@@ -1,0 +1,117 @@
+package net.smokeybbq.bittermelon.character;
+
+import com.mojang.authlib.GameProfile;
+import net.minecraft.client.Minecraft;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.PlayerList;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.storage.LevelResource;
+import net.minecraft.world.level.storage.PlayerDataStorage;
+import net.minecraftforge.event.server.ServerLifecycleEvent;
+import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.server.ServerLifecycleHooks;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.UUID;
+
+public class Character {
+    private final UUID uuid;
+    private final UUID playerUuid;
+    private String name;
+    private String gender;
+    private String description;
+    private String skinUrl;
+    private int age;
+    private double height;
+    private String emoteColor;
+
+    public Character(UUID playerUuid, String name, String gender, String description, String skinUrl, int age, double height, String emoteColor) {
+        this.uuid = UUID.randomUUID();
+        this.playerUuid = playerUuid;
+        this.name = name;
+        this.gender = gender;
+        this.description = description;
+        this.skinUrl = skinUrl;
+        this.age = age;
+        this.height = height;
+        this.emoteColor = emoteColor;
+    }
+
+    public UUID getUUID() {
+        return uuid;
+    }
+
+    public UUID getPlayerUUID() {
+        return playerUuid;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getSkinUrl() {
+        return skinUrl;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public String getEmoteColor() {
+        return emoteColor;
+    }
+
+    public void savePlayerData(ServerPlayer newData) {
+        Path worldSavePath = ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.PLAYER_DATA_DIR);
+        Path playerDataPath = worldSavePath.resolve(newData.getUUID().toString() + ".dat");
+        Path characterDir = FMLPaths.GAMEDIR.get().resolve("characters/" + uuid + "/");
+        Path characterFilePath = characterDir.resolve(newData.getUUID().toString() + ".dat");
+
+        try {
+            Files.copy(playerDataPath, characterFilePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public CompoundTag getPlayerData() {
+        File worldSaveFile = ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.PLAYER_DATA_DIR).toFile();
+        File playerDataFile = new File(worldSaveFile, playerUuid.toString() + ".dat");
+
+        if (!playerDataFile.exists()) {
+            return null;
+        }
+
+        CompoundTag playerData;
+        try {
+            playerData = NbtIo.readCompressed(playerDataFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return playerData;
+    }
+
+}
+
