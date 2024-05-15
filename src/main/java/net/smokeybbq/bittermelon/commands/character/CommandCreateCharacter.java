@@ -7,6 +7,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.smokeybbq.bittermelon.character.Character;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -26,14 +27,14 @@ public class CommandCreateCharacter {
     }
 
     private static int createCharacter(CommandContext<CommandSourceStack> context) {
-        ServerPlayer player = context.getSource().getPlayer();
         String name = StringArgumentType.getString(context, "name");
         int age = IntegerArgumentType.getInteger(context, "age");
         String description = StringArgumentType.getString(context, "description");
         String emoteColor = "#" + StringArgumentType.getString(context, "emoteColor");
 
-        Character character = new Character(context.getSource().getPlayer().getUUID(), name, "test", description, "test", age, 1.5, emoteColor, player.saveWithoutId(new CompoundTag()));
+        Character character = new Character(context.getSource().getPlayer().getUUID(), name, "test", description, "test", age, 1.5, emoteColor);
         CharacterManager.getInstance().addCharacter(context.getSource().getPlayer().getUUID(), character);
+        context.getSource().sendSystemMessage(Component.literal("Character created: " + name));
         return 1;
     }
 }

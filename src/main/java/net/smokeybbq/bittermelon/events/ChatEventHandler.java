@@ -32,7 +32,7 @@ public class ChatEventHandler {
         String channelColor = currentChannel.getChannelNameColor();
 
         String channelFormat = "[" + currentChannel.getName() + "] ";
-        String nameFormat = activeCharacter + ":";
+        String nameFormat = activeCharacter.getName() + ":";
 
         MutableComponent messageComponent = Component.empty();
         messageComponent.append(Component.literal(channelFormat));

@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
 import net.smokeybbq.bittermelon.chat.Channel;
@@ -27,6 +28,7 @@ public class CommandJoinChannel {
             channel.addMember(activeCharacter);
         } catch (IllegalArgumentException e) {
         }
+        context.getSource().sendSystemMessage(Component.literal("Channel joined: " + channelName));
         return 1;
     }
 }

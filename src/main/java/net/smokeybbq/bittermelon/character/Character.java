@@ -33,9 +33,8 @@ public class Character {
     private int age;
     private double height;
     private String emoteColor;
-    CompoundTag playerData;
 
-    public Character(UUID playerUuid, String name, String gender, String description, String skinUrl, int age, double height, String emoteColor, CompoundTag playerData) {
+    public Character(UUID playerUuid, String name, String gender, String description, String skinUrl, int age, double height, String emoteColor) {
         this.uuid = UUID.randomUUID();
         this.playerUuid = playerUuid;
         this.name = name;
@@ -45,7 +44,6 @@ public class Character {
         this.age = age;
         this.height = height;
         this.emoteColor = emoteColor;
-        this.playerData = playerData;
     }
 
     public UUID getUUID() {
@@ -85,12 +83,24 @@ public class Character {
     }
 
     public void savePlayerData(CompoundTag data) {
-        playerData = data;
+        try {
+            NbtIo.writeCompressed(data, new File(FMLPaths.GAMEDIR.get() + "/characters/" + uuid.toString() + "/playerData.dat"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("There is an error with savePlayerData");
+        }
         CharacterManager.getInstance().updateData(this);
     }
 
     public CompoundTag getPlayerData() {
-        return playerData;
+        try {
+            CompoundTag data = NbtIo.readCompressed(new File(FMLPaths.GAMEDIR.get() + "/characters/" + uuid.toString() + "/playerData.dat"));
+            return data;
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("There is an error with getPlayerData");
+        }
+        return null;
     }
 
 }

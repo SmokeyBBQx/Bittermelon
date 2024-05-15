@@ -35,6 +35,7 @@ public class CommandChannel {
             }
         } catch (IllegalArgumentException e) {
         }
+        context.getSource().sendSystemMessage(Component.literal("Channel switched to: " + channelName));
         return 1;
     }
 }

@@ -6,6 +6,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
 import net.smokeybbq.bittermelon.chat.Channel;
@@ -30,6 +31,7 @@ public class CommandCreateChannel {
 
         Channel channel = new Channel(name, range, chatColor, channelNameColor);
         ChannelManager.getInstance().addChannel(name, channel);
+        context.getSource().sendSystemMessage(Component.literal("Channel created: " + name + "(Talk Range: " + range + " Chat Color: " + chatColor + " Channel Name Color: " + channelNameColor + ")"));
         return 1;
     }
 }

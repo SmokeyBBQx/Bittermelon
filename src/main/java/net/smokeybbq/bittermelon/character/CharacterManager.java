@@ -21,11 +21,19 @@ public class CharacterManager extends DataManager<UUID, Character> {
 
     }
 
+
     public static synchronized CharacterManager getInstance() {
         if (instance == null) {
             instance = new CharacterManager();
         }
         return instance;
+    }
+
+    @Override
+    public void addData(UUID characterUUID, Character character) {
+        saveData(character);
+        dataMap.put(characterUUID, character);
+        playerUUIDToCharacter.computeIfAbsent(character.getPlayerUUID(), k -> new ArrayList<>()).add(character);
     }
 
     public void addCharacter(UUID playerUUID, Character character) {

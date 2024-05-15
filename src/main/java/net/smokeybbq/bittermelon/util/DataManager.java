@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class DataManager<U, T> {
@@ -37,7 +36,9 @@ public abstract class DataManager<U, T> {
     }
 
     protected void saveData(T data) {
-        String fileName = dataFolder + "/" + getFileName(data) + ".json";
+        String folderName = dataFolder + "/" + getFileName(data);
+        new File(folderName).mkdirs();
+        String fileName = folderName + "/" + getFileName(data) + ".json";
         try (FileWriter writer = new FileWriter(fileName)) {
             gson.toJson(data, writer);
         } catch (IOException e) {
@@ -47,15 +48,22 @@ public abstract class DataManager<U, T> {
 
     protected void loadData() {
         File folder = new File(dataFolder);
-        File[] listOfFiles = folder.listFiles();
-        if (listOfFiles != null) {
-            for (File file : listOfFiles) {
-                if (file.isFile()) {
-                    try (FileReader reader = new FileReader(file)) {
-                        T data = gson.fromJson(reader, type);
-                        addData(getKey(data), data);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+        File[] listOfDirs = folder.listFiles();
+        if (listOfDirs != null) {
+            for (File dir : listOfDirs) {
+                if (dir.isDirectory()) {
+                    File[] listOfFiles = dir.listFiles();
+                    if (listOfFiles != null) {
+                        for (File file : listOfFiles) {
+                            if (file.isFile() && file.getName().endsWith(".json")) {
+                                try (FileReader reader = new FileReader(file)) {
+                                    T data = gson.fromJson(reader, type);
+                                    dataMap.put(getKey(data), data);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
                     }
                 }
             }
