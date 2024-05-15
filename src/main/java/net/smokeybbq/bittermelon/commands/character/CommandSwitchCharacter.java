@@ -42,7 +42,8 @@ public class CommandSwitchCharacter {
 
         if (CharacterManager.getInstance().getActiveCharacter(player) != null) {
             Character currentCharacter = CharacterManager.getInstance().getActiveCharacter(player);
-            currentCharacter.savePlayerData(player);
+            CompoundTag playerData = player.saveWithoutId(new CompoundTag());
+            currentCharacter.savePlayerData(playerData);
         }
 
         if (selectedCharacter.get().getPlayerData() != null) {

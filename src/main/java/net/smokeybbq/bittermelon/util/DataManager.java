@@ -28,8 +28,8 @@ public abstract class DataManager<U, T> {
     }
 
     public void addData(U key, T data) {
-        dataMap.put(key, data);
         saveData(data);
+        dataMap.put(key, data);
     }
 
     public Map<U, T> getDataMap() {
@@ -37,13 +37,8 @@ public abstract class DataManager<U, T> {
     }
 
     protected void saveData(T data) {
-        U fileName = getFileName(data);
-        File directory = new File(dataFolder, fileName.toString());
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
-        File file = new File(directory, fileName + ".json");
-        try (FileWriter writer = new FileWriter(file)) {
+        String fileName = dataFolder + "/" + getFileName(data) + ".json";
+        try (FileWriter writer = new FileWriter(fileName)) {
             gson.toJson(data, writer);
         } catch (IOException e) {
             e.printStackTrace();
@@ -54,20 +49,13 @@ public abstract class DataManager<U, T> {
         File folder = new File(dataFolder);
         File[] listOfFiles = folder.listFiles();
         if (listOfFiles != null) {
-            for (File dir : listOfFiles) {
-                if (dir.isDirectory()) {
-                    File[] filesInDir = dir.listFiles();
-                    if (filesInDir != null) {
-                        for (File file : filesInDir) {
-                            if (file.isFile() && file.getName().endsWith(".json")) {
-                                try (FileReader reader = new FileReader(file)) {
-                                    T data = gson.fromJson(reader, type);
-                                    addData(getKey(data), data);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
+            for (File file : listOfFiles) {
+                if (file.isFile()) {
+                    try (FileReader reader = new FileReader(file)) {
+                        T data = gson.fromJson(reader, type);
+                        addData(getKey(data), data);
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
             }

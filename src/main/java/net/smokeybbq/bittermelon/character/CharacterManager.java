@@ -52,6 +52,10 @@ public class CharacterManager extends DataManager<UUID, Character> {
         return getDataMap();
     }
 
+    public void updateData(Character character) {
+        saveData(character);
+    }
+
     @Override
     protected UUID getFileName(Character data) {
         return data.getUUID();

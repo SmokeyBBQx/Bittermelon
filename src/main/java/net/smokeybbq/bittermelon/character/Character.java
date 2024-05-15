@@ -13,6 +13,7 @@ import net.minecraft.world.level.storage.PlayerDataStorage;
 import net.minecraftforge.event.server.ServerLifecycleEvent;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.server.ServerLifecycleHooks;
+import net.smokeybbq.bittermelon.chat.ChannelManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,8 +33,9 @@ public class Character {
     private int age;
     private double height;
     private String emoteColor;
+    CompoundTag playerData;
 
-    public Character(UUID playerUuid, String name, String gender, String description, String skinUrl, int age, double height, String emoteColor) {
+    public Character(UUID playerUuid, String name, String gender, String description, String skinUrl, int age, double height, String emoteColor, CompoundTag playerData) {
         this.uuid = UUID.randomUUID();
         this.playerUuid = playerUuid;
         this.name = name;
@@ -43,6 +45,7 @@ public class Character {
         this.age = age;
         this.height = height;
         this.emoteColor = emoteColor;
+        this.playerData = playerData;
     }
 
     public UUID getUUID() {
@@ -81,35 +84,12 @@ public class Character {
         return emoteColor;
     }
 
-    public void savePlayerData(ServerPlayer newData) {
-        Path worldSavePath = ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.PLAYER_DATA_DIR);
-        Path playerDataPath = worldSavePath.resolve(newData.getUUID().toString() + ".dat");
-        Path characterDir = FMLPaths.GAMEDIR.get().resolve("characters/" + uuid + "/");
-        Path characterFilePath = characterDir.resolve(newData.getUUID().toString() + ".dat");
-
-        try {
-            Files.copy(playerDataPath, characterFilePath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void savePlayerData(CompoundTag data) {
+        playerData = data;
+        CharacterManager.getInstance().updateData(this);
     }
 
     public CompoundTag getPlayerData() {
-        File worldSaveFile = ServerLifecycleHooks.getCurrentServer().getWorldPath(LevelResource.PLAYER_DATA_DIR).toFile();
-        File playerDataFile = new File(worldSaveFile, playerUuid.toString() + ".dat");
-
-        if (!playerDataFile.exists()) {
-            return null;
-        }
-
-        CompoundTag playerData;
-        try {
-            playerData = NbtIo.readCompressed(playerDataFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-
         return playerData;
     }
 
