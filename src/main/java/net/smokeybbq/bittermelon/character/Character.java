@@ -13,6 +13,7 @@ import net.minecraft.world.level.storage.PlayerDataStorage;
 import net.minecraftforge.event.server.ServerLifecycleEvent;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.server.ServerLifecycleHooks;
+import net.smokeybbq.bittermelon.character.medical.MedicalStats;
 import net.smokeybbq.bittermelon.chat.ChannelManager;
 
 import java.io.File;
@@ -32,7 +33,9 @@ public class Character {
     private String skinUrl;
     private int age;
     private double height;
+    private double weight;
     private String emoteColor;
+    private MedicalStats medicalStats;
 
     public Character(UUID playerUuid, String name, String gender, String description, String skinUrl, int age, double height, String emoteColor) {
         this.uuid = UUID.randomUUID();
@@ -44,6 +47,10 @@ public class Character {
         this.age = age;
         this.height = height;
         this.emoteColor = emoteColor;
+    }
+
+    private void initializeMedicalStats() {
+        medicalStats = new MedicalStats(this);
     }
 
     public UUID getUUID() {
@@ -78,8 +85,20 @@ public class Character {
         return height;
     }
 
+    public double getWeight() {
+        return weight;
+    }
+
     public String getEmoteColor() {
         return emoteColor;
+    }
+
+    public MedicalStats getMedicalStats() {
+        return medicalStats;
+    }
+
+    public void update() {
+        medicalStats.update();
     }
 
     public void savePlayerData(CompoundTag data) {

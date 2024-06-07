@@ -13,6 +13,7 @@ import net.minecraft.network.chat.OutgoingChatMessage;
 import net.minecraft.server.level.ServerPlayer;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
+import net.smokeybbq.bittermelon.medical.symptoms.Rash;
 
 import java.util.List;
 

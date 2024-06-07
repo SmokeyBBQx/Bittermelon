@@ -6,12 +6,14 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.client.model.CompositeModel;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.smokeybbq.bittermelon.util.DataManager;
 
 public class CharacterManager extends DataManager<UUID, Character> {
+    private static MinecraftServer minecraftServer;
     private static CharacterManager instance = null;
     private final Map<UUID, List<Character>> playerUUIDToCharacter = new ConcurrentHashMap<>();
     private static final Map<UUID, Character> activeCharacters = new HashMap<>();
@@ -56,8 +58,20 @@ public class CharacterManager extends DataManager<UUID, Character> {
         return getData(characterUUID);
     }
 
+    public static void setMinecraftServer(MinecraftServer server) {
+        minecraftServer = server;
+    }
+
+    public static MinecraftServer getServer() {
+        return minecraftServer;
+    }
+
     public Map<UUID, Character> getCharacterMap() {
         return getDataMap();
+    }
+
+    public static Map<UUID, Character> getActiveCharacters() {
+        return activeCharacters;
     }
 
     public void updateData(Character character) {

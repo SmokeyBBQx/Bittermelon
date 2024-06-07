@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.smokeybbq.bittermelon.character.Character;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.smokeybbq.bittermelon.character.CharacterManager;
+import net.smokeybbq.bittermelon.character.medical.MedicalStats;
 
 import java.io.IOException;
 
