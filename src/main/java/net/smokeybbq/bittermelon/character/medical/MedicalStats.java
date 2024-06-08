@@ -110,7 +110,7 @@ public class MedicalStats {
 
         if (pulseTimer >= pulseRate) {
             double lungBloodFlow = compartments.get("Lungs").getBloodFlow();
-            double circulatoryBloodFlow = compartments.get("Circulatory").getBloodFlow();
+            double circulatoryBloodFlow = compartments.get("Circulatory System").getBloodFlow();
 
             pulseTimer = 0;
             bloodOxygen += lungBloodFlow * circulatoryBloodFlow;
@@ -124,11 +124,11 @@ public class MedicalStats {
             pulse = 0;
         }
 
-        System.out.println("Diastolic: " + bloodPressureDiastolic);
-        System.out.println("Systolic: " + bloodPressureSystolic);
-        System.out.println("Oxygen: " + bloodOxygen);
-        System.out.println("Pulse Rate: " + pulseRate);
-        System.out.println("Actual Pulse Rate: " + actualPulseRate);
+//        System.out.println("Diastolic: " + bloodPressureDiastolic);
+//        System.out.println("Systolic: " + bloodPressureSystolic);
+//        System.out.println("Oxygen: " + bloodOxygen);
+//        System.out.println("Pulse Rate: " + pulseRate);
+//        System.out.println("Actual Pulse Rate: " + actualPulseRate);
      }
 
     private void updateBloodFlow() {

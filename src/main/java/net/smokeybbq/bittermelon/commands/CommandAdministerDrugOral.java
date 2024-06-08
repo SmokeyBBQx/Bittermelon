@@ -20,7 +20,7 @@ import java.util.Optional;
 public class CommandAdministerDrugOral {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("condition")
+        dispatcher.register(Commands.literal("administeroral")
                 .then(Commands.argument("characterName", StringArgumentType.string())
                         .then(Commands.argument("dosage", DoubleArgumentType.doubleArg())
                                 .then(Commands.argument("absorptionModifier", DoubleArgumentType.doubleArg())

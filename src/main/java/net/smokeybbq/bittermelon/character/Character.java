@@ -35,7 +35,7 @@ public class Character {
     private double height;
     private double weight;
     private String emoteColor;
-    private MedicalStats medicalStats;
+    private transient MedicalStats medicalStats;
 
     public Character(UUID playerUuid, String name, String gender, String description, String skinUrl, int age, double height, String emoteColor) {
         this.uuid = UUID.randomUUID();
@@ -47,9 +47,6 @@ public class Character {
         this.age = age;
         this.height = height;
         this.emoteColor = emoteColor;
-    }
-
-    private void initializeMedicalStats() {
         medicalStats = new MedicalStats(this);
     }
 
