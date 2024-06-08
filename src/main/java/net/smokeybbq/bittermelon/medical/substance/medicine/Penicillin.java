@@ -1,6 +1,8 @@
-package net.smokeybbq.bittermelon.medical.medicine;
+package net.smokeybbq.bittermelon.medical.substance.medicine;
 
-public class Penicillin extends Medicine {
+import net.smokeybbq.bittermelon.medical.substance.Substance;
+
+public class Penicillin extends Substance {
 
     public Penicillin(double absorptionModifier, double eliminationModifier, double metabolismModifier) {
         super(absorptionModifier, eliminationModifier, metabolismModifier);

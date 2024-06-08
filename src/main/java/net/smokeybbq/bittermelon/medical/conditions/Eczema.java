@@ -1,12 +1,8 @@
 package net.smokeybbq.bittermelon.medical.conditions;
 
-import net.minecraft.server.level.ServerPlayer;
 import net.smokeybbq.bittermelon.character.Character;
-import net.smokeybbq.bittermelon.medical.medicine.Medicine;
-import net.smokeybbq.bittermelon.medical.medicine.Penicillin;
+import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.medical.symptoms.Rash;
-
-import java.util.UUID;
 
 public class Eczema extends Condition {
     private Rash rash;
@@ -25,7 +21,7 @@ public class Eczema extends Condition {
     }
 
     @Override
-    public void treat(Medicine drug, double effectiveness) {
+    public void treat(Substance drug, double effectiveness) {
         setSeverity(severity - effectiveness);
     }
 

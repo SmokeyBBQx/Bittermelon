@@ -1,5 +1,6 @@
 package net.smokeybbq.bittermelon.medical.simulation.compartments;
 
+import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.medical.simulation.Inhibitor;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ public abstract class Compartment {
     protected String name;
     protected double volume;
     protected double concentration;
-    protected Map<String, Double> concentrations = new HashMap<>();
+    protected Map<Substance, Double> concentrations = new HashMap<>();
     protected List<Inhibitor> inhibitors = new ArrayList<>();
 
     public Compartment(String name, double volume) {
@@ -19,21 +20,30 @@ public abstract class Compartment {
         this.volume = volume;
     }
 
-    public double getConcentration() {
-        return concentration;
+    public double getConcentration(Substance substance) {
+        return concentrations.getOrDefault(substance, 0.0);
+    }
+
+    public Map<Substance, Double> getConcentrations() {
+        return concentrations;
     }
 
     public double getDerivative() {
         return 0;
     }
 
-    public void updateConcentration(String drugName, double derivative, double timeStep) {
-        double updatedConcentration = concentrations.get(drugName) + derivative * timeStep;
-        concentrations.put(drugName, updatedConcentration);
+    public void updateConcentration(Substance substance, double derivative, double timeStep) {
+        double updatedConcentration = concentrations.getOrDefault(substance, 0.0) + derivative * timeStep;
+        concentrations.put(substance, updatedConcentration);
     }
 
-    public void addConcentration(String drugName, double concentration) {
-        double updatedConcentration = concentrations.get()
+    public void addConcentration(Substance substance, double concentration) {
+        double updatedConcentration = concentrations.getOrDefault(substance, 0.0) + concentration;
+        concentrations.put(substance, updatedConcentration);
+    }
+
+    public void clearConcentrationMapping(Substance substance) {
+        concentrations.remove(substance);
     }
 
     public void addInhibitor(Inhibitor inhibitor) {

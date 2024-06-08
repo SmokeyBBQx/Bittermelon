@@ -1,6 +1,6 @@
-package net.smokeybbq.bittermelon.medical.medicine;
+package net.smokeybbq.bittermelon.medical.substance;
 
-public abstract class Medicine {
+public abstract class Substance {
     protected String name;
     protected double eMax;
     protected double halfMaximalEffectiveConcentration;
@@ -10,7 +10,7 @@ public abstract class Medicine {
     protected double metabolismRateConstant;
     protected double absorptionModifier, eliminationModifier, metabolismModifier;
 
-    public Medicine(double absorptionModifier, double eliminationModifier, double metabolismModifier) {
+    public Substance(double absorptionModifier, double eliminationModifier, double metabolismModifier) {
         this.absorptionModifier = absorptionModifier;
         this.eliminationModifier = eliminationModifier;
         this.metabolismModifier = metabolismModifier;

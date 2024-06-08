@@ -1,7 +1,6 @@
 package net.smokeybbq.bittermelon;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -14,7 +13,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
 import net.smokeybbq.bittermelon.commands.CommandStumble;
 import net.smokeybbq.bittermelon.commands.channel.CommandChannel;
@@ -23,12 +21,7 @@ import net.smokeybbq.bittermelon.commands.channel.CommandJoinChannel;
 import net.smokeybbq.bittermelon.commands.character.*;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.smokeybbq.bittermelon.events.ChatEventHandler;
-import net.smokeybbq.bittermelon.events.SkinChangeHandler;
-import net.smokeybbq.bittermelon.medical.medicine.Medicine;
-import net.smokeybbq.bittermelon.medical.medicine.Penicillin;
 import org.slf4j.Logger;
-
-import java.util.UUID;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(Bittermelon.MODID)

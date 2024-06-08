@@ -1,12 +1,7 @@
 package net.smokeybbq.bittermelon.medical.conditions;
 
-import net.minecraft.server.level.ServerPlayer;
 import net.smokeybbq.bittermelon.character.Character;
-import net.smokeybbq.bittermelon.character.medical.MedicalStats;
-import net.smokeybbq.bittermelon.medical.medicine.Medicine;
-
-import java.util.List;
-import java.util.UUID;
+import net.smokeybbq.bittermelon.medical.substance.Substance;
 
 public abstract class Condition {
     protected String name;
@@ -50,5 +45,5 @@ public abstract class Condition {
         return suitableTreatments;
     }
 
-    public abstract void treat(Medicine drug, double effectiveness);
+    public abstract void treat(Substance drug, double effectiveness);
 }

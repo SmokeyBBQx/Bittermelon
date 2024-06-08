@@ -2,8 +2,7 @@ package net.smokeybbq.bittermelon.medical.simulation;
 
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.medical.MedicalStats;
-import net.smokeybbq.bittermelon.medical.conditions.Condition;
-import net.smokeybbq.bittermelon.medical.medicine.Medicine;
+import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.medical.simulation.compartments.*;
 
 import java.util.*;
@@ -13,7 +12,7 @@ public abstract class PBPKModel {
     protected Character character;
     protected double timeStep = 0.01;
     protected double t = 0;
-    protected Medicine drug;
+    protected Substance drug;
     protected Double volumeGI, volumeLiver, volumeCirculatory, volumeKidney, volumeHeart, volumeLung, volumeBrain, volumeAdiposeTissue, volumeBone, volumeMuscle, volumeLymphatic, volumeEndocrine, volumeOther;
     protected SimpleCompartment GI, liver, peripheral, kidney, lung, heart, brain, adiposeTissue, bone, muscle, lymphatic, endocrine, other;
     protected CirculatoryCompartment circulatory;
@@ -21,11 +20,13 @@ public abstract class PBPKModel {
     protected double totalConcentration;
     protected MedicalStats medicalStats;
     protected SimpleCompartment[] simpleCompartments;
-    public PBPKModel(double dosage, Character character, Medicine drug) {
+    protected String drugName;
+    public PBPKModel(double dosage, Character character, Substance drug) {
         this.dosage = dosage;
         this.drug = drug;
         this.character = character;
         this.medicalStats = character.getMedicalStats();
+        drugName = drug.getName();
         initializeVolumes(character.getWeight());
         createCompartments();
         initializeSimulation();
@@ -80,11 +81,16 @@ public abstract class PBPKModel {
 
     protected abstract void initializeSimulation();
     public abstract void runSimulation();
-
     protected void updateRateConstants() {
         GI.setRateConstant(drug.getAbsorptionRateConstant());
         kidney.setRateConstant(drug.getEliminationRateConstant());
         liver.setRateConstant(-drug.getMetabolismRateConstant());
+    }
+
+    protected void clearMapping() {
+        for (Compartment compartment : compartmentMap.values()) {
+            compartment.clearConcentrationMapping(drug);
+        }
     }
 
     protected void handleSimpleCompartments() {
@@ -92,43 +98,27 @@ public abstract class PBPKModel {
 
         for (var i = 0; i < simpleCompartments.length; i++) {
             simpleDerivatives[i] = simpleCompartments[i].getDerivative(
-                    circulatory.getConcentration(),
-                    simpleCompartments[i].getConcentration(),
+                    circulatory.getConcentration(drug),
+                    simpleCompartments[i].getConcentration(drug),
                     simpleCompartments[i].getVolume(),
                     medicalStats.getBloodFlow(simpleCompartments[i].getName())
             );
         }
 
         for (var i = 0; i < simpleCompartments.length; i++) {
-            simpleCompartments[i].updateConcentration(simpleDerivatives[i], timeStep);
+            simpleCompartments[i].updateConcentration(drug, simpleDerivatives[i], timeStep);
         }
-    }
-    public double calculateE(Compartment compartment) {
-        return drug.getEMax() * compartment.getConcentration() / (drug.getEMax() * drug.getHalfMaximalEffectiveConcentration() + compartment.getConcentration());
-    }
-
-    public double drugEffect() {
-        List<Condition> conditions = character.getMedicalStats().getConditions();
-
-        for (Condition condition : conditions) {
-            if (Arrays.stream(condition.getSuitableTreatments()).anyMatch(drug.getName()::equals)) {
-                String affectedArea = condition.getAffectedArea();
-                double effectiveness = calculateE(compartmentMap.get(affectedArea));
-                condition.treat(drug, effectiveness);
-            }
-        }
-        return 0;
     }
 
     public void removeFromSimulations() {
-        character.getMedicalStats().removeSimulation(this);
+        medicalStats.simulationHandler.removeSimulation(this);
     }
 
     public double getTotalConcentration() {
         double concentrationSum = 0;
 
         for (Compartment compartment : compartmentMap.values()) {
-            concentrationSum += compartment.getConcentration();
+            concentrationSum += compartment.getConcentration(drug);
         }
 
         return concentrationSum;
