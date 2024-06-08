@@ -20,6 +20,7 @@ public abstract class PBPKModel {
     protected MedicalStats medicalStats;
     protected SimpleCompartment[] simpleCompartments;
     protected String drugName;
+
     public PBPKModel(double dosage, Character character, Substance drug) {
         this.dosage = dosage;
         this.drug = drug;
@@ -48,7 +49,20 @@ public abstract class PBPKModel {
 
 
     protected abstract void initializeSimulation();
-    public abstract void runSimulation();
+
+    public void runSimulation() {
+        if (totalConcentration > 1) {
+            updateRateConstants();
+            simulation();
+            totalConcentration = getTotalConcentration();
+            t += timeStep;
+        } else {
+            clearMapping();
+            removeFromSimulations();
+        }
+    }
+    protected abstract void simulation();
+
     protected void updateRateConstants() {
         GI.setRateConstant(drug.getAbsorptionRateConstant());
         kidney.setRateConstant(drug.getEliminationRateConstant());

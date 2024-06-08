@@ -17,45 +17,29 @@ public class OralAdministration extends PBPKModel {
     }
 
     @Override
-    public void runSimulation() {
-        if (totalConcentration < 1) {
-            updateRateConstants();
+    public void simulation() {
+        double GIConcentration = GI.getConcentration(drug);
+        double liverConcentration = liver.getConcentration(drug);
+        double circulatoryConcentration = circulatory.getConcentration(drug);
 
-            // Concentrations
-            double GIConcentration = GI.getConcentration(drug);
-            double liverConcentration = liver.getConcentration(drug);
-            double circulatoryConcentration = circulatory.getConcentration(drug);
+        double GIBloodFlow = GI.getBloodFlow();
+        double circulatoryBloodFlow = circulatory.getBloodFlow();
 
-            // Blood Flow
-            double GIBloodFlow = GI.getBloodFlow();
-            double circulatoryBloodFlow = circulatory.getBloodFlow();
+        double volumeGI = GI.getVolume();
+        double volumeLiver = liver.getVolume();
+        double volumeCirculatory = circulatory.getVolume();
 
-            // Volumes
-            double volumeGI = GI.getVolume();
-            double volumeLiver = liver.getVolume();
-            double volumeCirculatory = circulatory.getVolume();
+        double GIDerivative = GI.getDerivative(GIConcentration, liverConcentration, volumeGI, GIBloodFlow);
 
-            // Derivatives
-            double GIDerivative = GI.getDerivative(GIConcentration, liverConcentration, volumeGI, GIBloodFlow);
+        double portalVein = (drug.getAbsorptionRateConstant() * GIConcentration * volumeGI) / volumeLiver;
+        double liverDerivative = portalVein - liver.getDerivative(liverConcentration, circulatoryConcentration, volumeLiver, circulatoryBloodFlow);
 
-            double portalVein = (drug.getAbsorptionRateConstant() * GIConcentration * volumeGI) / volumeLiver;
-            double liverDerivative = portalVein - liver.getDerivative(liverConcentration, circulatoryConcentration, volumeLiver, circulatoryBloodFlow);
+        double circulatoryDrugSource = (circulatoryBloodFlow * (liverConcentration - circulatoryConcentration)) / volumeCirculatory;
+        double circulatoryDerivative = circulatory.getDerivative(circulatoryDrugSource, simpleCompartments, drug);
 
-            double circulatoryDrugSource = (circulatoryBloodFlow * (liverConcentration - circulatoryConcentration)) / volumeCirculatory;
-            double circulatoryDerivative = circulatory.getDerivative(circulatoryDrugSource, simpleCompartments, drug);
-
-            // Concentrations
-            handleSimpleCompartments();
-            GI.updateConcentration(drug, GIDerivative, timeStep);
-            liver.updateConcentration(drug, liverDerivative, timeStep);
-            circulatory.updateConcentration(drug, circulatoryDerivative, timeStep);
-
-            totalConcentration = getTotalConcentration();
-
-            t += timeStep;
-        } else {
-            clearMapping();
-            removeFromSimulations();
-        }
+        handleSimpleCompartments();
+        GI.updateConcentration(drug, GIDerivative, timeStep);
+        liver.updateConcentration(drug, liverDerivative, timeStep);
+        circulatory.updateConcentration(drug, circulatoryDerivative, timeStep);
     }
 }

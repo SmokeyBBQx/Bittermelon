@@ -18,24 +18,12 @@ public class IVAdministration extends PBPKModel {
     }
 
     @Override
-    public void runSimulation() {
-        if (totalConcentration < 1) {
-            updateRateConstants();
+    public void simulation() {
+        double circulatoryConcentration = circulatory.getConcentration(drug);
 
-            double circulatoryConcentration = circulatory.getConcentration(drug);
+        double circulatoryDerivative = circulatory.getDerivative(circulatoryConcentration, simpleCompartments, drug);
 
-            double circulatoryDerivative = circulatory.getDerivative(circulatoryConcentration, simpleCompartments, drug);
-
-            circulatory.updateConcentration(drug, circulatoryDerivative, timeStep);
-            handleSimpleCompartments();
-
-            totalConcentration = getTotalConcentration();
-
-            t += timeStep;
-
-        } else {
-            clearMapping();
-            removeFromSimulations();
-        }
+        handleSimpleCompartments();
+        circulatory.updateConcentration(drug, circulatoryDerivative, timeStep);
     }
 }
