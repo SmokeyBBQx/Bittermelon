@@ -11,12 +11,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SimulationHandler {
 
-    private List<PBPKModel> simulations = new ArrayList<>();
+    private List<PBPKModel> simulations = new CopyOnWriteArrayList<>();
     private Character character;
     private Map<String, Compartment> compartmentMap;
+
     public SimulationHandler(Character character, Map<String, Compartment> compartmentMap) {
         this.character = character;
         this.compartmentMap = compartmentMap;
@@ -50,8 +52,9 @@ public class SimulationHandler {
         }
     }
 
+
     private boolean isTreatmentSuitable(Condition condition, Substance substance) {
-        return Arrays.stream(condition.getSuitableTreatments()).anyMatch(substance.getName()::equals);
+        return Arrays.stream(condition.getSuitableTreatments()).anyMatch(treatment -> treatment.equals(substance.getName()));
     }
 
     public double calculateE(Substance substance, Compartment compartment) {
