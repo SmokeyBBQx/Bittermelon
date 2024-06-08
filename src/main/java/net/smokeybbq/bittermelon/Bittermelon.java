@@ -14,6 +14,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.smokeybbq.bittermelon.character.CharacterManager;
+import net.smokeybbq.bittermelon.commands.CommandAdministerDrugOral;
+import net.smokeybbq.bittermelon.commands.CommandCondition;
 import net.smokeybbq.bittermelon.commands.CommandStumble;
 import net.smokeybbq.bittermelon.commands.channel.CommandChannel;
 import net.smokeybbq.bittermelon.commands.channel.CommandCreateChannel;
@@ -84,6 +86,8 @@ public class Bittermelon
         CommandJoinChannel.register(event.getDispatcher());
         CommandSwitchCharacter.register(event.getDispatcher());
         CommandStumble.register(event.getDispatcher());
+        CommandAdministerDrugOral.register(event.getDispatcher());
+        CommandCondition.register(event.getDispatcher());
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
