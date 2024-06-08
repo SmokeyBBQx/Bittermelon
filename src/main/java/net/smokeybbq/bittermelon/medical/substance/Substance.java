@@ -9,6 +9,7 @@ public abstract class Substance {
     protected double eliminationRateConstant;
     protected double metabolismRateConstant;
     protected double absorptionModifier, eliminationModifier, metabolismModifier;
+    public boolean toxic;
 
     public Substance(double absorptionModifier, double eliminationModifier, double metabolismModifier) {
         this.absorptionModifier = absorptionModifier;
@@ -41,5 +42,7 @@ public abstract class Substance {
     }
 
     public double getMetabolismRateConstant() { return  metabolismRateConstant;}
+
+    public abstract void toxicDamage(double effectiveness);
 
 }

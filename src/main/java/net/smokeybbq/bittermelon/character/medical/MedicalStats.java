@@ -1,8 +1,8 @@
 package net.smokeybbq.bittermelon.character.medical;
 
+import net.minecraft.world.entity.player.Player;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.medical.conditions.Condition;
-import net.smokeybbq.bittermelon.medical.simulation.PBPKModel;
 import net.smokeybbq.bittermelon.medical.simulation.compartments.CirculatoryCompartment;
 import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
 import net.smokeybbq.bittermelon.medical.simulation.compartments.EliminatingCompartment;
@@ -15,8 +15,6 @@ import static java.lang.Math.min;
 
 public class MedicalStats {
     private static final double INITIAL_HEALTH = 100.0;
-    private Map<String, Double> organHealth = new HashMap<>();
-    private Map<String, Double> organBloodFlow = new HashMap<>();
     private List<Condition> conditions = new ArrayList<>();
     private double bloodLevel, pulseRate, respirationRate, bloodPressureSystolic, bloodPressureDiastolic, bodyTemperature;
     private double bloodOxygen = 0;
@@ -28,21 +26,22 @@ public class MedicalStats {
     private int timer = 0;
     private int actualPulseRate = 0;
     private Double volumeGI, volumeLiver, volumeCirculatory, volumeKidney, volumeHeart, volumeLung, volumeBrain, volumeAdiposeTissue, volumeBone, volumeMuscle, volumeLymphatic, volumeEndocrine, volumeOther;
-    private SimpleCompartment GI, liver, peripheral, kidney, lung, heart, brain, adiposeTissue, bone, muscle, lymphatic, endocrine, other;
+    private SimpleCompartment GI, liver, kidney, lung, heart, brain, adiposeTissue, bone, muscle, lymphatic, endocrine, other;
     private CirculatoryCompartment circulatory;
-    private Map<String, Compartment> compartmentMap;
+    private Map<String, Compartment> compartments = new HashMap<>();
     public SimulationHandler simulationHandler;
 
     public MedicalStats(Character character) {
         this.character = character;
-        initializeOrgans();
-        initializeVolumes(character.getWeight());
+        updateVolumes();
         createCompartments();
         updateBloodFlow();
-        simulationHandler = new SimulationHandler(character, compartmentMap);
+        simulationHandler = new SimulationHandler(character, compartments);
     }
 
-    private void initializeVolumes(double weight) {
+    private void updateVolumes() {
+        double weight = character.getWeight();
+
         volumeGI =  0.0207 * weight;
         volumeCirculatory = 0.25 * 0.075 * weight;
         volumeKidney = 0.0051 * weight;
@@ -73,38 +72,31 @@ public class MedicalStats {
         endocrine = new SimpleCompartment("Endocrine System", volumeEndocrine);
         other = new SimpleCompartment("Other", volumeOther);
 
-        compartmentMap.put("Gastrointestinal", GI);
-        compartmentMap.put("Liver", liver);
-        compartmentMap.put("Peripheral System", peripheral);
-        compartmentMap.put("Kidneys", kidney);
-        compartmentMap.put("Circulatory System", circulatory);
-        compartmentMap.put("Lungs", lung);
-        compartmentMap.put("Heart", heart);
-        compartmentMap.put("Brain", brain);
-        compartmentMap.put("Adipose Tissue", adiposeTissue);
-        compartmentMap.put("Bone", bone);
-        compartmentMap.put("Muscle", muscle);
-        compartmentMap.put("Lymphatic System", lymphatic);
-        compartmentMap.put("Endocrine System", endocrine);
-        compartmentMap.put("Other", other);
-    }
-
-    public void modifyHealth(String name, double health) {
-        if (organHealth.containsKey(name)) {
-            double currentHealth = organHealth.get(name);
-            double newHealth = Math.max(0, currentHealth - health);
-            organHealth.put(name, newHealth);
-            updateBloodFlow();
-        }
+        compartments.put("Gastrointestinal", GI);
+        compartments.put("Liver", liver);
+        compartments.put("Kidneys", kidney);
+        compartments.put("Circulatory System", circulatory);
+        compartments.put("Lungs", lung);
+        compartments.put("Heart", heart);
+        compartments.put("Brain", brain);
+        compartments.put("Adipose Tissue", adiposeTissue);
+        compartments.put("Bone", bone);
+        compartments.put("Muscle", muscle);
+        compartments.put("Lymphatic System", lymphatic);
+        compartments.put("Endocrine System", endocrine);
+        compartments.put("Other", other);
     }
 
     public void update() {
         cardiovascularSystem();
         simulationHandler.update();
+        for (Condition condition : conditions) {
+            condition.update();
+        }
     }
 
     public void cardiovascularSystem() {
-        pulseRate = 20 * organHealth.get("Heart") / 100 * Math.max(heartEffort, 0.1);
+        pulseRate = 20 * compartments.get("Heart").getHealth() / 100 * Math.max(heartEffort, 0.1);
 
         if (bloodOxygen < 99) {
             heartEffort -= 0.1;
@@ -114,16 +106,15 @@ public class MedicalStats {
 
         pulseTimer++;
         timer++;
-        bloodPressureSystolic -= 0.1;
-        bloodPressureDiastolic -= 0.1;
         bloodOxygen -= 0.1;
 
         if (pulseTimer >= pulseRate) {
+            double lungBloodFlow = compartments.get("Lungs").getBloodFlow();
+            double circulatoryBloodFlow = compartments.get("Circulatory").getBloodFlow();
+
             pulseTimer = 0;
-            bloodOxygen += organBloodFlow.get("Lungs") * (organBloodFlow.get("Arterial Blood") + organBloodFlow.get("Venous Blood"));
+            bloodOxygen += lungBloodFlow * circulatoryBloodFlow;
             bloodOxygen = Math.min(bloodOxygen, 100);
-            bloodPressureSystolic += 3;
-            bloodPressureDiastolic += 2;
             pulse++;
         }
 
@@ -140,47 +131,40 @@ public class MedicalStats {
         System.out.println("Actual Pulse Rate: " + actualPulseRate);
      }
 
-    private void initializeOrgans() {
-        String[] organs = {"Gastrointestinal", "Liver", "Arterial Blood", "Venous Blood", "Lungs",
-                "Heart", "Brain", "Adipose Tissue", "Bone", "Muscle", "Lymphatic System",
-                "Endocrine System", "Other", "Kidneys"};
-        for (String organ : organs) {
-            organHealth.put(organ, INITIAL_HEALTH);
-        }
-
-        organHealth.put("Lungs", 80.0);
-    }
     private void updateBloodFlow() {
-        double heartHealth = organHealth.get("Heart") / 100.0;
-        for (String organ : organHealth.keySet()) {
-            if (organ.equals("Heart")) {
-                organBloodFlow.put(organ, heartHealth);
+        double heartHealth = compartments.get("Heart").getHealth() / 100.0;
+        for (Compartment compartment : compartments.values()) {
+            if (compartment.equals("Heart")) {
+                compartment.setBloodFlow(heartHealth);
             } else {
-                organBloodFlow.put(organ, heartHealth * organHealth.get(organ) / 100.0);
+                compartment.setBloodFlow(heartHealth * compartment.getHealth() / 100.0);
             }
         }
     }
 
-    public double getBloodFlow(String organName) {
-        return organBloodFlow.getOrDefault(organName, 0.0);
+    public double getBloodFlow(String name) {
+        if (compartments.containsKey(name)) {
+            return compartments.get(name).getBloodFlow();
+        }
+        return 0;
     }
 
-    public void increaseOrganHealth(String organName, double health) {
-        if (organHealth.containsKey(organName)) {
-            double updatedHealth = organHealth.get(organName) + health;
-            organHealth.put(organName, updatedHealth);
+    public void addCompartmentHealth(String name, double health) {
+        if (compartments.containsKey(name)) {
+            compartments.get(name).addHealth(health);
         }
     }
 
-    public void decreaseOrganHealth(String organName, double health) {
-        if (organHealth.containsKey(organName)) {
-            double updatedHealth = organHealth.get(organName) - health;
-            updatedHealth = Math.max(updatedHealth, 0.0);
-            organHealth.put(organName, updatedHealth);
+    public void removeCompartmentHealth(String name, double health) {
+        if (compartments.containsKey(name)) {
+            compartments.get(name).removeHealth(health);
         }
     }
-    public double getOrganHealth(String organName) {
-        return organHealth.getOrDefault(organName, 0.0);
+    public double getCompartmentHealth(String name) {
+        if (compartments.containsKey(name)) {
+            return compartments.get(name).getHealth();
+        }
+        return 0;
     }
 
     public void addCondition(Condition condition) {
@@ -189,5 +173,9 @@ public class MedicalStats {
 
     public List<Condition> getConditions() {
         return conditions;
+    }
+
+    public Map<String, Compartment> getCompartments() {
+        return compartments;
     }
 }

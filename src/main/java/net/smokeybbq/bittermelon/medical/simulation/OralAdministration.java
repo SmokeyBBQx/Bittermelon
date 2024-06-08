@@ -21,12 +21,21 @@ public class OralAdministration extends PBPKModel {
         if (totalConcentration < 1) {
             updateRateConstants();
 
+            // Concentrations
             double GIConcentration = GI.getConcentration(drug);
             double liverConcentration = liver.getConcentration(drug);
             double circulatoryConcentration = circulatory.getConcentration(drug);
-            double GIBloodFlow = medicalStats.getBloodFlow("Gastrointestinal");
-            double circulatoryBloodFlow = medicalStats.getBloodFlow("Circulatory System");
 
+            // Blood Flow
+            double GIBloodFlow = GI.getBloodFlow();
+            double circulatoryBloodFlow = circulatory.getBloodFlow();
+
+            // Volumes
+            double volumeGI = GI.getVolume();
+            double volumeLiver = liver.getVolume();
+            double volumeCirculatory = circulatory.getVolume();
+
+            // Derivatives
             double GIDerivative = GI.getDerivative(GIConcentration, liverConcentration, volumeGI, GIBloodFlow);
 
             double portalVein = (drug.getAbsorptionRateConstant() * GIConcentration * volumeGI) / volumeLiver;
@@ -35,6 +44,7 @@ public class OralAdministration extends PBPKModel {
             double circulatoryDrugSource = (circulatoryBloodFlow * (liverConcentration - circulatoryConcentration)) / volumeCirculatory;
             double circulatoryDerivative = circulatory.getDerivative(circulatoryDrugSource, simpleCompartments, drug);
 
+            // Concentrations
             handleSimpleCompartments();
             GI.updateConcentration(drug, GIDerivative, timeStep);
             liver.updateConcentration(drug, liverDerivative, timeStep);

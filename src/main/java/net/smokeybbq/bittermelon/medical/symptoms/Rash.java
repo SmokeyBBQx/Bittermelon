@@ -7,6 +7,7 @@ import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
@@ -28,7 +29,6 @@ public class Rash extends Symptom {
     boolean scratched = false;
     private static final int TICKS_REQUIRED = 100;
     private int ticksHeld = 0;
-    private ItchProgressScreen progressScreen;
     private String bodyPart;
 
     public Rash(double amplifier, Character character, String bodyPart) {
@@ -39,21 +39,24 @@ public class Rash extends Symptom {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    @SubscribeEvent
-    public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.player instanceof ServerPlayer && event.player == this.player) {
-            ticksSinceLastReminder++;
-            TICKS_BETWEEN_REMINDERS = ThreadLocalRandom.current().nextInt(REMINDER_MINIMUM_TICKS, REMINDER_MAXIMUM_TICKS);
+    @Override
+    public void update() {
+        effects();
+    }
 
-            if (ticksSinceLastReminder >= TICKS_BETWEEN_REMINDERS) {
-                itch();
-                ticksSinceLastReminder = 0;
-            }
+    @Override
+    public void effects() {
+        ticksSinceLastReminder++;
+        TICKS_BETWEEN_REMINDERS = ThreadLocalRandom.current().nextInt(REMINDER_MINIMUM_TICKS, REMINDER_MAXIMUM_TICKS);
 
-            if (scratched) {
-                player.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
-                player.connection.send(new ClientboundClearTitlesPacket(true));
-            }
+        if (ticksSinceLastReminder >= TICKS_BETWEEN_REMINDERS) {
+            itch();
+            ticksSinceLastReminder = 0;
+        }
+
+        if (scratched) {
+            player.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
+            player.connection.send(new ClientboundClearTitlesPacket(true));
         }
     }
 

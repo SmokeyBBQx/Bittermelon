@@ -12,6 +12,8 @@ public abstract class Compartment {
     protected String name;
     protected double volume;
     protected double concentration;
+    protected double health = 100;
+    protected double bloodFlow;
     protected Map<Substance, Double> concentrations = new HashMap<>();
     protected List<Inhibitor> inhibitors = new ArrayList<>();
 
@@ -63,6 +65,34 @@ public abstract class Compartment {
     }
 
     public void setRateConstant(double eliminationRateConstant) {
+    }
+
+    public double getHealth() {
+        return health;
+    }
+
+    public double getBloodFlow() {
+        return bloodFlow;
+    }
+
+    public void addHealth(double health) {
+        this.health += health;
+    }
+
+    public void addBloodFlow(double bloodFlow) {
+        this.bloodFlow += bloodFlow;
+    }
+
+    public void setBloodFlow(double bloodFlow) {
+        this.bloodFlow = bloodFlow;
+    }
+
+    public void removeHealth(double health) {
+        this.health -= health;
+    }
+
+    public void removeBloodFlow(double bloodFlow) {
+        this.bloodFlow -= bloodFlow;
     }
 
 }

@@ -5,6 +5,7 @@ import net.smokeybbq.bittermelon.medical.conditions.Condition;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.medical.simulation.PBPKModel;
 import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
+import net.smokeybbq.bittermelon.medical.substance.toxins.Toxin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,19 +30,28 @@ public class SimulationHandler {
         drugEffect();
     }
 
-    public double drugEffect() {
+    public void drugEffect() {
         List<Condition> conditions = character.getMedicalStats().getConditions();
 
         for (Condition condition : conditions) {
             String affectedArea = condition.getAffectedArea();
             Compartment compartment = compartmentMap.get(affectedArea);
-            for (Substance substance : compartment.getConcentrations().keySet())
-                if (Arrays.stream(condition.getSuitableTreatments()).anyMatch(substance.getName()::equals)) {
-                    double effectiveness = calculateE(substance, compartment);
+
+            for (Substance substance : compartment.getConcentrations().keySet()) {
+                double effectiveness = calculateE(substance, compartment);
+
+                if (isTreatmentSuitable(condition, substance)) {
                     condition.treat(substance, effectiveness);
                 }
+                if (substance.toxic) {
+                    substance.toxicDamage(effectiveness);
+                }
+            }
         }
-        return 0;
+    }
+
+    private boolean isTreatmentSuitable(Condition condition, Substance substance) {
+        return Arrays.stream(condition.getSuitableTreatments()).anyMatch(substance.getName()::equals);
     }
 
     public double calculateE(Substance substance, Compartment compartment) {

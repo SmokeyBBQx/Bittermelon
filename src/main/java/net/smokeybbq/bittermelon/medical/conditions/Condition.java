@@ -1,7 +1,11 @@
 package net.smokeybbq.bittermelon.medical.conditions;
 
+import net.minecraft.world.entity.player.Player;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
+import net.smokeybbq.bittermelon.medical.symptoms.Symptom;
+
+import java.util.List;
 
 public abstract class Condition {
     protected String name;
@@ -10,6 +14,7 @@ public abstract class Condition {
     protected double severity;
     protected String affectedArea;
     protected Character character;
+    protected List<Symptom> symptoms;
     protected String[] suitableTreatments;
     public Condition(double duration, boolean chronic, double severity, String affectedArea, Character character) {
         this.duration = duration;
@@ -17,7 +22,10 @@ public abstract class Condition {
         this.severity = severity;
         this.affectedArea = affectedArea;
         this.character= character;
+        symptoms();
     }
+
+    public abstract void update();
 
     protected abstract void symptoms();
 
