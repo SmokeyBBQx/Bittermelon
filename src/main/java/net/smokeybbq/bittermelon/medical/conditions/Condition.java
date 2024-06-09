@@ -5,6 +5,7 @@ import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.medical.symptoms.Symptom;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Condition {
@@ -14,7 +15,7 @@ public abstract class Condition {
     protected double severity;
     protected String affectedArea;
     protected Character character;
-    protected List<Symptom> symptoms;
+    protected List<Symptom> symptoms = new ArrayList<>();
     protected String[] suitableTreatments;
     public Condition(double duration, boolean chronic, double severity, String affectedArea, Character character) {
         this.duration = duration;
