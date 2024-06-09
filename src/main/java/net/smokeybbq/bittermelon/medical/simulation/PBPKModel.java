@@ -59,6 +59,7 @@ public abstract class PBPKModel {
 
             //DEBUGGING LINES
             System.out.println("Running simulation at time: " + t);
+            System.out.println();
             System.out.println("Total concentration: " + totalConcentration);
 
         } else {
@@ -114,6 +115,8 @@ public abstract class PBPKModel {
             //DEBUG LINES
             System.out.println(compartment.getName() + " " + n);
         }
+
+        System.out.println("------------------------");
 
         return concentrationSum;
     }
