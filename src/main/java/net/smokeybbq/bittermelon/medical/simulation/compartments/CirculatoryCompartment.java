@@ -13,7 +13,7 @@ public class CirculatoryCompartment extends Compartment {
 
         for (SimpleCompartment compartment : compartments) {
             // The total concentration in all compartments receiving from the circulatory system
-            circulationOut += compartment.getBloodFlow();
+            circulationOut += compartment.getBloodFlow() * getConcentration(drug);
 
             // The total concentration returning to the circulatory system from those compartments
 
@@ -22,8 +22,8 @@ public class CirculatoryCompartment extends Compartment {
                 circulationIn += compartment.getBloodFlow() / 2 * compartment.getConcentration(drug);
             }
         }
-        source = source + circulationIn - circulationOut * concentrations.getOrDefault(drug, 0.0);
+        double derivative = source + circulationIn - circulationOut;
 
-        return source;
+        return derivative;
     }
 }

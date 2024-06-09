@@ -11,12 +11,16 @@ public class EliminatingCompartment extends SimpleCompartment {
     }
 
     @Override
-    public double getDerivative(double sourceFlow, Substance drug) {
-        return bloodFlow * sourceFlow - rateConstant * getConcentration(drug);
+    public double getDerivative(double sourceConcentration, Substance drug) {
+        return bloodFlow * sourceConcentration - rateConstant * getConcentration(drug);
     }
 
     @Override
     public void setRateConstant(double rateConstant) {
         this.rateConstant = rateConstant;
+    }
+
+    public double getRateConstant() {
+        return rateConstant;
     }
 }
