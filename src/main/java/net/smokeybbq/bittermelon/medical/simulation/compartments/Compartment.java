@@ -92,6 +92,7 @@ public abstract class Compartment {
 
     public void removeHealth(double health) {
         this.health -= health;
+        this.health = Math.max(this.health, 0);
     }
 
     public void removeBloodFlow(double bloodFlow) {

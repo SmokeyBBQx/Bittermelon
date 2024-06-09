@@ -25,7 +25,7 @@ public class PBPKModelTest {
         testCharacter.getMedicalStats().simulationHandler.addSimulation(model);
 
         // Run the simulation 20 times a second (equal to minecraft ticks)
-        int runsPerSecond = 1000;
+        int runsPerSecond = 10000;
         long delay = 1000 / runsPerSecond; // Delay in milliseconds
 
 

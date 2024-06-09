@@ -13,14 +13,14 @@ public class MedicalStats {
     private static final double INITIAL_HEALTH = 100.0;
     private List<Condition> conditions = new ArrayList<>();
     private double bloodLevel, pulseRate, respirationRate, bloodPressureSystolic, bloodPressureDiastolic, bodyTemperature;
-    private double bloodOxygen = 0;
+    private double bloodOxygen = 100;
     private double maxHeartRate = 220;
     private Character character;
     private int pulseTimer = 0;
     private double heartEffort = 0;
     private int pulse = 0;
     private int timer = 0;
-    private int actualPulseRate = 0;
+    private int BPM = 0;
     private Double volumeGI, volumeLiver, volumeCirculatory, volumeKidney, volumeHeart, volumeLung, volumeBrain, volumeAdiposeTissue, volumeBone, volumeMuscle, volumeLymphatic, volumeEndocrine, volumeOther;
     private SimpleCompartment GI, liver, kidney, lung, heart, brain, adiposeTissue, bone, muscle, lymphatic, endocrine, other;
     private CirculatoryCompartment circulatory;
@@ -84,6 +84,7 @@ public class MedicalStats {
     }
 
     public void update() {
+        updateBloodFlow();
         cardiovascularSystem();
         simulationHandler.update();
         for (Condition condition : conditions) {
@@ -92,18 +93,22 @@ public class MedicalStats {
     }
 
     public void cardiovascularSystem() {
-        pulseRate = 20 * compartments.get("Heart").getHealth() / 100 * Math.max(heartEffort, 0.1);
+        pulseRate = compartments.get("Heart").getHealth() / 100 * heartEffort;
 
         if (bloodOxygen < 99) {
             heartEffort -= 0.1;
         } else {
             heartEffort += 0.1;
         }
+        heartEffort = Math.max(heartEffort, 0.1);
 
         pulseTimer++;
         timer++;
-        bloodOxygen -= 0.1;
 
+        bloodOxygen -= 0.05;
+        bloodOxygen = Math.max(bloodOxygen, 0);
+
+        // One heartbeat
         if (pulseTimer >= pulseRate) {
             double lungBloodFlow = compartments.get("Lungs").getBloodFlow();
             double circulatoryBloodFlow = compartments.get("Circulatory System").getBloodFlow();
@@ -114,17 +119,26 @@ public class MedicalStats {
             pulse++;
         }
 
+        // Calculate BPM after 1200 ticks or 1 minute
         if (timer >= 1200) {
-            actualPulseRate = pulse;
+            BPM = pulse;
             timer = 0;
             pulse = 0;
         }
 
-//        System.out.println("Diastolic: " + bloodPressureDiastolic);
-//        System.out.println("Systolic: " + bloodPressureSystolic);
+        // Cardiac Arrest
+        if (BPM > maxHeartRate) {
+            compartments.get("Heart").removeHealth(0.5);
+            timer = 1200;
+            pulseTimer -= 0.1;
+            pulseTimer = Math.max(pulseTimer, 0);
+        }
+
+        // Debugging
+//        System.out.println("Heart Effort: " + heartEffort);
 //        System.out.println("Oxygen: " + bloodOxygen);
 //        System.out.println("Pulse Rate: " + pulseRate);
-//        System.out.println("Actual Pulse Rate: " + actualPulseRate);
+//        System.out.println("BPM: " + BPM);
      }
 
     private void updateBloodFlow() {
