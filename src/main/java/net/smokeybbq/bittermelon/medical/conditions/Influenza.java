@@ -34,10 +34,12 @@ public class Influenza extends Condition {
     @Override
     public void treat(Substance drug, double effectiveness) {
         String drugName = drug.getName();
+        System.out.println("Drug Name " + drugName);
 
         switch (drugName) {
             case "Acetaminophen":
                 fever.decreaseAmplifier(effectiveness);
+
                 break;
             default:
                 for (Symptom symptom : symptoms) {

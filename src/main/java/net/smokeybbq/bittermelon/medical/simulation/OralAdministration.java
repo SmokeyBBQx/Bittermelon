@@ -5,9 +5,12 @@ import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.medical.simulation.compartments.*;
 
 public class OralAdministration extends PBPKModel {
+
     public OralAdministration(double dosage, Character character, Substance drug) {
         super(dosage, character, drug);
-        simpleCompartments = new SimpleCompartment[]{kidney, lung, heart, brain, adiposeTissue, bone, muscle, lymphatic, endocrine, other};
+
+        // Initialize compartments that will get their concentration from circulatory system
+        simpleCompartments = new SimpleCompartment[]{liver, kidney, lung, heart, brain, adiposeTissue, bone, muscle, lymphatic, endocrine, other};
     }
 
     @Override
@@ -22,21 +25,16 @@ public class OralAdministration extends PBPKModel {
         double liverConcentration = liver.getConcentration(drug);
         double circulatoryConcentration = circulatory.getConcentration(drug);
 
-        double GIBloodFlow = GI.getBloodFlow();
-        double circulatoryBloodFlow = circulatory.getBloodFlow();
+        double liverBloodFlow = liver.getBloodFlow();
 
-        double volumeGI = GI.getVolume();
-        double volumeLiver = liver.getVolume();
-        double volumeCirculatory = circulatory.getVolume();
+        double GIDerivative = -drug.getAbsorptionRateConstant() * GIConcentration;
+        double liverDerivative = -GIDerivative - (drug.getMetabolismRateConstant() + liverBloodFlow) * liverConcentration + liverBloodFlow / 2 * circulatoryConcentration;
 
-
-        double GIDerivative = (drug.getAbsorptionRateConstant() * GIConcentration * volumeGI) / volumeLiver;
-        double liverDerivative = GIDerivative - liver.getDerivative(liverConcentration, circulatoryConcentration, volumeLiver, circulatoryBloodFlow);
-
-        double circulatoryDrugSource = (circulatoryBloodFlow * (liverConcentration - circulatoryConcentration)) / volumeCirculatory;
+        double circulatoryDrugSource = liverBloodFlow * liverConcentration;
         double circulatoryDerivative = circulatory.getDerivative(circulatoryDrugSource, simpleCompartments, drug);
 
         handleSimpleCompartments();
+
         GI.updateConcentration(drug, GIDerivative, timeStep);
         liver.updateConcentration(drug, liverDerivative, timeStep);
         circulatory.updateConcentration(drug, circulatoryDerivative, timeStep);

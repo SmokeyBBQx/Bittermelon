@@ -44,6 +44,7 @@ public class SimulationHandler {
 
                 if (isTreatmentSuitable(condition, substance)) {
                     condition.treat(substance, effectiveness);
+                    System.out.println("Effectiveness " + effectiveness);
                 }
                 if (substance.toxic) {
                     substance.toxicDamage(effectiveness);

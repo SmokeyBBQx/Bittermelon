@@ -54,5 +54,13 @@ public abstract class Condition {
         return suitableTreatments;
     }
 
+    public List<Symptom> getSymptoms() {
+        return symptoms;
+    }
+
+    public double getSeverity() {
+        return severity;
+    }
+
     public abstract void treat(Substance drug, double effectiveness);
 }

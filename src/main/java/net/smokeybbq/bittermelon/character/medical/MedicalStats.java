@@ -1,6 +1,5 @@
 package net.smokeybbq.bittermelon.character.medical;
 
-import net.minecraft.world.entity.player.Player;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.medical.conditions.Condition;
 import net.smokeybbq.bittermelon.medical.simulation.compartments.CirculatoryCompartment;
@@ -9,9 +8,6 @@ import net.smokeybbq.bittermelon.medical.simulation.compartments.EliminatingComp
 import net.smokeybbq.bittermelon.medical.simulation.compartments.SimpleCompartment;
 
 import java.util.*;
-
-import static java.lang.Math.abs;
-import static java.lang.Math.min;
 
 public class MedicalStats {
     private static final double INITIAL_HEALTH = 100.0;
@@ -42,8 +38,8 @@ public class MedicalStats {
     private void updateVolumes() {
         double weight = character.getWeight();
 
-        volumeGI =  0.0207 * weight;
-        volumeCirculatory = 0.25 * 0.075 * weight;
+        volumeGI = 0.0207 * weight;
+        volumeCirculatory = 0.075 * weight;
         volumeKidney = 0.0051 * weight;
         volumeLiver = 0.0341 * weight;
         volumeHeart = 0.0069 * weight;

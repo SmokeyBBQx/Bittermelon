@@ -8,6 +8,9 @@ public class Acetaminophen extends Substance {
         this.absorptionRateConstant = 0.1 * absorptionModifier;
         this.eliminationRateConstant = 0.1 * eliminationModifier;
         this.metabolismRateConstant = 0.1 * metabolismModifier;
+        name = "Acetaminophen";
+        halfMaximalEffectiveConcentration = 100;
+        eMax = 1;
     }
 
     @Override
