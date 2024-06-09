@@ -9,7 +9,7 @@ public class EliminatingCompartment extends SimpleCompartment {
 
     @Override
     public double getDerivative(double sourceFlow, double targetFlow, double volume, double bloodFlow) {
-        return (bloodFlow * (sourceFlow - targetFlow)) / volume - rateConstant * concentration;
+            return (bloodFlow * (sourceFlow - targetFlow)) / volume - rateConstant * concentration;
     }
 
     @Override

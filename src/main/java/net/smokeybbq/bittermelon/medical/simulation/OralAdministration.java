@@ -29,10 +29,9 @@ public class OralAdministration extends PBPKModel {
         double volumeLiver = liver.getVolume();
         double volumeCirculatory = circulatory.getVolume();
 
-        double GIDerivative = GI.getDerivative(GIConcentration, liverConcentration, volumeGI, GIBloodFlow);
 
-        double portalVein = (drug.getAbsorptionRateConstant() * GIConcentration * volumeGI) / volumeLiver;
-        double liverDerivative = portalVein - liver.getDerivative(liverConcentration, circulatoryConcentration, volumeLiver, circulatoryBloodFlow);
+        double GIDerivative = (drug.getAbsorptionRateConstant() * GIConcentration * volumeGI) / volumeLiver;
+        double liverDerivative = GIDerivative - liver.getDerivative(liverConcentration, circulatoryConcentration, volumeLiver, circulatoryBloodFlow);
 
         double circulatoryDrugSource = (circulatoryBloodFlow * (liverConcentration - circulatoryConcentration)) / volumeCirculatory;
         double circulatoryDerivative = circulatory.getDerivative(circulatoryDrugSource, simpleCompartments, drug);

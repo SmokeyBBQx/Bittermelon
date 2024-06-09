@@ -56,9 +56,17 @@ public abstract class PBPKModel {
             simulation();
             totalConcentration = getTotalConcentration();
             t += timeStep;
+
+            //DEBUGGING LINES
+            System.out.println("Running simulation at time: " + t);
+            System.out.println("Total concentration: " + totalConcentration);
+
         } else {
             clearMapping();
             removeFromSimulations();
+
+            //DEBUGGING LINES
+            System.out.println("Clearing mapping and removing simulation at time: " + t);
         }
     }
     protected abstract void simulation();
@@ -100,7 +108,11 @@ public abstract class PBPKModel {
         double concentrationSum = 0;
 
         for (Compartment compartment : compartments.values()) {
-            concentrationSum += compartment.getConcentration(drug);
+            double n =  compartment.getConcentration(drug);
+            concentrationSum += n;
+
+            //DEBUG LINES
+            System.out.println(compartment.getName() + " " + n);
         }
 
         return concentrationSum;

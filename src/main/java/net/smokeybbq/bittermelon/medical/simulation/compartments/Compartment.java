@@ -36,6 +36,7 @@ public abstract class Compartment {
 
     public void updateConcentration(Substance substance, double derivative, double timeStep) {
         double updatedConcentration = concentrations.getOrDefault(substance, 0.0) + derivative * timeStep;
+
         concentrations.put(substance, updatedConcentration);
     }
 
