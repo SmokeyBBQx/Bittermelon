@@ -1,10 +1,7 @@
 package net.smokeybbq.bittermelon.medical.conditions;
 
-import net.minecraft.world.entity.player.Player;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
-import net.smokeybbq.bittermelon.medical.substance.medicine.Penicillin;
-import net.smokeybbq.bittermelon.medical.substance.toxins.Toxin;
 import net.smokeybbq.bittermelon.medical.symptoms.Fever;
 import net.smokeybbq.bittermelon.medical.symptoms.Symptom;
 
@@ -34,10 +31,12 @@ public class Influenza extends Condition {
     @Override
     public void treat(Substance drug, double effectiveness) {
         String drugName = drug.getName();
+        System.out.println("Drug Name " + drugName);
 
         switch (drugName) {
             case "Acetaminophen":
                 fever.decreaseAmplifier(effectiveness);
+
                 break;
             default:
                 for (Symptom symptom : symptoms) {

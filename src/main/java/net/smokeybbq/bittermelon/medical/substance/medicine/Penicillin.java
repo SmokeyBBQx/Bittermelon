@@ -6,9 +6,9 @@ public class Penicillin extends Substance {
 
     public Penicillin(double absorptionModifier, double eliminationModifier, double metabolismModifier) {
         super(absorptionModifier, eliminationModifier, metabolismModifier);
-        this.absorptionRateConstant = 0.2 * absorptionModifier;
-        this.eliminationRateConstant = 0.3 * eliminationModifier;
-        this.metabolismRateConstant = 0.2 * metabolismModifier;
+        this.absorptionRateConstant = 0.1 * absorptionModifier;
+        this.eliminationRateConstant = 0.5 * eliminationModifier;
+        this.metabolismRateConstant = 0.5 * metabolismModifier;
     }
 
     @Override

@@ -14,6 +14,8 @@ public abstract class Compartment {
     protected double concentration;
     protected double health = 100;
     protected double bloodFlow;
+    protected double tissueOverBloodPartitionCoefficient;
+
     protected Map<Substance, Double> concentrations = new HashMap<>();
     protected List<Inhibitor> inhibitors = new ArrayList<>();
 
@@ -90,6 +92,7 @@ public abstract class Compartment {
 
     public void removeHealth(double health) {
         this.health -= health;
+        this.health = Math.max(this.health, 0);
     }
 
     public void removeBloodFlow(double bloodFlow) {

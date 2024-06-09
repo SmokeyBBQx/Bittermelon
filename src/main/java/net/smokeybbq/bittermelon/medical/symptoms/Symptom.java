@@ -23,7 +23,7 @@ public abstract class Symptom {
 
         MinecraftServer server = CharacterManager.getServer();
         UUID playerUUID = character.getPlayerUUID();
-        this.player = server.getPlayerList().getPlayer(playerUUID);
+        // this.player = server.getPlayerList().getPlayer(playerUUID);
     }
 
     public abstract void update ();
@@ -36,7 +36,11 @@ public abstract class Symptom {
         amplifier += input;
     }
     public void decreaseAmplifier(double input) {
-        amplifier -= input;
+        amplifier = Math.max(amplifier - input, 0 );
+    }
+
+    public double getAmplifier() {
+        return amplifier;
     }
 
 }
