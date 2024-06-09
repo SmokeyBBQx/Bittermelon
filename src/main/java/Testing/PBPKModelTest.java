@@ -30,8 +30,8 @@ public class PBPKModelTest {
 
 
         // use for (int i = 0; i < runsPerSecond; i++) for 20 runs
-        // use while(model.getTotalConcentration() <= 1) for same exit condition as actual model
-        for (int i = 0; i < runsPerSecond; i++) {
+        // use while(model.getTotalConcentration() > 1) for same exit condition as actual model
+        while(model.getTotalConcentration() > 1) {
             // Runs all simulations for the character
             testCharacter.update();
 
