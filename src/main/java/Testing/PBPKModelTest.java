@@ -1,5 +1,6 @@
 package Testing;
 import net.smokeybbq.bittermelon.medical.conditions.Influenza;
+import net.smokeybbq.bittermelon.medical.simulation.IVAdministration;
 import net.smokeybbq.bittermelon.medical.simulation.PBPKModel;
 import net.smokeybbq.bittermelon.medical.simulation.OralAdministration;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
@@ -18,14 +19,14 @@ public class PBPKModelTest {
         testCharacter.getMedicalStats().addCondition(influenza);
 
         // Adjust the modifiers so that it takes different times to reach a total concentration of 1
-        Substance drug = new Acetaminophen(1,2,2);
+        Substance drug = new Acetaminophen(1,10,5);
 
-        PBPKModel model = new OralAdministration(100, testCharacter, drug);
+        PBPKModel model = new IVAdministration(100, testCharacter, drug);
 
         testCharacter.getMedicalStats().simulationHandler.addSimulation(model);
 
         // Run the simulation 20 times a second (equal to minecraft ticks)
-        int runsPerSecond = 10000;
+        int runsPerSecond = 500;
         long delay = 1000 / runsPerSecond; // Delay in milliseconds
 
 

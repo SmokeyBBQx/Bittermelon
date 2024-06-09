@@ -33,7 +33,7 @@ public abstract class PBPKModel {
     // Load compartments from the character's medical stats
     protected void loadCompartments() {
         GI = (SimpleCompartment) compartments.get("Gastrointestinal");
-        liver = (SimpleCompartment) compartments.get("Liver");
+        liver = (EliminatingCompartment) compartments.get("Liver");
         kidney = (EliminatingCompartment) compartments.get("Kidneys");
         lung = (SimpleCompartment) compartments.get("Lungs");
         heart = (SimpleCompartment) compartments.get("Heart");
@@ -92,8 +92,7 @@ public abstract class PBPKModel {
 
         // Calculate the derivatives for each simple compartment
         for (var i = 0; i < simpleCompartments.length; i++) {
-            simpleDerivatives[i] = simpleCompartments[i].getDerivative(
-                    circulatory.getConcentration(drug), drug);
+            simpleDerivatives[i] = simpleCompartments[i].getDerivative(circulatory.getConcentration(drug), drug);
         }
 
         // Update the concentrations based on the derivatives
@@ -114,7 +113,7 @@ public abstract class PBPKModel {
             concentrationSum += n;
 
             //DEBUG LINES
-            // System.out.println(compartment.getName() + " " + n);
+             System.out.println(compartment.getName() + " " + n);
         }
 
         return concentrationSum;

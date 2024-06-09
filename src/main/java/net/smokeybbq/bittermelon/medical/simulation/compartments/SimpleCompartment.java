@@ -8,7 +8,7 @@ public class SimpleCompartment extends Compartment {
         super(name, volume);
     }
 
-    public double getDerivative(double sourceFlow, Substance drug) {
-        return bloodFlow * sourceFlow - (bloodFlow / 2) * getConcentration(drug);
+    public double getDerivative(double sourceConcentration, Substance drug) {
+        return bloodFlow * sourceConcentration - (bloodFlow / 2) * getConcentration(drug);
     }
 }
