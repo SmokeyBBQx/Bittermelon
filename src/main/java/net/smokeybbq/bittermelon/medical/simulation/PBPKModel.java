@@ -8,19 +8,19 @@ import net.smokeybbq.bittermelon.medical.simulation.compartments.*;
 import java.util.*;
 
 public abstract class PBPKModel {
-    protected double dosage;
+    protected float dosage;
     protected Character character;
-    protected double timeStep = 0.01;
-    protected double t = 0;
+    protected float timeStep = 0.01F;
+    protected float t = 0;
     protected Substance drug;
     protected SimpleCompartment GI, liver, kidney, lung, heart, brain, adiposeTissue, bone, muscle, lymphatic, endocrine, other;
     protected CirculatoryCompartment circulatory;
     protected Map<String, Compartment> compartments;
-    protected double totalConcentration;
+    protected float totalConcentration;
     protected MedicalStats medicalStats;
     protected SimpleCompartment[] simpleCompartments;
 
-    public PBPKModel(double dosage, Character character, Substance drug) {
+    public PBPKModel(float dosage, Character character, Substance drug) {
         this.dosage = dosage;
         this.drug = drug;
         this.character = character;
@@ -89,7 +89,7 @@ public abstract class PBPKModel {
 
 
     protected void handleSimpleCompartments() {
-        double[] simpleDerivatives = new double[simpleCompartments.length];
+        float[] simpleDerivatives = new float[simpleCompartments.length];
 
         // Calculate the derivatives for each simple compartment
         for (var i = 0; i < simpleCompartments.length; i++) {
@@ -106,11 +106,11 @@ public abstract class PBPKModel {
         medicalStats.simulationHandler.removeSimulation(this);
     }
 
-    public double getTotalConcentration() {
-        double concentrationSum = 0;
+    public float getTotalConcentration() {
+        float concentrationSum = 0;
 
         for (Compartment compartment : compartments.values()) {
-            double n =  compartment.getConcentration(drug);
+            float n =  compartment.getConcentration(drug);
             concentrationSum += n;
 
             //DEBUG LINES

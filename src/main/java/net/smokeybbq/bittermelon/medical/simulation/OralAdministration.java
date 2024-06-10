@@ -6,7 +6,7 @@ import net.smokeybbq.bittermelon.medical.simulation.compartments.*;
 
 public class OralAdministration extends PBPKModel {
 
-    public OralAdministration(double dosage, Character character, Substance drug) {
+    public OralAdministration(float dosage, Character character, Substance drug) {
         super(dosage, character, drug);
 
         // Initialize compartments that will get their concentration from circulatory system
@@ -21,17 +21,17 @@ public class OralAdministration extends PBPKModel {
 
     @Override
     public void simulation() {
-        double GIConcentration = GI.getConcentration(drug);
-        double liverConcentration = liver.getConcentration(drug);
-        double circulatoryConcentration = circulatory.getConcentration(drug);
+        float GIConcentration = GI.getConcentration(drug);
+        float liverConcentration = liver.getConcentration(drug);
+        float circulatoryConcentration = circulatory.getConcentration(drug);
 
-        double liverBloodFlow = liver.getBloodFlow();
+        float liverBloodFlow = liver.getBloodFlow();
 
-        double GIDerivative = -drug.getAbsorptionRateConstant() * GIConcentration;
-        double liverDerivative = -GIDerivative - (drug.getMetabolismRateConstant() + liverBloodFlow) * liverConcentration + liverBloodFlow / 2 * circulatoryConcentration;
+        float GIDerivative = -drug.getAbsorptionRateConstant() * GIConcentration;
+        float liverDerivative = -GIDerivative - (drug.getMetabolismRateConstant() + liverBloodFlow) * liverConcentration + liverBloodFlow / 2 * circulatoryConcentration;
 
-        double circulatoryDrugSource = liverBloodFlow * liverConcentration;
-        double circulatoryDerivative = circulatory.getDerivative(circulatoryDrugSource, simpleCompartments, drug);
+        float circulatoryDrugSource = liverBloodFlow * liverConcentration;
+        float circulatoryDerivative = circulatory.getDerivative(circulatoryDrugSource, simpleCompartments, drug);
 
         handleSimpleCompartments();
 

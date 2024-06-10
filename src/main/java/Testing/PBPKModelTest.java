@@ -19,14 +19,14 @@ public class PBPKModelTest {
         testCharacter.getMedicalStats().addCondition(influenza);
 
         // Adjust the modifiers so that it takes different times to reach a total concentration of 1
-        Substance drug = new Acetaminophen(1,10,5);
+        Substance drug = new Acetaminophen(1,1,1);
 
-        PBPKModel model = new IVAdministration(100, testCharacter, drug);
+        PBPKModel model = new OralAdministration(100, testCharacter, drug);
 
         testCharacter.getMedicalStats().simulationHandler.addSimulation(model);
 
         // Run the simulation 20 times a second (equal to minecraft ticks)
-        int runsPerSecond = 500;
+        int runsPerSecond = 5000;
         long delay = 1000 / runsPerSecond; // Delay in milliseconds
 
 

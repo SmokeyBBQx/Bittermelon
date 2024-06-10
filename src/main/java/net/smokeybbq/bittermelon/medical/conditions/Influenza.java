@@ -10,7 +10,7 @@ public class Influenza extends Condition {
 
     private Symptom fever, headache, ache, fatigue, cough, congestion, nausea, vomiting;
 
-    public Influenza(double duration, boolean chronic, double severity, String affectedArea, Character character) {
+    public Influenza(float duration, boolean chronic, float severity, String affectedArea, Character character) {
         super(duration, chronic, severity, affectedArea, character);
     }
 
@@ -24,14 +24,14 @@ public class Influenza extends Condition {
     @Override
     protected void symptoms() {
         suitableTreatments = new String[]{"Acetaminophen"};
-        fever = new Fever(severity, character);
-        headache = new Headache(severity, character);
+        fever = new Fever(severity, character, affectedArea);
+        headache = new Headache(severity, character, affectedArea);
 
         symptoms.add(fever);
     }
 
     @Override
-    public void treat(Substance drug, double effectiveness) {
+    public void treat(Substance drug, float effectiveness) {
         String drugName = drug.getName();
         System.out.println("Drug Name " + drugName);
 

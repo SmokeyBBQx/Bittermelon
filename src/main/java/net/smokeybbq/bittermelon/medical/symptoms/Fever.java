@@ -3,8 +3,8 @@ package net.smokeybbq.bittermelon.medical.symptoms;
 import net.smokeybbq.bittermelon.character.Character;
 
 public class Fever extends Symptom {
-    public Fever(double amplifier, Character character) {
-        super(amplifier, character);
+    public Fever(float amplifier, Character character, String affectedArea) {
+        super(amplifier, character, affectedArea);
     }
 
     @Override
