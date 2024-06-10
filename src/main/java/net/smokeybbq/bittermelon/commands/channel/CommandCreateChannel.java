@@ -26,8 +26,8 @@ public class CommandCreateChannel {
     private static int createCharacter(CommandContext<CommandSourceStack> context) {
         String name = StringArgumentType.getString(context, "name");
         int range = IntegerArgumentType.getInteger(context, "range");
-        String chatColor = "#" + StringArgumentType.getString(context, "chatColor");
-        String channelNameColor = "#" + StringArgumentType.getString(context, "channelNameColor");
+        String chatColor = StringArgumentType.getString(context, "chatColor");
+        String channelNameColor = StringArgumentType.getString(context, "channelNameColor");
 
         Channel channel = new Channel(name, range, chatColor, channelNameColor);
         ChannelManager.getInstance().addChannel(name, channel);
