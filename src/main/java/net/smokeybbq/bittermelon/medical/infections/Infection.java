@@ -7,20 +7,31 @@ import java.util.List;
 public abstract class Infection {
     // Instance variables
     protected List<Symptom> symptoms;
-    protected int incubationPeriod;
+
+    // Does the body cure the illness eventually?
+    protected Boolean isPersistent;
+
+    protected int baseSeverity;
+
+    //The transmissionModifier determines how quickly the infection spreads to other living entities
     protected int transmissionModifier;
+
+    //An infection has five stages: Incubation, Prodromal, Acute, Decline and Convalescent
+    protected InfectionStage infectionStage;
 
     public Infection() {
         this.symptoms = new ArrayList<>();
     }
 
-    public abstract List<Symptom> getSymptoms();
-
-    public int getIncubationPeriod() {
-        return incubationPeriod;
+    public  List<Symptom> getSymptoms(){
+        return infectionStage.getSymptoms();
     }
 
-    public void setIncubationPeriod(int incubationPeriod) {
-        this.incubationPeriod = incubationPeriod;
+    public void setInfectionStage(InfectionStage infectionStage) {
+        this.infectionStage = infectionStage;
+    }
+
+    public InfectionStage getInfectionStage() {
+        return infectionStage;
     }
 }
