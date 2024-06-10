@@ -96,7 +96,7 @@ public class Character {
     }
 
     public void update() {
-        medicalStats.update();
+//        medicalStats.update();
     }
 
     public void savePlayerData(CompoundTag data) {

@@ -45,7 +45,7 @@ public class CharacterManager extends DataManager<UUID, Character> {
     }
 
     public void addCharacter(Character character) {
-        playerUUIDToCharacter.computeIfAbsent(character.getUUID(), k -> new ArrayList<>()).add(character);
+        playerUUIDToCharacter.computeIfAbsent(character.getPlayerUUID(), k -> new ArrayList<>()).add(character);
         addData(character.getUUID(), character);
     }
 
