@@ -42,14 +42,21 @@ public class Channel {
         save();
     }
 
+    /**
+     * Removes any UUIDs from the set that do not return a character
+     * @return Set of characters that are members of the channel
+     */
     public Set<Character> getMembers() {
         Set<Character> channelMembers = new HashSet<>();
-
         for (UUID memberUUID : members) {
             Character character = CharacterManager.getInstance().getData(memberUUID);
-            channelMembers.add(character);
+            if (character != null) {
+                channelMembers.add(character);
+            } else {
+                members.remove(memberUUID);
+            }
         }
-
+        save();
         return channelMembers;
     }
 
