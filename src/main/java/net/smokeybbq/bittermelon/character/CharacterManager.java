@@ -84,7 +84,8 @@ public class CharacterManager extends DataManager<UUID, Character> {
     }
 
     @Override
+    // TODO: Figure out what getKey is meant to be used for
     protected UUID getKey(Character data) {
-        return null;
+        return getFileName(data);
     }
 }
