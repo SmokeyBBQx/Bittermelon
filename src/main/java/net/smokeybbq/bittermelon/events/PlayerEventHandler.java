@@ -12,13 +12,13 @@ import net.smokeybbq.bittermelon.character.CharacterManager;
 
 public class PlayerEventHandler {
 
-    @SubscribeEvent
     /**
-     * Saves character data when the server saves player data
+     * Saves character data when the player logs out
      * Does not work on game shutdown or hard crash
      * TODO: Test if it works on server shutdown
-      */
-    public void onPlayerExit(PlayerEvent.SaveToFile event) {
+    */
+    @SubscribeEvent
+    public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
         Player player = event.getEntity();
         Character activeCharacter = CharacterManager.getActiveCharacter(player.getUUID());
         if (activeCharacter != null) {
