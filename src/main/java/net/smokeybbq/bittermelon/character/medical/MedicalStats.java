@@ -54,7 +54,7 @@ public class MedicalStats {
     }
 
     private void createCompartments() {
-        GI = new EliminatingCompartment("Gastrointestinal", volumeGI);
+        GI = new SimpleCompartment("Gastrointestinal", volumeGI);
         liver = new EliminatingCompartment("Liver", volumeLiver);
         kidney = new EliminatingCompartment("Kidneys", volumeKidney);
         circulatory = new CirculatoryCompartment("Circulatory System", volumeCirculatory);

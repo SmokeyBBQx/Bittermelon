@@ -18,9 +18,8 @@ public class CirculatoryCompartment extends Compartment {
             // The total concentration returning to the circulatory system from those compartments
 
             // Livers and kidneys won't return concentration
-            if (compartment.getName() != "Liver" && compartment.getName() != "Kidneys") {
                 circulationIn += compartment.getBloodFlow() / 2 * compartment.getConcentration(drug);
-            }
+
         }
         double derivative = source + circulationIn - circulationOut;
 

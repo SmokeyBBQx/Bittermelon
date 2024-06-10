@@ -12,7 +12,7 @@ public class EliminatingCompartment extends SimpleCompartment {
 
     @Override
     public double getDerivative(double sourceConcentration, Substance drug) {
-        return bloodFlow * sourceConcentration - rateConstant * getConcentration(drug);
+        return bloodFlow * sourceConcentration - (bloodFlow / 2) * getConcentration(drug) - rateConstant * getConcentration(drug);
     }
 
     @Override
