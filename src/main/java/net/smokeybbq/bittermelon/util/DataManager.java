@@ -36,10 +36,14 @@ public abstract class DataManager<U, T> {
     }
 
     protected void saveData(T data) {
+        // Construct the folder path where the data will be stored, using the data's file name
         String folderName = dataFolder + "/" + getFileName(data);
+        // Create the directory (and any necessary but nonexistent parent directories)
         new File(folderName).mkdirs();
+        // Construct the full file path for the data's JSON file
         String fileName = folderName + "/" + getFileName(data) + ".json";
         try (FileWriter writer = new FileWriter(fileName)) {
+            // Serialize the data object to JSON and write it to the file
             gson.toJson(data, writer);
         } catch (IOException e) {
             e.printStackTrace();
@@ -47,6 +51,7 @@ public abstract class DataManager<U, T> {
     }
 
     protected void loadData() {
+        // Finds the data folder -> finds all data directories -> checks for .json files inside directories
         File folder = new File(dataFolder);
         File[] listOfDirs = folder.listFiles();
         if (listOfDirs != null) {
@@ -57,8 +62,10 @@ public abstract class DataManager<U, T> {
                         for (File file : listOfFiles) {
                             if (file.isFile() && file.getName().endsWith(".json")) {
                                 try (FileReader reader = new FileReader(file)) {
+                                    // Deserialize the JSON file into an object of type T
                                     T data = gson.fromJson(reader, type);
-                                    dataMap.put(getKey(data), data);
+                                    // Add the deserialized object to the data map
+                                    addData(getKey(data), data);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
@@ -70,6 +77,6 @@ public abstract class DataManager<U, T> {
         }
     }
 
-    protected abstract U getFileName(T data);
+    protected abstract String getFileName(T data);
     protected abstract U getKey(T data);
 }
