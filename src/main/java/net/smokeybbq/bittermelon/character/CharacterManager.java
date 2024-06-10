@@ -20,10 +20,10 @@ public class CharacterManager extends DataManager<UUID, Character> {
 
     private CharacterManager() {
         super(FMLPaths.GAMEDIR.get().resolve("characters/").toString(), Character.class);
-
+        mapPlayersToCharacters();
     }
 
-
+    // Get the singleton instance of CharacterManager
     public static synchronized CharacterManager getInstance() {
         if (instance == null) {
             instance = new CharacterManager();
@@ -31,15 +31,21 @@ public class CharacterManager extends DataManager<UUID, Character> {
         return instance;
     }
 
+    // For adding data and saving it, use addCharacter instead for adding new characters
     @Override
     public void addData(UUID characterUUID, Character character) {
         saveData(character);
         dataMap.put(characterUUID, character);
-        playerUUIDToCharacter.computeIfAbsent(character.getPlayerUUID(), k -> new ArrayList<>()).add(character);
     }
 
-    public void addCharacter(UUID playerUUID, Character character) {
-        playerUUIDToCharacter.computeIfAbsent(playerUUID, k -> new ArrayList<>()).add(character);
+    public void mapPlayersToCharacters() {
+        for (Character character : dataMap.values()) {
+            playerUUIDToCharacter.computeIfAbsent(character.getPlayerUUID(), k -> new ArrayList<>()).add(character);
+        }
+    }
+
+    public void addCharacter(Character character) {
+        playerUUIDToCharacter.computeIfAbsent(character.getUUID(), k -> new ArrayList<>()).add(character);
         addData(character.getUUID(), character);
     }
 
@@ -58,14 +64,6 @@ public class CharacterManager extends DataManager<UUID, Character> {
         return getData(characterUUID);
     }
 
-    public static void setMinecraftServer(MinecraftServer server) {
-        minecraftServer = server;
-    }
-
-    public static MinecraftServer getServer() {
-        return minecraftServer;
-    }
-
     public Map<UUID, Character> getCharacterMap() {
         return getDataMap();
     }
@@ -78,14 +76,21 @@ public class CharacterManager extends DataManager<UUID, Character> {
         saveData(character);
     }
 
-    @Override
-    protected UUID getFileName(Character data) {
-        return data.getUUID();
+    public static void setMinecraftServer(MinecraftServer server) {
+        minecraftServer = server;
+    }
+
+    public static MinecraftServer getServer() {
+        return minecraftServer;
     }
 
     @Override
-    // TODO: Figure out what getKey is meant to be used for
+    protected String getFileName(Character data) {
+        return data.getUUID().toString();
+    }
+
+    @Override
     protected UUID getKey(Character data) {
-        return getFileName(data);
+        return data.getUUID();
     }
 }
