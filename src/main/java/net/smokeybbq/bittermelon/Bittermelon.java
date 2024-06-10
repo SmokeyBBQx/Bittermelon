@@ -18,12 +18,9 @@ import net.smokeybbq.bittermelon.commands.CommandAdministerDrugOral;
 import net.smokeybbq.bittermelon.commands.CommandCondition;
 import net.smokeybbq.bittermelon.commands.CommandStumble;
 import net.smokeybbq.bittermelon.commands.channel.CommandChannel;
-import net.smokeybbq.bittermelon.commands.channel.CommandCreateChannel;
-import net.smokeybbq.bittermelon.commands.channel.CommandJoinChannel;
 import net.smokeybbq.bittermelon.commands.character.*;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.smokeybbq.bittermelon.events.ChatEventHandler;
-import net.smokeybbq.bittermelon.medical.simulation.OralAdministration;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -79,12 +76,8 @@ public class Bittermelon
 
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
-        CommandCreateCharacter.register(event.getDispatcher());
-        CommandDisplayCharacter.register(event.getDispatcher());
-        CommandCreateChannel.register(event.getDispatcher());
         CommandChannel.register(event.getDispatcher());
-        CommandJoinChannel.register(event.getDispatcher());
-        CommandSwitchCharacter.register(event.getDispatcher());
+        CommandCharacter.register(event.getDispatcher());
         CommandStumble.register(event.getDispatcher());
         CommandAdministerDrugOral.register(event.getDispatcher());
         CommandCondition.register(event.getDispatcher());
