@@ -39,7 +39,7 @@ public class ContainmentChamber {
 
         if (event.player instanceof ServerPlayer) {
             ServerPlayer player = (ServerPlayer) event.player;
-            Character character = CharacterManager.getActiveCharacter(player);
+            Character character = CharacterManager.getActiveCharacter(player.getUUID());
             if (compareDistance(player) < containmentSize && character.getAge() > 5) {
                 patrolTime++;
             }

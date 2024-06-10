@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.model.CompositeModel;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.smokeybbq.bittermelon.util.DataManager;
@@ -52,8 +53,9 @@ public class CharacterManager extends DataManager<UUID, Character> {
     public static void setActiveCharacter(ServerPlayer player, Character character) {
         activeCharacters.put(player.getUUID(), character);
     }
-    public static Character getActiveCharacter(ServerPlayer player) {
-        return activeCharacters.getOrDefault(player.getUUID(), null);
+    // gets the active character using UUID
+    public static Character getActiveCharacter(UUID playerUUID) {
+        return activeCharacters.getOrDefault(playerUUID, null);
     }
 
     public List<Character> getCharacters(UUID playerUUID) {

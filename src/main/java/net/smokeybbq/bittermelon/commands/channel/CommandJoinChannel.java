@@ -22,7 +22,7 @@ public class CommandJoinChannel {
     private static int joinChannel(CommandContext<CommandSourceStack> context) {
         String channelName = StringArgumentType.getString(context, "channelName");
         try {
-            Character activeCharacter = CharacterManager.getInstance().getActiveCharacter(context.getSource().getPlayer());
+            Character activeCharacter = CharacterManager.getInstance().getActiveCharacter(context.getSource().getPlayer().getUUID());
             Channel channel = ChannelManager.getInstance().getChannel(channelName);
 
             channel.addMember(activeCharacter);

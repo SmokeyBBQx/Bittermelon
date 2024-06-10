@@ -21,7 +21,7 @@ public class CommandChannel {
     private static int switchChannel(CommandContext<CommandSourceStack> context) {
         String channelName = StringArgumentType.getString(context, "channelName");
         try {
-            Character activeCharacter = CharacterManager.getInstance().getActiveCharacter(context.getSource().getPlayer());
+            Character activeCharacter = CharacterManager.getInstance().getActiveCharacter(context.getSource().getPlayer().getUUID());
             if (ChannelManager.getInstance().getChannels().containsKey(channelName)) {
                 if (ChannelManager.getInstance().getChannel(channelName).getMembers().contains(activeCharacter)) {
                     ChannelManager.getInstance().setPlayerActiveChannel(activeCharacter, ChannelManager.getInstance().getChannel(channelName));

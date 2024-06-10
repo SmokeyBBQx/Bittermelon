@@ -68,7 +68,7 @@ public class Rash extends Symptom {
             if (ticksHeld >= TICKS_REQUIRED) {
                 scratched = true;
                 ticksHeld = 0;
-                Character character = CharacterManager.getInstance().getActiveCharacter(player);
+                Character character = CharacterManager.getInstance().getActiveCharacter(player.getUUID());
                 player.sendSystemMessage(Component.literal(character.getName() + " scratches their " + bodyPart + ".").setStyle(Style.EMPTY.withColor(TextColor.parseColor(character.getEmoteColor()))));
             }
         } else {

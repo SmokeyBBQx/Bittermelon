@@ -67,8 +67,8 @@ public class Bittermelon
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.player instanceof ServerPlayer) {
             ServerPlayer serverPlayer = (ServerPlayer) event.player;
-            if (CharacterManager.getActiveCharacter(serverPlayer) != null) {
-                CharacterManager.getActiveCharacter(serverPlayer).update();
+            if (CharacterManager.getActiveCharacter(serverPlayer.getUUID()) != null) {
+                CharacterManager.getActiveCharacter(serverPlayer.getUUID()).update();
             }
         }
     }

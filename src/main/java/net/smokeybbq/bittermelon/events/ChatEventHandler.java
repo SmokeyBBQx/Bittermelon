@@ -21,7 +21,7 @@ public class ChatEventHandler {
     @SubscribeEvent
     public void onChatMessage(ServerChatEvent event) {
         ServerPlayer player = event.getPlayer();
-        Character activeCharacter = CharacterManager.getActiveCharacter(player);
+        Character activeCharacter = CharacterManager.getActiveCharacter(player.getUUID());
         Channel currentChannel = ChannelManager.getPlayerActiveChannel(activeCharacter);
         String message = event.getMessage().getString();
 
