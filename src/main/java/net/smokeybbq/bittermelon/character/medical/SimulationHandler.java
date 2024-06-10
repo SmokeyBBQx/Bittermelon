@@ -3,11 +3,9 @@ package net.smokeybbq.bittermelon.character.medical;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.medical.conditions.Condition;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
-import net.smokeybbq.bittermelon.medical.simulation.PBPKModel;
+import net.smokeybbq.bittermelon.medical.simulation.SubstancePBPKModel;
 import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
-import net.smokeybbq.bittermelon.medical.substance.toxins.Toxin;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +13,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SimulationHandler {
 
-    private List<PBPKModel> simulations = new CopyOnWriteArrayList<>();
+    private List<SubstancePBPKModel> simulations = new CopyOnWriteArrayList<>();
     private Character character;
     private Map<String, Compartment> compartmentMap;
 
@@ -25,7 +23,7 @@ public class SimulationHandler {
     }
 
     public void update() {
-        for (PBPKModel simulation : simulations) {
+        for (SubstancePBPKModel simulation : simulations) {
             simulation.runSimulation();
         }
 
@@ -66,11 +64,11 @@ public class SimulationHandler {
         return EMax * concentration / (EMax * halfMaximalEffectiveConcentration + concentration);
     }
 
-    public void addSimulation(PBPKModel simulation) {
+    public void addSimulation(SubstancePBPKModel simulation) {
         simulations.add(simulation);
     }
 
-    public void removeSimulation(PBPKModel simulation) {
+    public void removeSimulation(SubstancePBPKModel simulation) {
         simulations.remove(simulation);
     }
 }

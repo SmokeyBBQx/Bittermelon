@@ -11,7 +11,11 @@ public abstract class Infection {
     // Does the body cure the illness eventually?
     protected Boolean isPersistent;
 
+    //Base severity for the illness
     protected int baseSeverity;
+
+    //How fast the infection spreads in the body itself
+    protected int spreadModifier;
 
     //The transmissionModifier determines how quickly the infection spreads to other living entities
     protected int transmissionModifier;

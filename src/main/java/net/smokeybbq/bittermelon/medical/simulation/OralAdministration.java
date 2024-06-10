@@ -4,7 +4,7 @@ import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.medical.simulation.compartments.*;
 
-public class OralAdministration extends PBPKModel {
+public class OralAdministration extends SubstancePBPKModel {
 
     public OralAdministration(double dosage, Character character, Substance drug) {
         super(dosage, character, drug);
