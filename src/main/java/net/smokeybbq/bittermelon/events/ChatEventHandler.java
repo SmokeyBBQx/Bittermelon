@@ -35,8 +35,8 @@ public class ChatEventHandler {
         String nameFormat = activeCharacter.getName() + ":";
 
         MutableComponent messageComponent = Component.empty();
-        messageComponent.append(Component.literal(channelFormat));
-        messageComponent.append(Component.literal(nameFormat).setStyle(Style.EMPTY.withColor(TextColor.parseColor(channelColor))));
+        messageComponent.append(Component.literal(channelFormat).setStyle(Style.EMPTY.withColor((TextColor.parseColor(channelColor)))));
+        messageComponent.append(Component.literal(nameFormat));
 
         // Emote and Dialogue Detection
         String regex = "\"([^\"]*)\"|([^\"\\s]+(\\s+[^\"\\s]+)*)";
@@ -44,6 +44,7 @@ public class ChatEventHandler {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(message);
 
+        // TODO: Review emotes
         while (matcher.find()) {
             if (matcher.group(1) != null) {
                 String quotedText = matcher.group(1);
