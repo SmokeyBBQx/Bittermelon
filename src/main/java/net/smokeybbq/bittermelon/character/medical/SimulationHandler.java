@@ -40,7 +40,7 @@ public class SimulationHandler {
             Compartment compartment = compartmentMap.get(affectedArea);
 
             for (Substance substance : compartment.getConcentrations().keySet()) {
-                double effectiveness = calculateE(substance, compartment);
+                float effectiveness = calculateE(substance, compartment);
 
                 if (isTreatmentSuitable(condition, substance)) {
                     condition.treat(substance, effectiveness);
@@ -58,10 +58,10 @@ public class SimulationHandler {
         return Arrays.stream(condition.getSuitableTreatments()).anyMatch(treatment -> treatment.equals(substance.getName()));
     }
 
-    public double calculateE(Substance substance, Compartment compartment) {
-        double concentration = compartment.getConcentration(substance);
-        double EMax = substance.getEMax();
-        double halfMaximalEffectiveConcentration = substance.getHalfMaximalEffectiveConcentration();
+    public float calculateE(Substance substance, Compartment compartment) {
+        float concentration = compartment.getConcentration(substance);
+        float EMax = substance.getEMax();
+        float halfMaximalEffectiveConcentration = substance.getHalfMaximalEffectiveConcentration();
 
         return EMax * concentration / (EMax * halfMaximalEffectiveConcentration + concentration);
     }

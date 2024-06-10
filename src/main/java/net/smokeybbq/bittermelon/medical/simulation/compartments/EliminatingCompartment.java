@@ -4,23 +4,23 @@ import net.smokeybbq.bittermelon.medical.substance.Substance;
 
 public class EliminatingCompartment extends SimpleCompartment {
 
-    private double rateConstant;
+    private float rateConstant;
 
-    public EliminatingCompartment(String name, double volume) {
+    public EliminatingCompartment(String name, float volume) {
         super(name, volume);
     }
 
     @Override
-    public double getDerivative(double sourceConcentration, Substance drug) {
-        return bloodFlow * sourceConcentration - rateConstant * getConcentration(drug);
+    public float getDerivative(float sourceConcentration, Substance drug) {
+        return bloodFlow * sourceConcentration - (bloodFlow / 2) * getConcentration(drug) - rateConstant * getConcentration(drug);
     }
 
     @Override
-    public void setRateConstant(double rateConstant) {
+    public void setRateConstant(float rateConstant) {
         this.rateConstant = rateConstant;
     }
 
-    public double getRateConstant() {
+    public float getRateConstant() {
         return rateConstant;
     }
 }

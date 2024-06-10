@@ -10,7 +10,7 @@ public class Eczema extends Condition {
 
     private String[] suitableTreatments = {"Penicillin"};
 
-    public Eczema(double duration, boolean chronic, double severity, String affectedArea, Character character) {
+    public Eczema(float duration, boolean chronic, float severity, String affectedArea, Character character) {
         super(duration, chronic, severity, affectedArea, character);
 
         symptoms();
@@ -27,7 +27,7 @@ public class Eczema extends Condition {
     }
 
     @Override
-    public void treat(Substance drug, double effectiveness) {
+    public void treat(Substance drug, float effectiveness) {
         setSeverity(severity - effectiveness);
     }
 

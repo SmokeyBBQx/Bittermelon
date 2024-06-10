@@ -69,6 +69,6 @@ public class ChatEventHandler {
         double x = Math.abs(player1.getX() - player2.getX());
         double y = Math.abs(player1.getY() - player2.getY());
         double z = Math.abs(player1.getZ() - player2.getZ());
-        return x + y + z;
+        return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
     }
 }

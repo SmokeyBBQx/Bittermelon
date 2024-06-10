@@ -1,7 +1,7 @@
 package net.smokeybbq.bittermelon.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -20,7 +20,7 @@ public class CommandCondition {
         dispatcher.register(Commands.literal("condition")
                 .then(Commands.argument("characterName", StringArgumentType.string())
                         .then(Commands.argument("affectedArea", StringArgumentType.string())
-                                .then(Commands.argument("severity", DoubleArgumentType.doubleArg())
+                                .then(Commands.argument("severity", FloatArgumentType.floatArg())
                                         .executes(context -> addCondition(context)))))
         );
     }
@@ -28,7 +28,7 @@ public class CommandCondition {
     private static int addCondition(CommandContext<CommandSourceStack> context) {
         String characterName = StringArgumentType.getString(context, "characterName");
         String affectedArea = StringArgumentType.getString(context, "affectedArea");
-        double severity = DoubleArgumentType.getDouble(context, "severity");
+        float severity = FloatArgumentType.getFloat(context, "severity");
         Collection<Character> characters = CharacterManager.getInstance().getCharacterMap().values();
 
         Optional<Character> selectedCharacter = characters.stream()

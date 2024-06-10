@@ -29,13 +29,11 @@ public class Rash extends Symptom {
     boolean scratched = false;
     private static final int TICKS_REQUIRED = 100;
     private int ticksHeld = 0;
-    private String bodyPart;
 
-    public Rash(double amplifier, Character character, String bodyPart) {
-        super(amplifier, character);
-        this.REMINDER_MINIMUM_TICKS -= amplifier * 5;
-        this.REMINDER_MAXIMUM_TICKS -= amplifier * 10;
-        this.bodyPart = bodyPart;
+    public Rash(float amplifier, Character character, String affectedArea) {
+        super(amplifier, character, affectedArea);
+        this.REMINDER_MINIMUM_TICKS -= (int) (amplifier * 5);
+        this.REMINDER_MAXIMUM_TICKS -= (int) (amplifier * 10);
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -69,7 +67,7 @@ public class Rash extends Symptom {
                 scratched = true;
                 ticksHeld = 0;
                 Character character = CharacterManager.getInstance().getActiveCharacter(player);
-                player.sendSystemMessage(Component.literal(character.getName() + " scratches their " + bodyPart + ".").setStyle(Style.EMPTY.withColor(TextColor.parseColor(character.getEmoteColor()))));
+                player.sendSystemMessage(Component.literal(character.getName() + " scratches their " + affectedArea + ".").setStyle(Style.EMPTY.withColor(TextColor.parseColor(character.getEmoteColor()))));
             }
         } else {
             ticksHeld = 0;

@@ -61,7 +61,8 @@ public class ChannelManager extends DataManager<String, Channel> {
     }
 
     @Override
+    // TODO: Figure out what getKey does
     protected String getKey(Channel data) {
-        return null;
+        return getFileName(data);
     }
 }

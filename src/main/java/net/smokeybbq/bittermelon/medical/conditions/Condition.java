@@ -10,14 +10,14 @@ import java.util.List;
 
 public abstract class Condition {
     protected String name;
-    protected double duration;
+    protected float duration;
     protected boolean chronic;
-    protected double severity;
+    protected float severity;
     protected String affectedArea;
     protected Character character;
     protected List<Symptom> symptoms = new ArrayList<>();
     protected String[] suitableTreatments;
-    public Condition(double duration, boolean chronic, double severity, String affectedArea, Character character) {
+    public Condition(float duration, boolean chronic, float severity, String affectedArea, Character character) {
         this.duration = duration;
         this.chronic = chronic;
         this.severity = severity;
@@ -38,7 +38,7 @@ public abstract class Condition {
         this.chronic = chronic;
     }
 
-    public void setSeverity(double severity) {
+    public void setSeverity(float severity) {
         this.severity = severity;
     }
 
@@ -58,9 +58,9 @@ public abstract class Condition {
         return symptoms;
     }
 
-    public double getSeverity() {
+    public float getSeverity() {
         return severity;
     }
 
-    public abstract void treat(Substance drug, double effectiveness);
+    public abstract void treat(Substance drug, float effectiveness);
 }

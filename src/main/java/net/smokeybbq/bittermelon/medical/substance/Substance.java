@@ -2,16 +2,16 @@ package net.smokeybbq.bittermelon.medical.substance;
 
 public abstract class Substance {
     protected String name;
-    protected double eMax;
-    protected double halfMaximalEffectiveConcentration;
-    protected double overdoseLimit;
-    protected double absorptionRateConstant;
-    protected double eliminationRateConstant;
-    protected double metabolismRateConstant;
-    protected double absorptionModifier, eliminationModifier, metabolismModifier;
+    protected float eMax;
+    protected float halfMaximalEffectiveConcentration;
+    protected float overdoseLimit;
+    protected float absorptionRateConstant;
+    protected float eliminationRateConstant;
+    protected float metabolismRateConstant;
+    protected float absorptionModifier, eliminationModifier, metabolismModifier;
     public boolean toxic;
 
-    public Substance(double absorptionModifier, double eliminationModifier, double metabolismModifier) {
+    public Substance(float absorptionModifier, float eliminationModifier, float metabolismModifier) {
         this.absorptionModifier = absorptionModifier;
         this.eliminationModifier = eliminationModifier;
         this.metabolismModifier = metabolismModifier;
@@ -21,28 +21,28 @@ public abstract class Substance {
         return name;
     }
 
-    public double getEMax() {
+    public float getEMax() {
         return eMax;
     }
 
-    public double getHalfMaximalEffectiveConcentration() {
+    public float getHalfMaximalEffectiveConcentration() {
         return halfMaximalEffectiveConcentration;
     }
 
-    public double getOverdoseLimit() {
+    public float getOverdoseLimit() {
         return overdoseLimit;
     }
 
-    public double getAbsorptionRateConstant() {
+    public float getAbsorptionRateConstant() {
         return absorptionRateConstant;
     }
 
-    public double getEliminationRateConstant() {
+    public float getEliminationRateConstant() {
         return eliminationRateConstant;
     }
 
-    public double getMetabolismRateConstant() { return  metabolismRateConstant;}
+    public float getMetabolismRateConstant() { return  metabolismRateConstant;}
 
-    public abstract void toxicDamage(double effectiveness);
+    public abstract void toxicDamage(float effectiveness);
 
 }

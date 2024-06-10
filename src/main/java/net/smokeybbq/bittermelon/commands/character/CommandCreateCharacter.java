@@ -33,8 +33,8 @@ public class CommandCreateCharacter {
         String description = StringArgumentType.getString(context, "description");
         String emoteColor = "#" + StringArgumentType.getString(context, "emoteColor");
 
-        Character character = new Character(context.getSource().getPlayer().getUUID(), name, "test", description, "test", age, 1.5, 80, emoteColor);
-        CharacterManager.getInstance().addCharacter(context.getSource().getPlayer().getUUID(), character);
+        Character character = new Character(context.getSource().getPlayer().getUUID(), name, "test", description, "test", age, 1.5F, 80, emoteColor);
+        CharacterManager.getInstance().addCharacter(character);
         context.getSource().sendSystemMessage(Component.literal("Character created: " + name));
         return 1;
     }

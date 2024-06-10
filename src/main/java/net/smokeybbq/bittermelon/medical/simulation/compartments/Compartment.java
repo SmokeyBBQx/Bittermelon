@@ -10,40 +10,40 @@ import java.util.Map;
 
 public abstract class Compartment {
     protected String name;
-    protected double volume;
-    protected double concentration;
-    protected double health = 100;
-    protected double bloodFlow;
-    protected double tissueOverBloodPartitionCoefficient;
+    protected float volume;
+    protected float concentration;
+    protected float health = 100;
+    protected float bloodFlow;
+    protected float tissueOverBloodPartitionCoefficient;
 
-    protected Map<Substance, Double> concentrations = new HashMap<>();
+    protected Map<Substance, Float> concentrations = new HashMap<>();
     protected List<Inhibitor> inhibitors = new ArrayList<>();
 
-    public Compartment(String name, double volume) {
+    public Compartment(String name, float volume) {
         this.name = name;
         this.volume = volume;
     }
 
-    public double getConcentration(Substance substance) {
-        return concentrations.getOrDefault(substance, 0.0);
+    public float getConcentration(Substance substance) {
+        return concentrations.getOrDefault(substance, 0.0F);
     }
 
-    public Map<Substance, Double> getConcentrations() {
+    public Map<Substance, Float> getConcentrations() {
         return concentrations;
     }
 
-    public double getDerivative() {
+    public float getDerivative() {
         return 0;
     }
 
-    public void updateConcentration(Substance substance, double derivative, double timeStep) {
-        double updatedConcentration = concentrations.getOrDefault(substance, 0.0) + derivative * timeStep;
+    public void updateConcentration(Substance substance, float derivative, float timeStep) {
+        float updatedConcentration = concentrations.getOrDefault(substance, 0.0F) + derivative * timeStep;
 
         concentrations.put(substance, updatedConcentration);
     }
 
-    public void addConcentration(Substance substance, double concentration) {
-        double updatedConcentration = concentrations.getOrDefault(substance, 0.0) + concentration;
+    public void addConcentration(Substance substance, float concentration) {
+        float updatedConcentration = concentrations.getOrDefault(substance, 0.0F) + concentration;
         concentrations.put(substance, updatedConcentration);
     }
 
@@ -55,11 +55,11 @@ public abstract class Compartment {
         inhibitors.add(inhibitor);
     }
 
-    public Double getVolume() {
+    public Float getVolume() {
         return volume;
     }
 
-    public void setVolume(double volume) {
+    public void setVolume(float volume) {
         this.volume = volume;
     }
 
@@ -67,35 +67,35 @@ public abstract class Compartment {
         return name;
     }
 
-    public void setRateConstant(double eliminationRateConstant) {
+    public void setRateConstant(float eliminationRateConstant) {
     }
 
-    public double getHealth() {
+    public float getHealth() {
         return health;
     }
 
-    public double getBloodFlow() {
+    public float getBloodFlow() {
         return bloodFlow;
     }
 
-    public void addHealth(double health) {
+    public void addHealth(float health) {
         this.health += health;
     }
 
-    public void addBloodFlow(double bloodFlow) {
+    public void addBloodFlow(float bloodFlow) {
         this.bloodFlow += bloodFlow;
     }
 
-    public void setBloodFlow(double bloodFlow) {
+    public void setBloodFlow(float bloodFlow) {
         this.bloodFlow = bloodFlow;
     }
 
-    public void removeHealth(double health) {
+    public void removeHealth(float health) {
         this.health -= health;
         this.health = Math.max(this.health, 0);
     }
 
-    public void removeBloodFlow(double bloodFlow) {
+    public void removeBloodFlow(float bloodFlow) {
         this.bloodFlow -= bloodFlow;
     }
 

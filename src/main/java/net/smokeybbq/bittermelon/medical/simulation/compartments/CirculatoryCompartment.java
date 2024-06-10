@@ -3,13 +3,13 @@ package net.smokeybbq.bittermelon.medical.simulation.compartments;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 
 public class CirculatoryCompartment extends Compartment {
-    public CirculatoryCompartment(String name, double volume) {
+    public CirculatoryCompartment(String name, float volume) {
         super(name, volume);
     }
 
-    public double getDerivative(double source, SimpleCompartment[] compartments, Substance drug) {
-        double circulationOut = 0;
-        double circulationIn = 0;
+    public float getDerivative(float source, SimpleCompartment[] compartments, Substance drug) {
+        float circulationOut = 0;
+        float circulationIn = 0;
 
         for (SimpleCompartment compartment : compartments) {
             // The total concentration in all compartments receiving from the circulatory system
@@ -18,11 +18,10 @@ public class CirculatoryCompartment extends Compartment {
             // The total concentration returning to the circulatory system from those compartments
 
             // Livers and kidneys won't return concentration
-            if (compartment.getName() != "Liver" && compartment.getName() != "Kidneys") {
                 circulationIn += compartment.getBloodFlow() / 2 * compartment.getConcentration(drug);
-            }
+
         }
-        double derivative = source + circulationIn - circulationOut;
+        float derivative = source + circulationIn - circulationOut;
 
         return derivative;
     }
