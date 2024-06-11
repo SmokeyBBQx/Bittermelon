@@ -48,7 +48,7 @@ public class CommandChannel {
                 if (channel.getMembers().contains(activeCharacter)) {
                     ChannelManager.getInstance().setPlayerActiveChannel(activeCharacter, channel);
                 } else {
-                    context.getSource().sendFailure(Component.literal("You have not joined: " + channelName));
+                    context.getSource().sendFailure(Component.literal("You have not joined: " + channel.getName()));
                     return 0;
                 }
             } else {
@@ -57,7 +57,7 @@ public class CommandChannel {
             }
         } catch (IllegalArgumentException e) {
         }
-        context.getSource().sendSystemMessage(Component.literal("Channel switched to: " + channelName));
+        context.getSource().sendSystemMessage(Component.literal("Channel switched to: " + channel.getName()));
         return 1;
     }
 
@@ -72,7 +72,7 @@ public class CommandChannel {
                     return 0;
                 }
                 if (channel.getMembers().contains(activeCharacter)) {
-                    context.getSource().sendSystemMessage(Component.literal("Already joined channel: " + channelName));
+                    context.getSource().sendSystemMessage(Component.literal("Already joined channel: " + channel.getName()));
                     return 1; // is this supposed to return 0 or 1?
                 } else {
                     channel.addMember(activeCharacter);
@@ -83,7 +83,7 @@ public class CommandChannel {
             }
         } catch (IllegalArgumentException e) {
         }
-        context.getSource().sendSystemMessage(Component.literal("Channel joined: " + channelName));
+        context.getSource().sendSystemMessage(Component.literal("Channel joined: " + channel.getName()));
         return 1;
     }
 
@@ -92,9 +92,10 @@ public class CommandChannel {
         int range = IntegerArgumentType.getInteger(context, "range");
         String chatColor = StringArgumentType.getString(context, "chatColor");
         String channelNameColor = StringArgumentType.getString(context, "nameColor");
+        Channel channel = getChannel(name);
 
-        if (getChannel(name) != null) {
-            context.getSource().sendFailure(Component.literal("Channel '" + name + "' already exists"));
+        if (channel != null) {
+            context.getSource().sendFailure(Component.literal("Channel '" + channel.getName() + "' already exists"));
             return 0;
         }
         Channel newChannel = new Channel(name, range, chatColor, channelNameColor);
