@@ -27,6 +27,11 @@ public class ChatEventHandler {
 
         event.setCanceled(true);
 
+        if (activeCharacter == null || currentChannel == null) {
+            player.sendSystemMessage(Component.literal("Join a channel before sending a chat message"));
+            return;
+        }
+
         String emoteColor = activeCharacter.getEmoteColor();
         String chatColor = currentChannel.getChatColor();
         String channelColor = currentChannel.getChannelNameColor();
@@ -36,7 +41,7 @@ public class ChatEventHandler {
 
         MutableComponent messageComponent = Component.empty();
         messageComponent.append(Component.literal(channelFormat).setStyle(Style.EMPTY.withColor((TextColor.parseColor(channelColor)))));
-        messageComponent.append(Component.literal(nameFormat));
+        messageComponent.append(Component.literal(nameFormat)); // TODO: add name colors
 
         // Emote and Dialogue Detection
         String regex = "\"([^\"]*)\"|([^\"\\s]+(\\s+[^\"\\s]+)*)";
