@@ -13,6 +13,9 @@ import net.smokeybbq.bittermelon.character.CharacterManager;
 import net.smokeybbq.bittermelon.chat.Channel;
 import net.smokeybbq.bittermelon.chat.ChannelManager;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class CommandChannel {
@@ -38,11 +41,12 @@ public class CommandChannel {
 
     private static int switchChannel(CommandContext<CommandSourceStack> context) {
         String channelName = StringArgumentType.getString(context, "channel");
+        Channel channel = getChannel(channelName);
         try {
             Character activeCharacter = CharacterManager.getInstance().getActiveCharacter(context.getSource().getPlayer().getUUID());
-            if (ChannelManager.getInstance().getChannels().containsKey(channelName)) {
-                if (ChannelManager.getInstance().getChannel(channelName).getMembers().contains(activeCharacter)) {
-                    ChannelManager.getInstance().setPlayerActiveChannel(activeCharacter, ChannelManager.getInstance().getChannel(channelName));
+            if (channel != null) {
+                if (channel.getMembers().contains(activeCharacter)) {
+                    ChannelManager.getInstance().setPlayerActiveChannel(activeCharacter, channel);
                 } else {
                     context.getSource().sendFailure(Component.literal("You have not joined: " + channelName));
                     return 0;
@@ -59,9 +63,9 @@ public class CommandChannel {
 
     private static int joinChannel(CommandContext<CommandSourceStack> context) {
         String channelName = StringArgumentType.getString(context, "channel");
+        Channel channel = getChannel(channelName);
         try {
             Character activeCharacter = CharacterManager.getInstance().getActiveCharacter(context.getSource().getPlayer().getUUID());
-            Channel channel = ChannelManager.getInstance().getChannel(channelName);
             if (channel != null) {
                 if (activeCharacter == null) {
                     context.getSource().sendFailure(Component.literal("Switch to a character before joining a channel"));
@@ -89,9 +93,26 @@ public class CommandChannel {
         String chatColor = StringArgumentType.getString(context, "chatColor");
         String channelNameColor = StringArgumentType.getString(context, "nameColor");
 
-        Channel channel = new Channel(name, range, chatColor, channelNameColor);
-        ChannelManager.getInstance().addChannel(name, channel);
+        if (getChannel(name) != null) {
+            context.getSource().sendFailure(Component.literal("Channel '" + name + "' already exists"));
+            return 0;
+        }
+        Channel newChannel = new Channel(name, range, chatColor, channelNameColor);
+        ChannelManager.getInstance().addChannel(name, newChannel);
         context.getSource().sendSystemMessage(Component.literal("Channel created: " + name + " (Talk Range: " + range + ", Chat Color: " + chatColor + ", Channel Name Color: " + channelNameColor + ")"));
         return 1;
+    }
+
+    // TODO: code review
+    private static Channel getChannel(String name) {
+        List<Channel> channels = ChannelManager.getInstance().getChannels().values().stream().toList();
+
+        Optional<Channel> selectedChannel = channels.stream()
+                .filter(c -> c.getName().equalsIgnoreCase(name))
+                .findFirst();
+        if (!selectedChannel.isPresent()) {
+            return null;
+        }
+        return selectedChannel.get();
     }
 }
