@@ -12,6 +12,7 @@ import net.smokeybbq.bittermelon.character.CharacterManager;
 import net.smokeybbq.bittermelon.chat.Channel;
 import net.smokeybbq.bittermelon.chat.ChannelManager;
 
+import java.util.ArrayList;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -62,10 +63,12 @@ public class ChatEventHandler {
             }
         }
 
+        ArrayList<UUID> seenMessage = new ArrayList<UUID>();
         for (Character character : currentChannel.getMembers()) {
             UUID memberUUID = character.getPlayerUUID();
             ServerPlayer p = player.server.getPlayerList().getPlayer(memberUUID);
-            if (p != null && compareDistance(player, p) <= currentChannel.getRange()) {
+            if (p != null && !seenMessage.contains(memberUUID) && compareDistance(player, p) <= currentChannel.getRange()) {
+                seenMessage.add(memberUUID);
                 p.sendSystemMessage(messageComponent);
             }
         }
