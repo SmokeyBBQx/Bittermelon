@@ -32,21 +32,22 @@ public class Stumble {
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        Player player = event.player;
-
-        if (stumbled == true) {
-            player.setForcedPose(Pose.SWIMMING);
+            if (event.player == this.player && stumbled) {
+                player.setForcedPose(Pose.SWIMMING);
         }
     }
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public void onPlayerJump(LivingEvent.LivingJumpEvent event) {
-        ServerPlayer eventPlayer = player.server.getPlayerList().getPlayer(event.getEntity().getUUID());
-        if (player == eventPlayer) {
-            event.setCanceled(true);
-            stumbled = false;
-            player.setForcedPose(null);
+        if (event.getEntity() instanceof Player player) {
+            if (this.player == player) {
+                player.setDeltaMovement(player.getDeltaMovement().x(), 0, player.getDeltaMovement().z());
+                stumbled = false;
+                player.setForcedPose(null);
+                MinecraftForge.EVENT_BUS.unregister(this);
+                this.player = null;
+            }
         }
     }
 }
