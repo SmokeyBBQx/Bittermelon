@@ -10,9 +10,9 @@ public class BAMSGroupCompartment extends GroupCompartment {
     public BAMSGroupCompartment(String name) {
         this.name = name;
         this.compartments = new ArrayList<SimpleCompartment>();
-        this.compartments.add(new SimpleCompartment("bone", 0 /*TO DO VOLUME*/));
-        this.compartments.add(new SimpleCompartment("skin", 0 /*TO DO VOLUME*/));
-        this.compartments.add(new SimpleCompartment("muscle", 0 /*TO DO VOLUME*/));
-        this.compartments.add(new SimpleCompartment("adipose", 0 /*TO DO VOLUME*/));
+        this.compartments.add(new SimpleCompartment("Bone", 0 /*TO DO VOLUME*/));
+        this.compartments.add(new SimpleCompartment("Skin", 0 /*TO DO VOLUME*/));
+        this.compartments.add(new SimpleCompartment("Muscle", 0 /*TO DO VOLUME*/));
+        this.compartments.add(new SimpleCompartment("Adipose Tissue", 0 /*TO DO VOLUME*/));
     }
 }
