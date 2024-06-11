@@ -6,6 +6,7 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -22,6 +23,7 @@ public class Stumble {
     public Stumble(ServerPlayer player) {
         this.player = player;
         stumbled = true;
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     public void stumble() {

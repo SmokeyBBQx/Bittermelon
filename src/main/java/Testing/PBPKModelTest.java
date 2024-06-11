@@ -14,7 +14,7 @@ public class PBPKModelTest {
         //Initializes a default character
         Character testCharacter = CharacterTestFactory.createDummyCharacter();
 
-        Influenza influenza = new Influenza(100, false, 1, "Lungs", testCharacter);
+        Influenza influenza = new Influenza(100, false, testCharacter, "Lungs", 1);
 
         testCharacter.getMedicalStats().addCondition(influenza);
 
