@@ -62,8 +62,21 @@ public class CommandChannel {
         try {
             Character activeCharacter = CharacterManager.getInstance().getActiveCharacter(context.getSource().getPlayer().getUUID());
             Channel channel = ChannelManager.getInstance().getChannel(channelName);
-
-            channel.addMember(activeCharacter);
+            if (channel != null) {
+                if (activeCharacter == null) {
+                    context.getSource().sendFailure(Component.literal("Switch to a character before joining a channel"));
+                    return 0;
+                }
+                if (channel.getMembers().contains(activeCharacter)) {
+                    context.getSource().sendSystemMessage(Component.literal("Already joined channel: " + channelName));
+                    return 1; // is this supposed to return 0 or 1?
+                } else {
+                    channel.addMember(activeCharacter);
+                }
+            } else {
+                context.getSource().sendFailure(Component.literal("Channel not found: " + channelName));
+                return 0;
+            }
         } catch (IllegalArgumentException e) {
         }
         context.getSource().sendSystemMessage(Component.literal("Channel joined: " + channelName));
@@ -78,7 +91,7 @@ public class CommandChannel {
 
         Channel channel = new Channel(name, range, chatColor, channelNameColor);
         ChannelManager.getInstance().addChannel(name, channel);
-        context.getSource().sendSystemMessage(Component.literal("Channel created: " + name + "(Talk Range: " + range + " Chat Color: " + chatColor + " Channel Name Color: " + channelNameColor + ")"));
+        context.getSource().sendSystemMessage(Component.literal("Channel created: " + name + " (Talk Range: " + range + ", Chat Color: " + chatColor + ", Channel Name Color: " + channelNameColor + ")"));
         return 1;
     }
 }
