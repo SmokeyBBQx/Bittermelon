@@ -21,6 +21,7 @@ import net.smokeybbq.bittermelon.commands.channel.CommandChannel;
 import net.smokeybbq.bittermelon.commands.character.*;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.smokeybbq.bittermelon.events.ChatEventHandler;
+import net.smokeybbq.bittermelon.events.PlayerEventHandler;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -44,6 +45,7 @@ public class Bittermelon
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
         MinecraftForge.EVENT_BUS.register(new ChatEventHandler());
+        MinecraftForge.EVENT_BUS.register(new PlayerEventHandler());
         // MinecraftForge.EVENT_BUS.register(new SkinChangeHandler());
     }
 
