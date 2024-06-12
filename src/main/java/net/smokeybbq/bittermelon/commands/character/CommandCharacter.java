@@ -13,6 +13,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
+import net.smokeybbq.bittermelon.chat.Channel;
+import net.smokeybbq.bittermelon.chat.ChannelManager;
 
 import java.util.List;
 import java.util.Optional;
@@ -60,7 +62,7 @@ public class CommandCharacter {
         context.getSource().sendSystemMessage(Component.literal("Character created: " + name));
         return 1;
     }
-
+    // TODO: figure out default data for characters
     private static int switchCharacter(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         String characterName = StringArgumentType.getString(context, "name");
         ServerPlayer player = context.getSource().getPlayerOrException();
@@ -72,17 +74,37 @@ public class CommandCharacter {
             return 0;
         }
 
+        CompoundTag persistentData = player.getPersistentData();
         if (activeCharacter != null) {
+            // enforces and validates activeCharacterUUID in persistentData
+            if (!persistentData.contains("bittermelon:activeCharacterUUID")) {
+                persistentData.putUUID("bittermelon:activeCharacterUUID", activeCharacter.getUUID());
+            } else if (!persistentData.getUUID("bittermelon:activeCharacterUUID").equals(activeCharacter.getUUID())) {
+                persistentData.remove("bittermelon:activeCharacterUUID");
+                persistentData.putUUID("bittermelon:activeCharacterUUID", activeCharacter.getUUID());
+            }
+
             CompoundTag playerData = player.saveWithoutId(new CompoundTag());
             activeCharacter.savePlayerData(playerData);
         }
 
-        if (selectedCharacter.getPlayerData() != null) {
-            player.load(selectedCharacter.getPlayerData());
+        CompoundTag newPlayerData = selectedCharacter.getPlayerData();
+        if (newPlayerData != null) {
+            player.load(newPlayerData);
             player.connection.teleport(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
             player.refreshDimensions();
             player.getInventory().setChanged();
             player.resetSentInfo();
+            // retrieve and set player channel
+            persistentData = player.getPersistentData(); // refresh stored data
+            if (persistentData.contains("bittermelon:activeChannel")) {
+                Channel channel = ChannelManager.getInstance().getChannel(persistentData.getString("bittermelon:activeChannel"));
+                if (channel != null) {
+                    ChannelManager.setPlayerActiveChannel(selectedCharacter, channel);
+                }
+            }
+        } else {
+            // implement default playerData
         }
 
         CharacterManager.getInstance().setActiveCharacter(player, selectedCharacter);

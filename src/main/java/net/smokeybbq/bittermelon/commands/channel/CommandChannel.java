@@ -7,7 +7,9 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.commands.arguments.TimeArgument;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
 import net.smokeybbq.bittermelon.chat.Channel;
@@ -42,10 +44,16 @@ public class CommandChannel {
     private static int switchChannel(CommandContext<CommandSourceStack> context) {
         String channelName = StringArgumentType.getString(context, "channel");
         Channel channel = getChannel(channelName);
+        ServerPlayer player = context.getSource().getPlayer();
         try {
-            Character activeCharacter = CharacterManager.getInstance().getActiveCharacter(context.getSource().getPlayer().getUUID());
+            Character activeCharacter = CharacterManager.getInstance().getActiveCharacter(player.getUUID());
             if (channel != null) {
                 if (channel.getMembers().contains(activeCharacter)) {
+                    CompoundTag persistentData = player.getPersistentData();
+                    if (persistentData.contains("bittermelon:activeChannel")) {
+                        persistentData.remove("bittermelon:activeChannel");
+                    }
+                    persistentData.putString("bittermelon:activeChannel", channel.getName());
                     ChannelManager.getInstance().setPlayerActiveChannel(activeCharacter, channel);
                 } else {
                     context.getSource().sendFailure(Component.literal("You have not joined: " + channel.getName()));
@@ -72,7 +80,7 @@ public class CommandChannel {
                     return 0;
                 }
                 if (channel.getMembers().contains(activeCharacter)) {
-                    context.getSource().sendSystemMessage(Component.literal("Already joined channel: " + channel.getName()));
+                    context.getSource().sendSystemMessage(Component.literal("Channel already joined: " + channel.getName()));
                     return 1; // is this supposed to return 0 or 1?
                 } else {
                     channel.addMember(activeCharacter);
