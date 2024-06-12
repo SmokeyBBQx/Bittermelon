@@ -6,19 +6,13 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import net.minecraft.commands.arguments.TimeArgument;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
 import net.smokeybbq.bittermelon.chat.Channel;
 import net.smokeybbq.bittermelon.chat.ChannelManager;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import net.smokeybbq.bittermelon.util.CommandUtil;
 
 public class CommandChannel {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -43,18 +37,19 @@ public class CommandChannel {
 
     private static int switchChannel(CommandContext<CommandSourceStack> context) {
         String channelName = StringArgumentType.getString(context, "channel");
-        Channel channel = getChannel(channelName);
+        Channel channel = CommandUtil.getChannelIgnoreCase(channelName);
         ServerPlayer player = context.getSource().getPlayer();
         try {
             Character activeCharacter = CharacterManager.getInstance().getActiveCharacter(player.getUUID());
             if (channel != null) {
                 if (channel.getMembers().contains(activeCharacter)) {
-                    CompoundTag persistentData = player.getPersistentData();
-                    if (persistentData.contains("bittermelon:activeChannel")) {
-                        persistentData.remove("bittermelon:activeChannel");
+                    if (ChannelManager.getCharacterActiveChannel(activeCharacter) != channel) {
+                        CommandUtil.writeChannelToPlayerData(channel, player);
+                        ChannelManager.getInstance().setCharacterActiveChannel(activeCharacter, channel);
+                    } else {
+                        context.getSource().sendSystemMessage(Component.literal("Already speaking in: " + channel.getName()));
+                        return 1;
                     }
-                    persistentData.putString("bittermelon:activeChannel", channel.getName());
-                    ChannelManager.getInstance().setPlayerActiveChannel(activeCharacter, channel);
                 } else {
                     context.getSource().sendFailure(Component.literal("You have not joined: " + channel.getName()));
                     return 0;
@@ -65,13 +60,13 @@ public class CommandChannel {
             }
         } catch (IllegalArgumentException e) {
         }
-        context.getSource().sendSystemMessage(Component.literal("Channel switched to: " + channel.getName()));
+        context.getSource().sendSystemMessage(Component.literal("Now speaking in: " + channel.getName()));
         return 1;
     }
 
     private static int joinChannel(CommandContext<CommandSourceStack> context) {
         String channelName = StringArgumentType.getString(context, "channel");
-        Channel channel = getChannel(channelName);
+        Channel channel = CommandUtil.getChannelIgnoreCase(channelName);
         try {
             Character activeCharacter = CharacterManager.getInstance().getActiveCharacter(context.getSource().getPlayer().getUUID());
             if (activeCharacter == null) {
@@ -80,7 +75,7 @@ public class CommandChannel {
             }
             if (channel != null) {
                 if (channel.getMembers().contains(activeCharacter)) {
-                    context.getSource().sendSystemMessage(Component.literal("Channel already joined: " + channel.getName()));
+                    context.getSource().sendSystemMessage(Component.literal("Already joined channel: " + channel.getName()));
                     return 1; // is this supposed to return 0 or 1?
                 } else {
                     channel.addMember(activeCharacter);
@@ -100,7 +95,7 @@ public class CommandChannel {
         int range = IntegerArgumentType.getInteger(context, "range");
         String chatColor = StringArgumentType.getString(context, "chatColor");
         String channelNameColor = StringArgumentType.getString(context, "nameColor");
-        Channel channel = getChannel(name);
+        Channel channel = CommandUtil.getChannelIgnoreCase(name);
 
         if (channel != null) {
             context.getSource().sendFailure(Component.literal("Channel '" + channel.getName() + "' already exists"));
@@ -110,18 +105,5 @@ public class CommandChannel {
         ChannelManager.getInstance().addChannel(name, newChannel);
         context.getSource().sendSystemMessage(Component.literal("Channel created: " + name + " (Talk Range: " + range + ", Chat Color: " + chatColor + ", Channel Name Color: " + channelNameColor + ")"));
         return 1;
-    }
-
-    // TODO: code review
-    private static Channel getChannel(String name) {
-        List<Channel> channels = ChannelManager.getInstance().getChannels().values().stream().toList();
-
-        Optional<Channel> selectedChannel = channels.stream()
-                .filter(c -> c.getName().equalsIgnoreCase(name))
-                .findFirst();
-        if (!selectedChannel.isPresent()) {
-            return null;
-        }
-        return selectedChannel.get();
     }
 }

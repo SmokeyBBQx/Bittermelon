@@ -23,7 +23,7 @@ public class ChatEventHandler {
     public void onChatMessage(ServerChatEvent event) {
         ServerPlayer player = event.getPlayer();
         Character activeCharacter = CharacterManager.getActiveCharacter(player.getUUID());
-        Channel currentChannel = ChannelManager.getPlayerActiveChannel(activeCharacter);
+        Channel currentChannel = ChannelManager.getCharacterActiveChannel(activeCharacter);
         String message = event.getMessage().getString();
 
         event.setCanceled(true);

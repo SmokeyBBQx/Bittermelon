@@ -9,74 +9,60 @@ import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
 import net.smokeybbq.bittermelon.chat.Channel;
 import net.smokeybbq.bittermelon.chat.ChannelManager;
+import net.smokeybbq.bittermelon.util.CommandUtil;
 
 
 public class PlayerEventHandler {
 
     /**
-     * Saves character data when the player logs out
-     * Does not work on game shutdown or hard crash
+     * Saves character data when the player logs out.
+     * Probably does not work on hard server crash.
+     * Works on client crash.
      * TODO: Test if it works on server shutdown
-    */
+     * @param event
+     */
     @SubscribeEvent
     public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-        ServerPlayer player = CharacterManager.keyToServerPlayer(event.getEntity().getUUID());
+        ServerPlayer player = CommandUtil.keyToServerPlayer(event.getEntity().getUUID());
         if (player == null) { // hopefully never does anything
-            return;
+            return; // add exception later?
         }
 
-        Character activeCharacter = CharacterManager.getActiveCharacter(player.getUUID());
-        if (activeCharacter != null) {
-            // enforces activeCharacterUUID in persistentData
-            CompoundTag persistentData = player.getPersistentData();
-            if (!persistentData.contains("bittermelon:activeCharacterUUID")) {
-                persistentData.putUUID("bittermelon:activeCharacterUUID", activeCharacter.getUUID());
-            } else if (!persistentData.getUUID("bittermelon:activeCharacterUUID").equals(activeCharacter.getUUID())) {
-                persistentData.remove("bittermelon:activeCharacterUUID");
-                persistentData.putUUID("bittermelon:activeCharacterUUID", activeCharacter.getUUID());
-            }
+        CommandUtil.validateStoredCharacterUUID(player);
+        Character character = CharacterManager.getInstance().getCharacter(player.getUUID());
+        if (character != null) {
             CompoundTag playerData = player.saveWithoutId(new CompoundTag());
-            activeCharacter.savePlayerData(playerData);
+            character.savePlayerData(playerData);
         }
     }
 
+    /**
+     * Makes sure the player's active character and channel, if they exist, are recorded in the managers.
+     * This mainly ensures that such data persists after a server reload and that invalid data is removed.
+     * @param event
+     */
     @SubscribeEvent
     public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        ServerPlayer player = CharacterManager.keyToServerPlayer(event.getEntity().getUUID());
-        if (player == null) { // hopefully never does anything
+        ServerPlayer player = CommandUtil.keyToServerPlayer(event.getEntity().getUUID());
+        // just in case
+        if (player == null) {
             return;
         }
 
-        CompoundTag persistentData = player.getPersistentData();
-        if (persistentData.contains("bittermelon:activeCharacterUUID")) {
-            Character character = CharacterManager.getInstance().getCharacter(persistentData.getUUID("bittermelon:activeCharacterUUID"));
-            if (character == null) { // should only happen when the character has been deleted
-                player.sendSystemMessage(Component.literal("Something went wrong with your character"));
-                persistentData.remove("bittermelon:activeCharacterUUID");
-                return;
-            }
-            if (!CharacterManager.getActiveCharacters().containsValue(character)) { // prevent unnecessary sets
+        Character character = CommandUtil.getActiveCharacterFromData(player);
+        if (character != null) {
+            // prevents setting if the character is already active
+            if (!CharacterManager.getActiveCharacters().containsValue(character)) {
                 CharacterManager.setActiveCharacter(player, character);
             }
 
-            if (persistentData.contains("bittermelon:activeChannel")) {
-                Channel channel = ChannelManager.getInstance().getChannel(persistentData.getString("bittermelon:activeChannel"));
-                if (channel == null) {
-                    player.sendSystemMessage(Component.literal("Something went wrong with your channel")); // should only happen when the channel has been deleted
-                    persistentData.remove("bittermelon:activeChannel");
-                    return;
-                }
-                if (ChannelManager.getPlayerActiveChannel(character) != channel) { // prevent unnecessary sets
-                    ChannelManager.setPlayerActiveChannel(character, channel);
+            Channel channel = CommandUtil.getActiveChannelFromData(player);
+            if (channel != null) {
+                if (ChannelManager.getCharacterActiveChannel(character) != channel) { // prevent unnecessary sets
+                    ChannelManager.setCharacterActiveChannel(character, channel);
                 }
             }
         }
     }
 
-    // just in case; only works for one playerData.dat at a time
-    private static void clearPersistentData(ServerPlayer player) {
-        for (String key : player.getPersistentData().getAllKeys()) {
-            player.getPersistentData().remove(key);
-        }
-    }
 }

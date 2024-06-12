@@ -96,7 +96,4 @@ public class CharacterManager extends DataManager<UUID, Character> {
         return data.getUUID();
     }
 
-    public static ServerPlayer keyToServerPlayer(UUID playerUUID) {
-        return minecraftServer.getPlayerList().getPlayer(playerUUID);
-    }
 }

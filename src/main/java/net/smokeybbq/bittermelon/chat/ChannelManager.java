@@ -31,10 +31,10 @@ public class ChannelManager extends DataManager<String, Channel> {
         return instance;
     }
 
-    public static void setPlayerActiveChannel(Character character, Channel channel) {
+    public static void setCharacterActiveChannel(Character character, Channel channel) {
         playerUUIDToChannel.put(character, channel);
     }
-    public static Channel getPlayerActiveChannel(Character character) {
+    public static Channel getCharacterActiveChannel(Character character) {
         return playerUUIDToChannel.get(character);
     }
 

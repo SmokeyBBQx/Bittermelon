@@ -7,7 +7,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,9 +14,9 @@ import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
 import net.smokeybbq.bittermelon.chat.Channel;
 import net.smokeybbq.bittermelon.chat.ChannelManager;
+import net.smokeybbq.bittermelon.util.CommandUtil;
 
 import java.util.List;
-import java.util.Optional;
 
 public class CommandCharacter {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -52,7 +51,7 @@ public class CommandCharacter {
         int age = IntegerArgumentType.getInteger(context, "age");
         String description = StringArgumentType.getString(context, "description");
         String emoteColor = StringArgumentType.getString(context, "emoteColor");
-        Character character = getCharacter(context, name);
+        Character character = CommandUtil.getCharacterIgnoreCase(context.getSource().getPlayer(), name);
 
         if (character != null) {
             context.getSource().sendFailure(Component.literal("Character '" + character.getName() + "' already exists"));
@@ -69,7 +68,7 @@ public class CommandCharacter {
     private static int switchCharacter(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         String characterName = StringArgumentType.getString(context, "name");
         ServerPlayer player = context.getSource().getPlayerOrException();
-        Character selectedCharacter = getCharacter(context, characterName);
+        Character selectedCharacter = CommandUtil.getCharacterIgnoreCase(player, characterName);
         Character activeCharacter = CharacterManager.getInstance().getActiveCharacter(player.getUUID());
 
         if (selectedCharacter == null) {
@@ -81,16 +80,8 @@ public class CommandCharacter {
             return 1; // someone please tell me if these return 0 or 1
         }
 
-        CompoundTag persistentData = player.getPersistentData();
-        if (activeCharacter != null) {
-            // enforces and validates activeCharacterUUID in persistentData
-            if (!persistentData.contains("bittermelon:activeCharacterUUID")) {
-                persistentData.putUUID("bittermelon:activeCharacterUUID", activeCharacter.getUUID());
-            } else if (!persistentData.getUUID("bittermelon:activeCharacterUUID").equals(activeCharacter.getUUID())) {
-                persistentData.remove("bittermelon:activeCharacterUUID");
-                persistentData.putUUID("bittermelon:activeCharacterUUID", activeCharacter.getUUID());
-            }
-
+        // ensures that if there is an active character it is stored in persistent data before saving
+        if (CommandUtil.validateStoredCharacterUUID(player) == 1) {
             CompoundTag playerData = player.saveWithoutId(new CompoundTag());
             activeCharacter.savePlayerData(playerData);
         }
@@ -103,12 +94,9 @@ public class CommandCharacter {
             player.getInventory().setChanged();
             player.resetSentInfo();
             // retrieve and set player channel
-            persistentData = player.getPersistentData(); // refresh stored data
-            if (persistentData.contains("bittermelon:activeChannel")) {
-                Channel channel = ChannelManager.getInstance().getChannel(persistentData.getString("bittermelon:activeChannel"));
-                if (channel != null) {
-                    ChannelManager.setPlayerActiveChannel(selectedCharacter, channel);
-                }
+            Channel channel = CommandUtil.getActiveChannelFromData(player);
+            if (channel != null) {
+                ChannelManager.setCharacterActiveChannel(selectedCharacter, channel);
             }
         } else {
             // implement default playerData
@@ -118,19 +106,5 @@ public class CommandCharacter {
         context.getSource().sendSystemMessage(Component.literal("Character switched: " + selectedCharacter.getName()));
         return 1;
 
-    }
-
-    // get player characters, NCS
-    private static Character getCharacter(CommandContext<CommandSourceStack> context, String characterName) {
-        List<Character> characters = CharacterManager.getInstance().getCharacters(context.getSource().getPlayer().getUUID());
-
-        Optional<Character> selectedCharacter = characters.stream()
-                .filter(c -> c.getName().equalsIgnoreCase(characterName))
-                .findFirst();
-
-        if (!selectedCharacter.isPresent()) {
-            return null;
-        }
-        return selectedCharacter.get();
     }
 }
