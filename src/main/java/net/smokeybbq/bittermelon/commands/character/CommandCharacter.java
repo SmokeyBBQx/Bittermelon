@@ -35,6 +35,9 @@ public class CommandCharacter {
                                                         .executes(context -> createCharacter(context))))))
                 )
         );
+        dispatcher.register(Commands.literal("switchcharacter")
+                .then(Commands.argument("name", StringArgumentType.string())
+                        .executes(context -> switchCharacter(context))));
     }
 
     private static int viewCharacters(CommandContext<CommandSourceStack> context) {
@@ -72,6 +75,10 @@ public class CommandCharacter {
         if (selectedCharacter == null) {
             context.getSource().sendFailure(Component.literal("Character not found: " + characterName));
             return 0;
+        }
+        if (selectedCharacter == activeCharacter) {
+            context.getSource().sendSystemMessage(Component.literal("Character already active: " + characterName));
+            return 1; // someone please tell me if these return 0 or 1
         }
 
         CompoundTag persistentData = player.getPersistentData();

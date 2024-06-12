@@ -74,11 +74,11 @@ public class CommandChannel {
         Channel channel = getChannel(channelName);
         try {
             Character activeCharacter = CharacterManager.getInstance().getActiveCharacter(context.getSource().getPlayer().getUUID());
+            if (activeCharacter == null) {
+                context.getSource().sendFailure(Component.literal("Switch to a character before joining a channel"));
+                return 0;
+            }
             if (channel != null) {
-                if (activeCharacter == null) {
-                    context.getSource().sendFailure(Component.literal("Switch to a character before joining a channel"));
-                    return 0;
-                }
                 if (channel.getMembers().contains(activeCharacter)) {
                     context.getSource().sendSystemMessage(Component.literal("Channel already joined: " + channel.getName()));
                     return 1; // is this supposed to return 0 or 1?
