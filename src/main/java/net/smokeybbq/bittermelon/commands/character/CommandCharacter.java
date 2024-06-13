@@ -9,6 +9,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
@@ -82,6 +83,7 @@ public class CommandCharacter {
 
         // ensures that if there is an active character it is stored in persistent data before saving
         if (CommandUtil.validateStoredCharacterUUID(player) == 1) {
+            CommandUtil.setActiveLevel(player);
             CompoundTag playerData = player.saveWithoutId(new CompoundTag());
             activeCharacter.savePlayerData(playerData);
         }
@@ -89,8 +91,16 @@ public class CommandCharacter {
         CompoundTag newPlayerData = selectedCharacter.getPlayerData();
         if (newPlayerData != null) {
             player.load(newPlayerData);
-            player.connection.teleport(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
-            player.refreshDimensions();
+
+            // Sends player to their stored position, if the dimension stored is valid
+            ServerLevel newLevel = CommandUtil.getActiveLevel(player);
+            if (newLevel != null) {
+                player.teleportTo(CommandUtil.getActiveLevel(player), player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
+            } else {
+                // implement send to spawn
+            }
+
+//            player.refreshDimensions(); // doesn't appear to do anything
             player.getInventory().setChanged();
             player.resetSentInfo();
             // retrieve and set player channel

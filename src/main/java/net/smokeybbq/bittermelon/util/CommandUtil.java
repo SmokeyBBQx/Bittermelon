@@ -3,6 +3,8 @@ package net.smokeybbq.bittermelon.util;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
@@ -16,6 +18,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class CommandUtil {
+    private static MinecraftServer server = CharacterManager.getServer();
 
     // just in case; only works for the active playerData
     public static void clearPersistentData(ServerPlayer player) {
@@ -123,7 +126,7 @@ public class CommandUtil {
      */
     @Nullable
     public static ServerPlayer keyToServerPlayer(UUID playerUUID) {
-        return CharacterManager.getServer().getPlayerList().getPlayer(playerUUID);
+        return server.getPlayerList().getPlayer(playerUUID);
     }
 
     /**
@@ -137,5 +140,27 @@ public class CommandUtil {
             persistentData.remove("bittermelon:activeChannel");
         }
         persistentData.putString("bittermelon:activeChannel", channel.getName());
+    }
+
+    @Nullable
+    public static ServerLevel getActiveLevel(ServerPlayer player) {
+        CompoundTag data = player.getPersistentData();
+        if (data.contains("bittermelon:activeWorld")) {
+            for (ServerLevel level : server.getAllLevels()) {
+                if (level.dimension().toString().equals(data.getString("bittermelon:activeWorld"))) {
+                    return level;
+                }
+            }
+            data.remove("bittermelon:activeWorld");
+        }
+        return null;
+    }
+
+    public static void setActiveLevel(ServerPlayer player) {
+        CompoundTag data = player.getPersistentData();
+        if (data.contains("bittermelon:activeWorld")) {
+            data.remove("bittermelon:activeWorld");
+        }
+        data.putString("bittermelon:activeWorld", player.serverLevel().dimension().toString());
     }
 }
