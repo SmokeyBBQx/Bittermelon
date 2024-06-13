@@ -7,5 +7,16 @@ public abstract class GroupCompartment {
     protected List<SimpleCompartment> compartments;
     protected String name;
 
-    //add basic functions
+    protected double getAverageHealth() {
+        if (compartments == null || compartments.isEmpty()) {
+            return 0;
+        }
+
+        double totalHealth = 0;
+        for (SimpleCompartment compartment : compartments) {
+            totalHealth += compartment.getHealth();
+        }
+
+        return totalHealth / compartments.size();
+    }
 }
