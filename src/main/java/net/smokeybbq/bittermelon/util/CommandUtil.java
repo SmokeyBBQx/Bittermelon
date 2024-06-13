@@ -53,6 +53,54 @@ public class CommandUtil {
         return 1;
     }
 
+    @Nullable
+    public static Character getActiveCharacterFromData(ServerPlayer player) {
+        CompoundTag persistentData = player.getPersistentData();
+        Character character = null;
+        if (persistentData.contains("bittermelon:activeCharacterUUID")) {
+            character = CharacterManager.getInstance().getCharacter(persistentData.getUUID("bittermelon:activeCharacterUUID")); // the tag should always be
+            if (character == null) {
+                persistentData.remove("bittermelon:activeCharacterUUID");
+            }
+        }
+        return character;
+    }
+
+    /**
+     * Adds the channel to the player's persistentData
+     * @param channel Channel to be added
+     * @param player Target player
+     */
+    public static void writeChannelToPlayerData(Channel channel, ServerPlayer player) {
+        CompoundTag persistentData = player.getPersistentData();
+        if (persistentData.contains("bittermelon:activeChannel")) {
+            persistentData.remove("bittermelon:activeChannel");
+        }
+        persistentData.putString("bittermelon:activeChannel", channel.getName());
+    }
+
+    @Nullable
+    public static ServerLevel getActiveLevel(ServerPlayer player) {
+        CompoundTag data = player.getPersistentData();
+        if (data.contains("bittermelon:activeWorld")) {
+            for (ServerLevel level : server.getAllLevels()) {
+                if (level.dimension().toString().equals(data.getString("bittermelon:activeWorld"))) {
+                    return level;
+                }
+            }
+            data.remove("bittermelon:activeWorld");
+        }
+        return null;
+    }
+
+    public static void setActiveLevel(ServerPlayer player) {
+        CompoundTag data = player.getPersistentData();
+        if (data.contains("bittermelon:activeWorld")) {
+            data.remove("bittermelon:activeWorld");
+        }
+        data.putString("bittermelon:activeWorld", player.serverLevel().dimension().toString());
+    }
+
     /**
      * Retrieves the channel from the player's persistentData.
      * If the data returns a null channel for any reason, the persistentData it was pulled from is deleted.
@@ -70,19 +118,6 @@ public class CommandUtil {
             }
         }
         return channel;
-    }
-
-    @Nullable
-    public static Character getActiveCharacterFromData(ServerPlayer player) {
-        CompoundTag persistentData = player.getPersistentData();
-        Character character = null;
-        if (persistentData.contains("bittermelon:activeCharacterUUID")) {
-            character = CharacterManager.getInstance().getCharacter(persistentData.getUUID("bittermelon:activeCharacterUUID")); // the tag should always be
-            if (character == null) {
-                persistentData.remove("bittermelon:activeCharacterUUID");
-            }
-        }
-        return character;
     }
 
     // TODO: code review
@@ -127,40 +162,5 @@ public class CommandUtil {
     @Nullable
     public static ServerPlayer keyToServerPlayer(UUID playerUUID) {
         return server.getPlayerList().getPlayer(playerUUID);
-    }
-
-    /**
-     * Adds the channel to the player's persistentData
-     * @param channel Channel to be added
-     * @param player Target player
-     */
-    public static void writeChannelToPlayerData(Channel channel, ServerPlayer player) {
-        CompoundTag persistentData = player.getPersistentData();
-        if (persistentData.contains("bittermelon:activeChannel")) {
-            persistentData.remove("bittermelon:activeChannel");
-        }
-        persistentData.putString("bittermelon:activeChannel", channel.getName());
-    }
-
-    @Nullable
-    public static ServerLevel getActiveLevel(ServerPlayer player) {
-        CompoundTag data = player.getPersistentData();
-        if (data.contains("bittermelon:activeWorld")) {
-            for (ServerLevel level : server.getAllLevels()) {
-                if (level.dimension().toString().equals(data.getString("bittermelon:activeWorld"))) {
-                    return level;
-                }
-            }
-            data.remove("bittermelon:activeWorld");
-        }
-        return null;
-    }
-
-    public static void setActiveLevel(ServerPlayer player) {
-        CompoundTag data = player.getPersistentData();
-        if (data.contains("bittermelon:activeWorld")) {
-            data.remove("bittermelon:activeWorld");
-        }
-        data.putString("bittermelon:activeWorld", player.serverLevel().dimension().toString());
     }
 }

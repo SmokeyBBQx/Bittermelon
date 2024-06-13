@@ -50,6 +50,21 @@ public class CharacterManager extends DataManager<UUID, Character> {
         addData(character.getUUID(), character);
     }
 
+    /**
+     * Deletes the directory the character corresponds to and removes it from character maps
+     * @param character Character to be removed
+     */
+    public void removeCharacter(Character character) {
+        deleteData(character);
+        List<Character> characterList = playerUUIDToCharacter.getOrDefault(character.getPlayerUUID(), null);
+        if (characterList != null) {
+            characterList.remove(character);
+        }
+        if (activeCharacters.containsValue(character)) {
+            activeCharacters.remove(character.getPlayerUUID(), character);
+        }
+    }
+
     public static void setActiveCharacter(ServerPlayer player, Character character) {
         activeCharacters.put(player.getUUID(), character);
     }

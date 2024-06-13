@@ -7,6 +7,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -23,10 +24,14 @@ public class CommandCharacter {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("character")
                 .then(Commands.literal("list")
-                        .executes(context -> viewCharacters(context)))
+                        .executes(context -> viewCharacters(context, false))
+                        .then(Commands.argument("target", EntityArgument.player())
+                                .executes(context -> viewCharacters(context, true)))
+                )
                 .then(Commands.literal("switch")
                         .then(Commands.argument("name", StringArgumentType.string())
-                                .executes(context -> switchCharacter(context))))
+                                .executes(context -> switchCharacter(context)))
+                )
                 .then(Commands.literal("create")
                         .then(Commands.argument("name", StringArgumentType.string())
                                 .then(Commands.argument("age", IntegerArgumentType.integer(1))
@@ -34,25 +39,38 @@ public class CommandCharacter {
                                                 .then(Commands.argument("description", StringArgumentType.greedyString())
                                                         .executes(context -> createCharacter(context))))))
                 )
+                .then(Commands.literal("remove")
+                        .then(Commands.argument("character", StringArgumentType.string())
+                                .executes(context -> removeCharacter(context, false))
+                                .then(Commands.argument("target", EntityArgument.player())
+                                        .executes(context -> removeCharacter(context, true))))
+                )
         );
         dispatcher.register(Commands.literal("switchcharacter")
                 .then(Commands.argument("name", StringArgumentType.string())
                         .executes(context -> switchCharacter(context))));
     }
 
-    private static int viewCharacters(CommandContext<CommandSourceStack> context) {
-        List<Character> characters = CharacterManager.getInstance().getCharacters(context.getSource().getPlayer().getUUID());
+    private static int viewCharacters(CommandContext<CommandSourceStack> context, boolean doesTargetPlayer) throws CommandSyntaxException {
+        ServerPlayer player;
+        if (doesTargetPlayer) {
+            player = EntityArgument.getPlayer(context, "target");
+        } else {
+            player = context.getSource().getPlayerOrException();
+        }
+
+        List<Character> characters = CharacterManager.getInstance().getCharacters(player.getUUID());
         characters.forEach(character -> context.getSource().sendSystemMessage(Component.literal("Name: " + character.getName() + ", Age: " + character.getAge() + ", Description: " + character.getDescription())));
         return 1;
     }
 
     // does this need a try/catch block?
-    private static int createCharacter(CommandContext<CommandSourceStack> context) {
+    private static int createCharacter(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         String name = StringArgumentType.getString(context, "name");
         int age = IntegerArgumentType.getInteger(context, "age");
         String description = StringArgumentType.getString(context, "description");
         String emoteColor = StringArgumentType.getString(context, "emoteColor");
-        Character character = CommandUtil.getCharacterIgnoreCase(context.getSource().getPlayer(), name);
+        Character character = CommandUtil.getCharacterIgnoreCase(context.getSource().getPlayerOrException(), name);
 
         if (character != null) {
             context.getSource().sendFailure(Component.literal("Character '" + character.getName() + "' already exists"));
@@ -70,7 +88,7 @@ public class CommandCharacter {
         String characterName = StringArgumentType.getString(context, "name");
         ServerPlayer player = context.getSource().getPlayerOrException();
         Character selectedCharacter = CommandUtil.getCharacterIgnoreCase(player, characterName);
-        Character activeCharacter = CharacterManager.getInstance().getActiveCharacter(player.getUUID());
+        Character activeCharacter = CharacterManager.getActiveCharacter(player.getUUID());
 
         if (selectedCharacter == null) {
             context.getSource().sendFailure(Component.literal("Character not found: " + characterName));
@@ -95,7 +113,7 @@ public class CommandCharacter {
             // Sends player to their stored position, if the dimension stored is valid
             ServerLevel newLevel = CommandUtil.getActiveLevel(player);
             if (newLevel != null) {
-                player.teleportTo(CommandUtil.getActiveLevel(player), player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
+                player.teleportTo(newLevel, player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
             } else {
                 // implement send to spawn
             }
@@ -116,5 +134,32 @@ public class CommandCharacter {
         context.getSource().sendSystemMessage(Component.literal("Character switched: " + selectedCharacter.getName()));
         return 1;
 
+    }
+
+    private static int removeCharacter(CommandContext<CommandSourceStack> context, boolean doesTargetPlayer) throws CommandSyntaxException {
+        String characterName = StringArgumentType.getString(context, "character");
+        ServerPlayer player;
+        if (doesTargetPlayer) {
+            player = EntityArgument.getPlayer(context, "target");
+        } else {
+            player = context.getSource().getPlayerOrException();
+        }
+
+        Character selectedCharacter = CommandUtil.getCharacterIgnoreCase(player, characterName);
+        Character activeCharacter = CharacterManager.getActiveCharacter(player.getUUID());
+
+        if (selectedCharacter == null) {
+            context.getSource().sendFailure(Component.literal("Character not found: " + characterName));
+            return 0;
+        }
+        // replace this return case once there is a way to reset playerData
+        if (selectedCharacter == activeCharacter) {
+            context.getSource().sendFailure(Component.literal("You cannot delete an active character"));
+            return 0;
+        }
+
+        CharacterManager.getInstance().removeCharacter(selectedCharacter);
+        context.getSource().sendSystemMessage(Component.literal("Character removed: " + characterName));
+        return 1;
     }
 }
