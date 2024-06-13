@@ -29,7 +29,7 @@ public class PlayerEventHandler {
         }
 
         CommandUtil.validateStoredCharacterUUID(player);
-        Character character = CharacterManager.getInstance().getCharacter(player.getUUID());
+        Character character = CharacterManager.getInstance().getActiveCharacter(player.getUUID());
         if (character != null) {
             CompoundTag playerData = player.saveWithoutId(new CompoundTag());
             character.savePlayerData(playerData);
