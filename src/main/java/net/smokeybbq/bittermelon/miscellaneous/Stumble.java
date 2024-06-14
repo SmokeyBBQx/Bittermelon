@@ -1,9 +1,17 @@
 package net.smokeybbq.bittermelon.miscellaneous;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.*;
+import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
@@ -11,42 +19,82 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import net.smokeybbq.bittermelon.character.Character;
+import net.smokeybbq.bittermelon.character.CharacterManager;
 
-import javax.security.auth.callback.Callback;
+import java.util.Random;
+
+import static net.smokeybbq.bittermelon.util.LocalMessageHandler.sendLocalMessage;
 
 @Mod.EventBusSubscriber(modid = "bittermelon")
 public class Stumble {
     ServerPlayer player;
     boolean stumbled;
+    int stunTime = 200;
+    int tickTimer = 0;
+    private static final Random RANDOM = new Random();
 
     public Stumble(ServerPlayer player) {
         this.player = player;
-        stumbled = true;
+        player.setPose(Pose.SWIMMING);
+        playerPhysics();
+        announceFall();
+        dropItem();
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    public void stumble() {
-        player.setForcedPose(Pose.SWIMMING);
+    private void dropItem() {
+        if (RANDOM.nextDouble() < 0.5) {
+            ItemStack heldItem = player.getMainHandItem();
+            player.drop(heldItem.copy(), true);
+            heldItem.setCount(0);
+        }
+    }
+
+    private void announceFall() {
+        Character character = CharacterManager.getActiveCharacter(player);
+        Component component = Component.literal(character.getName() + " falls to the ground.")
+                .setStyle(Style.EMPTY.withColor(TextColor.parseColor(character.getEmoteColor())));
+        sendLocalMessage(player, 5, component);
+    }
+
+    private void playerPhysics() {
+        float acceleration = player.getSpeed();
+        Vec3 lookDirection = player.getLookAngle().scale(acceleration * 2);
+
+        player.setDeltaMovement(player.getDeltaMovement().add(lookDirection));
+        player.hurtMarked = true;
+        stumbled = true;
     }
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        Player player = event.player;
-
-        if (stumbled == true) {
-            player.setForcedPose(Pose.SWIMMING);
+        if (stumbled && event.player == player) {
+            player.setPose(Pose.SWIMMING);
         }
+
+        float time = 10F - tickTimer / 20F;
+
+        if (time >= 0) {
+            String formattedTime = String.format("%.1f", time);
+            player.connection.send(new ClientboundSetActionBarTextPacket(Component.literal("Stunned for " + formattedTime + " seconds")));
+        }
+
+        tickTimer++;
     }
 
     @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
     public void onPlayerJump(LivingEvent.LivingJumpEvent event) {
         ServerPlayer eventPlayer = player.server.getPlayerList().getPlayer(event.getEntity().getUUID());
         if (player == eventPlayer) {
-            event.setCanceled(true);
-            stumbled = false;
-            player.setForcedPose(null);
+            player.setDeltaMovement(player.getDeltaMovement().x(), 0, player.getDeltaMovement().z());
+            player.hurtMarked = true;
+            if (tickTimer >= stunTime) {
+                stumbled = false;
+                player.setPose(Pose.STANDING);
+                MinecraftForge.EVENT_BUS.unregister(this);
+                this.player = null;
+            }
         }
     }
 }
