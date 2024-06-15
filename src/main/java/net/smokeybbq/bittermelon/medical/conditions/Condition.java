@@ -14,15 +14,25 @@ public abstract class Condition extends PathologyBase {
     protected boolean chronic;
     protected List<Symptom> symptoms = new ArrayList<>();
     protected String[] suitableTreatments;
+    protected List<String> affectedAreas;
 
     public Condition(float duration, boolean chronic, Character character, List<String> affectedAreas, float amplifier) {
-        super(character, affectedAreas, amplifier);
+        super(character, amplifier);
         this.duration = duration;
         this.chronic = chronic;
+        this.affectedAreas = affectedAreas;
         symptoms();
     }
 
     protected abstract void symptoms();
+
+    public void addAffectedArea(String area) {
+        affectedAreas.add(area);
+    }
+
+    public List<String> getAffectedAreas() {
+        return affectedAreas;
+    }
 
     public void setDuration(int duration) {
         this.duration = duration;
@@ -40,5 +50,5 @@ public abstract class Condition extends PathologyBase {
         return symptoms;
     }
 
-    public abstract void treat(Substance drug, float effectiveness);
+    public abstract void treat(Substance drug, float effectiveness, String area);
 }

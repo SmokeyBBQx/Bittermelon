@@ -6,8 +6,8 @@ import java.util.List;
 
 public class Fever extends Symptom {
 
-    public Fever(Character character, List<String> affectedAreas, float amplifier) {
-        super(character, affectedAreas, amplifier);
+    public Fever(Character character, String affectedArea, float amplifier) {
+        super(character, affectedArea, amplifier);
     }
 
     @Override

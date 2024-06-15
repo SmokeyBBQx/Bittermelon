@@ -7,8 +7,8 @@ import java.util.List;
 public class Headache extends Symptom {
 
 
-    public Headache(Character character, List<String> affectedAreas, float amplifier) {
-        super(character, affectedAreas, amplifier);
+    public Headache(Character character, String affectedArea, float amplifier) {
+        super(character, affectedArea, amplifier);
     }
 
     @Override

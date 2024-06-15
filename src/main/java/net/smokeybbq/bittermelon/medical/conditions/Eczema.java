@@ -22,7 +22,7 @@ public class Eczema extends Condition {
     }
 
     @Override
-    public void treat(Substance drug, float effectiveness) {
+    public void treat(Substance drug, float effectiveness, String area) {
 
     }
 

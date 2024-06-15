@@ -36,18 +36,19 @@ public class SimulationHandler {
         List<Condition> conditions = character.getMedicalStats().getConditions();
 
         for (Condition condition : conditions) {
-            String affectedArea = condition.getAffectedArea();
-            Compartment compartment = compartmentMap.get(affectedArea);
+            for (String affectedArea : condition.getAffectedAreas()) {
+                Compartment compartment = compartmentMap.get(affectedArea);
 
-            for (Substance substance : compartment.getConcentrations().keySet()) {
-                float effectiveness = calculateE(substance, compartment);
+                for (Substance substance : compartment.getConcentrations().keySet()) {
+                    float effectiveness = calculateE(substance, compartment);
 
-                if (isTreatmentSuitable(condition, substance)) {
-                    condition.treat(substance, effectiveness);
-                    System.out.println("Effectiveness " + effectiveness);
-                }
-                if (substance.toxic) {
-                    substance.toxicDamage(effectiveness);
+                    if (isTreatmentSuitable(condition, substance)) {
+                        condition.treat(substance, effectiveness, affectedArea);
+                        System.out.println("Effectiveness " + effectiveness);
+                    }
+                    if (substance.toxic) {
+                        substance.toxicDamage(effectiveness);
+                    }
                 }
             }
         }

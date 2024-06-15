@@ -13,15 +13,21 @@ import java.util.UUID;
 
 public abstract class Symptom extends PathologyBase {
     protected String MILD_DESCRIPTION, MODERATE_DESCRIPTION, SEVERE_DESCRIPTION, CRITICAL_DESCRIPTION, TERMINAL_DESCRIPTION;
+    protected String affectedArea;
 
-    public Symptom (Character character, List<String> affectedAreas, float amplifier) {
-        super(character, affectedAreas, amplifier);
+    public Symptom (Character character, String affectedArea, float amplifier) {
+        super(character, amplifier);
+        this.affectedArea = affectedArea;
         initializeDescriptions();
     }
 
     public abstract void initializeDescriptions();
 
     public abstract void effects();
+
+    public String getAffectedArea() {
+        return affectedArea;
+    }
 
     public String getDescription() {
         switch(severity) {

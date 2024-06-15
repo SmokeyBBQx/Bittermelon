@@ -16,15 +16,13 @@ public abstract class PathologyBase {
     protected int tickTimer = 0;
     protected Character character;
     protected ServerPlayer player;
-    protected List<String> affectedAreas;
     protected int progressionMildToModerate, progressionModerateToSevere, progressionSevereToCritical, progressionCriticalToTerminal;
     protected float amplifier;
     protected Severity severity;
     protected List<AbstractMap.SimpleEntry<Integer, Severity>> severityThresholds;
 
-    public PathologyBase (Character character, List<String> affectedArea, float amplifier) {
+    public PathologyBase (Character character, float amplifier) {
         this.character = character;
-        this.affectedAreas = affectedArea;
         this.amplifier = amplifier;
 
         MinecraftServer server = CharacterManager.getServer();
@@ -59,10 +57,6 @@ public abstract class PathologyBase {
 
     public float getAmplifier() {
         return amplifier;
-    }
-
-    public List<String> getAffectedAreas() {
-        return affectedAreas;
     }
 
     public void updateProgression() {
