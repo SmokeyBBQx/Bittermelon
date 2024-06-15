@@ -9,7 +9,7 @@ public class SimpleCompartment extends Compartment {
         super(name, medicalStats);
     }
 
-    public double getDerivative(double sourceConcentration, Substance drug) {
+    public float getDerivative(float sourceConcentration, Substance drug) {
         return bloodFlow * sourceConcentration - (bloodFlow / 2) * getConcentration(drug);
     }
 }

@@ -30,7 +30,7 @@ public abstract class GroupCompartment extends Compartment {
     }
 
     @Override
-    public void setBloodFlow(double bloodFlow) {
+    public void setBloodFlow(float bloodFlow) {
         this.bloodFlow = bloodFlow;
         updateBloodFlow();
     }
@@ -41,23 +41,23 @@ public abstract class GroupCompartment extends Compartment {
         }
     }
 
-    public void increaseCompartmentHealth(String name, double health) {
+    public void increaseCompartmentHealth(String name, float health) {
         if (compartments.containsKey(name)) {
             compartments.get(name).addHealth(health);
         }
     }
 
-    public void decreaseCompartmentHealth(String name, double health) {
+    public void decreaseCompartmentHealth(String name, float health) {
         if (compartments.containsKey(name)) {
             compartments.get(name).removeHealth(health);
         }
     }
-    protected double getAverageHealth() {
+    protected float getAverageHealth() {
         if (compartments == null || compartments.isEmpty()) {
             return 0;
         }
 
-        double totalHealth = 0;
+        float totalHealth = 0;
         for (SimpleCompartment compartment : compartments.values()) {
             totalHealth += compartment.getHealth();
         }

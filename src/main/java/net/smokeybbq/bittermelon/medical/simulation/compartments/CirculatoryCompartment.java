@@ -10,9 +10,9 @@ public class CirculatoryCompartment extends Compartment {
         super(name, medicalStats);
     }
 
-    public double getDerivative(double source, List<SimpleCompartment> compartments, Substance drug) {
-        double circulationOut = 0;
-        double circulationIn = 0;
+    public float getDerivative(float source, List<SimpleCompartment> compartments, Substance drug) {
+        float circulationOut = 0;
+        float circulationIn = 0;
 
         for (SimpleCompartment compartment : compartments) {
             // The total concentration in all compartments receiving from the circulatory system
@@ -25,7 +25,7 @@ public class CirculatoryCompartment extends Compartment {
                 circulationIn += compartment.getBloodFlow() / 2 * compartment.getConcentration(drug);
             }
         }
-        double derivative = source + circulationIn - circulationOut;
+        float derivative = source + circulationIn - circulationOut;
 
         return derivative;
     }

@@ -11,10 +11,10 @@ import java.util.Map;
 
 public abstract class Compartment {
     protected String name;
-    protected double concentration;
-    protected double health = 100;
-    protected double bloodFlow;
-    protected double tissueOverBloodPartitionCoefficient;
+    protected float concentration;
+    protected float health = 100;
+    protected float bloodFlow;
+    protected float tissueOverBloodPartitionCoefficient;
     protected MedicalStats medicalStats;
     protected Map<Substance, Double> concentrations = new HashMap<>();
     protected List<Inhibitor> inhibitors = new ArrayList<>();
@@ -24,7 +24,7 @@ public abstract class Compartment {
         this.medicalStats = medicalStats;
     }
 
-    public double getConcentration(Substance substance) {
+    public float getConcentration(Substance substance) {
         return concentrations.getOrDefault(substance, 0.0);
     }
 
@@ -32,18 +32,18 @@ public abstract class Compartment {
         return concentrations;
     }
 
-    public double getDerivative() {
+    public float getDerivative() {
         return 0;
     }
 
-    public void updateConcentration(Substance substance, double derivative, double timeStep) {
-        double updatedConcentration = concentrations.getOrDefault(substance, 0.0) + derivative * timeStep;
+    public void updateConcentration(Substance substance, float derivative, float timeStep) {
+        float updatedConcentration = concentrations.getOrDefault(substance, 0.0) + derivative * timeStep;
 
         concentrations.put(substance, updatedConcentration);
     }
 
-    public void addConcentration(Substance substance, double concentration) {
-        double updatedConcentration = concentrations.getOrDefault(substance, 0.0) + concentration;
+    public void addConcentration(Substance substance, float concentration) {
+        float updatedConcentration = concentrations.getOrDefault(substance, 0.0) + concentration;
         concentrations.put(substance, updatedConcentration);
     }
 
@@ -59,34 +59,34 @@ public abstract class Compartment {
         return name;
     }
 
-    public void setRateConstant(double eliminationRateConstant) {
+    public void setRateConstant(float eliminationRateConstant) {
     }
 
-    public double getHealth() {
+    public float getHealth() {
         return health;
     }
 
-    public double getBloodFlow() {
+    public float getBloodFlow() {
         return bloodFlow;
     }
 
-    public void addHealth(double health) {
+    public void addHealth(float health) {
         this.health += health;
     }
 
-    public void increaseBloodFlow(double bloodFlow) {
+    public void increaseBloodFlow(float bloodFlow) {
         this.bloodFlow += bloodFlow;
     }
 
-    public void decreaseBloodFlow(double bloodFlow) {
+    public void decreaseBloodFlow(float bloodFlow) {
         this.bloodFlow -= bloodFlow;
     }
 
-    public void setBloodFlow(double bloodFlow) {
+    public void setBloodFlow(float bloodFlow) {
         this.bloodFlow = bloodFlow;
     }
 
-    public void removeHealth(double health) {
+    public void removeHealth(float health) {
         this.health -= health;
         this.health = Math.max(this.health, 0);
     }

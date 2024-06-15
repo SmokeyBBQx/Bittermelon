@@ -8,14 +8,14 @@ import java.util.*;
 
 public class MedicalStats {
     private final List<Condition> conditions = new ArrayList<>();
-    private double bloodLevel;
-    private double respirationRate;
-    private double bloodPressureSystolic;
-    private double bloodPressureDiastolic;
-    private double bodyTemperature;
-    private double bloodOxygen = 100;
+    private float bloodLevel;
+    private float respirationRate;
+    private float bloodPressureSystolic;
+    private float bloodPressureDiastolic;
+    private float bodyTemperature;
+    private float bloodOxygen = 100;
     private float pulseTimer = 0;
-    private double heartEffort = 0;
+    private float heartEffort = 0;
     private int pulse = 0;
     private int timer = 0;
     private int BPM = 0;
@@ -90,14 +90,14 @@ public class MedicalStats {
     }
 
     public void cardiovascularSystem() {
-        double pulseRate = compartments.get("Heart").getHealth() / 100 * heartEffort;
+        float pulseRate = compartments.get("Heart").getHealth() / 100 * heartEffort;
 
         if (bloodOxygen < 99) {
             heartEffort -= 0.1;
         } else {
             heartEffort += 0.1;
         }
-        heartEffort = Math.max(heartEffort, 0.1);
+        heartEffort = Math.max(heartEffort, 0.1F);
 
         pulseTimer++;
         timer++;
@@ -107,8 +107,8 @@ public class MedicalStats {
 
         // One heartbeat
         if (pulseTimer >= pulseRate) {
-            double lungBloodFlow = compartments.get("Lungs").getBloodFlow();
-            double circulatoryBloodFlow = compartments.get("Circulatory System").getBloodFlow();
+            float lungBloodFlow = compartments.get("Lungs").getBloodFlow();
+            float circulatoryBloodFlow = compartments.get("Circulatory System").getBloodFlow();
 
             pulseTimer = 0;
             bloodOxygen += lungBloodFlow * circulatoryBloodFlow;
@@ -124,9 +124,9 @@ public class MedicalStats {
         }
 
         // Cardiac Arrest
-        double maxHeartRate = 220;
+        float maxHeartRate = 220;
         if (BPM > maxHeartRate) {
-            compartments.get("Heart").removeHealth(0.5);
+            compartments.get("Heart").removeHealth(0.5F);
             timer = 1200;
             pulseTimer -= 0.1F;
             pulseTimer = Math.max(pulseTimer, 0);
@@ -140,17 +140,17 @@ public class MedicalStats {
      }
 
     private void updateBloodFlow() {
-        double heartHealth = compartments.get("Heart").getHealth() / 100.0;
+        float heartHealth = compartments.get("Heart").getHealth() / 100.0F;
         for (Compartment compartment : compartments.values()) {
             if (compartment.getName().equals("Heart")) {
                 compartment.setBloodFlow(heartHealth);
             } else {
-                compartment.setBloodFlow(heartHealth * compartment.getHealth() / 100.0);
+                compartment.setBloodFlow(heartHealth * compartment.getHealth() / 100.0F);
             }
         }
     }
 
-    public double getBloodFlow(String name) {
+    public float getBloodFlow(String name) {
         if (compartments.containsKey(name)) {
             return compartments.get(name).getBloodFlow();
         }
@@ -161,18 +161,18 @@ public class MedicalStats {
         compartments.put(compartment.getName(), compartment);
     }
 
-    public void increaseCompartmentHealth(String name, double health) {
+    public void increaseCompartmentHealth(String name, float health) {
         if (compartments.containsKey(name)) {
             compartments.get(name).addHealth(health);
         }
     }
 
-    public void decreaseCompartmentHealth(String name, double health) {
+    public void decreaseCompartmentHealth(String name, float health) {
         if (compartments.containsKey(name)) {
             compartments.get(name).removeHealth(health);
         }
     }
-    public double getCompartmentHealth(String name) {
+    public float getCompartmentHealth(String name) {
         if (compartments.containsKey(name)) {
             return compartments.get(name).getHealth();
         }
