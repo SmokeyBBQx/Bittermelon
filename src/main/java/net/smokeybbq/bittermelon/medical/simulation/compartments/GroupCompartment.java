@@ -58,7 +58,7 @@ public abstract class GroupCompartment extends Compartment {
         }
 
         double totalHealth = 0;
-        for (SimpleCompartment compartment : compartments) {
+        for (SimpleCompartment compartment : compartments.values()) {
             totalHealth += compartment.getHealth();
         }
 
