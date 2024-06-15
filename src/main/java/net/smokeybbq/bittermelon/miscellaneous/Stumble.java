@@ -55,7 +55,7 @@ public class Stumble {
         Character character = CharacterManager.getActiveCharacter(player);
         Component component = Component.literal(character.getName() + " falls to the ground.")
                 .setStyle(Style.EMPTY.withColor(TextColor.parseColor(character.getEmoteColor())));
-        sendLocalMessage(player, 5, component);
+        sendLocalMessage(player, 10, component);
     }
 
     private void playerPhysics() {
