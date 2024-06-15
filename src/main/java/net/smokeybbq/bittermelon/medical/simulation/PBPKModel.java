@@ -10,7 +10,7 @@ import java.util.*;
 public abstract class PBPKModel {
     protected float dosage;
     protected Character character;
-    protected float timeStep = 0.01;
+    protected float timeStep = 0.01F;
     protected float t = 0;
     protected Substance drug;
     protected Map<String, Compartment> compartments;

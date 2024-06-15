@@ -16,7 +16,7 @@ public abstract class Compartment {
     protected float bloodFlow;
     protected float tissueOverBloodPartitionCoefficient;
     protected MedicalStats medicalStats;
-    protected Map<Substance, Double> concentrations = new HashMap<>();
+    protected Map<Substance, Float> concentrations = new HashMap<>();
     protected List<Inhibitor> inhibitors = new ArrayList<>();
 
     public Compartment(String name, MedicalStats medicalStats) {
@@ -25,10 +25,10 @@ public abstract class Compartment {
     }
 
     public float getConcentration(Substance substance) {
-        return concentrations.getOrDefault(substance, 0.0);
+        return concentrations.getOrDefault(substance, 0.0F);
     }
 
-    public Map<Substance, Double> getConcentrations() {
+    public Map<Substance, Float> getConcentrations() {
         return concentrations;
     }
 
@@ -37,13 +37,13 @@ public abstract class Compartment {
     }
 
     public void updateConcentration(Substance substance, float derivative, float timeStep) {
-        float updatedConcentration = concentrations.getOrDefault(substance, 0.0) + derivative * timeStep;
+        float updatedConcentration = concentrations.getOrDefault(substance, 0.0F) + derivative * timeStep;
 
         concentrations.put(substance, updatedConcentration);
     }
 
     public void addConcentration(Substance substance, float concentration) {
-        float updatedConcentration = concentrations.getOrDefault(substance, 0.0) + concentration;
+        float updatedConcentration = concentrations.getOrDefault(substance, 0.0F) + concentration;
         concentrations.put(substance, updatedConcentration);
     }
 
