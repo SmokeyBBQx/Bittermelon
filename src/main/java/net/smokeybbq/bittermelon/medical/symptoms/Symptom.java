@@ -4,55 +4,46 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
+import net.smokeybbq.bittermelon.medical.common.PathologyBase;
+import net.smokeybbq.bittermelon.medical.common.Severity;
 
+import java.util.AbstractMap;
+import java.util.List;
 import java.util.UUID;
 
-public abstract class Symptom {
-    protected String name;
-    protected float amplifier;
-    protected Character character;
-    protected ServerPlayer player;
-    protected String affectedArea;
-    protected int tickTimer = 0;
-    protected String description;
+public abstract class Symptom extends PathologyBase {
+    protected String MILD_DESCRIPTION, MODERATE_DESCRIPTION, SEVERE_DESCRIPTION, CRITICAL_DESCRIPTION, TERMINAL_DESCRIPTION;
 
-    public Symptom (float amplifier, Character character, String affectedArea) {
-        this.amplifier = amplifier;
-        this.character = character;
-        this.affectedArea = affectedArea;
-
-        MinecraftServer server = CharacterManager.getServer();
-        UUID playerUUID = character.getPlayerUUID();
-        this.player = server.getPlayerList().getPlayer(playerUUID);
+    public Symptom (Character character, String affectedArea, float amplifier) {
+        super(character, affectedArea, amplifier);
+        initializeDescriptions();
     }
 
-    public abstract void update ();
+    public abstract void initializeDescriptions();
 
-    public abstract void effects ();
-
-    protected void tick() {
-        tickTimer++;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void increaseAmplifier(float input) {
-        amplifier += input;
-    }
-
-    public void decreaseAmplifier(float input) {
-        amplifier = Math.max(amplifier - input, 0 );
-    }
-
-    public float getAmplifier() {
-        return amplifier;
-    }
+    public abstract void effects();
 
     public String getDescription() {
-        return description;
+        switch(severity) {
+            case MILD -> {
+                return MILD_DESCRIPTION;
+            }
+            case MODERATE -> {
+                return MODERATE_DESCRIPTION;
+            }
+            case SEVERE -> {
+                return SEVERE_DESCRIPTION;
+            }
+            case CRITICAL -> {
+                return CRITICAL_DESCRIPTION;
+            }
+            case TERMINAL -> {
+                return TERMINAL_DESCRIPTION;
+            }
+            default -> {
+                return null;
+            }
+        }
     }
-
 }
 

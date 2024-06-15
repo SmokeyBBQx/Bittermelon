@@ -10,25 +10,24 @@ public class Eczema extends Condition {
 
     private String[] suitableTreatments = {"Penicillin"};
 
-    public Eczema(float duration, boolean chronic, float severity, String affectedArea, Character character) {
-        super(duration, chronic, severity, affectedArea, character);
+    public Eczema(float duration, boolean chronic, Character character, String affectedArea, float amplifier) {
+        super(duration, chronic, character, affectedArea, amplifier);
+    }
 
-        symptoms();
+    @Override
+    protected void symptoms() {
+
+    }
+
+    @Override
+    public void treat(Substance drug, float effectiveness) {
+
     }
 
     @Override
     public void update() {
 
     }
-
-    @Override
-    protected void symptoms() {
-        this.rash = new Rash(severity, character, affectedArea);
-    }
-
-    @Override
-    public void treat(Substance drug, float effectiveness) {
-        setSeverity(severity - effectiveness);
-    }
-
 }
+
+

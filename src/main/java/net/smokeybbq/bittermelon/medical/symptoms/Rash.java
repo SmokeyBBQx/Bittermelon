@@ -22,16 +22,16 @@ import java.util.concurrent.ThreadLocalRandom;
 @Mod.EventBusSubscriber(modid = "bittermelon")
 public class Rash extends Symptom {
     String name = "Rash";
-    int ticksSinceLastReminder = 0;
-    int TICKS_BETWEEN_REMINDERS = 0;
+    private int ticksSinceLastReminder = 0;
+    private int TICKS_BETWEEN_REMINDERS = 0;
     private int REMINDER_MINIMUM_TICKS = 400;
     private int REMINDER_MAXIMUM_TICKS = 600;
     boolean scratched = false;
     private static final int TICKS_REQUIRED = 100;
     private int ticksHeld = 0;
 
-    public Rash(float amplifier, Character character, String affectedArea) {
-        super(amplifier, character, affectedArea);
+    public Rash(Character character, String affectedArea, float amplifier) {
+        super(character, affectedArea, amplifier);
         this.REMINDER_MINIMUM_TICKS -= (int) (amplifier * 5);
         this.REMINDER_MAXIMUM_TICKS -= (int) (amplifier * 10);
         MinecraftForge.EVENT_BUS.register(this);
@@ -40,6 +40,11 @@ public class Rash extends Symptom {
     @Override
     public void update() {
         effects();
+    }
+
+    @Override
+    public void initializeDescriptions() {
+
     }
 
     @Override

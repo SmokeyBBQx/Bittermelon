@@ -36,7 +36,7 @@ public class CommandCondition {
                 .findFirst();
 
         MedicalStats medicalStats = selectedCharacter.get().getMedicalStats();
-        Influenza influenza = new Influenza(100, false, severity, affectedArea, selectedCharacter.get());
+        Influenza influenza = new Influenza(100, false, selectedCharacter.get(), affectedArea, severity);
         medicalStats.addCondition(influenza);
 
         return 1;
