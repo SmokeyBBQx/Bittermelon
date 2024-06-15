@@ -3,7 +3,7 @@ package net.smokeybbq.bittermelon.character.medical;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.medical.conditions.Condition;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
-import net.smokeybbq.bittermelon.medical.simulation.SubstancePBPKModel;
+import net.smokeybbq.bittermelon.medical.simulation.PBPKModel;
 import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
 
 import java.util.Arrays;
@@ -13,7 +13,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SimulationHandler {
 
-    private List<SubstancePBPKModel> simulations = new CopyOnWriteArrayList<>();
+    private List<PBPKModel> simulations = new CopyOnWriteArrayList<>();
     private Character character;
     private Map<String, Compartment> compartmentMap;
 
@@ -23,7 +23,7 @@ public class SimulationHandler {
     }
 
     public void update() {
-        for (SubstancePBPKModel simulation : simulations) {
+        for (PBPKModel simulation : simulations) {
             simulation.runSimulation();
         }
 
@@ -64,11 +64,11 @@ public class SimulationHandler {
         return EMax * concentration / (EMax * halfMaximalEffectiveConcentration + concentration);
     }
 
-    public void addSimulation(SubstancePBPKModel simulation) {
+    public void addSimulation(PBPKModel simulation) {
         simulations.add(simulation);
     }
 
-    public void removeSimulation(SubstancePBPKModel simulation) {
+    public void removeSimulation(PBPKModel simulation) {
         simulations.remove(simulation);
     }
 }

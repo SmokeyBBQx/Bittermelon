@@ -1,14 +1,14 @@
 package net.smokeybbq.bittermelon.medical.simulation;
 
 import net.smokeybbq.bittermelon.character.Character;
+import net.smokeybbq.bittermelon.medical.simulation.compartments.CirculatoryCompartment;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
-import net.smokeybbq.bittermelon.medical.simulation.compartments.SimpleCompartment;
 
-public class IVAdministration extends SubstancePBPKModel {
+public class IVAdministration extends PBPKModel {
+    CirculatoryCompartment circulatory;
 
     public IVAdministration(double dosage, Character character, Substance drug) {
         super(dosage, character, drug);
-        simpleCompartments = new SimpleCompartment[]{GI, liver, kidney, lung, heart, brain, adiposeTissue, bone, muscle, lymphatic, endocrine, other};
     }
 
     @Override

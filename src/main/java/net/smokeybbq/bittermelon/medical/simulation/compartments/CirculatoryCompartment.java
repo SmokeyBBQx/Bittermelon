@@ -1,13 +1,16 @@
 package net.smokeybbq.bittermelon.medical.simulation.compartments;
 
+import net.smokeybbq.bittermelon.character.medical.MedicalStats;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 
+import java.util.List;
+
 public class CirculatoryCompartment extends Compartment {
-    public CirculatoryCompartment(String name, double volume) {
-        super(name, volume);
+    public CirculatoryCompartment(String name, MedicalStats medicalStats) {
+        super(name, medicalStats);
     }
 
-    public double getDerivative(double source, SimpleCompartment[] compartments, Substance drug) {
+    public double getDerivative(double source, List<SimpleCompartment> compartments, Substance drug) {
         double circulationOut = 0;
         double circulationIn = 0;
 

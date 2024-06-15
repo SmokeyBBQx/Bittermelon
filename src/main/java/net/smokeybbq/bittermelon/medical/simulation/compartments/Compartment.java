@@ -1,5 +1,6 @@
 package net.smokeybbq.bittermelon.medical.simulation.compartments;
 
+import net.smokeybbq.bittermelon.character.medical.MedicalStats;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.medical.simulation.Inhibitor;
 
@@ -10,18 +11,17 @@ import java.util.Map;
 
 public abstract class Compartment {
     protected String name;
-    protected double volume;
     protected double concentration;
     protected double health = 100;
     protected double bloodFlow;
     protected double tissueOverBloodPartitionCoefficient;
-
+    protected MedicalStats medicalStats;
     protected Map<Substance, Double> concentrations = new HashMap<>();
     protected List<Inhibitor> inhibitors = new ArrayList<>();
 
-    public Compartment(String name, double volume) {
+    public Compartment(String name, MedicalStats medicalStats) {
         this.name = name;
-        this.volume = volume;
+        this.medicalStats = medicalStats;
     }
 
     public double getConcentration(Substance substance) {
@@ -55,14 +55,6 @@ public abstract class Compartment {
         inhibitors.add(inhibitor);
     }
 
-    public Double getVolume() {
-        return volume;
-    }
-
-    public void setVolume(double volume) {
-        this.volume = volume;
-    }
-
     public String getName() {
         return name;
     }
@@ -82,8 +74,12 @@ public abstract class Compartment {
         this.health += health;
     }
 
-    public void addBloodFlow(double bloodFlow) {
+    public void increaseBloodFlow(double bloodFlow) {
         this.bloodFlow += bloodFlow;
+    }
+
+    public void decreaseBloodFlow(double bloodFlow) {
+        this.bloodFlow -= bloodFlow;
     }
 
     public void setBloodFlow(double bloodFlow) {
@@ -95,8 +91,8 @@ public abstract class Compartment {
         this.health = Math.max(this.health, 0);
     }
 
-    public void removeBloodFlow(double bloodFlow) {
-        this.bloodFlow -= bloodFlow;
+    public MedicalStats getMedicalStats() {
+        return medicalStats;
     }
 
 }

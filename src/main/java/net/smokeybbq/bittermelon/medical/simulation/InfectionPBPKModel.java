@@ -3,7 +3,6 @@ package net.smokeybbq.bittermelon.medical.simulation;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.medical.MedicalStats;
 import net.smokeybbq.bittermelon.medical.infections.Infection;
-import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.medical.simulation.compartments.*;
 
 import java.util.*;
@@ -21,29 +20,29 @@ public abstract class InfectionPBPKModel {
     protected MedicalStats medicalStats;
     protected SimpleCompartment[] simpleCompartments;
 
-    protected List<BAMSGroupCompartment> bodyPartList;
-    protected BAMSGroupCompartment head;
-    protected BAMSGroupCompartment neck;
-    protected BAMSGroupCompartment leftShoulder;
-    protected BAMSGroupCompartment rightShoulder;
-    protected BAMSGroupCompartment upperBack;
-    protected BAMSGroupCompartment abdomen;
-    protected BAMSGroupCompartment leftUpperArm;
-    protected BAMSGroupCompartment leftLowerArm;
-    protected BAMSGroupCompartment lowerBack;
-    protected BAMSGroupCompartment leftHand;
-    protected BAMSGroupCompartment rightHand;
-    protected BAMSGroupCompartment leftThigh;
-    protected BAMSGroupCompartment rightThigh;
-    protected BAMSGroupCompartment leftCalf;
-    protected BAMSGroupCompartment rightCalf;
-    protected BAMSGroupCompartment leftFoot;
-    protected BAMSGroupCompartment rightFoot;
-    protected BAMSGroupCompartment groin;
-    protected BAMSGroupCompartment leftLoin;
-    protected BAMSGroupCompartment rightLoin;
-    protected BAMSGroupCompartment leftHip;
-    protected BAMSGroupCompartment rightHip;
+    protected List<BodyPartGroupCompartment> bodyPartList;
+    protected BodyPartGroupCompartment head;
+    protected BodyPartGroupCompartment neck;
+    protected BodyPartGroupCompartment leftShoulder;
+    protected BodyPartGroupCompartment rightShoulder;
+    protected BodyPartGroupCompartment upperBack;
+    protected BodyPartGroupCompartment abdomen;
+    protected BodyPartGroupCompartment leftUpperArm;
+    protected BodyPartGroupCompartment leftLowerArm;
+    protected BodyPartGroupCompartment lowerBack;
+    protected BodyPartGroupCompartment leftHand;
+    protected BodyPartGroupCompartment rightHand;
+    protected BodyPartGroupCompartment leftThigh;
+    protected BodyPartGroupCompartment rightThigh;
+    protected BodyPartGroupCompartment leftCalf;
+    protected BodyPartGroupCompartment rightCalf;
+    protected BodyPartGroupCompartment leftFoot;
+    protected BodyPartGroupCompartment rightFoot;
+    protected BodyPartGroupCompartment groin;
+    protected BodyPartGroupCompartment leftLoin;
+    protected BodyPartGroupCompartment rightLoin;
+    protected BodyPartGroupCompartment leftHip;
+    protected BodyPartGroupCompartment rightHip;
 
 
     public InfectionPBPKModel(double severity, Character character, Infection infection) {
@@ -52,45 +51,7 @@ public abstract class InfectionPBPKModel {
         this.character = character;
         this.medicalStats = character.getMedicalStats();
         compartments = medicalStats.getCompartments();
-        loadCompartments();
         initializeSimulation();
-    }
-
-    // Load compartments from the character's medical stats
-    protected void loadCompartments() {
-        GI = (SimpleCompartment) compartments.get("Gastrointestinal");
-        liver = (EliminatingCompartment) compartments.get("Liver");
-        kidney = (EliminatingCompartment) compartments.get("Kidneys");
-        lung = (SimpleCompartment) compartments.get("Lungs");
-        heart = (SimpleCompartment) compartments.get("Heart");
-        brain = (SimpleCompartment) compartments.get("Brain");
-        lymphatic = (SimpleCompartment) compartments.get("Lymphatic System");
-        endocrine = (SimpleCompartment) compartments.get("Endocrine System");
-        other = (SimpleCompartment) compartments.get("Other");
-        circulatory = (CirculatoryCompartment) compartments.get("Circulatory System");
-
-        head = new BAMSGroupCompartment("head");
-        neck = new BAMSGroupCompartment("neck");
-        leftShoulder = new BAMSGroupCompartment("leftShoulder");
-        rightShoulder = new BAMSGroupCompartment("rightShoulder");
-        upperBack = new BAMSGroupCompartment("upperBack");
-        abdomen = new BAMSGroupCompartment("abdomen");
-        leftUpperArm = new BAMSGroupCompartment("leftUpperArm");
-        leftLowerArm = new BAMSGroupCompartment("leftLowerArm");
-        lowerBack = new BAMSGroupCompartment("lowerBack");
-        leftHand = new BAMSGroupCompartment("leftHand");
-        rightHand = new BAMSGroupCompartment("rightHand");
-        leftThigh = new BAMSGroupCompartment("leftThigh");
-        rightThigh = new BAMSGroupCompartment("rightThigh");
-        leftCalf = new BAMSGroupCompartment("leftCalf");
-        rightCalf = new BAMSGroupCompartment("rightCalf");
-        leftFoot = new BAMSGroupCompartment("leftFoot");
-        rightFoot = new BAMSGroupCompartment("rightFoot");
-        groin = new BAMSGroupCompartment("groin");
-        leftLoin = new BAMSGroupCompartment("leftLoin");
-        rightLoin = new BAMSGroupCompartment("rightLoin");
-        leftHip = new BAMSGroupCompartment("leftHip");
-        rightHip = new BAMSGroupCompartment("rightHip");
     }
 
     // Abstract method to initialize the simulation (set dosage, etc.), to be implemented by subclasses

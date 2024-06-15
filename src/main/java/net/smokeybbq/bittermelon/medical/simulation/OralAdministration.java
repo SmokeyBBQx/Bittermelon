@@ -4,17 +4,20 @@ import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.medical.simulation.compartments.*;
 
-public class OralAdministration extends SubstancePBPKModel {
+public class OralAdministration extends PBPKModel {
+    EliminatingCompartment GI, liver;
+    CirculatoryCompartment circulatory;
 
     public OralAdministration(double dosage, Character character, Substance drug) {
         super(dosage, character, drug);
-
-        // Initialize compartments that will get their concentration from circulatory system
-        simpleCompartments = new SimpleCompartment[]{liver, kidney, lung, heart, brain, adiposeTissue, bone, muscle, lymphatic, endocrine, other};
     }
 
     @Override
     protected void initializeSimulation() {
+        GI = (EliminatingCompartment) compartments.get("Gastrointestinal");
+        liver = (EliminatingCompartment) compartments.get("Liver");
+        circulatory = (CirculatoryCompartment) compartments.get("Circulatory System");
+
         GI.addConcentration(drug, dosage);
         totalConcentration = getTotalConcentration();
     }

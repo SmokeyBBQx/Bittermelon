@@ -1,13 +1,14 @@
 package net.smokeybbq.bittermelon.medical.simulation.compartments;
 
+import net.smokeybbq.bittermelon.character.medical.MedicalStats;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 
 public class EliminatingCompartment extends SimpleCompartment {
 
     private double rateConstant;
 
-    public EliminatingCompartment(String name, double volume) {
-        super(name, volume);
+    public EliminatingCompartment(String name, MedicalStats medicalStats) {
+        super(name, medicalStats);
     }
 
     @Override

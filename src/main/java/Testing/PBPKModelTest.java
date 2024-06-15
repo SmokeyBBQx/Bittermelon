@@ -1,7 +1,7 @@
 package Testing;
 import net.smokeybbq.bittermelon.medical.conditions.Influenza;
 import net.smokeybbq.bittermelon.medical.simulation.IVAdministration;
-import net.smokeybbq.bittermelon.medical.simulation.SubstancePBPKModel;
+import net.smokeybbq.bittermelon.medical.simulation.PBPKModel;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.medical.substance.medicine.Acetaminophen;
 import net.smokeybbq.bittermelon.character.Character;
@@ -19,7 +19,7 @@ public class PBPKModelTest {
         // Adjust the modifiers so that it takes different times to reach a total concentration of 1
         Substance drug = new Acetaminophen(1,10,5);
 
-        SubstancePBPKModel model = new IVAdministration(100, testCharacter, drug);
+        PBPKModel model = new IVAdministration(100, testCharacter, drug);
 
         testCharacter.getMedicalStats().simulationHandler.addSimulation(model);
 
