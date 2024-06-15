@@ -15,8 +15,8 @@ public abstract class Condition extends PathologyBase {
     protected List<Symptom> symptoms = new ArrayList<>();
     protected String[] suitableTreatments;
 
-    public Condition(float duration, boolean chronic, Character character, String affectedArea, float amplifier) {
-        super(character, affectedArea, amplifier);
+    public Condition(float duration, boolean chronic, Character character, List<String> affectedAreas, float amplifier) {
+        super(character, affectedAreas, amplifier);
         this.duration = duration;
         this.chronic = chronic;
         symptoms();

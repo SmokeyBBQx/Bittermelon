@@ -6,6 +6,7 @@ import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
 
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,15 +16,15 @@ public abstract class PathologyBase {
     protected int tickTimer = 0;
     protected Character character;
     protected ServerPlayer player;
-    protected String affectedArea;
+    protected List<String> affectedAreas;
     protected int progressionMildToModerate, progressionModerateToSevere, progressionSevereToCritical, progressionCriticalToTerminal;
     protected float amplifier;
     protected Severity severity;
     protected List<AbstractMap.SimpleEntry<Integer, Severity>> severityThresholds;
 
-    public PathologyBase (Character character, String affectedArea, float amplifier) {
+    public PathologyBase (Character character, List<String> affectedArea, float amplifier) {
         this.character = character;
-        this.affectedArea = affectedArea;
+        this.affectedAreas = affectedArea;
         this.amplifier = amplifier;
 
         MinecraftServer server = CharacterManager.getServer();
@@ -60,8 +61,8 @@ public abstract class PathologyBase {
         return amplifier;
     }
 
-    public String getAffectedArea() {
-        return affectedArea;
+    public List<String> getAffectedAreas() {
+        return affectedAreas;
     }
 
     public void updateProgression() {

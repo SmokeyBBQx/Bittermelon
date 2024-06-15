@@ -6,12 +6,14 @@ import net.smokeybbq.bittermelon.medical.symptoms.Fever;
 import net.smokeybbq.bittermelon.medical.symptoms.Headache;
 import net.smokeybbq.bittermelon.medical.symptoms.Symptom;
 
+import java.util.List;
+
 public class Influenza extends Condition {
 
     private Symptom fever, headache, ache, fatigue, cough, congestion, nausea, vomiting;
 
-    public Influenza(float duration, boolean chronic, Character character, String affectedArea, float amplifier) {
-        super(duration, chronic, character, affectedArea, amplifier);
+    public Influenza(float duration, boolean chronic, Character character, List<String> affectedAreas, float amplifier) {
+        super(duration, chronic, character, affectedAreas, amplifier);
     }
 
 
@@ -25,8 +27,8 @@ public class Influenza extends Condition {
     @Override
     protected void symptoms() {
         suitableTreatments = new String[]{"Acetaminophen"};
-        fever = new Fever(character, affectedArea, amplifier);
-        headache = new Headache(character, affectedArea, amplifier);
+        fever = new Fever(character, affectedAreas, amplifier);
+        headache = new Headache(character, affectedAreas, amplifier);
 
         symptoms.add(fever);
     }

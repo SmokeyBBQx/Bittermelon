@@ -5,13 +5,15 @@ import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.medical.symptoms.Rash;
 
+import java.util.List;
+
 public class Eczema extends Condition {
     private Rash rash;
 
-    private String[] suitableTreatments = {"Penicillin"};
+    private String[] suitableTreatments = {""};
 
-    public Eczema(float duration, boolean chronic, Character character, String affectedArea, float amplifier) {
-        super(duration, chronic, character, affectedArea, amplifier);
+    public Eczema(float duration, boolean chronic, Character character, List<String> affectedAreas, float amplifier) {
+        super(duration, chronic, character, affectedAreas, amplifier);
     }
 
     @Override

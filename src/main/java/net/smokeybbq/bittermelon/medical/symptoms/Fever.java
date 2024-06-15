@@ -2,10 +2,12 @@ package net.smokeybbq.bittermelon.medical.symptoms;
 
 import net.smokeybbq.bittermelon.character.Character;
 
+import java.util.List;
+
 public class Fever extends Symptom {
 
-    public Fever(Character character, String affectedArea, float amplifier) {
-        super(character, affectedArea, amplifier);
+    public Fever(Character character, List<String> affectedAreas, float amplifier) {
+        super(character, affectedAreas, amplifier);
     }
 
     @Override
