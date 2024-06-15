@@ -1,9 +1,6 @@
 package net.smokeybbq.bittermelon.events;
 
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
+import net.minecraft.network.chat.*;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -15,6 +12,8 @@ import net.smokeybbq.bittermelon.chat.ChannelManager;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static net.smokeybbq.bittermelon.util.LocalMessageHandler.compareDistance;
 
 public class ChatEventHandler {
 
@@ -65,10 +64,4 @@ public class ChatEventHandler {
         }
     }
 
-    public static double compareDistance(ServerPlayer player1, ServerPlayer player2) {
-        double x = Math.abs(player1.getX() - player2.getX());
-        double y = Math.abs(player1.getY() - player2.getY());
-        double z = Math.abs(player1.getZ() - player2.getZ());
-        return x + y + z;
-    }
 }

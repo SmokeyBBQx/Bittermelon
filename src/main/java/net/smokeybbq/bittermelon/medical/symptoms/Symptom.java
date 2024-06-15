@@ -2,46 +2,48 @@ package net.smokeybbq.bittermelon.medical.symptoms;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
+import net.smokeybbq.bittermelon.medical.common.PathologyBase;
+import net.smokeybbq.bittermelon.medical.common.Severity;
 
+import java.util.AbstractMap;
+import java.util.List;
 import java.util.UUID;
 
-public abstract class Symptom {
-    protected String name;
-    protected double amplifier;
-    protected Character character;
-    protected ServerPlayer player;
+public abstract class Symptom extends PathologyBase {
+    protected String MILD_DESCRIPTION, MODERATE_DESCRIPTION, SEVERE_DESCRIPTION, CRITICAL_DESCRIPTION, TERMINAL_DESCRIPTION;
 
-    public Symptom (double amplifier, Character character) {
-        this.amplifier = amplifier;
-        this.character = character;
-
-        MinecraftServer server = CharacterManager.getServer();
-        UUID playerUUID = character.getPlayerUUID();
-        // this.player = server.getPlayerList().getPlayer(playerUUID);
+    public Symptom (Character character, String affectedArea, float amplifier) {
+        super(character, affectedArea, amplifier);
+        initializeDescriptions();
     }
 
-    public abstract void update ();
-    public abstract void effects ();
-    public String getName() {
-        return name;
-    }
+    public abstract void initializeDescriptions();
 
-    public void increaseAmplifier(double input) {
-        amplifier += input;
-    }
-    public void decreaseAmplifier(double input) {
-        amplifier = Math.max(amplifier - input, 0 );
-    }
+    public abstract void effects();
 
-    public double getAmplifier() {
-        return amplifier;
+    public String getDescription() {
+        switch(severity) {
+            case MILD -> {
+                return MILD_DESCRIPTION;
+            }
+            case MODERATE -> {
+                return MODERATE_DESCRIPTION;
+            }
+            case SEVERE -> {
+                return SEVERE_DESCRIPTION;
+            }
+            case CRITICAL -> {
+                return CRITICAL_DESCRIPTION;
+            }
+            case TERMINAL -> {
+                return TERMINAL_DESCRIPTION;
+            }
+            default -> {
+                return null;
+            }
+        }
     }
-
 }
 

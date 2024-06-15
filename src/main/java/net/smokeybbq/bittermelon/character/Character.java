@@ -32,12 +32,12 @@ public class Character {
     private String description;
     private String skinUrl;
     private int age;
-    private double height;
-    private double weight;
+    private float height;
+    private float weight;
     private String emoteColor;
     private transient MedicalStats medicalStats;
 
-    public Character(UUID playerUuid, String name, String gender, String description, String skinUrl, int age, double height, double weight, String emoteColor) {
+    public Character(UUID playerUuid, String name, String gender, String description, String skinUrl, int age, float height, float weight, String emoteColor) {
         this.uuid = UUID.randomUUID();
         this.playerUuid = playerUuid;
         this.name = name;
@@ -79,11 +79,11 @@ public class Character {
         return age;
     }
 
-    public double getHeight() {
+    public float getHeight() {
         return height;
     }
 
-    public double getWeight() {
+    public float getWeight() {
         return weight;
     }
 

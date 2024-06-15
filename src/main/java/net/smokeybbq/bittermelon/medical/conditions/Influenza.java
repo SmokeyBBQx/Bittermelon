@@ -3,15 +3,17 @@ package net.smokeybbq.bittermelon.medical.conditions;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.medical.symptoms.Fever;
+import net.smokeybbq.bittermelon.medical.symptoms.Headache;
 import net.smokeybbq.bittermelon.medical.symptoms.Symptom;
 
 public class Influenza extends Condition {
 
-    private Fever fever;
+    private Symptom fever, headache, ache, fatigue, cough, congestion, nausea, vomiting;
 
-    public Influenza(double duration, boolean chronic, double severity, String affectedArea, Character character) {
-        super(duration, chronic, severity, affectedArea, character);
+    public Influenza(float duration, boolean chronic, Character character, String affectedArea, float amplifier) {
+        super(duration, chronic, character, affectedArea, amplifier);
     }
+
 
     @Override
     public void update() {
@@ -23,13 +25,14 @@ public class Influenza extends Condition {
     @Override
     protected void symptoms() {
         suitableTreatments = new String[]{"Acetaminophen"};
-        fever = new Fever(severity, character);
+        fever = new Fever(character, affectedArea, amplifier);
+        headache = new Headache(character, affectedArea, amplifier);
 
         symptoms.add(fever);
     }
 
     @Override
-    public void treat(Substance drug, double effectiveness) {
+    public void treat(Substance drug, float effectiveness) {
         String drugName = drug.getName();
         System.out.println("Drug Name " + drugName);
 

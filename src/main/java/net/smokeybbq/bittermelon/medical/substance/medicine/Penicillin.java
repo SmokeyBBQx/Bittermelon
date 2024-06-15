@@ -4,15 +4,15 @@ import net.smokeybbq.bittermelon.medical.substance.Substance;
 
 public class Penicillin extends Substance {
 
-    public Penicillin(double absorptionModifier, double eliminationModifier, double metabolismModifier) {
+    public Penicillin(float absorptionModifier, float eliminationModifier, float metabolismModifier) {
         super(absorptionModifier, eliminationModifier, metabolismModifier);
-        this.absorptionRateConstant = 0.1 * absorptionModifier;
-        this.eliminationRateConstant = 0.5 * eliminationModifier;
-        this.metabolismRateConstant = 0.5 * metabolismModifier;
+        this.absorptionRateConstant = 0.1F * absorptionModifier;
+        this.eliminationRateConstant = 0.5F * eliminationModifier;
+        this.metabolismRateConstant = 0.5F * metabolismModifier;
     }
 
     @Override
-    public void toxicDamage(double effectiveness) {
+    public void toxicDamage(float effectiveness) {
 
     }
 }

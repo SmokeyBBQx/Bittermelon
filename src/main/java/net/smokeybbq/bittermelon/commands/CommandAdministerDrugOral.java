@@ -1,7 +1,7 @@
 package net.smokeybbq.bittermelon.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -22,20 +22,20 @@ public class CommandAdministerDrugOral {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("administeroral")
                 .then(Commands.argument("characterName", StringArgumentType.string())
-                        .then(Commands.argument("dosage", DoubleArgumentType.doubleArg())
-                                .then(Commands.argument("absorptionModifier", DoubleArgumentType.doubleArg())
-                                        .then(Commands.argument("eliminationModifier", DoubleArgumentType.doubleArg())
-                                                .then(Commands.argument("metabolismModifier", DoubleArgumentType.doubleArg())
+                        .then(Commands.argument("dosage", FloatArgumentType.floatArg())
+                                .then(Commands.argument("absorptionModifier", FloatArgumentType.floatArg())
+                                        .then(Commands.argument("eliminationModifier", FloatArgumentType.floatArg())
+                                                .then(Commands.argument("metabolismModifier", FloatArgumentType.floatArg())
                                                         .executes(context -> addCondition(context)))))))
         );
     }
 
     private static int addCondition(CommandContext<CommandSourceStack> context) {
         String characterName = StringArgumentType.getString(context, "characterName");
-        double dosage = DoubleArgumentType.getDouble(context, "dosage");
-        double absorptionModifier = DoubleArgumentType.getDouble(context, "absorptionModifier");
-        double eliminationModifier = DoubleArgumentType.getDouble(context, "eliminationModifier");
-        double metabolismModifier = DoubleArgumentType.getDouble(context, "metabolismModifier");
+        float dosage = FloatArgumentType.getFloat(context, "dosage");
+        float absorptionModifier = FloatArgumentType.getFloat(context, "absorptionModifier");
+        float eliminationModifier = FloatArgumentType.getFloat(context, "eliminationModifier");
+        float metabolismModifier = FloatArgumentType.getFloat(context, "metabolismModifier");
 
         Collection<Character> characters = CharacterManager.getInstance().getCharacterMap().values();
 
