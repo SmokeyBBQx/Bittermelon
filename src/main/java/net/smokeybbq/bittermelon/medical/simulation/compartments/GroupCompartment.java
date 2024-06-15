@@ -52,4 +52,16 @@ public abstract class GroupCompartment extends Compartment {
             compartments.get(name).removeHealth(health);
         }
     }
+    protected double getAverageHealth() {
+        if (compartments == null || compartments.isEmpty()) {
+            return 0;
+        }
+
+        double totalHealth = 0;
+        for (SimpleCompartment compartment : compartments) {
+            totalHealth += compartment.getHealth();
+        }
+
+        return totalHealth / compartments.size();
+    }
 }

@@ -1,12 +1,11 @@
 package net.smokeybbq.bittermelon.medical.infections;
 
+import com.sun.jna.WString;
 import net.smokeybbq.bittermelon.medical.symptoms.Symptom;
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Infection {
-    // Instance variables
-    protected List<Symptom> symptoms;
 
     // Does the body cure the illness eventually?
     protected Boolean isPersistent;
@@ -23,8 +22,11 @@ public abstract class Infection {
     //An infection has five stages: Incubation, Prodromal, Acute, Decline and Convalescent
     protected InfectionStage infectionStage;
 
+    //The part of the body where the infection incubates, E.G. "leftFoot" or "Liver"
+    protected String pointOfOrigin;
+
     public Infection() {
-        this.symptoms = new ArrayList<>();
+
     }
 
     public  List<Symptom> getSymptoms(){
@@ -37,5 +39,13 @@ public abstract class Infection {
 
     public InfectionStage getInfectionStage() {
         return infectionStage;
+    }
+
+    public String getPointOfOrigin() {
+        return pointOfOrigin;
+    }
+
+    public void setPointOfOrigin(String pointOfOrigin) {
+        this.pointOfOrigin = pointOfOrigin;
     }
 }
