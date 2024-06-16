@@ -30,7 +30,7 @@ import static net.smokeybbq.bittermelon.util.LocalMessageHandler.sendLocalMessag
 public class Stumble {
     ServerPlayer player;
     boolean stumbled;
-    int stunTime = 200;
+    int stunTime = 100;
     int tickTimer = 0;
     private static final Random RANDOM = new Random();
 
@@ -59,10 +59,9 @@ public class Stumble {
     }
 
     private void playerPhysics() {
-        float acceleration = player.getSpeed();
-        Vec3 lookDirection = player.getLookAngle().scale(acceleration * 2);
+        Vec3 lookDirection = player.getLookAngle();
 
-        player.setDeltaMovement(player.getDeltaMovement().add(lookDirection));
+        player.setDeltaMovement(player.getDeltaMovement().add(lookDirection).scale(1.3));
         player.hurtMarked = true;
         stumbled = true;
     }
@@ -73,14 +72,14 @@ public class Stumble {
             player.setPose(Pose.SWIMMING);
         }
 
-        float time = 10F - tickTimer / 20F;
+            float time = 5F - tickTimer / 20F;
 
-        if (time >= 0) {
-            String formattedTime = String.format("%.1f", time);
-            player.connection.send(new ClientboundSetActionBarTextPacket(Component.literal("Stunned for " + formattedTime + " seconds")));
-        }
+            if (time >= 0) {
+                String formattedTime = String.format("%.1f", time);
+                player.connection.send(new ClientboundSetActionBarTextPacket(Component.literal("Stunned for " + formattedTime + " seconds")));
+            }
 
-        tickTimer++;
+            tickTimer++;
     }
 
     @SubscribeEvent
