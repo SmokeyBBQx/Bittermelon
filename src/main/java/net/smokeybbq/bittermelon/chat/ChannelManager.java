@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.util.DataManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileReader;
@@ -21,7 +22,7 @@ public class ChannelManager extends DataManager<String, Channel> {
     private static final HashMap<Character, Channel> playerUUIDToChannel = new HashMap<>();
 
     private ChannelManager() {
-        super(FMLPaths.GAMEDIR.get().resolve("channels/").toString(), Channel.class);
+        super(CHANNEL_FOLDER, Channel.class);
     }
 
     public static synchronized ChannelManager getInstance() {
@@ -49,6 +50,14 @@ public class ChannelManager extends DataManager<String, Channel> {
     public void addChannel(String channelName, Channel channel) {
         saveData(channel);
         addData(channelName, channel);
+    }
+
+    public void removeChannel(@NotNull Channel channel) {
+        deleteData(channel);
+        // while loop used to remove all characters tied to the channel
+        while (playerUUIDToChannel.containsValue(channel)) {
+            playerUUIDToChannel.values().remove(channel);
+        }
     }
 
     public void updateData(Channel channel) {

@@ -19,16 +19,22 @@ public class CommandChannel {
         dispatcher.register(Commands.literal("channel")
                 .then(Commands.literal("switch")
                         .then(Commands.argument("channel", StringArgumentType.word())
-                                .executes(context -> switchChannel(context))))
+                                .executes(context -> switchChannel(context)))
+                )
                 .then(Commands.literal("join")
                         .then(Commands.argument("channel", StringArgumentType.word())
-                                .executes(context -> joinChannel(context))))
+                                .executes(context -> joinChannel(context)))
+                )
                 .then(Commands.literal("add")
                         .then(Commands.argument("name", StringArgumentType.string())
                                 .then(Commands.argument("range", IntegerArgumentType.integer(-1))
                                         .then(Commands.argument("chatColor", StringArgumentType.string())
                                                 .then(Commands.argument("nameColor", StringArgumentType.string())
                                                         .executes(context -> createChannel(context))))))
+                )
+                .then(Commands.literal("remove")
+                        .then(Commands.argument("channel", StringArgumentType.string())
+                                .executes(context -> removeChannel(context)))
                 )
                 .then(Commands.argument("channel", StringArgumentType.word())
                         .executes(context -> switchChannel(context)))
@@ -104,6 +110,19 @@ public class CommandChannel {
         Channel newChannel = new Channel(name, range, chatColor, channelNameColor);
         ChannelManager.getInstance().addChannel(name, newChannel);
         context.getSource().sendSystemMessage(Component.literal("Channel created: " + name + " (Talk Range: " + range + ", Chat Color: " + chatColor + ", Channel Name Color: " + channelNameColor + ")"));
+        return 1;
+    }
+
+    private static int removeChannel(CommandContext<CommandSourceStack> context) {
+        String channelName = StringArgumentType.getString(context, "channel");
+        Channel channel = CommandUtil.getChannelIgnoreCase(channelName);
+        if (channel != null) {
+            ChannelManager.getInstance().removeChannel(channel);
+        } else {
+            context.getSource().sendFailure(Component.literal("Channel not found: " + channelName));
+            return 0;
+        }
+        context.getSource().sendSystemMessage(Component.literal("Channel removed: " + channel.getName()));
         return 1;
     }
 }
