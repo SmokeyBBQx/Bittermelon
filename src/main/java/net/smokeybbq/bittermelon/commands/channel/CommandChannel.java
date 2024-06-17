@@ -16,6 +16,7 @@ import net.smokeybbq.bittermelon.chat.Channel;
 import net.smokeybbq.bittermelon.chat.ChannelManager;
 import net.smokeybbq.bittermelon.util.CommandUtil;
 
+import java.util.List;
 import java.util.Set;
 
 public class CommandChannel {
@@ -40,6 +41,12 @@ public class CommandChannel {
                         .then(Commands.argument("channel", StringArgumentType.string())
                                 .executes(context -> removeChannel(context)))
                 )
+                .then(Commands.literal("list")
+                        .executes(context -> viewChannels(context, false))
+                        .then(Commands.argument("player", EntityArgument.player())
+                                .then(Commands.argument("character", StringArgumentType.string())
+                                        .executes(context -> viewChannels(context, true))))
+                )
                 .then(Commands.literal("whitelist")
                         .then(Commands.literal("add")
                                 .then(Commands.argument("channel", StringArgumentType.string())
@@ -61,6 +68,37 @@ public class CommandChannel {
                 .then(Commands.argument("channel", StringArgumentType.word())
                         .executes(context -> switchChannel(context)))
         );
+    }
+
+    private static int viewChannels(CommandContext<CommandSourceStack> context, boolean doesTargetPlayer) throws CommandSyntaxException {
+        ServerPlayer player;
+        Character character;
+        if (doesTargetPlayer) {
+            player = EntityArgument.getPlayer(context, "player");
+            String characterName = StringArgumentType.getString(context, "character");
+            character = CommandUtil.getCharacterIgnoreCase(player, characterName);
+            if (character == null) {
+                context.getSource().sendFailure(Component.literal("Character not found: " + characterName));
+                return 0;
+            }
+        } else {
+            player = context.getSource().getPlayerOrException();
+            character = CharacterManager.getActiveCharacter(player.getUUID());
+        }
+
+        List<Channel> channels = ChannelManager.getInstance().getPermittedChannels(character);
+        // this should never trigger, but just in case
+        if (channels.isEmpty()) {
+            context.getSource().sendSystemMessage(Component.literal(character.getName() + " has access to 0 channel(s): "));
+        }
+
+        String output = character.getName() + " has access to " + channels.size() + " channel(s): ";
+        for (Channel c : channels) {
+            output += c.getName() + ", ";
+        }
+        output = output.substring(0, output.lastIndexOf(", "));
+        context.getSource().sendSystemMessage(Component.literal(output));
+        return 1;
     }
 
     private static int switchChannel(CommandContext<CommandSourceStack> context) {
@@ -96,12 +134,16 @@ public class CommandChannel {
         String channelName = StringArgumentType.getString(context, "channel");
         Channel channel = CommandUtil.getChannelIgnoreCase(channelName);
         try {
-            Character activeCharacter = CharacterManager.getInstance().getActiveCharacter(context.getSource().getPlayer().getUUID());
+            Character activeCharacter = CharacterManager.getActiveCharacter(context.getSource().getPlayer().getUUID());
             if (activeCharacter == null) {
                 context.getSource().sendFailure(Component.literal("Switch to a character before joining a channel"));
                 return 0;
             }
             if (channel != null) {
+                if (!ChannelManager.getInstance().isPermittedChannel(activeCharacter, channel)) {
+                    context.getSource().sendFailure(Component.literal("You are not permitted to join that channel"));
+                    return 0;
+                }
                 if (channel.getMembers().contains(activeCharacter)) {
                     context.getSource().sendSystemMessage(Component.literal("Already joined channel: " + channel.getName()));
                     return 1; // is this supposed to return 0 or 1?

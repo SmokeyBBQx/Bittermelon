@@ -60,6 +60,21 @@ public class ChannelManager extends DataManager<String, Channel> {
         }
     }
 
+    // TODO: add boolean to channels that disables whitelist
+    public List<Channel> getPermittedChannels(Character character) {
+        List<Channel> list = new ArrayList<>();
+        for (Channel channel : getDataMap().values()) {
+            if (channel.getWhitelist().contains(character)) {
+                list.add(channel);
+            }
+        }
+        return list;
+    }
+
+    public boolean isPermittedChannel(Character character, Channel channel) {
+        return getPermittedChannels(character).contains(channel);
+    }
+
     public void updateData(Channel channel) {
         saveData(channel);
     }
