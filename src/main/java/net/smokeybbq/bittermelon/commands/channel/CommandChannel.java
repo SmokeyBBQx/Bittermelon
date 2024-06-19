@@ -94,8 +94,16 @@ public class CommandChannel {
         }
 
         String output = character.getName() + " has access to " + channels.size() + " channel(s): ";
+        String channelType = "";
         for (Channel c : channels) {
-            output += c.getName() + ", ";
+            if (c.getMembers().contains(character)) {
+                if (c.equals(ChannelManager.getCharacterActiveChannel(character))) {
+                    channelType = " (Active)";
+                } else {
+                    channelType = " (Joined)";
+                }
+            }
+            output += c.getName() + channelType + ", ";
         }
         output = output.substring(0, output.lastIndexOf(", "));
         context.getSource().sendSystemMessage(Component.literal(output));
