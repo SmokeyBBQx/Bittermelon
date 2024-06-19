@@ -121,17 +121,22 @@ public class CommandCharacter {
 //            player.refreshDimensions(); // doesn't appear to do anything
             player.getInventory().setChanged();
             player.resetSentInfo();
-            // retrieve and set player channel
-            Channel channel = CommandUtil.getActiveChannelFromData(player);
-            if (channel != null) {
-                ChannelManager.setCharacterActiveChannel(selectedCharacter, channel);
-            }
         } else {
             // implement default playerData
         }
 
         CharacterManager.getInstance().setActiveCharacter(player, selectedCharacter);
         context.getSource().sendSystemMessage(Component.literal("Character switched: " + selectedCharacter.getName()));
+        // retrieve and set player channel
+        Channel channel = CommandUtil.getActiveChannelFromData(player);
+        if (channel != null) {
+            if (ChannelManager.getCharacterActiveChannel(selectedCharacter) != channel) {
+                CommandUtil.executePlayerCommand(player, "channel switch " + channel.getName());
+            } else {
+                // manually sends message for clarity even when command is not called
+                context.getSource().sendSystemMessage(Component.literal("Now speaking in: " + channel.getName()));
+            }
+        }
         return 1;
 
     }

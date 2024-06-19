@@ -88,6 +88,10 @@ public class CommandChannel {
         } else {
             player = context.getSource().getPlayerOrException();
             character = CharacterManager.getActiveCharacter(player.getUUID());
+            if (character == null) {
+                context.getSource().sendFailure(Component.literal("Switch to a character before managing channels"));
+                return 0;
+            }
         }
 
         List<Channel> channels = ChannelManager.getInstance().getPermittedChannels(character);

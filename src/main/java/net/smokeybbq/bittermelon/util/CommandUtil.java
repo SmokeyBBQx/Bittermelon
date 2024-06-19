@@ -163,4 +163,12 @@ public class CommandUtil {
     public static ServerPlayer keyToServerPlayer(UUID playerUUID) {
         return server.getPlayerList().getPlayer(playerUUID);
     }
+
+    public static int executeServerCommand(String command) {
+        return server.getCommands().performPrefixedCommand(server.createCommandSourceStack(), command);
+    }
+
+    public static int executePlayerCommand(ServerPlayer player, String command) {
+        return server.getCommands().performPrefixedCommand(player.createCommandSourceStack(), command);
+    }
 }

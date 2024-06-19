@@ -54,14 +54,7 @@ public class PlayerEventHandler {
         if (character != null) {
             // prevents setting if the character is already active
             if (!CharacterManager.getActiveCharacters().containsValue(character)) {
-                CharacterManager.setActiveCharacter(player, character);
-            }
-
-            Channel channel = CommandUtil.getActiveChannelFromData(player);
-            if (channel != null) {
-                if (ChannelManager.getCharacterActiveChannel(character) != channel) { // prevent unnecessary sets
-                    ChannelManager.setCharacterActiveChannel(character, channel);
-                }
+                CommandUtil.executePlayerCommand(player, "character switch " + character.getName());
             }
         }
     }
