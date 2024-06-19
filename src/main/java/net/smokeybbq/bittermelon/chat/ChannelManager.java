@@ -60,6 +60,22 @@ public class ChannelManager extends DataManager<String, Channel> {
         }
     }
 
+    private List<Channel> getDefaultChannels() {
+        List<Channel> result = new ArrayList<>();
+        for (Channel c : getDataMap().values()) {
+            if (c.getProperty("isDefault")) {
+                result.add(c);
+            }
+        }
+        return result;
+    }
+
+    public void setDefaultChannels(Character character) {
+        for (Channel c : getDefaultChannels()) {
+            c.addMember(character);
+        }
+    }
+
     // TODO: add boolean to channels that disables whitelist
     public List<Channel> getPermittedChannels(Character character) {
         List<Channel> list = new ArrayList<>();

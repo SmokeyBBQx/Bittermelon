@@ -49,6 +49,7 @@ public class Character {
         this.weight = weight;
         this.emoteColor = emoteColor;
         medicalStats = new MedicalStats(this);
+        ChannelManager.getInstance().setDefaultChannels(this);
     }
 
     public UUID getUUID() {
