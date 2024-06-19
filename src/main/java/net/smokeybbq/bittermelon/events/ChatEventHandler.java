@@ -13,6 +13,7 @@ import net.smokeybbq.bittermelon.chat.Channel;
 import net.smokeybbq.bittermelon.chat.ChannelManager;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,16 +34,29 @@ public class ChatEventHandler {
             return;
         }
 
-        String emoteColor = activeCharacter.getEmoteColor();
-        String chatColor = currentChannel.getChatColor();
-        String channelColor = currentChannel.getChannelNameColor();
+        List<UUID> seenMessage = new ArrayList<>();
+        sendMessageToChannel(player, currentChannel, message, seenMessage, true);
+    }
 
-        String channelFormat = "[" + currentChannel.getName() + "] ";
-        String nameFormat = activeCharacter.getName() + ":";
+    public static double compareDistance(ServerPlayer player1, ServerPlayer player2) {
+        double x = Math.abs(player1.getX() - player2.getX());
+        double y = Math.abs(player1.getY() - player2.getY());
+        double z = Math.abs(player1.getZ() - player2.getZ());
+        return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+    }
+
+    private static void sendMessageToChannel(ServerPlayer player, Channel channel, String message, List<UUID> playersSeen, boolean isOriginalChannel) {
+        Character character = CharacterManager.getActiveCharacter(player.getUUID());
+        String emoteColor = character.getEmoteColor();
+        String chatColor = channel.getChatColor();
+        String channelColor = channel.getChannelNameColor();
+
+        String channelFormat = "[" + channel.getName() + "] ";
+        String nameFormat = character.getName() + ":";
 
         MutableComponent messageComponent = Component.empty();
-        messageComponent.append(Component.literal(channelFormat).setStyle(Style.EMPTY.withColor((TextColor.parseColor(channelColor)))));
-        messageComponent.append(Component.literal(nameFormat)); // TODO: add name colors
+        messageComponent.append(Component.literal(channelFormat).setStyle(Style.EMPTY.withColor(TextColor.parseColor(channelColor))));
+        messageComponent.append(Component.literal(nameFormat).setStyle(Style.EMPTY.withColor(TextColor.parseColor(channelColor)))); // TODO: review name colors
 
         // Emote and Dialogue Detection
         String regex = "\"([^\"]*)\"|([^\"\\s]+(\\s+[^\"\\s]+)*)";
@@ -50,7 +64,6 @@ public class ChatEventHandler {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(message);
 
-        // TODO: Review emotes
         while (matcher.find()) {
             if (matcher.group(1) != null) {
                 String quotedText = matcher.group(1);
@@ -63,21 +76,25 @@ public class ChatEventHandler {
             }
         }
 
-        ArrayList<UUID> seenMessage = new ArrayList<UUID>();
-        for (Character character : currentChannel.getMembers()) {
-            UUID memberUUID = character.getPlayerUUID();
+        for (Character c : channel.getMembers()) {
+            UUID memberUUID = c.getPlayerUUID();
             ServerPlayer p = player.server.getPlayerList().getPlayer(memberUUID);
-            if (p != null && !seenMessage.contains(memberUUID) && compareDistance(player, p) <= currentChannel.getRange()) {
-                seenMessage.add(memberUUID);
-                p.sendSystemMessage(messageComponent);
+            if (p != null && !playersSeen.contains(memberUUID)) {
+                if (compareDistance(player, p) <= channel.getRange() || channel.getProperty("ignoreRange")) {
+                    // TODO: server level comparison requires testing
+                    if (player.serverLevel().equals(p.serverLevel()) || channel.getProperty("ignoreDimensions")) {
+                        playersSeen.add(memberUUID);
+                        p.sendSystemMessage(messageComponent);
+                    }
+                }
             }
         }
-    }
 
-    public static double compareDistance(ServerPlayer player1, ServerPlayer player2) {
-        double x = Math.abs(player1.getX() - player2.getX());
-        double y = Math.abs(player1.getY() - player2.getY());
-        double z = Math.abs(player1.getZ() - player2.getZ());
-        return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+        // to prevent infinite recursion, only subchannels of the original channel will also see the message
+        if (isOriginalChannel) {
+            for (Channel layer : channel.getLayeredChannels()) {
+                sendMessageToChannel(player, layer, message, playersSeen, false);
+            }
+        }
     }
 }

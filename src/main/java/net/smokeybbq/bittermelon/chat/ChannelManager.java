@@ -64,7 +64,7 @@ public class ChannelManager extends DataManager<String, Channel> {
     public List<Channel> getPermittedChannels(Character character) {
         List<Channel> list = new ArrayList<>();
         for (Channel channel : getDataMap().values()) {
-            if (channel.getWhitelist().contains(character)) {
+            if (channel.getWhitelist().contains(character) || channel.getProperty("ignoreWhitelist")) {
                 list.add(channel);
             }
         }

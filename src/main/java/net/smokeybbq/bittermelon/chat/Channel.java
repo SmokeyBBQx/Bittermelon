@@ -2,10 +2,10 @@ package net.smokeybbq.bittermelon.chat;
 
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Channel {
     private final String name;
@@ -14,6 +14,8 @@ public class Channel {
     private final String channelNameColor;
     private final Set<UUID> members = new HashSet<>();
     private final Set<UUID> whitelist = new HashSet<>();
+    private final Set<String> layeredChannels = new HashSet<>();
+    private final Map<String, Boolean> properties = new ConcurrentHashMap<>();
 
 
     public Channel (String name, int range, String chatColor, String channelNameColor) {
@@ -21,6 +23,11 @@ public class Channel {
         this.range = range;
         this.chatColor = chatColor;
         this.channelNameColor = channelNameColor;
+        this.properties.put("ignoreWhitelist", Boolean.FALSE);
+        this.properties.put("ignoreDimensions", Boolean.FALSE);
+        this.properties.put("ignoreRange", Boolean.FALSE);
+        this.properties.put("canLeave", Boolean.TRUE);
+        this.properties.put("isDefault", Boolean.FALSE);
     }
 
     public String getName() {return name;}
@@ -35,6 +42,25 @@ public class Channel {
 
     public int getRange() {
         return range;
+    }
+
+    @Nullable
+    public boolean getProperty(String name) {
+        return properties.getOrDefault(name, null);
+    }
+
+    public List<Channel> getLayeredChannels() {
+        List<Channel> result = new ArrayList<>();
+        Channel layer;
+        for (String s : layeredChannels) {
+            layer = ChannelManager.getInstance().getChannel(s);
+            if (layer != null) {
+                result.add(layer);
+            } else {
+                layeredChannels.remove(s);
+            }
+        }
+        return result;
     }
 
     public void addMember(Character character) {
@@ -76,6 +102,7 @@ public class Channel {
     public void removeFromWhitelist(Character character) {
         UUID characterUUID = character.getUUID();
         whitelist.remove(characterUUID);
+        members.remove(characterUUID);
         save();
     }
 

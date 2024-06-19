@@ -23,18 +23,18 @@ public class CommandChannel {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("channel")
                 .then(Commands.literal("switch")
-                        .then(Commands.argument("channel", StringArgumentType.word())
+                        .then(Commands.argument("channel", StringArgumentType.greedyString())
                                 .executes(context -> switchChannel(context)))
                 )
                 .then(Commands.literal("join")
-                        .then(Commands.argument("channel", StringArgumentType.word())
+                        .then(Commands.argument("channel", StringArgumentType.greedyString())
                                 .executes(context -> joinChannel(context)))
                 )
                 .then(Commands.literal("add")
                         .then(Commands.argument("name", StringArgumentType.string())
                                 .then(Commands.argument("range", IntegerArgumentType.integer(-1))
                                         .then(Commands.argument("chatColor", StringArgumentType.string())
-                                                .then(Commands.argument("nameColor", StringArgumentType.string())
+                                                .then(Commands.argument("channelColor", StringArgumentType.string())
                                                         .executes(context -> createChannel(context))))))
                 )
                 .then(Commands.literal("remove")
@@ -65,7 +65,7 @@ public class CommandChannel {
                                 .then(Commands.argument("channel", StringArgumentType.string())
                                         .executes(context -> whitelistClear(context))))
                 )
-                .then(Commands.argument("channel", StringArgumentType.word())
+                .then(Commands.argument("channel", StringArgumentType.greedyString())
                         .executes(context -> switchChannel(context)))
         );
     }
@@ -90,6 +90,7 @@ public class CommandChannel {
         // this should never trigger, but just in case
         if (channels.isEmpty()) {
             context.getSource().sendSystemMessage(Component.literal(character.getName() + " has access to 0 channel(s): "));
+            return 1;
         }
 
         String output = character.getName() + " has access to " + channels.size() + " channel(s): ";
@@ -164,7 +165,7 @@ public class CommandChannel {
         String name = StringArgumentType.getString(context, "name");
         int range = IntegerArgumentType.getInteger(context, "range");
         String chatColor = StringArgumentType.getString(context, "chatColor");
-        String channelNameColor = StringArgumentType.getString(context, "nameColor");
+        String channelNameColor = StringArgumentType.getString(context, "channelColor");
         Channel channel = CommandUtil.getChannelIgnoreCase(name);
 
         if (channel != null) {
@@ -197,6 +198,10 @@ public class CommandChannel {
         Channel channel = CommandUtil.getChannelIgnoreCase(channelName);
         Character character = CommandUtil.getCharacterIgnoreCase(player, characterName);
         if (channel != null) {
+            if (channel.getProperty("ignoreWhitelist")) {
+                context.getSource().sendFailure(Component.literal(channel.getName() + " does not use a whitelist"));
+                return 0;
+            }
             if (character == null) {
                 context.getSource().sendFailure(Component.literal("Character not found: " + characterName));
                 return 0;
@@ -223,6 +228,10 @@ public class CommandChannel {
         Channel channel = CommandUtil.getChannelIgnoreCase(channelName);
         Character character = CommandUtil.getCharacterIgnoreCase(player, characterName);
         if (channel != null) {
+            if (channel.getProperty("ignoreWhitelist")) {
+                context.getSource().sendFailure(Component.literal(channel.getName() + " does not use a whitelist"));
+                return 0;
+            }
             if (character == null) {
                 context.getSource().sendFailure(Component.literal("Character not found: " + characterName));
                 return 0;
@@ -246,6 +255,11 @@ public class CommandChannel {
         String channelName = StringArgumentType.getString(context, "channel");
         Channel channel = CommandUtil.getChannelIgnoreCase(channelName);
         if (channel != null) {
+            if (channel.getProperty("ignoreWhitelist")) {
+                context.getSource().sendFailure(Component.literal(channel.getName() + " does not use a whitelist"));
+                return 0;
+            }
+
             Set<Character> whitelist = channel.getWhitelist();
 
             if (whitelist.isEmpty()) {
@@ -268,6 +282,11 @@ public class CommandChannel {
         String channelName = StringArgumentType.getString(context, "channel");
         Channel channel = CommandUtil.getChannelIgnoreCase(channelName);
         if (channel != null) {
+            if (channel.getProperty("ignoreWhitelist")) {
+                context.getSource().sendFailure(Component.literal(channel.getName() + " does not use a whitelist"));
+                return 0;
+            }
+
             Set<Character> whitelist = channel.getWhitelist();
 
             if (whitelist.isEmpty()) {
