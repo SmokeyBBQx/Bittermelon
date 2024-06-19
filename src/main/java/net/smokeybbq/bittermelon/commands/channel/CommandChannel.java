@@ -30,6 +30,10 @@ public class CommandChannel {
                         .then(Commands.argument("channel", StringArgumentType.greedyString())
                                 .executes(context -> joinChannel(context)))
                 )
+                .then(Commands.literal("leave")
+                        .then(Commands.argument("channel", StringArgumentType.greedyString())
+                                .executes(context -> leaveChannel(context)))
+                )
                 .then(Commands.literal("add")
                         .then(Commands.argument("name", StringArgumentType.string())
                                 .then(Commands.argument("range", IntegerArgumentType.integer(-1))
@@ -49,17 +53,17 @@ public class CommandChannel {
                 )
                 .then(Commands.literal("whitelist")
                         .then(Commands.literal("add")
-                                .then(Commands.argument("channel", StringArgumentType.string())
-                                        .then(Commands.argument("player", EntityArgument.player())
-                                                .then(Commands.argument("character", StringArgumentType.string())
+                                .then(Commands.argument("player", EntityArgument.player())
+                                        .then(Commands.argument("character", StringArgumentType.string())
+                                                .then(Commands.argument("channel", StringArgumentType.greedyString())
                                                         .executes(context -> whitelistAdd(context))))))
                         .then(Commands.literal("remove")
-                                .then(Commands.argument("channel", StringArgumentType.string())
-                                        .then(Commands.argument("player", EntityArgument.player())
-                                                .then(Commands.argument("character", StringArgumentType.string())
-                                                        .executes(context -> whitelistRemove(context))))))
+                                .then(Commands.argument("player", EntityArgument.player())
+                                        .then(Commands.argument("character", StringArgumentType.string())
+                                                .then(Commands.argument("channel", StringArgumentType.greedyString())
+                                                        .executes(context -> whitelistAdd(context))))))
                         .then(Commands.literal("list")
-                                .then(Commands.argument("channel", StringArgumentType.string())
+                                .then(Commands.argument("channel", StringArgumentType.greedyString())
                                         .executes(context -> whitelistList(context))))
                         .then(Commands.literal("clear")
                                 .then(Commands.argument("channel", StringArgumentType.string())
@@ -110,62 +114,87 @@ public class CommandChannel {
         return 1;
     }
 
-    private static int switchChannel(CommandContext<CommandSourceStack> context) {
+    private static int switchChannel(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         String channelName = StringArgumentType.getString(context, "channel");
         Channel channel = CommandUtil.getChannelIgnoreCase(channelName);
-        ServerPlayer player = context.getSource().getPlayer();
-        try {
-            Character activeCharacter = CharacterManager.getInstance().getActiveCharacter(player.getUUID());
-            if (channel != null) {
-                if (channel.getMembers().contains(activeCharacter)) {
-                    if (ChannelManager.getCharacterActiveChannel(activeCharacter) != channel) {
-                        CommandUtil.writeChannelToPlayerData(channel, player);
-                        ChannelManager.getInstance().setCharacterActiveChannel(activeCharacter, channel);
-                    } else {
-                        context.getSource().sendSystemMessage(Component.literal("Already speaking in: " + channel.getName()));
-                        return 1;
-                    }
+        ServerPlayer player = context.getSource().getPlayerOrException();
+        Character activeCharacter = CharacterManager.getActiveCharacter(player.getUUID());
+        if (channel != null) {
+            if (channel.getMembers().contains(activeCharacter)) {
+                if (ChannelManager.getCharacterActiveChannel(activeCharacter) != channel) {
+                    CommandUtil.writeChannelToPlayerData(channel, player);
+                    ChannelManager.setCharacterActiveChannel(activeCharacter, channel);
                 } else {
-                    context.getSource().sendFailure(Component.literal("You have not joined: " + channel.getName()));
-                    return 0;
+                    context.getSource().sendSystemMessage(Component.literal("Already speaking in: " + channel.getName()));
+                    return 1;
                 }
             } else {
-                context.getSource().sendFailure(Component.literal("Channel not found: " + channelName));
+                context.getSource().sendFailure(Component.literal("You have not joined: " + channel.getName()));
                 return 0;
             }
-        } catch (IllegalArgumentException e) {
+        } else {
+            context.getSource().sendFailure(Component.literal("Channel not found: " + channelName));
+            return 0;
         }
         context.getSource().sendSystemMessage(Component.literal("Now speaking in: " + channel.getName()));
         return 1;
     }
 
-    private static int joinChannel(CommandContext<CommandSourceStack> context) {
+    private static int joinChannel(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         String channelName = StringArgumentType.getString(context, "channel");
         Channel channel = CommandUtil.getChannelIgnoreCase(channelName);
-        try {
-            Character activeCharacter = CharacterManager.getActiveCharacter(context.getSource().getPlayer().getUUID());
-            if (activeCharacter == null) {
-                context.getSource().sendFailure(Component.literal("Switch to a character before joining a channel"));
+        Character activeCharacter = CharacterManager.getActiveCharacter(context.getSource().getPlayerOrException().getUUID());
+        if (activeCharacter == null) {
+            context.getSource().sendFailure(Component.literal("Switch to a character before managing channels"));
+            return 0;
+        }
+        if (channel != null) {
+            if (!ChannelManager.getInstance().isPermittedChannel(activeCharacter, channel)) {
+                context.getSource().sendFailure(Component.literal("You are not permitted to join that channel"));
                 return 0;
             }
-            if (channel != null) {
-                if (!ChannelManager.getInstance().isPermittedChannel(activeCharacter, channel)) {
-                    context.getSource().sendFailure(Component.literal("You are not permitted to join that channel"));
-                    return 0;
-                }
-                if (channel.getMembers().contains(activeCharacter)) {
-                    context.getSource().sendSystemMessage(Component.literal("Already joined channel: " + channel.getName()));
-                    return 1; // is this supposed to return 0 or 1?
-                } else {
-                    channel.addMember(activeCharacter);
-                }
+            if (channel.getMembers().contains(activeCharacter)) {
+                context.getSource().sendSystemMessage(Component.literal("Already joined channel: " + channel.getName()));
+                return 1;
             } else {
-                context.getSource().sendFailure(Component.literal("Channel not found: " + channelName));
-                return 0;
+                channel.addMember(activeCharacter);
             }
-        } catch (IllegalArgumentException e) {
+        } else {
+            context.getSource().sendFailure(Component.literal("Channel not found: " + channelName));
+            return 0;
         }
         context.getSource().sendSystemMessage(Component.literal("Channel joined: " + channel.getName()));
+        return 1;
+    }
+
+    private static int leaveChannel(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        String channelName = StringArgumentType.getString(context, "channel");
+        Channel channel = CommandUtil.getChannelIgnoreCase(channelName);
+        Character activeCharacter = CharacterManager.getActiveCharacter(context.getSource().getPlayerOrException().getUUID());
+        if (activeCharacter == null) {
+            context.getSource().sendFailure(Component.literal("Switch to a character before managing channels"));
+            return 0;
+        }
+        if (channel != null) {
+            if (!channel.getProperty("canLeave")) {
+                context.getSource().sendFailure(Component.literal("You are not permitted to leave that channel"));
+                return 0;
+            }
+            if (!channel.getMembers().contains(activeCharacter)) {
+                context.getSource().sendSystemMessage(Component.literal("Not joined channel: " + channel.getName()));
+                return 1;
+            } else {
+                if (channel.equals(ChannelManager.getCharacterActiveChannel(activeCharacter))) {
+                    context.getSource().sendFailure(Component.literal("You cannot leave an active channel"));
+                    return 0;
+                }
+                channel.removeMember(activeCharacter);
+            }
+        } else {
+            context.getSource().sendFailure(Component.literal("Channel not found: " + channelName));
+            return 0;
+        }
+        context.getSource().sendSystemMessage(Component.literal("Channel left: " + channel.getName()));
         return 1;
     }
 
