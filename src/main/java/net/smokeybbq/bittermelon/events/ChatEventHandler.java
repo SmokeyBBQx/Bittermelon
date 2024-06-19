@@ -38,13 +38,6 @@ public class ChatEventHandler {
         sendMessageToChannel(player, currentChannel, message, seenMessage, true);
     }
 
-    public static double compareDistance(ServerPlayer player1, ServerPlayer player2) {
-        double x = Math.abs(player1.getX() - player2.getX());
-        double y = Math.abs(player1.getY() - player2.getY());
-        double z = Math.abs(player1.getZ() - player2.getZ());
-        return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
-    }
-
     private static void sendMessageToChannel(ServerPlayer player, Channel channel, String message, List<UUID> playersSeen, boolean isOriginalChannel) {
         Character character = CharacterManager.getActiveCharacter(player.getUUID());
         String emoteColor = character.getEmoteColor();
@@ -80,7 +73,7 @@ public class ChatEventHandler {
             UUID memberUUID = c.getPlayerUUID();
             ServerPlayer p = player.server.getPlayerList().getPlayer(memberUUID);
             if (p != null && !playersSeen.contains(memberUUID)) {
-                if (compareDistance(player, p) <= channel.getRange() || channel.getProperty("ignoreRange")) {
+                if (player.distanceTo(p) <= channel.getRange() || channel.getProperty("ignoreRange")) {
                     // TODO: server level comparison requires testing
                     if (player.serverLevel().equals(p.serverLevel()) || channel.getProperty("ignoreDimensions")) {
                         playersSeen.add(memberUUID);
