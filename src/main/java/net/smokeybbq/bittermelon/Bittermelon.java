@@ -23,6 +23,7 @@ import net.smokeybbq.bittermelon.commands.channel.CommandJoinChannel;
 import net.smokeybbq.bittermelon.commands.character.*;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.smokeybbq.bittermelon.events.ChatEventHandler;
+import org.spongepowered.asm.mixin.Mixins;
 import net.smokeybbq.bittermelon.medical.simulation.OralAdministration;
 import org.slf4j.Logger;
 
