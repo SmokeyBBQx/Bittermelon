@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.smokeybbq.bittermelon.miscellaneous",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "PlayerPoseClient"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
