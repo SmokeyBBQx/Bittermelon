@@ -1,18 +1,19 @@
 package net.smokeybbq.bittermelon.medical.simulation.compartments;
 
+import net.smokeybbq.bittermelon.character.medical.MedicalStats;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 
 public class EliminatingCompartment extends SimpleCompartment {
 
     private float rateConstant;
 
-    public EliminatingCompartment(String name, float volume) {
-        super(name, volume);
+    public EliminatingCompartment(String name, MedicalStats medicalStats) {
+        super(name, medicalStats);
     }
 
     @Override
     public float getDerivative(float sourceConcentration, Substance drug) {
-        return bloodFlow * sourceConcentration - (bloodFlow / 2) * getConcentration(drug) - rateConstant * getConcentration(drug);
+        return bloodFlow * sourceConcentration - rateConstant * getConcentration(drug);
     }
 
     @Override

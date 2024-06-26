@@ -1,11 +1,12 @@
 package net.smokeybbq.bittermelon.medical.simulation.compartments;
 
+import net.smokeybbq.bittermelon.character.medical.MedicalStats;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 
 public class SimpleCompartment extends Compartment {
 
-    public SimpleCompartment(String name, float volume) {
-        super(name, volume);
+    public SimpleCompartment(String name, MedicalStats medicalStats) {
+        super(name, medicalStats);
     }
 
     public float getDerivative(float sourceConcentration, Substance drug) {

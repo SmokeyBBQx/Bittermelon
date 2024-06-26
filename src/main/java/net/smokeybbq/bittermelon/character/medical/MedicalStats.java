@@ -2,85 +2,82 @@ package net.smokeybbq.bittermelon.character.medical;
 
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.medical.conditions.Condition;
-import net.smokeybbq.bittermelon.medical.simulation.compartments.CirculatoryCompartment;
-import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
-import net.smokeybbq.bittermelon.medical.simulation.compartments.EliminatingCompartment;
-import net.smokeybbq.bittermelon.medical.simulation.compartments.SimpleCompartment;
+import net.smokeybbq.bittermelon.medical.simulation.compartments.*;
 
 import java.util.*;
 
 public class MedicalStats {
-    private static final int INITIAL_HEALTH = 100;
-    private List<Condition> conditions = new ArrayList<>();
-    private float bloodLevel, pulseRate, respirationRate, bloodPressureSystolic, bloodPressureDiastolic;
+    private final List<Condition> conditions = new ArrayList<>();
+    private float bloodLevel;
+    private float respirationRate;
+    private float bloodPressureSystolic;
+    private float bloodPressureDiastolic;
+    private float bodyTemperature;
     private float bloodOxygen = 100;
-    private int maxHeartRate = 220;
-    private Character character;
     private float pulseTimer = 0;
     private float heartEffort = 0;
     private int pulse = 0;
     private int timer = 0;
     private int BPM = 0;
-    private float bodyTemperature;
-    private float volumeGI, volumeLiver, volumeCirculatory, volumeKidney, volumeHeart, volumeLung, volumeBrain, volumeAdiposeTissue, volumeBone, volumeMuscle, volumeLymphatic, volumeEndocrine, volumeOther;
-    private SimpleCompartment GI, liver, kidney, lung, heart, brain, adiposeTissue, bone, muscle, lymphatic, endocrine, other;
-    private CirculatoryCompartment circulatory;
-    private Map<String, Compartment> compartments = new HashMap<>();
+    private final Map<String, Compartment> compartments = new HashMap<>();
     public SimulationHandler simulationHandler;
 
     public MedicalStats(Character character) {
-        this.character = character;
         createCompartments();
         updateBloodFlow();
         simulationHandler = new SimulationHandler(character, compartments);
     }
-
-//    private void updateVolumes() {
-//        float weight = character.getWeight();
-//
-//        volumeGI = 0.0207 * weight;
-//        volumeCirculatory = 0.075 * weight;
-//        volumeKidney = 0.0051 * weight;
-//        volumeLiver = 0.0341 * weight;
-//        volumeHeart = 0.0069 * weight;
-//        volumeLung = 0.0415 * weight;
-//        volumeBrain = 0.0252 * weight;
-//        volumeAdiposeTissue = 0.1363 * weight;
-//        volumeBone = 0.1484 * weight;
-//        volumeMuscle = 0.3156 * weight;
-//        volumeLymphatic = 0.0019 * weight;
-//        volumeEndocrine = 0.0016 * weight;
-//        volumeOther = 0.1363 * weight;
-//    }
-
     private void createCompartments() {
-        GI = new SimpleCompartment("Gastrointestinal", volumeGI);
-        liver = new EliminatingCompartment("Liver", volumeLiver);
-        kidney = new EliminatingCompartment("Kidneys", volumeKidney);
-        circulatory = new CirculatoryCompartment("Circulatory System", volumeCirculatory);
-        lung = new SimpleCompartment("Lungs", volumeLung);
-        heart = new SimpleCompartment("Heart", volumeHeart);
-        brain = new SimpleCompartment("Brain", volumeBrain);
-        adiposeTissue = new SimpleCompartment("Adipose Tissue", volumeAdiposeTissue);
-        bone = new SimpleCompartment("Bone", volumeBone);
-        muscle = new SimpleCompartment("Muscle", volumeMuscle);
-        lymphatic = new SimpleCompartment("Lymphatic System", volumeLymphatic);
-        endocrine = new SimpleCompartment("Endocrine System", volumeEndocrine);
-        other = new SimpleCompartment("Other", volumeOther);
+        // List of compartments
+        Compartment[] compartmentsArray = {
+                // Internal Organs
+                new EliminatingCompartment("Gastrointestinal", this),
+                new EliminatingCompartment("Liver", this),
+                new EliminatingCompartment("Kidneys", this),
+                new CirculatoryCompartment("Circulatory System", this),
+                new SimpleCompartment("Lungs", this),
+                new SimpleCompartment("Heart", this),
+                new SimpleCompartment("Brain", this),
+                new SimpleCompartment("Lymphatic System", this),
+                new SimpleCompartment("Endocrine System", this),
+                new SimpleCompartment("Other", this),
 
-        compartments.put("Gastrointestinal", GI);
-        compartments.put("Liver", liver);
-        compartments.put("Kidneys", kidney);
-        compartments.put("Circulatory System", circulatory);
-        compartments.put("Lungs", lung);
-        compartments.put("Heart", heart);
-        compartments.put("Brain", brain);
-        compartments.put("Adipose Tissue", adiposeTissue);
-        compartments.put("Bone", bone);
-        compartments.put("Muscle", muscle);
-        compartments.put("Lymphatic System", lymphatic);
-        compartments.put("Endocrine System", endocrine);
-        compartments.put("Other", other);
+                // Sensory Organs
+                new SimpleCompartment("Left Eye", this),
+                new SimpleCompartment("Right Eye", this),
+                new SimpleCompartment("Nose", this),
+                new SimpleCompartment("Left Ear", this),
+                new SimpleCompartment("Right Ear", this),
+
+                // Body Parts
+                new BodyPartGroupCompartment("Head", this),
+                new BodyPartGroupCompartment("Neck", this),
+                new BodyPartGroupCompartment("Left Shoulder", this),
+                new BodyPartGroupCompartment("Right Shoulder", this),
+                new BodyPartGroupCompartment("Upper Back", this),
+                new BodyPartGroupCompartment("Abdomen", this),
+                new BodyPartGroupCompartment("Left Upper Arm", this),
+                new BodyPartGroupCompartment("Left Lower Arm", this),
+                new BodyPartGroupCompartment("Lower Back", this),
+                new BodyPartGroupCompartment("Left Hand", this),
+                new BodyPartGroupCompartment("Right Hand", this),
+                new BodyPartGroupCompartment("Left Thigh", this),
+                new BodyPartGroupCompartment("Right Thigh", this),
+                new BodyPartGroupCompartment("Left Calf", this),
+                new BodyPartGroupCompartment("Right Calf", this),
+                new BodyPartGroupCompartment("Left Foot", this),
+                new BodyPartGroupCompartment("Right Foot", this),
+                new BodyPartGroupCompartment("Groin", this),
+                new BodyPartGroupCompartment("Left Loin", this),
+                new BodyPartGroupCompartment("Right Loin", this),
+                new BodyPartGroupCompartment("Left Hip", this),
+                new BodyPartGroupCompartment("Right Hip", this)
+        };
+
+        // Add compartments to the map
+        for (Compartment compartment : compartmentsArray) {
+            addCompartment(compartment);
+        }
     }
 
     public void update() {
@@ -93,19 +90,19 @@ public class MedicalStats {
     }
 
     public void cardiovascularSystem() {
-        pulseRate = compartments.get("Heart").getHealth() / 100 * heartEffort;
+        float pulseRate = compartments.get("Heart").getHealth() / 100 * heartEffort;
 
         if (bloodOxygen < 99) {
-            heartEffort -= 0.1F;
+            heartEffort -= 0.1;
         } else {
-            heartEffort += 0.1F;
+            heartEffort += 0.1;
         }
         heartEffort = Math.max(heartEffort, 0.1F);
 
         pulseTimer++;
         timer++;
 
-        bloodOxygen -= 0.05F;
+        bloodOxygen -= 0.05;
         bloodOxygen = Math.max(bloodOxygen, 0);
 
         // One heartbeat
@@ -127,6 +124,7 @@ public class MedicalStats {
         }
 
         // Cardiac Arrest
+        float maxHeartRate = 220;
         if (BPM > maxHeartRate) {
             compartments.get("Heart").removeHealth(0.5F);
             timer = 1200;
@@ -144,7 +142,7 @@ public class MedicalStats {
     private void updateBloodFlow() {
         float heartHealth = compartments.get("Heart").getHealth() / 100.0F;
         for (Compartment compartment : compartments.values()) {
-            if (compartment.equals("Heart")) {
+            if (compartment.getName().equals("Heart")) {
                 compartment.setBloodFlow(heartHealth);
             } else {
                 compartment.setBloodFlow(heartHealth * compartment.getHealth() / 100.0F);
@@ -159,13 +157,17 @@ public class MedicalStats {
         return 0;
     }
 
-    public void addCompartmentHealth(String name, float health) {
+    public void addCompartment(Compartment compartment) {
+        compartments.put(compartment.getName(), compartment);
+    }
+
+    public void increaseCompartmentHealth(String name, float health) {
         if (compartments.containsKey(name)) {
             compartments.get(name).addHealth(health);
         }
     }
 
-    public void removeCompartmentHealth(String name, float health) {
+    public void decreaseCompartmentHealth(String name, float health) {
         if (compartments.containsKey(name)) {
             compartments.get(name).removeHealth(health);
         }

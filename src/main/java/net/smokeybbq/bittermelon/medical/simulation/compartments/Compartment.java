@@ -1,5 +1,6 @@
 package net.smokeybbq.bittermelon.medical.simulation.compartments;
 
+import net.smokeybbq.bittermelon.character.medical.MedicalStats;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.medical.simulation.Inhibitor;
 
@@ -10,18 +11,17 @@ import java.util.Map;
 
 public abstract class Compartment {
     protected String name;
-    protected float volume;
     protected float concentration;
     protected float health = 100;
     protected float bloodFlow;
     protected float tissueOverBloodPartitionCoefficient;
-
+    protected MedicalStats medicalStats;
     protected Map<Substance, Float> concentrations = new HashMap<>();
     protected List<Inhibitor> inhibitors = new ArrayList<>();
 
-    public Compartment(String name, float volume) {
+    public Compartment(String name, MedicalStats medicalStats) {
         this.name = name;
-        this.volume = volume;
+        this.medicalStats = medicalStats;
     }
 
     public float getConcentration(Substance substance) {
@@ -55,14 +55,6 @@ public abstract class Compartment {
         inhibitors.add(inhibitor);
     }
 
-    public Float getVolume() {
-        return volume;
-    }
-
-    public void setVolume(float volume) {
-        this.volume = volume;
-    }
-
     public String getName() {
         return name;
     }
@@ -82,8 +74,12 @@ public abstract class Compartment {
         this.health += health;
     }
 
-    public void addBloodFlow(float bloodFlow) {
+    public void increaseBloodFlow(float bloodFlow) {
         this.bloodFlow += bloodFlow;
+    }
+
+    public void decreaseBloodFlow(float bloodFlow) {
+        this.bloodFlow -= bloodFlow;
     }
 
     public void setBloodFlow(float bloodFlow) {
@@ -95,8 +91,8 @@ public abstract class Compartment {
         this.health = Math.max(this.health, 0);
     }
 
-    public void removeBloodFlow(float bloodFlow) {
-        this.bloodFlow -= bloodFlow;
+    public MedicalStats getMedicalStats() {
+        return medicalStats;
     }
 
 }

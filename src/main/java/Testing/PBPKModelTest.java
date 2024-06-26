@@ -1,11 +1,10 @@
 package Testing;
 import net.smokeybbq.bittermelon.medical.conditions.Influenza;
 import net.smokeybbq.bittermelon.medical.simulation.IVAdministration;
-import net.smokeybbq.bittermelon.medical.simulation.PBPKModel;
 import net.smokeybbq.bittermelon.medical.simulation.OralAdministration;
+import net.smokeybbq.bittermelon.medical.simulation.PBPKModel;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.medical.substance.medicine.Acetaminophen;
-import net.smokeybbq.bittermelon.medical.substance.medicine.Penicillin;
 import net.smokeybbq.bittermelon.character.Character;
 
 public class PBPKModelTest {
