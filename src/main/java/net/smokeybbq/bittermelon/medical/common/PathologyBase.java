@@ -1,12 +1,14 @@
 package net.smokeybbq.bittermelon.medical.common;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
 
 import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,7 +17,7 @@ public abstract class PathologyBase {
     protected String name;
     protected int tickTimer = 0;
     protected Character character;
-    protected ServerPlayer player;
+    protected LivingEntity entity;
     protected int progressionMildToModerate, progressionModerateToSevere, progressionSevereToCritical, progressionCriticalToTerminal;
     protected float amplifier;
     protected Severity severity;
@@ -26,8 +28,8 @@ public abstract class PathologyBase {
         this.amplifier = amplifier;
 
         MinecraftServer server = CharacterManager.getServer();
-        UUID playerUUID = character.getPlayerUUID();
-        player = server.getPlayerList().getPlayer(playerUUID);
+        ServerLevel level = server.overworld();
+        entity = (LivingEntity) level.getEntity(character.getUUID());
 
         severityThresholds = List.of(
                 new AbstractMap.SimpleEntry<>(progressionCriticalToTerminal, Severity.TERMINAL),

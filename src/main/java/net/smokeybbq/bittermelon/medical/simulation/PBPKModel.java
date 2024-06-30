@@ -93,6 +93,17 @@ public abstract class PBPKModel {
         }
     }
 
+    protected float getSubstanceInteractions() {
+        for (Compartment compartment : compartments.values()) {
+            Set<Substance> substances = compartment.getConcentrations().keySet();
+            for (Substance substance : substances) {
+                return drug.interact(substance);
+            }
+        }
+
+        return 0;
+    }
+
     public void removeFromSimulations() {
         medicalStats.simulationHandler.removeSimulation(this);
     }

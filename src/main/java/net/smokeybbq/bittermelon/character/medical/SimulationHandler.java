@@ -13,9 +13,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SimulationHandler {
 
-    private List<PBPKModel> simulations = new CopyOnWriteArrayList<>();
-    private Character character;
-    private Map<String, Compartment> compartmentMap;
+    private final List<PBPKModel> simulations = new CopyOnWriteArrayList<>();
+    private final Character character;
+    private final Map<String, Compartment> compartmentMap;
 
     public SimulationHandler(Character character, Map<String, Compartment> compartmentMap) {
         this.character = character;
@@ -44,11 +44,18 @@ public class SimulationHandler {
                         condition.treat(substance, effectiveness, affectedArea);
                         System.out.println("Effectiveness " + effectiveness);
                     }
-                    if (substance.toxic) {
-                        substance.toxicDamage(effectiveness);
-                    }
+
+                    toxicDamage(substance, compartment);
                 }
             }
+        }
+    }
+
+    private void toxicDamage(Substance substance, Compartment compartment) {
+        if (substance.getToxicDamage().containsKey(compartment.getName())) {
+            compartment.removeHealth(substance.getToxicDamage().get(compartment.getName()) * compartment.getConcentration(substance));
+        } else {
+            compartment.removeHealth(substance.getDefaultToxicDamage() * compartment.getConcentration(substance));
         }
     }
 

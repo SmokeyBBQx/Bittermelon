@@ -4,7 +4,7 @@ import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.medical.symptoms.Cough;
 import net.smokeybbq.bittermelon.medical.symptoms.Fever;
-import net.smokeybbq.bittermelon.medical.symptoms.Headache;
+import net.smokeybbq.bittermelon.medical.symptoms.Ache;
 import net.smokeybbq.bittermelon.medical.symptoms.Symptom;
 
 import java.util.List;
@@ -29,7 +29,7 @@ public class Influenza extends Condition {
     protected void symptoms() {
         suitableTreatments = new String[]{"Acetaminophen"};
         fever = new Fever(character, "Hypothalamus", amplifier);
-        headache = new Headache(character, "Head", amplifier);
+        headache = new Ache(character, "Head", amplifier);
         cough = new Cough(character, "Throat", amplifier);
 
         symptoms.add(fever);
@@ -38,7 +38,6 @@ public class Influenza extends Condition {
     @Override
     public void treat(Substance drug, float effectiveness, String area) {
         String drugName = drug.getName();
-        System.out.println("Drug Name " + drugName);
 
         switch (drugName) {
             case "Acetaminophen" -> {
