@@ -9,7 +9,6 @@ import net.minecraft.commands.Commands;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
 import net.smokeybbq.bittermelon.character.medical.MedicalStats;
-import net.smokeybbq.bittermelon.medical.conditions.Influenza;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -42,8 +41,6 @@ public class CommandCondition {
                 .findFirst();
 
         MedicalStats medicalStats = selectedCharacter.get().getMedicalStats();
-        Influenza influenza = new Influenza(100, false, selectedCharacter.get(), affectedAreasList, severity);
-        medicalStats.addCondition(influenza);
 
         return 1;
     }

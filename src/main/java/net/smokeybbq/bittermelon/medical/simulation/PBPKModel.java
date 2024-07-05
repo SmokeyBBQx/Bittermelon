@@ -12,15 +12,15 @@ public abstract class PBPKModel {
     protected Character character;
     protected float timeStep = 0.01F;
     protected float t = 0;
-    protected Substance drug;
+    protected Substance substance;
     protected Map<String, Compartment> compartments;
     protected float totalConcentration;
     protected MedicalStats medicalStats;
     protected List<SimpleCompartment> simpleCompartments = new ArrayList<>();
 
-    public PBPKModel(float dosage, Character character, Substance drug) {
+    public PBPKModel(float dosage, Character character, Substance substance) {
         this.dosage = dosage;
-        this.drug = drug;
+        this.substance = substance;
         this.character = character;
         this.medicalStats = character.getMedicalStats();
         compartments = medicalStats.getCompartments();
@@ -31,13 +31,20 @@ public abstract class PBPKModel {
     private void initializeSimpleCompartments() {
         // Initialize compartments that will get their concentration from circulatory system
         for (Compartment compartment : compartments.values()) {
-            if (compartment instanceof GroupCompartment) {
-                simpleCompartments.addAll(((GroupCompartment) compartment).getCompartments().values());
+            if (compartment instanceof GroupCompartment && !compartment.getName().equals("Circulatory System")) {
+                // Add SimpleCompartments within the GroupCompartment
+                for (Compartment subCompartment : ((GroupCompartment) compartment).getCompartments().values()) {
+                    if (subCompartment instanceof SimpleCompartment) {
+                        simpleCompartments.add((SimpleCompartment) subCompartment);
+                    }
+                }
             } else if (compartment instanceof SimpleCompartment) {
+                // Add SimpleCompartment if it's not part of the circulatory system
                 simpleCompartments.add((SimpleCompartment) compartment);
             }
         }
     }
+
 
     // Abstract method to initialize the simulation (set dosage, etc.), to be implemented by subclasses
     protected abstract void initializeSimulation();
@@ -47,6 +54,7 @@ public abstract class PBPKModel {
         if (totalConcentration > 1) {
             updateRateConstants(); // Update the rate constants for absorption, metabolism, and elimination
             simulation(); // Perform the simulation implemented by subclass
+            substanceInteractions(); // Get substance-substance interactions
             totalConcentration = getTotalConcentration();
             t += timeStep;
 
@@ -68,14 +76,15 @@ public abstract class PBPKModel {
     protected abstract void simulation();
 
     protected void updateRateConstants() {
-        compartments.get("Gastrointestinal").setRateConstant(drug.getAbsorptionRateConstant());
-        compartments.get("Kidneys").setRateConstant(drug.getEliminationRateConstant());
-        compartments.get("Liver").setRateConstant(drug.getMetabolismRateConstant());
+        compartments.get("Gastrointestinal").getMainOrgan().setRateConstant(substance.getAbsorptionRateConstant());
+        compartments.get("Left Kidney").getMainOrgan().setRateConstant(substance.getEliminationRateConstant());
+        compartments.get("Right Kidney").getMainOrgan().setRateConstant(substance.getEliminationRateConstant());
+        compartments.get("Liver").getMainOrgan().setRateConstant(substance.getMetabolismRateConstant());
     }
 
     protected void clearMapping() {
         for (Compartment compartment : compartments.values()) {
-            compartment.clearConcentrationMapping(drug);
+            compartment.clearConcentrationMapping(substance);
         }
     }
 
@@ -84,24 +93,36 @@ public abstract class PBPKModel {
 
         // Calculate the derivatives for each simple compartment
         for (var i = 0; i < simpleCompartments.size(); i++) {
-            simpleDerivatives[i] = simpleCompartments.get(i).getDerivative(compartments.get("Circulatory System").getConcentration(drug), drug);
+            simpleDerivatives[i] = simpleCompartments.get(i).getDerivative(compartments.get("Circulatory System").getMainOrgan().getConcentration(substance), substance);
         }
 
         // Update the concentrations based on the derivatives
         for (var i = 0; i < simpleCompartments.size(); i++) {
-            simpleCompartments.get(i).updateConcentration(drug, simpleDerivatives[i], timeStep);
+            simpleCompartments.get(i).updateConcentration(substance, simpleDerivatives[i], timeStep);
         }
     }
 
-    protected float getSubstanceInteractions() {
+//    protected void handleSimpleCompartmentsExcludingElimination() {
+//        float[] simpleDerivatives = new float[simpleCompartments.size()];
+//
+//        // Calculate the derivatives for each simple compartment
+//        for (var i = 0; i < simpleCompartments.size(); i++) {
+//            simpleDerivatives[i] = simpleCompartments.get(i).getDerivative(compartments.get("Circulatory System").getConcentration(substance), substance);
+//        }
+//
+//        // Update the concentrations based on the derivatives
+//        for (var i = 0; i < simpleCompartments.size(); i++) {
+//            simpleCompartments.get(i).updateConcentration(substance, simpleDerivatives[i], timeStep);
+//        }
+//    }
+
+    private void substanceInteractions() {
         for (Compartment compartment : compartments.values()) {
             Set<Substance> substances = compartment.getConcentrations().keySet();
             for (Substance substance : substances) {
-                return drug.interact(substance);
+                compartment.removeConcentration(this.substance, this.substance.interact(substance) * compartment.getConcentration(substance));
             }
         }
-
-        return 0;
     }
 
     public void removeFromSimulations() {
@@ -111,12 +132,12 @@ public abstract class PBPKModel {
     public float getTotalConcentration() {
         float concentrationSum = 0;
 
-        for (Compartment compartment : compartments.values()) {
-            float n =  compartment.getConcentration(drug);
+        for (Compartment compartment : simpleCompartments) {
+            float n =  compartment.getConcentration(substance);
             concentrationSum += n;
 
             //DEBUG LINES
-             System.out.println(compartment.getName() + " " + n);
+             System.out.println(substance.getName() + " " + compartment.getName() + " " + n);
         }
 
         System.out.println("------------------------");

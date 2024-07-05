@@ -9,10 +9,8 @@ import net.minecraft.commands.Commands;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
 import net.smokeybbq.bittermelon.character.medical.MedicalStats;
-import net.smokeybbq.bittermelon.medical.conditions.Influenza;
 import net.smokeybbq.bittermelon.medical.simulation.OralAdministration;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
-import net.smokeybbq.bittermelon.medical.substance.medicine.Acetaminophen;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -44,9 +42,6 @@ public class CommandAdministerDrugOral {
                 .findFirst();
 
         MedicalStats medicalStats = selectedCharacter.get().getMedicalStats();
-        Substance substance = new Acetaminophen(absorptionModifier, eliminationModifier, metabolismModifier);
-        OralAdministration simulation = new OralAdministration(dosage, selectedCharacter.get(), substance);
-        medicalStats.simulationHandler.addSimulation(simulation);
         return 1;
     }
 }

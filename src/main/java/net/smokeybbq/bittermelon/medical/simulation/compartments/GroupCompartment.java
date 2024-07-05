@@ -8,7 +8,7 @@ import java.util.Map;
 
 public abstract class GroupCompartment extends Compartment {
 
-    protected Map<String, SimpleCompartment> compartments = new HashMap<>();
+    protected Map<String, Compartment> compartments = new HashMap<>();
 
     public GroupCompartment(String name, MedicalStats medicalStats) {
         super(name, medicalStats);
@@ -17,15 +17,16 @@ public abstract class GroupCompartment extends Compartment {
 
     public abstract void initializeCompartments();
 
+    @Override
     public Compartment getCompartment(String name) {
         return compartments.get(name);
     }
 
-    public void addCompartment(SimpleCompartment compartment) {
+    public void addCompartment(Compartment compartment) {
         compartments.put(compartment.getName(), compartment);
     }
 
-    public Map<String, SimpleCompartment> getCompartments() {
+    public Map<String, Compartment> getCompartments() {
         return compartments;
     }
 
@@ -37,7 +38,11 @@ public abstract class GroupCompartment extends Compartment {
 
     public void updateBloodFlow() {
         for (Compartment compartment : compartments.values()) {
-            compartment.setBloodFlow(bloodFlow);
+            if (compartment != null) {
+                compartment.setBloodFlow(bloodFlow);
+            } else {
+                System.err.println("Null compartment found in " + getName());
+            }
         }
     }
 
@@ -58,7 +63,7 @@ public abstract class GroupCompartment extends Compartment {
         }
 
         float totalHealth = 0;
-        for (SimpleCompartment compartment : compartments.values()) {
+        for (Compartment compartment : compartments.values()) {
             totalHealth += compartment.getHealth();
         }
 

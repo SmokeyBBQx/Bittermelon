@@ -13,17 +13,19 @@ public class IVAdministration extends PBPKModel {
 
     @Override
     protected void initializeSimulation() {
-        circulatory.addConcentration(drug, dosage);
+        circulatory = (CirculatoryCompartment) compartments.get("Circulatory System").getMainOrgan();
+
+        circulatory.addConcentration(substance, dosage);
         totalConcentration = getTotalConcentration();
     }
 
     @Override
     public void simulation() {
-        float circulatoryConcentration = circulatory.getConcentration(drug);
+        float circulatoryConcentration = circulatory.getConcentration(substance);
 
-        float circulatoryDerivative = circulatory.getDerivative(circulatoryConcentration, simpleCompartments, drug);
+        float circulatoryDerivative = circulatory.getDerivative(circulatoryConcentration, simpleCompartments, substance);
 
         handleSimpleCompartments();
-        circulatory.updateConcentration(drug, circulatoryDerivative, timeStep);
+        circulatory.updateConcentration(substance, circulatoryDerivative, timeStep);
     }
 }

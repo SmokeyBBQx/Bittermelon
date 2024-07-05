@@ -4,6 +4,7 @@ import net.smokeybbq.bittermelon.character.medical.MedicalStats;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 
 import java.util.List;
+import java.util.Objects;
 
 public class CirculatoryCompartment extends Compartment {
     public CirculatoryCompartment(String name, MedicalStats medicalStats) {
@@ -21,12 +22,11 @@ public class CirculatoryCompartment extends Compartment {
             // The total concentration returning to the circulatory system from those compartments
 
             // Livers and kidneys won't return concentration
-            if (compartment.getName() != "Liver" && compartment.getName() != "Kidneys") {
+            if (!Objects.equals(compartment.getName(), "Liver") && !Objects.equals(compartment.getName(), "Left Kidney") && !Objects.equals(compartment.getName(), "Right Kidney")) {
                 circulationIn += compartment.getBloodFlow() / 2 * compartment.getConcentration(drug);
             }
         }
-        float derivative = source + circulationIn - circulationOut;
 
-        return derivative;
+        return source + circulationIn - circulationOut;
     }
 }

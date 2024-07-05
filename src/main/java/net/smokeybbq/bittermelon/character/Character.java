@@ -48,7 +48,7 @@ public class Character {
         this.height = height;
         this.weight = weight;
         this.emoteColor = emoteColor;
-        medicalStats = new MedicalStats(this);
+        this.medicalStats = new MedicalStats(this);
     }
 
     public UUID getUUID() {

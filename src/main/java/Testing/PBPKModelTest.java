@@ -1,11 +1,10 @@
 package Testing;
-import net.smokeybbq.bittermelon.medical.conditions.Influenza;
 import net.smokeybbq.bittermelon.medical.simulation.IVAdministration;
 import net.smokeybbq.bittermelon.medical.simulation.OralAdministration;
 import net.smokeybbq.bittermelon.medical.simulation.PBPKModel;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
-import net.smokeybbq.bittermelon.medical.substance.medicine.Acetaminophen;
 import net.smokeybbq.bittermelon.character.Character;
+import net.smokeybbq.bittermelon.medical.substance.toxins.Bacteria;
 
 public class PBPKModelTest {
     public static void main(String[] args) {
@@ -13,19 +12,16 @@ public class PBPKModelTest {
         //Initializes a default character
         Character testCharacter = CharacterTestFactory.createDummyCharacter();
 
-        Influenza influenza = new Influenza(100, false, testCharacter, "Lungs", 1);
+        PBPKModel model = new IVAdministration(100, testCharacter, new Bacteria("Salmonella", 0.2F, 0.6F, 0.8F, 1));
 
-        testCharacter.getMedicalStats().addCondition(influenza);
+        testCharacter.getMedicalStats().getSimulationHandler().addSimulation(model);
+
+        testCharacter.getMedicalStats().getSimulationHandler().initialize();
 
         // Adjust the modifiers so that it takes different times to reach a total concentration of 1
-        Substance drug = new Acetaminophen(1,1,1);
-
-        PBPKModel model = new OralAdministration(100, testCharacter, drug);
-
-        testCharacter.getMedicalStats().simulationHandler.addSimulation(model);
 
         // Run the simulation 20 times a second (equal to minecraft ticks)
-        int runsPerSecond = 5000;
+        int runsPerSecond = 100;
         long delay = 1000 / runsPerSecond; // Delay in milliseconds
 
 
@@ -34,9 +30,8 @@ public class PBPKModelTest {
         while(model.getTotalConcentration() > 1) {
             // Runs all simulations for the character
             testCharacter.update();
+            System.out.println("Bacteria Concentration: " + model.getTotalConcentration());
 
-            // Gets the fever symptom
-            System.out.println(influenza.getSymptoms().get(0).getAmplifier());
             try {
                 Thread.sleep(delay); // Introduce delay to achieve 20 runs per second
             } catch (InterruptedException e) {

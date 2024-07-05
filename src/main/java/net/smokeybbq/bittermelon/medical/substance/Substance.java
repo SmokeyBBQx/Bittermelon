@@ -1,5 +1,7 @@
 package net.smokeybbq.bittermelon.medical.substance;
 
+import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,7 +19,8 @@ public abstract class Substance {
     protected Map<String, Float> toxicDamage = new HashMap<>();
     public boolean toxic;
 
-    public Substance(float absorptionModifier, float eliminationModifier, float metabolismModifier, float toxicModifier) {
+    public Substance(String name, float absorptionModifier, float eliminationModifier, float metabolismModifier, float toxicModifier) {
+        this.name = name;
         this.absorptionModifier = absorptionModifier;
         this.eliminationModifier = eliminationModifier;
         this.metabolismModifier = metabolismModifier;
@@ -48,11 +51,7 @@ public abstract class Substance {
 
     public float getMetabolismRateConstant() { return  metabolismRateConstant;}
 
-    public float getDefaultToxicDamage() {
-        return defaultToxicDamage;
-    }
-
-    public Map<String, Float> getToxicDamage() {
-        return toxicDamage;
+    public float getToxicDamage(Compartment compartment) {
+        return toxicDamage.getOrDefault(compartment.getName(), defaultToxicDamage);
     }
 }

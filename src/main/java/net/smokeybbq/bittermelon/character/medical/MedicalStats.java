@@ -21,33 +21,42 @@ public class MedicalStats {
     private int BPM = 0;
     private final Map<String, Compartment> compartments = new HashMap<>();
     public SimulationHandler simulationHandler;
+    private final Character character;
 
     public MedicalStats(Character character) {
+        this.character = character;
         createCompartments();
-        updateBloodFlow();
-        simulationHandler = new SimulationHandler(character, compartments);
+//        updateBloodFlow();
     }
+
+    public SimulationHandler getSimulationHandler() {
+        if (simulationHandler == null) {
+            simulationHandler = new SimulationHandler(character, compartments);
+        }
+        return simulationHandler;
+    }
+
     private void createCompartments() {
         // List of compartments
         Compartment[] compartmentsArray = {
                 // Internal Organs
-                new EliminatingCompartment("Gastrointestinal", this),
-                new EliminatingCompartment("Liver", this),
-                new EliminatingCompartment("Kidneys", this),
-                new CirculatoryCompartment("Circulatory System", this),
-                new SimpleCompartment("Lungs", this),
-                new SimpleCompartment("Heart", this),
-                new SimpleCompartment("Brain", this),
-                new SimpleCompartment("Lymphatic System", this),
-                new SimpleCompartment("Endocrine System", this),
-                new SimpleCompartment("Other", this),
+                new OrganGroupCompartment("Gastrointestinal", this, new EliminatingCompartment("Gastrointestinal", this)),
+                new OrganGroupCompartment("Liver", this, new EliminatingCompartment("Liver", this)),
+                new OrganGroupCompartment("Left Kidney", this, new EliminatingCompartment("Left Kidney", this)),
+                new OrganGroupCompartment("Right Kidney", this, new EliminatingCompartment("Right Kidney", this)),
+                new OrganGroupCompartment("Circulatory System", this, new CirculatoryCompartment("Circulatory System", this)),
+                new OrganGroupCompartment("Lungs", this, new SimpleCompartment("Lungs", this)),
+                new OrganGroupCompartment("Heart", this, new SimpleCompartment("Heart", this)),
+                new OrganGroupCompartment("Lymphatic System", this, new SimpleCompartment("Lymphatic System", this)),
+                new OrganGroupCompartment("Endocrine System", this, new SimpleCompartment("Endocrine System", this)),
+                new OrganGroupCompartment("Other", this, new SimpleCompartment("Other", this)),
 
                 // Sensory Organs
-                new SimpleCompartment("Left Eye", this),
-                new SimpleCompartment("Right Eye", this),
-                new SimpleCompartment("Nose", this),
-                new SimpleCompartment("Left Ear", this),
-                new SimpleCompartment("Right Ear", this),
+                new OrganGroupCompartment("Left Eye", this, new SimpleCompartment("Left Eye", this)),
+                new OrganGroupCompartment("Right Eye", this, new SimpleCompartment("Right Eye", this)),
+                new OrganGroupCompartment("Nose", this, new SimpleCompartment("Nose", this)),
+                new OrganGroupCompartment("Left Ear", this, new SimpleCompartment("Left Ear", this)),
+                new OrganGroupCompartment("Right Ear", this, new SimpleCompartment("Right Ear", this)),
 
                 // Body Parts
                 new BodyPartGroupCompartment("Head", this),
@@ -83,6 +92,7 @@ public class MedicalStats {
     public void update() {
         updateBloodFlow();
         cardiovascularSystem();
+        SimulationHandler handler = getSimulationHandler();
         simulationHandler.update();
         for (Condition condition : conditions) {
             condition.update();
@@ -93,16 +103,16 @@ public class MedicalStats {
         float pulseRate = compartments.get("Heart").getHealth() / 100 * heartEffort;
 
         if (bloodOxygen < 99) {
-            heartEffort -= 0.1;
+            heartEffort -= 0.1F;
         } else {
-            heartEffort += 0.1;
+            heartEffort += 0.1F;
         }
         heartEffort = Math.max(heartEffort, 0.1F);
 
         pulseTimer++;
         timer++;
 
-        bloodOxygen -= 0.05;
+        bloodOxygen -= 0.05F;
         bloodOxygen = Math.max(bloodOxygen, 0);
 
         // One heartbeat
@@ -140,8 +150,10 @@ public class MedicalStats {
      }
 
     private void updateBloodFlow() {
-        float heartHealth = compartments.get("Heart").getHealth() / 100.0F;
-        for (Compartment compartment : compartments.values()) {
+        Compartment heart = compartments.get("Heart");
+        float heartHealth = heart.getHealth() / 100.0F;
+        for (Map.Entry<String, Compartment> entry : compartments.entrySet()) {
+            Compartment compartment = entry.getValue();
             if (compartment.getName().equals("Heart")) {
                 compartment.setBloodFlow(heartHealth);
             } else {
@@ -189,5 +201,9 @@ public class MedicalStats {
 
     public Map<String, Compartment> getCompartments() {
         return compartments;
+    }
+
+    public float getImmuneHealth() {
+        return 100;
     }
 }
