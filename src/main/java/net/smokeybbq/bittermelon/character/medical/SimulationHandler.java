@@ -1,39 +1,49 @@
 package net.smokeybbq.bittermelon.character.medical;
 
 import net.smokeybbq.bittermelon.character.Character;
-import net.smokeybbq.bittermelon.medical.conditions.Condition;
 import net.smokeybbq.bittermelon.medical.simulation.IVAdministration;
-import net.smokeybbq.bittermelon.medical.simulation.compartments.GroupCompartment;
+import net.smokeybbq.bittermelon.medical.simulation.compartments.CompartmentTag;
 import net.smokeybbq.bittermelon.medical.substance.ImmuneResponse;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.medical.simulation.PBPKModel;
 import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SimulationHandler {
 
     private final List<PBPKModel> simulations = new CopyOnWriteArrayList<>();
     private final Character character;
-    private final Map<String, Compartment> compartmentMap;
+    private final Map<String, Compartment> compartments;
 
     // Immunity and inflammatory constants
-    private static final float INFLAMMATORY_DECAY = 0.001F;
+    private static final float INFLAMMATORY_DECAY = -0.001F;
     private static final float INFLAMMATORY_RESPONSE = 0.005F;
-    private static final float IMMUNITY_DECAY = 0.005F;
-    private static final float IMMUNE_ACTIVATION = 1;
+    private static final float IMMUNE_ACTIVATION = 0.01F;
+    private static final float RESERVE_CAPACITY = 1000;
+    private static final float IMMUNITY_MAXIMUM = 1000;
+    private float immuneReserve;
+    Set<Compartment> immuneCompartments = new HashSet<>();
+    PBPKModel immuneSystemSimulation;
 
-    public SimulationHandler(Character character, Map<String, Compartment> compartmentMap) {
+    public SimulationHandler(Character character, Map<String, Compartment> compartments) {
         this.character = character;
-        this.compartmentMap = compartmentMap;
+        this.compartments = compartments;
+        initialize();
     }
 
     public void initialize() {
-        addSimulation(new IVAdministration(100, character, new ImmuneResponse("Immune Response", 0.1F, 0.1F, 0.1F, 0.001F)));
+        immuneSystemSimulation = new IVAdministration(1000, character, new ImmuneResponse("Immune Response", 0F, 0F, 0F, 0.001F));
+        addSimulation(immuneSystemSimulation);
+
+        for (Compartment outerCompartment : compartments.values()) {
+            outerCompartment.traverseCompartments(compartment -> {
+                if (compartment.hasTag(CompartmentTag.IMMUNE)) {
+                    immuneCompartments.add(compartment);
+                }
+            });
+        }
     }
 
     public void update() {
@@ -43,76 +53,87 @@ public class SimulationHandler {
 
         decay();
         substanceEffect();
+        growImmuneReserve();
     }
 
     // Immunity and inflammatory decay
     private void decay() {
-        for (Compartment compartment : compartmentMap.values()) {
-            compartment.decreaseInflammation(INFLAMMATORY_DECAY);
-            for (Map.Entry<Substance, Float> entry : compartment.getConcentrations().entrySet()) {
-                if (entry.getKey() instanceof ImmuneResponse) {
-                    compartment.removeConcentration(entry.getKey(), IMMUNITY_DECAY);
-                }
-            }
+        for (Compartment outerCompartment : compartments.values()) {
+            outerCompartment.traverseCompartments(compartment -> {
+                compartment.modifyInflammation(INFLAMMATORY_DECAY);
+            });
         }
     }
 
     public void substanceEffect() {
-        List<Condition> conditions = character.getMedicalStats().getConditions();
+        for (Compartment outerCompartment : compartments.values()) {
+            outerCompartment.traverseCompartments(compartment -> {
+                Map<Substance, Float> concentrations = compartment.getConcentrations();
+                List<Substance> substances = new ArrayList<>(concentrations.keySet());
+                int n = substances.size();
 
-//            for (String affectedArea : condition.getAffectedAreas()) {
-//                Compartment compartment = compartmentMap.get(affectedArea);
-        for (Compartment compartment : compartmentMap.values()) {
-            if (compartment instanceof GroupCompartment) {
-                GroupCompartment groupCompartment = (GroupCompartment) compartment;
+                // Perform toxic damage and prepare for interactions
+                Map<Substance, Float> removals = new HashMap<>();
+                for (int i = 0; i < n; i++) {
+                    Substance substance1 = substances.get(i);
+                    float concentration1 = concentrations.get(substance1);
 
-                for (Compartment subCompartment : groupCompartment.getCompartments().values()) {
-                    Set<Substance> substances = new HashSet<>(subCompartment.getConcentrations().keySet());
+                    // Toxic damage
+                    toxicDamage(substance1, compartment);
 
-                    // Perform toxic damage to each substance first
-                    for (Substance substance : substances) {
-                        toxicDamage(substance, subCompartment);
-                    }
-
-                    // Iterate over each pair of substances for interaction
-                    for (Substance substance1 : substances) {
-                        for (Substance substance2 : substances) {
-                            if (!substance1.equals(substance2)) {
-                                subCompartment.removeConcentration(substance2, substance1.interact(substance2) * subCompartment.getConcentration(substance1));
+                    // Interactions
+                    for (int j = 0; j < n; j++) {
+                        if (i != j) {
+                            Substance substance2 = substances.get(j);
+                            float interaction = substance1.interact(substance2);
+                            if (interaction != 0) {
+                                float removalAmount = interaction * concentration1;
+                                removals.merge(substance2, removalAmount, Float::sum);
                             }
                         }
                     }
                 }
-            }
+
+                // Apply removals
+                for (Map.Entry<Substance, Float> entry : removals.entrySet()) {
+                    compartment.updateConcentration(entry.getKey(), entry.getValue());
+                }
+            });
         }
     }
 
+    private void toxicDamage(Substance substance, Compartment compartment) {
+        float toxicDamage = substance.getToxicDamage(compartment) * compartment.getConcentration(substance);
+        compartment.modifyHealth(toxicDamage);
 
-        private void toxicDamage(Substance substance, Compartment compartment) {
-        float toxicDamage = substance.getToxicDamage(compartment);
-
-        if (toxicDamage * compartment.getConcentration(substance) >= 0.5) {
+        if (toxicDamage >= 0.5 && immuneSystemSimulation.getTotalConcentration() < IMMUNITY_MAXIMUM) {
             immuneResponse(compartment);
         }
     }
 
     private void immuneResponse(Compartment compartment) {
-        Compartment circulatorySystem = compartmentMap.get("Circulatory System");
-        for (Map.Entry<Substance, Float> entry : circulatorySystem.getMainOrgan().getConcentrations().entrySet()) {
+        Compartment circulatorySystem = compartments.get("circulatory_system");
+        for (Map.Entry<Substance, Float> entry : circulatorySystem.getMainCompartment().getConcentrations().entrySet()) {
             if (entry.getKey() instanceof ImmuneResponse) {
-                circulatorySystem.getMainOrgan().addConcentration(entry.getKey(), IMMUNE_ACTIVATION * character.getMedicalStats().getImmuneHealth());
+                circulatorySystem.getMainCompartment().updateConcentration(entry.getKey(), activateImmuneReserve());
             }
         }
 
-        compartment.increaseInflammation(INFLAMMATORY_RESPONSE);
+        compartment.modifyInflammation(INFLAMMATORY_RESPONSE);
     }
 
-    public void decreaseInflammation(Compartment compartment, float amount) {
-        compartment.decreaseInflammation(amount);
+    public float activateImmuneReserve() {
+        float available = immuneReserve - IMMUNE_ACTIVATION;
+        return Math.max(available, 0);
     }
 
-    public void increaseInflammation(Compartment compartment, float amount) {
-        compartment.increaseInflammation(amount);
+    public void growImmuneReserve() {
+        if (immuneReserve < RESERVE_CAPACITY) {
+            for (Compartment compartment : immuneCompartments) {
+                immuneReserve += compartment.getHealth() / 10;
+            }
+
+        }
     }
 
     public void addSimulation(PBPKModel simulation) {

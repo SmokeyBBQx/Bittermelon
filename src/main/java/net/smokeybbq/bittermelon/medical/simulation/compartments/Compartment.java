@@ -1,140 +1,107 @@
 package net.smokeybbq.bittermelon.medical.simulation.compartments;
 
-import net.smokeybbq.bittermelon.character.medical.MedicalStats;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
-public abstract class Compartment {
+public class Compartment {
     protected String name;
     protected float immunePrivilege = 100;
-    protected float concentration;
     protected float health = 100;
-    protected float bloodFlow;
+    protected float bloodFlow = 1;
+    protected float bloodFlowModifier = 1;
     protected float inflammation = 0.1F;
-    protected float tissueOverBloodPartitionCoefficient;
-    protected MedicalStats medicalStats;
+    protected float permeability;
     protected Map<Substance, Float> concentrations = new HashMap<>();
+    public boolean excludeFromCirculation = false;
+    protected List<CompartmentTag> tags = new ArrayList<>();
 
-    public Compartment(String name, MedicalStats medicalStats) {
+    public Compartment(String name, float permeability) {
         this.name = name;
-        this.medicalStats = medicalStats;
+        this.permeability = permeability;
+        updateBloodFlow();
     }
 
     public float getConcentration(Substance substance) {
         return concentrations.getOrDefault(substance, 0.0F);
     }
 
-    public Map<Substance, Float> getConcentrations() {
-        return concentrations;
+    public void updateConcentration(Substance substance, float delta) {
+        concentrations.compute(substance, (k, v) -> Math.max(0, (v == null ? 0 : v) + delta));
+
+        if (concentrations.get(substance) <= 0.1) {
+            clearConcentration(substance);
+        }
     }
 
-    public float getDerivative() {
-        return 0;
-    }
-
-    public void updateConcentration(Substance substance, float derivative, float timeStep) {
-        float updatedConcentration = concentrations.getOrDefault(substance, 0.0F) + derivative * timeStep;
-
-        concentrations.put(substance, updatedConcentration);
-    }
-
-    public void addConcentration(Substance substance, float concentration) {
-        float updatedConcentration = concentrations.getOrDefault(substance, 0.0F) + concentration;
-        concentrations.put(substance, updatedConcentration);
-    }
-
-    public void removeConcentration(Substance substance, float concentration) {
-        float updatedConcentration = concentrations.getOrDefault(substance, 0.0F) - concentration;
-        concentrations.put(substance, Math.max(updatedConcentration, 0));
-    }
-
-    public void clearConcentrationMapping(Substance substance) {
+    public void clearConcentration(Substance substance) {
         concentrations.remove(substance);
     }
 
-    public String getName() {
-        return name;
+    public Map<Substance, Float> getConcentrations() {
+        return concentrations;
     }
-
-    public void setRateConstant(float eliminationRateConstant) {
-    }
-
-    public float getHealth() {
-        return health;
-    }
-
-    public float getBloodFlow() {
-        return bloodFlow;
-    }
-
-    public void addHealth(float health) {
-        this.health += health;
-    }
-
-    public void increaseBloodFlow(float bloodFlow) {
-        this.bloodFlow += bloodFlow;
-    }
-
-    public void decreaseBloodFlow(float bloodFlow) {
-        this.bloodFlow -= bloodFlow;
-    }
-
-    public void setBloodFlow(float bloodFlow) {
-        this.bloodFlow = bloodFlow;
-    }
-
-    public float getInflammation() {
-        return inflammation;
-    }
-
-    public void removeHealth(float health) {
-        this.health -= health;
-        this.health = Math.max(this.health, 0);
-    }
-
-    public void increaseInflammation(float value) {
-        inflammation += value;
-        inflammation = Math.min(inflammation, 1);
-        bloodFlow += value;
-        bloodFlow = Math.min(bloodFlow, 1);
-    }
-
-    public void decreaseInflammation(float value) {
-        inflammation -= value;
-        inflammation = Math.max(inflammation, 0.1F);
-        bloodFlow -= value;
-        bloodFlow = Math.max(bloodFlow, 0.1F);
-    }
-
-    public MedicalStats getMedicalStats() {
-        return medicalStats;
-    }
-
-    public void setImmunePrivilege(float value) {
-        immunePrivilege = value;
-    }
-
-    public void decreaseImmunePrivilege(float value) {
-        immunePrivilege -= value;
-    }
-
-    public void increaseImmunePrivilege(float value) {
-        immunePrivilege += value;
-    }
-
-    public float getImmunePrivilege() {
-        return immunePrivilege;
-    }
-
+    public String getName() { return name; }
+    public float getHealth() { return health; }
+    public float getBloodFlow() { return bloodFlow; }
+    public float getInflammation() { return inflammation; }
+    public float getImmunePrivilege() { return immunePrivilege; }
     public Compartment getCompartment(String name) {
         return this;
     }
+    public Compartment getMainCompartment() {return this;}
 
-    public Compartment getMainOrgan() {
-        return this;
+    // Setters and modifiers
+    public void modifyHealth(float delta) {
+        health = Math.max(0, health + delta);
+    }
+
+    public void setBloodFlow(float newBloodFlow) {
+        bloodFlow = newBloodFlow * inflammation * permeability;
+    }
+
+    public void modifyBloodFlow(float delta) {
+        bloodFlow = Math.max(0.0001F, (bloodFlowModifier + delta) * inflammation * permeability);
+    }
+
+    private void updateBloodFlow() {
+        bloodFlow = Math.max(0.0001F, bloodFlowModifier * inflammation * permeability);
+    }
+
+    public void modifyInflammation(float delta) {
+        inflammation = Math.min(1, Math.max(0.1F, inflammation + delta));
+        updateBloodFlow();
+    }
+
+    public void modifyImmunePrivilege(float delta) {
+        immunePrivilege = Math.max(0, Math.min(100, immunePrivilege + delta));
+    }
+
+    public void eliminateConcentration(Substance substance, float rate) {
+        updateConcentration(substance, -rate * getConcentration(substance));
+    }
+
+    public void moveConcentration(Compartment target, Substance substance, float rate, float timeStep) {
+        float amount = Math.min(getConcentration(substance), getConcentration(substance) * timeStep * rate);
+        if (amount > 0) {
+            updateConcentration(substance, -amount);
+            target.updateConcentration(substance, amount);
+        }
+    }
+
+    public void traverseCompartments(Consumer<Compartment> consumer) {
+        consumer.accept(this);
+    }
+
+    public void addTag(CompartmentTag tag) {
+        tags.add(tag);
+    }
+
+    public boolean hasTag(CompartmentTag tag) {
+        return tags.contains(tag);
     }
 }

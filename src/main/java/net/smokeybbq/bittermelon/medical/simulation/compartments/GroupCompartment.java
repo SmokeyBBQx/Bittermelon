@@ -4,69 +4,57 @@ import net.smokeybbq.bittermelon.character.medical.MedicalStats;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 
-public abstract class GroupCompartment extends Compartment {
+public class GroupCompartment extends Compartment {
 
-    protected Map<String, Compartment> compartments = new HashMap<>();
+    protected Map<String, Compartment> subCompartments = new HashMap<>();
 
-    public GroupCompartment(String name, MedicalStats medicalStats) {
-        super(name, medicalStats);
+    public GroupCompartment(String name, float permeability) {
+        super(name, permeability);
         initializeCompartments();
     }
 
-    public abstract void initializeCompartments();
+    public void initializeCompartments() {
+    }
 
     @Override
     public Compartment getCompartment(String name) {
-        return compartments.get(name);
+        return subCompartments.get(name);
     }
 
-    public void addCompartment(Compartment compartment) {
-        compartments.put(compartment.getName(), compartment);
+    public void addSubCompartment(Compartment compartment) {
+        subCompartments.put(compartment.getName(), compartment);
     }
 
-    public Map<String, Compartment> getCompartments() {
-        return compartments;
+    public Map<String, Compartment> getSubCompartments() {
+        return subCompartments;
     }
 
     @Override
-    public void setBloodFlow(float bloodFlow) {
-        this.bloodFlow = bloodFlow;
-        updateBloodFlow();
+    public void setBloodFlow(float newBloodFlow) {
+        super.setBloodFlow(newBloodFlow);
+        subCompartments.values().forEach(c -> c.setBloodFlow(newBloodFlow));
     }
 
-    public void updateBloodFlow() {
-        for (Compartment compartment : compartments.values()) {
-            if (compartment != null) {
-                compartment.setBloodFlow(bloodFlow);
-            } else {
-                System.err.println("Null compartment found in " + getName());
-            }
-        }
+    @Override
+    public void modifyBloodFlow(float delta) {
+        super.modifyBloodFlow(delta);
+        subCompartments.values().forEach(c -> modifyBloodFlow(delta));
     }
 
-    public void increaseCompartmentHealth(String name, float health) {
-        if (compartments.containsKey(name)) {
-            compartments.get(name).addHealth(health);
-        }
+    @Override
+    public float getHealth() {
+        return (float) subCompartments.values().stream()
+                .mapToDouble(Compartment::getHealth)
+                .average()
+                .orElse(0.0);
     }
 
-    public void decreaseCompartmentHealth(String name, float health) {
-        if (compartments.containsKey(name)) {
-            compartments.get(name).removeHealth(health);
-        }
-    }
-    protected float getAverageHealth() {
-        if (compartments == null || compartments.isEmpty()) {
-            return 0;
-        }
-
-        float totalHealth = 0;
-        for (Compartment compartment : compartments.values()) {
-            totalHealth += compartment.getHealth();
-        }
-
-        return totalHealth / compartments.size();
+    @Override
+    public void traverseCompartments(Consumer<Compartment> consumer) {
+        consumer.accept(this);
+        subCompartments.values().forEach(c -> c.traverseCompartments(consumer));
     }
 }

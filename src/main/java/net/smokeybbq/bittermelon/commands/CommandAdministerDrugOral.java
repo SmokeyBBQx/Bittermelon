@@ -9,8 +9,10 @@ import net.minecraft.commands.Commands;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
 import net.smokeybbq.bittermelon.character.medical.MedicalStats;
+import net.smokeybbq.bittermelon.medical.simulation.IVAdministration;
 import net.smokeybbq.bittermelon.medical.simulation.OralAdministration;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
+import net.smokeybbq.bittermelon.medical.substance.toxins.Toxin;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -42,6 +44,9 @@ public class CommandAdministerDrugOral {
                 .findFirst();
 
         MedicalStats medicalStats = selectedCharacter.get().getMedicalStats();
+
+        IVAdministration ivAdministration = new IVAdministration(dosage, selectedCharacter.get(), new Toxin("Penicillin", 0.5F, 0.3F, 0.3F, 0.001F));
+        selectedCharacter.get().getMedicalStats().simulationHandler.addSimulation(ivAdministration);
         return 1;
     }
 }

@@ -1,11 +1,11 @@
 package net.smokeybbq.bittermelon.medical.simulation;
 
 import net.smokeybbq.bittermelon.character.Character;
-import net.smokeybbq.bittermelon.medical.simulation.compartments.CirculatoryCompartment;
+import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 
 public class IVAdministration extends PBPKModel {
-    CirculatoryCompartment circulatory;
+    Compartment circulatory;
 
     public IVAdministration(float dosage, Character character, Substance drug) {
         super(dosage, character, drug);
@@ -13,19 +13,14 @@ public class IVAdministration extends PBPKModel {
 
     @Override
     protected void initializeSimulation() {
-        circulatory = (CirculatoryCompartment) compartments.get("Circulatory System").getMainOrgan();
+        circulatory = compartments.get("circulatory_system").getMainCompartment();
 
-        circulatory.addConcentration(substance, dosage);
+        circulatory.updateConcentration(substance, dosage);
         totalConcentration = getTotalConcentration();
     }
 
     @Override
     public void simulation() {
-        float circulatoryConcentration = circulatory.getConcentration(substance);
-
-        float circulatoryDerivative = circulatory.getDerivative(circulatoryConcentration, simpleCompartments, substance);
-
         handleSimpleCompartments();
-        circulatory.updateConcentration(substance, circulatoryDerivative, timeStep);
     }
 }

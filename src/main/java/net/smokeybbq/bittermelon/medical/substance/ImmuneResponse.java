@@ -20,7 +20,7 @@ public class ImmuneResponse extends Substance {
     public float interact(Substance substance) {
         if (substance instanceof Organism) {
             immunity.put(substance.getName(), 1F);
-            return toxicModifier * immunity.get(substance.getName());
+            return -toxicModifier * immunity.get(substance.getName());
         }
         return 0;
     }
@@ -28,7 +28,7 @@ public class ImmuneResponse extends Substance {
     @Override
     public float getToxicDamage(Compartment compartment) {
         if (compartment.getImmunePrivilege() <= 99) {
-            return 0.5F / compartment.getImmunePrivilege();
+            return -0.5F / compartment.getImmunePrivilege();
         }
         return defaultToxicDamage;
     }
