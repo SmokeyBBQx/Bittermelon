@@ -18,8 +18,8 @@ public class SimulationHandler {
     private final Map<String, Compartment> compartments;
 
     // Immunity and inflammatory constants
-    private static final float INFLAMMATORY_DECAY = -0.001F;
-    private static final float INFLAMMATORY_RESPONSE = 0.005F;
+    private static final float INFLAMMATORY_DECAY = -0.1F;
+    private static final float INFLAMMATORY_RESPONSE = 0.5F;
     private static final float IMMUNE_ACTIVATION = 0.01F;
     private static final float RESERVE_CAPACITY = 1000;
     private static final float IMMUNITY_MAXIMUM = 1000;

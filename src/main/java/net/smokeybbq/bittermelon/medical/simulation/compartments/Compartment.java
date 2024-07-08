@@ -104,4 +104,8 @@ public class Compartment {
     public boolean hasTag(CompartmentTag tag) {
         return tags.contains(tag);
     }
+
+    public void setExcludeFromCirculation(boolean value) {
+        excludeFromCirculation = value;
+    }
 }

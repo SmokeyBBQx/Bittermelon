@@ -15,12 +15,13 @@ public class PBPKModelTest {
         //Initializes a default character
         Character testCharacter = CharacterTestFactory.createDummyCharacter();
 
-        Substance substance = new Bacteria("Salmonella", 0.9F, 0F, 0F, 0.01F);
-        Compartment compartment = new Compartment("Tumor", 0.9F);
+        Substance substance = new Toxin("Salmonella", 0.8F, 0.1F, 0.1F, 0.1F);
+        Compartment compartment = new Compartment("Tumor", 0.5F);
+//        compartment.updateConcentration(substance, 100);
         compartment.modifyImmunePrivilege(-99);
         testCharacter.getMedicalStats().addCompartment(compartment);
 
-        PBPKModel model = new IVAdministration(100, testCharacter, substance);
+        PBPKModel model = new OralAdministration(100, testCharacter, substance);
 
         testCharacter.getMedicalStats().getSimulationHandler().addSimulation(model);
 
@@ -36,7 +37,7 @@ public class PBPKModelTest {
         // use for (int i = 0; i < runsPerSecond; i++) for 20 runs
         // use while(model.getTotalConcentration() > 1) for same exit condition as actual model
 
-        for (int i = 0; i < 400; i++) {
+        for (int i = 0; i < 50; i++) {
             // Runs all simulations for the character
             testCharacter.update();
             System.out.println("Tumor Health " + compartment.getHealth());

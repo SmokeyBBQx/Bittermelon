@@ -40,18 +40,38 @@ public class HumanFactory {
         head.addSubCompartment(new SingleGroupCompartment("skin", 0.2F));
 
         GroupCompartment abdomen = new GroupCompartment("abdomen", 1);
-        abdomen.addSubCompartment(new SingleGroupCompartment("gastrointestinal", 0.8F));
-        abdomen.addSubCompartment(new SingleGroupCompartment("stomach", 0.7F));
-        abdomen.addSubCompartment(new SingleGroupCompartment("small_intestine", 0.9F));
-        abdomen.addSubCompartment(new SingleGroupCompartment("large_intestine", 0.8F));
-        abdomen.addSubCompartment(new SingleGroupCompartment("liver", 0.9F));
+
+        SingleGroupCompartment stomach = new SingleGroupCompartment("stomach", 0.7F);
+        stomach.addTag(CompartmentTag.GASTROINTESTINAL);
+        abdomen.addSubCompartment(stomach);
+
+        SingleGroupCompartment smallIntestine = new SingleGroupCompartment("small_intestine", 0.9F);
+        smallIntestine.addTag(CompartmentTag.GASTROINTESTINAL);
+        abdomen.addSubCompartment(smallIntestine);
+
+        SingleGroupCompartment largeIntestine = new SingleGroupCompartment("large_intestine", 0.8F);
+        largeIntestine.addTag(CompartmentTag.GASTROINTESTINAL);
+        abdomen.addSubCompartment(largeIntestine);
+
+        SingleGroupCompartment liver = new SingleGroupCompartment("liver", 0.9F);
+        liver.addTag(CompartmentTag.METABOLIZING);
+        abdomen.addSubCompartment(liver);
+
         abdomen.addSubCompartment(new SingleGroupCompartment("gallbladder", 0.5F));
         abdomen.addSubCompartment(new SingleGroupCompartment("pancreas", 0.5F));
+
         SingleGroupCompartment spleen = new SingleGroupCompartment("spleen", 0.4F);
         spleen.addTag(CompartmentTag.IMMUNE);
         abdomen.addSubCompartment(spleen);
-        abdomen.addSubCompartment(new SingleGroupCompartment("left_kidney", 0.9F));
-        abdomen.addSubCompartment(new SingleGroupCompartment("right_kidney", 0.9F));
+
+        SingleGroupCompartment leftKidney = new SingleGroupCompartment("left_kidney", 0.9F);
+        leftKidney.addTag(CompartmentTag.ELIMINATING);
+        abdomen.addSubCompartment(leftKidney);
+
+        SingleGroupCompartment rightKidney = new SingleGroupCompartment("right_kidney", 0.9F);
+        rightKidney.addTag(CompartmentTag.ELIMINATING);
+        abdomen.addSubCompartment(rightKidney);
+
         abdomen.addSubCompartment(new SingleGroupCompartment("bladder", 0.4F));
         abdomen.addSubCompartment(new SingleGroupCompartment("muscles", 0.4F));
         abdomen.addSubCompartment(new SingleGroupCompartment("spine", 0.1F));

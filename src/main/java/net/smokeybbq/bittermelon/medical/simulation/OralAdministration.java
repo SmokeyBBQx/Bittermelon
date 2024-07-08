@@ -5,7 +5,8 @@ import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.medical.simulation.compartments.*;
 
 public class OralAdministration extends PBPKModel {
-    Compartment GI, liver, circulatory;
+    Compartment liver, circulatory;
+    GroupCompartment GI;
 
     public OralAdministration(float dosage, Character character, Substance drug) {
         super(dosage, character, drug);
@@ -13,12 +14,21 @@ public class OralAdministration extends PBPKModel {
 
     @Override
     protected void initializeSimulation() {
-        GI = compartments.get("abdomen").getCompartment("gastrointestinal").getMainCompartment();
+        GI = new GroupCompartment("gastrointestinal", 1);
+
+        for (Compartment outerCompartment : compartments.values()) {
+            outerCompartment.traverseCompartments(compartment -> {
+                if (compartment.hasTag(CompartmentTag.GASTROINTESTINAL)) {
+                    GI.addSubCompartment(compartment);
+                }
+            });
+        }
+
         liver = compartments.get("abdomen").getCompartment("liver").getMainCompartment();
         circulatory = compartments.get("circulatory_system").getMainCompartment();
 
         GI.updateConcentration(substance, dosage);
-        GI.excludeFromCirculation = true;
+        GI.setExcludeFromCirculation(true);
 
         totalConcentration = getTotalConcentration();
     }

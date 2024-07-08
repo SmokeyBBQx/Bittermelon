@@ -113,11 +113,12 @@ public abstract class PBPKModel {
             targetCompartment.updateConcentration(substance, amount * timeStep);
             circulatorySystem.updateConcentration(substance, -amount * timeStep);
 
-            switch (targetCompartment.getName()) {
-                case "liver" ->
-                        targetCompartment.eliminateConcentration(substance, substance.getMetabolismRateConstant());
-                case "left_kidney", "right_kidney" ->
-                        targetCompartment.eliminateConcentration(substance, substance.getEliminationRateConstant());
+            if (targetCompartment.hasTag(CompartmentTag.METABOLIZING)) {
+                targetCompartment.eliminateConcentration(substance, substance.getMetabolismRateConstant());
+            }
+
+            if (targetCompartment.hasTag(CompartmentTag.ELIMINATING)) {
+                targetCompartment.eliminateConcentration(substance, substance.getEliminationRateConstant());
             }
         }
 

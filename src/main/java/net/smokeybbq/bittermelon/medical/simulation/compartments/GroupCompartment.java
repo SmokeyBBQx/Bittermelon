@@ -1,6 +1,7 @@
 package net.smokeybbq.bittermelon.medical.simulation.compartments;
 
 import net.smokeybbq.bittermelon.character.medical.MedicalStats;
+import net.smokeybbq.bittermelon.medical.substance.Substance;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class GroupCompartment extends Compartment {
     @Override
     public void modifyBloodFlow(float delta) {
         super.modifyBloodFlow(delta);
-        subCompartments.values().forEach(c -> modifyBloodFlow(delta));
+        subCompartments.values().forEach(c -> c.modifyBloodFlow(delta));
     }
 
     @Override
@@ -53,8 +54,30 @@ public class GroupCompartment extends Compartment {
     }
 
     @Override
+    public void moveConcentration(Compartment target, Substance substance, float rate, float timeStep) {
+        subCompartments.values().forEach(c -> c.moveConcentration(target, substance, rate, timeStep));
+    }
+
+    @Override
+    public void updateConcentration(Substance substance, float delta) {
+        float totalBloodFlow = 0;
+
+        for (Compartment compartment : subCompartments.values()) {
+            totalBloodFlow += compartment.getBloodFlow();
+        }
+
+        float finalTotalBloodFlow = totalBloodFlow;
+        subCompartments.values().forEach(c -> c.updateConcentration(substance, delta * c.getBloodFlow() / finalTotalBloodFlow));
+    }
+
+    @Override
     public void traverseCompartments(Consumer<Compartment> consumer) {
         consumer.accept(this);
         subCompartments.values().forEach(c -> c.traverseCompartments(consumer));
+    }
+
+    @Override
+    public void setExcludeFromCirculation(boolean value) {
+        subCompartments.values().forEach(c -> c.setExcludeFromCirculation(value));
     }
 }
