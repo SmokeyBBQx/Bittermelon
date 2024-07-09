@@ -23,6 +23,8 @@ public class SimulationHandler {
     private static final float IMMUNE_ACTIVATION = 0.01F;
     private static final float RESERVE_CAPACITY = 1000;
     private static final float IMMUNITY_MAXIMUM = 1000;
+    private static final float SUPPRESSION_DECAY = -0.1F;
+    private float immuneSuppression = 0;
     private float immuneReserve;
     Set<Compartment> immuneCompartments = new HashSet<>();
     PBPKModel immuneSystemSimulation;
@@ -51,6 +53,7 @@ public class SimulationHandler {
             simulation.runSimulation();
         }
 
+        modifyImmuneSuppression(SUPPRESSION_DECAY);
         decay();
         substanceEffect();
         growImmuneReserve();
@@ -123,8 +126,10 @@ public class SimulationHandler {
     }
 
     public float activateImmuneReserve() {
-        float available = immuneReserve - IMMUNE_ACTIVATION;
-        return Math.max(available, 0);
+        float activationAmount = IMMUNE_ACTIVATION * (1 - immuneSuppression);
+        float actualActivation = Math.min(activationAmount, immuneReserve);
+        immuneReserve -= actualActivation;
+        return actualActivation;
     }
 
     public void growImmuneReserve() {
@@ -134,6 +139,10 @@ public class SimulationHandler {
             }
 
         }
+    }
+
+    public void modifyImmuneSuppression(float delta) {
+        immuneSuppression = Math.min(Math.max(immuneSuppression + delta, 0), 1);
     }
 
     public void addSimulation(PBPKModel simulation) {

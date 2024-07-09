@@ -29,18 +29,6 @@ public abstract class PBPKModel {
     }
 
     private void initializeSimpleCompartments() {
-        // Initialize compartments that will get their concentration from circulatory system
-//        for (Compartment compartment : compartments.values()) {
-//            if (compartment instanceof GroupCompartment) {
-//                // Add SimpleCompartments within the GroupCompartment
-//                simpleCompartments.addAll(((GroupCompartment) compartment).getSubCompartments().values());
-//
-//            } else if (compartment.getClass().equals(Compartment.class)) {
-//                // Add SimpleCompartment if it's not part of the circulatory system
-//                simpleCompartments.add(compartment);
-//            }
-//        }
-
         for (Compartment outerCompartment : compartments.values()) {
             outerCompartment.traverseCompartments(compartment -> {
                 if (compartment.getClass().equals(Compartment.class))

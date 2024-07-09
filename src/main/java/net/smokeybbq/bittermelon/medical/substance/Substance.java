@@ -7,17 +7,13 @@ import java.util.Map;
 
 public abstract class Substance {
     protected String name;
-    protected float eMax;
-    protected float halfMaximalEffectiveConcentration;
     protected float absorptionRateConstant;
     protected float eliminationRateConstant;
     protected float metabolismRateConstant;
     protected float absorptionModifier, eliminationModifier, metabolismModifier;
-
     protected float toxicModifier;
     protected float defaultToxicDamage;
     protected Map<String, Float> toxicDamage = new HashMap<>();
-    public boolean toxic;
 
     public Substance(String name, float absorptionModifier, float eliminationModifier, float metabolismModifier, float toxicModifier) {
         this.name = name;
@@ -29,16 +25,10 @@ public abstract class Substance {
 
     public abstract float interact(Substance substance);
 
+    public abstract void effect(Compartment compartment, float concentration);
+
     public String getName() {
         return name;
-    }
-
-    public float getEMax() {
-        return eMax;
-    }
-
-    public float getHalfMaximalEffectiveConcentration() {
-        return halfMaximalEffectiveConcentration;
     }
 
     public float getAbsorptionRateConstant() {

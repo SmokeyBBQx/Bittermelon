@@ -26,6 +26,7 @@ public class Compartment {
         updateBloodFlow();
     }
 
+
     public float getConcentration(Substance substance) {
         return concentrations.getOrDefault(substance, 0.0F);
     }

@@ -26,6 +26,11 @@ public class ImmuneResponse extends Substance {
     }
 
     @Override
+    public void effect(Compartment compartment, float concentration) {
+
+    }
+
+    @Override
     public float getToxicDamage(Compartment compartment) {
         if (compartment.getImmunePrivilege() <= 99) {
             return -0.5F / compartment.getImmunePrivilege();
