@@ -14,7 +14,7 @@ public class OralAdministration extends PBPKModel {
 
     @Override
     protected void initializeSimulation() {
-        GI = new GroupCompartment("gastrointestinal", 1);
+        GI = new GroupCompartment("gastrointestinal", 1, 1);
 
         for (Compartment outerCompartment : compartments.values()) {
             outerCompartment.traverseCompartments(compartment -> {

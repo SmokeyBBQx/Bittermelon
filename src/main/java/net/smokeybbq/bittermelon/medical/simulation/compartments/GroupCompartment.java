@@ -1,6 +1,5 @@
 package net.smokeybbq.bittermelon.medical.simulation.compartments;
 
-import net.smokeybbq.bittermelon.character.medical.MedicalStats;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 
 import java.util.HashMap;
@@ -12,8 +11,8 @@ public class GroupCompartment extends Compartment {
 
     protected Map<String, Compartment> subCompartments = new HashMap<>();
 
-    public GroupCompartment(String name, float permeability) {
-        super(name, permeability);
+    public GroupCompartment(String name, float permeability, float volume) {
+        super(name, permeability, volume);
         initializeCompartments();
     }
 
@@ -72,12 +71,45 @@ public class GroupCompartment extends Compartment {
 
     @Override
     public void traverseCompartments(Consumer<Compartment> consumer) {
-        consumer.accept(this);
         subCompartments.values().forEach(c -> c.traverseCompartments(consumer));
     }
 
     @Override
     public void setExcludeFromCirculation(boolean value) {
         subCompartments.values().forEach(c -> c.setExcludeFromCirculation(value));
+    }
+
+    @Override
+    public float getVolume() {
+        float totalVolume = 0;
+
+        for (Compartment compartment : subCompartments.values()) {
+            totalVolume += compartment.getVolume();
+        }
+
+        return totalVolume;
+    }
+
+    @Override
+    public float getFunction() {
+        float totalFunction = 0;
+        float totalVolume = 0;
+
+        for (Compartment compartment : subCompartments.values()) {
+            float volume = compartment.getVolume();
+            totalFunction += compartment.getFunction() * volume;
+            totalVolume += volume;
+        }
+
+        return totalFunction / totalVolume;
+    }
+
+    @Override
+    public float getPain() {
+        float totalPain = 0;
+        for (Compartment compartment : subCompartments.values()) {
+            totalPain += compartment.getPain();
+        }
+        return totalPain / subCompartments.size();
     }
 }

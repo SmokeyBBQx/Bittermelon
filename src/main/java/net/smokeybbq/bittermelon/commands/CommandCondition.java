@@ -8,7 +8,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
-import net.smokeybbq.bittermelon.character.medical.MedicalStats;
+import net.smokeybbq.bittermelon.character.medical.AnimalMedicalStats;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,7 +40,7 @@ public class CommandCondition {
                 .filter(c -> c.getName().equalsIgnoreCase(characterName))
                 .findFirst();
 
-        MedicalStats medicalStats = selectedCharacter.get().getMedicalStats();
+        AnimalMedicalStats medicalStats = selectedCharacter.get().getMedicalStats();
 
         return 1;
     }

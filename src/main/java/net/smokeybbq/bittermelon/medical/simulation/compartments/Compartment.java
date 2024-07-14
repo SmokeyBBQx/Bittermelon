@@ -15,14 +15,18 @@ public class Compartment {
     protected float bloodFlow = 1;
     protected float bloodFlowModifier = 1;
     protected float inflammation = 0.1F;
+    protected float function = 1;
+    protected float pain = 0;
+    protected float volume;
     protected float permeability;
     protected Map<Substance, Float> concentrations = new HashMap<>();
     public boolean excludeFromCirculation = false;
     protected List<CompartmentTag> tags = new ArrayList<>();
 
-    public Compartment(String name, float permeability) {
+    public Compartment(String name, float permeability, float volume) {
         this.name = name;
         this.permeability = permeability;
+        this.volume = volume;
         updateBloodFlow();
     }
 
@@ -33,6 +37,7 @@ public class Compartment {
 
     public void updateConcentration(Substance substance, float delta) {
         concentrations.compute(substance, (k, v) -> Math.max(0, (v == null ? 0 : v) + delta));
+//        concentrations.compute(substance, (k, v) -> Math.max(0, (v == null ? 0 : v) + (delta / getVolume())));
 
         if (concentrations.get(substance) <= 0.1) {
             clearConcentration(substance);
@@ -55,6 +60,15 @@ public class Compartment {
         return this;
     }
     public Compartment getMainCompartment() {return this;}
+    public float getFunction() {
+        return function * health / 100 / inflammation;
+    }
+    public float getPain() {
+        return pain;
+    }
+    public float getVolume() {
+        return volume;
+    }
 
     // Setters and modifiers
     public void modifyHealth(float delta) {

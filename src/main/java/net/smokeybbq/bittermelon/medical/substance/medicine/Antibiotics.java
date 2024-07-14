@@ -1,5 +1,6 @@
 package net.smokeybbq.bittermelon.medical.substance.medicine;
 
+import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.medical.substance.toxins.Bacteria;
 import net.smokeybbq.bittermelon.medical.substance.toxins.Organism;
@@ -15,5 +16,10 @@ public class Antibiotics extends Substance {
             return toxicModifier;
         }
         return 0;
+    }
+
+    @Override
+    public void effect(Compartment compartment, float concentration) {
+
     }
 }

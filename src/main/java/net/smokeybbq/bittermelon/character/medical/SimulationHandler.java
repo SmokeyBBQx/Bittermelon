@@ -42,7 +42,7 @@ public class SimulationHandler {
         for (Compartment outerCompartment : compartments.values()) {
             outerCompartment.traverseCompartments(compartment -> {
                 if (compartment.hasTag(CompartmentTag.IMMUNE)) {
-                    immuneCompartments.add(compartment);
+                    immuneCompartments.add(compartment.getMainCompartment());
                 }
             });
         }
@@ -137,7 +137,6 @@ public class SimulationHandler {
             for (Compartment compartment : immuneCompartments) {
                 immuneReserve += compartment.getHealth() / 10;
             }
-
         }
     }
 

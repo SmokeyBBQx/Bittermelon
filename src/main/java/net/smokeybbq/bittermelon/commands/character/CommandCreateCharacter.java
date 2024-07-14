@@ -3,18 +3,12 @@ package net.smokeybbq.bittermelon.commands.character;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.smokeybbq.bittermelon.character.Character;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.smokeybbq.bittermelon.character.CharacterManager;
-import net.smokeybbq.bittermelon.character.medical.MedicalStats;
-
-import java.io.IOException;
 
 public class CommandCreateCharacter {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {

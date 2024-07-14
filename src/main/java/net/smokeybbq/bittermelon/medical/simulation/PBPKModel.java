@@ -1,7 +1,7 @@
 package net.smokeybbq.bittermelon.medical.simulation;
 
 import net.smokeybbq.bittermelon.character.Character;
-import net.smokeybbq.bittermelon.character.medical.MedicalStats;
+import net.smokeybbq.bittermelon.character.medical.AnimalMedicalStats;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.medical.simulation.compartments.*;
 
@@ -15,7 +15,7 @@ public abstract class PBPKModel {
     protected Substance substance;
     protected Map<String, Compartment> compartments;
     protected float totalConcentration;
-    protected MedicalStats medicalStats;
+    protected AnimalMedicalStats medicalStats;
     protected List<Compartment> simpleCompartments = new ArrayList<>();
 
     public PBPKModel(float dosage, Character character, Substance substance) {

@@ -1,13 +1,11 @@
 package net.smokeybbq.bittermelon.medical.simulation.compartments;
 
-import net.smokeybbq.bittermelon.character.medical.MedicalStats;
-
 public class SingleGroupCompartment extends GroupCompartment {
 
     Compartment mainCompartment;
-    public SingleGroupCompartment(String name, float permeability) {
-        super(name, permeability);
-        mainCompartment = new Compartment(name, permeability);
+    public SingleGroupCompartment(String name, float permeability, float volume) {
+        super(name, permeability, volume);
+        mainCompartment = new Compartment(name, permeability, volume);
         subCompartments.put(name, mainCompartment);
     }
 

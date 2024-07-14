@@ -1,5 +1,6 @@
 package net.smokeybbq.bittermelon.medical.substance.toxins;
 
+import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 
 public class Organism extends Substance {
@@ -13,5 +14,10 @@ public class Organism extends Substance {
     @Override
     public float interact(Substance substance) {
         return 0;
+    }
+
+    @Override
+    public void effect(Compartment compartment, float concentration) {
+
     }
 }
