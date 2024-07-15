@@ -1,12 +1,9 @@
 package Testing;
 
-import net.smokeybbq.bittermelon.medical.simulation.IVAdministration;
 import net.smokeybbq.bittermelon.medical.simulation.OralAdministration;
 import net.smokeybbq.bittermelon.medical.simulation.PBPKModel;
-import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.character.Character;
-import net.smokeybbq.bittermelon.medical.substance.toxins.Bacteria;
 import net.smokeybbq.bittermelon.medical.substance.toxins.Toxin;
 
 public class PBPKModelTest {
@@ -37,7 +34,7 @@ public class PBPKModelTest {
         // use for (int i = 0; i < runsPerSecond; i++) for 20 runs
         // use while(model.getTotalConcentration() > 1) for same exit condition as actual model
 
-        for (int i = 0; i < 2000; i++) {
+        for (int i = 0; i < 100; i++) {
             // Runs all simulations for the character
             testCharacter.update();
 //            System.out.println("Tumor Health " + compartment.getHealth());

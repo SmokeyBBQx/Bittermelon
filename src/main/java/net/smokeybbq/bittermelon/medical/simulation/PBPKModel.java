@@ -25,7 +25,6 @@ public abstract class PBPKModel {
         this.medicalStats = character.getMedicalStats();
         compartments = medicalStats.getCompartments();
         initializeSimpleCompartments();
-        initializeSimulation();
     }
 
     private void initializeSimpleCompartments() {
@@ -79,7 +78,9 @@ public abstract class PBPKModel {
         float totalBloodFlow = 0;
 
         for (Compartment compartment : simpleCompartments) {
-            totalBloodFlow += compartment.getBloodFlow();
+            if (!compartment.excludeFromCirculation) {
+                totalBloodFlow += compartment.getBloodFlow();
+            }
         }
 
         // Calculate distribution amounts for each compartment
@@ -113,7 +114,7 @@ public abstract class PBPKModel {
         // Calculate and move substance back to circulatory system
         for (Compartment compartment : simpleCompartments) {
             if (!compartment.excludeFromCirculation) {
-                float returnAmount = compartment.getConcentration(substance) * compartment.getBloodFlow() / 2;
+                float returnAmount = compartment.getBloodFlow();
                 compartment.moveConcentration(circulatorySystem, substance, returnAmount, timeStep);
             }
         }

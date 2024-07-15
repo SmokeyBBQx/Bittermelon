@@ -4,23 +4,22 @@ import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 
-public class IVAdministration extends PBPKModel {
-    Compartment circulatory;
-
-    public IVAdministration(float dosage, Character character, Substance drug) {
-        super(dosage, character, drug);
+public class SimpleAdministration extends PBPKModel {
+    Compartment entryCompartment;
+    public SimpleAdministration(float dosage, Character character, Substance substance, Compartment entryCompartment) {
+        super(dosage, character, substance);
+        this.entryCompartment = entryCompartment;
+        initializeSimulation();
     }
 
     @Override
     protected void initializeSimulation() {
-        circulatory = compartments.get("circulatory_system").getMainCompartment();
-
-        circulatory.updateConcentration(substance, dosage);
+        entryCompartment.updateConcentration(substance, dosage);
         totalConcentration = getTotalConcentration();
     }
 
     @Override
-    public void simulation() {
+    protected void simulation() {
         handleSimpleCompartments();
     }
 }

@@ -10,6 +10,7 @@ public class OralAdministration extends PBPKModel {
 
     public OralAdministration(float dosage, Character character, Substance drug) {
         super(dosage, character, drug);
+        initializeSimulation();
     }
 
     @Override

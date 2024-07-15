@@ -84,7 +84,7 @@ public class CardiovascularSystem {
     }
 
     private void checkForArrhythmia() {
-        float heartHealth = compartments.get("chest").getCompartment("heart").getHealth();
+        float heartHealth = compartments.get("chest").getCompartment("heart").getFunction();
 
         float fibrillationChance = (100 - heartHealth) / 1000;
 

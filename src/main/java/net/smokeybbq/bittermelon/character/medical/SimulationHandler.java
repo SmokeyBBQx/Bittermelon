@@ -1,7 +1,7 @@
 package net.smokeybbq.bittermelon.character.medical;
 
 import net.smokeybbq.bittermelon.character.Character;
-import net.smokeybbq.bittermelon.medical.simulation.IVAdministration;
+import net.smokeybbq.bittermelon.medical.simulation.SimpleAdministration;
 import net.smokeybbq.bittermelon.medical.simulation.compartments.CompartmentTag;
 import net.smokeybbq.bittermelon.medical.substance.ImmuneResponse;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
@@ -36,7 +36,7 @@ public class SimulationHandler {
     }
 
     public void initialize() {
-        immuneSystemSimulation = new IVAdministration(1000, character, new ImmuneResponse("Immune Response", 0F, 0F, 0F, 0.001F));
+        immuneSystemSimulation = new SimpleAdministration(1000, character, new ImmuneResponse("Immune Response", 0F, 0F, 0F, 0.001F), compartments.get("circulatory_system").getMainCompartment());
         addSimulation(immuneSystemSimulation);
 
         for (Compartment outerCompartment : compartments.values()) {
