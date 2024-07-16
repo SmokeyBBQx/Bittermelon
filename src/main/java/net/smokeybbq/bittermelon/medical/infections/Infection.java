@@ -1,8 +1,8 @@
 package net.smokeybbq.bittermelon.medical.infections;
 
-import com.sun.jna.WString;
+import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
 import net.smokeybbq.bittermelon.medical.symptoms.Symptom;
-import java.util.ArrayList;
+
 import java.util.List;
 
 public abstract class Infection {
@@ -23,9 +23,15 @@ public abstract class Infection {
     protected InfectionStage infectionStage;
 
     //The part of the body where the infection incubates, E.G. "leftFoot" or "Liver"
-    protected String pointOfOrigin;
+    protected Compartment siteOfEntry;
+    protected float infectionRate;
 
-    public Infection() {
+    public Infection(Compartment siteOfEntry) {
+        this.siteOfEntry = siteOfEntry;
+
+    }
+
+    public void update() {
 
     }
 
@@ -41,11 +47,7 @@ public abstract class Infection {
         return infectionStage;
     }
 
-    public String getPointOfOrigin() {
-        return pointOfOrigin;
-    }
-
-    public void setPointOfOrigin(String pointOfOrigin) {
-        this.pointOfOrigin = pointOfOrigin;
+    public Compartment getSiteOfEntry() {
+        return siteOfEntry;
     }
 }

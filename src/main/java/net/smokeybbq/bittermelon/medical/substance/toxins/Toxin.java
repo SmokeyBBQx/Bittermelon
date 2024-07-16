@@ -1,9 +1,10 @@
 package net.smokeybbq.bittermelon.medical.substance.toxins;
 
 import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
+import net.smokeybbq.bittermelon.medical.substance.Chemical;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 
-public class Toxin extends Substance {
+public class Toxin extends Chemical {
     public Toxin(String name, float absorptionModifier, float eliminationModifier, float metabolismModifier, float toxicModifier) {
         super(name, absorptionModifier, eliminationModifier, metabolismModifier, toxicModifier);
         absorptionRateConstant = 1 * absorptionModifier;

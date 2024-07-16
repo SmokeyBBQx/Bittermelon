@@ -4,8 +4,8 @@ import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 
 public class Organism extends Substance {
-    public Organism(String name, float absorptionModifier, float eliminationModifier, float metabolismModifier, float toxicModifier) {
-        super(name, absorptionModifier, eliminationModifier, metabolismModifier, toxicModifier);
+    public Organism(String name, float toxicModifier) {
+        super(name, toxicModifier);
         eliminationRateConstant = 0;
         metabolismRateConstant = 0;
         absorptionRateConstant = 0;

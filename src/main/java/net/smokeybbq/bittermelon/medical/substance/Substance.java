@@ -15,11 +15,8 @@ public abstract class Substance {
     protected float defaultToxicDamage;
     protected Map<String, Float> toxicDamage = new HashMap<>();
 
-    public Substance(String name, float absorptionModifier, float eliminationModifier, float metabolismModifier, float toxicModifier) {
+    public Substance(String name, float toxicModifier) {
         this.name = name;
-        this.absorptionModifier = absorptionModifier;
-        this.eliminationModifier = eliminationModifier;
-        this.metabolismModifier = metabolismModifier;
         this.toxicModifier = toxicModifier;
     }
 
