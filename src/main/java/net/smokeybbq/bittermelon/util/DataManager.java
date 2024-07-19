@@ -1,11 +1,13 @@
 package net.smokeybbq.bittermelon.util;
 
 import com.google.gson.Gson;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -74,6 +76,22 @@ public abstract class DataManager<U, T> {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Recursively deletes the directory the data should be stored in before removing the data from the map
+     * @param data Data to be removed
+     */
+    public void deleteData(T data) {
+        // Finds the folder with the data
+        File folder = new File(dataFolder + "/" + getFileName(data));
+        // Tries to recursively delete
+        try {
+            FileUtils.deleteDirectory(folder);;
+            dataMap.remove(getKey(data), data);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.model.CompositeModel;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.smokeybbq.bittermelon.util.DataManager;
@@ -49,11 +50,27 @@ public class CharacterManager extends DataManager<UUID, Character> {
         addData(character.getUUID(), character);
     }
 
+    /**
+     * Deletes the directory the character corresponds to and removes it from character maps
+     * @param character Character to be removed
+     */
+    public void removeCharacter(Character character) {
+        deleteData(character);
+        List<Character> characterList = playerUUIDToCharacter.getOrDefault(character.getPlayerUUID(), null);
+        if (characterList != null) {
+            characterList.remove(character);
+        }
+        if (activeCharacters.containsValue(character)) {
+            activeCharacters.remove(character.getPlayerUUID(), character);
+        }
+    }
+
     public static void setActiveCharacter(ServerPlayer player, Character character) {
         activeCharacters.put(player.getUUID(), character);
     }
-    public static Character getActiveCharacter(ServerPlayer player) {
-        return activeCharacters.getOrDefault(player.getUUID(), null);
+    // gets the active character using UUID
+    public static Character getActiveCharacter(UUID playerUUID) {
+        return activeCharacters.getOrDefault(playerUUID, null);
     }
 
     public List<Character> getCharacters(UUID playerUUID) {
@@ -93,4 +110,5 @@ public class CharacterManager extends DataManager<UUID, Character> {
     protected UUID getKey(Character data) {
         return data.getUUID();
     }
+
 }
