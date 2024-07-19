@@ -1,12 +1,28 @@
 package net.smokeybbq.bittermelon.character;
 
+import com.mojang.authlib.GameProfile;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.PlayerList;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.storage.LevelResource;
+import net.minecraft.world.level.storage.PlayerDataStorage;
+import net.minecraftforge.event.server.ServerLifecycleEvent;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import net.smokeybbq.bittermelon.character.medical.AnimalMedicalStats;
+import net.smokeybbq.bittermelon.character.medical.MedicalStats;
+import net.smokeybbq.bittermelon.chat.ChannelManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 import static net.smokeybbq.bittermelon.medical.simulation.compartments.anatomies.HumanFactory.createCompartments;
@@ -14,15 +30,15 @@ import static net.smokeybbq.bittermelon.medical.simulation.compartments.anatomie
 public class Character {
     private final UUID uuid;
     private final UUID playerUuid;
-    private String name;
-    private String gender;
-    private String description;
-    private String skinUrl;
-    private int age;
-    private float height;
-    private float weight;
-    private String emoteColor;
-    private transient AnimalMedicalStats medicalStats;
+    private final String name;
+    private final String gender;
+    private final String description;
+    private final String skinUrl;
+    private final int age;
+    private final float height;
+    private final float weight;
+    private final String emoteColor;
+    private final transient MedicalStats medicalStats;
 
     public Character(UUID playerUuid, String name, String gender, String description, String skinUrl, int age, float height, float weight, String emoteColor) {
         this.uuid = UUID.randomUUID();
@@ -35,7 +51,7 @@ public class Character {
         this.height = height;
         this.weight = weight;
         this.emoteColor = emoteColor;
-        this.medicalStats = new AnimalMedicalStats(this, createCompartments());
+        medicalStats = new AnimalMedicalStats(this, createCompartments());
     }
 
     public UUID getUUID() {
@@ -78,7 +94,7 @@ public class Character {
         return emoteColor;
     }
 
-    public AnimalMedicalStats getMedicalStats() {
+    public MedicalStats getMedicalStats() {
         return medicalStats;
     }
 

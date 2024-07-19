@@ -1,6 +1,7 @@
 package net.smokeybbq.bittermelon.events;
 
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.smokeybbq.bittermelon.character.Character;
@@ -14,12 +15,17 @@ public class DamageHandler {
 
     @SubscribeEvent
     public static void onLivingHurtEvent(LivingHurtEvent event) {
-        if (event.getSource().is(DamageTypes.FALL)) {
-            Character character = new Character(UUID.randomUUID(), "Dummy", "Male", "Dummy", "Nothing", 5, 5, 5, "A");
-            Compartment leftLeg = character.getMedicalStats().getCompartments().get("left_leg");
-            leftLeg.modifyHealth(-event.getAmount());
+        if (event.getEntity() instanceof Player player) {
+            if (event.getSource().is(DamageTypes.FALL)) {
+                Character character = CharacterManager.getActiveCharacter(player.getUUID());
+                Compartment leftLeg = character.getMedicalStats().getCompartments().get("left_leg");
+                Compartment rightLeg = character.getMedicalStats().getCompartments().get("right_leg");
 
-            Stumble stumble = new Stumble(CharacterManager.getServer().getPlayerList().getPlayer(character.getPlayerUUID()));
+                leftLeg.modifyHealth(-event.getAmount());
+                rightLeg.modifyHealth(-event.getAmount());
+
+                Stumble stumble = new Stumble(CharacterManager.getServer().getPlayerList().getPlayer(character.getPlayerUUID()));
+            }
         }
     }
 }
