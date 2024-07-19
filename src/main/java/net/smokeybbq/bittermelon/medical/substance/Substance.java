@@ -1,36 +1,31 @@
 package net.smokeybbq.bittermelon.medical.substance;
 
+import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public abstract class Substance {
     protected String name;
-    protected float eMax;
-    protected float halfMaximalEffectiveConcentration;
-    protected float overdoseLimit;
     protected float absorptionRateConstant;
     protected float eliminationRateConstant;
     protected float metabolismRateConstant;
     protected float absorptionModifier, eliminationModifier, metabolismModifier;
-    public boolean toxic;
+    protected float toxicModifier;
+    protected float defaultToxicDamage;
+    protected Map<String, Float> toxicDamage = new HashMap<>();
 
-    public Substance(float absorptionModifier, float eliminationModifier, float metabolismModifier) {
-        this.absorptionModifier = absorptionModifier;
-        this.eliminationModifier = eliminationModifier;
-        this.metabolismModifier = metabolismModifier;
+    public Substance(String name, float toxicModifier) {
+        this.name = name;
+        this.toxicModifier = toxicModifier;
     }
+
+    public abstract float interact(Substance substance);
+
+    public abstract void effect(Compartment compartment, float concentration);
 
     public String getName() {
         return name;
-    }
-
-    public float getEMax() {
-        return eMax;
-    }
-
-    public float getHalfMaximalEffectiveConcentration() {
-        return halfMaximalEffectiveConcentration;
-    }
-
-    public float getOverdoseLimit() {
-        return overdoseLimit;
     }
 
     public float getAbsorptionRateConstant() {
@@ -43,6 +38,7 @@ public abstract class Substance {
 
     public float getMetabolismRateConstant() { return  metabolismRateConstant;}
 
-    public abstract void toxicDamage(float effectiveness);
-
+    public float getToxicDamage(Compartment compartment) {
+        return toxicDamage.getOrDefault(compartment.getName(), defaultToxicDamage);
+    }
 }

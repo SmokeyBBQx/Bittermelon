@@ -8,11 +8,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
-import net.smokeybbq.bittermelon.character.medical.MedicalStats;
-import net.smokeybbq.bittermelon.medical.conditions.Influenza;
-import net.smokeybbq.bittermelon.medical.simulation.OralAdministration;
-import net.smokeybbq.bittermelon.medical.substance.Substance;
-import net.smokeybbq.bittermelon.medical.substance.medicine.Acetaminophen;
+import net.smokeybbq.bittermelon.character.medical.AnimalMedicalStats;
+import net.smokeybbq.bittermelon.medical.substance.toxins.Toxin;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -43,10 +40,10 @@ public class CommandAdministerDrugOral {
                 .filter(c -> c.getName().equalsIgnoreCase(characterName))
                 .findFirst();
 
-        MedicalStats medicalStats = selectedCharacter.get().getMedicalStats();
-        Substance substance = new Acetaminophen(absorptionModifier, eliminationModifier, metabolismModifier);
-        OralAdministration simulation = new OralAdministration(dosage, selectedCharacter.get(), substance);
-        medicalStats.simulationHandler.addSimulation(simulation);
+        AnimalMedicalStats medicalStats = selectedCharacter.get().getMedicalStats();
+
+//        IVAdministration ivAdministration = new IVAdministration(dosage, selectedCharacter.get(), new Toxin("Penicillin", 0.5F, 0.3F, 0.3F, 0.001F));
+//        selectedCharacter.get().getMedicalStats().simulationHandler.addSimulation(ivAdministration);
         return 1;
     }
 }

@@ -12,8 +12,8 @@ public class CharacterTestFactory {
         String description = "This is a test character.";
         String skinUrl = "http://wow.com/skin.png";
         int age = 25;
-        double height = 1.75;
-        double weight = 70.0;
+        float height = 1.75F;
+        float weight = 70.0F;
         String emoteColor = "#FFFFFF";
 
         return new Character(playerUuid, name, gender, description, skinUrl, age, height, weight, emoteColor);

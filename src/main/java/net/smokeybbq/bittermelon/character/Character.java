@@ -1,28 +1,15 @@
 package net.smokeybbq.bittermelon.character;
 
-import com.mojang.authlib.GameProfile;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.players.PlayerList;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.storage.LevelResource;
-import net.minecraft.world.level.storage.PlayerDataStorage;
-import net.minecraftforge.event.server.ServerLifecycleEvent;
 import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.server.ServerLifecycleHooks;
-import net.smokeybbq.bittermelon.character.medical.MedicalStats;
-import net.smokeybbq.bittermelon.chat.ChannelManager;
+import net.smokeybbq.bittermelon.character.medical.AnimalMedicalStats;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.UUID;
+
+import static net.smokeybbq.bittermelon.medical.simulation.compartments.anatomies.HumanFactory.createCompartments;
 
 public class Character {
     private final UUID uuid;
@@ -35,7 +22,7 @@ public class Character {
     private float height;
     private float weight;
     private String emoteColor;
-    private transient MedicalStats medicalStats;
+    private transient AnimalMedicalStats medicalStats;
 
     public Character(UUID playerUuid, String name, String gender, String description, String skinUrl, int age, float height, float weight, String emoteColor) {
         this.uuid = UUID.randomUUID();
@@ -48,8 +35,7 @@ public class Character {
         this.height = height;
         this.weight = weight;
         this.emoteColor = emoteColor;
-        medicalStats = new MedicalStats(this);
-        ChannelManager.getInstance().setDefaultChannels(this);
+        this.medicalStats = new AnimalMedicalStats(this, createCompartments());
     }
 
     public UUID getUUID() {
@@ -92,12 +78,12 @@ public class Character {
         return emoteColor;
     }
 
-    public MedicalStats getMedicalStats() {
+    public AnimalMedicalStats getMedicalStats() {
         return medicalStats;
     }
 
     public void update() {
-//        medicalStats.update();
+        medicalStats.update();
     }
 
     public void savePlayerData(CompoundTag data) {

@@ -1,102 +1,126 @@
 package net.smokeybbq.bittermelon.medical.simulation.compartments;
 
 import net.smokeybbq.bittermelon.medical.substance.Substance;
-import net.smokeybbq.bittermelon.medical.simulation.Inhibitor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
-public abstract class Compartment {
+public class Compartment {
     protected String name;
-    protected float volume;
-    protected float concentration;
+    protected float immunePrivilege = 100;
     protected float health = 100;
-    protected float bloodFlow;
-    protected float tissueOverBloodPartitionCoefficient;
-
+    protected float bloodFlow = 1;
+    protected float bloodFlowModifier = 1;
+    protected float inflammation = 0.1F;
+    protected float function = 1;
+    protected float pain = 0;
+    protected float volume;
+    protected float permeability;
     protected Map<Substance, Float> concentrations = new HashMap<>();
-    protected List<Inhibitor> inhibitors = new ArrayList<>();
+    public boolean excludeFromCirculation = false;
+    protected List<CompartmentTag> tags = new ArrayList<>();
 
-    public Compartment(String name, float volume) {
+    public Compartment(String name, float permeability, float volume) {
         this.name = name;
+        this.permeability = permeability;
         this.volume = volume;
+        updateBloodFlow();
     }
+
 
     public float getConcentration(Substance substance) {
         return concentrations.getOrDefault(substance, 0.0F);
     }
 
-    public Map<Substance, Float> getConcentrations() {
-        return concentrations;
+    public void updateConcentration(Substance substance, float delta) {
+        concentrations.compute(substance, (k, v) -> Math.max(0, (v == null ? 0 : v) + delta));
+//        concentrations.compute(substance, (k, v) -> Math.max(0, (v == null ? 0 : v) + (delta / getVolume())));
+
+        if (concentrations.get(substance) <= 0.1) {
+            clearConcentration(substance);
+        }
     }
 
-    public float getDerivative() {
-        return 0;
-    }
-
-    public void updateConcentration(Substance substance, float derivative, float timeStep) {
-        float updatedConcentration = concentrations.getOrDefault(substance, 0.0F) + derivative * timeStep;
-
-        concentrations.put(substance, updatedConcentration);
-    }
-
-    public void addConcentration(Substance substance, float concentration) {
-        float updatedConcentration = concentrations.getOrDefault(substance, 0.0F) + concentration;
-        concentrations.put(substance, updatedConcentration);
-    }
-
-    public void clearConcentrationMapping(Substance substance) {
+    public void clearConcentration(Substance substance) {
         concentrations.remove(substance);
     }
 
-    public void addInhibitor(Inhibitor inhibitor) {
-        inhibitors.add(inhibitor);
+    public Map<Substance, Float> getConcentrations() {
+        return concentrations;
     }
-
-    public Float getVolume() {
+    public String getName() { return name; }
+    public float getHealth() { return health; }
+    public float getBloodFlow() { return bloodFlow; }
+    public float getInflammation() { return inflammation; }
+    public float getImmunePrivilege() { return immunePrivilege; }
+    public Compartment getCompartment(String name) {
+        return this;
+    }
+    public Compartment getMainCompartment() {return this;}
+    public float getFunction() {
+        return function * health / 100 / inflammation;
+    }
+    public float getPain() {
+        return pain;
+    }
+    public float getVolume() {
         return volume;
     }
 
-    public void setVolume(float volume) {
-        this.volume = volume;
+    // Setters and modifiers
+    public void modifyHealth(float delta) {
+        health = Math.max(0, health + delta);
     }
 
-    public String getName() {
-        return name;
+    public void setBloodFlow(float newBloodFlow) {
+        bloodFlow = newBloodFlow * inflammation * permeability;
     }
 
-    public void setRateConstant(float eliminationRateConstant) {
+    public void modifyBloodFlow(float delta) {
+        bloodFlow = Math.max(0.0001F, (bloodFlowModifier + delta) * inflammation * permeability);
     }
 
-    public float getHealth() {
-        return health;
+    private void updateBloodFlow() {
+        bloodFlow = Math.max(0.0001F, bloodFlowModifier * inflammation * permeability);
     }
 
-    public float getBloodFlow() {
-        return bloodFlow;
+    public void modifyInflammation(float delta) {
+        inflammation = Math.min(1, Math.max(0.1F, inflammation + delta));
+        updateBloodFlow();
     }
 
-    public void addHealth(float health) {
-        this.health += health;
+    public void modifyImmunePrivilege(float delta) {
+        immunePrivilege = Math.max(0, Math.min(100, immunePrivilege + delta));
     }
 
-    public void addBloodFlow(float bloodFlow) {
-        this.bloodFlow += bloodFlow;
+    public void eliminateConcentration(Substance substance, float rate) {
+        updateConcentration(substance, -rate * getConcentration(substance));
     }
 
-    public void setBloodFlow(float bloodFlow) {
-        this.bloodFlow = bloodFlow;
+    public void moveConcentration(Compartment target, Substance substance, float rate, float timeStep) {
+        float amount = Math.min(getConcentration(substance), getConcentration(substance) * timeStep * rate);
+        if (amount > 0) {
+            updateConcentration(substance, -amount);
+            target.updateConcentration(substance, amount);
+        }
     }
 
-    public void removeHealth(float health) {
-        this.health -= health;
-        this.health = Math.max(this.health, 0);
+    public void traverseCompartments(Consumer<Compartment> consumer) {
+        consumer.accept(this);
     }
 
-    public void removeBloodFlow(float bloodFlow) {
-        this.bloodFlow -= bloodFlow;
+    public void addTag(CompartmentTag tag) {
+        tags.add(tag);
     }
 
+    public boolean hasTag(CompartmentTag tag) {
+        return tags.contains(tag);
+    }
+
+    public void setExcludeFromCirculation(boolean value) {
+        excludeFromCirculation = value;
+    }
 }

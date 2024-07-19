@@ -20,8 +20,6 @@ public class CommandStumble {
 
     private static int stumble(CommandContext<CommandSourceStack> context, ServerPlayer player) {
         Stumble stumble = new Stumble(player);
-
-        stumble.stumble();
         return 1;
     }
 

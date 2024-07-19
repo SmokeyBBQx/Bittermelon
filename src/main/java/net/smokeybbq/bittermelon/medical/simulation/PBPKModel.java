@@ -1,7 +1,7 @@
 package net.smokeybbq.bittermelon.medical.simulation;
 
 import net.smokeybbq.bittermelon.character.Character;
-import net.smokeybbq.bittermelon.character.medical.MedicalStats;
+import net.smokeybbq.bittermelon.character.medical.AnimalMedicalStats;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.medical.simulation.compartments.*;
 
@@ -12,40 +12,32 @@ public abstract class PBPKModel {
     protected Character character;
     protected float timeStep = 0.01F;
     protected float t = 0;
-    protected Substance drug;
-    protected SimpleCompartment GI, liver, kidney, lung, heart, brain, adiposeTissue, bone, muscle, lymphatic, endocrine, other;
-    protected CirculatoryCompartment circulatory;
+    protected Substance substance;
     protected Map<String, Compartment> compartments;
     protected float totalConcentration;
-    protected MedicalStats medicalStats;
-    protected SimpleCompartment[] simpleCompartments;
+    protected AnimalMedicalStats medicalStats;
+    protected List<Compartment> simpleCompartments = new ArrayList<>();
 
-    public PBPKModel(float dosage, Character character, Substance drug) {
+    public PBPKModel(float dosage, Character character, Substance substance) {
         this.dosage = dosage;
-        this.drug = drug;
+        this.substance = substance;
         this.character = character;
         this.medicalStats = character.getMedicalStats();
         compartments = medicalStats.getCompartments();
-        loadCompartments();
-        initializeSimulation();
+        initializeSimpleCompartments();
     }
 
-    // Load compartments from the character's medical stats
-    protected void loadCompartments() {
-        GI = (SimpleCompartment) compartments.get("Gastrointestinal");
-        liver = (EliminatingCompartment) compartments.get("Liver");
-        kidney = (EliminatingCompartment) compartments.get("Kidneys");
-        lung = (SimpleCompartment) compartments.get("Lungs");
-        heart = (SimpleCompartment) compartments.get("Heart");
-        brain = (SimpleCompartment) compartments.get("Brain");
-        adiposeTissue = (SimpleCompartment) compartments.get("Adipose Tissue");
-        bone = (SimpleCompartment) compartments.get("Bone");
-        muscle = (SimpleCompartment) compartments.get("Muscle");
-        lymphatic = (SimpleCompartment) compartments.get("Lymphatic System");
-        endocrine = (SimpleCompartment) compartments.get("Endocrine System");
-        other = (SimpleCompartment) compartments.get("Other");
-        circulatory = (CirculatoryCompartment) compartments.get("Circulatory System");
+    private void initializeSimpleCompartments() {
+        for (Compartment outerCompartment : compartments.values()) {
+            outerCompartment.traverseCompartments(compartment -> {
+                if (compartment.getClass().equals(Compartment.class))
+                    simpleCompartments.add(compartment);
+            });
+        }
+
+        compartments.get("circulatory_system").getMainCompartment().excludeFromCirculation = true;
     }
+
 
     // Abstract method to initialize the simulation (set dosage, etc.), to be implemented by subclasses
     protected abstract void initializeSimulation();
@@ -53,7 +45,6 @@ public abstract class PBPKModel {
     // Run the simulation for one time step
     public void runSimulation() {
         if (totalConcentration > 1) {
-            updateRateConstants(); // Update the rate constants for absorption, metabolism, and elimination
             simulation(); // Perform the simulation implemented by subclass
             totalConcentration = getTotalConcentration();
             t += timeStep;
@@ -61,7 +52,7 @@ public abstract class PBPKModel {
             //DEBUGGING LINES
             System.out.println("Running simulation at time: " + t);
             System.out.println();
-            System.out.println("Total concentration: " + totalConcentration);
+            System.out.println(substance.getName() + " Total concentration: " + totalConcentration);
 
         } else {
             clearMapping(); // Clear the concentration mappings in the compartments
@@ -75,32 +66,60 @@ public abstract class PBPKModel {
     // Abstract method for the simulation logic, to be implemented by subclasses
     protected abstract void simulation();
 
-    protected void updateRateConstants() {
-        GI.setRateConstant(drug.getAbsorptionRateConstant());
-        kidney.setRateConstant(drug.getEliminationRateConstant());
-        liver.setRateConstant(drug.getMetabolismRateConstant());
-    }
-
     protected void clearMapping() {
         for (Compartment compartment : compartments.values()) {
-            compartment.clearConcentrationMapping(drug);
+            compartment.clearConcentration(substance);
         }
     }
-
 
     protected void handleSimpleCompartments() {
-        float[] simpleDerivatives = new float[simpleCompartments.length];
+        Compartment circulatorySystem = compartments.get("circulatory_system").getMainCompartment();
+        float totalSubstance = circulatorySystem.getConcentration(substance);
+        float totalBloodFlow = 0;
 
-        // Calculate the derivatives for each simple compartment
-        for (var i = 0; i < simpleCompartments.length; i++) {
-            simpleDerivatives[i] = simpleCompartments[i].getDerivative(circulatory.getConcentration(drug), drug);
+        for (Compartment compartment : simpleCompartments) {
+            if (!compartment.excludeFromCirculation) {
+                totalBloodFlow += compartment.getBloodFlow();
+            }
         }
 
-        // Update the concentrations based on the derivatives
-        for (var i = 0; i < simpleCompartments.length; i++) {
-            simpleCompartments[i].updateConcentration(drug, simpleDerivatives[i], timeStep);
+        // Calculate distribution amounts for each compartment
+        Map<Compartment, Float> distributionAmounts = new HashMap<>();
+
+        for (Compartment compartment : simpleCompartments) {
+            if (!compartment.excludeFromCirculation) {
+                float distributionRate = compartment.getBloodFlow() / totalBloodFlow;
+                float amount = totalSubstance * distributionRate;
+                distributionAmounts.put(compartment, amount);
+            }
+        }
+
+        // Move substance from circulatory system to other compartments
+        for (Map.Entry<Compartment, Float> entry : distributionAmounts.entrySet()) {
+            Compartment targetCompartment = entry.getKey();
+            float amount = entry.getValue();
+
+            targetCompartment.updateConcentration(substance, amount * timeStep);
+            circulatorySystem.updateConcentration(substance, -amount * timeStep);
+
+            if (targetCompartment.hasTag(CompartmentTag.METABOLIZING)) {
+                targetCompartment.eliminateConcentration(substance, substance.getMetabolismRateConstant());
+            }
+
+            if (targetCompartment.hasTag(CompartmentTag.ELIMINATING)) {
+                targetCompartment.eliminateConcentration(substance, substance.getEliminationRateConstant());
+            }
+        }
+
+        // Calculate and move substance back to circulatory system
+        for (Compartment compartment : simpleCompartments) {
+            if (!compartment.excludeFromCirculation) {
+                float returnAmount = compartment.getBloodFlow();
+                compartment.moveConcentration(circulatorySystem, substance, returnAmount, timeStep);
+            }
         }
     }
+
 
     public void removeFromSimulations() {
         medicalStats.simulationHandler.removeSimulation(this);
@@ -109,12 +128,13 @@ public abstract class PBPKModel {
     public float getTotalConcentration() {
         float concentrationSum = 0;
 
-        for (Compartment compartment : compartments.values()) {
-            float n =  compartment.getConcentration(drug);
+        for (Compartment compartment : simpleCompartments) {
+            float n = compartment.getConcentration(substance);
             concentrationSum += n;
 
             //DEBUG LINES
-             System.out.println(compartment.getName() + " " + n);
+            System.out.println(substance.getName() + " " + compartment.getName() + " " + n);
+            System.out.println(substance.getName() + " " + compartment.getName() + " BF: " + compartment.getBloodFlow());
         }
 
         System.out.println("------------------------");

@@ -2,33 +2,36 @@ package net.smokeybbq.bittermelon.medical.conditions;
 
 import net.minecraft.world.entity.player.Player;
 import net.smokeybbq.bittermelon.character.Character;
+import net.smokeybbq.bittermelon.medical.common.PathologyBase;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.medical.symptoms.Symptom;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Condition {
-    protected String name;
+public abstract class Condition extends PathologyBase {
     protected float duration;
     protected boolean chronic;
-    protected float severity;
-    protected String affectedArea;
-    protected Character character;
     protected List<Symptom> symptoms = new ArrayList<>();
-    protected String[] suitableTreatments;
-    public Condition(float duration, boolean chronic, float severity, String affectedArea, Character character) {
+    protected List<String> affectedAreas;
+
+    public Condition(float duration, boolean chronic, Character character, List<String> affectedAreas, float amplifier) {
+        super(character, amplifier);
         this.duration = duration;
         this.chronic = chronic;
-        this.severity = severity;
-        this.affectedArea = affectedArea;
-        this.character= character;
+        this.affectedAreas = affectedAreas;
         symptoms();
     }
 
-    public abstract void update();
-
     protected abstract void symptoms();
+
+    public void addAffectedArea(String area) {
+        affectedAreas.add(area);
+    }
+
+    public List<String> getAffectedAreas() {
+        return affectedAreas;
+    }
 
     public void setDuration(int duration) {
         this.duration = duration;
@@ -38,29 +41,7 @@ public abstract class Condition {
         this.chronic = chronic;
     }
 
-    public void setSeverity(float severity) {
-        this.severity = severity;
-    }
-
-    public void setAffectedArea(String affectedArea) {
-        this.affectedArea = affectedArea;
-    }
-
-    public String getAffectedArea() {
-        return affectedArea;
-    }
-
-    public String[] getSuitableTreatments() {
-        return suitableTreatments;
-    }
-
     public List<Symptom> getSymptoms() {
         return symptoms;
     }
-
-    public float getSeverity() {
-        return severity;
-    }
-
-    public abstract void treat(Substance drug, float effectiveness);
 }

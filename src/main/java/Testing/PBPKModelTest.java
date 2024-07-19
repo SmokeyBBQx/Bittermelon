@@ -1,12 +1,10 @@
 package Testing;
-import net.smokeybbq.bittermelon.medical.conditions.Influenza;
-import net.smokeybbq.bittermelon.medical.simulation.IVAdministration;
-import net.smokeybbq.bittermelon.medical.simulation.PBPKModel;
+
 import net.smokeybbq.bittermelon.medical.simulation.OralAdministration;
+import net.smokeybbq.bittermelon.medical.simulation.PBPKModel;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
-import net.smokeybbq.bittermelon.medical.substance.medicine.Acetaminophen;
-import net.smokeybbq.bittermelon.medical.substance.medicine.Penicillin;
 import net.smokeybbq.bittermelon.character.Character;
+import net.smokeybbq.bittermelon.medical.substance.toxins.Toxin;
 
 public class PBPKModelTest {
     public static void main(String[] args) {
@@ -14,30 +12,33 @@ public class PBPKModelTest {
         //Initializes a default character
         Character testCharacter = CharacterTestFactory.createDummyCharacter();
 
-        Influenza influenza = new Influenza(100, false, 1, "Lungs", testCharacter);
+        Substance substance = new Toxin("Salmonella", 0.8F, 0.1F, 0.1F, 0.1F);
+//        Compartment compartment = new Compartment("Tumor", 0.5F);
+//        compartment.updateConcentration(substance, 100);
+//        compartment.modifyImmunePrivilege(-99);
+//        testCharacter.getMedicalStats().addCompartment(compartment);
 
-        testCharacter.getMedicalStats().addCondition(influenza);
+        PBPKModel model = new OralAdministration(1000, testCharacter, substance);
+
+        testCharacter.getMedicalStats().getSimulationHandler().addSimulation(model);
+
+//        testCharacter.getMedicalStats().getSimulationHandler().initialize();
 
         // Adjust the modifiers so that it takes different times to reach a total concentration of 1
-        Substance drug = new Acetaminophen(1,1,1);
-
-        PBPKModel model = new OralAdministration(100, testCharacter, drug);
-
-        testCharacter.getMedicalStats().simulationHandler.addSimulation(model);
 
         // Run the simulation 20 times a second (equal to minecraft ticks)
-        int runsPerSecond = 5000;
+        int runsPerSecond = 20;
         long delay = 1000 / runsPerSecond; // Delay in milliseconds
 
 
         // use for (int i = 0; i < runsPerSecond; i++) for 20 runs
         // use while(model.getTotalConcentration() > 1) for same exit condition as actual model
-        while(model.getTotalConcentration() > 1) {
+
+        for (int i = 0; i < 100; i++) {
             // Runs all simulations for the character
             testCharacter.update();
+//            System.out.println("Tumor Health " + compartment.getHealth());
 
-            // Gets the fever symptom
-            System.out.println(influenza.getSymptoms().get(0).getAmplifier());
             try {
                 Thread.sleep(delay); // Introduce delay to achieve 20 runs per second
             } catch (InterruptedException e) {
