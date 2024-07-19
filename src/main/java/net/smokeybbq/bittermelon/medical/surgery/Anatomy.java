@@ -1,0 +1,4 @@
+package net.smokeybbq.bittermelon.medical.surgery;
+
+public class Anatomy {
+}

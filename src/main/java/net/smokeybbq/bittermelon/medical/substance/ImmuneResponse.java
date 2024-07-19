@@ -9,8 +9,8 @@ import java.util.Map;
 
 public class ImmuneResponse extends Substance {
     Map<String, Float> immunity = new HashMap<>();
-    public ImmuneResponse(String name, float absorptionModifier, float eliminationModifier, float metabolismModifier, float toxicModifier) {
-        super(name, absorptionModifier, eliminationModifier, metabolismModifier, toxicModifier);
+    public ImmuneResponse(String name, float toxicModifier) {
+        super(name, toxicModifier);
         absorptionRateConstant = 0;
         eliminationRateConstant = 0;
         metabolismRateConstant = 0;

@@ -36,7 +36,7 @@ public class SimulationHandler {
     }
 
     public void initialize() {
-        immuneSystemSimulation = new SimpleAdministration(1000, character, new ImmuneResponse("Immune Response", 0F, 0F, 0F, 0.001F), compartments.get("circulatory_system").getMainCompartment());
+        immuneSystemSimulation = new SimpleAdministration(1000, character, new ImmuneResponse("Immune Response", 0.001F), compartments.get("circulatory_system").getMainCompartment());
         addSimulation(immuneSystemSimulation);
 
         for (Compartment outerCompartment : compartments.values()) {

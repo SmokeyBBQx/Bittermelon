@@ -3,9 +3,9 @@ package net.smokeybbq.bittermelon.medical.substance.toxins;
 import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 
-public class Virus extends Substance {
-    public Virus(String name, float absorptionModifier, float eliminationModifier, float metabolismModifier, float toxicModifier) {
-        super(name, absorptionModifier, eliminationModifier, metabolismModifier, toxicModifier);
+public class Virus extends Pathogen {
+    public Virus(String name, float toxicModifier, float infectionRate) {
+        super(name, toxicModifier, infectionRate);
     }
 
     @Override
