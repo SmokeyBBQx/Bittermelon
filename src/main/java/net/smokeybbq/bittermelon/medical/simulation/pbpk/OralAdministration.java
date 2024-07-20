@@ -1,8 +1,10 @@
-package net.smokeybbq.bittermelon.medical.simulation;
+package net.smokeybbq.bittermelon.medical.simulation.pbpk;
 
 import net.smokeybbq.bittermelon.character.Character;
+import net.smokeybbq.bittermelon.medical.compartments.Compartment;
+import net.smokeybbq.bittermelon.medical.compartments.CompartmentTag;
+import net.smokeybbq.bittermelon.medical.compartments.GroupCompartment;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
-import net.smokeybbq.bittermelon.medical.simulation.compartments.*;
 
 public class OralAdministration extends PBPKModel {
     Compartment liver, circulatory;

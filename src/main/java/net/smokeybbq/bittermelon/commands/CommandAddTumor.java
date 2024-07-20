@@ -8,7 +8,6 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.server.level.ServerPlayer;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
-import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
 
 public class CommandAddTumor {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {

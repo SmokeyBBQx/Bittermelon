@@ -1,6 +1,6 @@
 package net.smokeybbq.bittermelon.medical.substance;
 
-import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
+import net.smokeybbq.bittermelon.medical.compartments.Compartment;
 
 public class Chemical extends Substance {
     public Chemical(String name, float toxicModifier, float absorptionModifier, float eliminationModifier, float metabolismModifier) {

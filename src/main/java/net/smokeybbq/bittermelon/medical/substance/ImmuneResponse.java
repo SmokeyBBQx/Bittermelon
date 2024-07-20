@@ -1,7 +1,6 @@
 package net.smokeybbq.bittermelon.medical.substance;
 
-import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
-import net.smokeybbq.bittermelon.medical.substance.toxins.Bacteria;
+import net.smokeybbq.bittermelon.medical.compartments.Compartment;
 import net.smokeybbq.bittermelon.medical.substance.toxins.Organism;
 
 import java.util.HashMap;

@@ -1,7 +1,8 @@
-package net.smokeybbq.bittermelon.character.medical;
+package net.smokeybbq.bittermelon.character.medical.species.mammal;
 
-import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
-import net.smokeybbq.bittermelon.medical.simulation.compartments.CompartmentTag;
+import net.smokeybbq.bittermelon.character.medical.HeartRhythm;
+import net.smokeybbq.bittermelon.medical.compartments.Compartment;
+import net.smokeybbq.bittermelon.medical.compartments.CompartmentTag;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -10,7 +11,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 
-public class CardiovascularSystem {
+public class MammalCardiorespiratory {
     private float bloodOxygen = 100;
     private float pulseTimer = 0;
     private float pulseRate = 0;
@@ -22,7 +23,7 @@ public class CardiovascularSystem {
     private final Map<String, Compartment> compartments;
     Set<Compartment> respiratoryCompartments = new HashSet<>();
 
-    public CardiovascularSystem(Map<String, Compartment> compartments) {
+    public MammalCardiorespiratory(Map<String, Compartment> compartments) {
         this.compartments = compartments;
         initialize();
     }

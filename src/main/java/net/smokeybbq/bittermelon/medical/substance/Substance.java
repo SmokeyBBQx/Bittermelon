@@ -1,6 +1,6 @@
 package net.smokeybbq.bittermelon.medical.substance;
 
-import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
+import net.smokeybbq.bittermelon.medical.compartments.Compartment;
 
 import java.util.HashMap;
 import java.util.Map;

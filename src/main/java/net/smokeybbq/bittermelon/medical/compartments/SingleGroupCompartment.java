@@ -1,4 +1,4 @@
-package net.smokeybbq.bittermelon.medical.simulation.compartments;
+package net.smokeybbq.bittermelon.medical.compartments;
 
 public class SingleGroupCompartment extends GroupCompartment {
 

@@ -1,9 +1,11 @@
-package net.smokeybbq.bittermelon.medical.simulation;
+package net.smokeybbq.bittermelon.medical.simulation.pbpk;
 
 import net.smokeybbq.bittermelon.character.Character;
-import net.smokeybbq.bittermelon.character.medical.AnimalMedicalStats;
+import net.smokeybbq.bittermelon.character.medical.species.AnimalMedicalStats;
+import net.smokeybbq.bittermelon.character.medical.species.MedicalStats;
+import net.smokeybbq.bittermelon.medical.compartments.Compartment;
+import net.smokeybbq.bittermelon.medical.compartments.CompartmentTag;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
-import net.smokeybbq.bittermelon.medical.simulation.compartments.*;
 
 import java.util.*;
 
@@ -15,7 +17,7 @@ public abstract class PBPKModel {
     protected Substance substance;
     protected Map<String, Compartment> compartments;
     protected float totalConcentration;
-    protected AnimalMedicalStats medicalStats;
+    protected MedicalStats medicalStats;
     protected List<Compartment> simpleCompartments = new ArrayList<>();
 
     public PBPKModel(float dosage, Character character, Substance substance) {
@@ -122,7 +124,9 @@ public abstract class PBPKModel {
 
 
     public void removeFromSimulations() {
-        medicalStats.simulationHandler.removeSimulation(this);
+        if (medicalStats instanceof AnimalMedicalStats) {
+            ((AnimalMedicalStats) medicalStats).getSimulationHandler().removeSimulation(this);
+        }
     }
 
     public float getTotalConcentration() {

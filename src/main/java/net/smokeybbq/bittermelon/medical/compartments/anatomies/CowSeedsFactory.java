@@ -1,9 +1,6 @@
-package net.smokeybbq.bittermelon.medical.simulation.compartments.anatomies;
+package net.smokeybbq.bittermelon.medical.compartments.anatomies;
 
-import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
-import net.smokeybbq.bittermelon.medical.simulation.compartments.CompartmentTag;
-import net.smokeybbq.bittermelon.medical.simulation.compartments.GroupCompartment;
-import net.smokeybbq.bittermelon.medical.simulation.compartments.SingleGroupCompartment;
+import net.smokeybbq.bittermelon.medical.compartments.Compartment;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -23,8 +23,6 @@ import net.smokeybbq.bittermelon.commands.character.*;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.smokeybbq.bittermelon.events.ChatEventHandler;
 import net.smokeybbq.bittermelon.events.PlayerEventHandler;
-import org.spongepowered.asm.mixin.Mixins;
-import net.smokeybbq.bittermelon.medical.simulation.OralAdministration;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file

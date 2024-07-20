@@ -1,7 +1,7 @@
 package Testing;
 
-import net.smokeybbq.bittermelon.medical.simulation.OralAdministration;
-import net.smokeybbq.bittermelon.medical.simulation.PBPKModel;
+import net.smokeybbq.bittermelon.medical.simulation.pbpk.OralAdministration;
+import net.smokeybbq.bittermelon.medical.simulation.pbpk.PBPKModel;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.medical.substance.toxins.Toxin;
@@ -20,7 +20,7 @@ public class PBPKModelTest {
 
         PBPKModel model = new OralAdministration(1000, testCharacter, substance);
 
-        testCharacter.getMedicalStats().getSimulationHandler().addSimulation(model);
+//        testCharacter.getMedicalStats().getSimulationHandler().addSimulation(model);
 
 //        testCharacter.getMedicalStats().getSimulationHandler().initialize();
 

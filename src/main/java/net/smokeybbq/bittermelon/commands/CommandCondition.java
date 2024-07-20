@@ -8,13 +8,12 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
-import net.smokeybbq.bittermelon.character.medical.AnimalMedicalStats;
+import net.smokeybbq.bittermelon.character.medical.species.MedicalStats;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class CommandCondition {
 
@@ -23,7 +22,7 @@ public class CommandCondition {
                 .then(Commands.argument("characterName", StringArgumentType.string())
                         .then(Commands.argument("affectedAreas", StringArgumentType.string())
                                 .then(Commands.argument("severity", FloatArgumentType.floatArg())
-                                        .executes(context -> addCondition(context)))))
+                                        .executes(CommandCondition::addCondition))))
         );
     }
 
@@ -32,7 +31,7 @@ public class CommandCondition {
         String affectedAreas = StringArgumentType.getString(context, "affectedAreas");
         List<String> affectedAreasList = Arrays.stream(affectedAreas.split(","))
                 .map(String::trim)
-                .collect(Collectors.toList());
+                .toList();
         float severity = FloatArgumentType.getFloat(context, "severity");
         Collection<Character> characters = CharacterManager.getInstance().getCharacterMap().values();
 
@@ -40,7 +39,7 @@ public class CommandCondition {
                 .filter(c -> c.getName().equalsIgnoreCase(characterName))
                 .findFirst();
 
-        AnimalMedicalStats medicalStats = selectedCharacter.get().getMedicalStats();
+        MedicalStats medicalStats = selectedCharacter.get().getMedicalStats();
 
         return 1;
     }

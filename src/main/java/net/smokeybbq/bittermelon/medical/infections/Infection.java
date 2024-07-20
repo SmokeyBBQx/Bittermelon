@@ -1,6 +1,6 @@
 package net.smokeybbq.bittermelon.medical.infections;
 
-import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
+import net.smokeybbq.bittermelon.medical.compartments.Compartment;
 import net.smokeybbq.bittermelon.medical.symptoms.Symptom;
 
 import java.util.List;

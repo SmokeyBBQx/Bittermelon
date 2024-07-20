@@ -1,6 +1,6 @@
 package net.smokeybbq.bittermelon.medical.substance.toxins;
 
-import net.smokeybbq.bittermelon.medical.simulation.compartments.Compartment;
+import net.smokeybbq.bittermelon.medical.compartments.Compartment;
 import net.smokeybbq.bittermelon.medical.substance.Chemical;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 
