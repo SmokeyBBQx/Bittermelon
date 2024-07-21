@@ -14,6 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
+import net.smokeybbq.bittermelon.character.medical.species.SpeciesClass;
 import net.smokeybbq.bittermelon.chat.Channel;
 import net.smokeybbq.bittermelon.chat.ChannelManager;
 import net.smokeybbq.bittermelon.util.CommandUtil;
@@ -30,14 +31,14 @@ public class CommandCharacter {
                 )
                 .then(Commands.literal("switch")
                         .then(Commands.argument("name", StringArgumentType.string())
-                                .executes(context -> switchCharacter(context)))
+                                .executes(CommandCharacter::switchCharacter))
                 )
                 .then(Commands.literal("create")
                         .then(Commands.argument("name", StringArgumentType.string())
                                 .then(Commands.argument("age", IntegerArgumentType.integer(1))
                                         .then(Commands.argument("emoteColor", StringArgumentType.string())
                                                 .then(Commands.argument("description", StringArgumentType.greedyString())
-                                                        .executes(context -> createCharacter(context))))))
+                                                        .executes(CommandCharacter::createCharacter)))))
                 )
                 .then(Commands.literal("remove")
                         .then(Commands.argument("character", StringArgumentType.string())
@@ -48,7 +49,7 @@ public class CommandCharacter {
         );
         dispatcher.register(Commands.literal("switchcharacter")
                 .then(Commands.argument("name", StringArgumentType.string())
-                        .executes(context -> switchCharacter(context))));
+                        .executes(CommandCharacter::switchCharacter)));
     }
 
     private static int viewCharacters(CommandContext<CommandSourceStack> context, boolean doesTargetPlayer) throws CommandSyntaxException {
@@ -76,7 +77,7 @@ public class CommandCharacter {
             context.getSource().sendFailure(Component.literal("Character '" + character.getName() + "' already exists"));
             return 0;
         } else {
-            character = new Character(context.getSource().getPlayer().getUUID(), name, "test", description, "test", age, 1.5, 80, emoteColor);
+            character = new Character(context.getSource().getPlayer().getUUID(), name, description, "url","test", age, 1.5F, 80, emoteColor, new SpeciesClass());
             CharacterManager.getInstance().addCharacter(character);
         }
 
