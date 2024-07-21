@@ -338,7 +338,7 @@ public class CommandChannel {
             String result = "";
             int count = 0;
             for (Character c : whitelist) {
-                result += c.getName() + " (" + CommandUtil.keyToServerPlayer(c.getPlayerUUID()).getName().getString() + ")"  + ", ";
+                result += c.getName() + " (" + CommandUtil.keyToServerPlayer(c.getEntityUUID()).getName().getString() + ")"  + ", ";
                 count++;
             }
             result = result.substring(0, result.lastIndexOf(", "));

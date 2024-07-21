@@ -1,4 +1,4 @@
-package net.smokeybbq.bittermelon.character.medical.species.mammal;
+package net.smokeybbq.bittermelon.character.medical.species.animal;
 
 import net.smokeybbq.bittermelon.character.medical.HeartRhythm;
 import net.smokeybbq.bittermelon.medical.compartments.Compartment;
@@ -11,23 +11,23 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 
-public class MammalCardiorespiratory {
-    private float bloodOxygen = 100;
-    private float pulseTimer = 0;
-    private float pulseRate = 0;
-    private float heartEffort = 20;
-    final float MAX_BLOOD_OXYGEN = 100f;
-    final float MIN_HEART_EFFORT = 0.1f;
-    HeartRhythm rhythm = HeartRhythm.VENTRICULAR_FIBRILLATION;
-    private int BPM = 0;
-    private final Map<String, Compartment> compartments;
-    Set<Compartment> respiratoryCompartments = new HashSet<>();
+public abstract class Cardiorespiratory {
+    protected float bloodOxygen = 100;
+    protected float pulseTimer = 0;
+    protected float pulseRate = 0;
+    protected float heartEffort = 20;
+    protected final float MAX_BLOOD_OXYGEN = 100f;
+    protected final float MIN_HEART_EFFORT = 0.1f;
+    protected final float MAX_HEART_RATE = 220;
+    protected HeartRhythm rhythm = HeartRhythm.VENTRICULAR_FIBRILLATION;
+    protected int BPM = 0;
+    protected final Map<String, Compartment> compartments;
+    protected Set<Compartment> respiratoryCompartments = new HashSet<>();
 
-    public MammalCardiorespiratory(Map<String, Compartment> compartments) {
+    public Cardiorespiratory(Map<String, Compartment> compartments) {
         this.compartments = compartments;
         initialize();
     }
-
 
     private void initialize() {
         for (Compartment outerCompartment : compartments.values()) {
@@ -40,8 +40,6 @@ public class MammalCardiorespiratory {
     }
 
     public void update() {
-        final int MAX_HEART_RATE = 220;
-
         bloodOxygen = Math.max(bloodOxygen - 0.05F, 0);
 
         // Cardiac Arrest
@@ -53,45 +51,20 @@ public class MammalCardiorespiratory {
 
         if (bloodOxygen < 1) {
             for (Compartment outerCompartment : compartments.values()) {
-                outerCompartment.traverseCompartments(compartment -> {
-                    compartment.modifyHealth(-0.1F);
-                });
+                outerCompartment.traverseCompartments(compartment -> compartment.modifyHealth(-0.1F));
             }
         }
+
+        heartRhythm();
     }
 
-    private void heartRhythm() {
-        switch (rhythm) {
-            case SINUS -> {
-                sinus();
-            }
-            case VENTRICULAR_FIBRILLATION -> {
-                ventricularFibrillation();
-            }
-            case ATRIAL_FIBRILLATION -> {
-                atrialFibrillation();
-            }
-            case PEA -> {
-                PEA();
-            }
-            case ASYSTOLE -> {
-                asystole();
-            }
-        }
-    }
+    protected abstract void heartRhythm();
 
     public void switchHeartState(HeartRhythm heartRhythm) {
         rhythm = heartRhythm;
     }
 
-    private void checkForArrhythmia() {
-        float heartHealth = compartments.get("chest").getCompartment("heart").getFunction();
-
-        float fibrillationChance = (100 - heartHealth) / 1000;
-
-    }
-
-    private void sinus() {
+    protected void sinus() {
         pulseRate = heartEffort;
         pulseRate = Math.max(pulseRate, 0);
 
@@ -113,40 +86,37 @@ public class MammalCardiorespiratory {
         BPM = Math.round((TICKS_PER_SECOND * 60) / pulseRate);
     }
 
-    private void ventricularFibrillation() {
+    protected void ventricularFibrillation() {
         BPM = ThreadLocalRandom.current().nextInt(300, 600);
     }
 
-    private void atrialFibrillation() {
+    protected void atrialFibrillation() {
 
     }
 
-    private void PEA() {
+    protected void PEA() {
         BPM = ThreadLocalRandom.current().nextInt(60, 75);
     }
 
-    private void asystole() {
+    protected void asystole() {
         BPM = 0;
     }
 
-    private void logDebugInfo() {
+    protected void logDebugInfo() {
         System.out.println("Heart Effort: " + heartEffort);
         System.out.println("Oxygen: " + bloodOxygen);
         System.out.println("Pulse Rate: " + pulseRate);
         System.out.println("Estimated BPM: " + BPM);
     }
 
-    private float respiratoryFunction() {
-        Compartment chest = compartments.get("chest");
-
-        float tracheaFunction = chest.getCompartment("trachea").getFunction();
+    protected float respiratoryFunction() {
         float respiratoryFunction = 0;
 
         for (Compartment compartment : respiratoryCompartments) {
             respiratoryFunction += compartment.getFunction();
         }
 
-        return tracheaFunction * respiratoryFunction;
+        return respiratoryFunction;
     }
 
 }

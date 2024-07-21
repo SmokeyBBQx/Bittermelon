@@ -5,5 +5,5 @@ public enum CompartmentTag {
     GASTROINTESTINAL,
     METABOLIZING,
     ELIMINATING,
-    RESPIRATORY;
+    RESPIRATORY
 }

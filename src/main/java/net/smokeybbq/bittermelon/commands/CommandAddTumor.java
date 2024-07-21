@@ -18,7 +18,7 @@ public class CommandAddTumor {
     }
 
     private static int addTumor(CommandContext<CommandSourceStack> context, ServerPlayer player) {
-        Character selectedCharacter = CharacterManager.getActiveCharacter(player);
+        Character selectedCharacter = CharacterManager.getActiveCharacter(player.getUUID());
 //        selectedCharacter.getMedicalStats().addCompartment(new Compartment("Tumor", 1F));
         return 1;
     }

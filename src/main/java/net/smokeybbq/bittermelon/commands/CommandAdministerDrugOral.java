@@ -8,7 +8,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
-import net.smokeybbq.bittermelon.character.medical.species.mammal.MammalMedicalStats;
+import net.smokeybbq.bittermelon.character.medical.species.animal.mammal.MammalMedicalStats;
 
 import java.util.Collection;
 import java.util.Optional;

@@ -2,9 +2,6 @@ package net.smokeybbq.bittermelon.medical.simulation;
 
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.medical.simulation.pbpk.PBPKModel;
-import net.smokeybbq.bittermelon.medical.simulation.pbpk.SimpleAdministration;
-import net.smokeybbq.bittermelon.medical.compartments.CompartmentTag;
-import net.smokeybbq.bittermelon.medical.substance.ImmuneResponse;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 import net.smokeybbq.bittermelon.medical.compartments.Compartment;
 

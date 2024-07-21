@@ -22,7 +22,7 @@ public class DamageHandler {
                 leftLeg.modifyHealth(-event.getAmount());
                 rightLeg.modifyHealth(-event.getAmount());
 
-                Stumble stumble = new Stumble(CharacterManager.getServer().getPlayerList().getPlayer(character.getPlayerUUID()));
+                Stumble stumble = new Stumble(CharacterManager.getServer().getPlayerList().getPlayer(character.getEntityUUID()));
             }
         }
     }

@@ -125,7 +125,7 @@ public class CommandCharacter {
             // implement default playerData
         }
 
-        CharacterManager.getInstance().setActiveCharacter(player, selectedCharacter);
+        CharacterManager.getInstance().setActiveCharacter(player.getUUID(), selectedCharacter);
         context.getSource().sendSystemMessage(Component.literal("Character switched: " + selectedCharacter.getName()));
         // retrieve and set player channel
         Channel channel = CommandUtil.getActiveChannelFromData(player);

@@ -1,7 +1,6 @@
 package net.smokeybbq.bittermelon.medical.simulation.pbpk;
 
 import net.smokeybbq.bittermelon.character.Character;
-import net.smokeybbq.bittermelon.medical.simulation.pbpk.PBPKModel;
 import net.smokeybbq.bittermelon.medical.substance.Substance;
 
 public class TopicalAdministration extends PBPKModel {

@@ -70,7 +70,7 @@ public class ChatEventHandler {
         }
 
         for (Character c : channel.getMembers()) {
-            UUID memberUUID = c.getPlayerUUID();
+            UUID memberUUID = c.getEntityUUID();
             ServerPlayer p = player.server.getPlayerList().getPlayer(memberUUID);
             if (p != null && !playersSeen.contains(memberUUID)) {
                 if (player.distanceTo(p) <= channel.getRange() || channel.getProperty("ignoreRange")) {

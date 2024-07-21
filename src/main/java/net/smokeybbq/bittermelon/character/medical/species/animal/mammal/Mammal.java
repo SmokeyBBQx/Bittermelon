@@ -1,4 +1,4 @@
-package net.smokeybbq.bittermelon.character.medical.species.mammal;
+package net.smokeybbq.bittermelon.character.medical.species.animal.mammal;
 
 import net.smokeybbq.bittermelon.character.medical.species.Species;
 

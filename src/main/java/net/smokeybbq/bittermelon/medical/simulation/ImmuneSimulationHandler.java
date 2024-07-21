@@ -57,9 +57,7 @@ public class ImmuneSimulationHandler extends SimulationHandler {
 
     private void decay() {
         for (Compartment outerCompartment : compartments.values()) {
-            outerCompartment.traverseCompartments(compartment -> {
-                compartment.modifyInflammation(INFLAMMATORY_DECAY);
-            });
+            outerCompartment.traverseCompartments(compartment -> compartment.modifyInflammation(INFLAMMATORY_DECAY));
         }
     }
 

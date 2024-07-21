@@ -1,7 +1,7 @@
 package net.smokeybbq.bittermelon.medical.simulation.pbpk;
 
 import net.smokeybbq.bittermelon.character.Character;
-import net.smokeybbq.bittermelon.character.medical.species.AnimalMedicalStats;
+import net.smokeybbq.bittermelon.character.medical.species.animal.AnimalMedicalStats;
 import net.smokeybbq.bittermelon.character.medical.species.MedicalStats;
 import net.smokeybbq.bittermelon.medical.compartments.Compartment;
 import net.smokeybbq.bittermelon.medical.compartments.CompartmentTag;

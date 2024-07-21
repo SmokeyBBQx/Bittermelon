@@ -1,8 +1,7 @@
-package net.smokeybbq.bittermelon.character.medical.species.mammal;
+package net.smokeybbq.bittermelon.character.medical.species.animal.mammal;
 
 import net.smokeybbq.bittermelon.character.Character;
-import net.smokeybbq.bittermelon.character.medical.species.AnimalMedicalStats;
-import net.smokeybbq.bittermelon.character.medical.species.MedicalStats;
+import net.smokeybbq.bittermelon.character.medical.species.animal.AnimalMedicalStats;
 import net.smokeybbq.bittermelon.medical.compartments.Compartment;
 import net.smokeybbq.bittermelon.medical.simulation.ImmuneSimulationHandler;
 import net.smokeybbq.bittermelon.medical.simulation.SimulationHandler;

@@ -1,15 +1,9 @@
 package net.smokeybbq.bittermelon.character;
 
-import com.google.gson.Gson;
-
-import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.client.model.CompositeModel;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.smokeybbq.bittermelon.util.DataManager;
 
@@ -41,12 +35,12 @@ public class CharacterManager extends DataManager<UUID, Character> {
 
     public void mapPlayersToCharacters() {
         for (Character character : dataMap.values()) {
-            playerUUIDToCharacter.computeIfAbsent(character.getPlayerUUID(), k -> new ArrayList<>()).add(character);
+            playerUUIDToCharacter.computeIfAbsent(character.getEntityUUID(), k -> new ArrayList<>()).add(character);
         }
     }
 
     public void addCharacter(Character character) {
-        playerUUIDToCharacter.computeIfAbsent(character.getPlayerUUID(), k -> new ArrayList<>()).add(character);
+        playerUUIDToCharacter.computeIfAbsent(character.getEntityUUID(), k -> new ArrayList<>()).add(character);
         addData(character.getUUID(), character);
     }
 
@@ -56,25 +50,25 @@ public class CharacterManager extends DataManager<UUID, Character> {
      */
     public void removeCharacter(Character character) {
         deleteData(character);
-        List<Character> characterList = playerUUIDToCharacter.getOrDefault(character.getPlayerUUID(), null);
+        List<Character> characterList = playerUUIDToCharacter.getOrDefault(character.getEntityUUID(), null);
         if (characterList != null) {
             characterList.remove(character);
         }
         if (activeCharacters.containsValue(character)) {
-            activeCharacters.remove(character.getPlayerUUID(), character);
+            activeCharacters.remove(character.getEntityUUID(), character);
         }
     }
 
-    public static void setActiveCharacter(ServerPlayer player, Character character) {
-        activeCharacters.put(player.getUUID(), character);
+    public static void setActiveCharacter(UUID entityUUID, Character character) {
+        activeCharacters.put(entityUUID, character);
     }
     // gets the active character using UUID
-    public static Character getActiveCharacter(UUID playerUUID) {
-        return activeCharacters.getOrDefault(playerUUID, null);
+    public static Character getActiveCharacter(UUID entityUUID) {
+        return activeCharacters.getOrDefault(entityUUID, null);
     }
 
-    public List<Character> getCharacters(UUID playerUUID) {
-        return playerUUIDToCharacter.getOrDefault(playerUUID, new ArrayList<>());
+    public List<Character> getCharacters(UUID entityUUID) {
+        return playerUUIDToCharacter.getOrDefault(entityUUID, new ArrayList<>());
     }
 
     public Character getCharacter(UUID characterUUID) {

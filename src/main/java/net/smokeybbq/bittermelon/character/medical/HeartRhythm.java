@@ -5,5 +5,5 @@ public enum HeartRhythm {
     ATRIAL_FIBRILLATION,
     VENTRICULAR_FIBRILLATION,
     PEA,
-    ASYSTOLE;
+    ASYSTOLE
 }
