@@ -119,4 +119,7 @@ public abstract class Cardiorespiratory {
         return respiratoryFunction;
     }
 
+    public float getBloodOxygen() {return bloodOxygen;}
+    public int getBPM() {return BPM;}
+
 }

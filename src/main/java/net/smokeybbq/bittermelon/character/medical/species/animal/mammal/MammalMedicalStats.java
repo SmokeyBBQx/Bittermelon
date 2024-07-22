@@ -9,10 +9,6 @@ import net.smokeybbq.bittermelon.medical.simulation.SimulationHandler;
 import java.util.*;
 
 public class MammalMedicalStats extends AnimalMedicalStats {
-    private float bloodLevel;
-    private float respirationRate;
-    private float bloodPressureSystolic;
-    private float bloodPressureDiastolic;
     private float bodyTemperature;
     private final MammalCardiorespiratory mammalCardiorespiratory;
 

@@ -5,6 +5,9 @@ import net.smokeybbq.bittermelon.medical.compartments.Compartment;
 import java.util.Map;
 
 public class MammalCardiorespiratory extends Cardiorespiratory {
+    private float bloodLevel;
+    private float bloodPressureSystolic;
+    private float bloodPressureDiastolic;
 
     public MammalCardiorespiratory(Map<String, Compartment> compartments) {
         super(compartments);

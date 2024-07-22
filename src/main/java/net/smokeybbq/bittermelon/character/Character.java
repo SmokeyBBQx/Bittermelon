@@ -3,6 +3,7 @@ package net.smokeybbq.bittermelon.character;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.smokeybbq.bittermelon.character.medical.species.Species;
 import net.smokeybbq.bittermelon.character.medical.species.SpeciesClass;
 import net.smokeybbq.bittermelon.character.medical.species.MedicalStats;
 
@@ -21,10 +22,10 @@ public class Character {
     private final float height;
     private final float weight;
     private final String emoteColor;
-    private final transient SpeciesClass species;
+    private final Species species;
     private final transient MedicalStats medicalStats;
 
-    public Character(UUID entityUUID, String name, String description, String skinUrl, String gender, int age, float height, float weight, String emoteColor, SpeciesClass species) {
+    public Character(UUID entityUUID, String name, String description, String skinUrl, String gender, int age, float height, float weight, String emoteColor, Species species) {
         this.uuid = UUID.randomUUID();
         this.entityUUID = entityUUID;
         this.name = name;
@@ -36,7 +37,7 @@ public class Character {
         this.weight = weight;
         this.emoteColor = emoteColor;
         this.species = species;
-        medicalStats = species.getMedicalStats();
+        medicalStats = species.createMedicalStats();
     }
 
     public UUID getUUID() {
