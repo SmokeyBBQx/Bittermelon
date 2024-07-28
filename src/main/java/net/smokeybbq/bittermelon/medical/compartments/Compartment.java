@@ -21,6 +21,7 @@ public class Compartment {
     protected float permeability;
     protected Map<Substance, Float> concentrations = new HashMap<>();
     public boolean excludeFromCirculation = false;
+    protected boolean bleeding = false;
     protected List<CompartmentTag> tags = new ArrayList<>();
 
     public Compartment(String name, float permeability, float volume) {
@@ -51,26 +52,54 @@ public class Compartment {
     public Map<Substance, Float> getConcentrations() {
         return concentrations;
     }
-    public String getName() { return name; }
-    public float getHealth() { return health; }
-    public float getBloodFlow() { return bloodFlow; }
-    public float getInflammation() { return inflammation; }
-    public float getImmunePrivilege() { return immunePrivilege; }
+
+    public String getName() {
+        return name;
+    }
+
+    public float getHealth() {
+        return health;
+    }
+
+    public float getBloodFlow() {
+        return bloodFlow;
+    }
+
+    public float getInflammation() {
+        return inflammation;
+    }
+
+    public float getImmunePrivilege() {
+        return immunePrivilege;
+    }
+
     public Compartment getCompartment(String name) {
         return this;
     }
-    public Compartment getMainCompartment() {return this;}
+
+    public Compartment getMainCompartment() {
+        return this;
+    }
+
     public float getFunction() {
         return function * health / 100 / inflammation;
     }
+
     public float getPain() {
         return pain;
     }
+
     public float getVolume() {
         return volume;
     }
+    public float getBleedingAmount() {return volume / 100;}
+    public boolean isBleeding() {return bleeding;}
 
     // Setters and modifiers
+    public void setBleeding(boolean value) {
+        bleeding = value;
+    }
+
     public void modifyHealth(float delta) {
         health = Math.max(0, health + delta);
     }

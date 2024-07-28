@@ -4,7 +4,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.smokeybbq.bittermelon.character.medical.species.Species;
-import net.smokeybbq.bittermelon.character.medical.species.SpeciesClass;
 import net.smokeybbq.bittermelon.character.medical.species.MedicalStats;
 
 import java.io.File;

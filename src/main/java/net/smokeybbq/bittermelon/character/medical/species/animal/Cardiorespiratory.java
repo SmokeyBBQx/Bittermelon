@@ -13,6 +13,7 @@ import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 
 public abstract class Cardiorespiratory {
     protected float bloodOxygen = 100;
+    protected float bloodVolume = 100;
     protected float pulseTimer = 0;
     protected float pulseRate = 0;
     protected float heartEffort = 20;
@@ -40,6 +41,7 @@ public abstract class Cardiorespiratory {
     }
 
     public void update() {
+        bleed();
         bloodOxygen = Math.max(bloodOxygen - 0.05F, 0);
 
         // Cardiac Arrest
@@ -56,6 +58,16 @@ public abstract class Cardiorespiratory {
         }
 
         heartRhythm();
+    }
+
+    private void bleed() {
+        for (Compartment outerCompartment : compartments.values()) {
+            outerCompartment.traverseCompartments(compartment -> {
+                if (compartment.isBleeding()) {
+                    bloodVolume -= compartment.getBleedingAmount();
+                }
+            });
+        }
     }
 
     protected abstract void heartRhythm();
