@@ -17,6 +17,7 @@ public class Compartment {
     protected float inflammation = 0.1F;
     protected float function = 1;
     protected float pain = 0;
+    protected float nervousFunction = 1;
     protected float volume;
     protected float permeability;
     protected Map<Substance, Float> concentrations = new HashMap<>();
@@ -86,7 +87,7 @@ public class Compartment {
     }
 
     public float getPain() {
-        return pain;
+        return pain * nervousFunction;
     }
 
     public float getVolume() {
@@ -94,6 +95,7 @@ public class Compartment {
     }
     public float getBleedingAmount() {return volume / 100;}
     public boolean isBleeding() {return bleeding;}
+    public float getNervousFunction() {return nervousFunction;}
 
     // Setters and modifiers
     public void setBleeding(boolean value) {

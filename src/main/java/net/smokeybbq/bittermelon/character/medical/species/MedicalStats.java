@@ -2,13 +2,14 @@ package net.smokeybbq.bittermelon.character.medical.species;
 
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.medical.compartments.Compartment;
+import net.smokeybbq.bittermelon.medical.symptoms.Symptom;
 
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public abstract class MedicalStats {
     protected final Character character;
     protected final Map<String, Compartment> compartments;
+    protected final Map<String, Symptom> symptoms = new HashMap<>();
     public MedicalStats(Character character, Map<String, Compartment> compartments) {
         this.character = character;
         this.compartments = compartments;

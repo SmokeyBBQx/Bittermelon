@@ -6,6 +6,8 @@ import net.smokeybbq.bittermelon.medical.compartments.Compartment;
 import net.smokeybbq.bittermelon.medical.compartments.SingleGroupCompartment;
 import net.smokeybbq.bittermelon.medical.simulation.ImmuneSimulationHandler;
 import net.smokeybbq.bittermelon.medical.simulation.SimulationHandler;
+import net.smokeybbq.bittermelon.medical.symptoms.Pain;
+import net.smokeybbq.bittermelon.medical.symptoms.Symptom;
 
 import java.util.*;
 
@@ -33,6 +35,24 @@ public class MammalMedicalStats extends AnimalMedicalStats {
 
     public void additionalUpdate() {
         brain();
+        handlePain();
+    }
+
+    private void handlePain() {
+        for (Compartment outerCompartment : compartments.values()) {
+            outerCompartment.traverseCompartments(compartment -> {
+                String name = compartment.getName();
+                float pain = compartment.getPain();
+
+                if (pain > 1) {
+                    symptoms.put(name, new Pain(character, name, pain));
+                } else {
+                    symptoms.remove(name);
+                }
+            });
+        }
+
+        // Pain shock
     }
 
     public void brain() {
