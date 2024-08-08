@@ -10,6 +10,8 @@ public class SCP {
     private float researchGrade;
     private float maintenanceGrade;
     private float caretakingGrade;
+    private int researchTimer = 0;
+    private final int RESEARCH_THRESHOLD = 5184000;
     private final float DECAY = 1.5F;
     private Character character;
     private UUID uuid;
@@ -22,8 +24,8 @@ public class SCP {
     }
 
     public void update() {
-        researchGrade -= DECAY;
-
+        securityGrade -= DECAY;
+        checkForResearchProgress();
     }
 
     public float getContainmentGrade() {
@@ -45,6 +47,13 @@ public class SCP {
 
     public float getCaretakingGrade() {
         return caretakingGrade;
+    }
+
+    private void checkForResearchProgress() {
+        researchTimer++;
+        if (researchTimer >= RESEARCH_THRESHOLD) {
+
+        }
     }
 }
 
