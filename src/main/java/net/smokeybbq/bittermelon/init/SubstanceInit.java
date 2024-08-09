@@ -21,6 +21,15 @@ public class SubstanceInit {
     public static final RegistryObject<Substance> WATER = SUBSTANCES.register("water", () ->
             new Substance("water", 0xFFAAD5DB));
 
+    public static final RegistryObject<Substance> VOMIT = SUBSTANCES.register("vomit", () ->
+            new Substance("vomit", 0xFFC7C10C));
+
+    public static final RegistryObject<Substance> RANCH = SUBSTANCES.register("ranch", () ->
+            new Substance("ranch", 0xFFFEFFF4));
+
+    public static final RegistryObject<Substance> URINE = SUBSTANCES.register("urine", () ->
+            new Substance("urine", 0xFFFFDC65));
+
     public static IForgeRegistry<Substance> getSubstanceRegistry() {
         return RegistryManager.ACTIVE.getRegistry(new ResourceLocation("bittermelon", "substances"));
     }

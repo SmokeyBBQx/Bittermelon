@@ -26,6 +26,8 @@ import net.smokeybbq.bittermelon.miscellaneous.Stumble;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Random;
+
 
 public class PuddleBlock extends FallingBlock implements EntityBlock {
     protected static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 0.1D, 16.0D);
@@ -51,17 +53,36 @@ public class PuddleBlock extends FallingBlock implements EntityBlock {
 //        return level.isClientSide() ? null : (level0, state0, blockEntityType0, blockEntity) -> ((PuddleBlockEntity) blockEntity).tick();
 //    }
 
+//    @Override
+//    public void entityInside(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Entity entity) {
+//        if (entity instanceof ServerPlayer player && !level.isClientSide) {
+//            Vec3 movement = player.getDeltaMovement();
+//
+//            float MOVEMENT_THRESHOLD = 0.01F;
+//
+//            System.out.println(Math.abs(movement.x));
+//            System.out.println(Math.abs(movement.z));
+//
+//            if (Math.abs(movement.x) > MOVEMENT_THRESHOLD || Math.abs(movement.z) > MOVEMENT_THRESHOLD) {
+//                if (level.getRandom().nextFloat() < 0.02f) {
+//                    ServerPlayer serverPlayer = (ServerPlayer) player;
+//                    Stumble stumble = new Stumble(serverPlayer);
+//                }
+//            }
+//        }
+//    }
+
     @Override
     public void entityInside(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Entity entity) {
-        if (entity instanceof Player && !level.isClientSide) {
-            Vec3 movement = entity.getDeltaMovement();
-
-            float MOVEMENT_THRESHOLD = 0;
+        if (entity instanceof Player player && !level.isClientSide) {
+            Random random = new Random();
+            Vec3 movement = player.getDeltaMovement();
+            float MOVEMENT_THRESHOLD = 0.01F;
 
             if (Math.abs(movement.x) > MOVEMENT_THRESHOLD || Math.abs(movement.z) > MOVEMENT_THRESHOLD) {
-                if (level.getRandom().nextFloat() < 0.2f) {
-                    ServerPlayer player = (ServerPlayer) entity;
-                    Stumble stumble = new Stumble(player);
+                if (random.nextFloat() < 0.02f) {
+                    ServerPlayer serverPlayer = (ServerPlayer) player;
+                    Stumble stumble = new Stumble(serverPlayer);
                 }
             }
         }
