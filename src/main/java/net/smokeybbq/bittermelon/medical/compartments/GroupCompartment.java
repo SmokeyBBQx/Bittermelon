@@ -11,8 +11,8 @@ public class GroupCompartment extends Compartment {
 
     protected Map<String, Compartment> subCompartments = new HashMap<>();
 
-    public GroupCompartment(String name, float permeability, float volume) {
-        super(name, permeability, volume);
+    public GroupCompartment(String name, float permeability, float volume, float healFactor) {
+        super(name, permeability, volume, healFactor);
         initializeCompartments();
     }
 

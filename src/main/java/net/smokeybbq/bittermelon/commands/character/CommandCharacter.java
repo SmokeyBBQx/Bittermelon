@@ -14,6 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
+import net.smokeybbq.bittermelon.character.medical.species.Species;
 import net.smokeybbq.bittermelon.character.medical.species.SpeciesClass;
 import net.smokeybbq.bittermelon.chat.Channel;
 import net.smokeybbq.bittermelon.chat.ChannelManager;
@@ -77,7 +78,7 @@ public class CommandCharacter {
             context.getSource().sendFailure(Component.literal("Character '" + character.getName() + "' already exists"));
             return 0;
         } else {
-            character = new Character(context.getSource().getPlayer().getUUID(), name, description, "url","test", age, 1.5F, 80, emoteColor, new SpeciesClass());
+            character = new Character(context.getSource().getPlayer().getUUID(), name, description, "url","test", age, 1.5F, 80, emoteColor, Species.MAMMAL);
             CharacterManager.getInstance().addCharacter(character);
         }
 

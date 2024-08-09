@@ -3,9 +3,9 @@ package net.smokeybbq.bittermelon.medical.compartments;
 public class SingleGroupCompartment extends GroupCompartment {
 
     Compartment mainCompartment;
-    public SingleGroupCompartment(String name, float permeability, float volume) {
-        super(name, permeability, volume);
-        mainCompartment = new Compartment(name, permeability, volume);
+    public SingleGroupCompartment(String name, float permeability, float volume, float healFactor) {
+        super(name, permeability, volume, healFactor);
+        mainCompartment = new Compartment(name, permeability, volume, healFactor);
         subCompartments.put(name, mainCompartment);
     }
 

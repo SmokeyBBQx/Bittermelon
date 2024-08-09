@@ -1,6 +1,7 @@
 package Testing;
 import java.util.UUID;
 import net.smokeybbq.bittermelon.character.Character;
+import net.smokeybbq.bittermelon.character.medical.species.Species;
 
 public class CharacterTestFactory {
 
@@ -16,6 +17,6 @@ public class CharacterTestFactory {
         float weight = 70.0F;
         String emoteColor = "#FFFFFF";
 
-        return new Character(playerUuid, name, gender, description, skinUrl, age, height, weight, emoteColor);
+        return new Character(playerUuid, name, gender, description, skinUrl, age, height, weight, emoteColor, Species.MAMMAL);
     }
 }

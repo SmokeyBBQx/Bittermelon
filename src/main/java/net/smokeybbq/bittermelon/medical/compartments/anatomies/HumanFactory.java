@@ -14,6 +14,7 @@ public class HumanFactory {
     public static Map<String, Compartment> createCompartments() {
         Map<String, Compartment> compartments = new HashMap<>();
 
+        float healFactor = 0.01F;
         float brainDensity = 1.036F;
         float lungDensity = 0.26F;
         float liverDensity = 1.06F;
@@ -28,131 +29,131 @@ public class HumanFactory {
         float muscleDensity = 1.06F;
         float averageDensity = 1.07F;
 
-        GroupCompartment head = new GroupCompartment("head", 1, 8 * WEIGHT);
-        head.addSubCompartment(new SingleGroupCompartment("skull", 0.0001F, 3 * WEIGHT / boneDensity));
+        GroupCompartment head = new GroupCompartment("head", 1, 8 * WEIGHT, healFactor);
+        head.addSubCompartment(new SingleGroupCompartment("skull", 0.0001F, 3 * WEIGHT / boneDensity, healFactor));
 
-        GroupCompartment brain = new GroupCompartment("brain", 0.1F, 2.0f * WEIGHT / brainDensity);
-        brain.addSubCompartment(new SingleGroupCompartment("frontal_lobe", 0.1F, 0.4f * WEIGHT / brainDensity));
-        brain.addSubCompartment(new SingleGroupCompartment("parietal_lobe", 0.1F, 0.4f * WEIGHT / brainDensity));
-        brain.addSubCompartment(new SingleGroupCompartment("temporal_lobe", 0.1F, 0.3f * WEIGHT / brainDensity));
-        brain.addSubCompartment(new SingleGroupCompartment("occipital_lobe", 0.1F, 0.2f * WEIGHT / brainDensity));
-        brain.addSubCompartment(new SingleGroupCompartment("cerebellum", 0.1F, 0.3f * WEIGHT / brainDensity));
-        brain.addSubCompartment(new SingleGroupCompartment("brainstem", 0.1F, 0.2f * WEIGHT / brainDensity));
-        brain.addSubCompartment(new SingleGroupCompartment("meninges", 0.1F, 0.2f * WEIGHT / brainDensity));
+        GroupCompartment brain = new GroupCompartment("brain", 0.1F, 2.0f * WEIGHT / brainDensity, healFactor);
+        brain.addSubCompartment(new SingleGroupCompartment("frontal_lobe", 0.1F, 0.4f * WEIGHT / brainDensity, healFactor));
+        brain.addSubCompartment(new SingleGroupCompartment("parietal_lobe", 0.1F, 0.4f * WEIGHT / brainDensity, healFactor));
+        brain.addSubCompartment(new SingleGroupCompartment("temporal_lobe", 0.1F, 0.3f * WEIGHT / brainDensity, healFactor));
+        brain.addSubCompartment(new SingleGroupCompartment("occipital_lobe", 0.1F, 0.2f * WEIGHT / brainDensity, healFactor));
+        brain.addSubCompartment(new SingleGroupCompartment("cerebellum", 0.1F, 0.3f * WEIGHT / brainDensity, healFactor));
+        brain.addSubCompartment(new SingleGroupCompartment("brainstem", 0.1F, 0.2f * WEIGHT / brainDensity, healFactor));
+        brain.addSubCompartment(new SingleGroupCompartment("meninges", 0.1F, 0.2f * WEIGHT / brainDensity, healFactor));
 
-        head.addSubCompartment(new SingleGroupCompartment("left_eye", 0.1F, 0.1f * WEIGHT / averageDensity));
-        head.addSubCompartment(new SingleGroupCompartment("right_eye", 0.1F, 0.1f * WEIGHT / averageDensity));
-        head.addSubCompartment(new SingleGroupCompartment("left_ear", 0.1F, 0.05f * WEIGHT / averageDensity));
-        head.addSubCompartment(new SingleGroupCompartment("right_ear", 0.1F, 0.05f * WEIGHT / averageDensity));
-        head.addSubCompartment(new SingleGroupCompartment("skin", 0.2F, 0.5f * WEIGHT / skinDensity));
-        head.addSubCompartment(new SingleGroupCompartment("nose", 0.3F, 0.1f * WEIGHT / averageDensity));
-        head.addSubCompartment(new SingleGroupCompartment("mouth", 0.5F, 0.1f * WEIGHT / averageDensity));
-        head.addSubCompartment(new SingleGroupCompartment("tongue", 0.5F, 0.1f * WEIGHT / averageDensity));
-        head.addSubCompartment(new SingleGroupCompartment("teeth", 0.0001F, 0.1f * WEIGHT / boneDensity));
+        head.addSubCompartment(new SingleGroupCompartment("left_eye", 0.1F, 0.1f * WEIGHT / averageDensity, healFactor));
+        head.addSubCompartment(new SingleGroupCompartment("right_eye", 0.1F, 0.1f * WEIGHT / averageDensity, healFactor));
+        head.addSubCompartment(new SingleGroupCompartment("left_ear", 0.1F, 0.05f * WEIGHT / averageDensity, healFactor));
+        head.addSubCompartment(new SingleGroupCompartment("right_ear", 0.1F, 0.05f * WEIGHT / averageDensity, healFactor));
+        head.addSubCompartment(new SingleGroupCompartment("skin", 0.2F, 0.5f * WEIGHT / skinDensity, healFactor));
+        head.addSubCompartment(new SingleGroupCompartment("nose", 0.3F, 0.1f * WEIGHT / averageDensity, healFactor));
+        head.addSubCompartment(new SingleGroupCompartment("mouth", 0.5F, 0.1f * WEIGHT / averageDensity, healFactor));
+        head.addSubCompartment(new SingleGroupCompartment("tongue", 0.5F, 0.1f * WEIGHT / averageDensity, healFactor));
+        head.addSubCompartment(new SingleGroupCompartment("teeth", 0.0001F, 0.1f * WEIGHT / boneDensity, healFactor));
 
-        GroupCompartment chest = new GroupCompartment("chest", 1, 25.0f * WEIGHT);
-        chest.addSubCompartment(new SingleGroupCompartment("heart", 0.4F, 0.5f * WEIGHT / heartDensity));
+        GroupCompartment chest = new GroupCompartment("chest", 1, 25.0f * WEIGHT, healFactor);
+        chest.addSubCompartment(new SingleGroupCompartment("heart", 0.4F, 0.5f * WEIGHT / heartDensity, healFactor));
 
-        SingleGroupCompartment leftLung = new SingleGroupCompartment("left_lung", 0.7F, 0.6f * WEIGHT / lungDensity);
+        SingleGroupCompartment leftLung = new SingleGroupCompartment("left_lung", 0.7F, 0.6f * WEIGHT / lungDensity, healFactor);
         leftLung.addTag(CompartmentTag.RESPIRATORY);
         chest.addSubCompartment(leftLung);
 
-        SingleGroupCompartment rightLung = new SingleGroupCompartment("right_lung", 0.7F, 0.6f * WEIGHT / lungDensity);
+        SingleGroupCompartment rightLung = new SingleGroupCompartment("right_lung", 0.7F, 0.6f * WEIGHT / lungDensity, healFactor);
         rightLung.addTag(CompartmentTag.RESPIRATORY);
         chest.addSubCompartment(rightLung);
 
-        SingleGroupCompartment thymus = new SingleGroupCompartment("thymus", 0.3F, 0.05f * WEIGHT / averageDensity);
+        SingleGroupCompartment thymus = new SingleGroupCompartment("thymus", 0.3F, 0.05f * WEIGHT / averageDensity, healFactor);
         thymus.addTag(CompartmentTag.IMMUNE);
         chest.addSubCompartment(thymus);
 
-        chest.addSubCompartment(new SingleGroupCompartment("muscles", 0.4F, 10.0f * WEIGHT / muscleDensity));
-        chest.addSubCompartment(new SingleGroupCompartment("ribs", 0.1F, 3.0f * WEIGHT / boneDensity));
-        chest.addSubCompartment(new SingleGroupCompartment("sternum", 0.1F, 0.3f * WEIGHT / boneDensity));
-        chest.addSubCompartment(new SingleGroupCompartment("esophagus", 0.5F, 0.2f * WEIGHT / averageDensity));
-        chest.addSubCompartment(new SingleGroupCompartment("trachea", 0.5F, 0.1f * WEIGHT / averageDensity));
-        chest.addSubCompartment(new SingleGroupCompartment("skin", 0.2F, 1.0f * WEIGHT / skinDensity));
+        chest.addSubCompartment(new SingleGroupCompartment("muscles", 0.4F, 10.0f * WEIGHT / muscleDensity, healFactor));
+        chest.addSubCompartment(new SingleGroupCompartment("ribs", 0.1F, 3.0f * WEIGHT / boneDensity, healFactor));
+        chest.addSubCompartment(new SingleGroupCompartment("sternum", 0.1F, 0.3f * WEIGHT / boneDensity, healFactor));
+        chest.addSubCompartment(new SingleGroupCompartment("esophagus", 0.5F, 0.2f * WEIGHT / averageDensity, healFactor));
+        chest.addSubCompartment(new SingleGroupCompartment("trachea", 0.5F, 0.1f * WEIGHT / averageDensity, healFactor));
+        chest.addSubCompartment(new SingleGroupCompartment("skin", 0.2F, 1.0f * WEIGHT / skinDensity, healFactor));
 
-        GroupCompartment abdomen = new GroupCompartment("abdomen", 1, 30.0f * WEIGHT);
+        GroupCompartment abdomen = new GroupCompartment("abdomen", 1, 30.0f * WEIGHT, healFactor);
 
-        SingleGroupCompartment stomach = new SingleGroupCompartment("stomach", 0.7F, 0.3f * WEIGHT / GIDensity);
+        SingleGroupCompartment stomach = new SingleGroupCompartment("stomach", 0.7F, 0.3f * WEIGHT / GIDensity, healFactor);
         stomach.addTag(CompartmentTag.GASTROINTESTINAL);
         abdomen.addSubCompartment(stomach);
 
-        SingleGroupCompartment smallIntestine = new SingleGroupCompartment("small_intestine", 0.9F, 1.0f * WEIGHT / GIDensity);
+        SingleGroupCompartment smallIntestine = new SingleGroupCompartment("small_intestine", 0.9F, 1.0f * WEIGHT / GIDensity, healFactor);
         smallIntestine.addTag(CompartmentTag.GASTROINTESTINAL);
         abdomen.addSubCompartment(smallIntestine);
 
-        SingleGroupCompartment largeIntestine = new SingleGroupCompartment("large_intestine", 0.8F, 1.0f * WEIGHT / GIDensity);
+        SingleGroupCompartment largeIntestine = new SingleGroupCompartment("large_intestine", 0.8F, 1.0f * WEIGHT / GIDensity, healFactor);
         largeIntestine.addTag(CompartmentTag.GASTROINTESTINAL);
         abdomen.addSubCompartment(largeIntestine);
 
-        SingleGroupCompartment liver = new SingleGroupCompartment("liver", 0.9F, 2.0f * WEIGHT / liverDensity);
+        SingleGroupCompartment liver = new SingleGroupCompartment("liver", 0.9F, 2.0f * WEIGHT / liverDensity, healFactor);
         liver.addTag(CompartmentTag.METABOLIZING);
         abdomen.addSubCompartment(liver);
 
-        abdomen.addSubCompartment(new SingleGroupCompartment("gallbladder", 0.5F, 0.05f * WEIGHT / pancreasDensity));
-        abdomen.addSubCompartment(new SingleGroupCompartment("pancreas", 0.5F, 0.1f * WEIGHT / pancreasDensity));
+        abdomen.addSubCompartment(new SingleGroupCompartment("gallbladder", 0.5F, 0.05f * WEIGHT / pancreasDensity, healFactor));
+        abdomen.addSubCompartment(new SingleGroupCompartment("pancreas", 0.5F, 0.1f * WEIGHT / pancreasDensity, healFactor));
 
-        SingleGroupCompartment spleen = new SingleGroupCompartment("spleen", 0.4F, 0.2f * WEIGHT / pancreasDensity);
+        SingleGroupCompartment spleen = new SingleGroupCompartment("spleen", 0.4F, 0.2f * WEIGHT / pancreasDensity, healFactor);
         spleen.addTag(CompartmentTag.IMMUNE);
         abdomen.addSubCompartment(spleen);
 
-        SingleGroupCompartment leftKidney = new SingleGroupCompartment("left_kidney", 0.9F, 0.15f * WEIGHT / kidneyDensity);
+        SingleGroupCompartment leftKidney = new SingleGroupCompartment("left_kidney", 0.9F, 0.15f * WEIGHT / kidneyDensity, healFactor);
         leftKidney.addTag(CompartmentTag.ELIMINATING);
         abdomen.addSubCompartment(leftKidney);
 
-        SingleGroupCompartment rightKidney = new SingleGroupCompartment("right_kidney", 0.9F, 0.15f * WEIGHT / kidneyDensity);
+        SingleGroupCompartment rightKidney = new SingleGroupCompartment("right_kidney", 0.9F, 0.15f * WEIGHT / kidneyDensity, healFactor);
         rightKidney.addTag(CompartmentTag.ELIMINATING);
         abdomen.addSubCompartment(rightKidney);
 
-        abdomen.addSubCompartment(new SingleGroupCompartment("bladder", 0.4F, 0.2f * WEIGHT / averageDensity));
-        abdomen.addSubCompartment(new SingleGroupCompartment("muscles", 0.4F, 10.0f * WEIGHT / muscleDensity));
-        abdomen.addSubCompartment(new SingleGroupCompartment("pelvis", 0.2F, 2.0f * WEIGHT / boneDensity));
-        abdomen.addSubCompartment(new SingleGroupCompartment("skin", 0.2F, 1.0f * WEIGHT / skinDensity));
+        abdomen.addSubCompartment(new SingleGroupCompartment("bladder", 0.4F, 0.2f * WEIGHT / averageDensity, healFactor));
+        abdomen.addSubCompartment(new SingleGroupCompartment("muscles", 0.4F, 10.0f * WEIGHT / muscleDensity, healFactor));
+        abdomen.addSubCompartment(new SingleGroupCompartment("pelvis", 0.2F, 2.0f * WEIGHT / boneDensity, healFactor));
+        abdomen.addSubCompartment(new SingleGroupCompartment("skin", 0.2F, 1.0f * WEIGHT / skinDensity, healFactor));
 
-        GroupCompartment leftUpperLimb = new GroupCompartment("left_arm", 1, 5.0f * WEIGHT);
-        leftUpperLimb.addSubCompartment(new SingleGroupCompartment("left_humerus", 0.1F, 0.5f * WEIGHT / boneDensity));
-        leftUpperLimb.addSubCompartment(new SingleGroupCompartment("left_radius_ulna", 0.1F, 0.3f * WEIGHT / boneDensity));
-        leftUpperLimb.addSubCompartment(new SingleGroupCompartment("left_hand", 0.3F, 0.5f * WEIGHT / boneDensity));
-        leftUpperLimb.addSubCompartment(new SingleGroupCompartment("left_wrist", 0.3F, 0.1f * WEIGHT / boneDensity));
-        leftUpperLimb.addSubCompartment(new SingleGroupCompartment("skin", 0.2F, 0.5f * WEIGHT / skinDensity));
-        leftUpperLimb.addSubCompartment(new SingleGroupCompartment("muscles", 0.4F, 2.5f * WEIGHT / muscleDensity));
-        leftUpperLimb.addSubCompartment(new SingleGroupCompartment("tendons", 0.2F, 0.2f * WEIGHT / tendonDensity));
+        GroupCompartment leftUpperLimb = new GroupCompartment("left_arm", 1, 5.0f * WEIGHT, healFactor);
+        leftUpperLimb.addSubCompartment(new SingleGroupCompartment("left_humerus", 0.1F, 0.5f * WEIGHT / boneDensity, healFactor));
+        leftUpperLimb.addSubCompartment(new SingleGroupCompartment("left_radius_ulna", 0.1F, 0.3f * WEIGHT / boneDensity, healFactor));
+        leftUpperLimb.addSubCompartment(new SingleGroupCompartment("left_hand", 0.3F, 0.5f * WEIGHT / boneDensity, healFactor));
+        leftUpperLimb.addSubCompartment(new SingleGroupCompartment("left_wrist", 0.3F, 0.1f * WEIGHT / boneDensity, healFactor));
+        leftUpperLimb.addSubCompartment(new SingleGroupCompartment("skin", 0.2F, 0.5f * WEIGHT / skinDensity, healFactor));
+        leftUpperLimb.addSubCompartment(new SingleGroupCompartment("muscles", 0.4F, 2.5f * WEIGHT / muscleDensity, healFactor));
+        leftUpperLimb.addSubCompartment(new SingleGroupCompartment("tendons", 0.2F, 0.2f * WEIGHT / tendonDensity, healFactor));
 
-        GroupCompartment rightUpperLimb = new GroupCompartment("right_arm", 1, 5.0f * WEIGHT);
-        rightUpperLimb.addSubCompartment(new SingleGroupCompartment("right_humerus", 0.1F, 0.5f * WEIGHT / boneDensity));
-        rightUpperLimb.addSubCompartment(new SingleGroupCompartment("right_radius_ulna", 0.1F, 0.3f * WEIGHT / boneDensity));
-        rightUpperLimb.addSubCompartment(new SingleGroupCompartment("right_hand", 0.3F, 0.5f * WEIGHT / boneDensity));
-        rightUpperLimb.addSubCompartment(new SingleGroupCompartment("right_wrist", 0.3F, 0.1f * WEIGHT / boneDensity));
-        rightUpperLimb.addSubCompartment(new SingleGroupCompartment("skin", 0.2F, 0.5f * WEIGHT / skinDensity));
-        rightUpperLimb.addSubCompartment(new SingleGroupCompartment("muscles", 0.4F, 2.5f * WEIGHT / muscleDensity));
-        rightUpperLimb.addSubCompartment(new SingleGroupCompartment("tendons", 0.2F, 0.2f * WEIGHT / tendonDensity));
+        GroupCompartment rightUpperLimb = new GroupCompartment("right_arm", 1, 5.0f * WEIGHT, healFactor);
+        rightUpperLimb.addSubCompartment(new SingleGroupCompartment("right_humerus", 0.1F, 0.5f * WEIGHT / boneDensity, healFactor));
+        rightUpperLimb.addSubCompartment(new SingleGroupCompartment("right_radius_ulna", 0.1F, 0.3f * WEIGHT / boneDensity, healFactor));
+        rightUpperLimb.addSubCompartment(new SingleGroupCompartment("right_hand", 0.3F, 0.5f * WEIGHT / boneDensity, healFactor));
+        rightUpperLimb.addSubCompartment(new SingleGroupCompartment("right_wrist", 0.3F, 0.1f * WEIGHT / boneDensity, healFactor));
+        rightUpperLimb.addSubCompartment(new SingleGroupCompartment("skin", 0.2F, 0.5f * WEIGHT / skinDensity, healFactor));
+        rightUpperLimb.addSubCompartment(new SingleGroupCompartment("muscles", 0.4F, 2.5f * WEIGHT / muscleDensity, healFactor));
+        rightUpperLimb.addSubCompartment(new SingleGroupCompartment("tendons", 0.2F, 0.2f * WEIGHT / tendonDensity, healFactor));
 
-        GroupCompartment leftLowerLimb = new GroupCompartment("left_leg", 1, 15.0f * WEIGHT);
-        leftLowerLimb.addSubCompartment(new SingleGroupCompartment("left_femur", 0.1F, 1.5f * WEIGHT / boneDensity));
-        leftLowerLimb.addSubCompartment(new SingleGroupCompartment("left_tibia_fibula", 0.1F, 1.0f * WEIGHT / boneDensity));
-        leftLowerLimb.addSubCompartment(new SingleGroupCompartment("left_foot", 0.3F, 1.0f * WEIGHT / boneDensity));
-        leftLowerLimb.addSubCompartment(new SingleGroupCompartment("left_ankle", 0.3F, 0.2f * WEIGHT / boneDensity));
-        leftLowerLimb.addSubCompartment(new SingleGroupCompartment("skin", 0.2F, 1.0f * WEIGHT / skinDensity));
-        leftLowerLimb.addSubCompartment(new SingleGroupCompartment("muscles", 0.4F, 8.0f * WEIGHT / muscleDensity));
-        leftLowerLimb.addSubCompartment(new SingleGroupCompartment("tendons", 0.2F, 0.5f * WEIGHT / tendonDensity));
+        GroupCompartment leftLowerLimb = new GroupCompartment("left_leg", 1, 15.0f * WEIGHT, healFactor);
+        leftLowerLimb.addSubCompartment(new SingleGroupCompartment("left_femur", 0.1F, 1.5f * WEIGHT / boneDensity, healFactor));
+        leftLowerLimb.addSubCompartment(new SingleGroupCompartment("left_tibia_fibula", 0.1F, 1.0f * WEIGHT / boneDensity, healFactor));
+        leftLowerLimb.addSubCompartment(new SingleGroupCompartment("left_foot", 0.3F, 1.0f * WEIGHT / boneDensity, healFactor));
+        leftLowerLimb.addSubCompartment(new SingleGroupCompartment("left_ankle", 0.3F, 0.2f * WEIGHT / boneDensity, healFactor));
+        leftLowerLimb.addSubCompartment(new SingleGroupCompartment("skin", 0.2F, 1.0f * WEIGHT / skinDensity, healFactor));
+        leftLowerLimb.addSubCompartment(new SingleGroupCompartment("muscles", 0.4F, 8.0f * WEIGHT / muscleDensity, healFactor));
+        leftLowerLimb.addSubCompartment(new SingleGroupCompartment("tendons", 0.2F, 0.5f * WEIGHT / tendonDensity, healFactor));
 
-        GroupCompartment rightLowerLimb = new GroupCompartment("right_leg", 1, 15.0f * WEIGHT);
-        rightLowerLimb.addSubCompartment(new SingleGroupCompartment("right_femur", 0.1F, 1.5f * WEIGHT / boneDensity));
-        rightLowerLimb.addSubCompartment(new SingleGroupCompartment("right_tibia_fibula", 0.1F, 1.0f * WEIGHT / boneDensity));
-        rightLowerLimb.addSubCompartment(new SingleGroupCompartment("right_foot", 0.3F, 1.0f * WEIGHT / boneDensity));
-        rightLowerLimb.addSubCompartment(new SingleGroupCompartment("right_ankle", 0.3F, 0.2f * WEIGHT / boneDensity));
-        rightLowerLimb.addSubCompartment(new SingleGroupCompartment("skin", 0.2F, 1.0f * WEIGHT / skinDensity));
-        rightLowerLimb.addSubCompartment(new SingleGroupCompartment("muscles", 0.4F, 8.0f * WEIGHT / muscleDensity));
-        rightLowerLimb.addSubCompartment(new SingleGroupCompartment("tendons", 0.2F, 0.5f * WEIGHT / tendonDensity));
+        GroupCompartment rightLowerLimb = new GroupCompartment("right_leg", 1, 15.0f * WEIGHT, healFactor);
+        rightLowerLimb.addSubCompartment(new SingleGroupCompartment("right_femur", 0.1F, 1.5f * WEIGHT / boneDensity, healFactor));
+        rightLowerLimb.addSubCompartment(new SingleGroupCompartment("right_tibia_fibula", 0.1F, 1.0f * WEIGHT / boneDensity, healFactor));
+        rightLowerLimb.addSubCompartment(new SingleGroupCompartment("right_foot", 0.3F, 1.0f * WEIGHT / boneDensity, healFactor));
+        rightLowerLimb.addSubCompartment(new SingleGroupCompartment("right_ankle", 0.3F, 0.2f * WEIGHT / boneDensity, healFactor));
+        rightLowerLimb.addSubCompartment(new SingleGroupCompartment("skin", 0.2F, 1.0f * WEIGHT / skinDensity, healFactor));
+        rightLowerLimb.addSubCompartment(new SingleGroupCompartment("muscles", 0.4F, 8.0f * WEIGHT / muscleDensity, healFactor));
+        rightLowerLimb.addSubCompartment(new SingleGroupCompartment("tendons", 0.2F, 0.5f * WEIGHT / tendonDensity, healFactor));
 
-        GroupCompartment back = new GroupCompartment("back", 1, 15.0f * WEIGHT);
-        back.addSubCompartment(new SingleGroupCompartment("spine", 0.1F, 3.0f * WEIGHT / boneDensity));
-        back.addSubCompartment(new SingleGroupCompartment("scapula", 0.1F, 0.5f * WEIGHT / boneDensity));
-        back.addSubCompartment(new SingleGroupCompartment("muscles", 0.4F, 10.0f * WEIGHT / muscleDensity));
-        back.addSubCompartment(new SingleGroupCompartment("skin", 0.2F, 1.0f * WEIGHT / skinDensity));
+        GroupCompartment back = new GroupCompartment("back", 1, 15.0f * WEIGHT, healFactor);
+        back.addSubCompartment(new SingleGroupCompartment("spine", 0.1F, 3.0f * WEIGHT / boneDensity, healFactor));
+        back.addSubCompartment(new SingleGroupCompartment("scapula", 0.1F, 0.5f * WEIGHT / boneDensity, healFactor));
+        back.addSubCompartment(new SingleGroupCompartment("muscles", 0.4F, 10.0f * WEIGHT / muscleDensity, healFactor));
+        back.addSubCompartment(new SingleGroupCompartment("skin", 0.2F, 1.0f * WEIGHT / skinDensity, healFactor));
 
-        SingleGroupCompartment circulatory = new SingleGroupCompartment("circulatory_system", 1, 7.0f * WEIGHT / bloodDensity);
+        SingleGroupCompartment circulatory = new SingleGroupCompartment("circulatory_system", 1, 7.0f * WEIGHT / bloodDensity, healFactor);
 
         compartments.put("circulatory_system", circulatory);
         compartments.put("head", head);
