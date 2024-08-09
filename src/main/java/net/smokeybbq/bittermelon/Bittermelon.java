@@ -30,9 +30,11 @@ import net.smokeybbq.bittermelon.commands.character.*;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.smokeybbq.bittermelon.events.ChatEventHandler;
 import net.smokeybbq.bittermelon.events.PlayerEventHandler;
+import net.smokeybbq.bittermelon.init.BlockEntityInit;
 import org.slf4j.Logger;
 
 import static net.minecraftforge.versions.forge.ForgeVersion.MOD_ID;
+import static net.smokeybbq.bittermelon.init.BlockEntityInit.BLOCK_ENTITIES;
 import static net.smokeybbq.bittermelon.init.BlockInit.BLOCKS;
 import static net.smokeybbq.bittermelon.init.ItemInit.ITEMS;
 
@@ -60,6 +62,7 @@ public class Bittermelon {
         // MinecraftForge.EVENT_BUS.register(new SkinChangeHandler());
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
+        BLOCK_ENTITIES.register(modEventBus);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
