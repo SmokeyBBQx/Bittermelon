@@ -6,6 +6,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.TickEvent;
@@ -21,22 +22,23 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.smokeybbq.bittermelon.blocks.PuddleBlock;
 import net.smokeybbq.bittermelon.character.CharacterManager;
-import net.smokeybbq.bittermelon.commands.CommandAddTumor;
-import net.smokeybbq.bittermelon.commands.CommandAdministerDrugOral;
-import net.smokeybbq.bittermelon.commands.CommandCondition;
-import net.smokeybbq.bittermelon.commands.CommandStumble;
+import net.smokeybbq.bittermelon.client.colorhandlers.PuddleBlockColor;
+import net.smokeybbq.bittermelon.commands.*;
 import net.smokeybbq.bittermelon.commands.channel.CommandChannel;
 import net.smokeybbq.bittermelon.commands.character.*;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.smokeybbq.bittermelon.events.ChatEventHandler;
 import net.smokeybbq.bittermelon.events.PlayerEventHandler;
 import net.smokeybbq.bittermelon.init.BlockEntityInit;
+import net.smokeybbq.bittermelon.init.ModRegistries;
 import org.slf4j.Logger;
 
 import static net.minecraftforge.versions.forge.ForgeVersion.MOD_ID;
 import static net.smokeybbq.bittermelon.init.BlockEntityInit.BLOCK_ENTITIES;
 import static net.smokeybbq.bittermelon.init.BlockInit.BLOCKS;
+import static net.smokeybbq.bittermelon.init.BlockInit.PUDDLE;
 import static net.smokeybbq.bittermelon.init.ItemInit.ITEMS;
+import static net.smokeybbq.bittermelon.init.SubstanceInit.SUBSTANCES;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(Bittermelon.MODID)
@@ -55,6 +57,7 @@ public class Bittermelon {
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
 
+        modEventBus.addListener(ModRegistries::registerRegistries);
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
         MinecraftForge.EVENT_BUS.register(new ChatEventHandler());
@@ -63,6 +66,7 @@ public class Bittermelon {
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
+        SUBSTANCES.register(modEventBus);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
@@ -99,6 +103,7 @@ public class Bittermelon {
         CommandAdministerDrugOral.register(event.getDispatcher());
         CommandCondition.register(event.getDispatcher());
         CommandAddTumor.register(event.getDispatcher());
+        CommandAddSubstance.register(event.getDispatcher());
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
@@ -106,6 +111,11 @@ public class Bittermelon {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
+        }
+
+        @SubscribeEvent
+        public static void registerColorHandlers(RegisterColorHandlersEvent.Block event) {
+            event.register(new PuddleBlockColor(), PUDDLE.get());
         }
     }
 }

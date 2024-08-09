@@ -6,12 +6,15 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.smokeybbq.bittermelon.blocks.blockentities.PuddleBlockEntity;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PuddleBlockColor implements BlockColor {
     @Override
-    public int getColor(BlockState pState, @Nullable BlockAndTintGetter pLevel, @Nullable BlockPos pPos, int pTintIndex) {
+    public int getColor(@NotNull BlockState pState, @Nullable BlockAndTintGetter pLevel, @Nullable BlockPos pPos, int pTintIndex) {
 
+        assert pLevel != null;
+        assert pPos != null;
         BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
         if (blockEntity == null) {
             blockEntity = pLevel.getBlockEntity(pPos.below());
