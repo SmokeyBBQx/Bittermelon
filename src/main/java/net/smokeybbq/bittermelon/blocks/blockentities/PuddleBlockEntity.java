@@ -3,10 +3,14 @@ package net.smokeybbq.bittermelon.blocks.blockentities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.smokeybbq.bittermelon.init.BlockEntityInit;
 import net.smokeybbq.bittermelon.substances.Substance;
 import net.smokeybbq.bittermelon.util.ColorUtil;
@@ -56,35 +60,77 @@ public class PuddleBlockEntity extends BlockEntity {
         System.out.println("Saved substances: " + substances);
     }
 
+    @OnlyIn(Dist.CLIENT)
     public int getColor() {
-        System.out.println("getColor called. Substances: " + substances);
         if (cachedColor == -1) {
             if (substances.isEmpty()) {
                 cachedColor = 0xFFAAD5DB; // Default color if no substances
-                System.out.println("No substances, using default color: #FFAAD5DB");
             } else {
                 Map<Integer, Float> colors = new HashMap<>();
                 for (Map.Entry<Substance, Float> entry : substances.entrySet()) {
                     colors.put(entry.getKey().getColor(), entry.getValue());
-                    System.out.println("Substance: " + entry.getKey().getName() + ", Color: " + String.format("#%06X", entry.getKey().getColor()) + ", Amount: " + entry.getValue());
                 }
                 cachedColor = ColorUtil.mixColors(colors);
-                System.out.println("Calculated new color from substances: " + String.format("#%08X", cachedColor));
             }
-        } else {
-            System.out.println("Using cached color: " + String.format("#%08X", cachedColor));
         }
         return cachedColor;
     }
 
     public void addSubstance(Substance substance, float amount) {
         substances.put(substance, substances.getOrDefault(substance, 0f) + amount);
-
-        cachedColor = -1;
+        invalidateColor();
         setChanged();
+        syncToClient();
+    }
 
+    private void invalidateColor() {
+        cachedColor = -1;
+        if (level != null && level.isClientSide) {
+            requestModelDataUpdate();
+        }
+    }
+
+    @Override
+    public CompoundTag getUpdateTag() {
+        CompoundTag tag = new CompoundTag();
+        saveAdditional(tag);
+        return tag;
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag) {
+        load(tag);
+    }
+
+    @Override
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+        super.onDataPacket(net, pkt);
+        CompoundTag tag = pkt.getTag();
+        handleUpdateTag(tag);
+        requestModelDataUpdate();
+        if (level != null) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        }
+    }
+
+    private void syncToClient() {
         if (level != null && !level.isClientSide) {
-            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+            BlockState state = level.getBlockState(worldPosition);
+            level.sendBlockUpdated(worldPosition, state, state, 3);
+            setChanged();
+        }
+    }
+
+    @Override
+    public void setChanged() {
+        super.setChanged();
+        if (level != null && !level.isClientSide) {
+            syncToClient();
         }
     }
 
