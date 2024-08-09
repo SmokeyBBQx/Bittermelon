@@ -16,6 +16,10 @@ public abstract class MedicalStats {
     }
 
     public void update() {
+        for (Compartment outerCompartment : compartments.values()) {
+            outerCompartment.traverseCompartments(Compartment::update);
+        }
+
         additionalUpdate();
     }
 

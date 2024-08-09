@@ -18,6 +18,7 @@ public class Compartment {
     protected float function = 1;
     protected float pain = 0;
     protected float nervousFunction = 1;
+    protected float healFactor;
     protected float volume;
     protected float permeability;
     protected Map<Substance, Float> concentrations = new HashMap<>();
@@ -25,13 +26,17 @@ public class Compartment {
     protected boolean bleeding = false;
     protected List<CompartmentTag> tags = new ArrayList<>();
 
-    public Compartment(String name, float permeability, float volume) {
+    public Compartment(String name, float permeability, float volume, float healFactor) {
         this.name = name;
         this.permeability = permeability;
         this.volume = volume;
+        this.healFactor = healFactor;
         updateBloodFlow();
     }
 
+    public void update() {
+        modifyHealth(healFactor);
+    }
 
     public float getConcentration(Substance substance) {
         return concentrations.getOrDefault(substance, 0.0F);
@@ -125,6 +130,10 @@ public class Compartment {
 
     public void modifyImmunePrivilege(float delta) {
         immunePrivilege = Math.max(0, Math.min(100, immunePrivilege + delta));
+    }
+
+    public void modifyPain(float delta) {
+        pain = Math.max(0, Math.min(100, pain + delta));
     }
 
     public void eliminateConcentration(Substance substance, float rate) {
