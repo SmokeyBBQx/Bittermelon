@@ -26,11 +26,11 @@ public class ColorUtil {
         return (red / count << 16) | (green / count << 8) | (blue / count);
     }
 
-    public static int mixColors(Map<Integer, Float> colors) {
+    public static int mixColors(Map<Integer, Integer> colors) {
         float totalAmount = 0;
         float redSum = 0, greenSum = 0, blueSum = 0;
 
-        for (Map.Entry<Integer, Float> entry : colors.entrySet()) {
+        for (Map.Entry<Integer, Integer> entry : colors.entrySet()) {
             int color = entry.getKey();
             float amount = entry.getValue();
 
