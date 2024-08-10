@@ -7,7 +7,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -23,6 +25,7 @@ import net.minecraftforge.registries.RegistryObject;
 import net.smokeybbq.bittermelon.blocks.PuddleBlock;
 import net.smokeybbq.bittermelon.character.CharacterManager;
 import net.smokeybbq.bittermelon.client.colorhandlers.PuddleBlockColor;
+import net.smokeybbq.bittermelon.client.gui.TransferRateOverlayRenderer;
 import net.smokeybbq.bittermelon.commands.*;
 import net.smokeybbq.bittermelon.commands.channel.CommandChannel;
 import net.smokeybbq.bittermelon.commands.character.*;
@@ -30,7 +33,9 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.smokeybbq.bittermelon.events.ChatEventHandler;
 import net.smokeybbq.bittermelon.events.PlayerEventHandler;
 import net.smokeybbq.bittermelon.init.BlockEntityInit;
+import net.smokeybbq.bittermelon.init.ModCapabilities;
 import net.smokeybbq.bittermelon.init.ModRegistries;
+import net.smokeybbq.bittermelon.networking.PacketHandler;
 import org.slf4j.Logger;
 
 import static net.minecraftforge.versions.forge.ForgeVersion.MOD_ID;
@@ -70,10 +75,16 @@ public class Bittermelon {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
+        event.enqueueWork(PacketHandler::register);
     }
 
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
+    }
+
+    @SubscribeEvent
+    public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
+        ModCapabilities.register(event);
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

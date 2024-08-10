@@ -15,24 +15,62 @@ import net.smokeybbq.bittermelon.substances.Substance;
 import net.smokeybbq.bittermelon.util.ColorUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class PuddleBlockEntity extends BlockEntity {
-    private final Map<Substance, Float> substances = new HashMap<>();
+    private final Map<Substance, Integer> substances = new HashMap<>();
     private int cachedColor = -1;
 
     public PuddleBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntityInit.PUDDLE_BLOCK_ENTITY.get(), pPos, pBlockState);
     }
 
-//    public void tick() {
+    //    public void tick() {
 //    }
-    public void addSubstance(Substance substance, float amount) {
-        substances.merge(substance, amount, Float::sum);
+    public void updateSubstance(Substance substance, int amount) {
+        substances.merge(substance, amount, Integer::sum);
         setChanged();
+    }
+
+    public Map<Substance, Integer> transferSubstances(int amount) {
+        if (substances.isEmpty()) {
+            return new HashMap<>();
+        }
+
+        int transferAmount = (amount / substances.size());
+        Map<Substance, Integer> transferredSubstances = new HashMap<>();
+        List<Substance> substancesToRemove = new ArrayList<>();
+
+        for (Map.Entry<Substance, Integer> entry : substances.entrySet()) {
+            Substance substance = entry.getKey();
+            int availableAmount = entry.getValue();
+
+            int actualAmount = Math.min(availableAmount, transferAmount);
+            updateSubstance(substance, -actualAmount);
+            transferredSubstances.put(substance, actualAmount);
+
+            if (availableAmount <= actualAmount) {
+                substancesToRemove.add(substance);
+            }
+        }
+
+        substancesToRemove.forEach(substances::remove);
+
+        if (substances.isEmpty()) {
+            removePuddleBlock();
+        }
+
+        setChanged();
+
+        return transferredSubstances;
+    }
+
+    private void removePuddleBlock() {
+        assert level != null;
+        if (!level.isClientSide) {
+            level.removeBlock(getBlockPos(), false);
+        }
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -41,8 +79,8 @@ public class PuddleBlockEntity extends BlockEntity {
             if (substances.isEmpty()) {
                 cachedColor = 0xFFAAD5DB; // Default color if no substances
             } else {
-                Map<Integer, Float> colors = new HashMap<>();
-                for (Map.Entry<Substance, Float> entry : substances.entrySet()) {
+                Map<Integer, Integer> colors = new HashMap<>();
+                for (Map.Entry<Substance, Integer> entry : substances.entrySet()) {
                     colors.put(entry.getKey().getColor(), entry.getValue());
                 }
                 cachedColor = ColorUtil.mixColors(colors);
@@ -51,8 +89,8 @@ public class PuddleBlockEntity extends BlockEntity {
         return cachedColor;
     }
 
-    private float getTotalAmount() {
-        return substances.values().stream().reduce(0f, Float::sum);
+    private int getTotalAmount() {
+        return substances.values().stream().reduce(0, Integer::sum);
     }
 
     public Component getContentsDescription() {
@@ -63,14 +101,16 @@ public class PuddleBlockEntity extends BlockEntity {
         );
     }
 
-    /** NBT/DATA */
+    /**
+     * NBT/DATA
+     */
 
     private CompoundTag serializeData() {
         CompoundTag nbt = new CompoundTag();
         ListTag substancesList = new ListTag();
-        for (Map.Entry<Substance, Float> entry : substances.entrySet()) {
+        for (Map.Entry<Substance, Integer> entry : substances.entrySet()) {
             CompoundTag substanceTag = entry.getKey().serializeNBT();
-            substanceTag.putFloat("Amount", entry.getValue());
+            substanceTag.putInt("Amount", entry.getValue());
             substancesList.add(substanceTag);
         }
         nbt.put("Substances", substancesList);
@@ -83,7 +123,7 @@ public class PuddleBlockEntity extends BlockEntity {
         for (int i = 0; i < substancesList.size(); i++) {
             CompoundTag substanceTag = substancesList.getCompound(i);
             Substance substance = Substance.fromNBT(substanceTag);
-            float amount = substanceTag.getFloat("Amount");
+            int amount = substanceTag.getInt("Amount");
             substances.put(substance, amount);
         }
         setChanged();
@@ -101,7 +141,9 @@ public class PuddleBlockEntity extends BlockEntity {
         deserializeData(nbt.getCompound("PuddleData"));
     }
 
-    /** NETWORKING */
+    /**
+     * NETWORKING
+     */
     @Override
     public @NotNull CompoundTag getUpdateTag() {
         CompoundTag tag = new CompoundTag();

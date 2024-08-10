@@ -9,7 +9,9 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.smokeybbq.bittermelon.blocks.blockentities.PuddleBlockEntity;
 import net.smokeybbq.bittermelon.init.SubstanceInit;
@@ -18,17 +20,19 @@ import net.smokeybbq.bittermelon.substances.Substance;
 
 import java.util.Objects;
 
+import static net.smokeybbq.bittermelon.init.SubstanceInit.getSubstance;
+
 public class CommandAddSubstance {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("addsubstance")
                 .requires(source -> source.hasPermission(2))
                 .then(Commands.literal("puddle")
                         .then(Commands.argument("substance", StringArgumentType.word())
-                                .then(Commands.argument("amount", FloatArgumentType.floatArg(0, 100))
+                                .then(Commands.argument("amount", IntegerArgumentType.integer())
                                         .executes(context -> addSubstancePuddle(
                                                 context.getSource(),
                                                 StringArgumentType.getString(context, "substance"),
-                                                FloatArgumentType.getFloat(context, "amount")
+                                                IntegerArgumentType.getInteger(context, "amount")
                                         ))
                                 )
                         )
@@ -47,7 +51,7 @@ public class CommandAddSubstance {
         );
     }
 
-    private static int addSubstancePuddle(CommandSourceStack source, String substanceName, float amount) throws CommandSyntaxException {
+    private static int addSubstancePuddle(CommandSourceStack source, String substanceName, int amount) throws CommandSyntaxException {
         BlockPos pos = BlockPos.containing(source.getPosition());
         BlockEntity blockEntity = source.getLevel().getBlockEntity(pos);
 
@@ -56,34 +60,32 @@ public class CommandAddSubstance {
             return 0;
         }
 
-        Substance substance = getSubstance(source, substanceName);
+        Substance substance = getSubstance(substanceName);
 
-        puddleBlockEntity.addSubstance(substance, amount);
+        puddleBlockEntity.updateSubstance(substance, amount);
         source.sendSuccess(() -> Component.literal(String.format("Added %.1f%% %s to the puddle", amount, substance.getName())), true);
         source.sendSuccess(puddleBlockEntity::getContentsDescription, true);
         return 1;
     }
 
-    private static int addSubstanceContainer(CommandSourceStack source, String substanceName, int amount) throws CommandSyntaxException {
-        ItemStack itemStack = Objects.requireNonNull(source.getPlayer()).getMainHandItem();
+    private static int addSubstanceContainer(CommandSourceStack source, String substanceName, int amount) {
+        Player player = Objects.requireNonNull(source.getPlayer());
+        ItemStack itemStack = player.getMainHandItem();
 
         if (!(itemStack.getItem() instanceof SubstanceContainerItem containerItem)) {
             source.sendFailure(Component.literal("You must be holding a container!"));
             return 0;
         }
 
-        Substance substance = getSubstance(source, substanceName);
-        containerItem.updateSubstance(itemStack, substance, amount);
-        return 1;
-    }
-
-    private static Substance getSubstance(CommandSourceStack source, String name) {
-        Substance substance = SubstanceInit.getSubstance(name);
-
+        Substance substance = SubstanceInit.getSubstance(substanceName);
         if (substance == null) {
-            source.sendFailure(Component.literal("Unknown substance: " + name));
-            return null;
+            source.sendFailure(Component.literal("Invalid substance name!"));
+            return 0;
         }
-        return substance;
+
+        containerItem.updateSubstance(itemStack, substance, amount);
+        source.sendSuccess(() -> Component.literal("Updated " + substanceName + " by " + amount + " in the container"), true);
+
+        return 1;
     }
 }
