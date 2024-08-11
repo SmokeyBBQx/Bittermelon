@@ -1,6 +1,4 @@
-package net.smokeybbq.bittermelon.items.substanceContainers;
-
-import net.smokeybbq.bittermelon.substances.Substance;
+package net.smokeybbq.bittermelon.items.substancecontainers;
 
 public class BucketItem extends SubstanceContainerItem {
     public BucketItem(Properties pProperties) {

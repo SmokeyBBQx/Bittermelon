@@ -102,12 +102,15 @@ public class PuddleBlock extends FallingBlock implements EntityBlock {
     public void tick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRandom) {
         if (isFree(pLevel.getBlockState(pPos.below())) && pPos.getY() >= pLevel.getMinBuildHeight()) {
             if (pLevel.getBlockEntity(pPos) instanceof PuddleBlockEntity blockEntity) {
-                CompoundTag nbt = blockEntity.saveWithoutMetadata();
+                CompoundTag nbt = blockEntity.serializeNBT();
+
+                if (nbt == null) {
+                    ModLogger.warn("Falling block has null nbt");
+                }
 
                 PuddleFallingBlockEntity fallingBlockEntity = PuddleFallingBlockEntity.fallPuddle(pLevel, pPos, pState);
                 fallingBlockEntity.dropItem = false;
                 fallingBlockEntity.blockData = nbt;
-                fallingBlockEntity.setPuddleData(nbt);
 
                 this.falling(fallingBlockEntity);
             }

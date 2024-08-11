@@ -1,4 +1,4 @@
-package net.smokeybbq.bittermelon.items.substanceContainers;
+package net.smokeybbq.bittermelon.items.substancecontainers;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;

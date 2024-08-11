@@ -2,7 +2,7 @@ package net.smokeybbq.bittermelon.networking;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
-import net.smokeybbq.bittermelon.items.substanceContainers.SubstanceContainerItem;
+import net.smokeybbq.bittermelon.items.substancecontainers.SubstanceContainerItem;
 
 import java.util.Objects;
 import java.util.function.Supplier;

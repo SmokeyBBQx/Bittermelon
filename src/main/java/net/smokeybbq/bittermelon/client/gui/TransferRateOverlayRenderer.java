@@ -1,19 +1,15 @@
 package net.smokeybbq.bittermelon.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
-import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.smokeybbq.bittermelon.Bittermelon;
-import net.smokeybbq.bittermelon.items.substanceContainers.SubstanceContainerItem;
+import net.smokeybbq.bittermelon.items.substancecontainers.SubstanceContainerItem;
 
 @Mod.EventBusSubscriber(modid = Bittermelon.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class TransferRateOverlayRenderer {

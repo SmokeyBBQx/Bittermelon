@@ -1,7 +1,6 @@
 package net.smokeybbq.bittermelon.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -11,11 +10,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.smokeybbq.bittermelon.blocks.blockentities.PuddleBlockEntity;
 import net.smokeybbq.bittermelon.init.SubstanceInit;
-import net.smokeybbq.bittermelon.items.substanceContainers.SubstanceContainerItem;
+import net.smokeybbq.bittermelon.items.substancecontainers.SubstanceContainerItem;
 import net.smokeybbq.bittermelon.substances.Substance;
 
 import java.util.Objects;

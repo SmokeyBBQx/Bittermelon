@@ -24,6 +24,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.smokeybbq.bittermelon.blocks.blockentities.PuddleBlockEntity;
 import net.smokeybbq.bittermelon.util.ModLogger;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +33,6 @@ import static net.smokeybbq.bittermelon.init.BlockInit.PUDDLE;
 import static net.smokeybbq.bittermelon.init.EntityInit.*;
 
 public class PuddleFallingBlockEntity extends FallingBlockEntity {
-    private CompoundTag puddleData;
     protected BlockState blockState = PUDDLE.get().defaultBlockState();
     boolean cancelDrop = false;
     private int color;
@@ -59,7 +59,6 @@ public class PuddleFallingBlockEntity extends FallingBlockEntity {
         pLevel.addFreshEntity(fallingBlockEntity);
         return fallingBlockEntity;
     }
-
     @Override
     public void tick() {
         if (this.blockState.isAir()) {
@@ -177,6 +176,36 @@ public class PuddleFallingBlockEntity extends FallingBlockEntity {
         double d2 = pPacket.getZ();
         this.setPos(d0, d1, d2);
         this.setStartPos(this.blockPosition());
+    }
+
+    @Override
+    protected void addAdditionalSaveData(CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        if (this.blockData != null) {
+            compound.put("BlockEntityData", this.blockData);
+        }
+    }
+
+    @Override
+    protected void readAdditionalSaveData(CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        if (compound.contains("BlockEntityData", 10)) {
+            this.blockData = compound.getCompound("BlockEntityData");
+        } else {
+            this.blockData = new CompoundTag(); // Fallback to empty compound
+        }
+    }
+
+    public int getColor() {
+        if (this.blockData != null) {
+                PuddleBlockEntity tempEntity = new PuddleBlockEntity(blockPosition(), blockState);
+                tempEntity.load(blockData);
+                color = tempEntity.getColor();
+                return color;
+            } else {
+                ModLogger.warn("PuddleFallingBlockEntity has null blockData");
+            }
+        return 0xFFAAD5DB; // Default color
     }
 
 

@@ -6,7 +6,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.smokeybbq.bittermelon.Bittermelon;
-import net.smokeybbq.bittermelon.items.substanceContainers.BucketItem;
+import net.smokeybbq.bittermelon.items.substancecontainers.BucketItem;
 
 public class ItemInit {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Bittermelon.MODID);

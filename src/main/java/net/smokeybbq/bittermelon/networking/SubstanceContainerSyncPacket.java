@@ -6,13 +6,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 import net.smokeybbq.bittermelon.init.ModCapabilities;
-import net.smokeybbq.bittermelon.items.substanceContainers.SubstanceContainerItem;
+import net.smokeybbq.bittermelon.items.substancecontainers.SubstanceContainerItem;
 import net.smokeybbq.bittermelon.substances.Substance;
 import net.smokeybbq.bittermelon.util.ModLogger;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 @Deprecated
