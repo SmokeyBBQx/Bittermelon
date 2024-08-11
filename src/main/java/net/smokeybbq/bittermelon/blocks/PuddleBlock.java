@@ -2,8 +2,13 @@ package net.smokeybbq.bittermelon.blocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -17,12 +22,17 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.smokeybbq.bittermelon.blocks.blockentities.PuddleBlockEntity;
+import net.smokeybbq.bittermelon.entities.PuddleFallingBlockEntity;
 import net.smokeybbq.bittermelon.init.BlockEntityInit;
 import net.smokeybbq.bittermelon.miscellaneous.Stumble;
+import net.smokeybbq.bittermelon.util.ModLogger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -85,6 +95,42 @@ public class PuddleBlock extends FallingBlock implements EntityBlock {
                     Stumble stumble = new Stumble(serverPlayer);
                 }
             }
+        }
+    }
+
+    @Override
+    public void tick(BlockState pState, ServerLevel pLevel, BlockPos pPos, RandomSource pRandom) {
+        if (isFree(pLevel.getBlockState(pPos.below())) && pPos.getY() >= pLevel.getMinBuildHeight()) {
+            if (pLevel.getBlockEntity(pPos) instanceof PuddleBlockEntity blockEntity) {
+                CompoundTag nbt = blockEntity.saveWithoutMetadata();
+
+                PuddleFallingBlockEntity fallingBlockEntity = PuddleFallingBlockEntity.fallPuddle(pLevel, pPos, pState);
+                fallingBlockEntity.dropItem = false;
+                fallingBlockEntity.blockData = nbt;
+                fallingBlockEntity.setPuddleData(nbt);
+
+                this.falling(fallingBlockEntity);
+            }
+        }
+    }
+
+
+    @Override
+    public void onLand(Level level, BlockPos pos, BlockState state, BlockState replaceableState, FallingBlockEntity fallingBlock) {
+        super.onLand(level, pos, state, replaceableState, fallingBlock);
+        ModLogger.info("Puddle landed at: " + pos);
+
+        if (fallingBlock.blockData != null && level.getBlockEntity(pos) instanceof PuddleBlockEntity blockEntity) {
+            blockEntity.load(fallingBlock.blockData);
+        }
+    }
+
+    @Override
+    public void onBrokenAfterFall(Level level, @NotNull BlockPos pos, @NotNull FallingBlockEntity fallingBlock) {
+        ModLogger.info("Puddle broken at: " + pos);
+        if (level.getBlockEntity(pos.below()) instanceof PuddleBlockEntity targetEntity) {
+            assert fallingBlock.blockData != null;
+            targetEntity.mixWith(fallingBlock.blockData);
         }
     }
 }

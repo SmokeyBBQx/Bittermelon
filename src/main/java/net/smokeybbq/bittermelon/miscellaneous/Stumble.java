@@ -26,7 +26,7 @@ import static net.smokeybbq.bittermelon.util.LocalMessageHandler.sendLocalMessag
 public class Stumble {
     private final ServerPlayer player;
     private boolean stumbled;
-    private int stunTime = 100;
+    private final int stunTime = 100;
     private int tickTimer = 0;
     private static final Random RANDOM = new Random();
 
@@ -56,14 +56,15 @@ public class Stumble {
     }
 
     private void playerPhysics() {
-        Vec3 lookDirection = player.getLookAngle();
-        player.setDeltaMovement(player.getDeltaMovement().add(lookDirection).scale(1.3));
-        player.hurtMarked = true;
+//        Vec3 lookDirection = player.getLookAngle();
+//        player.setDeltaMovement(player.getDeltaMovement().add(lookDirection).scale(1.3));
+//        player.hurtMarked = true;
         stumbled = true;
     }
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
             if (stumbled && event.player == player) {
                 event.player.setPose(Pose.SWIMMING);
 
@@ -75,17 +76,20 @@ public class Stumble {
 
                 tickTimer++;
             }
+        }
     }
 
     @SubscribeEvent
     public void onPlayerJump(LivingEvent.LivingJumpEvent event) {
-        if (event.getEntity() instanceof ServerPlayer eventPlayer && eventPlayer == player) {
-            player.setDeltaMovement(player.getDeltaMovement().x(), 0, player.getDeltaMovement().z());
-            player.hurtMarked = true;
-            if (tickTimer >= stunTime) {
-                stumbled = false;
-                player.setPose(Pose.STANDING);
-                MinecraftForge.EVENT_BUS.unregister(this);
+        if (event.getEntity() instanceof Player eventPlayer) {
+            if (eventPlayer == player) {
+//                player.setDeltaMovement(player.getDeltaMovement().x(), 0, player.getDeltaMovement().z());
+//                player.hurtMarked = true;
+                if (tickTimer >= stunTime) {
+                    stumbled = false;
+                    player.setPose(Pose.STANDING);
+                    MinecraftForge.EVENT_BUS.unregister(this);
+                }
             }
         }
     }

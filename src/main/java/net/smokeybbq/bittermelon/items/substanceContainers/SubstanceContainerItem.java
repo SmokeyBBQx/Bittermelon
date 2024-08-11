@@ -10,6 +10,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -39,12 +40,14 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static net.smokeybbq.bittermelon.init.BlockInit.PUDDLE;
 
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class SubstanceContainerItem extends Item {
+    private static final Random RANDOM = new Random();
     protected int capacity;
     private static final int MIN_TRANSFER_RATE = 1;
     private static final int MAX_TRANSFER_RATE = 100;
@@ -297,6 +300,61 @@ public class SubstanceContainerItem extends Item {
             level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), 3);
             level.playSound(null, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.PLAYERS, 1.0F, 1.0F);
         }
+    }
+
+    @Override
+    public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
+        Level level = entity.level();
+        if (!level.isClientSide && !entity.isNoGravity() && entity.onGround()) {
+            CompoundTag tag = stack.getOrCreateTag();
+            if (!tag.getBoolean("hasLanded")) {
+                tag.putBoolean("hasLanded", true);
+                spillOnLanding(stack, level, entity.blockPosition());
+            }
+        }
+        return false; // Return false to allow normal update behavior
+    }
+
+    @Override
+    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
+        super.inventoryTick(stack, level, entity, slotId, isSelected);
+
+        CompoundTag tag = stack.getOrCreateTag();
+        if (tag.getBoolean("hasLanded")) {
+            tag.putBoolean("hasLanded", false);
+        }
+    }
+
+    private void spillOnLanding(ItemStack stack, Level level, BlockPos spillPos) {
+        getSubstanceContainer(stack).ifPresent(cap -> {
+            int totalAmount = cap.getTotalAmount();
+            if (totalAmount <= 0) return;
+
+            if (!(level.getBlockState(spillPos).getBlock() instanceof PuddleBlock)) {
+                level.setBlock(spillPos, PUDDLE.get().defaultBlockState(), 3);
+            }
+
+            if (level.getBlockEntity(spillPos) instanceof PuddleBlockEntity puddleBlockEntity) {
+                float spillPercentage = RANDOM.nextFloat();
+
+                Map<Substance, Integer> substances = cap.getSubstances();
+                for (Map.Entry<Substance, Integer> entry : substances.entrySet()) {
+                    Substance substance = entry.getKey();
+                    int availableAmount = entry.getValue();
+                    int spillAmount = Math.round(availableAmount * spillPercentage);
+
+                    if (spillAmount > 0) {
+                        puddleBlockEntity.updateSubstance(substance, spillAmount);
+                        updateSubstance(stack, substance, -spillAmount);
+                        ModLogger.info("Spilled " + spillAmount + " of " + substance.getName() + " at " + spillPos);
+                    }
+                }
+
+                puddleBlockEntity.setChanged();
+                level.sendBlockUpdated(spillPos, level.getBlockState(spillPos), level.getBlockState(spillPos), 3);
+                level.playSound(null, spillPos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 0.5F, 1.0F);
+            }
+        });
     }
 
     @SubscribeEvent

@@ -4,7 +4,7 @@
   "package": "net.smokeybbq.bittermelon.miscellaneous",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "PlayerPoseClient"
+    "net.smokeybbq.bittermelon.mixins.PlayerPoseClient"
   ],
   "injectors": {
     "defaultRequire": 1

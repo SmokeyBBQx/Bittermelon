@@ -1,6 +1,8 @@
 package net.smokeybbq.bittermelon;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.client.renderer.entity.FallingBlockRenderer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -26,6 +28,7 @@ import net.smokeybbq.bittermelon.blocks.PuddleBlock;
 import net.smokeybbq.bittermelon.character.CharacterManager;
 import net.smokeybbq.bittermelon.client.colorhandlers.PuddleBlockColor;
 import net.smokeybbq.bittermelon.client.gui.TransferRateOverlayRenderer;
+import net.smokeybbq.bittermelon.client.renderer.PuddleFallingBlockRenderer;
 import net.smokeybbq.bittermelon.commands.*;
 import net.smokeybbq.bittermelon.commands.channel.CommandChannel;
 import net.smokeybbq.bittermelon.commands.character.*;
@@ -42,6 +45,8 @@ import static net.minecraftforge.versions.forge.ForgeVersion.MOD_ID;
 import static net.smokeybbq.bittermelon.init.BlockEntityInit.BLOCK_ENTITIES;
 import static net.smokeybbq.bittermelon.init.BlockInit.BLOCKS;
 import static net.smokeybbq.bittermelon.init.BlockInit.PUDDLE;
+import static net.smokeybbq.bittermelon.init.EntityInit.ENTITIES;
+import static net.smokeybbq.bittermelon.init.EntityInit.PUDDLE_FALLING_BLOCK;
 import static net.smokeybbq.bittermelon.init.ItemInit.ITEMS;
 import static net.smokeybbq.bittermelon.init.SubstanceInit.SUBSTANCES;
 
@@ -71,6 +76,7 @@ public class Bittermelon {
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
+        ENTITIES.register(modEventBus);
         SUBSTANCES.register(modEventBus);
     }
 
@@ -122,6 +128,9 @@ public class Bittermelon {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
+            event.enqueueWork(() -> {
+                EntityRenderers.register(PUDDLE_FALLING_BLOCK.get(), PuddleFallingBlockRenderer::new);
+            });
         }
 
         @SubscribeEvent

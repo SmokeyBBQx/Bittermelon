@@ -29,7 +29,18 @@ public class PuddleBlockEntity extends BlockEntity {
     //    public void tick() {
 //    }
     public void updateSubstance(Substance substance, int amount) {
-        substances.merge(substance, amount, Integer::sum);
+        boolean updated = false;
+        for (Map.Entry<Substance, Integer> entry : substances.entrySet()) {
+            if (entry.getKey().getName().equals(substance.getName())) {
+                substances.merge(entry.getKey(), amount, Integer::sum);
+                updated = true;
+                break;
+            }
+        }
+
+        if (!updated) {
+            substances.put(substance, amount);
+        }
         setChanged();
     }
 
@@ -185,5 +196,15 @@ public class PuddleBlockEntity extends BlockEntity {
     private void invalidateColor() {
         cachedColor = -1;
         requestModelDataUpdate();
+    }
+
+    public void mixWith(CompoundTag nbt) {
+        ListTag substancesList = nbt.getList("Substances", 10);
+        for (int i = 0; i < substancesList.size(); i++) {
+            CompoundTag substanceTag = substancesList.getCompound(i);
+            Substance substance = Substance.fromNBT(substanceTag);
+            int amount = substanceTag.getInt("Amount");
+            updateSubstance(substance, amount);
+        }
     }
 }
