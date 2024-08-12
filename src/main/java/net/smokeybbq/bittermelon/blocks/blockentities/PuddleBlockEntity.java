@@ -26,10 +26,23 @@ public class PuddleBlockEntity extends BlockEntity {
         super(BlockEntityInit.PUDDLE_BLOCK_ENTITY.get(), pPos, pBlockState);
     }
 
-    //    public void tick() {
-//    }
+    public Map<Substance, Integer> getContents() {
+        return substances;
+    }
+
     public void updateSubstance(Substance substance, int amount) {
-        substances.merge(substance, amount, Integer::sum);
+        boolean updated = false;
+        for (Map.Entry<Substance, Integer> entry : substances.entrySet()) {
+            if (entry.getKey().getName().equals(substance.getName())) {
+                substances.merge(entry.getKey(), amount, Integer::sum);
+                updated = true;
+                break;
+            }
+        }
+
+        if (!updated) {
+            substances.put(substance, amount);
+        }
         setChanged();
     }
 
@@ -38,7 +51,7 @@ public class PuddleBlockEntity extends BlockEntity {
             return new HashMap<>();
         }
 
-        int transferAmount = (amount / substances.size());
+        int totalAmount = substances.values().stream().mapToInt(Integer::intValue).sum();
         Map<Substance, Integer> transferredSubstances = new HashMap<>();
         List<Substance> substancesToRemove = new ArrayList<>();
 
@@ -46,12 +59,17 @@ public class PuddleBlockEntity extends BlockEntity {
             Substance substance = entry.getKey();
             int availableAmount = entry.getValue();
 
+            double proportion = (double) availableAmount / totalAmount;
+            int transferAmount = (int) Math.ceil(amount * proportion);
             int actualAmount = Math.min(availableAmount, transferAmount);
-            updateSubstance(substance, -actualAmount);
-            transferredSubstances.put(substance, actualAmount);
 
-            if (availableAmount <= actualAmount) {
-                substancesToRemove.add(substance);
+            if (actualAmount > 0) {
+                updateSubstance(substance, -actualAmount);
+                transferredSubstances.put(substance, actualAmount);
+
+                if (availableAmount <= actualAmount) {
+                    substancesToRemove.add(substance);
+                }
             }
         }
 
@@ -185,5 +203,15 @@ public class PuddleBlockEntity extends BlockEntity {
     private void invalidateColor() {
         cachedColor = -1;
         requestModelDataUpdate();
+    }
+
+    public void mixWith(CompoundTag nbt) {
+        ListTag substancesList = nbt.getList("Substances", 10);
+        for (int i = 0; i < substancesList.size(); i++) {
+            CompoundTag substanceTag = substancesList.getCompound(i);
+            Substance substance = Substance.fromNBT(substanceTag);
+            int amount = substanceTag.getInt("Amount");
+            updateSubstance(substance, amount);
+        }
     }
 }

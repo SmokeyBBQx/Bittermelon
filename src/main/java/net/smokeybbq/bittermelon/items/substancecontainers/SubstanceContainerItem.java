@@ -1,8 +1,7 @@
-package net.smokeybbq.bittermelon.items.substanceContainers;
+package net.smokeybbq.bittermelon.items.substancecontainers;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -10,10 +9,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -21,9 +20,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -39,76 +35,23 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static net.smokeybbq.bittermelon.init.BlockInit.PUDDLE;
 
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class SubstanceContainerItem extends Item {
-    protected int capacity;
+public class SubstanceContainerItem extends SubstanceItem {
+    private static final Random RANDOM = new Random();
     private static final int MIN_TRANSFER_RATE = 1;
     private static final int MAX_TRANSFER_RATE = 100;
+    private static final int DRINK_SPEED = 32;
+    private final int capacity;
 
-    public SubstanceContainerItem(Properties pProperties) {
-        super(pProperties);
-    }
 
-    @Override
-    public @Nullable ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-        return new ICapabilitySerializable<CompoundTag>() {
-            final LazyOptional<ISubstanceContainer> container = LazyOptional.of(() -> new SubstanceContainerCapability(capacity));
-
-            @Override
-            public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-                return ModCapabilities.SUBSTANCE_CONTAINER_CAPABILITY.orEmpty(cap, container);
-            }
-
-            @Override
-            public CompoundTag serializeNBT() {
-                return container.map(ISubstanceContainer::serializeNBT).orElse(new CompoundTag());
-            }
-
-            @Override
-            public void deserializeNBT(CompoundTag nbt) {
-                container.ifPresent(c -> c.deserializeNBT(nbt));
-            }
-        };
-    }
-
-    private LazyOptional<ISubstanceContainer> getSubstanceContainer(ItemStack stack) {
-        return stack.getCapability(ModCapabilities.SUBSTANCE_CONTAINER_CAPABILITY);
-    }
-
-    public void updateSubstance(ItemStack stack, Substance substance, int amount) {
-        getSubstanceContainer(stack).ifPresent(cap -> {
-            boolean updated = false;
-            for (Map.Entry<Substance, Integer> entry : cap.getSubstances().entrySet()) {
-                if (entry.getKey().getName().equals(substance.getName())) {
-                    cap.updateSubstance(entry.getKey(), amount);
-                    updated = true;
-                    break;
-                }
-            }
-            if (!updated) {
-                cap.updateSubstance(substance, amount);
-            }
-            updateVisuals(stack);
-        });
-    }
-//    private void syncToClient(ItemStack stack, ServerPlayer player) {
-//        stack.getCapability(ModCapabilities.SUBSTANCE_CONTAINER_CAPABILITY).ifPresent(cap -> {
-//            int slot = player.getInventory().findSlotMatchingItem(stack);
-//            if (slot != -1) {
-//                SubstanceContainerSyncPacket packet = new SubstanceContainerSyncPacket(slot, cap.getSubstances());
-//                PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
-//                ModLogger.debug("Sent SubstanceContainerSyncPacket to player: " + player.getName().getString());
-//            }
-//        });
-//    }
-
-    private void updateVisuals(ItemStack stack) {
-        CompoundTag tag = stack.getOrCreateTag();
-        tag.putLong("LastUpdate", System.currentTimeMillis());
+    public SubstanceContainerItem(Properties pProperties, int capacity) {
+        super(pProperties, capacity);
+        this.capacity = capacity;
     }
 
     @Override
@@ -117,32 +60,6 @@ public class SubstanceContainerItem extends Item {
         getSubstanceContainer(stack).ifPresent(cap ->
                 toolTipComponents.add(Component.literal("Contents: " + cap.getTotalAmount() + "/" + capacity))
         );
-    }
-
-    @Override
-    public boolean isBarVisible(@NotNull ItemStack stack) {
-        return true;
-    }
-
-    @Override
-    public int getBarWidth(@NotNull ItemStack stack) {
-        return getSubstanceContainer(stack)
-                .map(cap -> (int) ((long) cap.getTotalAmount() * MAX_BAR_WIDTH / capacity))
-                .orElse(0);
-    }
-
-    @Override
-    public int getBarColor(@NotNull ItemStack stack) {
-        return getSubstanceContainer(stack)
-                .map(cap -> {
-                    float fillPercentage = (float) cap.getTotalAmount() / capacity;
-                    if (fillPercentage < 0.5f) {
-                        return 0xFF0000 | (Math.round(510 * fillPercentage) << 8);  // Red to Yellow
-                    } else {
-                        return 0x00FF00 | (Math.round(510 * (1 - fillPercentage)) << 16);  // Yellow to Green
-                    }
-                })
-                .orElse(0xFF0000);  // Default to red if capability is not present
     }
 
     @Override
@@ -156,15 +73,22 @@ public class SubstanceContainerItem extends Item {
             return InteractionResultHolder.fail(player.getMainHandItem());
         }
 
+
         if (hand == InteractionHand.MAIN_HAND && offHandItem.getItem() instanceof SubstanceContainerItem) {
-            if (player.isShiftKeyDown()) {
+            if (!level.isClientSide) {
+                if (player.isShiftKeyDown()) {
 
-                if (!level.isClientSide) {
                     transferSubstances(mainHandItem, offHandItem, level, player);
-                }
 
-                return InteractionResultHolder.success(mainHandItem);
+                    return InteractionResultHolder.success(mainHandItem);
+                }
             }
+        } else {
+            level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                    SoundEvents.GENERIC_DRINK, SoundSource.PLAYERS, 0.5F,
+                    level.getRandom().nextFloat() * 0.1F + 0.9F);
+
+            return ItemUtils.startUsingInstantly(level, player, hand);
         }
 
         return super.use(level, player, hand);
@@ -241,21 +165,29 @@ public class SubstanceContainerItem extends Item {
                 targetContainerOpt.ifPresent(targetContainer -> {
                     Map<Substance, Integer> sourceSubstances = sourceContainer.getSubstances();
                     int transferRate = getTransferRate(sourceItem);
+                    int totalSourceAmount = sourceSubstances.values().stream().mapToInt(Integer::intValue).sum();
+                    int spaceAvailable = targetContainer.getCapacity() - targetContainer.getTotalAmount();
 
-                    for (Map.Entry<Substance, Integer> entry : sourceSubstances.entrySet()) {
-                        Substance substance = entry.getKey();
-                        int availableAmount = entry.getValue();
-                        int transferAmount = Math.min(availableAmount, transferRate);
-                        int spaceAvailable = targetContainer.getCapacity() - targetContainer.getTotalAmount();
+                    if (totalSourceAmount > 0 && spaceAvailable > 0) {
+                        int totalTransferAmount = Math.min(transferRate, Math.min(totalSourceAmount, spaceAvailable));
 
-                        if (spaceAvailable > 0) {
-                            int actualTransferAmount = Math.min(transferAmount, spaceAvailable);
+                        for (Map.Entry<Substance, Integer> entry : sourceSubstances.entrySet()) {
+                            Substance substance = entry.getKey();
+                            int availableAmount = entry.getValue();
 
-                            sourceContainer.updateSubstance(substance, -actualTransferAmount);
-                            targetContainer.updateSubstance(substance, actualTransferAmount);
+                            double proportion = (double) availableAmount / totalSourceAmount;
+                            int transferAmount = (int) Math.ceil(totalTransferAmount * proportion);
+                            int actualTransferAmount = Math.min(transferAmount, availableAmount);
 
-                            ModLogger.info("Transferred " + actualTransferAmount + " of " + substance.getName() + " from main hand to off hand");
+                            if (actualTransferAmount > 0) {
+                                sourceContainer.updateSubstance(substance, -actualTransferAmount);
+                                targetContainer.updateSubstance(substance, actualTransferAmount);
 
+                                ModLogger.info("Transferred " + actualTransferAmount + " of " + substance.getName() + " from main hand to off hand");
+                            }
+                        }
+
+                        if (totalTransferAmount > 0) {
                             level.playSound(null, player.getX(), player.getY(), player.getZ(),
                                     SoundEvents.BOTTLE_FILL, SoundSource.PLAYERS, 0.5F, 1.0F);
 
@@ -286,17 +218,83 @@ public class SubstanceContainerItem extends Item {
     private void spill(BlockPos pos, Level level, ItemStack itemStack, ISubstanceContainer cap) {
         if (level.getBlockEntity(pos) instanceof PuddleBlockEntity puddleBlockEntity) {
             Map<Substance, Integer> substances = cap.getSubstances();
+            int totalAmount = substances.values().stream().mapToInt(Integer::intValue).sum();
+            int transferRate = getTransferRate(itemStack);
+
             substances.forEach((substance, amount) -> {
-                int actualAmount = Math.min(amount, getTransferRate(itemStack) / substances.size());
-                ModLogger.info("Adding " + actualAmount + " of " + substance.getName() + " to puddle at " + pos);
-                puddleBlockEntity.updateSubstance(substance, actualAmount);
-                updateSubstance(itemStack, substance, -actualAmount);
+                if (totalAmount > 0) {
+                    float proportion = (float) amount / totalAmount;
+                    int transferAmount = (int) Math.ceil(transferRate * proportion);
+                    int actualAmount = Math.min(amount, transferAmount);
+
+                    puddleBlockEntity.updateSubstance(substance, actualAmount);
+                    updateSubstance(itemStack, substance, -actualAmount);
+                }
             });
 
             puddleBlockEntity.setChanged();
             level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), 3);
             level.playSound(null, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.PLAYERS, 1.0F, 1.0F);
         }
+    }
+
+    @Override
+    public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
+        Level level = entity.level();
+        if (!level.isClientSide && !entity.isNoGravity() && entity.onGround()) {
+            CompoundTag tag = stack.getOrCreateTag();
+            if (!tag.getBoolean("hasLanded")) {
+                tag.putBoolean("hasLanded", true);
+                spillOnLanding(stack, level, entity.blockPosition());
+            }
+        }
+        return false; // Return false to allow normal update behavior
+    }
+
+    @Override
+    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
+        super.inventoryTick(stack, level, entity, slotId, isSelected);
+
+        CompoundTag tag = stack.getOrCreateTag();
+        if (tag.getBoolean("hasLanded")) {
+            tag.putBoolean("hasLanded", false);
+        }
+    }
+
+    private void spillOnLanding(ItemStack stack, Level level, BlockPos spillPos) {
+        getSubstanceContainer(stack).ifPresent(cap -> {
+            int totalAmount = cap.getTotalAmount();
+            if (totalAmount <= 0) return;
+
+            if (!(level.getBlockState(spillPos).getBlock() instanceof PuddleBlock)) {
+                level.setBlock(spillPos, PUDDLE.get().defaultBlockState(), 3);
+            }
+
+            if (level.getBlockEntity(spillPos) instanceof PuddleBlockEntity puddleBlockEntity) {
+                float spillPercentage = RANDOM.nextFloat();
+                int totalSpillAmount = Math.round(totalAmount * spillPercentage);
+
+                Map<Substance, Integer> substances = cap.getSubstances();
+                for (Map.Entry<Substance, Integer> entry : substances.entrySet()) {
+                    Substance substance = entry.getKey();
+                    int availableAmount = entry.getValue();
+
+                    float proportion = (float) availableAmount / totalAmount;
+                    int spillAmount = (int) Math.ceil(totalSpillAmount * proportion);
+                    spillAmount = Math.min(spillAmount, availableAmount);
+
+                    if (spillAmount > 0) {
+                        puddleBlockEntity.updateSubstance(substance, spillAmount);
+                        updateSubstance(stack, substance, -spillAmount);
+                        ModLogger.info("Spilled " + spillAmount + " of " + substance.getName() + " at " + spillPos);
+                    }
+                }
+
+                puddleBlockEntity.setChanged();
+                level.sendBlockUpdated(spillPos, level.getBlockState(spillPos), level.getBlockState(spillPos), 3);
+                level.playSound(null, spillPos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 0.5F, 1.0F);
+            }
+        });
     }
 
     @SubscribeEvent
@@ -330,5 +328,50 @@ public class SubstanceContainerItem extends Item {
             setTransferRate(heldItem, newRate);
             ModLogger.info("Updated transfer rate for " + player.getName().getString() + " to " + newRate);
         }
+    }
+
+    @Override
+    public int getUseDuration(@NotNull ItemStack stack) {
+        return DRINK_SPEED + getTransferRate(stack);
+    }
+
+    @Override
+    public @NotNull UseAnim getUseAnimation(@NotNull ItemStack stack) {
+        return UseAnim.DRINK;
+    }
+
+    @Override
+    public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
+        if (entity instanceof Player player) {
+
+            getSubstanceContainer(stack).ifPresent(cap -> {
+                Map<Substance, Integer> substances = cap.getSubstances();
+                int totalSubstances = substances.size();
+                if (totalSubstances == 0) return;
+
+                int totalAmount = cap.getTotalAmount();
+
+                substances.forEach((substance, amount) -> {
+                    float proportion = (float) amount / totalAmount;
+                    int consumeAmount = (int) Math.ceil(getTransferRate(stack) * proportion);
+                    int actualAmount = Math.min(amount, consumeAmount);
+
+                    updateSubstance(stack, substance, -actualAmount);
+                    substance.getEffects(entity, actualAmount);
+                });
+            });
+
+
+            if (!level.isClientSide()) {
+                player.sendSystemMessage(getFlavorMessageComponent(stack));
+            }
+
+            level.playSound(null, entity.getX(), entity.getY(), entity.getZ(),
+                    SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.5F,
+                    level.getRandom().nextFloat() * 0.1F + 0.9F);
+
+
+        }
+        return stack;
     }
 }
