@@ -33,6 +33,14 @@ public class PacketHandler {
                 TransferRateUpdatePacket::handle
                 );
 
+        INSTANCE.registerMessage(packetId++,
+                ThrowItemPacket.class,
+                ThrowItemPacket::encode,
+                ThrowItemPacket::decode,
+                ThrowItemPacket::handle
+        );
+
+
         ModLogger.info("Network messages registered successfully");
 
     }

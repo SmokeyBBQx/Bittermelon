@@ -26,8 +26,10 @@ public class PuddleBlockEntity extends BlockEntity {
         super(BlockEntityInit.PUDDLE_BLOCK_ENTITY.get(), pPos, pBlockState);
     }
 
-    //    public void tick() {
-//    }
+    public Map<Substance, Integer> getContents() {
+        return substances;
+    }
+
     public void updateSubstance(Substance substance, int amount) {
         boolean updated = false;
         for (Map.Entry<Substance, Integer> entry : substances.entrySet()) {
@@ -49,7 +51,7 @@ public class PuddleBlockEntity extends BlockEntity {
             return new HashMap<>();
         }
 
-        int transferAmount = (amount / substances.size());
+        int totalAmount = substances.values().stream().mapToInt(Integer::intValue).sum();
         Map<Substance, Integer> transferredSubstances = new HashMap<>();
         List<Substance> substancesToRemove = new ArrayList<>();
 
@@ -57,12 +59,17 @@ public class PuddleBlockEntity extends BlockEntity {
             Substance substance = entry.getKey();
             int availableAmount = entry.getValue();
 
+            double proportion = (double) availableAmount / totalAmount;
+            int transferAmount = (int) Math.ceil(amount * proportion);
             int actualAmount = Math.min(availableAmount, transferAmount);
-            updateSubstance(substance, -actualAmount);
-            transferredSubstances.put(substance, actualAmount);
 
-            if (availableAmount <= actualAmount) {
-                substancesToRemove.add(substance);
+            if (actualAmount > 0) {
+                updateSubstance(substance, -actualAmount);
+                transferredSubstances.put(substance, actualAmount);
+
+                if (availableAmount <= actualAmount) {
+                    substancesToRemove.add(substance);
+                }
             }
         }
 
