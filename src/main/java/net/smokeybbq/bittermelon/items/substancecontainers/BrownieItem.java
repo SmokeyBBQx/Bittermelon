@@ -8,7 +8,8 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.smokeybbq.bittermelon.init.ModCapabilities;
-import net.smokeybbq.bittermelon.substances.Substance;
+import net.smokeybbq.bittermelon.items.base.ItemSize;
+import net.smokeybbq.bittermelon.items.base.ItemWeight;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -19,6 +20,8 @@ public class BrownieItem extends SubstanceSolidItem {
     private static final int capacity = 50;
     public BrownieItem(Properties pProperties) {
         super(pProperties, capacity);
+        itemSize = ItemSize.SMALL;
+        itemWeight = ItemWeight.VERY_LIGHT;
     }
 
     @Override

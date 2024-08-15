@@ -1,12 +1,5 @@
 package net.smokeybbq.bittermelon.entities;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,19 +10,15 @@ import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.network.NetworkHooks;
-import net.smokeybbq.bittermelon.items.BaseItem;
+import net.smokeybbq.bittermelon.items.base.BaseItem;
 import org.jetbrains.annotations.NotNull;
-import net.smokeybbq.bittermelon.util.ModLogger;
 
 import static net.smokeybbq.bittermelon.init.EntityInit.THROWN_ITEM_PROJECTILE;
 
 public class ThrownItemProjectile extends ThrowableItemProjectile {
+    private final float BASE_GRAVITY = 0.03F;
     public ThrownItemProjectile(EntityType<? extends ThrownItemProjectile> pEntityType, Level level) {
         super(pEntityType, level);
     }
@@ -81,5 +70,13 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
                     entity.hurt(this.damageSources().thrown(this, this.getOwner()), dmg);
                 }
             }
+        }
+
+        @Override
+        protected float getGravity() {
+            if (this.getItem().getItem() instanceof BaseItem item) {
+                return BASE_GRAVITY + (float) item.getItemWeight().value / 100;
+            }
+            return BASE_GRAVITY;
         }
     }

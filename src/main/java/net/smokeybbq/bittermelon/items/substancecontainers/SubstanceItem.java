@@ -6,13 +6,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.smokeybbq.bittermelon.init.ModCapabilities;
+import net.smokeybbq.bittermelon.items.base.BaseItem;
 import net.smokeybbq.bittermelon.substances.Substance;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public abstract class SubstanceItem extends Item {
+public abstract class SubstanceItem extends BaseItem {
     private final int capacity;
     public SubstanceItem(Properties pProperties, int capacity) {
         super(pProperties);
@@ -121,7 +121,7 @@ public abstract class SubstanceItem extends Item {
                 Map.Entry<Substance, Integer> entry = substances.entrySet().iterator().next();
                 Substance substance = entry.getKey();
 
-                String flavorDescription = "Tastes like " + substance.getFlavor();
+                String flavorDescription = "Tastes " + substance.getFlavor() + ".";
 
                 return Component.literal(flavorDescription).withStyle(ChatFormatting.GREEN);
             }

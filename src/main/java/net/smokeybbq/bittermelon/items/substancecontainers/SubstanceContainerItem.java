@@ -1,7 +1,10 @@
 package net.smokeybbq.bittermelon.items.substancecontainers;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -12,10 +15,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
-import net.minecraft.network.chat.Component;
-import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,7 +35,6 @@ import net.smokeybbq.bittermelon.substances.Substance;
 import net.smokeybbq.bittermelon.util.ModLogger;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -73,6 +75,11 @@ public class SubstanceContainerItem extends SubstanceItem {
             return InteractionResultHolder.fail(player.getMainHandItem());
         }
 
+        if (getTransferRate(mainHandItem) < 1) {
+            playEmptySound(level, player);
+            return InteractionResultHolder.fail(player.getMainHandItem());
+        }
+
 
         if (hand == InteractionHand.MAIN_HAND && offHandItem.getItem() instanceof SubstanceContainerItem) {
             if (!level.isClientSide) {
@@ -100,6 +107,12 @@ public class SubstanceContainerItem extends SubstanceItem {
         Level level = pContext.getLevel();
         ItemStack itemStack = pContext.getItemInHand();
         BlockPos pos = pContext.getClickedPos();
+
+        if (getTransferRate(itemStack) < 1) {
+            assert player != null;
+            playEmptySound(level, player);
+            return InteractionResult.PASS;
+        }
 
         if (!level.isClientSide && player != null) {
 
@@ -343,6 +356,10 @@ public class SubstanceContainerItem extends SubstanceItem {
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
         if (entity instanceof Player player) {
+            if (!level.isClientSide()) {
+                player.sendSystemMessage(getFlavorMessageComponent(stack));
+            }
+
 
             getSubstanceContainer(stack).ifPresent(cap -> {
                 Map<Substance, Integer> substances = cap.getSubstances();
@@ -360,11 +377,6 @@ public class SubstanceContainerItem extends SubstanceItem {
                     substance.getEffects(entity, actualAmount);
                 });
             });
-
-
-            if (!level.isClientSide()) {
-                player.sendSystemMessage(getFlavorMessageComponent(stack));
-            }
 
             level.playSound(null, entity.getX(), entity.getY(), entity.getZ(),
                     SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.5F,

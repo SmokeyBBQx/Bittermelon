@@ -1,37 +1,24 @@
 package net.smokeybbq.bittermelon.items.substancecontainers;
 
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.common.util.LazyOptional;
-import net.smokeybbq.bittermelon.init.ModCapabilities;
 import net.smokeybbq.bittermelon.substances.Substance;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 
 public class SubstanceSolidItem extends SubstanceItem {
-    private final int capacity;
     protected final int CONSUME_RATE = 10;
     public SubstanceSolidItem(Properties pProperties, int capacity) {
         super(pProperties, capacity);
-        this.capacity = capacity;
     }
 
     @Override

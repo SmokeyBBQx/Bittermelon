@@ -7,7 +7,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
 import net.smokeybbq.bittermelon.medical.compartments.Compartment;
-import net.smokeybbq.bittermelon.miscellaneous.Stumble;
+//import net.smokeybbq.bittermelon.miscellaneous.Stumble;
 
 public class DamageHandler {
 
@@ -22,7 +22,7 @@ public class DamageHandler {
                 leftLeg.modifyHealth(-event.getAmount());
                 rightLeg.modifyHealth(-event.getAmount());
 
-                Stumble stumble = new Stumble(CharacterManager.getServer().getPlayerList().getPlayer(character.getEntityUUID()));
+//                Stumble stumble = new Stumble(CharacterManager.getServer().getPlayerList().getPlayer(character.getEntityUUID()));
             }
         }
     }

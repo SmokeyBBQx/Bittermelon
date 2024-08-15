@@ -31,7 +31,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.smokeybbq.bittermelon.blocks.blockentities.PuddleBlockEntity;
 import net.smokeybbq.bittermelon.entities.PuddleFallingBlockEntity;
 import net.smokeybbq.bittermelon.init.BlockEntityInit;
-import net.smokeybbq.bittermelon.miscellaneous.Stumble;
 import net.smokeybbq.bittermelon.util.ModLogger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -92,7 +91,7 @@ public class PuddleBlock extends FallingBlock implements EntityBlock {
             if (Math.abs(movement.x) > MOVEMENT_THRESHOLD || Math.abs(movement.z) > MOVEMENT_THRESHOLD) {
                 if (random.nextFloat() < 0.02f) {
                     ServerPlayer serverPlayer = (ServerPlayer) player;
-                    Stumble stumble = new Stumble(serverPlayer);
+//                    Stumble stumble = new Stumble(serverPlayer);
                 }
             }
         }

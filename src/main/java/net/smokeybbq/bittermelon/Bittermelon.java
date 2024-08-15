@@ -1,6 +1,7 @@
 package net.smokeybbq.bittermelon;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,13 +26,14 @@ import net.smokeybbq.bittermelon.commands.*;
 import net.smokeybbq.bittermelon.commands.channel.CommandChannel;
 import net.smokeybbq.bittermelon.commands.character.*;
 import net.minecraftforge.event.RegisterCommandsEvent;
-import net.smokeybbq.bittermelon.entities.ThrownItemProjectile;
 import net.smokeybbq.bittermelon.events.ChatEventHandler;
 import net.smokeybbq.bittermelon.events.PlayerEventHandler;
 import net.smokeybbq.bittermelon.events.ThrowKeyHandler;
 import net.smokeybbq.bittermelon.init.ModCapabilities;
 import net.smokeybbq.bittermelon.init.ModKeyBindings;
 import net.smokeybbq.bittermelon.init.ModRegistries;
+import net.smokeybbq.bittermelon.init.ModScreens;
+import net.smokeybbq.bittermelon.items.handlabeler.HandLabelerScreen;
 import net.smokeybbq.bittermelon.networking.PacketHandler;
 import org.slf4j.Logger;
 
@@ -40,6 +42,8 @@ import static net.smokeybbq.bittermelon.init.BlockInit.BLOCKS;
 import static net.smokeybbq.bittermelon.init.BlockInit.PUDDLE;
 import static net.smokeybbq.bittermelon.init.EntityInit.*;
 import static net.smokeybbq.bittermelon.init.ItemInit.ITEMS;
+import static net.smokeybbq.bittermelon.init.MenuInit.*;
+import static net.smokeybbq.bittermelon.init.SoundInit.SOUND_EVENTS;
 import static net.smokeybbq.bittermelon.init.SubstanceInit.SUBSTANCES;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -71,6 +75,8 @@ public class Bittermelon {
         BLOCK_ENTITIES.register(modEventBus);
         ENTITIES.register(modEventBus);
         SUBSTANCES.register(modEventBus);
+        MENUS.register(modEventBus);
+        SOUND_EVENTS.register(modEventBus);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
@@ -127,8 +133,10 @@ public class Bittermelon {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
             event.enqueueWork(() -> {
+                ModScreens.register();
                 EntityRenderers.register(PUDDLE_FALLING_BLOCK.get(), PuddleFallingBlockRenderer::new);
                 EntityRenderers.register(THROWN_ITEM_PROJECTILE.get(), ThrownItemRenderer::new);
+                MenuScreens.register(HAND_LABELER_MENU.get(), HandLabelerScreen::new);
             });
         }
 

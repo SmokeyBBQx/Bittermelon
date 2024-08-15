@@ -7,6 +7,7 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.smokeybbq.bittermelon.Bittermelon;
+import net.smokeybbq.bittermelon.items.handlabeler.SetItemNamePacket;
 import net.smokeybbq.bittermelon.util.ModLogger;
 
 import java.util.function.Supplier;
@@ -31,13 +32,20 @@ public class PacketHandler {
                 TransferRateUpdatePacket::encode,
                 TransferRateUpdatePacket::decode,
                 TransferRateUpdatePacket::handle
-                );
+        );
 
         INSTANCE.registerMessage(packetId++,
                 ThrowItemPacket.class,
                 ThrowItemPacket::encode,
                 ThrowItemPacket::decode,
                 ThrowItemPacket::handle
+        );
+
+        INSTANCE.registerMessage(packetId++,
+                SetItemNamePacket.class,
+                SetItemNamePacket::encode,
+                SetItemNamePacket::decode,
+                SetItemNamePacket::handle
         );
 
 

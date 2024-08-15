@@ -18,8 +18,4 @@ public class PlayerPoseClient {
         System.out.println("Mixin working for: " + player);
 
 }
-
-    private boolean shouldPlayerCrawl(Player player) {
-        return true;
-    }
 }
