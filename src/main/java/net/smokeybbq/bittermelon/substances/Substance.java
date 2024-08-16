@@ -5,6 +5,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.checkerframework.checker.units.qual.C;
 
+import java.util.Objects;
+
 public class Substance implements INBTSerializable<CompoundTag> {
     protected String name;
     protected int color;
@@ -51,4 +53,5 @@ public class Substance implements INBTSerializable<CompoundTag> {
     public void getEffects(Entity entity, int amount) {
 
     }
+
 }

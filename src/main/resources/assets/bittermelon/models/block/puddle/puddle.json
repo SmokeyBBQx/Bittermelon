@@ -2,8 +2,8 @@
   "parent": "block/thin_block",
   "render_type": "minecraft:cutout",
   "textures": {
-    "particle": "bittermelon:block/puddle",
-    "texture": "bittermelon:block/puddle"
+    "particle": "bittermelon:block/puddle/puddle",
+    "texture": "bittermelon:block/puddle/puddle"
   },
   "elements": [
     {   "from": [ 0, 0.1, 0 ],

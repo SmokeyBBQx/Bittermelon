@@ -165,12 +165,11 @@ public class ContainerScreen<T extends ContainerMenu> extends AbstractContainerS
                 ItemStack itemStack = slot.getItem();
                 if (slot.container == menu.inventory && itemStack.getItem() instanceof BaseItem item) {
                     int size = Math.min(item.getItemSize().value, Math.min(menu.rows, menu.columns));
-                    float totalSize = Math.max(1, size);
+                    float totalSize = Math.max(1, size * 0.75F);
                     int itemX = x + slot.x + (size * SLOT_SIZE) / 2;
                     int itemY = y + slot.y + (size * SLOT_SIZE) / 2;
                     renderScaledItem(guiGraphics, itemStack, itemX, itemY, totalSize);
                 } else {
-                    // Render non-BaseItems or items not in the custom inventory normally
                     guiGraphics.renderItem(itemStack, x + slot.x, y + slot.y);
                     guiGraphics.renderItemDecorations(this.font, itemStack, x + slot.x, y + slot.y);
                 }

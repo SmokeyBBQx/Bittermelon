@@ -4,7 +4,7 @@ import net.smokeybbq.bittermelon.items.base.ItemSize;
 import net.smokeybbq.bittermelon.items.base.ItemWeight;
 
 public class BucketItem extends SubstanceContainerItem {
-    private static final int capacity = 100;
+    private static final int capacity = 1000;
     public BucketItem(Properties pProperties) {
         super(pProperties, capacity);
         itemSize = ItemSize.NORMAL;

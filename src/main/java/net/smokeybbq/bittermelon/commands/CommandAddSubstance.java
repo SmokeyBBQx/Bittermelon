@@ -73,8 +73,8 @@ public class CommandAddSubstance {
         Substance substance = getSubstance(substanceName);
 
         puddleBlockEntity.updateSubstance(substance, amount);
-        source.sendSuccess(() -> Component.literal(String.format("Added %.1f%% %s to the puddle", amount, substance.getName())), true);
-        source.sendSuccess(puddleBlockEntity::getContentsDescription, true);
+        source.sendSuccess(() -> Component.literal(String.format("Added %d %s to the puddle", amount, substance.getName())), true);
+        source.sendSuccess(() -> Component.literal(puddleBlockEntity.getContentsDescription()), true);
         return 1;
     }
 
@@ -87,15 +87,7 @@ public class CommandAddSubstance {
             return 0;
         }
 
-        Map<Substance, Integer> contents = puddleBlockEntity.getContents();
-        if (contents.isEmpty()) {
-            source.sendSuccess(() -> Component.literal("The puddle is empty."), false);
-        } else {
-            source.sendSuccess(() -> Component.literal("Puddle contents:"), false);
-            for (Map.Entry<Substance, Integer> entry : contents.entrySet()) {
-                source.sendSuccess(() -> Component.literal(String.format("- %s: %.1f%%", entry.getKey().getName(), entry.getValue())), false);
-            }
-        }
+        source.sendSuccess(() -> Component.literal(puddleBlockEntity.getContentsDescription()), true);
         return 1;
     }
 

@@ -36,6 +36,9 @@ public class SubstanceInit {
     public static final RegistryObject<Substance> HASHISH = SUBSTANCES.register("hashish", () ->
             new Substance("hashish", 0xFF745E48, "earthy and herbal"));
 
+    public static final RegistryObject<Substance> DIARRHEA = SUBSTANCES.register("diarrhea", () ->
+            new Substance("diarrhea", 0x341c02, "bitter and foul"));
+
     public static IForgeRegistry<Substance> getSubstanceRegistry() {
         return RegistryManager.ACTIVE.getRegistry(new ResourceLocation("bittermelon", "substances"));
     }

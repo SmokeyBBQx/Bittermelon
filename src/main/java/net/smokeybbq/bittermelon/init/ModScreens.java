@@ -5,10 +5,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.smokeybbq.bittermelon.Bittermelon;
-import net.smokeybbq.bittermelon.items.cigarettes.CigarettePackMenu;
 import net.smokeybbq.bittermelon.items.itemcontainers.ContainerMenu;
 import net.smokeybbq.bittermelon.items.itemcontainers.ContainerScreen;
-import net.smokeybbq.bittermelon.items.toolbox.ToolBoxMenu;
 
 import static net.smokeybbq.bittermelon.init.MenuInit.CIGARETTE_PACK_MENU;
 import static net.smokeybbq.bittermelon.init.MenuInit.TOOLBOX_MENU;
