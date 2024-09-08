@@ -10,15 +10,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
-import net.smokeybbq.bittermelon.substances.Substance;
+import net.smokeybbq.bittermelon.items.base.ItemSize;
+import net.smokeybbq.bittermelon.items.base.ItemWeight;
+import net.smokeybbq.bittermelon.systems.substances.Substance;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
 public class SubstanceSolidItem extends SubstanceItem {
     protected final int CONSUME_RATE = 10;
-    public SubstanceSolidItem(Properties pProperties, int capacity) {
-        super(pProperties, capacity);
+    public SubstanceSolidItem(Properties pProperties, ItemSize itemSize, ItemWeight itemWeight, int capacity) {
+        super(pProperties, capacity, itemSize, itemWeight);
     }
 
     @Override

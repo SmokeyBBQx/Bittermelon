@@ -15,7 +15,9 @@ import net.smokeybbq.bittermelon.blocks.blockentities.PuddleBlockEntity;
 import net.smokeybbq.bittermelon.init.SubstanceInit;
 import net.smokeybbq.bittermelon.items.substancecontainers.SubstanceContainerItem;
 import net.smokeybbq.bittermelon.items.substancecontainers.SubstanceItem;
-import net.smokeybbq.bittermelon.substances.Substance;
+import net.smokeybbq.bittermelon.systems.atmospherics.AtmosCell;
+import net.smokeybbq.bittermelon.systems.atmospherics.AtmosManager;
+import net.smokeybbq.bittermelon.systems.substances.Substance;
 
 import java.util.Map;
 import java.util.Objects;
@@ -58,7 +60,53 @@ public class CommandAddSubstance {
                                 .executes(context -> showContainerContents(context.getSource()))
                         )
                 )
+                .then(Commands.literal("atmos")
+                        .then(Commands.literal("add")
+                                .then(Commands.argument("substance", StringArgumentType.word())
+                                        .then(Commands.argument("amount", IntegerArgumentType.integer())
+                                                .executes(context -> addSubstanceAtmos(
+                                                        context.getSource(),
+                                                        StringArgumentType.getString(context, "substance"),
+                                                        IntegerArgumentType.getInteger(context, "amount")
+                                                        )
+                                                )
+                                        )
+                                )
+                        )
+                        .then(Commands.literal("show")
+                                .executes(context -> showAtmosContents(context.getSource()))
+                        )
+                )
         );
+    }
+
+    private static int showAtmosContents(CommandSourceStack source) {
+        AtmosCell cell = AtmosManager.getInstance().getCellFromBlockPos(Objects.requireNonNull(source.getPlayer()).getOnPos().above());
+
+        if (cell == null) {
+            source.sendFailure(Component.literal("You must be standing in an atmos cell."));
+            return 0;
+        }
+
+        source.sendSuccess(() -> Component.literal(cell.getContentsDescription()), true);
+        return 1;
+    }
+
+    private static int addSubstanceAtmos(CommandSourceStack source, String substanceName, int amount) {
+        AtmosCell cell = AtmosManager.getInstance().getCellFromBlockPos(Objects.requireNonNull(source.getPlayer()).getOnPos().above());
+
+        if (cell == null) {
+            source.sendFailure(Component.literal("You must be standing in an atmos cell."));
+            return 0;
+        }
+
+        Substance substance = getSubstance(substanceName);
+
+        cell.addGas(substance, amount);
+        source.sendSuccess(() -> Component.literal(String.format("Added %d %s to the atmos cell", amount, substance.getName())), true);
+        source.sendSuccess(() -> Component.literal(cell.getContentsDescription()), true);
+        AtmosManager.getInstance().onBlockChange(Objects.requireNonNull(source.getPlayer()).getOnPos().above(), true);
+        return 1;
     }
 
     private static int addSubstancePuddle(CommandSourceStack source, String substanceName, int amount) throws CommandSyntaxException {

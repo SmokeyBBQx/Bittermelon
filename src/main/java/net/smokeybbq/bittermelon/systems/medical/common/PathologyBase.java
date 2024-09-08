@@ -1,0 +1,70 @@
+package net.smokeybbq.bittermelon.systems.medical.common;
+
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.LivingEntity;
+import net.smokeybbq.bittermelon.character.Character;
+import net.smokeybbq.bittermelon.character.CharacterManager;
+
+import java.util.AbstractMap;
+import java.util.List;
+
+public abstract class PathologyBase {
+
+    protected String name;
+    protected int tickTimer = 0;
+    protected Character character;
+    protected LivingEntity entity;
+    protected int progressionMildToModerate, progressionModerateToSevere, progressionSevereToCritical, progressionCriticalToTerminal;
+    protected float amplifier;
+    protected Severity severity;
+    protected List<AbstractMap.SimpleEntry<Integer, Severity>> severityThresholds;
+
+    public PathologyBase (Character character, float amplifier) {
+        this.character = character;
+        this.amplifier = amplifier;
+
+        MinecraftServer server = CharacterManager.getServer();
+        ServerLevel level = server.overworld();
+        entity = (LivingEntity) level.getEntity(character.getUUID());
+
+        severityThresholds = List.of(
+                new AbstractMap.SimpleEntry<>(progressionCriticalToTerminal, Severity.TERMINAL),
+                new AbstractMap.SimpleEntry<>(progressionSevereToCritical, Severity.CRITICAL),
+                new AbstractMap.SimpleEntry<>(progressionModerateToSevere, Severity.SEVERE),
+                new AbstractMap.SimpleEntry<>(progressionMildToModerate, Severity.MODERATE)
+        );
+    }
+
+    public abstract void update ();
+
+    protected void tick() {
+        tickTimer++;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void increaseAmplifier(float input) {
+        amplifier += input;
+    }
+
+    public void decreaseAmplifier(float input) {
+        amplifier = Math.max(amplifier - input, 0 );
+    }
+
+    public float getAmplifier() {
+        return amplifier;
+    }
+
+    public void updateProgression() {
+        severity = Severity.MILD;
+        for (AbstractMap.SimpleEntry<Integer, Severity> threshold : severityThresholds) {
+            if (amplifier >= threshold.getKey()) {
+                severity = threshold.getValue();
+                break;
+            }
+        }
+    }
+}

@@ -18,9 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class HandLabeler extends BaseItem {
     public HandLabeler(Properties pProperties) {
-        super(pProperties);
-        itemSize = ItemSize.NORMAL;
-        itemWeight = ItemWeight.MEDIUM;
+        super(pProperties, ItemSize.NORMAL, ItemWeight.MEDIUM);
     }
 
     @Override

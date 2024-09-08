@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
+import static net.smokeybbq.bittermelon.systems.medical.compartments.anatomies.HumanFactory.createCompartments;
+
 public class Character {
     private final UUID uuid;
     private final UUID entityUUID;
@@ -23,6 +25,7 @@ public class Character {
     private final String emoteColor;
     private final Species species;
     private final transient MedicalStats medicalStats;
+    private final SpeechProperties speechProperties;
 
     public Character(UUID entityUUID, String name, String description, String skinUrl, String gender, int age, float height, float weight, String emoteColor, Species species) {
         this.uuid = UUID.randomUUID();
@@ -36,7 +39,8 @@ public class Character {
         this.weight = weight;
         this.emoteColor = emoteColor;
         this.species = species;
-        medicalStats = species.createMedicalStats();
+        this.medicalStats = species.createMedicalStats(this, createCompartments());
+        this.speechProperties = new SpeechProperties();
     }
 
     public UUID getUUID() {
@@ -81,8 +85,14 @@ public class Character {
         return medicalStats;
     }
 
+    public Species getSpecies() {return species;}
+
+    public SpeechProperties getSpeechProperties() {return speechProperties;}
+
     public void update() {
-        medicalStats.update();
+        if (medicalStats != null) {
+            medicalStats.update();
+        }
     }
 
     public void savePlayerData(CompoundTag data) {

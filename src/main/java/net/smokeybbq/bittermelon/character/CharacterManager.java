@@ -10,7 +10,7 @@ import net.smokeybbq.bittermelon.util.DataManager;
 public class CharacterManager extends DataManager<UUID, Character> {
     private static MinecraftServer minecraftServer;
     private static CharacterManager instance = null;
-    private final Map<UUID, List<Character>> playerUUIDToCharacter = new ConcurrentHashMap<>();
+    private final Map<UUID, List<Character>> UUIDToCharacter = new ConcurrentHashMap<>();
     private static final Map<UUID, Character> activeCharacters = new HashMap<>();
 
     private CharacterManager() {
@@ -35,12 +35,17 @@ public class CharacterManager extends DataManager<UUID, Character> {
 
     public void mapPlayersToCharacters() {
         for (Character character : dataMap.values()) {
-            playerUUIDToCharacter.computeIfAbsent(character.getEntityUUID(), k -> new ArrayList<>()).add(character);
+            UUID entityUUID = character.getEntityUUID();
+            if (entityUUID != null) {
+                UUIDToCharacter.computeIfAbsent(entityUUID, k -> new ArrayList<>()).add(character);
+            } else {
+                System.err.println("Warning: Character found with null entityUUID: " + character.getUUID());
+            }
         }
     }
 
     public void addCharacter(Character character) {
-        playerUUIDToCharacter.computeIfAbsent(character.getEntityUUID(), k -> new ArrayList<>()).add(character);
+        UUIDToCharacter.computeIfAbsent(character.getEntityUUID(), k -> new ArrayList<>()).add(character);
         addData(character.getUUID(), character);
     }
 
@@ -49,8 +54,8 @@ public class CharacterManager extends DataManager<UUID, Character> {
      * @param character Character to be removed
      */
     public void removeCharacter(Character character) {
-        deleteData(character);
-        List<Character> characterList = playerUUIDToCharacter.getOrDefault(character.getEntityUUID(), null);
+        deleteData(character.getUUID());
+        List<Character> characterList = UUIDToCharacter.getOrDefault(character.getEntityUUID(), null);
         if (characterList != null) {
             characterList.remove(character);
         }
@@ -68,7 +73,7 @@ public class CharacterManager extends DataManager<UUID, Character> {
     }
 
     public List<Character> getCharacters(UUID entityUUID) {
-        return playerUUIDToCharacter.getOrDefault(entityUUID, new ArrayList<>());
+        return UUIDToCharacter.getOrDefault(entityUUID, new ArrayList<>());
     }
 
     public Character getCharacter(UUID characterUUID) {

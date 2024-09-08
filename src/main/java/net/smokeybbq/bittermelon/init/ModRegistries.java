@@ -6,7 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.NewRegistryEvent;
 import net.minecraftforge.registries.RegistryBuilder;
 import net.smokeybbq.bittermelon.Bittermelon;
-import net.smokeybbq.bittermelon.substances.Substance;
+import net.smokeybbq.bittermelon.systems.substances.Substance;
 
 public class ModRegistries {
     public static final ResourceKey<Registry<Substance>> SUBSTANCE_REGISTRY = ResourceKey.createRegistryKey(

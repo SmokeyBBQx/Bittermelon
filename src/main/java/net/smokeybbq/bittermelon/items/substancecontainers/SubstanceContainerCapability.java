@@ -2,7 +2,7 @@ package net.smokeybbq.bittermelon.items.substancecontainers;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.smokeybbq.bittermelon.substances.Substance;
+import net.smokeybbq.bittermelon.systems.substances.Substance;
 
 import java.util.HashMap;
 import java.util.Map;

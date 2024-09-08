@@ -14,36 +14,39 @@ import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
 import net.smokeybbq.bittermelon.chat.Channel;
 import net.smokeybbq.bittermelon.chat.ChannelManager;
+import net.smokeybbq.bittermelon.chat.ChannelProperty;
 import net.smokeybbq.bittermelon.util.CommandUtil;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 public class CommandChannel {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("channel")
                 .then(Commands.literal("switch")
                         .then(Commands.argument("channel", StringArgumentType.greedyString())
-                                .executes(context -> switchChannel(context)))
+                                .executes(CommandChannel::switchChannel))
                 )
                 .then(Commands.literal("join")
                         .then(Commands.argument("channel", StringArgumentType.greedyString())
-                                .executes(context -> joinChannel(context)))
+                                .executes(CommandChannel::joinChannel))
                 )
                 .then(Commands.literal("leave")
                         .then(Commands.argument("channel", StringArgumentType.greedyString())
-                                .executes(context -> leaveChannel(context)))
+                                .executes(CommandChannel::leaveChannel))
                 )
                 .then(Commands.literal("add")
                         .then(Commands.argument("name", StringArgumentType.string())
                                 .then(Commands.argument("range", IntegerArgumentType.integer(-1))
                                         .then(Commands.argument("chatColor", StringArgumentType.string())
                                                 .then(Commands.argument("channelColor", StringArgumentType.string())
-                                                        .executes(context -> createChannel(context))))))
+                                                        .executes(CommandChannel::createChannel)))))
                 )
                 .then(Commands.literal("remove")
                         .then(Commands.argument("channel", StringArgumentType.string())
-                                .executes(context -> removeChannel(context)))
+                                .executes(CommandChannel::removeChannel))
                 )
                 .then(Commands.literal("list")
                         .executes(context -> viewChannels(context, false))
@@ -51,26 +54,26 @@ public class CommandChannel {
                                 .then(Commands.argument("character", StringArgumentType.string())
                                         .executes(context -> viewChannels(context, true))))
                 )
-                .then(Commands.literal("whitelist")
-                        .then(Commands.literal("add")
-                                .then(Commands.argument("player", EntityArgument.player())
-                                        .then(Commands.argument("character", StringArgumentType.string())
-                                                .then(Commands.argument("channel", StringArgumentType.greedyString())
-                                                        .executes(context -> whitelistAdd(context))))))
-                        .then(Commands.literal("remove")
-                                .then(Commands.argument("player", EntityArgument.player())
-                                        .then(Commands.argument("character", StringArgumentType.string())
-                                                .then(Commands.argument("channel", StringArgumentType.greedyString())
-                                                        .executes(context -> whitelistAdd(context))))))
-                        .then(Commands.literal("list")
-                                .then(Commands.argument("channel", StringArgumentType.greedyString())
-                                        .executes(context -> whitelistList(context))))
-                        .then(Commands.literal("clear")
-                                .then(Commands.argument("channel", StringArgumentType.string())
-                                        .executes(context -> whitelistClear(context))))
-                )
+//                .then(Commands.literal("whitelist")
+//                        .then(Commands.literal("add")
+//                                .then(Commands.argument("player", EntityArgument.player())
+//                                        .then(Commands.argument("character", StringArgumentType.string())
+//                                                .then(Commands.argument("channel", StringArgumentType.greedyString())
+//                                                        .executes(context -> whitelistAdd(context))))))
+//                        .then(Commands.literal("remove")
+//                                .then(Commands.argument("player", EntityArgument.player())
+//                                        .then(Commands.argument("character", StringArgumentType.string())
+//                                                .then(Commands.argument("channel", StringArgumentType.greedyString())
+//                                                        .executes(context -> whitelistAdd(context))))))
+//                        .then(Commands.literal("list")
+//                                .then(Commands.argument("channel", StringArgumentType.greedyString())
+//                                        .executes(context -> whitelistList(context))))
+//                        .then(Commands.literal("clear")
+//                                .then(Commands.argument("channel", StringArgumentType.string())
+//                                        .executes(context -> whitelistClear(context))))
+//                )
                 .then(Commands.argument("channel", StringArgumentType.greedyString())
-                        .executes(context -> switchChannel(context)))
+                        .executes(CommandChannel::switchChannel))
         );
     }
 
@@ -180,7 +183,7 @@ public class CommandChannel {
             return 0;
         }
         if (channel != null) {
-            if (!channel.getProperty("canLeave")) {
+            if (!channel.getProperty(ChannelProperty.CAN_LEAVE)) {
                 context.getSource().sendFailure(Component.literal("You are not permitted to leave that channel"));
                 return 0;
             }
@@ -232,121 +235,122 @@ public class CommandChannel {
         return 1;
     }
 
-    private static int whitelistAdd(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        ServerPlayer player = EntityArgument.getPlayer(context, "player");
-        String channelName = StringArgumentType.getString(context, "channel");
-        String characterName = StringArgumentType.getString(context, "character");
-        Channel channel = CommandUtil.getChannelIgnoreCase(channelName);
-        Character character = CommandUtil.getCharacterIgnoreCase(player, characterName);
-        if (channel != null) {
-            if (channel.getProperty("ignoreWhitelist")) {
-                context.getSource().sendFailure(Component.literal(channel.getName() + " does not use a whitelist"));
-                return 0;
-            }
-            if (character == null) {
-                context.getSource().sendFailure(Component.literal("Character not found: " + characterName));
-                return 0;
-            }
+//    private static int whitelistAdd(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+//        ServerPlayer player = EntityArgument.getPlayer(context, "player");
+//        String channelName = StringArgumentType.getString(context, "channel");
+//        String characterName = StringArgumentType.getString(context, "character");
+//        Channel channel = CommandUtil.getChannelIgnoreCase(channelName);
+//        Character character = CommandUtil.getCharacterIgnoreCase(player, characterName);
+//        if (channel != null) {
+//            if (channel.getProperty("ignoreWhitelist")) {
+//                context.getSource().sendFailure(Component.literal(channel.getName() + " does not use a whitelist"));
+//                return 0;
+//            }
+//            if (character == null) {
+//                context.getSource().sendFailure(Component.literal("Character not found: " + characterName));
+//                return 0;
+//            }
+//
+//            Set<UUID> whitelist = channel.getWhitelist();
+//            if (whitelist.contains(character.getUUID())) {
+//                context.getSource().sendSystemMessage(Component.literal("Character already whitelisted: " + character.getName()));
+//                return 1;
+//            }
+//            channel.addToWhitelist(character);
+//        } else {
+//            context.getSource().sendFailure(Component.literal("Channel not found: " + channelName));
+//            return 0;
+//        }
+//        context.getSource().sendSystemMessage(Component.literal("Character successfully added to whitelist"));
+//        return 1;
+//    }
+//
+//    private static int whitelistRemove(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+//        ServerPlayer player = EntityArgument.getPlayer(context, "player");
+//        String channelName = StringArgumentType.getString(context, "channel");
+//        String characterName = StringArgumentType.getString(context, "character");
+//        Channel channel = CommandUtil.getChannelIgnoreCase(channelName);
+//        Character character = CommandUtil.getCharacterIgnoreCase(player, characterName);
+//        if (channel != null) {
+//            if (channel.getProperty("ignoreWhitelist")) {
+//                context.getSource().sendFailure(Component.literal(channel.getName() + " does not use a whitelist"));
+//                return 0;
+//            }
+//            if (character == null) {
+//                context.getSource().sendFailure(Component.literal("Character not found: " + characterName));
+//                return 0;
+//            }
+//
+//            Set<UUID> whitelist = channel.getWhitelist();
+//            if (!whitelist.contains(character.getUUID())) {
+//                context.getSource().sendSystemMessage(Component.literal("Character is not whitelisted: " + character.getName()));
+//                return 1;
+//            }
+//            channel.removeFromWhitelist(character.getUUID());
+//        } else {
+//            context.getSource().sendFailure(Component.literal("Channel not found: " + channelName));
+//            return 0;
+//        }
+//        context.getSource().sendSystemMessage(Component.literal("Character successfully removed from whitelist"));
+//        return 1;
+//    }
 
-            Set<Character> whitelist = channel.getWhitelist();
-            if (whitelist.contains(character)) {
-                context.getSource().sendSystemMessage(Component.literal("Character already whitelisted: " + character.getName()));
-                return 1;
-            }
-            channel.addToWhitelist(character);
-        } else {
-            context.getSource().sendFailure(Component.literal("Channel not found: " + channelName));
-            return 0;
-        }
-        context.getSource().sendSystemMessage(Component.literal("Character successfully added to whitelist"));
-        return 1;
-    }
+//    private static int whitelistClear(CommandContext<CommandSourceStack> context) {
+//        String channelName = StringArgumentType.getString(context, "channel");
+//        Channel channel = CommandUtil.getChannelIgnoreCase(channelName);
+//        if (channel != null) {
+//            if (channel.getProperty("ignoreWhitelist")) {
+//                context.getSource().sendFailure(Component.literal(channel.getName() + " does not use a whitelist"));
+//                return 0;
+//            }
+//
+//            Set<UUID> whitelist = channel.getWhitelist();
+//
+//            if (whitelist.isEmpty()) {
+//                context.getSource().sendSystemMessage(Component.literal("Whitelist for '" + channel.getName() + "' is empty"));
+//                return 1;
+//            }
+//
+//            for (UUID c : whitelist) {
+//                channel.removeFromWhitelist(c);
+//            }
+//            context.getSource().sendSystemMessage(Component.literal("Whitelist for '" + channel.getName() + "' has been cleared"));
+//            return 1;
+//        } else {
+//            context.getSource().sendFailure(Component.literal("Channel not found: " + channelName));
+//            return 0;
+//        }
+//    }
 
-    private static int whitelistRemove(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        ServerPlayer player = EntityArgument.getPlayer(context, "player");
-        String channelName = StringArgumentType.getString(context, "channel");
-        String characterName = StringArgumentType.getString(context, "character");
-        Channel channel = CommandUtil.getChannelIgnoreCase(channelName);
-        Character character = CommandUtil.getCharacterIgnoreCase(player, characterName);
-        if (channel != null) {
-            if (channel.getProperty("ignoreWhitelist")) {
-                context.getSource().sendFailure(Component.literal(channel.getName() + " does not use a whitelist"));
-                return 0;
-            }
-            if (character == null) {
-                context.getSource().sendFailure(Component.literal("Character not found: " + characterName));
-                return 0;
-            }
-
-            Set<Character> whitelist = channel.getWhitelist();
-            if (!whitelist.contains(character)) {
-                context.getSource().sendSystemMessage(Component.literal("Character is not whitelisted: " + character.getName()));
-                return 1;
-            }
-            channel.removeFromWhitelist(character);
-        } else {
-            context.getSource().sendFailure(Component.literal("Channel not found: " + channelName));
-            return 0;
-        }
-        context.getSource().sendSystemMessage(Component.literal("Character successfully removed from whitelist"));
-        return 1;
-    }
-
-    private static int whitelistClear(CommandContext<CommandSourceStack> context) {
-        String channelName = StringArgumentType.getString(context, "channel");
-        Channel channel = CommandUtil.getChannelIgnoreCase(channelName);
-        if (channel != null) {
-            if (channel.getProperty("ignoreWhitelist")) {
-                context.getSource().sendFailure(Component.literal(channel.getName() + " does not use a whitelist"));
-                return 0;
-            }
-
-            Set<Character> whitelist = channel.getWhitelist();
-
-            if (whitelist.isEmpty()) {
-                context.getSource().sendSystemMessage(Component.literal("Whitelist for '" + channel.getName() + "' is empty"));
-                return 1;
-            }
-
-            for (Character c : whitelist) {
-                channel.removeFromWhitelist(c);
-            }
-            context.getSource().sendSystemMessage(Component.literal("Whitelist for '" + channel.getName() + "' has been cleared"));
-            return 1;
-        } else {
-            context.getSource().sendFailure(Component.literal("Channel not found: " + channelName));
-            return 0;
-        }
-    }
-
-    private static int whitelistList(CommandContext<CommandSourceStack> context) {
-        String channelName = StringArgumentType.getString(context, "channel");
-        Channel channel = CommandUtil.getChannelIgnoreCase(channelName);
-        if (channel != null) {
-            if (channel.getProperty("ignoreWhitelist")) {
-                context.getSource().sendFailure(Component.literal(channel.getName() + " does not use a whitelist"));
-                return 0;
-            }
-
-            Set<Character> whitelist = channel.getWhitelist();
-
-            if (whitelist.isEmpty()) {
-                context.getSource().sendSystemMessage(Component.literal("Whitelist for '" + channel.getName() + "' is empty"));
-                return 1;
-            }
-
-            String result = "";
-            int count = 0;
-            for (Character c : whitelist) {
-                result += c.getName() + " (" + CommandUtil.keyToServerPlayer(c.getEntityUUID()).getName().getString() + ")"  + ", ";
-                count++;
-            }
-            result = result.substring(0, result.lastIndexOf(", "));
-            context.getSource().sendSystemMessage(Component.literal(channel.getName() + " has " + count + " whitelisted character(s): ").append(result));
-            return 1;
-        } else {
-            context.getSource().sendFailure(Component.literal("Channel not found: " + channelName));
-            return 0;
-        }
-    }
+//    private static int whitelistList(CommandContext<CommandSourceStack> context) {
+//        String channelName = StringArgumentType.getString(context, "channel");
+//        Channel channel = CommandUtil.getChannelIgnoreCase(channelName);
+//        if (channel != null) {
+//            if (channel.getProperty("ignoreWhitelist")) {
+//                context.getSource().sendFailure(Component.literal(channel.getName() + " does not use a whitelist"));
+//                return 0;
+//            }
+//
+//            Set<UUID> whitelist = channel.getWhitelist();
+//
+//            if (whitelist.isEmpty()) {
+//                context.getSource().sendSystemMessage(Component.literal("Whitelist for '" + channel.getName() + "' is empty"));
+//                return 1;
+//            }
+//
+//            StringBuilder result = new StringBuilder();
+//            int count = 0;
+//            for (UUID c : whitelist) {
+//                Character character = CharacterManager.getInstance().getCharacter(c);
+//                result.append(character.getName()).append(" (").append(Objects.requireNonNull(CommandUtil.keyToServerPlayer(character.getEntityUUID())).getName().getString()).append(")").append(", ");
+//                count++;
+//            }
+//            result = new StringBuilder(result.substring(0, result.lastIndexOf(", ")));
+//            context.getSource().sendSystemMessage(Component.literal(channel.getName() + " has " + count + " whitelisted character(s): ").append(result.toString()));
+//            return 1;
+//        } else {
+//            context.getSource().sendFailure(Component.literal("Channel not found: " + channelName));
+//            return 0;
+//        }
+//    }
 }

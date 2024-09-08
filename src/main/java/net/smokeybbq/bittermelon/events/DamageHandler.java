@@ -6,7 +6,7 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.CharacterManager;
-import net.smokeybbq.bittermelon.medical.compartments.Compartment;
+import net.smokeybbq.bittermelon.systems.medical.compartments.Compartment;
 //import net.smokeybbq.bittermelon.miscellaneous.Stumble;
 
 public class DamageHandler {

@@ -1,196 +1,129 @@
 {
   "multipart": [
     {
-      "when": { "level": 0, "north": false, "east": false, "south": false, "west": false },
+      "when": { "level": 0, "north": false, "east": false, "south": false, "west": false, "floating": false },
       "apply": { "model": "bittermelon:block/puddle/puddle_0" }
     },
     {
-      "when": { "level": 0, "north": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_n" }
-    },
-    {
-      "when": { "level": 0, "east": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_e" }
-    },
-    {
-      "when": { "level": 0, "south": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_s" }
-    },
-    {
-      "when": { "level": 0, "west": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_w" }
-    },
-    {
-      "when": { "level": 0, "north": true, "east": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_ne" }
-    },
-    {
-      "when": { "level": 0, "north": true, "south": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_ns" }
-    },
-    {
-      "when": { "level": 0, "north": true, "west": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_nw" }
-    },
-    {
-      "when": { "level": 0, "east": true, "south": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_es" }
-    },
-    {
-      "when": { "level": 0, "east": true, "west": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_ew" }
-    },
-    {
-      "when": { "level": 0, "south": true, "west": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_sw" }
-    },
-    {
-      "when": { "level": 0, "north": true, "east": true, "south": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_nes" }
-    },
-    {
-      "when": { "level": 0, "north": true, "east": true, "west": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_new" }
-    },
-    {
-      "when": { "level": 0, "north": true, "south": true, "west": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_nsw" }
-    },
-    {
-      "when": { "level": 0, "east": true, "south": true, "west": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_esw" }
-    },
-    {
-      "when": { "level": 0, "north": true, "east": true, "south": true, "west": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_nesw" }
-    },
-    {
-      "when": { "level": 1, "north": false, "east": false, "south": false, "west": false },
+      "when": { "level": 1, "north": false, "east": false, "south": false, "west": false, "floating": false },
       "apply": { "model": "bittermelon:block/puddle/puddle_1" }
     },
     {
-      "when": { "level": 1, "north": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_n" }
+      "when": { "level": 3, "floating": false },
+      "apply": { "model": "bittermelon:block/puddle/puddle_2" }
     },
     {
-      "when": { "level": 1, "east": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_e" }
+      "when": { "level": 4, "floating": false },
+      "apply": { "model": "bittermelon:block/puddle/puddle_3" }
     },
     {
-      "when": { "level": 1, "south": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_s" }
+      "when": { "level": 5, "floating": false },
+      "apply": { "model": "bittermelon:block/puddle/puddle_4" }
     },
     {
-      "when": { "level": 1, "west": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_w" }
+      "when": { "level": 6, "floating": false },
+      "apply": { "model": "bittermelon:block/puddle/puddle_5" }
     },
     {
-      "when": { "level": 1, "north": true, "east": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_ne" }
+      "when": { "level": 7, "floating": false },
+      "apply": { "model": "bittermelon:block/puddle/puddle_6" }
     },
     {
-      "when": { "level": 1, "north": true, "south": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_ns" }
+      "when": { "level": 8, "floating": false },
+      "apply": { "model": "bittermelon:block/puddle/puddle_7" }
     },
     {
-      "when": { "level": 1, "north": true, "west": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_nw" }
+      "when": { "level": 9, "floating": false },
+      "apply": { "model": "bittermelon:block/puddle/puddle_8" }
     },
     {
-      "when": { "level": 1, "east": true, "south": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_es" }
+      "when": { "level": 10, "floating": false },
+      "apply": { "model": "bittermelon:block/puddle/puddle_9" }
     },
     {
-      "when": { "level": 1, "east": true, "west": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_ew" }
+      "when": { "north": false, "east": false, "south": false, "west": false, "floating": true },
+      "apply": { "model": "bittermelon:block/puddle/puddle_floating" }
     },
     {
-      "when": { "level": 1, "south": true, "west": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_sw" }
+      "when": { "north": true, "east": false, "south": false, "west": false, "floating": true },
+      "apply": { "model": "bittermelon:block/puddle/puddle_floating_n" }
     },
     {
-      "when": { "level": 1, "north": true, "east": true, "south": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_nes" }
+      "when": { "north": false, "east": true, "south": false, "west": false, "floating": true },
+      "apply": { "model": "bittermelon:block/puddle/puddle_floating_e" }
     },
     {
-      "when": { "level": 1, "north": true, "east": true, "west": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_new" }
+      "when": { "north": false, "east": false, "south": true, "west": false, "floating": true },
+      "apply": { "model": "bittermelon:block/puddle/puddle_floating_s" }
     },
     {
-      "when": { "level": 1, "north": true, "south": true, "west": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_nsw" }
+      "when": { "north": false, "east": false, "south": false, "west": true, "floating": true },
+      "apply": { "model": "bittermelon:block/puddle/puddle_floating_w" }
     },
     {
-      "when": { "level": 1, "east": true, "south": true, "west": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_esw" }
-    },
-    {
-      "when": { "level": 1, "north": true, "east": true, "south": true, "west": true },
-      "apply": { "model": "bittermelon:block/puddle/puddle_nesw" }
-    },
-    {
-      "when": { "level": 2, "north": false, "east": false, "south": false, "west": false },
+      "when": { "level": 2, "north": false, "east": false, "south": false, "west": false, "floating": false },
       "apply": { "model": "bittermelon:block/puddle/puddle" }
     },
     {
-      "when": { "level": 2, "north": true },
+      "when": { "north": true, "east": false, "south": false, "west": false, "floating": false },
       "apply": { "model": "bittermelon:block/puddle/puddle_n" }
     },
     {
-      "when": { "level": 2, "east": true },
+      "when": { "north": false, "east": true, "south": false, "west": false, "floating": false },
       "apply": { "model": "bittermelon:block/puddle/puddle_e" }
     },
     {
-      "when": { "level": 2, "south": true },
+      "when": { "north": false, "east": false, "south": true, "west": false, "floating": false },
       "apply": { "model": "bittermelon:block/puddle/puddle_s" }
     },
     {
-      "when": { "level": 2, "west": true },
+      "when": { "north": false, "east": false, "south": false, "west": true, "floating": false },
       "apply": { "model": "bittermelon:block/puddle/puddle_w" }
     },
     {
-      "when": { "level": 2, "north": true, "east": true },
+      "when": { "north": true, "east": true, "south": false, "west": false, "floating": false },
       "apply": { "model": "bittermelon:block/puddle/puddle_ne" }
     },
     {
-      "when": { "level": 2, "north": true, "south": true },
+      "when": { "north": true, "east": false, "south": true, "west": false, "floating": false },
       "apply": { "model": "bittermelon:block/puddle/puddle_ns" }
     },
     {
-      "when": { "level": 2, "north": true, "west": true },
+      "when": { "north": true, "east": false, "south": false, "west": true, "floating": false },
       "apply": { "model": "bittermelon:block/puddle/puddle_nw" }
     },
     {
-      "when": { "level": 2, "east": true, "south": true },
+      "when": { "north": false, "east": true, "south": true, "west": false, "floating": false },
       "apply": { "model": "bittermelon:block/puddle/puddle_es" }
     },
     {
-      "when": { "level": 2, "east": true, "west": true },
+      "when": { "north": false, "east": true, "south": false, "west": true, "floating": false },
       "apply": { "model": "bittermelon:block/puddle/puddle_ew" }
     },
     {
-      "when": { "level": 2, "south": true, "west": true },
+      "when": { "north": false, "east": false, "south": true, "west": true, "floating": false },
       "apply": { "model": "bittermelon:block/puddle/puddle_sw" }
     },
     {
-      "when": { "level": 2, "north": true, "east": true, "south": true },
+      "when": { "north": true, "east": true, "south": true, "west": false, "floating": false },
       "apply": { "model": "bittermelon:block/puddle/puddle_nes" }
     },
     {
-      "when": { "level": 2, "north": true, "east": true, "west": true },
+      "when": { "north": true, "east": true, "south": false, "west": true, "floating": false },
       "apply": { "model": "bittermelon:block/puddle/puddle_new" }
     },
     {
-      "when": { "level": 2, "north": true, "south": true, "west": true },
+      "when": { "north": true, "east": false, "south": true, "west": true, "floating": false },
       "apply": { "model": "bittermelon:block/puddle/puddle_nsw" }
     },
     {
-      "when": { "level": 2, "east": true, "south": true, "west": true },
+      "when": { "north": false, "east": true, "south": true, "west": true, "floating": false },
       "apply": { "model": "bittermelon:block/puddle/puddle_esw" }
     },
     {
-      "when": { "level": 2, "north": true, "east": true, "south": true, "west": true },
+      "when": { "north": true, "east": true, "south": true, "west": true, "floating": false },
       "apply": { "model": "bittermelon:block/puddle/puddle_nesw" }
     }
   ]
 }
+

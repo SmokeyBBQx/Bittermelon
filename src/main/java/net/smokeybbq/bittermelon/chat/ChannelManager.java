@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.util.DataManager;
+import net.smokeybbq.bittermelon.util.ModLogger;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -15,7 +16,7 @@ public class ChannelManager extends DataManager<String, Channel> {
     private static final Map<String, Channel> channels = new ConcurrentHashMap<>();
     private static final String CHANNEL_FOLDER = FMLPaths.GAMEDIR.get().resolve("channels/").toString();
     private static final Gson gson = new Gson();
-    private static final HashMap<Character, Channel> playerUUIDToChannel = new HashMap<>();
+    private static final HashMap<Character, Channel> characterToChannel = new HashMap<>();
 
     private ChannelManager() {
         super(CHANNEL_FOLDER, Channel.class);
@@ -29,10 +30,16 @@ public class ChannelManager extends DataManager<String, Channel> {
     }
 
     public static void setCharacterActiveChannel(Character character, Channel channel) {
-        playerUUIDToChannel.put(character, channel);
+        characterToChannel.put(character, channel);
     }
+
+    public static void setCharacterActiveChannel(Character character, String channel) {
+        ModLogger.debug("Setting " + character.getName() + " to channel " + channel);
+        characterToChannel.put(character, getInstance().getChannel(channel));
+    }
+
     public static Channel getCharacterActiveChannel(Character character) {
-        return playerUUIDToChannel.get(character);
+        return characterToChannel.get(character);
     }
 
     public Map<String, Channel> getChannels() {
@@ -49,17 +56,17 @@ public class ChannelManager extends DataManager<String, Channel> {
     }
 
     public void removeChannel(@NotNull Channel channel) {
-        deleteData(channel);
+        deleteData(channel.getName());
         // while loop used to remove all characters tied to the channel
-        while (playerUUIDToChannel.containsValue(channel)) {
-            playerUUIDToChannel.values().remove(channel);
+        while (characterToChannel.containsValue(channel)) {
+            characterToChannel.values().remove(channel);
         }
     }
 
     private List<Channel> getDefaultChannels() {
         List<Channel> result = new ArrayList<>();
         for (Channel c : getDataMap().values()) {
-            if (c.getProperty("isDefault")) {
+            if (c.getProperty(ChannelProperty.IS_DEFAULT)) {
                 result.add(c);
             }
         }
@@ -74,13 +81,7 @@ public class ChannelManager extends DataManager<String, Channel> {
 
     // TODO: add boolean to channels that disables whitelist
     public List<Channel> getPermittedChannels(Character character) {
-        List<Channel> list = new ArrayList<>();
-        for (Channel channel : getDataMap().values()) {
-            if (channel.getWhitelist().contains(character) || channel.getProperty("ignoreWhitelist")) {
-                list.add(channel);
-            }
-        }
-        return list;
+        return new ArrayList<>(getDataMap().values());
     }
 
     public boolean isPermittedChannel(Character character, Channel channel) {

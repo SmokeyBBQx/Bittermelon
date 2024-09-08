@@ -1,7 +1,7 @@
 package net.smokeybbq.bittermelon.character.medical;
 
 import net.smokeybbq.bittermelon.character.medical.species.animal.mammal.MammalMedicalStats;
-import net.smokeybbq.bittermelon.medical.compartments.Compartment;
+import net.smokeybbq.bittermelon.systems.medical.compartments.Compartment;
 
 public class BodilyInteractions {
 

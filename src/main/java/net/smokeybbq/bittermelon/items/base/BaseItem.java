@@ -19,12 +19,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public abstract class BaseItem extends Item {
+public class BaseItem extends Item {
     protected ItemSize itemSize;
     protected ItemWeight itemWeight;
 
-    public BaseItem(Properties pProperties) {
+    public BaseItem(Properties pProperties, ItemSize itemSize, ItemWeight itemWeight) {
         super(pProperties);
+        this.itemSize = itemSize;
+        this.itemWeight = itemWeight;
     }
 
     public ItemSize getItemSize() {

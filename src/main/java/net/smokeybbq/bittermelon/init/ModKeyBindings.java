@@ -17,7 +17,16 @@ public class ModKeyBindings {
             KeyMapping.CATEGORY_MISC
     );
 
+    public static final KeyMapping RADIO_CHAT = new KeyMapping(
+            "key.bittermelon.radio_chat",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_Y,
+            KeyMapping.CATEGORY_MISC
+    );
+
     public static void register(RegisterKeyMappingsEvent event) {
         event.register(THROW_ITEM);
+        event.register(RADIO_CHAT);
     }
 }

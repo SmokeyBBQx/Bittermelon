@@ -21,9 +21,7 @@ import org.jetbrains.annotations.NotNull;
 public class CigarettePackItem extends BaseItem {
 
     public CigarettePackItem(Properties pProperties) {
-        super(pProperties);
-        itemSize = ItemSize.SMALL;
-        itemWeight = ItemWeight.VERY_LIGHT;
+        super(pProperties, ItemSize.SMALL, ItemWeight.VERY_LIGHT);
     }
 
     @Override

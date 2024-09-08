@@ -6,7 +6,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Pose;
+import net.smokeybbq.bittermelon.systems.miscellaneous.Stumble;
 
 public class CommandStumble {
 
@@ -18,7 +18,7 @@ public class CommandStumble {
     }
 
     private static int stumble(CommandContext<CommandSourceStack> context, ServerPlayer player) {
-//        Stumble stumble = new Stumble(player);
+        Stumble stumble = new Stumble(player);
         return 1;
     }
 

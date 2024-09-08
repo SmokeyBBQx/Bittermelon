@@ -8,14 +8,14 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Channel {
-    private final String name;
-    private final int range;
-    private final String chatColor;
-    private final String channelNameColor;
-    private final Set<UUID> members = new HashSet<>();
-    private final Set<UUID> whitelist = new HashSet<>();
-    private final Set<String> layeredChannels = new HashSet<>();
-    private final Map<String, Boolean> properties = new ConcurrentHashMap<>();
+    protected final String name;
+    protected final int range;
+    protected final String chatColor;
+    protected final String channelNameColor;
+    protected final Set<UUID> members = new HashSet<>();
+    protected final Set<String> permissions = new HashSet<>();
+
+    protected final EnumMap<ChannelProperty, Boolean> properties = new EnumMap<>(ChannelProperty.class);
 
 
     public Channel (String name, int range, String chatColor, String channelNameColor) {
@@ -23,55 +23,42 @@ public class Channel {
         this.range = range;
         this.chatColor = chatColor;
         this.channelNameColor = channelNameColor;
-        this.properties.put("ignoreWhitelist", Boolean.FALSE);
-        this.properties.put("ignoreDimensions", Boolean.FALSE);
-        this.properties.put("ignoreRange", Boolean.FALSE);
-        this.properties.put("canLeave", Boolean.TRUE);
-        this.properties.put("isDefault", Boolean.FALSE);
+        initializeProperties();
+    }
+
+    private void initializeProperties() {
+        for (ChannelProperty property : ChannelProperty.values()) {
+            properties.put(property, property.getDefaultValue());
+        }
     }
 
     public String getName() {return name;}
-
     public String getChatColor() {
         return chatColor;
     }
-
     public String getChannelNameColor() {
         return channelNameColor;
     }
-
     public int getRange() {
         return range;
     }
 
-    @Nullable
-    public boolean getProperty(String name) {
-        return properties.getOrDefault(name, null);
+    public boolean getProperty(ChannelProperty property) {
+        return properties.get(property);
     }
 
-    public List<Channel> getLayeredChannels() {
-        List<Channel> result = new ArrayList<>();
-        Channel layer;
-        for (String s : layeredChannels) {
-            layer = ChannelManager.getInstance().getChannel(s);
-            if (layer != null) {
-                result.add(layer);
-            } else {
-                layeredChannels.remove(s);
-            }
-        }
-        return result;
+    public void setProperty(ChannelProperty property, boolean value) {
+        properties.put(property, value);
+        save();
     }
 
     public void addMember(Character character) {
-        UUID characterUUID = character.getUUID();
-        members.add(characterUUID);
+        members.add(character.getUUID());
         save();
     }
 
     public void removeMember(Character character) {
-        UUID characterUUID = character.getUUID();
-        members.remove(characterUUID);
+        members.remove(character.getUUID());
         save();
     }
 
@@ -81,43 +68,16 @@ public class Channel {
      */
     public Set<Character> getMembers() {
         Set<Character> channelMembers = new HashSet<>();
-        for (UUID memberUUID : members) {
-            Character character = CharacterManager.getInstance().getData(memberUUID);
+        members.removeIf(uuid -> {
+            Character character = CharacterManager.getInstance().getData(uuid);
             if (character != null) {
                 channelMembers.add(character);
-            } else {
-                members.remove(memberUUID);
+                return false;
             }
-        }
+            return true;
+        });
         save();
         return channelMembers;
-    }
-
-    public void addToWhitelist(Character character) {
-        UUID characterUUID = character.getUUID();
-        whitelist.add(characterUUID);
-        save();
-    }
-
-    public void removeFromWhitelist(Character character) {
-        UUID characterUUID = character.getUUID();
-        whitelist.remove(characterUUID);
-        members.remove(characterUUID);
-        save();
-    }
-
-    public Set<Character> getWhitelist() {
-        Set<Character> whitelistCharacters = new HashSet<>();
-        for (UUID memberUUID : whitelist) {
-            Character character = CharacterManager.getInstance().getData(memberUUID);
-            if (character != null) {
-                whitelistCharacters.add(character);
-            } else {
-                whitelist.remove(memberUUID);
-            }
-        }
-        save();
-        return whitelistCharacters;
     }
 
     public void save() {

@@ -1,7 +1,10 @@
 {
   "key.bittermelon.throw_item": "Throw Item",
+  "key.bittermelon.radio_chat": "Radio",
+
   "item.bittermelon.hand_labeler": "Hand Labeler",
   "item.bittermelon.toolbox": "Toolbox",
+
   "container.hand_labeler": "Hand Labeler",
   "container.labeler": "Label"
 }

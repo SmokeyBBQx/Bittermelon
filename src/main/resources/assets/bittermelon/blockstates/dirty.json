@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "facing=north,level=0": { "model": "bittermelon:block/dirty/dirty_light" },
+    "facing=east,level=0":  { "model": "bittermelon:block/dirty/dirty_light", "y": 90 },
+    "facing=south,level=0": { "model": "bittermelon:block/dirty/dirty_light", "y": 180 },
+    "facing=west,level=0":  { "model": "bittermelon:block/dirty/dirty_light", "y": 270 },
+    "facing=north,level=1": { "model": "bittermelon:block/dirty/dirty_medium" },
+    "facing=east,level=1":  { "model": "bittermelon:block/dirty/dirty_medium", "y": 90 },
+    "facing=south,level=1": { "model": "bittermelon:block/dirty/dirty_medium", "y": 180 },
+    "facing=west,level=1":  { "model": "bittermelon:block/dirty/dirty_medium", "y": 270 },
+    "facing=north,level=2": { "model": "bittermelon:block/dirty/dirty_heavy" },
+    "facing=east,level=2":  { "model": "bittermelon:block/dirty/dirty_heavy", "y": 90 },
+    "facing=south,level=2": { "model": "bittermelon:block/dirty/dirty_heavy", "y": 180 },
+    "facing=west,level=2":  { "model": "bittermelon:block/dirty/dirty_heavy", "y": 270 }
+  }
+}

@@ -21,9 +21,7 @@ import static net.smokeybbq.bittermelon.init.SoundInit.TOOLBOX_OPEN;
 
 public class ToolBoxItem extends BaseItem {
     public ToolBoxItem(Properties pProperties) {
-        super(pProperties);
-        itemSize = ItemSize.BULKY;
-        itemWeight = ItemWeight.MEDIUM;
+        super(pProperties, ItemSize.BULKY, ItemWeight.MEDIUM);
     }
 
     @Override

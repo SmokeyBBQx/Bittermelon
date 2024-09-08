@@ -1,7 +1,7 @@
 package net.smokeybbq.bittermelon.character.medical.species.animal.gastropod;
 
 import net.smokeybbq.bittermelon.character.medical.species.animal.Cardiorespiratory;
-import net.smokeybbq.bittermelon.medical.compartments.Compartment;
+import net.smokeybbq.bittermelon.systems.medical.compartments.Compartment;
 
 import java.util.Map;
 

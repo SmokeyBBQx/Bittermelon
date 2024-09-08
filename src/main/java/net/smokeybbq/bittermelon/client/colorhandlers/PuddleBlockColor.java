@@ -13,8 +13,10 @@ public class PuddleBlockColor implements BlockColor {
     @Override
     public int getColor(@NotNull BlockState pState, @Nullable BlockAndTintGetter pLevel, @Nullable BlockPos pPos, int pTintIndex) {
 
-        assert pLevel != null;
-        assert pPos != null;
+       if (pLevel == null || pPos == null) {
+           return 0;
+       }
+
         BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
         if (blockEntity == null) {
             blockEntity = pLevel.getBlockEntity(pPos.below());

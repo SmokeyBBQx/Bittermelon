@@ -6,8 +6,6 @@ import net.smokeybbq.bittermelon.items.base.ItemWeight;
 
 public class CigaretteItem extends BaseItem {
     public CigaretteItem(Properties pProperties) {
-        super(pProperties);
-        itemSize = ItemSize.TINY;
-        itemWeight = ItemWeight.VERY_LIGHT;
+        super(pProperties, ItemSize.TINY, ItemWeight.VERY_LIGHT);
     }
 }

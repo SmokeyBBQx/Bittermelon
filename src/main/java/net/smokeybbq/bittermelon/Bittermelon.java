@@ -5,6 +5,7 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
@@ -13,6 +14,7 @@ import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -26,14 +28,18 @@ import net.smokeybbq.bittermelon.commands.*;
 import net.smokeybbq.bittermelon.commands.channel.CommandChannel;
 import net.smokeybbq.bittermelon.commands.character.*;
 import net.minecraftforge.event.RegisterCommandsEvent;
-import net.smokeybbq.bittermelon.events.ChatEventHandler;
+import net.smokeybbq.bittermelon.chat.ChatEventHandler;
+import net.smokeybbq.bittermelon.systems.atmospherics.AtmosEventHandler;
+import net.smokeybbq.bittermelon.systems.atmospherics.AtmosManager;
+import net.smokeybbq.bittermelon.systems.atmospherics.AtmosRenderer;
 import net.smokeybbq.bittermelon.events.PlayerEventHandler;
-import net.smokeybbq.bittermelon.events.ThrowKeyHandler;
+import net.smokeybbq.bittermelon.systems.throwing.ThrowKeyHandler;
 import net.smokeybbq.bittermelon.init.ModCapabilities;
 import net.smokeybbq.bittermelon.init.ModKeyBindings;
 import net.smokeybbq.bittermelon.init.ModRegistries;
 import net.smokeybbq.bittermelon.init.ModScreens;
 import net.smokeybbq.bittermelon.items.handlabeler.HandLabelerScreen;
+import net.smokeybbq.bittermelon.items.radio.RadioKeyHandler;
 import net.smokeybbq.bittermelon.networking.PacketHandler;
 import org.slf4j.Logger;
 
@@ -69,6 +75,8 @@ public class Bittermelon {
         MinecraftForge.EVENT_BUS.register(new ChatEventHandler());
         MinecraftForge.EVENT_BUS.register(new PlayerEventHandler());
         MinecraftForge.EVENT_BUS.register(new ThrowKeyHandler());
+        MinecraftForge.EVENT_BUS.register(new RadioKeyHandler());
+        MinecraftForge.EVENT_BUS.register(new AtmosEventHandler());
         // MinecraftForge.EVENT_BUS.register(new SkinChangeHandler());
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
@@ -96,6 +104,11 @@ public class Bittermelon {
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
         CharacterManager.setMinecraftServer(event.getServer());
+        AtmosManager.init(event.getServer().getLevel(Level.OVERWORLD));
+    }
+
+    @SubscribeEvent
+    public void onServerStopping(ServerStoppingEvent event) {
     }
 
     @SubscribeEvent
@@ -105,10 +118,18 @@ public class Bittermelon {
                 CharacterManager.getActiveCharacter(serverPlayer.getUUID()).update();
             }
         }
+//        DirtyBlocksHandler.onPlayerTick(event);
     }
 
     @SubscribeEvent
     public void onLevelTick(TickEvent.LevelTickEvent event) {
+    }
+
+    @SubscribeEvent
+    public void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            AtmosManager.getInstance().tick();
+        }
     }
 
     @SubscribeEvent
@@ -120,6 +141,7 @@ public class Bittermelon {
         CommandCondition.register(event.getDispatcher());
         CommandAddTumor.register(event.getDispatcher());
         CommandAddSubstance.register(event.getDispatcher());
+        CommandStartScreenshake.register(event.getDispatcher());
     }
 
     @SubscribeEvent
@@ -137,6 +159,7 @@ public class Bittermelon {
                 EntityRenderers.register(PUDDLE_FALLING_BLOCK.get(), PuddleFallingBlockRenderer::new);
                 EntityRenderers.register(THROWN_ITEM_PROJECTILE.get(), ThrownItemRenderer::new);
                 MenuScreens.register(HAND_LABELER_MENU.get(), HandLabelerScreen::new);
+                MinecraftForge.EVENT_BUS.register(AtmosRenderer.class);
             });
         }
 
@@ -145,4 +168,5 @@ public class Bittermelon {
             event.register(new PuddleBlockColor(), PUDDLE.get());
         }
     }
+
 }

@@ -13,29 +13,47 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.smokeybbq.bittermelon.init.ModCapabilities;
 import net.smokeybbq.bittermelon.items.base.BaseItem;
-import net.smokeybbq.bittermelon.substances.Substance;
+import net.smokeybbq.bittermelon.items.base.ItemSize;
+import net.smokeybbq.bittermelon.items.base.ItemWeight;
+import net.smokeybbq.bittermelon.systems.substances.Substance;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public abstract class SubstanceItem extends BaseItem {
     private final int capacity;
-    public SubstanceItem(Properties pProperties, int capacity) {
-        super(pProperties);
+    private final Map<Supplier<Substance>, Integer> initialSubstances;
+    public SubstanceItem(Properties pProperties, int capacity, ItemSize itemSize, ItemWeight itemWeight) {
+        super(pProperties, itemSize, itemWeight);
         this.capacity = capacity;
+        this.initialSubstances = new HashMap<>();
     }
 
     protected LazyOptional<ISubstanceContainer> getSubstanceContainer(ItemStack stack) {
         return stack.getCapability(ModCapabilities.SUBSTANCE_CONTAINER_CAPABILITY);
     }
 
+    public SubstanceItem addInitialSubstance(Supplier<Substance> substance, int amount) {
+        this.initialSubstances.put(substance, amount);
+        return this;
+    }
+
     @Override
     public @Nullable ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
         return new ICapabilitySerializable<CompoundTag>() {
-            final LazyOptional<ISubstanceContainer> container = LazyOptional.of(() -> new SubstanceContainerCapability(capacity));
+            final LazyOptional<ISubstanceContainer> container = LazyOptional.of(() -> {
+                ISubstanceContainer cont = new SubstanceContainerCapability(capacity);
+                if (nbt == null) {
+                    initialSubstances.forEach((substanceSupplier, amount) ->
+                            cont.updateSubstance(substanceSupplier.get(), amount));
+                }
+                return cont;
+            });
 
             @Override
             public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
@@ -53,6 +71,7 @@ public abstract class SubstanceItem extends BaseItem {
             }
         };
     }
+
 
     public void updateSubstance(ItemStack stack, Substance substance, int amount) {
         getSubstanceContainer(stack).ifPresent(cap -> {

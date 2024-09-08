@@ -1,14 +1,9 @@
 package net.smokeybbq.bittermelon.init;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.*;
 import net.smokeybbq.bittermelon.Bittermelon;
-import net.smokeybbq.bittermelon.substances.Substance;
-
-import java.util.Optional;
-
-import static net.smokeybbq.bittermelon.init.BlockInit.BLOCKS;
+import net.smokeybbq.bittermelon.systems.substances.Substance;
 
 public class SubstanceInit {
     public static final DeferredRegister<Substance> SUBSTANCES = DeferredRegister.create(ModRegistries.SUBSTANCE_REGISTRY, Bittermelon.MODID);
@@ -38,6 +33,15 @@ public class SubstanceInit {
 
     public static final RegistryObject<Substance> DIARRHEA = SUBSTANCES.register("diarrhea", () ->
             new Substance("diarrhea", 0x341c02, "bitter and foul"));
+
+    public static final RegistryObject<Substance> WINE = SUBSTANCES.register("wine", () ->
+            new Substance("wine", 0x722F37, "sour and alcoholic"));
+
+    public static final RegistryObject<Substance> BEER = SUBSTANCES.register("beer", () ->
+            new Substance("beer", 0xF28E1C, "bitter and alcoholic"));
+
+    public static final RegistryObject<Substance> KETCHUP = SUBSTANCES.register("ketchup", () ->
+            new Substance("ketchup", 0xA03232, "tomatoey, sweet and acidic"));
 
     public static IForgeRegistry<Substance> getSubstanceRegistry() {
         return RegistryManager.ACTIVE.getRegistry(new ResourceLocation("bittermelon", "substances"));

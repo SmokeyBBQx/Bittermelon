@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "bottles=1,facing=north": { "model": "bittermelon:block/bottle/ketchup_bottle_1" },
+    "bottles=1,facing=east": { "model": "bittermelon:block/bottle/ketchup_bottle_1", "y": 90 },
+    "bottles=1,facing=south": { "model": "bittermelon:block/bottle/ketchup_bottle_1", "y": 180 },
+    "bottles=1,facing=west": { "model": "bittermelon:block/bottle/ketchup_bottle_1", "y": 270 },
+    "bottles=2,facing=north": { "model": "bittermelon:block/bottle/ketchup_bottle_2" },
+    "bottles=2,facing=east": { "model": "bittermelon:block/bottle/ketchup_bottle_2", "y": 90 },
+    "bottles=2,facing=south": { "model": "bittermelon:block/bottle/ketchup_bottle_2", "y": 180 },
+    "bottles=2,facing=west": { "model": "bittermelon:block/bottle/ketchup_bottle_2", "y": 270 },
+    "bottles=3,facing=north": { "model": "bittermelon:block/bottle/ketchup_bottle_3" },
+    "bottles=3,facing=east": { "model": "bittermelon:block/bottle/ketchup_bottle_3", "y": 90 },
+    "bottles=3,facing=south": { "model": "bittermelon:block/bottle/ketchup_bottle_3", "y": 180 },
+    "bottles=3,facing=west": { "model": "bittermelon:block/bottle/ketchup_bottle_3", "y": 270 },
+    "bottles=4,facing=north": { "model": "bittermelon:block/bottle/ketchup_bottle_4" },
+    "bottles=4,facing=east": { "model": "bittermelon:block/bottle/ketchup_bottle_4", "y": 90 },
+    "bottles=4,facing=south": { "model": "bittermelon:block/bottle/ketchup_bottle_4", "y": 180 },
+    "bottles=4,facing=west": { "model": "bittermelon:block/bottle/ketchup_bottle_4", "y": 270 }
+  }
+}

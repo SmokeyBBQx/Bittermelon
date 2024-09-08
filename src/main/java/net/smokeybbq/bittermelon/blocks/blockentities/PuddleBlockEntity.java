@@ -7,13 +7,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.smokeybbq.bittermelon.blocks.PuddleBlock;
 import net.smokeybbq.bittermelon.init.BlockEntityInit;
-import net.smokeybbq.bittermelon.substances.Substance;
+import net.smokeybbq.bittermelon.systems.substances.Substance;
 import net.smokeybbq.bittermelon.util.ColorUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,22 +22,72 @@ import java.util.stream.Collectors;
 import static net.smokeybbq.bittermelon.init.BlockInit.PUDDLE;
 
 public class PuddleBlockEntity extends BlockEntity implements Tickable {
-    private final int MAX_CAPACITY = 20;
+    // Constants
+    private static final int SPREAD_THRESHOLD = 16;
+    private static final int MAX_CAPACITY = 40;
+    private static final int SPREAD_DELAY = 10;
+    private static final int EQUALIZE_DELAY = 10;
+    private static final int GRAVITY_CHECK_DELAY = 5;
+
+    // Instance variables
     private final Map<Substance, Integer> substances = new HashMap<>();
     private int cachedColor = -1;
     private int spreadTimer = 0;
-    private int mixTimer = 0;
     private int amountToSpread = 0;
-    private static final int SPREAD_DELAY = 10;
-    private static final int MIX_DELAY = 40;
+    private int equalizeTimer = 0;
+    private int gravityCheckTimer = 0;
 
     public PuddleBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntityInit.PUDDLE_BLOCK_ENTITY.get(), pPos, pBlockState);
     }
 
-    public Map<Substance, Integer> getContents() {
-        return substances;
+    @Override
+    public void tick() {
+        if (getTotalAmount() < 1) {
+            removePuddleBlock();
+            return;
+        }
+
+        if (level != null && !level.isClientSide) {
+            handleEqualization();
+            handleGravity();
+            handleSpread();
+            checkIfOnPuddle(worldPosition, level, substances);
+        }
     }
+
+    private void handleEqualization() {
+        if (++equalizeTimer >= EQUALIZE_DELAY) {
+            equalizeHorizontally();
+            equalizeTimer = 0;
+        }
+    }
+
+    private void handleGravity() {
+        if (++gravityCheckTimer >= GRAVITY_CHECK_DELAY) {
+            applyGravity();
+            gravityCheckTimer = 0;
+        }
+    }
+
+    private void handleSpread() {
+        if (amountToSpread > 0 && level != null) {
+            if (!level.getBlockState(worldPosition.below()).isAir()) {
+                if (++spreadTimer >= SPREAD_DELAY) {
+                    spread(amountToSpread);
+                    amountToSpread = 0;
+                    spreadTimer = 0;
+                }
+            }
+        } else {
+            spreadTimer = 0;
+            checkForOverflow();
+        }
+    }
+
+    /**
+     * ---------Substance Handling---------
+     */
 
     public void updateSubstance(Substance substance, int amount) {
         int currentAmount = substances.getOrDefault(substance, 0);
@@ -57,7 +106,7 @@ public class PuddleBlockEntity extends BlockEntity implements Tickable {
             return new HashMap<>();
         }
 
-        int totalAmount = substances.values().stream().mapToInt(Integer::intValue).sum();
+        int totalAmount = getTotalAmount();
         Map<Substance, Integer> transferredSubstances = new HashMap<>();
         List<Substance> substancesToRemove = new ArrayList<>();
 
@@ -65,7 +114,7 @@ public class PuddleBlockEntity extends BlockEntity implements Tickable {
             Substance substance = entry.getKey();
             int availableAmount = entry.getValue();
 
-            double proportion = (double) availableAmount / totalAmount;
+            float proportion = (float) availableAmount / totalAmount;
             int transferAmount = (int) Math.ceil(amount * proportion);
             int actualAmount = Math.min(availableAmount, transferAmount);
 
@@ -86,107 +135,79 @@ public class PuddleBlockEntity extends BlockEntity implements Tickable {
         }
 
         setChanged();
-
         return transferredSubstances;
     }
 
     private void removePuddleBlock() {
-        assert level != null;
-        if (!level.isClientSide) {
+        if (level != null && !level.isClientSide) {
             level.removeBlock(getBlockPos(), false);
         }
-    }
-
-    private void mixWithNeighbors() {
-        // Issues:
-        // Mixes through walls
-        // If substance is picked up and placed again, it causes it to bug out
-//
-//        List<PuddleBlockEntity> validNeighbors = new ArrayList<>();
-//        BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
-//        int radius = 1;
-//
-//        for (int x = -radius; x <= radius; x++) {
-//            for (int z = -radius; z <= radius; z++) {
-//                // Skip the center block (the puddle itself)
-//                if (x == 0 && z == 0) continue;
-//
-//                // Optionally, use this to make it circular instead of square
-//                if (x * x + z * z > radius * radius) continue;
-//
-//                mutablePos.set(worldPosition).move(x, 0, z);
-//
-//                if (level == null || !level.isLoaded(mutablePos)) {
-//                    continue;
-//                }
-//
-//                if (!canSpreadTo(mutablePos)) {
-//                    continue;
-//                }
-//
-//                BlockEntity blockEntity = level.getBlockEntity(mutablePos);
-//                if (blockEntity instanceof PuddleBlockEntity puddleBlockEntity) {
-//                    validNeighbors.add(puddleBlockEntity);
-//                }
-//            }
-//        }
-//
-//        if (validNeighbors.isEmpty()) {
-//            return;
-//        }
-//
-//        Map<Substance, Integer> totalSubstances = new HashMap<>(substances);
-//
-//        for (PuddleBlockEntity neighbor : validNeighbors) {
-//            for (Map.Entry<Substance, Integer> entry : neighbor.getSubstances().entrySet()) {
-//                totalSubstances.merge(entry.getKey(), entry.getValue(), Integer::sum);
-//            }
-//        }
-//
-//        Map<Substance, Integer> distributedSubstances = new HashMap<>(totalSubstances);
-//        for (Map.Entry<Substance, Integer> entry : totalSubstances.entrySet()) {
-//            int amount = Math.round((float) entry.getValue() / (validNeighbors.size() + 1));
-//            if (amount > 0) {
-////                ModLogger.debug(amount + " Distributed amount for: " + entry.getKey().getName() + " from original amount: " + entry.getValue() + " for this many puddles: " + validNeighbors.size());
-//                distributedSubstances.put(entry.getKey(), amount);
-//            }
-//        }
-//
-//        for (PuddleBlockEntity neighbor : validNeighbors) {
-//            neighbor.setSubstances(distributedSubstances);
-//        }
-//
-//        setSubstances(distributedSubstances);
-    }
-
-
-    private void setSubstances(Map<Substance, Integer> newSubstances) {
-        substances.clear();
-        substances.putAll(newSubstances);
-        setChanged();
     }
 
     public Map<Substance, Integer> getSubstances() {
         return substances;
     }
 
-    private List<PuddleBlockEntity> getNeighboringPuddles() {
-        List<PuddleBlockEntity> neighbors = new ArrayList<>();
-        if (level == null) return neighbors;
-
-        for (Direction dir : Direction.Plane.HORIZONTAL) {
-            BlockPos neighborPos = worldPosition.relative(dir);
-            BlockEntity blockEntity = level.getBlockEntity(neighborPos);
-            if (blockEntity instanceof PuddleBlockEntity) {
-                neighbors.add((PuddleBlockEntity) blockEntity);
-            }
-        }
-        Collections.shuffle(neighbors);
-        return neighbors;
+    public int getTotalAmount() {
+        return substances.values().stream().reduce(0, Integer::sum);
     }
 
+    public void mixWith(Map<Substance, Integer> substances) {
+        for (Map.Entry<Substance, Integer> entry : substances.entrySet()) {
+            updateSubstance(entry.getKey(), entry.getValue());
+        }
+    }
 
-    private void spread(int amount) {
+    public void setSubstances(Map<Substance, Integer> newSubstances) {
+        substances.clear();
+        substances.putAll(newSubstances);
+        updatePuddleLevel();
+        setChanged();
+    }
+
+    /**
+     * ---------Fluid Behavior---------
+     */
+
+    private void applyGravity() {
+        if (level == null) return;
+
+        BlockPos belowPos = worldPosition.below();
+        BlockState belowState = level.getBlockState(belowPos);
+
+        if (level.getBlockEntity(belowPos) instanceof PuddleBlockEntity) {
+            return;
+        }
+
+        if (belowState.canBeReplaced()) {
+            level.setBlock(belowPos, PUDDLE.get().defaultBlockState(), 3);
+
+            if (level.getBlockEntity(belowPos) instanceof PuddleBlockEntity targetPuddle) {
+                targetPuddle.setSubstances(substances);
+                substances.clear();
+                removePuddleBlock();
+            }
+        }
+    }
+
+    public void checkForOverflow() {
+        int totalAmount = getTotalAmount();
+        if (totalAmount > SPREAD_THRESHOLD) {
+            int excessAmount = totalAmount - SPREAD_THRESHOLD;
+            amountToSpread += excessAmount;
+        }
+    }
+
+    public void checkIfOnPuddle(BlockPos pos, Level level, Map<Substance, Integer> substances) {
+        if (level.getBlockEntity(pos.below()) instanceof PuddleBlockEntity blockEntity) {
+            if (blockEntity.getTotalAmount() < MAX_CAPACITY) {
+                transferSubstances(getTotalAmount());
+                blockEntity.mixWith(substances);
+            }
+        }
+    }
+
+    public void spread(int amount) {
         if (level == null) return;
 
         List<BlockPos> validNeighbors = getValidNeighbors();
@@ -202,52 +223,73 @@ public class PuddleBlockEntity extends BlockEntity implements Tickable {
 
     private List<BlockPos> getValidNeighbors() {
         List<BlockPos> validNeighbors = new ArrayList<>();
+        if (level == null) return validNeighbors;
+
+        BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
         Queue<BlockPos> queue = new LinkedList<>();
         Set<BlockPos> visited = new HashSet<>();
-        BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
 
-        assert level != null;
+        BlockState currentState = level.getBlockState(worldPosition);
+        boolean isDisplaced = !(currentState.getBlock() instanceof PuddleBlock) || getTotalAmount() > MAX_CAPACITY;
+
+        for (Direction dir : Direction.Plane.HORIZONTAL.shuffledCopy(level.random)) {
+            BlockPos pos = worldPosition.relative(dir);
+            if (level.getBlockState(pos).canBeReplaced()) {
+                queue.offer(pos.below());
+            }
+        }
+
         for (Direction dir : Direction.Plane.HORIZONTAL.shuffledCopy(level.random)) {
             queue.offer(worldPosition.relative(dir));
         }
 
         while (!queue.isEmpty() && validNeighbors.size() < 4) {
             BlockPos pos = queue.poll();
-            if (!visited.add(pos)) continue;
 
-            if (level == null || !level.isLoaded(pos)) continue;
+            if (!visited.add(pos) || !level.isLoaded(pos)) continue;
 
             BlockState state = level.getBlockState(pos);
             if (canSpreadTo(pos)) {
-                if (state.isAir()) {
-                    validNeighbors.add(pos.immutable());
-                } else if (level.getBlockEntity(pos) instanceof PuddleBlockEntity puddleBlockEntity) {
-                    if (puddleBlockEntity.getTotalAmount() < MAX_CAPACITY) {
-                        validNeighbors.add(pos.immutable());
+                if (level.getBlockEntity(pos) instanceof PuddleBlockEntity entity) {
+                    if (entity.getTotalAmount() <= SPREAD_THRESHOLD) {
+                        validNeighbors.add(pos);
                     }
+                } else {
+                    validNeighbors.add(pos);
                 }
             }
 
-            if (state.isAir() || state.getBlock() instanceof PuddleBlock || !state.isSolid()) {
+            // TODO: Fix issue with four neighbors being found in a straight enclosed line
+
+            if (state.canBeReplaced() || state.getBlock() instanceof PuddleBlock) {
                 for (Direction dir : Direction.Plane.HORIZONTAL.shuffledCopy(level.random)) {
                     mutablePos.set(pos).move(dir);
+
                     if (!visited.contains(mutablePos)) {
                         queue.offer(mutablePos.immutable());
                     }
                 }
             }
 
-            if (validNeighbors.isEmpty()) {
-                for (Direction dir : Direction.Plane.HORIZONTAL.shuffledCopy(level.random)) {
-                    mutablePos.set(worldPosition).move(dir);
-                    BlockEntity blockEntity = level.getBlockEntity(mutablePos);
-                    if (blockEntity instanceof PuddleBlockEntity) {
-                        validNeighbors.add(mutablePos.immutable());
+            if (!validNeighbors.isEmpty()) {
+                for (BlockPos neighbor : validNeighbors) {
+                    if (worldPosition.getY() - neighbor.getY() > 0) {
+                        return validNeighbors;
                     }
                 }
             }
         }
 
+        if (isDisplaced && validNeighbors.isEmpty()) {
+            for (Direction dir : Direction.Plane.HORIZONTAL.shuffledCopy(level.random)) {
+                BlockPos pos = worldPosition.relative(dir).above();
+                if (level.getBlockEntity(pos) instanceof PuddleBlockEntity entity) {
+                    if (getTotalAmount() < entity.getTotalAmount()) {
+                        validNeighbors.add(worldPosition.relative(dir).above());
+                    }
+                }
+            }
+        }
 
         Collections.shuffle(validNeighbors);
         return validNeighbors;
@@ -256,7 +298,24 @@ public class PuddleBlockEntity extends BlockEntity implements Tickable {
     private boolean canSpreadTo(BlockPos pos) {
         if (level == null) return false;
         BlockState state = level.getBlockState(pos);
-        return state.isAir() || state.getBlock() instanceof PuddleBlock;
+        BlockPos belowPos = pos.below();
+
+        if (level.getBlockState(belowPos).isAir()) {
+            return level.getBlockState(belowPos.below()).isAir();
+        }
+
+        if (level.getBlockState(pos.below()).canBeReplaced()) {
+            if (level.getBlockEntity(belowPos) instanceof PuddleBlockEntity blockEntity) {
+                return blockEntity.getTotalAmount() > MAX_CAPACITY;
+            }
+            return false;
+        }
+
+        if (level.getBlockEntity(pos) instanceof PuddleBlockEntity blockEntity) {
+            return blockEntity.getTotalAmount() < MAX_CAPACITY;
+        }
+
+        return state.canBeReplaced();
     }
 
     private void spill(BlockPos blockPos, int amount) {
@@ -265,11 +324,15 @@ public class PuddleBlockEntity extends BlockEntity implements Tickable {
         BlockState targetState = level.getBlockState(blockPos);
         PuddleBlockEntity targetPuddle;
 
-        if (targetState.isAir()) {
-            // Don't place the block yet, wait until we know we have substance to transfer
-            targetPuddle = null;
-        } else if (level.getBlockEntity(blockPos) instanceof PuddleBlockEntity entity) {
+        if (level.getBlockEntity(blockPos) instanceof PuddleBlockEntity entity) {
             targetPuddle = entity;
+        } else if (targetState.canBeReplaced()) {
+            // Don't place the block yet, wait until we know we have substance to transfer
+            if (level.getBlockEntity(blockPos.below()) instanceof PuddleBlockEntity entity) {
+                targetPuddle = entity;
+            } else {
+                targetPuddle = null;
+            }
         } else {
             return;
         }
@@ -308,10 +371,59 @@ public class PuddleBlockEntity extends BlockEntity implements Tickable {
             targetPuddle.setChanged();
             setChanged();
         }
-
     }
 
-    @OnlyIn(Dist.CLIENT)
+    private static Map<Substance, Integer> mergeSubstances(Map<Substance, Integer> substances, Substance newSubstance, Integer amount) {
+        boolean alreadyExists = false;
+        for (Substance substance : substances.keySet()) {
+            if (substance.compare(newSubstance)) {
+                substances.merge(substance, amount, Integer::sum);
+                alreadyExists = true;
+            }
+        }
+        if (!alreadyExists) {
+            substances.put(newSubstance, amount);
+        }
+        return new HashMap<>(substances);
+    }
+
+    private void equalizeHorizontally() {
+        List<PuddleBlockEntity> flowCandidates = new ArrayList<>();
+        flowCandidates.add(this);
+
+        for (Direction dir : Direction.Plane.HORIZONTAL) {
+            BlockPos neighborPos = worldPosition.relative(dir);
+            if (level != null && level.getBlockEntity(neighborPos) instanceof PuddleBlockEntity entity) {
+                if (entity.getTotalAmount() != getTotalAmount()) {
+                    flowCandidates.add(entity);
+                }
+            }
+        }
+
+        if (flowCandidates.size() > 1) {
+            Map<Substance, Integer> totalSubstances = new HashMap<>();
+            for (PuddleBlockEntity puddle : flowCandidates) {
+                for (Map.Entry<Substance, Integer> entry : puddle.getSubstances().entrySet()) {
+                    totalSubstances = mergeSubstances(totalSubstances, entry.getKey(), entry.getValue());
+                }
+            }
+
+            Map<Substance, Integer> equalizedSubstances = totalSubstances.entrySet().stream()
+                    .filter(entry -> entry.getValue() > 0)
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            entry -> Math.round((float) entry.getValue() / flowCandidates.size())
+                    ));
+
+            for (PuddleBlockEntity puddle : flowCandidates) {
+                puddle.setSubstances(new HashMap<>(equalizedSubstances));
+            }
+        }
+    }
+
+    /**
+     * ------- Visuals -------
+     */
     public int getColor() {
         if (cachedColor == -1) {
             if (substances.isEmpty()) {
@@ -327,10 +439,6 @@ public class PuddleBlockEntity extends BlockEntity implements Tickable {
         return cachedColor;
     }
 
-    public int getTotalAmount() {
-        return substances.values().stream().reduce(0, Integer::sum);
-    }
-
     public String getContentsDescription() {
         if (substances.isEmpty()) {
             return "Empty";
@@ -341,8 +449,37 @@ public class PuddleBlockEntity extends BlockEntity implements Tickable {
                 .collect(Collectors.joining(", "));
     }
 
+    private void updatePuddleLevel() {
+        if (level != null && level.getBlockState(worldPosition).getBlock() instanceof PuddleBlock) {
+            int newLevel = getNewLevel();
+
+            if (level != null) {
+                BlockState currentState = level.getBlockState(worldPosition);
+                if (currentState.getValue(PuddleBlock.LEVEL) != newLevel) {
+                    level.setBlock(worldPosition, currentState.setValue(PuddleBlock.LEVEL, newLevel), 3);
+                    level.sendBlockUpdated(worldPosition, currentState, currentState.setValue(PuddleBlock.LEVEL, newLevel), 3);
+                }
+            }
+        }
+    }
+
+    private int getNewLevel() {
+        int totalAmount = getTotalAmount();
+        if (totalAmount < 6) return 0;
+        else if (totalAmount <= 11) return 1;
+        else if (totalAmount <= 19) return 2;
+        else if (totalAmount <= 24) return 3;
+        else if (totalAmount <= 26) return 4;
+        else if (totalAmount <= 28) return 5;
+        else if (totalAmount <= 30) return 6;
+        else if (totalAmount <= 32) return 7;
+        else if (totalAmount <= 34) return 8;
+        else if (totalAmount <= 36) return 9;
+        else return 10;
+    }
+
     /**
-     * NBT/DATA
+     * ------- NBT/Data -------
      */
 
     private CompoundTag serializeData() {
@@ -378,22 +515,25 @@ public class PuddleBlockEntity extends BlockEntity implements Tickable {
     @Override
     public void load(@NotNull CompoundTag nbt) {
         super.load(nbt);
-        deserializeData(nbt.getCompound("PuddleData"));
+        CompoundTag puddleData = nbt.getCompound("PuddleData");
+        deserializeData(puddleData);
     }
 
     /**
-     * NETWORKING
+     * ------- Networking -------
      */
     @Override
     public @NotNull CompoundTag getUpdateTag() {
         CompoundTag tag = new CompoundTag();
-        tag.put("PuddleData", serializeData());
+        CompoundTag puddleData = serializeData();
+        tag.put("PuddleData", puddleData);
         return tag;
     }
 
     @Override
     public void handleUpdateTag(CompoundTag tag) {
-        deserializeData(tag.getCompound("PuddleData"));
+        CompoundTag puddleData = tag.getCompound("PuddleData");
+        deserializeData(puddleData);
         if (level != null && level.isClientSide) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         }
@@ -425,72 +565,5 @@ public class PuddleBlockEntity extends BlockEntity implements Tickable {
     private void invalidateColor() {
         cachedColor = -1;
         requestModelDataUpdate();
-    }
-
-    public void mixWith(CompoundTag nbt) {
-        ListTag substancesList = nbt.getList("Substances", 10);
-        for (int i = 0; i < substancesList.size(); i++) {
-            CompoundTag substanceTag = substancesList.getCompound(i);
-            Substance substance = Substance.fromNBT(substanceTag);
-            int amount = substanceTag.getInt("Amount");
-            updateSubstance(substance, amount);
-        }
-    }
-
-    public void checkForOverflow() {
-        int totalAmount = getTotalAmount();
-        if (totalAmount > MAX_CAPACITY) {
-            int excessAmount = totalAmount - MAX_CAPACITY;
-            amountToSpread += excessAmount;
-        }
-    }
-
-    @Override
-    public void tick() {
-        if (substances.isEmpty()) {
-            removePuddleBlock();
-            return;
-        }
-
-        if (level != null && !level.isClientSide) {
-            mixTimer++;
-
-            if (mixTimer >= MIX_DELAY) {
-                mixWithNeighbors();
-                mixTimer = 0;
-            }
-
-            if (amountToSpread > 0) {
-                spreadTimer++;
-                if (spreadTimer >= SPREAD_DELAY) {
-                    spread(amountToSpread);
-                    amountToSpread = 0;
-                    spreadTimer = 0;
-                }
-            } else {
-                spreadTimer = 0;
-                checkForOverflow();
-            }
-        }
-    }
-
-    private void updatePuddleLevel() {
-        int totalAmount = getTotalAmount();
-        int newLevel;
-        if (totalAmount < 6) {
-            newLevel = 0;
-        } else if (totalAmount < 12) {
-            newLevel = 1;
-        } else {
-            newLevel = 2;
-        }
-
-        if (level != null) {
-            BlockState currentState = level.getBlockState(worldPosition);
-            if (currentState.getValue(PuddleBlock.LEVEL) != newLevel) {
-                level.setBlock(worldPosition, currentState.setValue(PuddleBlock.LEVEL, newLevel), 3);
-                level.sendBlockUpdated(worldPosition, currentState, currentState.setValue(PuddleBlock.LEVEL, newLevel), 3);
-            }
-        }
     }
 }

@@ -1,0 +1,8 @@
+{
+  "parent": "block/cross",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "bittermelon:block/drinking_glass",
+    "cross": "bittermelon:block/drinking_glass"
+  }
+}

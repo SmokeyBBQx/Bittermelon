@@ -2,8 +2,8 @@ package net.smokeybbq.bittermelon.character.medical.species.animal;
 
 import net.smokeybbq.bittermelon.character.Character;
 import net.smokeybbq.bittermelon.character.medical.species.MedicalStats;
-import net.smokeybbq.bittermelon.medical.compartments.Compartment;
-import net.smokeybbq.bittermelon.medical.simulation.SimulationHandler;
+import net.smokeybbq.bittermelon.systems.medical.compartments.Compartment;
+import net.smokeybbq.bittermelon.systems.medical.simulation.SimulationHandler;
 
 import java.util.Map;
 

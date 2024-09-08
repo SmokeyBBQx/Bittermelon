@@ -52,7 +52,6 @@ public class ContainerScreen<T extends ContainerMenu> extends AbstractContainerS
             if (hoveredSlot != null) {
                 highlightOccupiedSlots(guiGraphics, hoveredSlot, itemSize);
             }
-            renderScaledFloatingItem(guiGraphics, carried, mouseX, mouseY, itemSize);
         }
 
         this.renderTooltip(guiGraphics, mouseX, mouseY);
@@ -190,22 +189,26 @@ public class ContainerScreen<T extends ContainerMenu> extends AbstractContainerS
         poseStack.popPose();
     }
 
-    private void renderScaledFloatingItem(GuiGraphics guiGraphics, ItemStack stack, int mouseX, int mouseY, int itemSize) {
+
+    @Override
+    protected void renderFloatingItem(GuiGraphics guiGraphics, ItemStack itemStack, int mouseX, int mouseY, String text) {
         if (hoveredSlot != null) {
-            if (hoveredSlot.container == menu.inventory) {
-                float scale = itemSize * 0.75f;
-                String countString = stack.getCount() > 1 ? String.valueOf(stack.getCount()) : "";
+            if (hoveredSlot.container == menu.inventory && itemStack.getItem() instanceof BaseItem item) {
+                    float scale = item.getItemSize().value * 0.75f;
+                    String countString = itemStack.getCount() > 1 ? String.valueOf(itemStack.getCount()) : "";
 
-                PoseStack poseStack = guiGraphics.pose();
-                poseStack.pushPose();
-                poseStack.translate(mouseX, mouseY, 200.0F);
-                poseStack.scale(scale, scale, scale);
-                poseStack.translate(-8, -8, 0); // Center the item
+                    PoseStack poseStack = guiGraphics.pose();
+                    poseStack.pushPose();
+                    poseStack.translate(mouseX, mouseY, 200.0F);
+                    poseStack.scale(scale, scale, scale);
+                    poseStack.translate(-8, -8, 0); // Center the item
 
-                guiGraphics.renderItem(stack, 0, 0);
-                guiGraphics.renderItemDecorations(this.font, stack, 0, 0, countString);
+                    guiGraphics.renderItem(itemStack, 0, 0);
+                    guiGraphics.renderItemDecorations(this.font, itemStack, 0, 0, countString);
 
-                poseStack.popPose();
+                    poseStack.popPose();
+            } else {
+                super.renderFloatingItem(guiGraphics, itemStack, mouseX, mouseY, text);
             }
         }
     }

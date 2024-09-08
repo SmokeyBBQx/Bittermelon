@@ -29,9 +29,11 @@ import net.minecraftforge.fml.common.Mod;
 import net.smokeybbq.bittermelon.blocks.PuddleBlock;
 import net.smokeybbq.bittermelon.blocks.blockentities.PuddleBlockEntity;
 import net.smokeybbq.bittermelon.init.ModCapabilities;
+import net.smokeybbq.bittermelon.items.base.ItemSize;
+import net.smokeybbq.bittermelon.items.base.ItemWeight;
 import net.smokeybbq.bittermelon.networking.PacketHandler;
-import net.smokeybbq.bittermelon.networking.TransferRateUpdatePacket;
-import net.smokeybbq.bittermelon.substances.Substance;
+import net.smokeybbq.bittermelon.networking.TransferRateUpdateC2SPacket;
+import net.smokeybbq.bittermelon.systems.substances.Substance;
 import net.smokeybbq.bittermelon.util.ModLogger;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,8 +53,8 @@ public class SubstanceContainerItem extends SubstanceItem {
     private final int capacity;
 
 
-    public SubstanceContainerItem(Properties pProperties, int capacity) {
-        super(pProperties, capacity);
+    public SubstanceContainerItem(Properties pProperties, ItemSize itemSize, ItemWeight itemWeight, int capacity) {
+        super(pProperties, capacity, itemSize, itemWeight);
         this.capacity = capacity;
     }
 
@@ -261,7 +263,7 @@ public class SubstanceContainerItem extends SubstanceItem {
                 spillOnLanding(stack, level, entity.blockPosition());
             }
         }
-        return false; // Return false to allow normal update behavior
+        return false;
     }
 
     @Override
@@ -274,7 +276,7 @@ public class SubstanceContainerItem extends SubstanceItem {
         }
     }
 
-    private void spillOnLanding(ItemStack stack, Level level, BlockPos spillPos) {
+    public void spillOnLanding(ItemStack stack, Level level, BlockPos spillPos) {
         getSubstanceContainer(stack).ifPresent(cap -> {
             int totalAmount = cap.getTotalAmount();
             if (totalAmount <= 0) return;
@@ -310,6 +312,40 @@ public class SubstanceContainerItem extends SubstanceItem {
         });
     }
 
+    public void spillEverything(ItemStack itemStack, Level level, BlockPos spillPos) {
+        getSubstanceContainer(itemStack).ifPresent(cap -> {
+            int totalAmount = cap.getTotalAmount();
+            if (totalAmount <= 0) return;
+
+            if (!(level.getBlockState(spillPos).getBlock() instanceof PuddleBlock)) {
+                level.setBlock(spillPos, PUDDLE.get().defaultBlockState(), 3);
+            }
+
+            if (level.getBlockEntity(spillPos) instanceof PuddleBlockEntity puddleBlockEntity) {
+
+                Map<Substance, Integer> substances = cap.getSubstances();
+                for (Map.Entry<Substance, Integer> entry : substances.entrySet()) {
+                    Substance substance = entry.getKey();
+                    int availableAmount = entry.getValue();
+
+                    float proportion = (float) availableAmount / totalAmount;
+                    int spillAmount = (int) Math.ceil(totalAmount * proportion);
+                    spillAmount = Math.min(spillAmount, availableAmount);
+
+                    if (spillAmount > 0) {
+                        puddleBlockEntity.updateSubstance(substance, spillAmount);
+                        updateSubstance(itemStack, substance, -spillAmount);
+                        ModLogger.info("Spilled " + spillAmount + " of " + substance.getName() + " at " + spillPos);
+                    }
+                }
+
+                puddleBlockEntity.setChanged();
+                level.sendBlockUpdated(spillPos, level.getBlockState(spillPos), level.getBlockState(spillPos), 3);
+                level.playSound(null, spillPos, SoundEvents.BOTTLE_EMPTY, SoundSource.BLOCKS, 0.5F, 1.0F);
+            }
+        });
+    }
+
     @SubscribeEvent
     public static void onMouseScroll(InputEvent.MouseScrollingEvent event) {
         Player player = Minecraft.getInstance().player;
@@ -320,7 +356,7 @@ public class SubstanceContainerItem extends SubstanceItem {
                 int newRate = Mth.clamp(currentRate + (event.getScrollDelta() > 0 ? 1 : -1), MIN_TRANSFER_RATE, MAX_TRANSFER_RATE);
                 setTransferRate(heldItem, newRate);
 
-                PacketHandler.INSTANCE.sendToServer(new TransferRateUpdatePacket(newRate));
+                PacketHandler.INSTANCE.sendToServer(new TransferRateUpdateC2SPacket(newRate));
 
                 event.setCanceled(true);
             }

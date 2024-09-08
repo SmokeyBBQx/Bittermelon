@@ -1,8 +1,8 @@
 package net.smokeybbq.bittermelon.character.medical.species.animal;
 
 import net.smokeybbq.bittermelon.character.medical.HeartRhythm;
-import net.smokeybbq.bittermelon.medical.compartments.Compartment;
-import net.smokeybbq.bittermelon.medical.compartments.CompartmentTag;
+import net.smokeybbq.bittermelon.systems.medical.compartments.Compartment;
+import net.smokeybbq.bittermelon.systems.medical.compartments.CompartmentTag;
 
 import java.util.HashSet;
 import java.util.Map;

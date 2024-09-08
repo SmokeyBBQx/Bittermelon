@@ -81,10 +81,11 @@ public abstract class DataManager<U, T> {
 
     /**
      * Recursively deletes the directory the data should be stored in before removing the data from the map
-     * @param data Data to be removed
+     * @param Data to be removed
      */
-    public void deleteData(T data) {
+    public void deleteData(U key) {
         // Finds the folder with the data
+        T data = getData(key);
         File folder = new File(dataFolder + "/" + getFileName(data));
         // Tries to recursively delete
         try {

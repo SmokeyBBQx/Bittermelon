@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "render_type": "minecraft:translucent",
+  "textures": {
+    "layer0": "bittermelon:item/large_beaker"
+  }
+}
