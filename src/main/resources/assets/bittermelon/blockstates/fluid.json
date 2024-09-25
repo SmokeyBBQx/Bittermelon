@@ -1,0 +1,129 @@
+{
+  "multipart": [
+    {
+      "when": { "level": 0, "north": false, "east": false, "south": false, "west": false, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_0" }
+    },
+    {
+      "when": { "level": 1, "north": false, "east": false, "south": false, "west": false, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_1" }
+    },
+    {
+      "when": { "level": 3, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_2" }
+    },
+    {
+      "when": { "level": 4, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_3" }
+    },
+    {
+      "when": { "level": 5, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_4" }
+    },
+    {
+      "when": { "level": 6, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_5" }
+    },
+    {
+      "when": { "level": 7, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_6" }
+    },
+    {
+      "when": { "level": 8, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_7" }
+    },
+    {
+      "when": { "level": 9, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_8" }
+    },
+    {
+      "when": { "level": 10, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_9" }
+    },
+    {
+      "when": { "north": false, "east": false, "south": false, "west": false, "floating": true },
+      "apply": { "model": "bittermelon:block/fluid/fluid_floating" }
+    },
+    {
+      "when": { "north": true, "east": false, "south": false, "west": false, "floating": true },
+      "apply": { "model": "bittermelon:block/fluid/fluid_floating_n" }
+    },
+    {
+      "when": { "north": false, "east": true, "south": false, "west": false, "floating": true },
+      "apply": { "model": "bittermelon:block/fluid/fluid_floating_e" }
+    },
+    {
+      "when": { "north": false, "east": false, "south": true, "west": false, "floating": true },
+      "apply": { "model": "bittermelon:block/fluid/fluid_floating_s" }
+    },
+    {
+      "when": { "north": false, "east": false, "south": false, "west": true, "floating": true },
+      "apply": { "model": "bittermelon:block/fluid/fluid_floating_w" }
+    },
+    {
+      "when": { "level": 2, "north": false, "east": false, "south": false, "west": false, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid" }
+    },
+    {
+      "when": { "north": true, "east": false, "south": false, "west": false, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_n" }
+    },
+    {
+      "when": { "north": false, "east": true, "south": false, "west": false, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_e" }
+    },
+    {
+      "when": { "north": false, "east": false, "south": true, "west": false, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_s" }
+    },
+    {
+      "when": { "north": false, "east": false, "south": false, "west": true, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_w" }
+    },
+    {
+      "when": { "north": true, "east": true, "south": false, "west": false, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_ne" }
+    },
+    {
+      "when": { "north": true, "east": false, "south": true, "west": false, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_ns" }
+    },
+    {
+      "when": { "north": true, "east": false, "south": false, "west": true, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_nw" }
+    },
+    {
+      "when": { "north": false, "east": true, "south": true, "west": false, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_es" }
+    },
+    {
+      "when": { "north": false, "east": true, "south": false, "west": true, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_ew" }
+    },
+    {
+      "when": { "north": false, "east": false, "south": true, "west": true, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_sw" }
+    },
+    {
+      "when": { "north": true, "east": true, "south": true, "west": false, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_nes" }
+    },
+    {
+      "when": { "north": true, "east": true, "south": false, "west": true, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_new" }
+    },
+    {
+      "when": { "north": true, "east": false, "south": true, "west": true, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_nsw" }
+    },
+    {
+      "when": { "north": false, "east": true, "south": true, "west": true, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_esw" }
+    },
+    {
+      "when": { "north": true, "east": true, "south": true, "west": true, "floating": false },
+      "apply": { "model": "bittermelon:block/fluid/fluid_nesw" }
+    }
+  ]
+}
+

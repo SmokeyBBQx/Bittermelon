@@ -112,6 +112,7 @@ configurations {
 }
 
 dependencies {
+    implementation "net.tslat.smartbrainlib:SmartBrainLib-neoforge-1.21.1:1.16.1"
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
@@ -171,7 +172,8 @@ publishing {
     }
     repositories {
         maven {
-            url "file://${project.projectDir}/repo"
+            name = "SmartBrainLibRepo"
+            url = "https://dl.cloudsmith.io/public/tslat/sbl/maven/"
         }
     }
 }

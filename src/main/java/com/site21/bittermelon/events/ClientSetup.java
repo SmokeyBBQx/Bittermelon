@@ -1,0 +1,19 @@
+package com.site21.bittermelon.events;
+
+import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.client.renderer.entity.SCP939Renderer;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+
+import static com.site21.bittermelon.init.EntityInit.SCP_939;
+
+@EventBusSubscriber(modid = Bittermelon.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+public class ClientSetup {
+
+    @SubscribeEvent
+    public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(SCP_939.get(), SCP939Renderer::new);
+    }
+}
