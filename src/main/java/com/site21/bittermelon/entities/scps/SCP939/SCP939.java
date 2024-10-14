@@ -390,13 +390,13 @@ public class SCP939 extends PathfinderMob implements NeedsUser, Socializable, Vi
 
     public BrainActivityGroup<? extends SCP939> getProcreateTasks() {
         return new BrainActivityGroup<SCP939>(ActivityInit.PROCREATE.get()).behaviours(
-                new Procreate<>(20),
+                new Procreate<>(20)
                 );
     }
 
     public BrainActivityGroup<? extends SCP939> getRestTasks() {
         return new BrainActivityGroup<SCP939>(Activity.REST).behaviours(
-                new ReplenishAmnestics<>(100),
+                new ReplenishAmnestics<>(100)
                 );
     }
 
