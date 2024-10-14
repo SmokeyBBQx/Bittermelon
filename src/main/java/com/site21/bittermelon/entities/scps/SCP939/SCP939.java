@@ -1,50 +1,97 @@
 package com.site21.bittermelon.entities.scps.SCP939;
 
 import com.mojang.serialization.Dynamic;
-import com.site21.bittermelon.entities.base.BaseEntity;
+import com.site21.bittermelon.character.Character;
+import com.site21.bittermelon.character.CharacterManager;
+import com.site21.bittermelon.entities.behavior.needs.Need;
+import com.site21.bittermelon.entities.behavior.path.SeekNearestPlayer;
+import com.site21.bittermelon.entities.behavior.social.GenericSocialize;
+import com.site21.bittermelon.entities.behavior.social.Socializable;
+import com.site21.bittermelon.entities.brain.NeedsBrain;
+import com.site21.bittermelon.entities.brain.NeedsBrainOwner;
+import com.site21.bittermelon.entities.scps.ExtendedVibrationUser;
+import com.site21.bittermelon.entities.scps.SCP939.behavior.*;
+import com.site21.bittermelon.init.ActivityInit;
+import com.site21.bittermelon.init.MemoryModuleTypeInit;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.DebugPackets;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Unit;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.memory.WalkTarget;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.DynamicGameEventListener;
-import net.minecraft.world.level.gameevent.EntityPositionSource;
-import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.gameevent.PositionSource;
 import net.minecraft.world.level.gameevent.vibrations.VibrationSystem;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
+import net.tslat.smartbrainlib.api.SmartBrainOwner;
+import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
+import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
+import net.tslat.smartbrainlib.api.core.behaviour.AllApplicableBehaviours;
+import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.LeapAtTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.target.InvalidateAttackTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetRandomLookTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.target.TargetOrRetaliate;
+import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
+import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
+import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
+import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
+import net.tslat.smartbrainlib.util.BrainUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
-public class SCP939 extends Monster implements VibrationSystem {
-    private final DynamicGameEventListener<VibrationSystem.Listener> dynamicGameEventListener;
-    private final VibrationSystem.User vibrationUser;
+@SuppressWarnings("unchecked")
+public class SCP939 extends PathfinderMob implements NeedsBrainOwner, Socializable, VibrationSystem, SmartBrainOwner<SCP939> {
+    private static final EntityDataAccessor<Float> BLOODLUST = SynchedEntityData.defineId(SCP939.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> SOCIALIZATION = SynchedEntityData.defineId(SCP939.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> PROCREATION = SynchedEntityData.defineId(SCP939.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> AMNESTICS = SynchedEntityData.defineId(SCP939.class, EntityDataSerializers.FLOAT);
+
+    private float suspicion = 0;
+    private final int BASE_LURE_COOLDOWN = 200;
+    private final int BASE_LISTEN_COOLDOWN = 300;
+    private final int BASE_SEARCH_RANGE = 32;
+    private final int BASE_MIN_IDLE_TIME = 20;
+    private final int BASE_MAX_IDLE_TIME = 40;
+    private final float BLOODLUST_DECAY = 0.001f;
+    private final float SOCIALIZATION_DECAY = 0.001f;
+    private final float PROCREATION_DECAY = 0.0001f;
+
+    private final DynamicGameEventListener<Listener> dynamicGameEventListener;
     private VibrationSystem.Data vibrationData;
+    private VibrationSystem.User vibrationUser;
 
     public SCP939(EntityType<? extends Mob> entityType, Level level) {
         super((EntityType<? extends Monster>) entityType, level);
-        this.vibrationUser = new SCP939.VibrationUser();
+        this.vibrationUser = new ExtendedVibrationUser(this);
         this.vibrationData = new VibrationSystem.Data();
         this.dynamicGameEventListener = new DynamicGameEventListener<>(new VibrationSystem.Listener(this));
         this.xpReward = 5;
@@ -55,6 +102,10 @@ public class SCP939 extends Monster implements VibrationSystem {
         this.setPathfindingMalus(PathType.LAVA, 8.0F);
         this.setPathfindingMalus(PathType.DAMAGE_FIRE, 0.0F);
         this.setPathfindingMalus(PathType.DANGER_FIRE, 0.0F);
+
+        Character character = new Character(this.uuid, "SCP-939");
+        CharacterManager.getInstance().addCharacter(character);
+        CharacterManager.getInstance().setActiveCharacter(this.uuid, character);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -66,35 +117,85 @@ public class SCP939 extends Monster implements VibrationSystem {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        super.defineSynchedData(builder);
-    }
-
-    @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        RegistryOps<Tag> registryops = this.registryAccess().createSerializationContext(NbtOps.INSTANCE);
-        if (compound.contains("listener", 10)) {
-            VibrationSystem.Data.CODEC
-                    .parse(registryops, compound.getCompound("listener"))
-                    .resultOrPartial(p_351914_ -> System.out.println("Failed to parse vibration listener for SCP-939: " + p_351914_))
-                    .ifPresent(p_281093_ -> this.vibrationData = p_281093_);
+    public void updateDynamicGameEventListener(BiConsumer<DynamicGameEventListener<?>, ServerLevel> listenerConsumer) {
+        if (this.level() instanceof ServerLevel serverlevel) {
+            listenerConsumer.accept(this.dynamicGameEventListener, serverlevel);
         }
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        RegistryOps<Tag> registryops = this.registryAccess().createSerializationContext(NbtOps.INSTANCE);
-        VibrationSystem.Data.CODEC
-                .encodeStart(registryops, this.vibrationData)
-                .resultOrPartial(p_351915_ -> System.out.println("Failed to encode vibration listener for SCP-939: " + p_351915_))
-                .ifPresent(p_219418_ -> compound.put("listener", p_219418_));
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(BLOODLUST, 100.0f);
+        builder.define(SOCIALIZATION, 90.0f);
+        builder.define(PROCREATION, 100.0f);
+        builder.define(AMNESTICS, 100.0f);
     }
 
     @Override
-    public boolean dampensVibrations() {
-        return true;
+    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        this.modifyBloodlust(compound.getFloat("bloodlust"));
+        this.modifySocialization(compound.getFloat("socialization"));
+        this.modifyProcreation(compound.getFloat("procreation"));
+        this.modifyAmnestics(compound.getFloat("amnestics"));
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        compound.putFloat("bloodlust", getBloodlust());
+        compound.putFloat("socialization", getSocialization());
+        compound.putFloat("procreation", getProcreation());
+        compound.putFloat("amnestics", getAmnestics());
+    }
+
+    public void modifyBloodlust(float amount) {
+        this.entityData.set(BLOODLUST, Math.min(100, Math.max(0, getBloodlust() + amount)));
+    }
+
+    public void modifySocialization(float amount) {
+        this.entityData.set(SOCIALIZATION, Math.min(100, Math.max(0, getSocialization() + amount)));
+    }
+
+    public void modifyProcreation(float amount) {
+        this.entityData.set(PROCREATION, Math.min(100, Math.max(0, getProcreation() + amount)));
+    }
+
+    public void modifyAmnestics(float amount) {
+        this.entityData.set(AMNESTICS, Math.min(100, Math.max(0, getAmnestics() + amount)));
+    }
+
+    public void setBloodlust(float amount) {
+        this.entityData.set(BLOODLUST, amount);
+    }
+
+    public void setSocialization(float amount) {
+        this.entityData.set(SOCIALIZATION, amount);
+    }
+
+    public void setProcreation(float amount) {
+        this.entityData.set(PROCREATION, amount);
+    }
+
+    public void setAmnestics(float amount) {
+        this.entityData.set(AMNESTICS, amount);
+    }
+
+    public float getBloodlust() {
+        return this.entityData.get(BLOODLUST);
+    }
+
+    public float getSocialization() {
+        return this.entityData.get(SOCIALIZATION);
+    }
+
+    public float getProcreation() {
+        return this.entityData.get(PROCREATION);
+    }
+
+    public float getAmnestics() {
+        return this.entityData.get(AMNESTICS);
     }
 
     @javax.annotation.Nullable
@@ -108,20 +209,6 @@ public class SCP939 extends Monster implements VibrationSystem {
         return false;
     }
 
-//    public Optional<Object> getEntityAngryAt() {
-//
-//    }
-
-    @Override
-    protected Brain.@NotNull Provider<SCP939> brainProvider() {
-        return SCP939AI.brainProvider();
-    }
-
-    @Override
-    protected @NotNull Brain<?> makeBrain(@NotNull Dynamic<?> dynamic) {
-        return SCP939AI.makeBrain(this, this.brainProvider().makeBrain(dynamic));
-    }
-
     @Contract("null->false")
     public boolean canTargetEntity(LivingEntity entity) {
         return entity instanceof LivingEntity livingentity
@@ -129,7 +216,6 @@ public class SCP939 extends Monster implements VibrationSystem {
                 && EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(entity)
                 && !this.isAlliedTo(entity)
                 && livingentity.getType() != EntityType.ARMOR_STAND
-                && livingentity.getType() != EntityType.WARDEN
                 && !livingentity.isInvulnerable()
                 && !livingentity.isDeadOrDying()
                 && this.level().getWorldBorder().isWithinBounds(livingentity.getBoundingBox());
@@ -155,39 +241,46 @@ public class SCP939 extends Monster implements VibrationSystem {
         this.getBrain().eraseMemory(MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
     }
 
-    @Override
-    public @NotNull Data getVibrationData() {
-        return this.vibrationData;
-    }
-
-    @Override
-    public @NotNull User getVibrationUser() {
-        return this.vibrationUser;
-    }
 
     @Override
     public void tick() {
+        super.tick();
         if (this.level() instanceof ServerLevel serverlevel) {
             VibrationSystem.Ticker.tick(serverlevel, this.vibrationData, this.vibrationUser);
         }
+        this.modifySuspicion(-0.001f);
 
-        super.tick();
+        modifyBloodlust(-BLOODLUST_DECAY);
+        modifySocialization(-SOCIALIZATION_DECAY);
+        modifyProcreation(-PROCREATION_DECAY);
+        setActivityBasedOnNeeds();
+    }
 
+    private void setActivityBasedOnNeeds() {
+        List<Need> needs = this.getNeeds();
 
+        Need highestPriorityNeed = needs.stream()
+                .max((n1, n2) -> {
+                    float value1 = this.getEntityData().get(n1.need());
+                    float value2 = this.getEntityData().get(n2.need());
+                    float priority1 = n1.priorityFunction().apply(value1);
+                    float priority2 = n2.priorityFunction().apply(value2);
+                    return Float.compare(priority1, priority2);
+                })
+                .orElseThrow(() -> new IllegalStateException("No needs found"));
+
+        float currentValue = this.getEntityData().get(highestPriorityNeed.need());
+        float priorityScore = highestPriorityNeed.priorityFunction().apply(currentValue);
+
+        System.out.println(highestPriorityNeed.activity().getName() + " is the highest priority with amount "
+                + currentValue + " and priority score " + priorityScore);
+
+        brain.setActiveActivityIfPossible(highestPriorityNeed.activity());
     }
 
     @Override
     protected void customServerAiStep() {
-        ServerLevel serverlevel = (ServerLevel) this.level();
-        serverlevel.getProfiler().push("wardenBrain");
-        this.getBrain().tick(serverlevel, this);
-        this.level().getProfiler().pop();
-        SCP939AI.updateActivity(this);
-    }
-
-    @Override
-    public @NotNull Brain<SCP939> getBrain() {
-        return (Brain<SCP939>) super.getBrain();
+        tickBrain(this);
     }
 
     @Override
@@ -196,12 +289,6 @@ public class SCP939 extends Monster implements VibrationSystem {
         DebugPackets.sendEntityBrain(this);
     }
 
-    @Override
-    public void updateDynamicGameEventListener(@NotNull BiConsumer<DynamicGameEventListener<?>, ServerLevel> listenerConsumer) {
-        if (this.level() instanceof ServerLevel serverlevel) {
-            listenerConsumer.accept(this.dynamicGameEventListener, serverlevel);
-        }
-    }
 
     @Override
     protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
@@ -220,40 +307,192 @@ public class SCP939 extends Monster implements VibrationSystem {
         };
     }
 
+    @Override
+    protected Brain.@NotNull Provider<SCP939> brainProvider() {
+        return new SmartBrainProvider<>(this);
+    }
 
-    class VibrationUser implements VibrationSystem.User {
-        private final PositionSource positionSource = new EntityPositionSource(SCP939.this, SCP939.this.getEyeHeight());
+    @Override
+    public List<? extends ExtendedSensor<? extends SCP939>> getSensors() {
+        return List.of(
+                new NearbyPlayersSensor<SCP939>().setRadius(1000),
+                new NearbyLivingEntitySensor<>(),
+                new HurtBySensor<>()
+        );
+    }
 
-        @Override
-        public int getListenerRadius() {
-            return 16;
-        }
+    @Override
+    public List<Activity> getActivityPriorities() {
+        return ObjectArrayList.of(Activity.FIGHT);
+    }
 
-        @Override
-        public @NotNull PositionSource getPositionSource() {
-            return this.positionSource;
-        }
+    @Override
+    public Map<Activity, BrainActivityGroup<? extends SCP939>> getAdditionalTasks() {
+        return Map.of(
+                Activity.INVESTIGATE, getInvestigationTasks(),
+                ActivityInit.HUNT.get(), getHuntTasks(),
+                ActivityInit.PROCREATE.get(), getProcreateTasks(),
+                Activity.REST, getRestTasks(),
+                ActivityInit.SOCIALIZE.get(), getSocializeTasks()
+        );
+    }
 
-        @Override
-        public boolean canReceiveVibration(@NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull Holder<GameEvent> gameEvent, GameEvent.@NotNull Context context) {
-            return true;
+    @Override
+    public BrainActivityGroup<? extends SCP939> getCoreTasks() {
+        return BrainActivityGroup.coreTasks(
+//                new AvoidSun<>(),
+//                new EscapeSun<>().cooldownFor(entity -> 20),
+//                TODO: new FleeFireTask<>
+                new LookAtTarget<>(),
+                new MoveToWalkTarget<>()
+        );
+    }
 
-            // TODO: Add checks for when SCP-939 is allowed to listen
-        }
+    @Override
+    public BrainActivityGroup<? extends SCP939> getIdleTasks() {
+        return BrainActivityGroup.idleTasks(
+                new FirstApplicableBehaviour<>(
+                        new TargetOrRetaliate<>(),
+                        new SetRandomLookTarget<>()
+                ),
+                new OneRandomBehaviour<>(
+                        new SetRandomWalkTarget<>(),
+                        new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))
+                )
+        );
+    }
 
-        @Override
-        public void onReceiveVibration(@NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull Holder<GameEvent> gameEvent, @Nullable Entity entity, @Nullable Entity playerEntity, float distance) {
-            if (!SCP939.this.isDeadOrDying()) {
-                SCP939.this.brain.setMemoryWithExpiry(MemoryModuleType.VIBRATION_COOLDOWN, Unit.INSTANCE, 40L);
-                level.broadcastEntityEvent(SCP939.this, (byte) 61);
-                if (entity instanceof LivingEntity livingEntity) {
-                    if (SCP939.this.closerThan(livingEntity, 32)) {
-                        if (SCP939.this.canTargetEntity(livingEntity)) {
-                            SCP939AI.setDisturbanceLocation(SCP939.this, pos);
-                        }
-                    }
-                }
-            }
-        }
+    @Override
+    public BrainActivityGroup<? extends SCP939> getFightTasks() {
+        return BrainActivityGroup.fightTasks(
+                new InvalidateAttackTarget<>(),
+                new SetWalkTargetToAttackTarget<>().speedMod((entity, target) -> 1.5f).stopIf(entity -> this.isDeadOrDying()),
+                new AnimatableMeleeAttack<>(0),
+                new LeapAtTarget<>(20)
+        );
+    }
+
+    public BrainActivityGroup<? extends SCP939> getHuntTasks() {
+        return new BrainActivityGroup<SCP939>(ActivityInit.HUNT.get()).behaviours(
+                new SeekNearestPlayer<>()
+                        .cooldownFor(entity -> 120),
+                new OneRandomBehaviour<>(
+                        new Lure<>(20)
+                                .cooldownFor(entity -> getLureCooldown()),
+                        new Amnesticize<>(60)
+                                .cooldownFor(entity -> 200),
+                        new Listen<>(100)
+                                .cooldownFor(entity -> getListenCooldown())
+
+                        // TODO: Cooldown as memory type?
+                )
+                        .startCondition(entity -> !BrainUtils.hasMemory(entity, MemoryModuleTypeInit.ACTION_COOLDOWN.get()))
+                        .cooldownFor(entity -> 150)
+                        .whenStopping(entity -> BrainUtils.setForgettableMemory(entity, MemoryModuleTypeInit.ACTION_COOLDOWN.get(), true, 150)),
+                new OneRandomBehaviour<>(
+                        new SetRandomWalkTarget<>(),
+                        new Idle<>().runFor(entity -> getIdleTime())
+                )
+        );
+    }
+
+    public BrainActivityGroup<? extends SCP939> getInvestigationTasks() {
+        return new BrainActivityGroup<SCP939>(Activity.INVESTIGATE).requireAndWipeMemoriesOnUse(
+                        MemoryModuleType.DISTURBANCE_LOCATION
+                )
+                .behaviours(
+                        new FirstApplicableBehaviour<>(
+                                new InvestigateTarget<>()
+                                        .cooldownFor(entity -> 20),
+                                new AllApplicableBehaviours<>(
+                                        new MoveToWalkTarget<>(),
+                                        new Idle<>().runFor(entity -> getIdleTime())
+                                )
+                        )
+                );
+    }
+
+    public BrainActivityGroup<? extends SCP939> getProcreateTasks() {
+        return new BrainActivityGroup<SCP939>(ActivityInit.PROCREATE.get()).behaviours(
+                new Procreate<>(20)
+        );
+    }
+
+    public BrainActivityGroup<? extends SCP939> getRestTasks() {
+        return new BrainActivityGroup<SCP939>(Activity.REST).behaviours(
+                new ReplenishAmnestics<>(100)
+        );
+    }
+
+    public BrainActivityGroup<? extends SCP939> getSocializeTasks() {
+        return new BrainActivityGroup<SCP939>(ActivityInit.SOCIALIZE.get()).behaviours(
+                new GenericSocialize<>()
+                        .closeEnoughDist((entity, partner) -> 5)
+                        .messages(List.of(
+                                " flickers its bioluminescent spine lights at ",
+                                " makes a high-pitched tone towards "
+                        ))
+        );
+    }
+
+    private int getLureCooldown() {
+        return (int) (BASE_LURE_COOLDOWN * (1 + this.getSuspicion()));
+    }
+
+    private int getListenCooldown() {
+        return (int) (BASE_LISTEN_COOLDOWN * (1 - this.getSuspicion() * 0.5f));
+    }
+
+    private double getSearchRange() {
+        return (BASE_SEARCH_RANGE * (1 - this.getSuspicion() * 0.5f));
+    }
+
+    private int getIdleTime() {
+        float idleAmplifier = 1 + this.getSuspicion();
+        return (int) (this.getRandom().nextInt(BASE_MIN_IDLE_TIME, BASE_MAX_IDLE_TIME) * idleAmplifier);
+    }
+
+    public float getSuspicion() {
+        return this.suspicion;
+    }
+
+    public void modifySuspicion(float amount) {
+        this.suspicion = Math.min(1, Math.max(0, this.getSuspicion() + amount));
+    }
+
+    @Override
+    public boolean dampensVibrations() {
+        return true;
+    }
+
+    @Override
+    public @NotNull Data getVibrationData() {
+        return this.vibrationData;
+    }
+
+    @Override
+    public @NotNull User getVibrationUser() {
+        return this.vibrationUser;
+    }
+
+    public static void setDisturbanceLocation(BlockPos pos, SCP939 entity) {
+        BrainUtils.setForgettableMemory(entity, MemoryModuleType.DISTURBANCE_LOCATION, pos, 600);
+        BrainUtils.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(pos, 1, 1));
+        entity.modifySuspicion(0.1f);
+        System.out.println("Current suspicion" + entity.getSuspicion());
+    }
+
+    public Component getRandomLureLine() {
+        return Component.literal("HELP");
+    }
+
+    @Override
+    public List<Need> getNeeds() {
+        return List.of(
+                new Need(BLOODLUST, ActivityInit.HUNT.get(), value -> (float) Math.pow(100 - value, 1.2)),
+                new Need(SOCIALIZATION, ActivityInit.SOCIALIZE.get(), value -> (float) Math.pow(100 - value, 1.5)),
+                new Need(PROCREATION, ActivityInit.PROCREATE.get(), value -> 100 - value),
+                new Need(AMNESTICS, Activity.REST, value -> (float) Math.pow(100 - value, 0.2))
+        );
     }
 }

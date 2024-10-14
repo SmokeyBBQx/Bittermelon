@@ -13,4 +13,7 @@ public class ActivityInit {
     public static final DeferredHolder<Activity, Activity> LURE = ACTIVITY.register("lure", () -> new Activity("lure"));
     public static final DeferredHolder<Activity, Activity> LISTEN = ACTIVITY.register("listen", () -> new Activity("listen"));
     public static final DeferredHolder<Activity, Activity> EXHALE = ACTIVITY.register("exhale", () -> new Activity("exhale"));
+    public static final DeferredHolder<Activity, Activity> HUNT = ACTIVITY.register("hunt", () -> new Activity("hunt"));
+    public static final DeferredHolder<Activity, Activity> PROCREATE = ACTIVITY.register("procreate", () -> new Activity("procreate"));
+    public static final DeferredHolder<Activity, Activity> SOCIALIZE = ACTIVITY.register("socialize", () -> new Activity("socialize"));
 }

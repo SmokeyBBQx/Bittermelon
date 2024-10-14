@@ -42,9 +42,6 @@ public class SCP939AI {
             MemoryModuleType.ATTACK_COOLING_DOWN,
             MemoryModuleType.NEAREST_ATTACKABLE,
             MemoryModuleType.DISTURBANCE_LOCATION,
-            EXHALE_COOLDOWN.get(),
-            LURE_COOLDOWN.get(),
-            LISTEN_COOLDOWN.get(),
             IS_LISTENING.get(),
             IS_EXHALING.get()
     );
@@ -60,8 +57,6 @@ public class SCP939AI {
         initInvestigateActivity(brain);
         initExhaleActivity(brain);
         initLureActivity(brain);
-        initListenActivity(brain);
-        initListenActivity(brain);
         brain.setCoreActivities(ImmutableSet.of(Activity.CORE));
         brain.setDefaultActivity(Activity.IDLE);
         brain.useDefaultActivity();
@@ -92,11 +87,11 @@ public class SCP939AI {
                 Activity.IDLE,
                 10,
                 ImmutableList.of(
-                        TryToListen.create(),
-                        new RunOne<>(
-                                ImmutableMap.of(IS_LISTENING.get(), MemoryStatus.VALUE_ABSENT),
-                                ImmutableList.of(Pair.of(RandomStroll.stroll(0.5F), 2), Pair.of(new DoNothing(30, 60), 1))
-                        )
+//                        TryToListen.create(),
+//                        new RunOne<>(
+//                                ImmutableMap.of(IS_LISTENING.get(), MemoryStatus.VALUE_ABSENT),
+//                                ImmutableList.of(Pair.of(RandomStroll.stroll(0.5F), 2), Pair.of(new DoNothing(30, 60), 1))
+//                        )
                 )
         );
     }
@@ -121,14 +116,6 @@ public class SCP939AI {
         );
     }
 
-    private static void initListenActivity(Brain<SCP939> brain) {
-        brain.addActivityAndRemoveMemoryWhenStopped(
-                LISTEN.get(),
-                5,
-                ImmutableList.of(new Listening<>(120)),
-                IS_LISTENING.get()
-        );
-    }
 
     private static void initLureActivity(Brain<SCP939> brain) {
         brain.addActivity(
@@ -169,7 +156,6 @@ public class SCP939AI {
         if (scp939.level().getWorldBorder().isWithinBounds(disturbanceLocation)
 //                && scp939.getEntityAngryAt().isEmpty()
                 && scp939.getBrain().getMemory(MemoryModuleType.ATTACK_TARGET).isEmpty()) {
-            scp939.getBrain().setMemoryWithExpiry(LISTEN_COOLDOWN.get(), Unit.INSTANCE, 100L);
             scp939.getBrain().setMemoryWithExpiry(MemoryModuleType.LOOK_TARGET, new BlockPosTracker(disturbanceLocation), 100L);
             scp939.getBrain().setMemoryWithExpiry(MemoryModuleType.DISTURBANCE_LOCATION, disturbanceLocation, 100L);
             scp939.getBrain().eraseMemory(MemoryModuleType.WALK_TARGET);
