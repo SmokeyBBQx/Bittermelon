@@ -1,14 +1,13 @@
 package com.site21.bittermelon.entities.scps.SCP939;
 
-import com.mojang.serialization.Dynamic;
 import com.site21.bittermelon.character.Character;
 import com.site21.bittermelon.character.CharacterManager;
 import com.site21.bittermelon.entities.behavior.needs.Need;
+import com.site21.bittermelon.entities.behavior.needs.ReevaluateDecision;
 import com.site21.bittermelon.entities.behavior.path.SeekNearestPlayer;
 import com.site21.bittermelon.entities.behavior.social.GenericSocialize;
 import com.site21.bittermelon.entities.behavior.social.Socializable;
-import com.site21.bittermelon.entities.brain.NeedsBrain;
-import com.site21.bittermelon.entities.brain.NeedsBrainOwner;
+import com.site21.bittermelon.entities.behavior.needs.NeedsUser;
 import com.site21.bittermelon.entities.scps.ExtendedVibrationUser;
 import com.site21.bittermelon.entities.scps.SCP939.behavior.*;
 import com.site21.bittermelon.init.ActivityInit;
@@ -69,7 +68,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 @SuppressWarnings("unchecked")
-public class SCP939 extends PathfinderMob implements NeedsBrainOwner, Socializable, VibrationSystem, SmartBrainOwner<SCP939> {
+public class SCP939 extends PathfinderMob implements NeedsUser, Socializable, VibrationSystem, SmartBrainOwner<SCP939> {
     private static final EntityDataAccessor<Float> BLOODLUST = SynchedEntityData.defineId(SCP939.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> SOCIALIZATION = SynchedEntityData.defineId(SCP939.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> PROCREATION = SynchedEntityData.defineId(SCP939.class, EntityDataSerializers.FLOAT);
@@ -81,9 +80,9 @@ public class SCP939 extends PathfinderMob implements NeedsBrainOwner, Socializab
     private final int BASE_SEARCH_RANGE = 32;
     private final int BASE_MIN_IDLE_TIME = 20;
     private final int BASE_MAX_IDLE_TIME = 40;
-    private final float BLOODLUST_DECAY = 0.001f;
-    private final float SOCIALIZATION_DECAY = 0.001f;
-    private final float PROCREATION_DECAY = 0.0001f;
+    private final float BLOODLUST_DECAY = -0.001f;
+    private final float SOCIALIZATION_DECAY = -0.001f;
+    private final float PROCREATION_DECAY = -0.0001f;
 
     private final DynamicGameEventListener<Listener> dynamicGameEventListener;
     private VibrationSystem.Data vibrationData;
@@ -117,17 +116,17 @@ public class SCP939 extends PathfinderMob implements NeedsBrainOwner, Socializab
     }
 
     @Override
-    public void updateDynamicGameEventListener(BiConsumer<DynamicGameEventListener<?>, ServerLevel> listenerConsumer) {
+    public void updateDynamicGameEventListener(@NotNull BiConsumer<DynamicGameEventListener<?>, ServerLevel> listenerConsumer) {
         if (this.level() instanceof ServerLevel serverlevel) {
             listenerConsumer.accept(this.dynamicGameEventListener, serverlevel);
         }
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(BLOODLUST, 100.0f);
-        builder.define(SOCIALIZATION, 90.0f);
+        builder.define(SOCIALIZATION, 100.0f);
         builder.define(PROCREATION, 100.0f);
         builder.define(AMNESTICS, 100.0f);
     }
@@ -227,9 +226,9 @@ public class SCP939 extends PathfinderMob implements NeedsBrainOwner, Socializab
         if (!this.level().isClientSide && !this.isNoAi()) {
             Entity entity = source.getEntity();
             if (this.brain.getMemory(MemoryModuleType.ATTACK_TARGET).isEmpty()
-                    && entity instanceof LivingEntity livingentity
-                    && (source.isDirect() || this.closerThan(livingentity, 5.0))) {
-                this.setAttackTarget(livingentity);
+                    && entity instanceof LivingEntity livingEntity
+                    && (source.isDirect() || this.closerThan(livingEntity, 5.0))) {
+                this.setAttackTarget(livingEntity);
             }
         }
 
@@ -241,7 +240,6 @@ public class SCP939 extends PathfinderMob implements NeedsBrainOwner, Socializab
         this.getBrain().eraseMemory(MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
     }
 
-
     @Override
     public void tick() {
         super.tick();
@@ -250,32 +248,9 @@ public class SCP939 extends PathfinderMob implements NeedsBrainOwner, Socializab
         }
         this.modifySuspicion(-0.001f);
 
-        modifyBloodlust(-BLOODLUST_DECAY);
-        modifySocialization(-SOCIALIZATION_DECAY);
-        modifyProcreation(-PROCREATION_DECAY);
-        setActivityBasedOnNeeds();
-    }
-
-    private void setActivityBasedOnNeeds() {
-        List<Need> needs = this.getNeeds();
-
-        Need highestPriorityNeed = needs.stream()
-                .max((n1, n2) -> {
-                    float value1 = this.getEntityData().get(n1.need());
-                    float value2 = this.getEntityData().get(n2.need());
-                    float priority1 = n1.priorityFunction().apply(value1);
-                    float priority2 = n2.priorityFunction().apply(value2);
-                    return Float.compare(priority1, priority2);
-                })
-                .orElseThrow(() -> new IllegalStateException("No needs found"));
-
-        float currentValue = this.getEntityData().get(highestPriorityNeed.need());
-        float priorityScore = highestPriorityNeed.priorityFunction().apply(currentValue);
-
-        System.out.println(highestPriorityNeed.activity().getName() + " is the highest priority with amount "
-                + currentValue + " and priority score " + priorityScore);
-
-        brain.setActiveActivityIfPossible(highestPriorityNeed.activity());
+        modifyBloodlust(BLOODLUST_DECAY);
+        modifySocialization(SOCIALIZATION_DECAY);
+        modifyProcreation(PROCREATION_DECAY);
     }
 
     @Override
@@ -344,7 +319,8 @@ public class SCP939 extends PathfinderMob implements NeedsBrainOwner, Socializab
 //                new EscapeSun<>().cooldownFor(entity -> 20),
 //                TODO: new FleeFireTask<>
                 new LookAtTarget<>(),
-                new MoveToWalkTarget<>()
+                new MoveToWalkTarget<>(),
+                new ReevaluateDecision<>()
         );
     }
 
@@ -414,14 +390,14 @@ public class SCP939 extends PathfinderMob implements NeedsBrainOwner, Socializab
 
     public BrainActivityGroup<? extends SCP939> getProcreateTasks() {
         return new BrainActivityGroup<SCP939>(ActivityInit.PROCREATE.get()).behaviours(
-                new Procreate<>(20)
-        );
+                new Procreate<>(20),
+                );
     }
 
     public BrainActivityGroup<? extends SCP939> getRestTasks() {
         return new BrainActivityGroup<SCP939>(Activity.REST).behaviours(
-                new ReplenishAmnestics<>(100)
-        );
+                new ReplenishAmnestics<>(100),
+                );
     }
 
     public BrainActivityGroup<? extends SCP939> getSocializeTasks() {
@@ -429,9 +405,10 @@ public class SCP939 extends PathfinderMob implements NeedsBrainOwner, Socializab
                 new GenericSocialize<>()
                         .closeEnoughDist((entity, partner) -> 5)
                         .messages(List.of(
-                                " flickers its bioluminescent spine lights at ",
-                                " makes a high-pitched tone towards "
-                        ))
+                                        " flickers its bioluminescent spine lights at ",
+                                        " makes a high-pitched tone towards "
+                                )
+                        )
         );
     }
 
