@@ -1,9 +1,7 @@
 package com.site21.bittermelon.blocks.blockentities;
 
 import com.site21.bittermelon.blocks.FluidBlock;
-import com.site21.bittermelon.substance.Substance;
 import com.site21.bittermelon.substance.SubstanceStack;
-import com.site21.bittermelon.substance.reactions.Reaction;
 import com.site21.bittermelon.substance.reactions.ReactionContainer;
 import com.site21.bittermelon.substance.reactions.ReactionHandler;
 import com.site21.bittermelon.util.ColorUtil;
@@ -18,17 +16,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-import javax.sound.midi.SysexMessage;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.site21.bittermelon.init.BlockEntityInit.FLUID_BLOCK_ENTITY;
-import static com.site21.bittermelon.init.BlockInit.FLUID;
+import static com.site21.bittermelon.init.BitterBlockEntities.FLUID_BLOCK_ENTITY;
+import static com.site21.bittermelon.init.BitterBlocks.FLUID;
 
-public class FluidBlockEntity extends BlockEntity implements Tickable, ReactionContainer {
+public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
     // Constants
     private static final int SPREAD_THRESHOLD = 16;
     private static final int MAX_CAPACITY = 40;
@@ -54,7 +50,6 @@ public class FluidBlockEntity extends BlockEntity implements Tickable, ReactionC
         super(FLUID_BLOCK_ENTITY.get(), pos, blockState);
     }
 
-    @Override
     public void tick() {
         if (getTotalAmount() < 1) {
             removePuddleBlock();
@@ -148,6 +143,42 @@ public class FluidBlockEntity extends BlockEntity implements Tickable, ReactionC
                 transferredSubstances.add(stackToTransfer);
 
                 if (availableAmount <= actualAmount) {
+                    iterator.remove();
+                }
+            }
+        }
+
+        if (substances.isEmpty()) {
+            removePuddleBlock();
+        }
+
+        setChanged();
+        return transferredSubstances;
+    }
+
+    public List<SubstanceStack> transferSubstancesVolume(float amount) {
+        if (substances.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        float totalVolume = getTotalVolume();
+        List<SubstanceStack> transferredSubstances = new ArrayList<>();
+        Iterator<SubstanceStack> iterator = substances.iterator();
+
+        while (iterator.hasNext()) {
+            SubstanceStack stack = iterator.next();
+            float availableVolume = stack.getVolume();
+
+            float transferAmount = (amount * availableVolume) / totalVolume;
+            float actualAmount = Math.min(availableVolume, transferAmount);
+
+            if (actualAmount > 0) {
+                stack.modifyVolume(-actualAmount);
+                SubstanceStack stackToTransfer = stack.copy();
+                stackToTransfer.setVolume(actualAmount);
+                transferredSubstances.add(stackToTransfer);
+
+                if (availableVolume <= actualAmount) {
                     iterator.remove();
                 }
             }
@@ -284,7 +315,6 @@ public class FluidBlockEntity extends BlockEntity implements Tickable, ReactionC
             spill(neighbor, spillAmount);
         }
 
-        System.out.println("Spread returning true");
         return true;
     }
 
@@ -415,9 +445,7 @@ public class FluidBlockEntity extends BlockEntity implements Tickable, ReactionC
             if (transferAmount > 0) {
                 SubstanceStack stackToTransfer = stack.copy();
                 stackToTransfer.setAmount(transferAmount);
-                System.out.println("Stack to transfer amount is " + stackToTransfer.getAmount());
                 substancesToTransfer.add(stackToTransfer);
-                System.out.println("Original stack being removed with " + transferAmount + " with original stack amount being " + stack.getAmount());
                 stack.modifyAmount(-transferAmount);
                 totalTransferred += transferAmount;
             }
@@ -441,6 +469,8 @@ public class FluidBlockEntity extends BlockEntity implements Tickable, ReactionC
             targetPuddle.setChanged();
             setChanged();
         }
+
+        // TODO: Issue because we're using amounts and not volumes?
     }
 
     private static void mergeSubstances(List<SubstanceStack> substances, SubstanceStack stack) {
@@ -477,9 +507,7 @@ public class FluidBlockEntity extends BlockEntity implements Tickable, ReactionC
 
             totalSubstances.removeIf(stack -> {
                 if (stack.getAmount() > 0) {
-                    System.out.println("Running equalization for substance with " + stack.getAmount() + " amount, divided by " + flowCandidates.size());
                     stack.setAmount(stack.getAmount() / flowCandidates.size());
-                    System.out.println("Setting amount with " + stack.getAmount());
                     return false;
                 }
                 return true;

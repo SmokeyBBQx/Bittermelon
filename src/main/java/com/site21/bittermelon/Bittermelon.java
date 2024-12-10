@@ -1,14 +1,15 @@
 package com.site21.bittermelon;
 
+import com.site21.bittermelon.character.Character;
+import com.site21.bittermelon.character.CharacterManager;
 import com.site21.bittermelon.client.colorhandlers.FluidBlockColor;
-import com.site21.bittermelon.client.renderer.entity.SCP939Renderer;
-import com.site21.bittermelon.commands.CommandSubstance;
+import com.site21.bittermelon.commands.SubstanceCommand;
 import com.site21.bittermelon.init.*;
 import com.site21.bittermelon.substance.reactions.Reactions;
-import net.minecraft.client.renderer.entity.EntityRenderers;
+import com.site21.bittermelon.util.ServerUtil;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.registries.NewRegistryEvent;
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -28,17 +29,19 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
-import static com.site21.bittermelon.init.ActivityInit.ACTIVITY;
-import static com.site21.bittermelon.init.BlockEntityInit.BLOCK_ENTITY_TYPES;
-import static com.site21.bittermelon.init.BlockInit.BLOCKS;
-import static com.site21.bittermelon.init.BlockInit.FLUID;
-import static com.site21.bittermelon.init.DataComponentsInit.DATA_COMPONENTS;
-import static com.site21.bittermelon.init.EntityInit.ENTITY_TYPES;
-import static com.site21.bittermelon.init.EntityInit.SCP_939;
-import static com.site21.bittermelon.init.MemoryModuleTypeInit.MEMORY_MODULE_TYPES;
-import static com.site21.bittermelon.init.ReactionInit.REACTIONS;
-import static com.site21.bittermelon.init.SubstanceInit.SUBSTANCES;
-import static net.minecraft.core.registries.Registries.MEMORY_MODULE_TYPE;
+import static com.site21.bittermelon.init.BitterActivity.ACTIVITY;
+import static com.site21.bittermelon.init.BitterAttachmentTypes.ATTACHMENT_TYPES;
+import static com.site21.bittermelon.init.BitterBlockEntities.BLOCK_ENTITY_TYPES;
+import static com.site21.bittermelon.init.BitterBlocks.BLOCKS;
+import static com.site21.bittermelon.init.BitterBlocks.FLUID;
+import static com.site21.bittermelon.init.BitterDataComponents.DATA_COMPONENTS;
+import static com.site21.bittermelon.init.BitterMemoryModuleType.MEMORY_MODULE_TYPES;
+import static com.site21.bittermelon.init.BitterItems.ITEMS;
+import static com.site21.bittermelon.init.BitterMenus.MENUS;
+import static com.site21.bittermelon.init.BitterMobEffects.MOB_EFFECTS;
+import static com.site21.bittermelon.init.BitterReactions.REACTIONS;
+import static com.site21.bittermelon.init.BitterSounds.SOUND_EVENTS;
+import static com.site21.bittermelon.init.Substances.SUBSTANCES;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(Bittermelon.MOD_ID)
@@ -51,8 +54,8 @@ public class Bittermelon
 
     // Creates a new Block with the id "examplemod:example_block", combining the namespace and path
 //    public static final DeferredBlock<Block> EXAMPLE_BLOCK = BLOCKS.registerSimpleBlock("example_block", BlockBehaviour.Properties.of().mapColor(MapColor.STONE));
-//    // Creates a new BlockItem with the id "examplemod:example_block", combining the namespace and path
-//    public static final DeferredItem<BlockItem> EXAMPLE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("example_block", EXAMPLE_BLOCK);
+//    // Creates a new PlaceableItem with the id "examplemod:example_block", combining the namespace and path
+//    public static final DeferredItem<PlaceableItem> EXAMPLE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("example_block", EXAMPLE_BLOCK);
 
     // Creates a new food item with the id "examplemod:example_id", nutrition 1 and saturation 2
 //    public static final DeferredItem<Item> EXAMPLE_ITEM = ITEMS.registerSimpleItem("example_item", new Item.Properties().food(new FoodProperties.Builder()
@@ -72,14 +75,19 @@ public class Bittermelon
 
         BLOCKS.register(modEventBus);
         ACTIVITY.register(modEventBus);
+        ITEMS.register(modEventBus);
         MEMORY_MODULE_TYPES.register(modEventBus);
-        EntityInit.register(modEventBus);
+        BitterEntities.register(modEventBus);
         SUBSTANCES.register(modEventBus);
         REACTIONS.register(modEventBus);
         BLOCK_ENTITY_TYPES.register(modEventBus);
         DATA_COMPONENTS.register(modEventBus);
+        SOUND_EVENTS.register(modEventBus);
+        MENUS.register(modEventBus);
+        ATTACHMENT_TYPES.register(modEventBus);
+        MOB_EFFECTS.register(modEventBus);
 
-        modEventBus.addListener(ModRegistries::registerRegistries);
+        modEventBus.addListener(BitterRegistries::registerRegistries);
         modEventBus.addListener(this::commonSetup);
     }
 
@@ -101,13 +109,17 @@ public class Bittermelon
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event)
     {
+        ServerUtil.setMinecraftServer(event.getServer());
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
     }
 
     @SubscribeEvent
-    public void onRegisterCommands(RegisterCommandsEvent event) {
-        CommandSubstance.register(event.getDispatcher());
+    public void onEntityTick(EntityTickEvent.Post event) {
+        Character character = CharacterManager.getInstance().getActiveCharacter(event.getEntity().getUUID());
+        if (character != null) {
+            character.update();
+        }
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent

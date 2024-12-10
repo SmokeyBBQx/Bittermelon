@@ -12,7 +12,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.init.EntityInit.THROWN_ITEM_PROJECTILE;
+import static com.site21.bittermelon.init.BitterEntities.THROWN_ITEM_PROJECTILE;
 
 public class ThrownItemProjectile extends ThrowableItemProjectile {
     private final float BASE_GRAVITY = 0.03F;

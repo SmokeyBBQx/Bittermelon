@@ -4,6 +4,7 @@ import com.site21.bittermelon.substance.Substance;
 import com.site21.bittermelon.substance.SubstanceStack;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Reaction {
@@ -36,7 +37,6 @@ public class Reaction {
 
         return rate;
     }
-
 
     public Map<Substance, Integer> getReactants() {
         return new HashMap<>(reactants);

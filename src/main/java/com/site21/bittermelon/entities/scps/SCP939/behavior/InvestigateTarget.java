@@ -26,19 +26,15 @@ public class InvestigateTarget<E extends SCP939> extends ExtendedBehaviour<E> {
 
     @Override
     protected void start(E entity) {
-        if (entity.getSuspicion() > 0.9f) {
             LivingEntity nearestAttackable = BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_ATTACKABLE);
             BrainUtils.setMemory(entity, MemoryModuleType.ATTACK_TARGET, nearestAttackable);
             BrainUtils.clearMemory(entity, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
-        }
     }
 
     @Override
     protected void tick(E entity) {
-        if (entity.getSuspicion() > 0.9f) {
             LivingEntity nearestAttackable = BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_ATTACKABLE);
             BrainUtils.setMemory(entity, MemoryModuleType.ATTACK_TARGET, nearestAttackable);
             BrainUtils.clearMemory(entity, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
-        }
     }
 }

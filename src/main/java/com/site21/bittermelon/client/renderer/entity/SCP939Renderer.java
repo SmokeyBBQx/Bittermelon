@@ -14,7 +14,7 @@ import static com.site21.bittermelon.client.ModelLayers.SCP939_LAYER;
 
 @OnlyIn(Dist.CLIENT)
 public class SCP939Renderer extends MobRenderer<SCP939, SCP939Model<SCP939>> {
-    private static final ResourceLocation SCP939_LOCATION = ResourceLocation.withDefaultNamespace("textures/entity/scp939.png");
+    private static final ResourceLocation SCP939_LOCATION = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/entity/scp939.png");
     public SCP939Renderer(EntityRendererProvider.Context context) {
         super(context, new SCP939Model<>(context.bakeLayer(SCP939_LAYER)), 0.5f);
     }

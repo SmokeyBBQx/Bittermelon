@@ -1,0 +1,32 @@
+package com.site21.bittermelon.medical.compartments;
+
+public enum FunctionType {
+    FUNCTION,
+    TREMOR,
+    PAIN,
+    HEALING,
+    IMMUNITY,
+    ELIMINATION,
+    RESPIRATORY,
+    DIGESTION,
+    NERVOUS,
+    CIRCULATION,
+    MOVEMENT,
+    SIGHT,
+    HEARING,
+    TASTE,
+    MANIPULATION,
+    BRAIN_VOLUNTARY_MOVEMENT,
+    BRAIN_LANGUAGE,
+    BRAIN_MOTOR_ABILITY,
+    BRAIN_EMOTIONS,
+    BRAIN_MEMORY,
+    BRAIN_CONSCIOUSNESS,
+    BRAIN_SIGHT,
+    BRAIN_HEARING,
+    BRAIN_SMELL,
+    BRAIN_TASTE,
+    BRAIN_TOUCH,
+    BRAIN_LOCATION,
+    BRAIN_VITALS
+}

@@ -1,0 +1,39 @@
+package com.site21.bittermelon.medical.compartments;
+
+public enum CompartmentType {
+    // CONDITIONS
+    STAB,
+    SCAR,
+    CUT,
+    BRUISE,
+    DISLOCATION,
+    SAW_CUT,
+    NECROTIC,
+    INFECTION,
+    INFLAMMATION,
+    FOREIGN_SUBSTANCE,
+    PAIN,
+    BLEED,
+    ARTERIAL_BLEED,
+    MAJOR_ARTERIAL_BLEED,
+    VENOUS_BLEED,
+    CAPILLARY_BLEED,
+    SCAB,
+
+    // FIRST-AID
+    BANDAGE,
+    CLAMP,
+    OLD_BANDAGE,
+    RETRACTOR,
+    STITCHES,
+
+    // ANATOMY
+    BLOOD_VESSEL,
+    MAJOR_ARTERY,
+    ARTERY,
+    VEIN,
+    CAPILLARY,
+    HARD_TISSUE,
+    SOFT_TISSUE,
+    MAJOR_BODY_PART
+}

@@ -1,36 +1,48 @@
 package com.site21.bittermelon.entities.behavior.needs;
 
 import com.mojang.datafixers.util.Pair;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
+import net.minecraft.world.entity.schedule.Activity;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
+import net.tslat.smartbrainlib.util.BrainUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class ReevaluateDecision<E extends LivingEntity & NeedsUser> extends ExtendedBehaviour<E> {
+public class ReevaluateDecision<E extends LivingEntity & NeedsUser<E>> extends ExtendedBehaviour<E> {
+    private static final List<Pair<MemoryModuleType<?>, MemoryStatus>> MEMORY_REQUIREMENTS = ObjectArrayList.of(
+            Pair.of(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_ABSENT)
+   );
+
     @Override
     protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
-        return List.of();
+        return MEMORY_REQUIREMENTS;
     }
 
     @Override
     protected void start(E entity) {
-        List<Need> needs = entity.getNeeds();
+        List<Need<E>> needs = new ArrayList<>(entity.getNeeds());
 
-        Need highestPriorityNeed = needs.stream()
-                .max((n1, n2) -> {
-                    float value1 = entity.getEntityData().get(n1.need());
-                    float value2 = entity.getEntityData().get(n2.need());
-                    float priority1 = n1.priorityFunction().apply(value1);
-                    float priority2 = n2.priorityFunction().apply(value2);
-                    return Float.compare(priority1, priority2);
-                })
-                .orElseThrow(() -> new IllegalStateException("No needs found for " + entity));
+        needs.removeIf(need -> !need.canBeFulfilled().test(entity));
 
-        float currentValue = entity.getEntityData().get(highestPriorityNeed.need());
-        float priorityScore = highestPriorityNeed.priorityFunction().apply(currentValue);
+        if (!needs.isEmpty()) {
+            needs.sort((n1, n2) -> {
+                float priority1 = n1.priorityFunction().apply(entity.getEntityData().get(n1.data()));
+                float priority2 = n2.priorityFunction().apply(entity.getEntityData().get(n2.data()));
+                return Float.compare(priority2, priority1);
+            });
 
-        entity.getBrain().setActiveActivityIfPossible(highestPriorityNeed.activity());
+            List<Activity> activities = needs.stream()
+                    .map(Need::activity)
+                    .collect(Collectors.toList());
+
+            System.out.println(activities.getFirst());
+
+            entity.getBrain().setActiveActivityToFirstValid(activities);
+        }
     }
 }

@@ -3,7 +3,6 @@ package com.site21.bittermelon.substance;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.site21.bittermelon.Bittermelon;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
 import net.minecraft.core.Holder;
@@ -19,18 +18,17 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.MutableDataComponentHolder;
-import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import static com.site21.bittermelon.Bittermelon.LOGGER;
-import static com.site21.bittermelon.init.ModRegistries.SUBSTANCE_REGISTRY;
-import static com.site21.bittermelon.init.ModRegistries.SUBSTANCE_REGISTRY_KEY;
+import static com.site21.bittermelon.init.BitterRegistries.SUBSTANCE_REGISTRY;
+import static com.site21.bittermelon.init.BitterRegistries.SUBSTANCE_REGISTRY_KEY;
 
 public class SubstanceStack implements MutableDataComponentHolder {
     public static final Codec<Holder<Substance>> SUBSTANCE_NON_EMPTY_CODEC = SUBSTANCE_REGISTRY.holderByNameCodec().validate(DataResult::success);
@@ -154,20 +152,17 @@ public class SubstanceStack implements MutableDataComponentHolder {
         this.amount = Math.max(0, this.temperature + delta);
     }
 
-    public SubstanceState getState() {
-        if (temperature < substance.properties.getFreezingTemperature()) {
-            return SubstanceState.SOLID;
-        } else if (temperature < substance.properties.getBoilingTemperature()) {
-            return SubstanceState.LIQUID;
-        } else if (temperature < substance.properties.getPlasmaTemperature()) {
-            return SubstanceState.GAS;
-        } else {
-            return SubstanceState.PLASMA;
-        }
-    }
-
     public float getVolume() {
         return amount * substance.getSpecificVolume();
+    }
+
+    public void setVolume(float volume) {
+        this.amount = volume / substance.getSpecificVolume();
+    }
+
+    public void modifyVolume(float delta) {
+        float newVolume = Math.max(0, getVolume() + delta);
+        setVolume(newVolume);
     }
 
     public boolean canMergeWith(SubstanceStack other) {
@@ -177,6 +172,48 @@ public class SubstanceStack implements MutableDataComponentHolder {
             return Objects.equals(this.components, other.components) && this.substance == other.getSubstance();
         }
     }
+
+    public static boolean matches(SubstanceStack stack, SubstanceStack other) {
+        if (stack == other) {
+            return true;
+        } else {
+            return Objects.equals(stack.components, other.components) && stack.substance == other.substance;
+        }
+    }
+
+    public static boolean listMatches(List<SubstanceStack> list, List<SubstanceStack> other) {
+        if (list.size() != other.size()) {
+            return false;
+        } else {
+            for (int i = 0; i < list.size(); i++) {
+                if (!matches(list.get(i), other.get(i))) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
+    public static int hashStackList(List<SubstanceStack> list) {
+        int i = 0;
+
+        for (SubstanceStack stack : list) {
+            i = i * 31 + hashItemAndComponents(stack);
+        }
+
+        return i;
+    }
+
+    public static int hashItemAndComponents(@javax.annotation.Nullable SubstanceStack stack) {
+        if (stack != null) {
+            int i = 31 + stack.getSubstance().hashCode();
+            return 31 * i + stack.getComponents().hashCode();
+        } else {
+            return 0;
+        }
+    }
+
 
     public SubstanceStack copy() {
         if (this.isEmpty()) {

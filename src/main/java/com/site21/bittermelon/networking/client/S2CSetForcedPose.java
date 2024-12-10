@@ -1,0 +1,38 @@
+package com.site21.bittermelon.networking.client;
+
+import com.site21.bittermelon.Bittermelon;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.core.UUIDUtil;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
+import java.util.UUID;
+
+public record S2CSetForcedPose(UUID uuid, Pose pose) implements CustomPacketPayload {
+    public static final Type<S2CSetForcedPose> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "set_forced_pose"));
+
+
+    public static final StreamCodec<ByteBuf, S2CSetForcedPose> STREAM_CODEC = StreamCodec.composite(
+            UUIDUtil.STREAM_CODEC,
+            S2CSetForcedPose::uuid,
+            Pose.STREAM_CODEC,
+            S2CSetForcedPose::pose,
+            S2CSetForcedPose::new
+    );
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
+
+    public void handle(IPayloadContext ctx) {
+        Player player = ctx.player().level().getPlayerByUUID(uuid());
+        if (player != null) {
+            player.setForcedPose(pose);
+        }
+    }
+}

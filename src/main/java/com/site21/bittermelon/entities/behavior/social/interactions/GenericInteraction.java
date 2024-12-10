@@ -1,0 +1,143 @@
+package com.site21.bittermelon.entities.behavior.social.interactions;
+
+import com.mojang.datafixers.util.Pair;
+import com.site21.bittermelon.character.Character;
+import com.site21.bittermelon.character.CharacterManager;
+import com.site21.bittermelon.entities.behavior.social.Relationship;
+import com.site21.bittermelon.entities.behavior.social.Socializable;
+import com.site21.bittermelon.init.BitterMemoryModuleType;
+import com.site21.bittermelon.util.LocalMessageHelper;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.memory.MemoryStatus;
+import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
+import net.tslat.smartbrainlib.object.MemoryTest;
+import net.tslat.smartbrainlib.util.BrainUtils;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
+import java.util.function.ToIntBiFunction;
+
+public class GenericInteraction<E extends LivingEntity & Socializable> extends ExtendedBehaviour<E> {
+    private static final MemoryTest MEMORY_REQUIREMENTS = MemoryTest.builder(4).hasMemory(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES).noMemory(BitterMemoryModuleType.SOCIALIZE_TARGET.get()).usesMemories(MemoryModuleType.LOOK_TARGET, MemoryModuleType.WALK_TARGET);
+
+    protected BiFunction<E, LivingEntity, Float> speedMod = (entity, partner) -> 1f;
+    protected ToIntBiFunction<E, LivingEntity> closeEnoughDist = (entity, partner) -> 2;
+    protected BiFunction<E, LivingEntity, Integer> socializeTime = (entity, partner) -> entity.getRandom().nextInt(60, 110);
+    protected BiPredicate<E, LivingEntity> partnerPredicate = (entity, partner) -> entity.getType() == partner.getType();
+    protected LivingEntity partner = null;
+    protected List<String> messages;
+    protected int socializeTick = -1;
+
+    public GenericInteraction() {
+        noTimeout();
+    }
+
+    @Override
+    protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
+        return MEMORY_REQUIREMENTS;
+    }
+
+    public GenericInteraction<E> speedMod(final BiFunction<E, LivingEntity, Float> speedModifier) {
+        this.speedMod = speedModifier;
+
+        return this;
+    }
+
+    public GenericInteraction<E> messages(List<String> messages) {
+        this.messages = messages;
+
+        return this;
+    }
+
+    @Override
+    protected boolean checkExtraStartConditions(ServerLevel level, E entity) {
+        this.partner = findPartner(entity);
+
+        return this.partner != null;
+    }
+
+    public GenericInteraction<E> closeEnoughDist(final ToIntBiFunction<E, LivingEntity> closeEnoughDist) {
+        this.closeEnoughDist = closeEnoughDist;
+
+        return this;
+    }
+
+
+    @Override
+    protected boolean shouldKeepRunning(E entity) {
+        return this.partner != null && this.partner.isAlive() && entity.tickCount <= this.socializeTick && BehaviorUtils.entityIsVisible(entity.getBrain(), this.partner) && this.partnerPredicate.test(entity, this.partner);
+    }
+
+    @Override
+    protected void start(E entity) {
+        this.socializeTick = entity.tickCount + this.socializeTime.apply(entity, this.partner);
+
+        BrainUtils.setMemory(entity, BitterMemoryModuleType.SOCIALIZE_TARGET.get(), this.partner);
+        BrainUtils.setMemory(this.partner, BitterMemoryModuleType.SOCIALIZE_TARGET.get(), entity);
+        BehaviorUtils.lockGazeAndWalkToEachOther(entity, this.partner, this.speedMod.apply(entity, this.partner), this.closeEnoughDist.applyAsInt(entity, this.partner));
+        sendRandomMessage(entity);
+    }
+
+    @Override
+    protected void tick(E entity) {
+        BehaviorUtils.lockGazeAndWalkToEachOther(entity, this.partner, this.speedMod.apply(entity, this.partner), this.closeEnoughDist.applyAsInt(entity, this.partner));
+
+        if (entity.closerThan(this.partner, closeEnoughDist.applyAsInt(entity, partner)) && entity.tickCount == this.socializeTick) {
+            entity.modifySocialization(5);
+            Relationship entityPartnerRelationship = entity.getRelationship(CharacterManager.getInstance().getActiveCharacter(partner.getUUID()));
+            if (entityPartnerRelationship != null) {
+                entityPartnerRelationship.modifyOpinion(2);
+            }
+
+            if (partner instanceof Socializable socializable) {
+                socializable.modifySocialization(5);
+                Relationship partnerEntityRelationship = socializable.getRelationship(CharacterManager.getInstance().getActiveCharacter(entity.getUUID()));
+                if (partnerEntityRelationship != null) {
+                    partnerEntityRelationship.modifyOpinion(2);
+                }
+            }
+
+            BrainUtils.clearMemory(entity, BitterMemoryModuleType.SOCIALIZE_TARGET.get());
+            BrainUtils.clearMemory(this.partner, BitterMemoryModuleType.SOCIALIZE_TARGET.get());
+        }
+    }
+
+
+    @Override
+    protected void stop(E entity) {
+        BrainUtils.clearMemories(entity, BitterMemoryModuleType.SOCIALIZE_TARGET.get(), MemoryModuleType.LOOK_TARGET, MemoryModuleType.WALK_TARGET);
+
+        if (this.partner != null)
+            BrainUtils.clearMemories(this.partner, BitterMemoryModuleType.SOCIALIZE_TARGET.get(), MemoryModuleType.LOOK_TARGET, MemoryModuleType.WALK_TARGET);
+
+        this.socializeTick = -1;
+        this.partner = null;
+    }
+
+    @Nullable
+    protected LivingEntity findPartner(E entity) {
+        return BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES).findClosest(entity2 -> entity2 instanceof LivingEntity partner && this.partnerPredicate.test(entity, partner)).map(LivingEntity.class::cast).orElse(null);
+    }
+
+    @Nullable
+    protected void sendRandomMessage(E entity) {
+        if (messages != null && partner != null && !messages.isEmpty()) {
+            CharacterManager characterManager = CharacterManager.getInstance();
+            Character entityCharacter = characterManager.getActiveCharacter(entity.getUUID());
+            Character partnerCharacter = characterManager.getActiveCharacter(partner.getUUID());
+            if (!(entityCharacter == null) && !(partnerCharacter == null)) {
+                String message = this.messages.get(entity.getRandom().nextInt(messages.size()));
+                LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(entityCharacter.getName() + message + partnerCharacter.getName() + ".")
+                        .setStyle(Style.EMPTY.withColor(TextColor.parseColor("#" + entityCharacter.getEmoteColor()).getOrThrow())));
+            }
+        }
+    }
+}

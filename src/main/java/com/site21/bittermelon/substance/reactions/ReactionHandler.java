@@ -3,17 +3,16 @@ package com.site21.bittermelon.substance.reactions;
 import com.site21.bittermelon.substance.Substance;
 import com.site21.bittermelon.substance.SubstanceStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.site21.bittermelon.substance.reactions.Reactions.getAllReactions;
 
 public class ReactionHandler {
     private static ReactionHandler instance;
+    private final Map<Substance, Set<Reaction>> reactionsByReactant = new HashMap<>();
 
     private ReactionHandler() {
+        initializeReactionCache();
     }
 
     public static ReactionHandler getInstance() {
@@ -23,31 +22,54 @@ public class ReactionHandler {
         return instance;
     }
 
-    public void handleReactions(List<SubstanceStack> mixture, ReactionContainer container) {
-        for (Reaction reaction : getAllReactions()) {
-            checkForReaction(reaction, mixture, container);
-        }
-
-        // TODO: Store reactions?
-    }
-
-    private void checkForReaction(Reaction reaction, List<SubstanceStack> mixture, ReactionContainer container) {
-        Map<Substance, Integer> reactants = reaction.getReactants();
-        List<SubstanceStack> relatedStacks = new ArrayList<>();
-        Map<Substance, Float> concentrations = new HashMap<>();
-
-        for (SubstanceStack stack : mixture) {
-            if (reactants.containsKey(stack.getSubstance())) {
-                if (stack.getAmount() > reactants.get(stack.getSubstance())) {
-                    relatedStacks.add(stack);
-                    concentrations.put(stack.getSubstance(), stack.getAmount());
+    private void initializeReactionCache() {
+        for (Reaction reaction : Reactions.getAllReactions()) {
+            if (reaction != null) {
+                for (Substance reactant : reaction.getReactants().keySet()) {
+                    reactionsByReactant.computeIfAbsent(reactant, k -> new HashSet<>()).add(reaction);
                 }
             }
         }
+    }
 
-        if (reactants.keySet().containsAll(concentrations.keySet())) {
-            handleReaction(reaction, relatedStacks, concentrations, container);
+    public void handleReactions(List<SubstanceStack> mixture, ReactionContainer container) {
+        Set<Reaction> potentialReactions = getPotentialReactions(mixture);
+
+        for (Reaction reaction : potentialReactions) {
+            executeReaction(reaction, mixture, container);
         }
+
+        // TODO: Store active reactions?
+    }
+
+
+    private Set<Reaction> getPotentialReactions(List<SubstanceStack> mixture) {
+        Set<Reaction> potentialReactions = new HashSet<>();
+
+        for (SubstanceStack stack : mixture) {
+            Set<Reaction> reactions = reactionsByReactant.get(stack.getSubstance());
+            if (reactions != null) {
+                potentialReactions.addAll(reactions);
+            }
+        }
+
+        return potentialReactions;
+    }
+
+    private void executeReaction(Reaction reaction, List<SubstanceStack> mixture, ReactionContainer container) {
+        List<SubstanceStack> relatedStacks = mixture.stream()
+                .filter(stack -> reaction.getReactants().containsKey(stack.getSubstance()))
+                .toList();
+
+        handleReaction(reaction, relatedStacks, getConcentrations(relatedStacks), container);
+    }
+
+    private Map<Substance, Float> getConcentrations(List<SubstanceStack> mixture) {
+        Map<Substance, Float> concentrations = new HashMap<>();
+        for (SubstanceStack stack : mixture) {
+            concentrations.put(stack.getSubstance(), stack.getAmount());
+        }
+        return concentrations;
     }
 
     public void handleReaction(Reaction reaction, List<SubstanceStack> mixture, Map<Substance, Float> concentrations, ReactionContainer container) {

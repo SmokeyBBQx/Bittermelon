@@ -16,17 +16,28 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class BaseItem extends Item {
-    protected ItemSize itemSize;
-    protected ItemWeight itemWeight;
+    protected final ItemWeight itemWeight;
+    protected final int width;
+    protected final int height;
+    // TODO: Add temperature
 
-    public BaseItem(Properties properties, ItemSize itemSize, ItemWeight itemWeight) {
+    public BaseItem(Properties properties, int width, int height, ItemWeight itemWeight) {
         super(properties);
-        this.itemSize = itemSize;
+        this.width = width;
+        this.height = height;
         this.itemWeight = itemWeight;
     }
 
     public ItemSize getItemSize() {
-        return itemSize;
+        return ItemSize.fromDimensions(width, height);
+    }
+
+    public int getItemWidth() {
+        return width;
+    }
+
+    public int getItemHeight() {
+        return height;
     }
 
     public ItemWeight getItemWeight() {

@@ -1,42 +1,57 @@
 package com.site21.bittermelon.substance;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.substance.reactions.Reaction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
-import static com.site21.bittermelon.init.ModRegistries.SUBSTANCE_REGISTRY;
+import static com.site21.bittermelon.init.BitterRegistries.SUBSTANCE_REGISTRY;
 
-public abstract class Substance {
-    public final SubstanceProperties properties;
+public class Substance {
+    private String smell = "";
+    private String taste = "";
+    private final int color;
+    private final String name;
+    private final float molarMass;
+    private final float density;
+    private final float heatCapacity;
 
-    public abstract float getMolarMass();
-
-    public abstract float getDensity();
-
-    public abstract float getSpecificVolume();
-
-    public abstract float getHeatCapacity();
+    public Substance(String name, int color, float molarMass, float density, float heatCapacity) {
+        this.name = name;
+        this.color = color;
+        this.molarMass = molarMass;
+        this.density = density;
+        this.heatCapacity = heatCapacity;
+    }
 
     public String getName() {
-        return properties.getName();
+        return name;
     }
 
     public Integer getColor() {
-        return properties.getLiquidColor();
+        return color;
     }
 
-    public Substance(SubstanceProperties properties) {
-        this.properties = properties;
+    public float getMolarMass() {
+        return molarMass;
     }
 
-    public void addReaction(Reaction reaction) {
-        properties.getReactions().add(reaction);
+    public float getDensity() {
+        return density;
+    }
+
+    public float getSpecificVolume() {
+        return molarMass / density;
+    }
+
+    public float getHeatCapacity() {
+        return heatCapacity;
+    }
+
+    public Map<Substance, Integer> getFormula() {
+        return null;
     }
 
     public DataComponentMap components() {
@@ -44,20 +59,10 @@ public abstract class Substance {
     }
 
     public Holder<Substance> builtInRegistryHolder() {
-        return SUBSTANCE_REGISTRY.getHolder(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, getName().toLowerCase())).get();
+        // TODO: Add an actual way to get the holder
+        String name = getName().toLowerCase().replace(" ", "_");
+
+        return SUBSTANCE_REGISTRY.getHolder(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, name)).get();
 //        return this.holder;
-    }
-
-    public List<Reaction> checkForReactions(Set<Substance> mixture) {
-        List<Reaction> possibleReactions = new ArrayList<>();
-
-        for (Reaction reaction : properties.getReactions()) {
-            if (!mixture.containsAll(reaction.getReactants().keySet())) {
-                break;
-            }
-            System.out.println(getName() + "contains reaction");
-            possibleReactions.add(reaction);
-        }
-        return possibleReactions;
     }
 }

@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-import static com.site21.bittermelon.init.BlockEntityInit.FLUID_BLOCK_ENTITY;
+import static com.site21.bittermelon.init.BitterBlockEntities.FLUID_BLOCK_ENTITY;
 
 public class FluidBlock extends Block implements EntityBlock {
     public static final BooleanProperty NORTH = PipeBlock.NORTH;

@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "rotation=0": {
+      "model": "bittermelon:block/small_cardboard_box"
+    },
+    "rotation=1": {
+      "model": "bittermelon:block/small_cardboard_box_22.5"
+    },
+    "rotation=2": {
+      "model": "bittermelon:block/small_cardboard_box_45"
+    },
+    "rotation=3": {
+      "model": "bittermelon:block/small_cardboard_box_67.5",
+      "y": 180
+    },
+    "rotation=4": {
+      "model": "bittermelon:block/small_cardboard_box",
+      "y": 90
+    },
+    "rotation=5": {
+      "model": "bittermelon:block/small_cardboard_box_22.5",
+      "y": 90
+    },
+    "rotation=6": {
+      "model": "bittermelon:block/small_cardboard_box_45",
+      "y": 90
+    },
+    "rotation=7": {
+      "model": "bittermelon:block/small_cardboard_box_67.5",
+      "y": 270
+    },
+    "rotation=8": {
+      "model": "bittermelon:block/small_cardboard_box",
+      "y": 180
+    },
+    "rotation=9": {
+      "model": "bittermelon:block/small_cardboard_box_22.5",
+      "y": 180
+    },
+    "rotation=10": {
+      "model": "bittermelon:block/small_cardboard_box_45",
+      "y": 180
+    },
+    "rotation=11": {
+      "model": "bittermelon:block/small_cardboard_box_67.5"
+    },
+    "rotation=12": {
+      "model": "bittermelon:block/small_cardboard_box",
+      "y": 270
+    },
+    "rotation=13": {
+      "model": "bittermelon:block/small_cardboard_box_22.5",
+      "y": 270
+    },
+    "rotation=14": {
+      "model": "bittermelon:block/small_cardboard_box_45",
+      "y": 270
+    },
+    "rotation=15": {
+      "model": "bittermelon:block/small_cardboard_box_67.5",
+      "y": 90
+    }
+  }
+}

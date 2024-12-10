@@ -1,0 +1,50 @@
+{
+  "container.metal_inventory": {
+    "category": "neutral",
+    "sounds": [
+      "bittermelon:container/metal_inventory"
+    ]
+  },
+  "container.toolbox_close": {
+    "category": "neutral",
+    "sounds": [
+        "bittermelon:container/toolbox_close"
+    ]
+  },
+  "entity.scp939.ghostly_exhale": {
+    "category": "hostile",
+    "sounds": [
+      "bittermelon:entity/scp939/ghostly_exhale"
+    ]
+  },
+  "medical.scalpel": {
+    "category": "player",
+    "sounds": [
+      "bittermelon:medical/scalpel"
+    ]
+  },
+  "medical.retract": {
+    "category": "player",
+    "sounds": [
+      "bittermelon:medical/retract"
+    ]
+  },
+  "medical.cautery": {
+    "category": "player",
+    "sounds": [
+      "bittermelon:medical/cautery"
+    ]
+  },
+  "entity.fall": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:entity/fall"
+    ]
+  },
+  "container.toolbox_open": {
+    "category": "neutral",
+    "sounds": [
+      "bittermelon:container/toolbox_open"
+    ]
+  }
+}

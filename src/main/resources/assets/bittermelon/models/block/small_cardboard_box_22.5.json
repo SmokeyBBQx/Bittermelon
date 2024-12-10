@@ -1,0 +1,6 @@
+{
+  "parent": "bittermelon:block/base/small_block_22.5",
+  "textures": {
+    "texture": "bittermelon:block/small_cardboard_box"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "providers": [
+    {
+      "type": "reference",
+      "id": "minecraft:include/space"
+    },
+    {
+      "type": "bitmap",
+      "file": "bittermelon:font/controls.png",
+      "height": 11,
+      "ascent": 9,
+      "chars": [
+        "\uE000\uE001\uE002"
+      ]
+    },
+    {
+    "type": "reference",
+      "id": "minecraft:include/default",
+      "filter": {
+        "uniform": false
+      }
+    },
+    {
+      "type": "reference",
+      "id": "minecraft:include/unifont"
+    }
+  ]
+}
