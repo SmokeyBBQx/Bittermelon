@@ -14,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+import static com.site21.bittermelon.miscellaneous.RiseKeyHandler.TICKS_REQUIRED;
+
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class RiseProgressBar {
     private static final ResourceLocation PROGRESS_BAR_BACKGROUND = ResourceLocation.fromNamespaceAndPath("bittermelon", "textures/gui/sprites/hud/progress_bar_background.png");
@@ -37,7 +39,7 @@ public class RiseProgressBar {
 
         if (ticksHeld > 0) {
             RenderSystem.setShaderTexture(0, PROGRESS_BAR_PROGRESS);
-            int progressWidth = (int) ((ticksHeld / 30.0f) * 182); // TODO: Figure out what's going on with this (not synced to the actual ticks)
+            int progressWidth = (int) ((ticksHeld / (TICKS_REQUIRED - 2)) * 182);
             progressWidth = Math.min(progressWidth, 182);
 
             guiGraphics.blit(PROGRESS_BAR_PROGRESS,

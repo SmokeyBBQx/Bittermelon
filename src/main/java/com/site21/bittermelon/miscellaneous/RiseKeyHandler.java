@@ -16,7 +16,7 @@ import java.util.UUID;
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class RiseKeyHandler {
     private static int ticksHeld = 0;
-    private static final int TICKS_REQUIRED = 25;
+    public static final int TICKS_REQUIRED = 25;
     private static boolean keyPressed = false;
 
     @SubscribeEvent
