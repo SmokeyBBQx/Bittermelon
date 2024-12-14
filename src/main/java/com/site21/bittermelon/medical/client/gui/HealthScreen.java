@@ -33,12 +33,6 @@ public class HealthScreen extends Screen {
     private ItemStack heldItem;
     private final MedicalStats medicalStats;
     private CompartmentList compartmentList;
-
-    private final List<InstrumentSlot> instrumentSlots = new ArrayList<>();
-    private static final int SLOT_SIZE = 18;
-    private static final int SLOTS_PER_ROW = 4;
-    private InstrumentSlot selectedSlot = null;
-
     private boolean showOnlyInjured = false;
     private Button filterButton;
 
@@ -76,7 +70,6 @@ public class HealthScreen extends Screen {
             entry.obscure();
         }
     }
-
 
     public void refreshCompartmentList() {
         if (this.compartmentList == null) {
@@ -145,79 +138,6 @@ public class HealthScreen extends Screen {
         return false;
     }
 
-    private void initializeInstruments() {
-        instrumentSlots.clear();
-        List<ItemStack> instruments = new ArrayList<>();
-
-        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
-            ItemStack stack = player.getInventory().getItem(i);
-            if (stack.getItem() instanceof MedicalItem) {
-                instruments.add(stack);
-            }
-        }
-
-        int startX = width - 200;
-        int startY = 40;
-
-        for (int i = 0; i < instruments.size(); i++) {
-            int row = i / SLOTS_PER_ROW;
-            int col = i % SLOTS_PER_ROW;
-            int x = startX + col * SLOT_SIZE;
-            int y = startY + row * SLOT_SIZE;
-
-            instrumentSlots.add(new InstrumentSlot(
-                    instruments.get(i),
-                    x,
-                    y,
-                    i
-            ));
-        }
-
-    }
-
-    private void renderInstruments(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        guiGraphics.drawString(
-                Minecraft.getInstance().font,
-                Component.literal("Available Instruments"),
-                width - 200,
-                30,
-                0xFFFFFF
-        );
-
-        for (InstrumentSlot slot : instrumentSlots) {
-            if (slot == selectedSlot) {
-                guiGraphics.fill(
-                        slot.x,
-                        slot.y,
-                        slot.x + SLOT_SIZE,
-                        slot.y + SLOT_SIZE,
-                        0xFFFFFF00
-                );
-            } else {
-                guiGraphics.fill(
-                        slot.x,
-                        slot.y,
-                        slot.x + SLOT_SIZE,
-                        slot.y + SLOT_SIZE,
-                        0xFF404040
-                );
-            }
-
-            guiGraphics.renderItem(slot.stack, slot.x + 1, slot.y + 1);
-            guiGraphics.renderItemDecorations(Minecraft.getInstance().font, slot.stack, slot.x + 1, slot.y + 1);
-
-            if (mouseX >= slot.x && mouseX < slot.x + SLOT_SIZE &&
-                    mouseY >= slot.y && mouseY < slot.y + SLOT_SIZE) {
-                guiGraphics.renderTooltip(
-                        Minecraft.getInstance().font,
-                        slot.stack.getHoverName(),
-                        mouseX,
-                        mouseY
-                );
-            }
-        }
-    }
-
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (this.filterButton.isMouseOver(mouseX, mouseY)) {
@@ -229,29 +149,7 @@ public class HealthScreen extends Screen {
             this.onClose();
             return super.mouseClicked(mouseX, mouseY, button);
         }
-        return clickedOnCompartment;
-    }
-
-    private void handleInstrumentSelection(InstrumentSlot slot) {
-        if (selectedSlot == slot) {
-            selectedSlot = null;
-        } else {
-            selectedSlot = slot;
-        }
-    }
-
-    private static class InstrumentSlot {
-        final ItemStack stack;
-        final int x;
-        final int y;
-        final int index;
-
-        InstrumentSlot(ItemStack stack, int x, int y, int index) {
-            this.stack = stack;
-            this.x = x;
-            this.y = y;
-            this.index = index;
-        }
+        return true;
     }
 
     private static class CompartmentList extends ObjectSelectionList<CompartmentEntry> {
@@ -290,11 +188,11 @@ public class HealthScreen extends Screen {
         }
 
         @Override
-        protected void renderListBackground(GuiGraphics guiGraphics) {
+        protected void renderListBackground(@NotNull GuiGraphics guiGraphics) {
 //            RenderSystem.enableBlend();
-//            ResourceLocation resourcelocation = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/inworld_menu_list_background.png");
+//            ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/inworld_menu_list_background.png");
 //            guiGraphics.blit(
-//                    resourcelocation,
+//                    resourceLocation,
 //                    this.getX(),
 //                    this.getY(),
 //                    (float)this.getRight(),
@@ -348,9 +246,6 @@ public class HealthScreen extends Screen {
         private final int depth;
         private final HealthScreen screen;
         private boolean isExpanded;
-        private static final int REMOVE_BUTTON_WIDTH = 16;
-        private int removeButtonX;
-        private int removeButtonY;
 
         public CompartmentEntry(Compartment compartment, int depth, HealthScreen screen) {
             this.compartment = compartment;
@@ -393,8 +288,6 @@ public class HealthScreen extends Screen {
 
             return true;
         }
-
-        private int lastRenderedTop;
 
         private void toggleExpanded() {
             isExpanded = !isExpanded;
@@ -478,7 +371,6 @@ public class HealthScreen extends Screen {
                 guiGraphics.fill(left - 1, top - 1, left + width + 1, top + 22, 0x22FFFFFF);
             }
 
-            lastRenderedTop = top;
             int color = 0xFFFFFF;
             Component name;
             if (compartment.isObscured()) {
@@ -486,9 +378,6 @@ public class HealthScreen extends Screen {
             } else {
                 name = Component.literal(compartment.getName());
             }
-            int nameWidth = Minecraft.getInstance().font.width(name);
-            ResourceLocation REMOVE_ICON = ResourceLocation.fromNamespaceAndPath("minecraft", "textures/gui/sprites/widget/cross.png");
-            int ICON_SIZE = 8;
 
             if (compartment instanceof FirstAid) {
                 color = 0xFF3CC9C5;

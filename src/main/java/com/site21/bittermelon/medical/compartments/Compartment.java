@@ -119,6 +119,9 @@ public class Compartment {
     public boolean hasType(CompartmentType type) {
         return types.contains(type);
     }
+    public EnumSet<CompartmentType> getTypes() {
+        return types;
+    }
 
     public Compartment getOwner() {
         return owner;

@@ -1,4 +1,4 @@
-package com.site21.bittermelon.medical.compartments.conditions;
+package com.site21.bittermelon.medical.compartments.conditions.infections;
 
 import com.site21.bittermelon.character.Character;
 import com.site21.bittermelon.medical.compartments.Compartment;

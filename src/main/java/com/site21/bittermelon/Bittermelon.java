@@ -3,13 +3,12 @@ package com.site21.bittermelon;
 import com.site21.bittermelon.character.Character;
 import com.site21.bittermelon.character.CharacterManager;
 import com.site21.bittermelon.client.colorhandlers.FluidBlockColor;
-import com.site21.bittermelon.commands.SubstanceCommand;
 import com.site21.bittermelon.init.*;
 import com.site21.bittermelon.substance.reactions.Reactions;
 import com.site21.bittermelon.util.ServerUtil;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
-import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -115,7 +114,7 @@ public class Bittermelon
     }
 
     @SubscribeEvent
-    public void onEntityTick(EntityTickEvent.Post event) {
+    public void onEntityTick(EntityTickEvent.@NotNull Post event) {
         Character character = CharacterManager.getInstance().getActiveCharacter(event.getEntity().getUUID());
         if (character != null) {
             character.update();

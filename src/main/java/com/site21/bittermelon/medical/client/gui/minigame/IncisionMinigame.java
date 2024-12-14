@@ -9,11 +9,9 @@ import com.site21.bittermelon.medical.medicalstats.MedicalStats;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -33,7 +31,7 @@ public class IncisionMinigame extends MedicalMinigame {
     private int shakeY = 0;
     private int shakeXDraw = 0;
     private int shakeYDraw = 0;
-    private final int SHAKE_TIMER_THRESHOLD = 40;
+    private static final int SHAKE_TIMER_THRESHOLD = 40;
 
     private record Point(int x, int y) {
     }
@@ -79,7 +77,7 @@ public class IncisionMinigame extends MedicalMinigame {
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
-        drawDottedLine(guiGraphics, lineX + shakeX, startY + shakeY, endY + shakeY, 0xFFFFFFFF);
+        drawDottedLine(guiGraphics, lineX + shakeX, startY + shakeY, endY + shakeY);
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(shakeXDraw, shakeYDraw, 0);
@@ -108,11 +106,11 @@ public class IncisionMinigame extends MedicalMinigame {
         guiGraphics.renderFakeItem(item, mouseX - 8, mouseY - 8);
     }
 
-    private void drawDottedLine(GuiGraphics guiGraphics, int x, int startY, int endY, int color) {
+    private void drawDottedLine(GuiGraphics guiGraphics, int x, int startY, int endY) {
         int y = startY;
         while (y < endY) {
             int segmentEnd = Math.min(y + DOT_LENGTH, endY);
-            guiGraphics.vLine(x, y, segmentEnd, color);
+            guiGraphics.vLine(x, y, segmentEnd, -1);
             y += DOT_LENGTH + DOT_GAP;
         }
     }

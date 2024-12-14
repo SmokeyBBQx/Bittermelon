@@ -1,6 +1,7 @@
 package com.site21.bittermelon.init;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.items.GermTest;
 import com.site21.bittermelon.items.base.ItemWeight;
 import com.site21.bittermelon.items.cardboardbox.CardboardBoxItem;
 import com.site21.bittermelon.items.cardboardbox.CollapsedCardboardBoxItem;
@@ -127,5 +128,9 @@ public class BitterItems {
             1,
             1,
             ItemWeight.VERY_LIGHT
+    ));
+
+    public static final DeferredItem<GermTest> GERM_TEST = ITEMS.register("germ_test", () -> new GermTest(
+            new Item.Properties().stacksTo(3)
     ));
 }

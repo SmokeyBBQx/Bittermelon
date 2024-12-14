@@ -10,7 +10,6 @@ import com.site21.bittermelon.entities.BitterVibrationSystem;
 import com.site21.bittermelon.entities.behavior.mood.mentalbreak.MurderousRage;
 import com.site21.bittermelon.entities.behavior.mood.mentalbreak.WarnHighStress;
 import com.site21.bittermelon.entities.behavior.needs.Need;
-import com.site21.bittermelon.entities.behavior.needs.ReevaluateDecision;
 import com.site21.bittermelon.entities.behavior.social.Relationship;
 import com.site21.bittermelon.entities.behavior.social.interactions.GenericInteraction;
 import com.site21.bittermelon.entities.behavior.social.Socializable;
@@ -36,15 +35,12 @@ import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.memory.WalkTarget;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.warden.AngerLevel;
-import net.minecraft.world.entity.monster.warden.AngerManagement;
-import net.minecraft.world.entity.monster.warden.WardenAi;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
@@ -59,7 +55,6 @@ import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
 import net.tslat.smartbrainlib.api.core.behaviour.AllApplicableBehaviours;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
@@ -92,10 +87,10 @@ public class SCP939 extends PathfinderMob implements NeedsUser<SCP939>, Socializ
 
     private final Map<Character, Relationship> relationships = new HashMap<>();
 
-    private final float BLOODLUST_DECAY = -0.001f;
-    private final float SOCIALIZATION_DECAY = -0.001f;
-    private final float PROCREATION_DECAY = -0.0001f;
-    private final float STRESS_REGEN = 0.0005f;
+    private static final float BLOODLUST_DECAY = -0.001f;
+    private static final float SOCIALIZATION_DECAY = -0.001f;
+    private static final float PROCREATION_DECAY = -0.0001f;
+    private static final float STRESS_REGEN = 0.0005f;
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private final DynamicGameEventListener<Listener> dynamicGameEventListener;
@@ -452,7 +447,10 @@ public class SCP939 extends PathfinderMob implements NeedsUser<SCP939>, Socializ
                 new RegenBloodlust<>(),
                 new InvalidateAttackTarget<>(),
                 new SetWalkTargetToAttackTarget<>().speedMod((entity, target) -> 1.5f).stopIf(entity -> this.isDeadOrDying()),
-                new AnimatableMeleeAttack<>(0)
+                new OneRandomBehaviour<>(
+                        new Push<>(20),
+                        new Attack(20)
+                )
 //                new LeapAtTarget<>(20)
         );
     }

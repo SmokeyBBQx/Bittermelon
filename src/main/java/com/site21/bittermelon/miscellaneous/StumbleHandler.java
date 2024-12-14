@@ -8,8 +8,6 @@ import com.site21.bittermelon.networking.client.S2CClearForcedPose;
 import com.site21.bittermelon.networking.client.S2CSetForcedPose;
 import com.site21.bittermelon.util.ServerUtil;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
@@ -43,28 +41,45 @@ public class StumbleHandler {
     private static final ResourceLocation JUMP_STUN_ID = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "jump_stun");
     private static final Random RANDOM = new Random();
 
-    public static void stumble(@NotNull LivingEntity entity, int length) {
+    public static void stumble(@NotNull LivingEntity entity, int length, Vec3 pushDirection) {
         if (!entity.level().isClientSide) {
             instances.put(entity.getUUID(), length);
             effectDelays.put(entity.getUUID(), 5);
-            motion(entity, length);
+            motion(entity, length, pushDirection);
             addStun(entity);
             announceFall(entity);
         }
     }
 
     public static void stumble(LivingEntity entity) {
-        stumble(entity, entity instanceof Player ? 40 : 60);
+        stumble(entity, entity instanceof Player ? 40 : 60, entity.getLookAngle());
     }
 
-    private static void motion(@NotNull LivingEntity entity, int length) {
-        entity.addDeltaMovement(new Vec3(entity.getLookAngle().x * 1.2d, 0, entity.getLookAngle().z * 1.2d));
+    public static void stumble(LivingEntity entity, Vec3 pushDirection) {
+        stumble(entity, entity instanceof Player ? 40 : 60, pushDirection);
+    }
+
+    private static void motion(@NotNull LivingEntity entity, int length, Vec3 pushDirection) {
+        Vec3 normalizedPush = pushDirection.normalize();
+        Vec3 lookVector = entity.getLookAngle();
+
+        double dotProduct = normalizedPush.dot(lookVector);
+        entity.addDeltaMovement(pushDirection.scale(1.2d));
         entity.hurtMarked = true;
 
+        // TODO: Speed based distance
+
         if (entity instanceof ServerPlayer player) {
-            player.setForcedPose(Pose.SWIMMING);
-            PacketDistributor.sendToAllPlayers(new S2CSetForcedPose(player.getUUID(), Pose.SWIMMING));
-            dropItem(player);
+            Pose fallPose = dotProduct > 0 ? Pose.SWIMMING : Pose.SLEEPING;
+
+            player.setForcedPose(fallPose);
+            PacketDistributor.sendToAllPlayers(new S2CSetForcedPose(player.getUUID(), fallPose));
+
+            if (fallPose == Pose.SLEEPING) {
+                dropItem(player, 0.7);
+            } else {
+                dropItem(player, 0.3);
+            }
         } else {
             entity.addEffect(new MobEffectInstance(MOVEMENT_SLOWDOWN, length, 255, false, false));
             entity.setPose(Pose.SLEEPING);
@@ -86,8 +101,8 @@ public class StumbleHandler {
         }
     }
 
-    private static void dropItem(Player player) {
-        if (RANDOM.nextDouble() < 0.5) {
+    private static void dropItem(Player player, double chance) {
+        if (RANDOM.nextDouble() < chance) {
             ItemStack heldItem = player.getMainHandItem();
             if (!heldItem.isEmpty()) {
                 player.drop(heldItem.copy(), true);
@@ -99,8 +114,8 @@ public class StumbleHandler {
     private static void announceFall(@NotNull LivingEntity entity) {
         Character character = CharacterManager.getInstance().getActiveCharacter(entity.getUUID());
         if (character != null) {
-            Component component = Component.literal(character.getName() + " falls to the ground.")
-                    .setStyle(Style.EMPTY.withColor(TextColor.parseColor(character.getEmoteColor()).getOrThrow()));
+            Component component = Component.literal(character.getName() + " falls to the ground.");
+//                    .setStyle(Style.EMPTY.withColor(TextColor.parseColor(character.getEmoteColor()).getOrThrow()));
             sendLocalMessage(entity, 10, component);
         }
     }

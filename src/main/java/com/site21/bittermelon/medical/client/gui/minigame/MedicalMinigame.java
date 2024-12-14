@@ -1,7 +1,6 @@
 package com.site21.bittermelon.medical.client.gui.minigame;
 
 import com.site21.bittermelon.character.Character;
-import com.site21.bittermelon.init.BitterSounds;
 import com.site21.bittermelon.items.medical.MedicalItem;
 import com.site21.bittermelon.medical.compartments.Compartment;
 import com.site21.bittermelon.medical.medicalstats.MedicalStats;
@@ -10,7 +9,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 

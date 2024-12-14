@@ -1,15 +1,12 @@
 package com.site21.bittermelon.miscellaneous;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.networking.client.S2CSetForcedPose;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.UUID;
 
@@ -40,7 +37,6 @@ public class RiseKeyHandler {
             }
         } else {
             ticksHeld = 0;
-            PacketDistributor.sendToAllPlayers(new S2CSetForcedPose(uuid, Pose.SWIMMING));
             keyPressed = false;
         }
     }

@@ -7,7 +7,7 @@ import com.site21.bittermelon.medical.compartments.Condition;
 import com.site21.bittermelon.medical.compartments.Injury;
 import com.site21.bittermelon.medical.compartments.FunctionType;
 import com.site21.bittermelon.medical.compartments.conditions.ForeignSubstance;
-import com.site21.bittermelon.medical.compartments.conditions.Infection;
+import com.site21.bittermelon.medical.compartments.conditions.infections.Infection;
 import com.site21.bittermelon.medical.organs.HeartRhythm;
 import com.site21.bittermelon.util.ServerUtil;
 import net.minecraft.world.entity.LivingEntity;
@@ -28,7 +28,7 @@ public class MedicalStats {
     private final EnumMap<FunctionType, Float> stats = new EnumMap<>(FunctionType.class);
     private final Map<UUID, Float> immunity = new HashMap<>();
     private final Character character;
-    private transient LivingEntity entity;
+    private final transient LivingEntity entity;
 
     public MedicalStats(BloodType bloodType, List<Compartment> compartments, Character character) {
         this.bloodType = bloodType;
@@ -109,8 +109,7 @@ public class MedicalStats {
             for (FunctionType stat : FunctionType.values()) {
                 float attribute = compartment.getAttribute(stat);
                 if (attribute > 0) {
-                    float currentValue = statsCopy.get(stat);
-                    statsCopy.put(stat, currentValue + attribute);
+                    statsCopy.compute(stat, (k, currentValue) -> currentValue + attribute);
                 }
             }
         }
@@ -137,8 +136,7 @@ public class MedicalStats {
             // TODO: Add inflammation
             float memory = immunity.get(infection.getOrganism());
             infection.modifyHealth(-immunityRate * memory / 10);
-            float currentImmunity = immunity.get(infection.getOrganism());
-            immunity.put(infection.getOrganism(), currentImmunity + immunityRate / 10);
+            immunity.compute(infection.getOrganism(), (k, currentImmunity) -> currentImmunity + immunityRate / 10);
         }
     }
 
