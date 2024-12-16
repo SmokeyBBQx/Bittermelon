@@ -112,7 +112,7 @@ public class SCP939 extends PathfinderMob implements NeedsUser<SCP939>, Socializ
         this.setPathfindingMalus(PathType.DAMAGE_FIRE, 0.0F);
         this.setPathfindingMalus(PathType.DANGER_FIRE, 0.0F);
 
-        Character character = new Character(this.uuid, "SCP-939");
+        Character character = new Character(this.uuid, "SCP-939 " + getRandom().nextInt(1, 10));
         CharacterManager.getInstance().addCharacter(character);
         CharacterManager.getInstance().setActiveCharacter(this.uuid, character);
     }
@@ -290,6 +290,7 @@ public class SCP939 extends PathfinderMob implements NeedsUser<SCP939>, Socializ
                 && livingentity.getType() != EntityType.WARDEN
                 && !livingentity.isInvulnerable()
                 && !livingentity.isDeadOrDying()
+                && livingentity != this
                 && this.level().getWorldBorder().isWithinBounds(livingentity.getBoundingBox());
     }
 
@@ -448,9 +449,10 @@ public class SCP939 extends PathfinderMob implements NeedsUser<SCP939>, Socializ
                 new InvalidateAttackTarget<>(),
                 new SetWalkTargetToAttackTarget<>().speedMod((entity, target) -> 1.5f).stopIf(entity -> this.isDeadOrDying()),
                 new OneRandomBehaviour<>(
-                        new Push<>(20),
-                        new Attack(20)
-                )
+                        new Push<>(10).cooldownFor(scp939 -> 120),
+                        new Attack(10),
+                        new Pull<>(10).cooldownFor(scp939 -> 120)
+                ).cooldownFor(scp939 -> 40)
 //                new LeapAtTarget<>(20)
         );
     }
@@ -544,7 +546,7 @@ public class SCP939 extends PathfinderMob implements NeedsUser<SCP939>, Socializ
 
     @Override
     public boolean dampensVibrations() {
-        return true;
+        return false;
     }
 
     @Override

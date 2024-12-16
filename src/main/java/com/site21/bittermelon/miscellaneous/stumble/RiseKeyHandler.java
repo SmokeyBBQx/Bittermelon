@@ -1,4 +1,4 @@
-package com.site21.bittermelon.miscellaneous;
+package com.site21.bittermelon.miscellaneous.stumble;
 
 import com.site21.bittermelon.Bittermelon;
 import net.minecraft.client.Minecraft;

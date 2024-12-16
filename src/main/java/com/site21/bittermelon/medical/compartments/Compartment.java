@@ -9,7 +9,7 @@ import java.util.*;
 
 public class Compartment {
     protected final EnumSet<CompartmentType> types;
-    protected final String name;
+    protected String name;
     protected transient final List<Compartment> children;
     protected final EnumMap<FunctionType, Float> attributes;
 
@@ -129,6 +129,9 @@ public class Compartment {
 
     public String getName() {
         return name;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
 
     public List<Compartment> getChildren() {

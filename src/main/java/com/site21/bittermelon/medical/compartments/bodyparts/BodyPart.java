@@ -36,6 +36,10 @@ public class BodyPart extends Compartment {
         connective.add(compartment);
     }
 
+    public boolean isConnected(Compartment compartment) {
+        return connective.contains(compartment);
+    }
+
     @Override
     public boolean canExtract() {
         return connective.stream()

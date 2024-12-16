@@ -1,4 +1,4 @@
-package com.site21.bittermelon.miscellaneous;
+package com.site21.bittermelon.miscellaneous.stumble;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.character.Character;
@@ -39,6 +39,7 @@ public class StumbleHandler {
     private static final Map<UUID, Integer> instances = new HashMap<>();
     private static final Map<UUID, Integer> effectDelays = new HashMap<>();
     private static final ResourceLocation JUMP_STUN_ID = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "jump_stun");
+    private static final ResourceLocation MOVEMENT_STUN_ID = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "movement_stun");
     private static final Random RANDOM = new Random();
 
     public static void stumble(@NotNull LivingEntity entity, int length, Vec3 pushDirection) {
@@ -82,7 +83,7 @@ public class StumbleHandler {
             }
         } else {
             entity.addEffect(new MobEffectInstance(MOVEMENT_SLOWDOWN, length, 255, false, false));
-            entity.setPose(Pose.SLEEPING);
+//            entity.setPose(Pose.SLEEPING);
         }
     }
 
@@ -97,6 +98,21 @@ public class StumbleHandler {
         if (jumpStrength != null) {
             if (!jumpStrength.hasModifier(JUMP_STUN_ID)) {
                 jumpStrength.addTransientModifier(modifier);
+            }
+        }
+
+        if (entity.getPose() == Pose.SLEEPING) {
+            AttributeModifier speedModifier = new AttributeModifier(
+                    MOVEMENT_STUN_ID,
+                    -100,
+                    AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+            );
+
+            AttributeInstance movementSpeed = entity.getAttribute(Attributes.MOVEMENT_SPEED);
+            if (movementSpeed != null) {
+                if (!movementSpeed.hasModifier(MOVEMENT_STUN_ID)) {
+                    movementSpeed.addTransientModifier(speedModifier);
+                }
             }
         }
     }
@@ -153,6 +169,7 @@ public class StumbleHandler {
         instances.remove(entity.getUUID());
         if (entity instanceof LivingEntity livingEntity) {
             Objects.requireNonNull(livingEntity.getAttribute(Attributes.JUMP_STRENGTH)).removeModifier(JUMP_STUN_ID);
+            Objects.requireNonNull(livingEntity.getAttribute(Attributes.MOVEMENT_SPEED)).removeModifier(MOVEMENT_STUN_ID);
         }
     }
 

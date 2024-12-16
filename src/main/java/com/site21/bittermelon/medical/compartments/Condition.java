@@ -3,6 +3,7 @@ package com.site21.bittermelon.medical.compartments;
 import com.site21.bittermelon.character.Character;
 import com.site21.bittermelon.medical.medicalstats.MedicalStats;
 import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -18,7 +19,7 @@ public abstract class Condition extends Compartment {
     }
 
     @Override
-    public void onDeath(MedicalStats mammalMedicalStats) {
+    public void onDeath(@NotNull MedicalStats mammalMedicalStats) {
        mammalMedicalStats.removeCompartment(this);
     }
 
@@ -35,4 +36,7 @@ public abstract class Condition extends Compartment {
 
     public void effects() {
     }
+
+    public Character getCharacter() { return character; }
+    public LivingEntity getEntity() { return entity; }
 }

@@ -57,9 +57,9 @@ public class Pain extends Condition implements HasReminder {
             entity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 40 + (int) getHealth(), (int) getHealth(), false, true));
         }
 
-        if (entity instanceof ServerPlayer player) {
-            player.sendSystemMessage(Component.literal(getReminder()).withStyle(ChatFormatting.RED));
-        }
+//        if (entity instanceof ServerPlayer player) {
+//            player.sendSystemMessage(Component.literal(getReminder()).withStyle(ChatFormatting.RED));
+//        }
     }
 
     @Override

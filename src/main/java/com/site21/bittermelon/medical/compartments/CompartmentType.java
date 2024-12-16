@@ -6,6 +6,7 @@ public enum CompartmentType {
     SCAR,
     CUT,
     BRUISE,
+    LACERATION,
     DISLOCATION,
     SAW_CUT,
     NECROTIC,
@@ -19,6 +20,10 @@ public enum CompartmentType {
     VENOUS_BLEED,
     CAPILLARY_BLEED,
     SCAB,
+    BITE,
+    FRACTURE,
+    SCRATCH,
+    TRAUMATIC_AMPUTATION,
 
     // FIRST-AID
     BANDAGE,
@@ -35,5 +40,6 @@ public enum CompartmentType {
     CAPILLARY,
     HARD_TISSUE,
     SOFT_TISSUE,
-    MAJOR_BODY_PART
+    MAJOR_BODY_PART,
+    JOINT
 }

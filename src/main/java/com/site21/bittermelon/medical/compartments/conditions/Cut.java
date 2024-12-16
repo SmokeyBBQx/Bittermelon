@@ -6,6 +6,7 @@ import com.site21.bittermelon.medical.compartments.CompartmentType;
 import com.site21.bittermelon.medical.compartments.Injury;
 import com.site21.bittermelon.medical.medicalstats.MedicalStats;
 import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 
@@ -21,7 +22,7 @@ public class Cut extends Injury {
     }
 
     @Override
-    public void onDeath(MedicalStats medicalStats) {
+    public void onDeath(@NotNull MedicalStats medicalStats) {
         Compartment scar = new Scar(name + "scar", owner, maxHealth, character, entity);
         scar.reveal();
         medicalStats.addCompartment(scar);

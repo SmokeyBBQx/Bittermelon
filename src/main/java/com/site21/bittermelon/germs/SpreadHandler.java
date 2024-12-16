@@ -13,6 +13,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,16 +39,18 @@ public class SpreadHandler {
         ItemStack mainHandItem = player.getItemInHand(InteractionHand.MAIN_HAND);
         ItemStack offhandItem = player.getItemInHand(InteractionHand.OFF_HAND);
 
-        if (!mainHandItem.isEmpty() || !offhandItem.isEmpty()) {
+        List<UUID> playerGerms = new ArrayList<>(player.getData(GERMS.get()));
+
+        if (!mainHandItem.isEmpty()) {
             List<UUID> mainHandGerms = mainHandItem.get(BitterDataComponents.GERMS.get());
-            List<UUID> offHandGerms = offhandItem.get(BitterDataComponents.GERMS.get());
-            List<UUID> playerGerms = new ArrayList<>(player.getData(GERMS.get()));
-            assert mainHandGerms != null;
-            if (!playerGerms.containsAll(mainHandGerms)) {
+            if (mainHandGerms != null && !new HashSet<>(playerGerms).containsAll(mainHandGerms)) {
                 transferGerms(mainHandGerms, playerGerms, mainHandItem, player);
             }
-            assert offHandGerms != null;
-            if (!playerGerms.containsAll(offHandGerms)) {
+        }
+
+        if (!offhandItem.isEmpty()) {
+            List<UUID> offHandGerms = offhandItem.get(BitterDataComponents.GERMS.get());
+            if (offHandGerms != null && !new HashSet<>(playerGerms).containsAll(offHandGerms)) {
                 transferGerms(offHandGerms, playerGerms, offhandItem, player);
             }
         }

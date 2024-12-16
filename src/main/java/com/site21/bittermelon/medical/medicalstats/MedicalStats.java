@@ -6,17 +6,20 @@ import com.site21.bittermelon.medical.compartments.Compartment;
 import com.site21.bittermelon.medical.compartments.Condition;
 import com.site21.bittermelon.medical.compartments.Injury;
 import com.site21.bittermelon.medical.compartments.FunctionType;
+import com.site21.bittermelon.medical.compartments.bodyparts.BodyPart;
 import com.site21.bittermelon.medical.compartments.conditions.ForeignSubstance;
 import com.site21.bittermelon.medical.compartments.conditions.infections.Infection;
-import com.site21.bittermelon.medical.organs.HeartRhythm;
+import com.site21.bittermelon.medical.compartments.organs.HeartRhythm;
 import com.site21.bittermelon.util.ServerUtil;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class MedicalStats {
-    private final List<Compartment> compartments;
+    private final CopyOnWriteArrayList<Compartment> compartments;
     private final BloodType bloodType;
     private float oxygenSaturation;
     private float bloodVolume;
@@ -32,7 +35,7 @@ public class MedicalStats {
 
     public MedicalStats(BloodType bloodType, List<Compartment> compartments, Character character) {
         this.bloodType = bloodType;
-        this.compartments = compartments;
+        this.compartments = new CopyOnWriteArrayList<>(compartments);
         this.character = character;
 
         this.entity = ServerUtil.getLivingEntity(character.getEntityUUID());
@@ -45,6 +48,9 @@ public class MedicalStats {
     public void update() {
         List<Compartment> compartmentsCopy = new ArrayList<>(compartments);
         for (Compartment compartment : compartmentsCopy) {
+            if (compartment == null) {
+                continue;
+            }
             if (!compartments.contains(compartment)) {
                 continue;
             }
@@ -65,20 +71,22 @@ public class MedicalStats {
         updateStats();
     }
 
-    public void removeCompartment(Compartment compartment) {
-//        if (compartment instanceof BodyPart) {
-//            compartment.kill();
-//            // TODO: Proper removal implementation
-//        } else {
+    public void removeCompartment(@NotNull Compartment compartment) {
         compartment.getOwner().getChildren().remove(compartment);
         compartments.remove(compartment);
+
         List<Compartment> children = compartment.getChildren();
         for (Compartment child : children) {
-            compartments.remove(child);
+            if (child instanceof BodyPart bodyPart)
+                if (bodyPart.isConnected(compartment)) {
+                    compartments.remove(child);
+                }
         }
+
+        // TODO: Semi-owner? How should children be handled for removing? For instance, skin being removed vs an organ being removed
     }
 
-    public void extractCompartment(Compartment compartment) {
+    public void extractCompartment(@NotNull Compartment compartment) {
         compartment.onExtract(this);
         removeCompartment(compartment);
     }

@@ -1,4 +1,4 @@
-package com.site21.bittermelon.miscellaneous;
+package com.site21.bittermelon.miscellaneous.stumble;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-import static com.site21.bittermelon.miscellaneous.RiseKeyHandler.TICKS_REQUIRED;
+import static com.site21.bittermelon.miscellaneous.stumble.RiseKeyHandler.TICKS_REQUIRED;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class RiseProgressBar {

@@ -5,7 +5,6 @@ import com.site21.bittermelon.substance.SubstanceStack;
 import com.site21.bittermelon.substance.reactions.ReactionContainer;
 import com.site21.bittermelon.substance.reactions.ReactionHandler;
 import com.site21.bittermelon.util.ColorUtil;
-import net.minecraft.client.renderer.texture.Tickable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
