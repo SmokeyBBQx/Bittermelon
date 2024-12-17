@@ -4,6 +4,7 @@ import com.site21.bittermelon.character.Character;
 import com.site21.bittermelon.medical.compartments.Compartment;
 import com.site21.bittermelon.medical.compartments.CompartmentType;
 import com.site21.bittermelon.medical.compartments.Injury;
+import com.site21.bittermelon.medical.compartments.conditions.Bleed;
 import com.site21.bittermelon.medical.damage.DamageGenerator;
 import com.site21.bittermelon.medical.damage.InjuryResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -31,6 +32,7 @@ public class Bite extends DamageGenerator {
                     bite.reveal();
                     String message = "tearing the " + target.getName().toLowerCase();
                     target.reveal();
+                    Bleed.generateBleed(bite, character, entity, bite.getMaxHealth());
                     return new InjuryResult(bite, message);
                 }
                 case CompartmentType.HARD_TISSUE -> {

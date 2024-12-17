@@ -7,6 +7,8 @@ import com.site21.bittermelon.medical.compartments.CompartmentType;
 import com.site21.bittermelon.medical.compartments.FunctionType;
 import com.site21.bittermelon.medical.compartments.bodyparts.*;
 import com.site21.bittermelon.medical.medicalstats.MedicalStats;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -14,7 +16,8 @@ import static com.site21.bittermelon.init.BitterItems.*;
 
 public class HumanFactory {
 
-    public static MedicalStats build(BloodType bloodType, Character character) {
+    @Contract("_, _ -> new")
+    public static @NotNull MedicalStats build(BloodType bloodType, Character character) {
         List<Compartment> compartments = new ArrayList<>();
 
         BodyPart wholeBody = createMajorBodyPart("Whole Body", null);
@@ -30,7 +33,7 @@ public class HumanFactory {
         return new MedicalStats(bloodType, compartments, character);
     }
 
-    private static void buildHead(BodyPart wholeBody, List<Compartment> compartments) {
+    private static void buildHead(BodyPart wholeBody, @NotNull List<Compartment> compartments) {
         BodyPart head = createMajorBodyPart("Head", wholeBody);
         compartments.add(head);
 
@@ -51,6 +54,7 @@ public class HumanFactory {
         BodyPart occipitalLobe = createBodyPart("Occipital Lobe", meninges, 3, EnumSet.of(CompartmentType.SOFT_TISSUE));
         BodyPart cerebellum = createBodyPart("Cerebellum", meninges, 4, EnumSet.of(CompartmentType.SOFT_TISSUE));
         BodyPart brainstem = createBodyPart("Brainstem", meninges, 2, EnumSet.of(CompartmentType.SOFT_TISSUE));
+        brainstem.setAttribute(FunctionType.BRAIN_VITALS, 1f);
 
         // Face components
         BodyPart leftEye = createRevealedBodyPart("Left Eye", head, 2, EnumSet.of(CompartmentType.SOFT_TISSUE));
@@ -66,7 +70,7 @@ public class HumanFactory {
                 frontalLobe, parietalLobe, temporalLobe, occipitalLobe, cerebellum, brainstem, leftEye, rightEye, leftEar, rightEar, nose, mouth, tongue, teeth));
     }
 
-    private static void buildChest(BodyPart wholeBody, List<Compartment> compartments) {
+    private static void buildChest(BodyPart wholeBody, @NotNull List<Compartment> compartments) {
         BodyPart chest = createMajorBodyPart("Chest", wholeBody);
         compartments.add(chest);
 
@@ -86,7 +90,9 @@ public class HumanFactory {
         BodyPart heart = createBodyPart("Heart", pleuralMembrane, 30, EnumSet.of(CompartmentType.SOFT_TISSUE));
         BodyPart pericardium = createBodyPart("Pericardium", heart, 2, EnumSet.of(CompartmentType.SOFT_TISSUE));
         BodyPart leftLung = createBodyPart("Left Lung", pleuralMembrane, 40, EnumSet.of(CompartmentType.SOFT_TISSUE));
+        leftLung.setAttribute(FunctionType.RESPIRATORY, 0.05f);
         BodyPart rightLung = createBodyPart("Right Lung", pleuralMembrane, 40, EnumSet.of(CompartmentType.SOFT_TISSUE));
+        rightLung.setAttribute(FunctionType.RESPIRATORY, 0.06f);
 
         // Other organs
         BodyPart thymus = createBodyPart("Thymus", pleuralMembrane, 5, EnumSet.of(CompartmentType.SOFT_TISSUE));
@@ -97,7 +103,7 @@ public class HumanFactory {
                 pleuralMembrane, heart, pericardium, leftLung, rightLung, thymus, esophagus, trachea));
     }
 
-    private static void buildAbdomen(BodyPart wholeBody, List<Compartment> compartments) {
+    private static void buildAbdomen(BodyPart wholeBody, @NotNull List<Compartment> compartments) {
         BodyPart abdomen = createMajorBodyPart("Abdomen", wholeBody);
         compartments.add(abdomen);
 

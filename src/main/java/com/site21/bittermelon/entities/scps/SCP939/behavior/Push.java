@@ -34,18 +34,16 @@ public class Push<E extends Mob> extends AnimatableMeleeAttack<E> {
         if (!entity.getSensing().hasLineOfSight(this.target) || !entity.isWithinMeleeAttackRange(this.target))
             return;
 
-        StumbleHandler.stumble(target, entity.getLookAngle());
-
-        if (target != null) {
-            CharacterManager characterManager = CharacterManager.getInstance();
-            Character entityCharacter = characterManager.getActiveCharacter(entity.getUUID());
-            Character targetCharacter = characterManager.getActiveCharacter(target.getUUID());
-            if (entityCharacter != null && targetCharacter != null) {
-                LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(
-                        entityCharacter.getName() + " pushes " + targetCharacter.getName() + "."));
+        CharacterManager characterManager = CharacterManager.getInstance();
+        Character entityCharacter = characterManager.getActiveCharacter(entity.getUUID());
+        Character targetCharacter = characterManager.getActiveCharacter(target.getUUID());
+        if (entityCharacter != null && targetCharacter != null) {
+            LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(
+                    entityCharacter.getName() + " pushes " + targetCharacter.getName() + "."));
 //                        .setStyle(Style.EMPTY.withColor(TextColor.parseColor(
 //                                "#" + entityCharacter.getEmoteColor()).getOrThrow())));
-            }
         }
+
+        StumbleHandler.stumble(target, entity.getLookAngle());
     }
 }

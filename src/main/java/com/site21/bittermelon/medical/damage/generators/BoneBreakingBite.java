@@ -4,6 +4,7 @@ import com.site21.bittermelon.character.Character;
 import com.site21.bittermelon.medical.compartments.Compartment;
 import com.site21.bittermelon.medical.compartments.CompartmentType;
 import com.site21.bittermelon.medical.compartments.Injury;
+import com.site21.bittermelon.medical.compartments.conditions.Bleed;
 import com.site21.bittermelon.medical.damage.InjuryResult;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +25,7 @@ public class BoneBreakingBite extends Bite {
                     target.reveal();
                     bite.reveal();
                     String message = "tearing the " + target.getName().toLowerCase();
+                    Bleed.generateBleed(bite, character, entity, bite.getMaxHealth());
                     return new InjuryResult(bite, message);
                 }
                 case CompartmentType.JOINT -> {

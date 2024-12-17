@@ -1,28 +1,38 @@
 package com.site21.bittermelon.medical.medicalstats;
 
+import com.site21.bittermelon.blocks.FluidBlock;
+import com.site21.bittermelon.blocks.blockentities.FluidBlockEntity;
 import com.site21.bittermelon.character.Character;
 import com.site21.bittermelon.medical.blood.BloodType;
-import com.site21.bittermelon.medical.compartments.Compartment;
-import com.site21.bittermelon.medical.compartments.Condition;
-import com.site21.bittermelon.medical.compartments.Injury;
-import com.site21.bittermelon.medical.compartments.FunctionType;
+import com.site21.bittermelon.medical.compartments.*;
 import com.site21.bittermelon.medical.compartments.bodyparts.BodyPart;
 import com.site21.bittermelon.medical.compartments.conditions.ForeignSubstance;
 import com.site21.bittermelon.medical.compartments.conditions.infections.Infection;
 import com.site21.bittermelon.medical.compartments.organs.HeartRhythm;
+import com.site21.bittermelon.miscellaneous.stumble.StumbleHandler;
+import com.site21.bittermelon.substance.SubstanceStack;
+import com.site21.bittermelon.util.LocalMessageHelper;
 import com.site21.bittermelon.util.ServerUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static com.site21.bittermelon.init.BitterBlocks.FLUID;
+import static com.site21.bittermelon.init.Substances.LIQUID_BLOOD;
+
 public class MedicalStats {
     private final CopyOnWriteArrayList<Compartment> compartments;
     private final BloodType bloodType;
-    private float oxygenSaturation;
-    private float bloodVolume;
+    private float consciousness = 1;
+    private float oxygenSaturation = 100;
+    private float bloodVolume = 100;
     private float BPM;
     private float bloodPressureSystolic;
     private float bloodPressureDiastolic;
@@ -32,8 +42,11 @@ public class MedicalStats {
     private final Map<UUID, Float> immunity = new HashMap<>();
     private final Character character;
     private final transient LivingEntity entity;
+    private int puddleTimer = 0;
+    private static final int PUDDLE_INTERVAL = 40;
 
-    public MedicalStats(BloodType bloodType, List<Compartment> compartments, Character character) {
+
+    public MedicalStats(BloodType bloodType, List<Compartment> compartments, @NotNull Character character) {
         this.bloodType = bloodType;
         this.compartments = new CopyOnWriteArrayList<>(compartments);
         this.character = character;
@@ -55,9 +68,6 @@ public class MedicalStats {
                 continue;
             }
             compartment.update(this);
-            if (stats.get(FunctionType.BRAIN_VITALS) > 0) {
-                respiration(compartment);
-            }
             if (compartment instanceof Condition) {
                 immuneSystem(compartment);
                 elimination(compartment);
@@ -67,7 +77,16 @@ public class MedicalStats {
         if (entity != null) {
             movement();
             manipulation();
+            brain();
+//
+//            puddleTimer++;
+//
+//            if (puddleTimer >= PUDDLE_INTERVAL) {
+//                bloodPuddle();
+//                puddleTimer = 0;
+//            }
         }
+        updateCardiopulmonary();
         updateStats();
     }
 
@@ -75,15 +94,17 @@ public class MedicalStats {
         compartment.getOwner().getChildren().remove(compartment);
         compartments.remove(compartment);
 
-        List<Compartment> children = compartment.getChildren();
-        for (Compartment child : children) {
-            if (child instanceof BodyPart bodyPart)
-                if (bodyPart.isConnected(compartment)) {
-                    compartments.remove(child);
-                }
+        List<Compartment> childrenToRemove = new ArrayList<>(compartment.getChildren());
+        for (Compartment child : childrenToRemove) {
+            if (compartment.hasType(CompartmentType.MAJOR_BODY_PART)) {
+                removeCompartment(child);
+            } else if (child instanceof Condition) {
+                removeCompartment(child);
+            }
         }
 
-        // TODO: Semi-owner? How should children be handled for removing? For instance, skin being removed vs an organ being removed
+
+        // TODO: Severed vessels and such for connecting compartments
     }
 
     public void extractCompartment(@NotNull Compartment compartment) {
@@ -126,14 +147,30 @@ public class MedicalStats {
     }
 
     private void updateCardiopulmonary() {
-        modifyBloodVolume(0.01f);
-        modifyOxygenSaturation(-0.01f);
+        modifyBloodVolume(0.01f - stats.get(FunctionType.BLEED) / 100);
+        modifyOxygenSaturation(stats.get(FunctionType.RESPIRATORY) * stats.get(FunctionType.BRAIN_VITALS) - 0.01f);
+
+        System.out.println(bloodVolume);
+
+        if (bloodVolume < 60 || oxygenSaturation < 80) {
+            for (Compartment compartment : compartments) {
+                if (compartment instanceof BodyPart) {
+                    compartment.modifyHealth(-0.001f);
+                }
+            }
+        }
 
         // TODO: Random heart state depending on heart health
     }
 
-    private void respiration(Compartment compartment) {
-        modifyOxygenSaturation(compartment.getAttribute(FunctionType.RESPIRATORY));
+    private void brain() {
+        consciousness = stats.get(FunctionType.BRAIN_VITALS);
+
+        System.out.println(consciousness);
+
+        if (consciousness < 0.1f) {
+//            LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal("Entity passes out"));
+        }
     }
 
     private void immuneSystem(Compartment compartment) {
@@ -200,6 +237,23 @@ public class MedicalStats {
             Objects.requireNonNull(entity.getAttribute(Attributes.BLOCK_BREAK_SPEED)).setBaseValue(movementCapability);
             Objects.requireNonNull(entity.getAttribute(Attributes.BLOCK_INTERACTION_RANGE)).setBaseValue(movementCapability);
             Objects.requireNonNull(entity.getAttribute(Attributes.ENTITY_INTERACTION_RANGE)).setBaseValue(movementCapability);
+        }
+    }
+
+    private void bloodPuddle() {
+        BlockPos pos = entity.getOnPos().above();
+        Level level = entity.level();
+        BlockState existingState = level.getBlockState(pos);
+
+        if (existingState.getBlock() instanceof FluidBlock) {
+            if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluid) {
+                fluid.updateSubstance(new SubstanceStack(LIQUID_BLOOD.get(), stats.get(FunctionType.BLEED) / 2));
+            }
+        } else if (existingState.canBeReplaced()) {
+            level.setBlock(pos, FLUID.get().defaultBlockState(), 3);
+            if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluid) {
+                fluid.updateSubstance(new SubstanceStack(LIQUID_BLOOD.get(), stats.get(FunctionType.BLEED) / 2));
+            }
         }
     }
 

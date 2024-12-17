@@ -42,7 +42,7 @@ public abstract class DamageGenerator {
             medicalStats.addCompartment(injury);
             injuryResults.add(injuryResult);
 
-            int depth = random.nextInt(minDepth, maxDepth);
+            int depth = minDepth + (int) (Math.pow(random.nextFloat(), 2) * (maxDepth - minDepth));
             for (int j = 0; j < depth; j++) {
                 injuryResult = inflictInjury(filterCompartments(injury.getOwner().getChildren()), injury.getMaxHealth() / 2, medicalStats, character, entity);
                 if (injuryResult == null) break;

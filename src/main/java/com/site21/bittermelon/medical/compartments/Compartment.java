@@ -4,6 +4,7 @@ import com.site21.bittermelon.medical.medicalstats.MedicalStats;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -150,7 +151,7 @@ public class Compartment {
         this.item = item;
     }
 
-    public void defaultItem(Item item) {
+    public void defaultItem(@NotNull Item item) {
         this.item = item.getDefaultInstance();
     }
 

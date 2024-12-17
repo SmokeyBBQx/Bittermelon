@@ -17,7 +17,7 @@ import net.tslat.smartbrainlib.util.BrainUtils;
 import java.util.*;
 
 public class Attack extends AnimatableMeleeAttack<SCP939> {
-    Set<AttackTemplate> attackSequences = new HashSet<>();
+    Set<AttackTemplate> attackTemplates = new HashSet<>();
 
     public Attack(int delayTicks) {
         super(delayTicks);
@@ -39,7 +39,7 @@ public class Attack extends AnimatableMeleeAttack<SCP939> {
         if (entityCharacter == null || targetCharacter == null)
             return;
 
-        attackSequences.add(AttackTemplate.of(
+        attackTemplates.add(AttackTemplate.of(
                 EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE),
                 () -> new Bite(EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE)),
                 "%s sinks its fangs deep into %s's %s",
@@ -64,7 +64,7 @@ public class Attack extends AnimatableMeleeAttack<SCP939> {
                 "%s attempts to sink its teeth into %s's %s"
         ));
 
-        attackSequences.add(AttackTemplate.of(
+        attackTemplates.add(AttackTemplate.of(
                 EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE),
                 () -> new Lacerations(EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE)),
                 "%s rakes its claws across %s's %s",
@@ -88,7 +88,7 @@ public class Attack extends AnimatableMeleeAttack<SCP939> {
                 "%s unleashes a frenzied series of slashes at %s's %s"
         ));
 
-        attackSequences.add(AttackTemplate.of(
+        attackTemplates.add(AttackTemplate.of(
                 EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE),
                 () -> new BluntForceTrauma(EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE)),
                 "%s smashes into %s's %s with devastating force",
@@ -127,17 +127,31 @@ public class Attack extends AnimatableMeleeAttack<SCP939> {
                 "%s stomps ruthlessly on %s's %s"
         ));
 
-        Object[] array = attackSequences.toArray();
+        // TODO: Weaker attacks
+
+        Object[] array = attackTemplates.toArray();
         AttackTemplate selectedAttack = (AttackTemplate) array[new Random().nextInt(array.length)];
         DamageGenerator damageSequence = selectedAttack.damageSequenceSupplier().get();
-        DamageResult damageResult = damageSequence.generateDamage(targetCharacter.getMedicalStats(), 2, 1, 3, 10, targetCharacter, target);
+        DamageResult damageResult = damageSequence.generateDamage(targetCharacter.getMedicalStats(), 2, 1, 6, 10, targetCharacter, target);
         if (damageResult != null && !damageResult.injuryResults().isEmpty()) {
-            String injuryDescription = damageResult.injuryResults().getFirst().message();
-            for (int i = 0; i < damageResult.injuryResults().size(); i++) {
-                if (!Objects.equals(injuryDescription, damageResult.injuryResults().get(i).message())) {
-                    injuryDescription = injuryDescription + " and " + damageResult.injuryResults().get(i).message();
-                    break;
+            String injuryDescription;
+            List<InjuryResult> injuryResults = damageResult.injuryResults();
+
+            if (injuryResults.size() > 2) {
+                InjuryResult lastResult = injuryResults.getLast();
+                String targetName = lastResult.injury().getOwner().getName().toLowerCase();
+                String action = lastResult.message().split(" ")[0];
+                injuryDescription = String.format("the injury reaching through and %s the %s", action, targetName);
+            } else if (injuryResults.size() > 1) {
+                injuryDescription = injuryResults.getFirst().message();
+                for (InjuryResult injuryResult : injuryResults) {
+                    if (!Objects.equals(injuryDescription, injuryResult.message())) {
+                        injuryDescription = injuryDescription + " and " + injuryResult.message();
+                        break;
+                    }
                 }
+            } else {
+                injuryDescription = injuryResults.getFirst().message();
             }
 
             LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(

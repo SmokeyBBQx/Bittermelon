@@ -4,6 +4,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -18,7 +19,7 @@ public class ServerUtil {
         return minecraftServer;
     }
 
-    public static Entity getEntity(UUID uuid) {
+    public static @Nullable Entity getEntity(UUID uuid) {
         for (ServerLevel level : getServer().getAllLevels()) {
             Entity entity = level.getEntities().get(uuid);
             if (entity != null) {
@@ -28,7 +29,7 @@ public class ServerUtil {
         return null;
     }
 
-    public static LivingEntity getLivingEntity(UUID uuid) {
+    public static @Nullable LivingEntity getLivingEntity(UUID uuid) {
         if (getEntity(uuid) instanceof LivingEntity livingEntity) {
             return livingEntity;
         }

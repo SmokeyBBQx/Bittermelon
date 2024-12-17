@@ -161,7 +161,7 @@ public class HealthScreen extends Screen {
             return super.addEntry(entry);
         }
 
-        public CompartmentEntry getHoveredEntry(double mouseX, double mouseY) {
+        public @org.jetbrains.annotations.Nullable CompartmentEntry getHoveredEntry(double mouseX, double mouseY) {
             if (this.isMouseOver(mouseX, mouseY)) {
                 int i1 = Mth.floor(mouseY - (double) this.getY()) - this.headerHeight + (int) this.getScrollAmount() - 4;
                 int j1 = i1 / this.itemHeight;
@@ -247,7 +247,7 @@ public class HealthScreen extends Screen {
         private final HealthScreen screen;
         private boolean isExpanded;
 
-        public CompartmentEntry(Compartment compartment, int depth, HealthScreen screen) {
+        public CompartmentEntry(Compartment compartment, int depth, @NotNull HealthScreen screen) {
             this.compartment = compartment;
             this.depth = depth;
             this.screen = screen;
@@ -418,9 +418,7 @@ public class HealthScreen extends Screen {
             }
             currentX += 13;
 
-            if (compartment.isObscured()) {
-
-            } else if (compartment.getIcon() != null) {
+            if (compartment.getIcon() != null && !compartment.isObscured()) {
                 guiGraphics.blit(
                         compartment.getIcon(),
                         currentX,
@@ -433,7 +431,7 @@ public class HealthScreen extends Screen {
                         16
                 );
                 currentX += 20;
-            } else if (compartment.getItem() != null) {
+            } else if (compartment.getItem() != null && !compartment.isObscured()) {
                 if (compartment.canExtract()) {
                     float pulse = (float) (Math.sin(System.currentTimeMillis() / 500.0) * 0.4f + 0.8f);
                     RenderSystem.enableBlend();
@@ -447,7 +445,6 @@ public class HealthScreen extends Screen {
                     RenderSystem.disableBlend();
                 }
                 currentX += 20;
-
             }
 
             guiGraphics.drawString(Minecraft.getInstance().font, name,

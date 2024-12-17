@@ -101,7 +101,7 @@ public class FluidContainerItem extends SubstanceContainerItem {
         return super.useOn(context);
     }
 
-    private InteractionResult handleSpillAction(BlockPos clickedOnPos, Level level, Player player, ItemStack stack) {
+    private InteractionResult handleSpillAction(@NotNull BlockPos clickedOnPos, @NotNull Level level, Player player, ItemStack stack) {
         BlockPos spillPos = clickedOnPos.above();
         BlockState existingState = level.getBlockState(spillPos);
         BlockState clickedOnState = level.getBlockState(clickedOnPos);
@@ -119,7 +119,7 @@ public class FluidContainerItem extends SubstanceContainerItem {
         return InteractionResult.SUCCESS;
     }
 
-    private void transferSubstancesToBlock(BlockPos pos, Level level, ItemStack stack) {
+    private void transferSubstancesToBlock(BlockPos pos, @NotNull Level level, ItemStack stack) {
         if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluidEntity) {
             transferSubstances(stack, getTotalVolume(stack), getLimitedTransferRate(stack),
                     (substance, amount) -> fluidEntity.updateSubstance(substance));
@@ -127,7 +127,7 @@ public class FluidContainerItem extends SubstanceContainerItem {
         }
     }
 
-    private void transferSubstancesFromBlock(BlockPos pos, Level level, ItemStack stack) {
+    private void transferSubstancesFromBlock(BlockPos pos, @NotNull Level level, ItemStack stack) {
         if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluidEntity) {
             float availableCapacity = capacity - getTotalVolume(stack);
             float transferRate = Math.min(getTransferRate(stack), availableCapacity);

@@ -4,6 +4,7 @@ public enum FunctionType {
     FUNCTION,
     TREMOR,
     PAIN,
+    BLEED,
     HEALING,
     IMMUNITY,
     ELIMINATION,

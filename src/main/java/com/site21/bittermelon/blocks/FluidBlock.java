@@ -55,7 +55,7 @@ public class FluidBlock extends Block implements EntityBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         builder.add(NORTH, EAST, SOUTH, WEST, LEVEL, FLOATING);
     }
 
@@ -76,7 +76,7 @@ public class FluidBlock extends Block implements EntityBlock {
         return stateIn;
     }
 
-    private boolean canConnectTo(LevelAccessor world, BlockPos facingPos) {
+    private boolean canConnectTo(@NotNull LevelAccessor world, BlockPos facingPos) {
         BlockState facingState = world.getBlockState(facingPos);
         return facingState.isFaceSturdy(world, facingPos, Direction.UP) || facingState.getBlock() instanceof FluidBlock;
     }
