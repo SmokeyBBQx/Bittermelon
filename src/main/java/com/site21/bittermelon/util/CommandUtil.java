@@ -5,6 +5,7 @@ import com.site21.bittermelon.character.CharacterManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.nio.channels.Channel;
@@ -26,24 +27,26 @@ public class CommandUtil {
      * @param player Target player
      * @return 0 if there is no active character, 1 if the data is validated
      */
-    public static int validateStoredCharacterUUID(ServerPlayer player) {
+    public static int validateStoredCharacterUUID(@NotNull ServerPlayer player) {
         CompoundTag persistentData = player.getPersistentData();
+        String characterUUIDKey = "bittermelon:activeCharacterUUID";
+
         Character activeCharacter = CharacterManager.getInstance().getActiveCharacter(player.getUUID());
 
-        if (activeCharacter == null) {
-            if (persistentData.contains("bittermelon:activeCharacterUUID")) {
-                persistentData.remove("bittermelon:activeCharacterUUID");
+        if (activeCharacter != null) {
+            UUID characterUUID = activeCharacter.getUUID();
+
+            if (!persistentData.contains(characterUUIDKey)) {
+                persistentData.putUUID(characterUUIDKey, characterUUID);
+            } else if (!persistentData.getUUID(characterUUIDKey).equals(characterUUID)) {
+                persistentData.remove(characterUUIDKey);
+                persistentData.putUUID(characterUUIDKey, characterUUID);
             }
+            return 1;
+        } else {
+            persistentData.remove(characterUUIDKey);
             return 0;
         }
-
-        if (!persistentData.contains("bittermelon:activeCharacterUUID")) {
-            persistentData.putUUID("bittermelon:activeCharacterUUID", activeCharacter.getUUID());
-        } else if (!persistentData.getUUID("bittermelon:activeCharacterUUID").equals(activeCharacter.getUUID())) {
-            persistentData.remove("bittermelon:activeCharacterUUID");
-            persistentData.putUUID("bittermelon:activeCharacterUUID", activeCharacter.getUUID());
-        }
-        return 1;
     }
 
 //    @Nullable

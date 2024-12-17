@@ -9,19 +9,21 @@ import com.site21.bittermelon.medical.compartments.bodyparts.BodyPart;
 import com.site21.bittermelon.medical.compartments.conditions.ForeignSubstance;
 import com.site21.bittermelon.medical.compartments.conditions.infections.Infection;
 import com.site21.bittermelon.medical.compartments.organs.HeartRhythm;
-import com.site21.bittermelon.miscellaneous.stumble.StumbleHandler;
 import com.site21.bittermelon.substance.SubstanceStack;
 import com.site21.bittermelon.util.LocalMessageHelper;
 import com.site21.bittermelon.util.ServerUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static com.site21.bittermelon.init.BitterBlocks.FLUID;
@@ -29,22 +31,15 @@ import static com.site21.bittermelon.init.Substances.LIQUID_BLOOD;
 
 public class MedicalStats {
     private final CopyOnWriteArrayList<Compartment> compartments;
+    private final Map<FunctionType, Float> stats;
+    private final Map<UUID, Float> immunity;
     private final BloodType bloodType;
-    private float consciousness = 1;
-    private float oxygenSaturation = 100;
-    private float bloodVolume = 100;
-    private float BPM;
-    private float bloodPressureSystolic;
-    private float bloodPressureDiastolic;
-    private float temperature;
-    private HeartRhythm heartRhythm;
-    private final EnumMap<FunctionType, Float> stats = new EnumMap<>(FunctionType.class);
-    private final Map<UUID, Float> immunity = new HashMap<>();
     private final Character character;
-    private final transient LivingEntity entity;
-    private int puddleTimer = 0;
-    private static final int PUDDLE_INTERVAL = 40;
+    private LivingEntity entity;
+    private final VitalSigns vitalSigns;
 
+    private int gaspTickCounter = 0;
+    private static final int GASP_INTERVAL = 80;
 
     public MedicalStats(BloodType bloodType, List<Compartment> compartments, @NotNull Character character) {
         this.bloodType = bloodType;
@@ -52,6 +47,9 @@ public class MedicalStats {
         this.character = character;
 
         this.entity = ServerUtil.getLivingEntity(character.getEntityUUID());
+        this.stats = new EnumMap<>(FunctionType.class);
+        this.immunity = new ConcurrentHashMap<>();
+        this.vitalSigns = new VitalSigns();
 
         for (FunctionType type : FunctionType.values()) {
             stats.put(type, 0f);
@@ -59,35 +57,140 @@ public class MedicalStats {
     }
 
     public void update() {
-        List<Compartment> compartmentsCopy = new ArrayList<>(compartments);
-        for (Compartment compartment : compartmentsCopy) {
-            if (compartment == null) {
-                continue;
-            }
-            if (!compartments.contains(compartment)) {
-                continue;
-            }
-            compartment.update(this);
-            if (compartment instanceof Condition) {
-                immuneSystem(compartment);
-                elimination(compartment);
-                heal(compartment);
-            }
-        }
-        if (entity != null) {
-            movement();
-            manipulation();
-            brain();
-//
-//            puddleTimer++;
-//
-//            if (puddleTimer >= PUDDLE_INTERVAL) {
-//                bloodPuddle();
-//                puddleTimer = 0;
-//            }
-        }
+        updateCompartments();
+        updateEntityAttributes();
         updateCardiopulmonary();
         updateStats();
+    }
+
+    private void updateCompartments() {
+        for (Compartment compartment : compartments) {
+            compartment.update(this);
+            if (compartment instanceof Condition) {
+                processCondition(compartment);
+            }
+        }
+    }
+
+    private void processCondition(Compartment compartment) {
+        if (compartment instanceof Infection infection) {
+            handleInfection(infection);
+        } else if (compartment instanceof ForeignSubstance substance) {
+            handleForeignSubstance(substance);
+        } else if (compartment instanceof Injury injury) {
+            handleInjury(injury);
+        }
+    }
+
+    private void handleInfection(@NotNull Infection infection) {
+        float immunityRate = stats.get(FunctionType.IMMUNITY);
+        float memory = immunity.getOrDefault(infection.getOrganism(), 0f);
+
+        infection.modifyHealth(-immunityRate * memory / 10);
+        immunity.merge(infection.getOrganism(),
+                immunityRate / 10,
+                Float::sum);
+
+        // TODO: Add inflammation
+    }
+
+    private void handleForeignSubstance(@NotNull ForeignSubstance substance) {
+        float eliminationRate = stats.get(FunctionType.ELIMINATION);
+        substance.modifyHealth(-eliminationRate / 10);
+
+        // TODO: Separate metabolism and elimination?
+    }
+
+    private void handleInjury(@NotNull Injury injury) {
+        float healRate = stats.get(FunctionType.HEALING);
+        injury.modifyHealth(-healRate);
+    }
+
+
+    private void updateEntityAttributes() {
+        if (entity != null) {
+            updateMovementAttributes();
+            updateManipulationAttributes();
+            updateConsciousness();
+        }
+    }
+
+    private void updateMovementAttributes() {
+        float capability = stats.get(FunctionType.BRAIN_MOTOR_ABILITY) * stats.get(FunctionType.MOVEMENT);
+        updateEntityAttribute(Attributes.MOVEMENT_SPEED, capability);
+        updateEntityAttribute(Attributes.JUMP_STRENGTH, capability * 4.2);
+    }
+
+    private void updateManipulationAttributes() {
+        float capability = stats.get(FunctionType.BRAIN_MOTOR_ABILITY) * stats.get(FunctionType.MANIPULATION);
+        updateEntityAttribute(Attributes.ATTACK_SPEED, capability);
+        updateEntityAttribute(Attributes.ATTACK_DAMAGE, capability);
+        updateEntityAttribute(Attributes.BLOCK_BREAK_SPEED, capability);
+        updateEntityAttribute(Attributes.BLOCK_INTERACTION_RANGE, capability);
+        updateEntityAttribute(Attributes.ENTITY_INTERACTION_RANGE, capability);
+    }
+
+    private void updateEntityAttribute(Holder<Attribute> attribute, double value) {
+        Objects.requireNonNull(entity.getAttribute(attribute))
+                .setBaseValue(value);
+    }
+
+    private void updateStats() {
+        EnumMap<FunctionType, Float> statsCopy = new EnumMap<>(FunctionType.class);
+        for (FunctionType type : FunctionType.values()) {
+            statsCopy.put(type, 0f);
+        }
+
+        for (Compartment compartment : compartments) {
+            for (FunctionType stat : FunctionType.values()) {
+                float attribute = compartment.getAttribute(stat);
+                if (attribute > 0) {
+                    statsCopy.compute(stat, (k, currentValue) -> currentValue + attribute);
+                }
+            }
+        }
+
+        stats.putAll(statsCopy);
+    }
+
+    private void updateCardiopulmonary() {
+        vitalSigns.modifyBloodVolume(0.01f - stats.get(FunctionType.BLEED) / 100);
+        vitalSigns.modifyOxygenSaturation(stats.get(FunctionType.RESPIRATORY) * stats.get(FunctionType.BRAIN_VITALS) - 0.01f);
+
+        handleGasping();
+
+        if (vitalSigns.bloodVolume < 60 || vitalSigns.oxygenSaturation < 80) {
+            for (Compartment compartment : compartments) {
+                if (compartment instanceof BodyPart) {
+                    compartment.modifyHealth(-0.001f);
+                }
+            }
+        }
+
+        // TODO: Random heart state depending on heart health
+    }
+
+    private void handleGasping() {
+        if (vitalSigns.oxygenSaturation < 80) {
+            gaspTickCounter++;
+            if (gaspTickCounter >= GASP_INTERVAL) {
+                if (entity != null && stats.get(FunctionType.BRAIN_VITALS) > 0.1f) {
+                    Component message = Component.literal(character.getName() + " gasps for air.");
+                    LocalMessageHelper.sendLocalMessage(entity, 10, message);
+                }
+                gaspTickCounter = 0;
+            }
+        } else {
+            gaspTickCounter = 0;
+        }
+    }
+
+    private void updateConsciousness() {
+        vitalSigns.consciousness = stats.get(FunctionType.BRAIN_VITALS);
+
+        if (vitalSigns.consciousness < 0.1f) {
+//            LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal("Entity passes out"));
+        }
     }
 
     public void removeCompartment(@NotNull Compartment compartment) {
@@ -120,86 +223,6 @@ public class MedicalStats {
         return compartments;
     }
 
-    public void modifyBloodVolume(float amount) {
-        bloodVolume = Math.max(0, Math.min(amount + bloodVolume, 100));
-    }
-
-    public void modifyOxygenSaturation(float amount) {
-        oxygenSaturation = Math.max(0, Math.min(amount + oxygenSaturation, 100));
-    }
-
-    private void updateStats() {
-        EnumMap<FunctionType, Float> statsCopy = new EnumMap<>(FunctionType.class);
-        for (FunctionType type : FunctionType.values()) {
-            statsCopy.put(type, 0f);
-        }
-
-        for (Compartment compartment : compartments) {
-            for (FunctionType stat : FunctionType.values()) {
-                float attribute = compartment.getAttribute(stat);
-                if (attribute > 0) {
-                    statsCopy.compute(stat, (k, currentValue) -> currentValue + attribute);
-                }
-            }
-        }
-
-        stats.putAll(statsCopy);
-    }
-
-    private void updateCardiopulmonary() {
-        modifyBloodVolume(0.01f - stats.get(FunctionType.BLEED) / 100);
-        modifyOxygenSaturation(stats.get(FunctionType.RESPIRATORY) * stats.get(FunctionType.BRAIN_VITALS) - 0.01f);
-
-        System.out.println(bloodVolume);
-
-        if (bloodVolume < 60 || oxygenSaturation < 80) {
-            for (Compartment compartment : compartments) {
-                if (compartment instanceof BodyPart) {
-                    compartment.modifyHealth(-0.001f);
-                }
-            }
-        }
-
-        // TODO: Random heart state depending on heart health
-    }
-
-    private void brain() {
-        consciousness = stats.get(FunctionType.BRAIN_VITALS);
-
-        System.out.println(consciousness);
-
-        if (consciousness < 0.1f) {
-//            LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal("Entity passes out"));
-        }
-    }
-
-    private void immuneSystem(Compartment compartment) {
-        if (compartment instanceof Infection infection) {
-            float immunityRate = stats.get(FunctionType.IMMUNITY);
-            Compartment owner = infection.getOwner();
-//                addCompartment(new Inflammation(owner.getName() + "inflammation", owner, infection.getMaxHealth()));
-            // TODO: Add inflammation
-            float memory = immunity.get(infection.getOrganism());
-            infection.modifyHealth(-immunityRate * memory / 10);
-            immunity.compute(infection.getOrganism(), (k, currentImmunity) -> currentImmunity + immunityRate / 10);
-        }
-    }
-
-    private void elimination(Compartment compartment) {
-        if (compartment instanceof ForeignSubstance foreignSubstance) {
-            float eliminationRate = stats.get(FunctionType.ELIMINATION);
-            foreignSubstance.modifyHealth(-eliminationRate / 10);
-            // TODO: Separate metabolism and elimination?
-        }
-    }
-
-    private void heal(Compartment compartment) {
-        if (compartment instanceof Injury injury) {
-            float healRate = stats.get(FunctionType.HEALING);
-            injury.modifyHealth(-healRate);
-        }
-    }
-
     protected void sight() {
         if (stats.get(FunctionType.BRAIN_SIGHT) <= 10) {
 
@@ -207,36 +230,6 @@ public class MedicalStats {
 
         if (stats.get(FunctionType.SIGHT) <= 10) {
 
-        }
-    }
-
-    protected void movement() {
-        float brainMotorAbility = stats.get(FunctionType.BRAIN_MOTOR_ABILITY);
-        float movementAbility = stats.get(FunctionType.MOVEMENT);
-
-        float movementCapability = (brainMotorAbility * movementAbility);
-        double currentBaseValue = entity.getAttributeBaseValue(Attributes.MOVEMENT_SPEED);
-
-//        System.out.println(movementCapability);
-
-        if (movementCapability != currentBaseValue) {
-            Objects.requireNonNull(entity.getAttribute(Attributes.MOVEMENT_SPEED)).setBaseValue(movementCapability);
-            Objects.requireNonNull(entity.getAttribute(Attributes.JUMP_STRENGTH)).setBaseValue(movementCapability * 4.2);
-        }
-    }
-
-    protected void manipulation() {
-        float brainMotorAbility = stats.get(FunctionType.BRAIN_MOTOR_ABILITY);
-        float manipulationAbility = stats.get(FunctionType.MANIPULATION);
-
-        float movementCapability = (brainMotorAbility * manipulationAbility);
-        double currentBaseValue = entity.getAttributeBaseValue(Attributes.ATTACK_SPEED);
-        if (movementCapability != currentBaseValue) {
-            Objects.requireNonNull(entity.getAttribute(Attributes.ATTACK_SPEED)).setBaseValue(movementCapability);
-            Objects.requireNonNull(entity.getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(movementCapability);
-            Objects.requireNonNull(entity.getAttribute(Attributes.BLOCK_BREAK_SPEED)).setBaseValue(movementCapability);
-            Objects.requireNonNull(entity.getAttribute(Attributes.BLOCK_INTERACTION_RANGE)).setBaseValue(movementCapability);
-            Objects.requireNonNull(entity.getAttribute(Attributes.ENTITY_INTERACTION_RANGE)).setBaseValue(movementCapability);
         }
     }
 
@@ -275,5 +268,56 @@ public class MedicalStats {
 
     public BloodType getBloodType() {
         return bloodType;
+    }
+
+    public float getConsciousness() {
+        return vitalSigns.consciousness;
+    }
+
+    public float getOxygenSaturation() {
+        return vitalSigns.oxygenSaturation;
+    }
+
+    public float getBloodVolume() {
+        return vitalSigns.bloodVolume;
+    }
+
+    public float getBPM() {
+        return vitalSigns.bpm;
+    }
+
+    public float getBloodPressureSystolic() {
+        return vitalSigns.bloodPressureSystolic;
+    }
+
+    public float getBloodPressureDiastolic() {
+        return vitalSigns.bloodPressureDiastolic;
+    }
+
+    public float getTemperature() {
+        return vitalSigns.temperature;
+    }
+
+    public HeartRhythm getHeartRhythm() {
+        return vitalSigns.heartRhythm;
+    }
+
+    private static class VitalSigns {
+        private float consciousness = 1;
+        private float oxygenSaturation = 100;
+        private float bloodVolume = 100;
+        private float bpm;
+        private float bloodPressureSystolic;
+        private float bloodPressureDiastolic;
+        private float temperature;
+        private HeartRhythm heartRhythm;
+
+        public void modifyBloodVolume(float amount) {
+            bloodVolume = Math.max(0, Math.min(amount + bloodVolume, 100));
+        }
+
+        public void modifyOxygenSaturation(float amount) {
+            oxygenSaturation = Math.max(0, Math.min(amount + oxygenSaturation, 100));
+        }
     }
 }

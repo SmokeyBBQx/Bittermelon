@@ -43,12 +43,12 @@ public class Pull<E extends Mob> extends AnimatableMeleeAttack<E> {
         target.hurtMarked = true;
 
         CharacterManager characterManager = CharacterManager.getInstance();
-        Optional<Character> entityCharacterOpt = characterManager.getActiveCharacter(entity.getUUID());
-        Optional<Character> targetCharacterOpt = characterManager.getActiveCharacter(target.getUUID());
+        Character entityCharacter = characterManager.getActiveCharacter(entity.getUUID());
+        Character targetCharacter = characterManager.getActiveCharacter(target.getUUID());
 
-        entityCharacterOpt.ifPresent(entityCharacter ->
-                targetCharacterOpt.ifPresent(targetCharacter ->
-                        LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(
-                                entityCharacter.getName() + " pulls " + targetCharacter.getName() + "."))));
+        if (entityCharacter != null && targetCharacter != null) {
+            LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(
+                    entityCharacter.getName() + " pulls " + targetCharacter.getName() + "."));
+        }
     }
 }

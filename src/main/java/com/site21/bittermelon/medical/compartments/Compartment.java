@@ -11,8 +11,8 @@ import java.util.*;
 public class Compartment {
     protected final EnumSet<CompartmentType> types;
     protected String name;
-    protected transient final List<Compartment> children;
-    protected final EnumMap<FunctionType, Float> attributes;
+    protected transient List<Compartment> children;
+    protected EnumMap<FunctionType, Float> attributes;
 
     protected transient Compartment owner;
     protected float maxHealth;
@@ -41,6 +41,18 @@ public class Compartment {
         this(types, name, maxHealth);
         this.hidden = hidden;
         initializeWithOwner(owner);
+    }
+
+    protected void initializeChildren() {
+        if (children == null) {
+            children = new ArrayList<>();
+        }
+    }
+
+    protected void initializeAttributes() {
+        if (attributes == null) {
+            attributes = new EnumMap<>(FunctionType.class);
+        }
     }
 
     public void initializeWithOwner(Compartment owner) {
@@ -81,34 +93,41 @@ public class Compartment {
     }
 
     public void setAttribute(FunctionType functionType, Float value) {
-        this.attributes.put(functionType, value);
+        initializeAttributes();
+        attributes.put(functionType, value);
     }
 
     public void setAttributes(Map<FunctionType, Float> newAttributes) {
-        this.attributes.clear();
-        this.attributes.putAll(newAttributes);
+        initializeAttributes();
+        attributes.clear();
+        attributes.putAll(newAttributes);
     }
 
     public float getAttribute(FunctionType type) {
+        if (attributes == null) return 0f;
         float healthPercentage = getHealth() / maxHealth;
         return attributes.getOrDefault(type, 0f) * healthPercentage;
     }
 
     public EnumMap<FunctionType, Float> getAttributes() {
+        initializeAttributes();
         return attributes;
     }
 
     public void addChild(Compartment compartment) {
+        initializeChildren();
         children.add(compartment);
     }
 
     public boolean areChildrenEmpty() {
+        if (children == null) return true;
         return children.isEmpty() || children.stream().allMatch(Compartment::isHidden);
     }
 
     public boolean isHidden() {
         return owner != null && owner.isHidden() || hidden;
     }
+
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
     }

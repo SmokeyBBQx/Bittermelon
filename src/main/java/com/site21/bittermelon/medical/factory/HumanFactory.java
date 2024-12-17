@@ -90,9 +90,9 @@ public class HumanFactory {
         BodyPart heart = createBodyPart("Heart", pleuralMembrane, 30, EnumSet.of(CompartmentType.SOFT_TISSUE));
         BodyPart pericardium = createBodyPart("Pericardium", heart, 2, EnumSet.of(CompartmentType.SOFT_TISSUE));
         BodyPart leftLung = createBodyPart("Left Lung", pleuralMembrane, 40, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        leftLung.setAttribute(FunctionType.RESPIRATORY, 0.05f);
+//        leftLung.setAttribute(FunctionType.RESPIRATORY, 0.05f);
         BodyPart rightLung = createBodyPart("Right Lung", pleuralMembrane, 40, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        rightLung.setAttribute(FunctionType.RESPIRATORY, 0.06f);
+//        rightLung.setAttribute(FunctionType.RESPIRATORY, 0.06f);
 
         // Other organs
         BodyPart thymus = createBodyPart("Thymus", pleuralMembrane, 5, EnumSet.of(CompartmentType.SOFT_TISSUE));
@@ -213,11 +213,12 @@ public class HumanFactory {
         compartments.addAll(Arrays.asList(backSkin, backFat, backMuscles, spine, scapula));
     }
 
-    private static BodyPart createMajorBodyPart(String name, Compartment owner) {
+    @Contract("_, _ -> new")
+    private static @NotNull BodyPart createMajorBodyPart(String name, Compartment owner) {
         return new BodyPart(EnumSet.of(CompartmentType.MAJOR_BODY_PART), name, owner, -1, false);
     }
 
-    private static BodyPart createBodyPart(String name, Compartment owner, float maxHealth, EnumSet<CompartmentType> types) {
+    private static @NotNull BodyPart createBodyPart(String name, Compartment owner, float maxHealth, EnumSet<CompartmentType> types) {
         BodyPart part = new BodyPart(types, name, owner, maxHealth);
         if (types.contains(CompartmentType.SOFT_TISSUE)) {
             part.setDoesBleed(true);
@@ -225,7 +226,7 @@ public class HumanFactory {
         return part;
     }
 
-    private static BodyPart createRevealedBodyPart(String name, Compartment owner, float maxHealth, EnumSet<CompartmentType> types) {
+    private static @NotNull BodyPart createRevealedBodyPart(String name, Compartment owner, float maxHealth, EnumSet<CompartmentType> types) {
         BodyPart part = new BodyPart(types, name, owner, maxHealth, false);
         if (types.contains(CompartmentType.SOFT_TISSUE)) {
             part.setDoesBleed(true);
@@ -233,7 +234,7 @@ public class HumanFactory {
         return part;
     }
 
-    private static BodyPart createVessel(String name, Compartment owner, float maxHealth, CompartmentType type) {
+    private static @NotNull BodyPart createVessel(String name, Compartment owner, float maxHealth, CompartmentType type) {
         return createBodyPart(name, owner, maxHealth, EnumSet.of(CompartmentType.SOFT_TISSUE, type));
     }
 }

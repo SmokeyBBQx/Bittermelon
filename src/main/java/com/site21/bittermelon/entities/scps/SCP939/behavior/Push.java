@@ -37,13 +37,13 @@ public class Push<E extends Mob> extends AnimatableMeleeAttack<E> {
             return;
 
         CharacterManager characterManager = CharacterManager.getInstance();
-        Optional<Character> entityCharacterOpt = characterManager.getActiveCharacter(entity.getUUID());
-        Optional<Character> targetCharacterOpt = characterManager.getActiveCharacter(target.getUUID());
+        Character entityCharacter = characterManager.getActiveCharacter(entity.getUUID());
+        Character targetCharacter = characterManager.getActiveCharacter(target.getUUID());
 
-        entityCharacterOpt.ifPresent(entityCharacter ->
-                targetCharacterOpt.ifPresent(targetCharacter ->
-                        LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(
-                                entityCharacter.getName() + " pushes " + targetCharacter.getName() + "."))));
+        if (entityCharacter != null && targetCharacter != null) {
+            LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(
+                    entityCharacter.getName() + " pushes " + targetCharacter.getName() + "."));
+        }
 
         StumbleHandler.stumble(target, entity.getLookAngle());
     }

@@ -66,7 +66,7 @@ public class Bittermelon
 
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
-    public Bittermelon(IEventBus modEventBus, ModContainer modContainer)
+    public Bittermelon(IEventBus modEventBus, @NotNull ModContainer modContainer)
     {
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
 
@@ -108,7 +108,7 @@ public class Bittermelon
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event)
+    public void onServerStarting(@NotNull ServerStartingEvent event)
     {
         ServerUtil.setMinecraftServer(event.getServer());
         // Do something when the server starts
@@ -117,8 +117,8 @@ public class Bittermelon
 
     @SubscribeEvent
     public void onEntityTick(EntityTickEvent.@NotNull Post event) {
-        Optional<Character> character = CharacterManager.getInstance().getActiveCharacter(event.getEntity().getUUID());
-        character.ifPresent(Character::update);
+       Character character = CharacterManager.getInstance().getActiveCharacter(event.getEntity().getUUID());
+       if (character != null) character.update();
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
@@ -134,7 +134,7 @@ public class Bittermelon
         }
 
         @SubscribeEvent
-        public static void registerColorHandlers(RegisterColorHandlersEvent.Block event) {
+        public static void registerColorHandlers(RegisterColorHandlersEvent.@NotNull Block event) {
             event.register(new FluidBlockColor(), FLUID.get());
         }
     }

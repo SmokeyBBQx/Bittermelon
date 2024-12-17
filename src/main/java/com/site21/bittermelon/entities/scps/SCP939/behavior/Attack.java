@@ -35,13 +35,10 @@ public class Attack extends AnimatableMeleeAttack<SCP939> {
             return;
 
         CharacterManager characterManager = CharacterManager.getInstance();
-        Optional<Character> entityCharacterOpt = characterManager.getActiveCharacter(entity.getUUID());
-        Optional<Character> targetCharacterOpt = characterManager.getActiveCharacter(target.getUUID());
-        if (entityCharacterOpt.isEmpty() || targetCharacterOpt.isEmpty())
+        Character entityCharacter = characterManager.getActiveCharacter(entity.getUUID());
+        Character targetCharacter = characterManager.getActiveCharacter(target.getUUID());
+        if (entityCharacter == null || targetCharacter == null)
             return;
-
-        Character entityCharacter = entityCharacterOpt.get();
-        Character targetCharacter = targetCharacterOpt.get();
 
         attackTemplates.add(AttackTemplate.of(
                 EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE),
@@ -136,15 +133,15 @@ public class Attack extends AnimatableMeleeAttack<SCP939> {
         Object[] array = attackTemplates.toArray();
         AttackTemplate selectedAttack = (AttackTemplate) array[new Random().nextInt(array.length)];
         DamageGenerator damageSequence = selectedAttack.damageSequenceSupplier().get();
-        Optional<DamageResult> damageResultOpt = damageSequence.generateDamage(targetCharacter.getMedicalStats(), 2, 1, 6, 10, targetCharacter, target);
+        DamageResult damageResult = damageSequence.generateDamage(targetCharacter.getMedicalStats(), 2, 1, 6, 10, targetCharacter, target);
 
-        damageResultOpt.ifPresent(damageResult ->
-                LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(
-                selectedAttack.getFormattedMessage(entityCharacter.getName(),
-                        targetCharacter.getName(),
-                        damageResult.targetBodyPart().getName().toLowerCase()
-                ) + ", " + getInjuryDescription(damageResult) + "."))
-        );
+        if (damageResult != null) {
+            LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(
+                    selectedAttack.getFormattedMessage(entityCharacter.getName(),
+                            targetCharacter.getName(),
+                            damageResult.targetBodyPart().getName().toLowerCase()
+                    ) + ", " + getInjuryDescription(damageResult) + "."));
+        }
 
         target.hurt(entity.damageSources().mobAttack(entity), 0);
     }

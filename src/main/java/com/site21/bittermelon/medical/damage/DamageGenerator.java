@@ -9,6 +9,7 @@ import com.site21.bittermelon.util.LocalMessageHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -25,31 +26,28 @@ public abstract class DamageGenerator {
         this(EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE));
     }
 
-    public Optional<DamageResult> generateDamage(@NotNull MedicalStats medicalStats, int area, int minDepth, int maxDepth, float damage, Character character, LivingEntity entity) {
+    public @Nullable DamageResult generateDamage(@NotNull MedicalStats medicalStats, int area, int minDepth, int maxDepth, float damage, Character character, LivingEntity entity) {
         List<Compartment> initialCompartments = getInitialCompartments(medicalStats);
-        if (initialCompartments.isEmpty()) return Optional.empty();
+        if (initialCompartments.isEmpty()) return null;
 
         Compartment targetBodyPart = initialCompartments.get(random.nextInt(initialCompartments.size()));
         List<InjuryResult> injuryResults = new ArrayList<>();
 
         for (int i = 0; i < area; i++) {
-            Optional<InjuryResult> injuryResultOpt = inflictInjury(targetBodyPart.getChildren(), damage, medicalStats, character, entity);
-            if (injuryResultOpt.isEmpty()) return Optional.empty();
+            InjuryResult injuryResult = inflictInjury(targetBodyPart.getChildren(), damage, medicalStats, character, entity);
+            if (injuryResult == null) return null;
 
-            InjuryResult injuryResult = injuryResultOpt.get();
             injuryResults.add(injuryResult);
 
             Injury injury = injuryResult.injury();
             medicalStats.addCompartment(injury);
 
-
             int depth = minDepth + (int) (Math.pow(random.nextFloat(), 2) * (maxDepth - minDepth));
             for (int j = 0; j < depth; j++) {
-                injuryResultOpt = inflictInjury(filterCompartments(injury.getOwner().getChildren()),
+                injuryResult = inflictInjury(filterCompartments(injury.getOwner().getChildren()),
                         injury.getMaxHealth() / 2, medicalStats, character, entity);
-                if (injuryResultOpt.isEmpty()) break;
+                if (injuryResult == null) break;
 
-                injuryResult = injuryResultOpt.get();
                 injuryResults.add(injuryResult);
 
                 injury = injuryResult.injury();
@@ -57,11 +55,11 @@ public abstract class DamageGenerator {
             }
         }
 
-        return Optional.of(new DamageResult(targetBodyPart, injuryResults));
+        return new DamageResult(targetBodyPart, injuryResults);
     }
 
-    private Optional<InjuryResult> inflictInjury(@NotNull List<Compartment> compartments, float damage, MedicalStats medicalStats, Character character, LivingEntity entity) {
-        if (compartments.isEmpty()) return Optional.empty();
+    private @Nullable InjuryResult inflictInjury(@NotNull List<Compartment> compartments, float damage, MedicalStats medicalStats, Character character, LivingEntity entity) {
+        if (compartments.isEmpty()) return null;
 
         Compartment target = compartments.get(random.nextInt(compartments.size()));
         float injuryDamage = 1 + random.nextFloat() * damage;
@@ -70,7 +68,7 @@ public abstract class DamageGenerator {
             handleDismemberment(target, character, medicalStats, entity);
         }
 
-        return Optional.of(createInjury(injuryDamage, target, character, entity));
+        return createInjury(injuryDamage, target, character, entity);
     }
 
     protected abstract InjuryResult createInjury(float damage, Compartment target, Character character, LivingEntity entity);

@@ -96,24 +96,24 @@ public class GenericInteraction<E extends LivingEntity & Socializable> extends E
         if (entity.closerThan(this.partner, closeEnoughDist.applyAsInt(entity, partner)) && entity.tickCount == this.socializeTick) {
             entity.modifySocialization(5);
             CharacterManager characterManager = CharacterManager.getInstance();
-            Optional<Character> partnerCharacterOpt = characterManager.getActiveCharacter(partner.getUUID());
-            partnerCharacterOpt.ifPresent(partnerCharacter -> {
-                        Relationship entityPartnerRelationship = entity.getRelationship(partnerCharacter);
-                        if (entityPartnerRelationship != null) {
-                            entityPartnerRelationship.modifyOpinion(2);
-                        }
-                    }
-            );
+            Character partnerCharacter = characterManager.getActiveCharacter(partner.getUUID());
+
+            if (partnerCharacter != null) {
+                Relationship entityPartnerRelationship = entity.getRelationship(partnerCharacter);
+                if (entityPartnerRelationship != null) {
+                    entityPartnerRelationship.modifyOpinion(2);
+                }
+            }
 
             if (partner instanceof Socializable socializable) {
                 socializable.modifySocialization(5);
-                Optional<Character> entityCharacterOpt = characterManager.getActiveCharacter(partner.getUUID());
-                entityCharacterOpt.ifPresent(entityCharacter -> {
+                Character entityCharacter = characterManager.getActiveCharacter(entity.getUUID());
+                if (entityCharacter != null) {
                     Relationship partnerEntityRelationship = socializable.getRelationship(entityCharacter);
                     if (partnerEntityRelationship != null) {
                         partnerEntityRelationship.modifyOpinion(2);
                     }
-                });
+                }
             }
 
             BrainUtils.clearMemory(entity, BitterMemoryModuleType.SOCIALIZE_TARGET.get());
@@ -141,20 +141,18 @@ public class GenericInteraction<E extends LivingEntity & Socializable> extends E
     protected void sendRandomMessage(E entity) {
         if (messages != null && partner != null && !messages.isEmpty()) {
             CharacterManager characterManager = CharacterManager.getInstance();
-            Optional<Character> entityCharacterOpt = characterManager.getActiveCharacter(entity.getUUID());
-            Optional<Character> partnerCharacterOpt = characterManager.getActiveCharacter(partner.getUUID());
-            Random random = new Random();
+            Character entityCharacter = characterManager.getActiveCharacter(entity.getUUID());
+            Character partnerCharacter = characterManager.getActiveCharacter(partner.getUUID());
 
-            entityCharacterOpt.ifPresent(entityCharacter ->
-                    partnerCharacterOpt.ifPresent(partnerCharacter -> {
-                        String message = messages.get(random.nextInt(messages.size()));
-                        LocalMessageHelper.sendLocalMessage(entity, 10,
-                                Component.literal(entityCharacter.getName() + message + partnerCharacter.getName() + ".")
-                                        .setStyle(Style.EMPTY.withColor(TextColor.parseColor(
-                                                "#" + entityCharacter.getEmoteColor()).getOrThrow()))
-                        );
-                    })
-            );
+            if (entityCharacter != null && partnerCharacter != null) {
+                Random random = new Random();
+                String message = messages.get(random.nextInt(messages.size()));
+                LocalMessageHelper.sendLocalMessage(entity, 10,
+                        Component.literal(entityCharacter.getName() + message + partnerCharacter.getName() + ".")
+                                .setStyle(Style.EMPTY.withColor(TextColor.parseColor(
+                                        "#" + entityCharacter.getEmoteColor()).getOrThrow()))
+                );
+            }
         }
     }
 }

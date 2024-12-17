@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import static com.site21.bittermelon.keybinds.HealthScreenKeyBind.openHealthScreen;
@@ -54,17 +55,19 @@ public class IncisionMinigame extends MedicalMinigame {
 
         Character playerCharacter = CharacterManager.getInstance().getActiveCharacter(Minecraft.getInstance().player.getUUID());
 
-        shakeTimer++;
-        int shakeIntensity = (int) playerCharacter.getMedicalStats().getTremor() / 10;
-        shakeIntensity = Math.min(shakeIntensity, 10);
+        if (playerCharacter != null) {
+            shakeTimer++;
+            float tremorValue = playerCharacter.getMedicalStats().getTremor();
+            int shakeIntensity = (int) Math.min(tremorValue / 10, 10);
 
-        if (shakeIntensity > 1) {
-            if (shakeTimer >= SHAKE_TIMER_THRESHOLD / shakeIntensity) {
-                shakeTimer = 0;
-                shakeX = random.nextInt(-shakeIntensity, shakeIntensity);
-                shakeY = random.nextInt(-shakeIntensity, shakeIntensity);
-                shakeXDraw = random.nextInt(-shakeIntensity, shakeIntensity);
-                shakeYDraw = random.nextInt(-shakeIntensity, shakeIntensity);
+            if (shakeIntensity > 1) {
+                if (shakeTimer >= SHAKE_TIMER_THRESHOLD / shakeIntensity) {
+                    shakeTimer = 0;
+                    shakeX = random.nextInt(shakeIntensity * 2) - shakeIntensity;
+                    shakeY = random.nextInt(shakeIntensity * 2) - shakeIntensity;
+                    shakeXDraw = random.nextInt(shakeIntensity * 2) - shakeIntensity;
+                    shakeYDraw = random.nextInt(shakeIntensity * 2) - shakeIntensity;
+                }
             }
         }
 

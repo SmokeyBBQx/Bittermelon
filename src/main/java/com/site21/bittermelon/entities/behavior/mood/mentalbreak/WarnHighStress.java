@@ -13,6 +13,7 @@ import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
 
 import java.util.List;
+import java.util.Optional;
 
 public class WarnHighStress<E extends LivingEntity> extends ExtendedBehaviour<E> {
     protected final List<String> messages;
@@ -35,11 +36,11 @@ public class WarnHighStress<E extends LivingEntity> extends ExtendedBehaviour<E>
         if (!messages.isEmpty()) {
             CharacterManager characterManager = CharacterManager.getInstance();
             Character character = characterManager.getActiveCharacter(entity.getUUID());
-            if (!(character == null)) {
-                String message = this.messages.get(entity.getRandom().nextInt(messages.size()));
-                LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(character.getName() + message)
-                        .setStyle(Style.EMPTY.withColor(TextColor.parseColor("#" + character.getEmoteColor()).getOrThrow())));
-            }
+            if (character == null) return;
+
+            String message = this.messages.get(entity.getRandom().nextInt(messages.size()));
+            LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(character.getName() + message)
+                    .setStyle(Style.EMPTY.withColor(TextColor.parseColor("#" + character.getEmoteColor()).getOrThrow())));
         }
     }
 }

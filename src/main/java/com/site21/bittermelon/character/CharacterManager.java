@@ -3,6 +3,7 @@ package com.site21.bittermelon.character;
 import com.site21.bittermelon.util.DataManager;
 import net.neoforged.fml.loading.FMLPaths;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -71,8 +72,9 @@ public class CharacterManager extends DataManager<UUID, Character> {
         activeCharacters.put(entityUUID, getCharacter(characterUUID));
     }
 
-    public Optional<Character> getActiveCharacter(UUID entityUUID) {
-        return Optional.of(activeCharacters.get(entityUUID));
+    @Nullable
+    public Character getActiveCharacter(UUID entityUUID) {
+        return activeCharacters.get(entityUUID);
     }
 
     public List<Character> getCharacters(UUID entityUUID) {
