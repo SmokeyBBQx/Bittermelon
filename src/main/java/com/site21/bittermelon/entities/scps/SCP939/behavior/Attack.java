@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
 import net.tslat.smartbrainlib.util.BrainUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -34,10 +35,13 @@ public class Attack extends AnimatableMeleeAttack<SCP939> {
             return;
 
         CharacterManager characterManager = CharacterManager.getInstance();
-        Character entityCharacter = characterManager.getActiveCharacter(entity.getUUID());
-        Character targetCharacter = characterManager.getActiveCharacter(target.getUUID());
-        if (entityCharacter == null || targetCharacter == null)
+        Optional<Character> entityCharacterOpt = characterManager.getActiveCharacter(entity.getUUID());
+        Optional<Character> targetCharacterOpt = characterManager.getActiveCharacter(target.getUUID());
+        if (entityCharacterOpt.isEmpty() || targetCharacterOpt.isEmpty())
             return;
+
+        Character entityCharacter = entityCharacterOpt.get();
+        Character targetCharacter = targetCharacterOpt.get();
 
         attackTemplates.add(AttackTemplate.of(
                 EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE),
@@ -132,35 +136,38 @@ public class Attack extends AnimatableMeleeAttack<SCP939> {
         Object[] array = attackTemplates.toArray();
         AttackTemplate selectedAttack = (AttackTemplate) array[new Random().nextInt(array.length)];
         DamageGenerator damageSequence = selectedAttack.damageSequenceSupplier().get();
-        DamageResult damageResult = damageSequence.generateDamage(targetCharacter.getMedicalStats(), 2, 1, 6, 10, targetCharacter, target);
-        if (damageResult != null && !damageResult.injuryResults().isEmpty()) {
-            String injuryDescription;
-            List<InjuryResult> injuryResults = damageResult.injuryResults();
+        Optional<DamageResult> damageResultOpt = damageSequence.generateDamage(targetCharacter.getMedicalStats(), 2, 1, 6, 10, targetCharacter, target);
 
-            if (injuryResults.size() > 2) {
-                InjuryResult lastResult = injuryResults.getLast();
-                String targetName = lastResult.injury().getOwner().getName().toLowerCase();
-                String action = lastResult.message().split(" ")[0];
-                injuryDescription = String.format("the injury reaching through and %s the %s", action, targetName);
-            } else if (injuryResults.size() > 1) {
-                injuryDescription = injuryResults.getFirst().message();
-                for (InjuryResult injuryResult : injuryResults) {
-                    if (!Objects.equals(injuryDescription, injuryResult.message())) {
-                        injuryDescription = injuryDescription + " and " + injuryResult.message();
-                        break;
-                    }
-                }
-            } else {
-                injuryDescription = injuryResults.getFirst().message();
-            }
-
-            LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(
-                    selectedAttack.getFormattedMessage(entityCharacter.getName(),
-                            targetCharacter.getName(),
-                            damageResult.targetBodyPart().getName().toLowerCase()
-                    ) + ", " + injuryDescription + "."));
-        }
+        damageResultOpt.ifPresent(damageResult ->
+                LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(
+                selectedAttack.getFormattedMessage(entityCharacter.getName(),
+                        targetCharacter.getName(),
+                        damageResult.targetBodyPart().getName().toLowerCase()
+                ) + ", " + getInjuryDescription(damageResult) + "."))
+        );
 
         target.hurt(entity.damageSources().mobAttack(entity), 0);
+    }
+
+    private @NotNull String getInjuryDescription(@NotNull DamageResult damageResult) {
+        List<InjuryResult> injuryResults = damageResult.injuryResults();
+
+        if (injuryResults.size() > 2) {
+            InjuryResult lastResult = injuryResults.getLast();
+            String targetName = lastResult.injury().getOwner().getName().toLowerCase();
+            String action = lastResult.message().split(" ")[0];
+            return String.format("the injury reaching through and %s the %s", action, targetName);
+        } else if (injuryResults.size() > 1) {
+            String injuryDescription = injuryResults.getFirst().message();
+            for (InjuryResult injuryResult : injuryResults) {
+                if (!Objects.equals(injuryDescription, injuryResult.message())) {
+                    injuryDescription = injuryDescription + " and " + injuryResult.message();
+                    break;
+                }
+            }
+            return injuryDescription;
+        } else {
+            return injuryResults.getFirst().message();
+        }
     }
 }

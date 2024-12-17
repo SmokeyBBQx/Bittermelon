@@ -9,12 +9,8 @@ import com.site21.bittermelon.util.LocalMessageHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public abstract class DamageGenerator {
     protected final EnumSet<CompartmentType> allowedCompartments;
@@ -29,36 +25,43 @@ public abstract class DamageGenerator {
         this(EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE));
     }
 
-    public DamageResult generateDamage(@NotNull MedicalStats medicalStats, int area, int minDepth, int maxDepth, float damage, Character character, LivingEntity entity) {
+    public Optional<DamageResult> generateDamage(@NotNull MedicalStats medicalStats, int area, int minDepth, int maxDepth, float damage, Character character, LivingEntity entity) {
         List<Compartment> initialCompartments = getInitialCompartments(medicalStats);
-        if (initialCompartments.isEmpty()) return null;
+        if (initialCompartments.isEmpty()) return Optional.empty();
+
         Compartment targetBodyPart = initialCompartments.get(random.nextInt(initialCompartments.size()));
         List<InjuryResult> injuryResults = new ArrayList<>();
 
         for (int i = 0; i < area; i++) {
-            InjuryResult injuryResult = inflictInjury(targetBodyPart.getChildren(), damage, medicalStats, character, entity);
-            if (injuryResult == null) return null;
+            Optional<InjuryResult> injuryResultOpt = inflictInjury(targetBodyPart.getChildren(), damage, medicalStats, character, entity);
+            if (injuryResultOpt.isEmpty()) return Optional.empty();
+
+            InjuryResult injuryResult = injuryResultOpt.get();
+            injuryResults.add(injuryResult);
+
             Injury injury = injuryResult.injury();
             medicalStats.addCompartment(injury);
-            injuryResults.add(injuryResult);
+
 
             int depth = minDepth + (int) (Math.pow(random.nextFloat(), 2) * (maxDepth - minDepth));
             for (int j = 0; j < depth; j++) {
-                injuryResult = inflictInjury(filterCompartments(injury.getOwner().getChildren()), injury.getMaxHealth() / 2, medicalStats, character, entity);
-                if (injuryResult == null) break;
+                injuryResultOpt = inflictInjury(filterCompartments(injury.getOwner().getChildren()),
+                        injury.getMaxHealth() / 2, medicalStats, character, entity);
+                if (injuryResultOpt.isEmpty()) break;
+
+                injuryResult = injuryResultOpt.get();
                 injuryResults.add(injuryResult);
+
                 injury = injuryResult.injury();
                 medicalStats.addCompartment(injury);
             }
         }
 
-        return new DamageResult(targetBodyPart, injuryResults);
+        return Optional.of(new DamageResult(targetBodyPart, injuryResults));
     }
 
-    private @Nullable InjuryResult inflictInjury(@NotNull List<Compartment> compartments, float damage, MedicalStats medicalStats, Character character, LivingEntity entity) {
-        if (compartments.isEmpty()) {
-            return null;
-        }
+    private Optional<InjuryResult> inflictInjury(@NotNull List<Compartment> compartments, float damage, MedicalStats medicalStats, Character character, LivingEntity entity) {
+        if (compartments.isEmpty()) return Optional.empty();
 
         Compartment target = compartments.get(random.nextInt(compartments.size()));
         float injuryDamage = 1 + random.nextFloat() * damage;
@@ -67,7 +70,7 @@ public abstract class DamageGenerator {
             handleDismemberment(target, character, medicalStats, entity);
         }
 
-        return createInjury(injuryDamage, target, character, entity);
+        return Optional.of(createInjury(injuryDamage, target, character, entity));
     }
 
     protected abstract InjuryResult createInjury(float damage, Compartment target, Character character, LivingEntity entity);

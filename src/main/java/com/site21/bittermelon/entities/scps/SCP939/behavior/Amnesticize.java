@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.tslat.smartbrainlib.api.core.behaviour.DelayedBehaviour;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class Amnesticize<E extends SCP939> extends DelayedBehaviour<E> {
     }
 
     @Override
-    protected void start (E entity) {
+    protected void start (@NotNull E entity) {
         entity.playSound(BitterSounds.GHOSTLY_EXHALE.get(), 0.5f, 1.0f);
     }
 

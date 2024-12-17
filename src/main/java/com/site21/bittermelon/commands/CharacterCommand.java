@@ -13,10 +13,10 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.List;
+import java.util.Optional;
 
 public class CharacterCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -86,13 +86,14 @@ public class CharacterCommand {
         String characterName = StringArgumentType.getString(context, "name");
         ServerPlayer player = context.getSource().getPlayerOrException();
         Character selectedCharacter = CommandUtil.getCharacterIgnoreCase(player, characterName);
-        Character activeCharacter = CharacterManager.getInstance().getActiveCharacter(player.getUUID());
+        Optional<Character> activeCharacter = CharacterManager.getInstance().getActiveCharacter(player.getUUID());
 
         if (selectedCharacter == null) {
             context.getSource().sendFailure(Component.literal("Character not found: " + characterName));
             return 0;
         }
-        if (selectedCharacter == activeCharacter) {
+
+        if (selectedCharacter == activeCharacter.get()) {
             context.getSource().sendSystemMessage(Component.literal("Character already active: " + characterName));
             return 1; // someone please tell me if these return 0 or 1
         }
@@ -149,14 +150,14 @@ public class CharacterCommand {
         }
 
         Character selectedCharacter = CommandUtil.getCharacterIgnoreCase(player, characterName);
-        Character activeCharacter = CharacterManager.getInstance().getActiveCharacter(player.getUUID());
+        Optional<Character> activeCharacter = CharacterManager.getInstance().getActiveCharacter(player.getUUID());
 
         if (selectedCharacter == null) {
             context.getSource().sendFailure(Component.literal("Character not found: " + characterName));
             return 0;
         }
         // replace this return case once there is a way to reset playerData
-        if (selectedCharacter == activeCharacter) {
+        if (selectedCharacter == activeCharacter.get()) {
             context.getSource().sendFailure(Component.literal("You cannot delete an active character"));
             return 0;
         }

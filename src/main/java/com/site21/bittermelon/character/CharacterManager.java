@@ -1,7 +1,6 @@
 package com.site21.bittermelon.character;
 
 import com.site21.bittermelon.util.DataManager;
-import net.minecraft.world.entity.Entity;
 import net.neoforged.fml.loading.FMLPaths;
 
 import java.util.*;
@@ -72,8 +71,8 @@ public class CharacterManager extends DataManager<UUID, Character> {
         activeCharacters.put(entityUUID, getCharacter(characterUUID));
     }
 
-    public Character getActiveCharacter(UUID entityUUID) {
-        return activeCharacters.get(entityUUID);
+    public Optional<Character> getActiveCharacter(UUID entityUUID) {
+        return Optional.of(activeCharacters.get(entityUUID));
     }
 
     public List<Character> getCharacters(UUID entityUUID) {

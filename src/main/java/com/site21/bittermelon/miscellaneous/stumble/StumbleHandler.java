@@ -60,7 +60,7 @@ public class StumbleHandler {
         stumble(entity, entity instanceof Player ? 40 : 60, pushDirection);
     }
 
-    private static void motion(@NotNull LivingEntity entity, int length, Vec3 pushDirection) {
+    private static void motion(@NotNull LivingEntity entity, int length, @NotNull Vec3 pushDirection) {
         Vec3 normalizedPush = pushDirection.normalize();
         Vec3 lookVector = entity.getLookAngle();
 
@@ -128,12 +128,12 @@ public class StumbleHandler {
     }
 
     private static void announceFall(@NotNull LivingEntity entity) {
-        Character character = CharacterManager.getInstance().getActiveCharacter(entity.getUUID());
-        if (character != null) {
+        Optional<Character> characterOpt = CharacterManager.getInstance().getActiveCharacter(entity.getUUID());
+        characterOpt.ifPresent(character -> {
             Component component = Component.literal(character.getName() + " falls to the ground.");
 //                    .setStyle(Style.EMPTY.withColor(TextColor.parseColor(character.getEmoteColor()).getOrThrow()));
             sendLocalMessage(entity, 10, component);
-        }
+        });
     }
 
     @SubscribeEvent

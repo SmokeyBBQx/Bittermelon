@@ -28,6 +28,8 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
+import java.util.Optional;
+
 import static com.site21.bittermelon.init.BitterActivity.ACTIVITY;
 import static com.site21.bittermelon.init.BitterAttachmentTypes.ATTACHMENT_TYPES;
 import static com.site21.bittermelon.init.BitterBlockEntities.BLOCK_ENTITY_TYPES;
@@ -115,10 +117,8 @@ public class Bittermelon
 
     @SubscribeEvent
     public void onEntityTick(EntityTickEvent.@NotNull Post event) {
-        Character character = CharacterManager.getInstance().getActiveCharacter(event.getEntity().getUUID());
-        if (character != null) {
-            character.update();
-        }
+        Optional<Character> character = CharacterManager.getInstance().getActiveCharacter(event.getEntity().getUUID());
+        character.ifPresent(Character::update);
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent

@@ -12,6 +12,8 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeA
 import net.tslat.smartbrainlib.util.BrainUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
+
 public class Push<E extends Mob> extends AnimatableMeleeAttack<E> {
     public Push(int delayTicks) {
         super(delayTicks);
@@ -35,14 +37,13 @@ public class Push<E extends Mob> extends AnimatableMeleeAttack<E> {
             return;
 
         CharacterManager characterManager = CharacterManager.getInstance();
-        Character entityCharacter = characterManager.getActiveCharacter(entity.getUUID());
-        Character targetCharacter = characterManager.getActiveCharacter(target.getUUID());
-        if (entityCharacter != null && targetCharacter != null) {
-            LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(
-                    entityCharacter.getName() + " pushes " + targetCharacter.getName() + "."));
-//                        .setStyle(Style.EMPTY.withColor(TextColor.parseColor(
-//                                "#" + entityCharacter.getEmoteColor()).getOrThrow())));
-        }
+        Optional<Character> entityCharacterOpt = characterManager.getActiveCharacter(entity.getUUID());
+        Optional<Character> targetCharacterOpt = characterManager.getActiveCharacter(target.getUUID());
+
+        entityCharacterOpt.ifPresent(entityCharacter ->
+                targetCharacterOpt.ifPresent(targetCharacter ->
+                        LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(
+                                entityCharacter.getName() + " pushes " + targetCharacter.getName() + "."))));
 
         StumbleHandler.stumble(target, entity.getLookAngle());
     }

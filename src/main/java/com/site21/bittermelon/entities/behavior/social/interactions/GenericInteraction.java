@@ -18,9 +18,12 @@ import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
 import net.tslat.smartbrainlib.object.MemoryTest;
 import net.tslat.smartbrainlib.util.BrainUtils;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.ToIntBiFunction;
@@ -77,7 +80,7 @@ public class GenericInteraction<E extends LivingEntity & Socializable> extends E
     }
 
     @Override
-    protected void start(E entity) {
+    protected void start(@NotNull E entity) {
         this.socializeTick = entity.tickCount + this.socializeTime.apply(entity, this.partner);
 
         BrainUtils.setMemory(entity, BitterMemoryModuleType.SOCIALIZE_TARGET.get(), this.partner);
@@ -92,17 +95,25 @@ public class GenericInteraction<E extends LivingEntity & Socializable> extends E
 
         if (entity.closerThan(this.partner, closeEnoughDist.applyAsInt(entity, partner)) && entity.tickCount == this.socializeTick) {
             entity.modifySocialization(5);
-            Relationship entityPartnerRelationship = entity.getRelationship(CharacterManager.getInstance().getActiveCharacter(partner.getUUID()));
-            if (entityPartnerRelationship != null) {
-                entityPartnerRelationship.modifyOpinion(2);
-            }
+            CharacterManager characterManager = CharacterManager.getInstance();
+            Optional<Character> partnerCharacterOpt = characterManager.getActiveCharacter(partner.getUUID());
+            partnerCharacterOpt.ifPresent(partnerCharacter -> {
+                        Relationship entityPartnerRelationship = entity.getRelationship(partnerCharacter);
+                        if (entityPartnerRelationship != null) {
+                            entityPartnerRelationship.modifyOpinion(2);
+                        }
+                    }
+            );
 
             if (partner instanceof Socializable socializable) {
                 socializable.modifySocialization(5);
-                Relationship partnerEntityRelationship = socializable.getRelationship(CharacterManager.getInstance().getActiveCharacter(entity.getUUID()));
-                if (partnerEntityRelationship != null) {
-                    partnerEntityRelationship.modifyOpinion(2);
-                }
+                Optional<Character> entityCharacterOpt = characterManager.getActiveCharacter(partner.getUUID());
+                entityCharacterOpt.ifPresent(entityCharacter -> {
+                    Relationship partnerEntityRelationship = socializable.getRelationship(entityCharacter);
+                    if (partnerEntityRelationship != null) {
+                        partnerEntityRelationship.modifyOpinion(2);
+                    }
+                });
             }
 
             BrainUtils.clearMemory(entity, BitterMemoryModuleType.SOCIALIZE_TARGET.get());
@@ -127,17 +138,23 @@ public class GenericInteraction<E extends LivingEntity & Socializable> extends E
         return BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES).findClosest(entity2 -> entity2 instanceof LivingEntity partner && this.partnerPredicate.test(entity, partner)).map(LivingEntity.class::cast).orElse(null);
     }
 
-    @Nullable
     protected void sendRandomMessage(E entity) {
         if (messages != null && partner != null && !messages.isEmpty()) {
             CharacterManager characterManager = CharacterManager.getInstance();
-            Character entityCharacter = characterManager.getActiveCharacter(entity.getUUID());
-            Character partnerCharacter = characterManager.getActiveCharacter(partner.getUUID());
-            if (!(entityCharacter == null) && !(partnerCharacter == null)) {
-                String message = this.messages.get(entity.getRandom().nextInt(messages.size()));
-                LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(entityCharacter.getName() + message + partnerCharacter.getName() + ".")
-                        .setStyle(Style.EMPTY.withColor(TextColor.parseColor("#" + entityCharacter.getEmoteColor()).getOrThrow())));
-            }
+            Optional<Character> entityCharacterOpt = characterManager.getActiveCharacter(entity.getUUID());
+            Optional<Character> partnerCharacterOpt = characterManager.getActiveCharacter(partner.getUUID());
+            Random random = new Random();
+
+            entityCharacterOpt.ifPresent(entityCharacter ->
+                    partnerCharacterOpt.ifPresent(partnerCharacter -> {
+                        String message = messages.get(random.nextInt(messages.size()));
+                        LocalMessageHelper.sendLocalMessage(entity, 10,
+                                Component.literal(entityCharacter.getName() + message + partnerCharacter.getName() + ".")
+                                        .setStyle(Style.EMPTY.withColor(TextColor.parseColor(
+                                                "#" + entityCharacter.getEmoteColor()).getOrThrow()))
+                        );
+                    })
+            );
         }
     }
 }
