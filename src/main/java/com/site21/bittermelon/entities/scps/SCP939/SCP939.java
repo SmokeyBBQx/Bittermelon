@@ -117,7 +117,7 @@ public class SCP939 extends PathfinderMob implements NeedsUser<SCP939>, Socializ
         CharacterManager.getInstance().setActiveCharacter(this.uuid, character);
     }
 
-    public static AttributeSupplier.Builder createAttributes() {
+    public static AttributeSupplier.@NotNull Builder createAttributes() {
         return Monster.createMonsterAttributes()
                 .add(Attributes.MAX_HEALTH, 150.0)
                 .add(Attributes.ATTACK_KNOCKBACK, 1.5)
@@ -321,6 +321,16 @@ public class SCP939 extends PathfinderMob implements NeedsUser<SCP939>, Socializ
         super.doPush(entity);
     }
 
+    @Override
+    public boolean isDeadOrDying() {
+        Character character = CharacterManager.getInstance().getActiveCharacter(this.uuid);
+        if (character != null) {
+            return character.getMedicalStats().getConsciousness() <= 0 || super.isDeadOrDying();
+        }
+
+        return super.isDeadOrDying();
+    }
+
     public void setAttackTarget(LivingEntity attackTarget) {
         this.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, attackTarget);
         this.getBrain().eraseMemory(MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
@@ -452,7 +462,7 @@ public class SCP939 extends PathfinderMob implements NeedsUser<SCP939>, Socializ
                         new Push<>(10).cooldownFor(scp939 -> 120),
                         new Attack(10),
                         new Pull<>(10).cooldownFor(scp939 -> 120)
-                ).cooldownFor(scp939 -> 40)
+                ).cooldownFor(scp939 -> 60)
 //                new LeapAtTarget<>(20)
         );
     }

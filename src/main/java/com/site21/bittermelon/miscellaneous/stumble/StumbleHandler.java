@@ -43,6 +43,9 @@ public class StumbleHandler {
     private static final Random RANDOM = new Random();
 
     public static void stumble(@NotNull LivingEntity entity, int length, Vec3 pushDirection) {
+        Pose pose = entity.getPose();
+        if (pose == Pose.SLEEPING || pose == Pose.SWIMMING) return;
+
         if (!entity.level().isClientSide) {
             instances.put(entity.getUUID(), length);
             effectDelays.put(entity.getUUID(), 5);
@@ -53,11 +56,11 @@ public class StumbleHandler {
     }
 
     public static void stumble(LivingEntity entity) {
-        stumble(entity, entity instanceof Player ? 40 : 60, entity.getLookAngle());
+        stumble(entity, entity instanceof Player ? 40 : 100, entity.getLookAngle());
     }
 
     public static void stumble(LivingEntity entity, Vec3 pushDirection) {
-        stumble(entity, entity instanceof Player ? 40 : 60, pushDirection);
+        stumble(entity, entity instanceof Player ? 40 : 100, pushDirection);
     }
 
     private static void motion(@NotNull LivingEntity entity, int length, @NotNull Vec3 pushDirection) {

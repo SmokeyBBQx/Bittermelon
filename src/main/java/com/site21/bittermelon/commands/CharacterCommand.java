@@ -14,12 +14,13 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
 
 public class CharacterCommand {
-    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+    public static void register(@NotNull CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("character")
                 .then(Commands.literal("list")
                         .executes(context -> viewCharacters(context, false))
@@ -36,6 +37,16 @@ public class CharacterCommand {
                                         .then(Commands.argument("emoteColor", StringArgumentType.string())
                                                 .then(Commands.argument("description", StringArgumentType.greedyString())
                                                         .executes(CharacterCommand::createCharacter)))))
+                )
+                .then(Commands.literal("create")
+                        .requires(source -> source.hasPermission(2))
+                        .then(Commands.argument("targets", EntityArgument.entities())
+                                .then(Commands.argument("name", StringArgumentType.string())
+                                        .then(Commands.argument("age", IntegerArgumentType.integer(1))
+                                                .then(Commands.argument("emoteColor", StringArgumentType.string())
+                                                        .then(Commands.argument("description", StringArgumentType.greedyString())
+                                                                .executes(CharacterCommand::createCharacter)))))
+                        )
                 )
                 .then(Commands.literal("remove")
                         .then(Commands.argument("character", StringArgumentType.string())
@@ -81,12 +92,13 @@ public class CharacterCommand {
         context.getSource().sendSystemMessage(Component.literal("Character created: " + name));
         return 1;
     }
+
     // TODO: figure out default data for characters
     private static int switchCharacter(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         String characterName = StringArgumentType.getString(context, "name");
         ServerPlayer player = context.getSource().getPlayerOrException();
         Character selectedCharacter = CommandUtil.getCharacterIgnoreCase(player, characterName);
-       Character activeCharacter = CharacterManager.getInstance().getActiveCharacter(player.getUUID());
+        Character activeCharacter = CharacterManager.getInstance().getActiveCharacter(player.getUUID());
 
         if (selectedCharacter == null) {
             context.getSource().sendFailure(Component.literal("Character not found: " + characterName));

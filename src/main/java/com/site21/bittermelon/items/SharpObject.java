@@ -25,7 +25,8 @@ public interface SharpObject extends MedicalItem {
     @Override
     default EnumSet<CompartmentType> getAllowedCompartments() {
         return EnumSet.of(
-                CompartmentType.SOFT_TISSUE
+                CompartmentType.SOFT_TISSUE,
+                CompartmentType.HARD_TISSUE
         );
     }
 

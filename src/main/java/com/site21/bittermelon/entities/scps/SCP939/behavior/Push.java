@@ -23,7 +23,7 @@ public class Push<E extends Mob> extends AnimatableMeleeAttack<E> {
     protected boolean checkExtraStartConditions(ServerLevel level, E entity) {
         super.checkExtraStartConditions(level, entity);
 
-        return !StumbleHandler.containsUUID(target.getUUID());
+        return !StumbleHandler.containsUUID(target.getUUID()) && !StumbleHandler.containsUUID(entity.getUUID());
     }
 
     @Override

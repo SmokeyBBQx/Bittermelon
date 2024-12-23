@@ -26,6 +26,21 @@ public abstract class DamageGenerator {
         this(EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE));
     }
 
+    /**
+     * Generates damage to a character's body based on specified parameters.
+     * Selects a major body part as the initial target, then creates injuries in multiple child compartments based on area.
+     * For each affected area, damage can penetrate through multiple compartments based on depth.
+     *
+     * @param medicalStats MedicalStats of targeted character
+     * @param area Amount of children compartments affected within the targeted body part (e.g., 3 would create 3 separate injury sites)
+     * @param minDepth Minimum number of nested compartments the damage penetrates through
+     * @param maxDepth Maximum number of nested compartments the damage can penetrate
+     * @param damage Base damage value
+     * @param character The character receiving the damage
+     * @param entity The living entity associated with the character
+     * @return A DamageResult containing the targeted body part and list of created injuries, or null if no valid target was found
+     */
+
     public @Nullable DamageResult generateDamage(@NotNull MedicalStats medicalStats, int area, int minDepth, int maxDepth, float damage, Character character, LivingEntity entity) {
         List<Compartment> initialCompartments = getInitialCompartments(medicalStats);
         if (initialCompartments.isEmpty()) return null;
@@ -56,6 +71,16 @@ public abstract class DamageGenerator {
         }
 
         return new DamageResult(targetBodyPart, injuryResults);
+    }
+
+    public @Nullable DamageResult generateDamage(@NotNull MedicalStats medicalStats, int maxArea, int minDepth, int maxDepth, float damage, float performance, Character character, LivingEntity entity) {
+        int area = 1 + random.nextInt((int) (maxArea * performance > 1 ? maxArea * performance : 1));
+        maxDepth = 1 + random.nextInt((int) (maxDepth * performance > 1 ? maxDepth * performance : 1));
+
+//        System.out.println("Area " + area);
+//        System.out.println("Max Depth " + maxDepth);
+
+        return generateDamage(medicalStats, area, minDepth, maxDepth, damage, character, entity);
     }
 
     private @Nullable InjuryResult inflictInjury(@NotNull List<Compartment> compartments, float damage, MedicalStats medicalStats, Character character, LivingEntity entity) {

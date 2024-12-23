@@ -16,6 +16,7 @@ public enum FunctionType {
     SIGHT,
     HEARING,
     TASTE,
+    BITE,
     MANIPULATION,
     BRAIN_VOLUNTARY_MOVEMENT,
     BRAIN_LANGUAGE,

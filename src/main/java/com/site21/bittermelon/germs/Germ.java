@@ -91,7 +91,7 @@ public class Germ {
         this.growthRate = growthRate;
     }
 
-    public static Germ generateRandomGerm(long seed) {
+    public static @NotNull Germ generateRandomGerm(long seed) {
         Random random = new Random(seed);
 
         int incubationTime = random.nextInt(20 * 30, 20 * 300);
