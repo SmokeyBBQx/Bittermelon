@@ -1,6 +1,5 @@
 package com.site21.bittermelon.medical.medicalstats;
 
-import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.blocks.FluidBlock;
 import com.site21.bittermelon.blocks.blockentities.FluidBlockEntity;
 import com.site21.bittermelon.character.Character;
@@ -18,14 +17,11 @@ import com.site21.bittermelon.util.ServerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.ai.attributes.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -51,19 +47,33 @@ public class MedicalStats {
     private static final int GASP_INTERVAL = 200;
     private int stumbleTickCounter = 0;
     private static final int STUMBLE_INTERVAL = 100;
+    private final Map<Holder<Attribute>, Double> defaultAttributeValues = new HashMap<>();
 
     public MedicalStats(BloodType bloodType, List<Compartment> compartments, @NotNull Character character) {
         this.bloodType = bloodType;
         this.compartments = new CopyOnWriteArrayList<>(compartments);
         this.character = character;
-
-        this.entity = ServerUtil.getLivingEntity(character.getEntityUUID());
         this.stats = new EnumMap<>(FunctionType.class);
         this.immunity = new ConcurrentHashMap<>();
         this.vitalSigns = new VitalSigns();
 
         for (FunctionType type : FunctionType.values()) {
             stats.put(type, 0f);
+        }
+
+        initializeEntity();
+    }
+
+    private void initializeEntity() {
+        this.entity = ServerUtil.getLivingEntity(character.getEntityUUID());
+
+        if (entity != null) {
+            EntityType<? extends LivingEntity> entityType = (EntityType<? extends LivingEntity>) entity.getType();
+            AttributeMap attributeMap = new AttributeMap(DefaultAttributes.getSupplier(entityType));
+
+            for (AttributeInstance instance : attributeMap.attributes.values()) {
+                defaultAttributeValues.put(instance.getAttribute(), instance.getBaseValue());
+            }
         }
     }
 
@@ -123,57 +133,86 @@ public class MedicalStats {
             updateManipulationAttributes();
             updateConsciousness();
         } else {
-            entity = ServerUtil.getLivingEntity(character.getEntityUUID());
+            initializeEntity();
         }
     }
 
     private void updateMovementAttributes() {
         float capability = getMovement();
 
-        AttributeModifier modifier = new AttributeModifier(
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "movement"),
-                capability - 1,
-                AttributeModifier.Operation.ADD_MULTIPLIED_BASE
-        );
-
         handleStumbling(capability);
-
 //        System.out.println(capability);
 
-        updateEntityAttribute(Attributes.MOVEMENT_SPEED, modifier);
-        updateEntityAttribute(Attributes.JUMP_STRENGTH, modifier);
+        updateEntityAttribute(Attributes.MOVEMENT_SPEED, capability);
+        updateEntityAttribute(Attributes.JUMP_STRENGTH, capability);
     }
 
     private void updateManipulationAttributes() {
         float capability = getManipulation();
 
-        AttributeModifier modifier = new AttributeModifier(
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "manipulation"),
-                capability - 1,
-                AttributeModifier.Operation.ADD_MULTIPLIED_BASE
-        );
-
-        updateEntityAttribute(Attributes.ATTACK_SPEED, modifier);
-        updateEntityAttribute(Attributes.ATTACK_DAMAGE, modifier);
-        updateEntityAttribute(Attributes.BLOCK_BREAK_SPEED, modifier);
-        updateEntityAttribute(Attributes.BLOCK_INTERACTION_RANGE, modifier);
-        updateEntityAttribute(Attributes.ENTITY_INTERACTION_RANGE, modifier);
+        updateEntityAttribute(Attributes.ATTACK_SPEED, capability);
+        updateEntityAttribute(Attributes.ATTACK_DAMAGE, capability);
+        updateEntityAttribute(Attributes.BLOCK_BREAK_SPEED, capability);
+        updateEntityAttribute(Attributes.BLOCK_INTERACTION_RANGE, capability);
+        updateEntityAttribute(Attributes.ENTITY_INTERACTION_RANGE, capability);
     }
 
-    private void updateEntityAttribute(Holder<Attribute> attributeHolder, AttributeModifier modifier) {
+    private void updateEntityAttribute(Holder<Attribute> attributeHolder, double value) {
         AttributeInstance attribute = entity.getAttribute(attributeHolder);
         if (attribute == null) return;
 
-        AttributeModifier currentAttribute = attribute.getModifier(modifier.id());
-
-        if (attribute.hasModifier(modifier.id())) {
-            if (modifier.amount() != currentAttribute.amount()) {
-                attribute.addOrUpdateTransientModifier(modifier);
-            }
-        } else {
-            attribute.addOrUpdateTransientModifier(modifier);
-        }
+        if (defaultAttributeValues.get(attributeHolder) == null) return;
+        double baseValue = defaultAttributeValues.get(attributeHolder);
+        attribute.setBaseValue(value * baseValue);
     }
+
+//    private void updateMovementAttributes() {
+//        float capability = getMovement();
+//
+//        AttributeModifier modifier = new AttributeModifier(
+//                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "movement"),
+//                capability,
+//                AttributeModifier.Operation.ADD_VALUE
+//        );
+//
+//        handleStumbling(capability);
+//
+////        System.out.println(capability);
+//
+//        updateEntityAttribute(Attributes.MOVEMENT_SPEED, modifier);
+//        updateEntityAttribute(Attributes.JUMP_STRENGTH, modifier);
+//    }
+//
+//    private void updateManipulationAttributes() {
+//        float capability = getManipulation();
+//
+//        AttributeModifier modifier = new AttributeModifier(
+//                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "manipulation"),
+//                capability,
+//                AttributeModifier.Operation.ADD_VALUE
+//        );
+//
+//        updateEntityAttribute(Attributes.ATTACK_SPEED, modifier);
+//        updateEntityAttribute(Attributes.ATTACK_DAMAGE, modifier);
+//        updateEntityAttribute(Attributes.BLOCK_BREAK_SPEED, modifier);
+//        updateEntityAttribute(Attributes.BLOCK_INTERACTION_RANGE, modifier);
+//        updateEntityAttribute(Attributes.ENTITY_INTERACTION_RANGE, modifier);
+//    }
+//
+//    private void updateEntityAttribute(Holder<Attribute> attributeHolder, AttributeModifier modifier) {
+//        AttributeInstance attribute = entity.getAttribute(attributeHolder);
+//        if (attribute == null) return;
+//
+//        AttributeModifier currentAttribute = attribute.getModifier(modifier.id());
+//
+//        if (attribute.hasModifier(modifier.id())) {
+//            if (modifier.amount() != currentAttribute.amount()) {
+//                attribute.addOrUpdateTransientModifier(modifier);
+//            }
+//        } else {
+//            attribute.addOrUpdateTransientModifier(modifier);
+//        }
+//    }
 
     private void updateStats() {
         EnumMap<FunctionType, Float> statsCopy = new EnumMap<>(FunctionType.class);

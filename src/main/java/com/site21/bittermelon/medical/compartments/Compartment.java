@@ -16,6 +16,7 @@ public class Compartment {
 
     protected transient Compartment owner;
     protected float maxHealth;
+    protected final float trueMaxHealth;
     protected float health;
     protected ItemStack item;
     protected ResourceLocation icon;
@@ -26,6 +27,7 @@ public class Compartment {
         this.types = types;
         this.name = name;
         this.maxHealth = maxHealth;
+        this.trueMaxHealth = maxHealth;
         this.health = maxHealth;
         this.children = new ArrayList<>();
         this.attributes = new EnumMap<>(FunctionType.class);
