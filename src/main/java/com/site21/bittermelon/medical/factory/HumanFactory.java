@@ -14,10 +14,10 @@ import java.util.*;
 
 import static com.site21.bittermelon.init.BitterItems.*;
 
-public class HumanFactory {
+public class HumanFactory implements AnatomyFactory {
 
     @Contract("_, _ -> new")
-    public static @NotNull MedicalStats build(BloodType bloodType, Character character) {
+    public @NotNull MedicalStats build(BloodType bloodType, Character character) {
         List<Compartment> compartments = new ArrayList<>();
 
         BodyPart wholeBody = createMajorBodyPart("Whole Body", null);

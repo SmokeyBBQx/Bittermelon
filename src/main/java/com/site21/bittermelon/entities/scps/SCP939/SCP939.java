@@ -4,26 +4,25 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Dynamic;
 import com.site21.bittermelon.character.Character;
-import com.site21.bittermelon.character.CharacterManager;
 import com.site21.bittermelon.entities.BitterAngerManagement;
 import com.site21.bittermelon.entities.BitterVibrationSystem;
-import com.site21.bittermelon.entities.behavior.mood.mentalbreak.MurderousRage;
-import com.site21.bittermelon.entities.behavior.mood.mentalbreak.WarnHighStress;
+import com.site21.bittermelon.entities.base.BitterMob;
+import com.site21.bittermelon.entities.behavior.attack.AttackTemplate;
 import com.site21.bittermelon.entities.behavior.needs.Need;
 import com.site21.bittermelon.entities.behavior.social.Relationship;
-import com.site21.bittermelon.entities.behavior.social.interactions.GenericInteraction;
 import com.site21.bittermelon.entities.behavior.social.Socializable;
-import com.site21.bittermelon.entities.behavior.needs.NeedsUser;
 import com.site21.bittermelon.entities.scps.BitterVibrationUser;
-import com.site21.bittermelon.entities.scps.SCP939.behavior.*;
 import com.site21.bittermelon.init.BitterActivity;
-import com.site21.bittermelon.init.BitterMemoryModuleType;
+import com.site21.bittermelon.medical.compartments.CompartmentType;
+import com.site21.bittermelon.medical.damage.generators.*;
+import com.site21.bittermelon.medical.factory.Anatomy;
+import com.site21.bittermelon.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.miscellaneous.stumble.StumbleHandler;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.DebugPackets;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -31,12 +30,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Unit;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.WalkTarget;
-import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
@@ -45,22 +42,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.DynamicGameEventListener;
-import net.minecraft.world.level.pathfinder.Node;
-import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.level.pathfinder.PathType;
-import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
-import net.tslat.smartbrainlib.api.SmartBrainOwner;
+import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
-import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
-import net.tslat.smartbrainlib.api.core.behaviour.AllApplicableBehaviours;
-import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
-import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.target.InvalidateAttackTarget;
+import net.tslat.smartbrainlib.api.core.navigation.SmoothWallClimberNavigation;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
@@ -73,10 +58,9 @@ import org.slf4j.Logger;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
-public class SCP939 extends PathfinderMob implements NeedsUser<SCP939>, Socializable, BitterVibrationSystem, SmartBrainOwner<SCP939> {
+public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVibrationSystem {
     private static final EntityDataAccessor<Float> BLOODLUST = SynchedEntityData.defineId(SCP939.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> SOCIALIZATION = SynchedEntityData.defineId(SCP939.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> PROCREATION = SynchedEntityData.defineId(SCP939.class, EntityDataSerializers.FLOAT);
@@ -85,25 +69,32 @@ public class SCP939 extends PathfinderMob implements NeedsUser<SCP939>, Socializ
     private static final EntityDataAccessor<Float> ANGER = SynchedEntityData.defineId(SCP939.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Integer> CLIENT_ANGER_LEVEL = SynchedEntityData.defineId(SCP939.class, EntityDataSerializers.INT);
 
-    private final Map<Character, Relationship> relationships = new HashMap<>();
-
     private static final float BLOODLUST_DECAY = -0.001f;
     private static final float SOCIALIZATION_DECAY = -0.001f;
     private static final float PROCREATION_DECAY = -0.0001f;
     private static final float STRESS_REGEN = 0.0005f;
 
     private static final Logger LOGGER = LogUtils.getLogger();
+    private final Map<Character, Relationship> relationships = new HashMap<>();
     private final DynamicGameEventListener<Listener> dynamicGameEventListener;
-    private BitterVibrationSystem.Data vibrationData;
     private final BitterVibrationSystem.User vibrationUser;
-    private BitterAngerManagement angerManagement = new BitterAngerManagement(this::canTargetEntity, Collections.emptyList());
+    private BitterVibrationSystem.Data vibrationData;
+    private BitterAngerManagement angerManagement;
+    private final SCP939Brain brainHandler;
 
     public SCP939(EntityType<? extends Mob> entityType, Level level) {
         super((EntityType<? extends Monster>) entityType, level);
         this.vibrationUser = new BitterVibrationUser(this);
         this.vibrationData = new BitterVibrationSystem.Data();
         this.dynamicGameEventListener = new DynamicGameEventListener<>(new BitterVibrationSystem.Listener(this));
+        this.angerManagement = new BitterAngerManagement(this::canTargetEntity, Collections.emptyList());
         this.xpReward = 5;
+        this.brainHandler = new SCP939Brain(this);
+
+        initializePathfinding();
+    }
+
+    private void initializePathfinding() {
         this.getNavigation().setCanFloat(true);
         this.setPathfindingMalus(PathType.UNPASSABLE_RAIL, 0.0F);
         this.setPathfindingMalus(PathType.DAMAGE_OTHER, 8.0F);
@@ -111,14 +102,15 @@ public class SCP939 extends PathfinderMob implements NeedsUser<SCP939>, Socializ
         this.setPathfindingMalus(PathType.LAVA, 8.0F);
         this.setPathfindingMalus(PathType.DAMAGE_FIRE, 0.0F);
         this.setPathfindingMalus(PathType.DANGER_FIRE, 0.0F);
+    }
 
-        Character character = new Character(this.uuid, "SCP-939 " + getRandom().nextInt(1, 10));
-        CharacterManager.getInstance().addCharacter(character);
-        CharacterManager.getInstance().setActiveCharacter(this.uuid, character);
+    protected Character initializeCharacter() {
+        return new Character(this.uuid, "SCP-939-" + getRandom().nextInt(1, 24), Anatomy.HUMAN);
     }
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {
         return Monster.createMonsterAttributes()
+                .add(Attributes.MOVEMENT_SPEED, 0.6)
                 .add(Attributes.MAX_HEALTH, 150.0)
                 .add(Attributes.ATTACK_KNOCKBACK, 1.5)
                 .add(Attributes.ATTACK_DAMAGE, 30.0);
@@ -160,11 +152,11 @@ public class SCP939 extends PathfinderMob implements NeedsUser<SCP939>, Socializ
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.setBloodlust(compound.getFloat("bloodlust"));
-        this.setSocialization(compound.getFloat("socialization"));
-        this.setProcreation(compound.getFloat("procreation"));
-        this.setRest(compound.getFloat("rest"));
-        this.setStress(compound.getFloat("stress"));
+        this.setBloodlust(compound.contains("bloodlust") ? compound.getFloat("bloodlust") : 100.0f);
+        this.setSocialization(compound.contains("socialization") ? compound.getFloat("socialization") : 100.0f);
+        this.setProcreation(compound.contains("procreation") ? compound.getFloat("procreation") : 100.0f);
+        this.setRest(compound.contains("rest") ? compound.getFloat("rest") : 100.0f);
+        this.setStress(compound.contains("stress") ? compound.getFloat("stress") : 100.0f);
         if (compound.contains("anger")) {
             BitterAngerManagement.codec(this::canTargetEntity).parse(
                     new Dynamic<>(NbtOps.INSTANCE, compound.get("anger"))).resultOrPartial(LOGGER::error).ifPresent(
@@ -274,12 +266,6 @@ public class SCP939 extends PathfinderMob implements NeedsUser<SCP939>, Socializ
         return this.getTargetFromBrain();
     }
 
-    @Override
-    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
-        return false;
-    }
-
-
     @Contract("null->false")
     public boolean canTargetEntity(@Nullable Entity entity) {
         return entity instanceof LivingEntity livingentity
@@ -313,22 +299,14 @@ public class SCP939 extends PathfinderMob implements NeedsUser<SCP939>, Socializ
     @Override
     protected void doPush(@NotNull Entity entity) {
         if (!this.isNoAi() && !this.getBrain().hasMemoryValue(MemoryModuleType.TOUCH_COOLDOWN)) {
-            this.getBrain().setMemoryWithExpiry(MemoryModuleType.TOUCH_COOLDOWN, Unit.INSTANCE, 20L);
-            this.increaseAngerAt(entity);
-            setDisturbanceLocation(entity.blockPosition(), this);
+            if (entity.getType() != this.getType()) {
+                this.getBrain().setMemoryWithExpiry(MemoryModuleType.TOUCH_COOLDOWN, Unit.INSTANCE, 20L);
+                this.increaseAngerAt(entity);
+                setDisturbanceLocation(entity.blockPosition(), this);
+            }
         }
 
         super.doPush(entity);
-    }
-
-    @Override
-    public boolean isDeadOrDying() {
-        Character character = CharacterManager.getInstance().getActiveCharacter(this.uuid);
-        if (character != null) {
-            return character.getMedicalStats().getConsciousness() <= 0 || super.isDeadOrDying();
-        }
-
-        return super.isDeadOrDying();
     }
 
     public void setAttackTarget(LivingEntity attackTarget) {
@@ -342,6 +320,7 @@ public class SCP939 extends PathfinderMob implements NeedsUser<SCP939>, Socializ
         if (this.level() instanceof ServerLevel serverlevel) {
             BitterVibrationSystem.Ticker.tick(serverlevel, this.vibrationData, this.vibrationUser);
         }
+
         modifyBloodlust(BLOODLUST_DECAY);
         modifySocialization(SOCIALIZATION_DECAY);
         modifyProcreation(PROCREATION_DECAY);
@@ -351,8 +330,10 @@ public class SCP939 extends PathfinderMob implements NeedsUser<SCP939>, Socializ
 
     @Override
     protected void customServerAiStep() {
+        super.customServerAiStep();
+
         var serverLevel = (ServerLevel) this.level();
-        tickBrain(this);
+
         if (this.tickCount % 20 == 0) {
             this.angerManagement.tick(serverLevel, this::canTargetEntity);
             this.syncClientAngerLevel();
@@ -371,192 +352,13 @@ public class SCP939 extends PathfinderMob implements NeedsUser<SCP939>, Socializ
     }
 
     @Override
-    protected void sendDebugPackets() {
-        super.sendDebugPackets();
-        DebugPackets.sendEntityBrain(this);
-    }
-
-
-    @Override
     protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
-        return new GroundPathNavigation(this, level) {
-            @Override
-            protected @NotNull PathFinder createPathFinder(int i) {
-                this.nodeEvaluator = new WalkNodeEvaluator();
-                this.nodeEvaluator.setCanPassDoors(true);
-                return new PathFinder(this.nodeEvaluator, i) {
-                    @Override
-                    protected float distance(@NotNull Node entity1, @NotNull Node entity2) {
-                        return entity1.distanceToXZ(entity2);
-                    }
-                };
-            }
-        };
+        return new SmoothWallClimberNavigation(this, level);
     }
-
-    @Override
-    protected Brain.@NotNull Provider<SCP939> brainProvider() {
-        return new SmartBrainProvider<>(this);
-    }
-
-    @Override
-    public List<? extends ExtendedSensor<? extends SCP939>> getSensors() {
-        return ObjectArrayList.of(
-                new NearbyPlayersSensor<SCP939>().setRadius(1000),
-                new NearbyLivingEntitySensor<>(),
-                new HurtBySensor<>()
-        );
-    }
-
-    @Override
-    public List<Activity> getActivityPriorities() {
-        List<Need<SCP939>> needs = new ArrayList<>(this.getNeeds());
-
-        needs.removeIf(need -> !need.canBeFulfilled().test(this));
-
-        if (!needs.isEmpty()) {
-            needs.sort((n1, n2) -> {
-                float priority1 = n1.priorityFunction().apply(this.getEntityData().get(n1.data()));
-                float priority2 = n2.priorityFunction().apply(this.getEntityData().get(n2.data()));
-                return Float.compare(priority2, priority1);
-            });
-
-            return needs.stream()
-                    .map(Need::activity)
-                    .collect(Collectors.toList());
-        }
-
-        return ObjectArrayList.of(Activity.FIGHT, Activity.IDLE);
-    }
-
-    @Override
-    public Map<Activity, BrainActivityGroup<? extends SCP939>> getAdditionalTasks() {
-        return Map.of(
-                Activity.INVESTIGATE, getInvestigationTasks(),
-                BitterActivity.HUNT.get(), getHuntTasks(),
-                BitterActivity.PROCREATE.get(), getProcreateTasks(),
-                Activity.REST, getRestTasks(),
-                BitterActivity.SOCIALIZE.get(), getSocializeTasks(),
-                BitterActivity.MENTAL_BREAK.get(), getMentalBreakTasks()
-        );
-    }
-
-    @Override
-    public BrainActivityGroup<? extends SCP939> getCoreTasks() {
-        return BrainActivityGroup.coreTasks(
-//                new AvoidSun<>(),
-//                new EscapeSun<>().cooldownFor(entity -> 20),
-//                TODO: new FleeFireTask<>
-                new LookAtTarget<>(),
-                new MoveToWalkTarget<>()
-        );
-    }
-
-    @Override
-    public BrainActivityGroup<? extends SCP939> getFightTasks() {
-        return BrainActivityGroup.fightTasks(
-                new RegenBloodlust<>(),
-                new InvalidateAttackTarget<>(),
-                new SetWalkTargetToAttackTarget<>().speedMod((entity, target) -> 1.5f).stopIf(entity -> this.isDeadOrDying()),
-                new OneRandomBehaviour<>(
-                        new Push<>(10).cooldownFor(scp939 -> 120),
-                        new Attack(10),
-                        new Pull<>(10).cooldownFor(scp939 -> 120)
-                ).cooldownFor(scp939 -> 60)
-//                new LeapAtTarget<>(20)
-        );
-    }
-
-    public BrainActivityGroup<? extends SCP939> getHuntTasks() {
-        return new BrainActivityGroup<SCP939>(BitterActivity.HUNT.get()).behaviours(
-//                new SeekNearestPlayer<>()
-//                        .cooldownFor(entity -> 120),
-                new OneRandomBehaviour<>(
-                        new Lure<>(20)
-                                .cooldownFor(entity -> 200),
-                        new Amnesticize<>(60)
-                                .cooldownFor(entity -> 200),
-                        new Listen<>(100)
-                                .cooldownFor(entity -> 300)
-
-                        // TODO: Cooldown as memory type?
-                )
-                        .startCondition(entity -> !BrainUtils.hasMemory(entity, BitterMemoryModuleType.ACTION_COOLDOWN.get()))
-                        .cooldownFor(entity -> 150)
-                        .whenStopping(entity -> BrainUtils.setForgettableMemory(entity, BitterMemoryModuleType.ACTION_COOLDOWN.get(), true, 150)),
-                new OneRandomBehaviour<>(
-                        new SetRandomWalkTarget<>()
-                                .setRadius(getRandom().nextInt(10, 20)),
-                        new Idle<>().runFor(entity -> 60)
-                )
-        );
-    }
-
-    public BrainActivityGroup<? extends SCP939> getInvestigationTasks() {
-        return new BrainActivityGroup<SCP939>(Activity.INVESTIGATE).requireAndWipeMemoriesOnUse(
-                        MemoryModuleType.DISTURBANCE_LOCATION
-                )
-                .behaviours(
-                        new FirstApplicableBehaviour<>(
-//                                new InvestigateTarget<>()
-//                                        .cooldownFor(entity -> 20),
-                                new AllApplicableBehaviours<>(
-                                        new MoveToWalkTarget<>(),
-                                        new Idle<>().runFor(entity -> 60)
-                                )
-                        )
-                );
-    }
-
-    public BrainActivityGroup<? extends SCP939> getProcreateTasks() {
-        return new BrainActivityGroup<SCP939>(BitterActivity.PROCREATE.get()).behaviours(
-                new Procreate<>(20)
-        );
-    }
-
-    public BrainActivityGroup<? extends SCP939> getRestTasks() {
-        return new BrainActivityGroup<SCP939>(Activity.REST).behaviours(
-                new Rest<>(0.05f)
-//                new SequentialBehaviour<>(
-////                        new FindDarkness<>(),
-//                        new Rest<>(0.05f)
-//                )
-        );
-    }
-
-    public BrainActivityGroup<? extends SCP939> getSocializeTasks() {
-        return new BrainActivityGroup<SCP939>(BitterActivity.SOCIALIZE.get()).behaviours(
-                new GenericInteraction<>()
-                        .closeEnoughDist((entity, partner) -> 8)
-                        .messages(List.of(
-                                        " flickers its bioluminescent spine lights at ",
-                                        " emits a high-pitched tone towards "
-                                )
-                        )
-        );
-    }
-
-    public BrainActivityGroup<? extends SCP939> getMentalBreakTasks() {
-        return new BrainActivityGroup<SCP939>(BitterActivity.MENTAL_BREAK.get()).behaviours(
-                new OneRandomBehaviour<SCP939>(
-                        new WarnHighStress<>(List.of(
-                                " scratches the ground vigorously.",
-                                "'s bioluminescent spine lights flicker in a rapid wave-like rhythm."
-                        )),
-//                        new Berserk<>(),
-                        new MurderousRage<>(true),
-                        new SetRandomWalkTarget<>()
-                                .setRadius(getRandom().nextInt(10, 20)),
-                        new Idle<>().runFor(entity -> 30)
-                )
-                        .cooldownFor(entity -> 400)
-        );
-    }
-
 
     @Override
     public boolean dampensVibrations() {
-        return false;
+        return true;
     }
 
     @Override
@@ -576,6 +378,30 @@ public class SCP939 extends PathfinderMob implements NeedsUser<SCP939>, Socializ
 
     public Component getRandomLureLine() {
         return Component.literal("HELP");
+    }
+
+    @Override
+    public List<? extends ExtendedSensor<? extends SCP939>> getSensors() {
+        return ObjectArrayList.of(
+                new NearbyPlayersSensor<SCP939>().setRadius(1000),
+                new NearbyLivingEntitySensor<>(),
+                new HurtBySensor<>()
+        );
+    }
+
+    @Override
+    public Map<Activity, BrainActivityGroup<? extends SCP939>> getAdditionalTasks() {
+        return brainHandler.getAdditionalTasks();
+    }
+
+    @Override
+    public BrainActivityGroup<? extends SCP939> getCoreTasks() {
+        return brainHandler.getCoreTasks();
+    }
+
+    @Override
+    public BrainActivityGroup<? extends SCP939> getFightTasks() {
+        return brainHandler.getFightTasks();
     }
 
     @Override
@@ -620,14 +446,209 @@ public class SCP939 extends PathfinderMob implements NeedsUser<SCP939>, Socializ
         );
     }
 
-    @Override
-    public float getMood() {
-        float mood = 0;
+    public @NotNull List<AttackTemplate> getAttackTemplates() {
+        List<AttackTemplate> attackTemplates = new ArrayList<>();
 
-        for (Need<SCP939> need : getNeeds()) {
-            mood += this.entityData.get(need.data());
-        }
+        attackTemplates.add(new AttackTemplate.AttackTemplateBuilder()
+                .setDamageSupplier(() -> new BoneBreakingBite(EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE)))
+                .setArea(2)
+                .setDepthRange(1, 6)
+                .setDamage(15)
+                .addModifier(MedicalStats::getMovement, 0.2f)
+                .addModifier(MedicalStats::getBite, 0.7f)
+                .addModifier(MedicalStats::getSight, 0.1f)
+                .setMessages(
+                        "%s sinks its fangs deep into %s's %s",
+                        "%s snaps its jaws at %s's %s viciously",
+                        "%s tears into %s's %s with razor-sharp teeth",
+                        "%s chomps down on %s's %s with crushing force",
+                        "%s lunges with open maw at %s's %s",
+                        "%s clamps its jaws around %s's %s",
+                        "%s gnashes its teeth into %s's %s",
+                        "%s rips and tears at %s's %s with serrated fangs",
+                        "%s mauls %s's %s with powerful jaws",
+                        "%s bites down on %s's %s with bone-crushing force",
+                        "%s savagely bites into %s's %s",
+                        "%s's fangs pierce into %s's %s",
+                        "%s latches onto %s's %s with its teeth",
+                        "%s snaps its fangs at %s's %s",
+                        "%s's jaws close around %s's %s with frightening speed",
+                        "%s violently bites down on %s's %s",
+                        "%s tries to take a chunk out of %s's %s",
+                        "%s's teeth flash as it bites %s's %s",
+                        "%s lunges with gnashing teeth at %s's %s",
+                        "%s attempts to sink its teeth into %s's %s"
+                )
+                .build()
+        );
 
-        return mood / getNeeds().size();
+        attackTemplates.add(new AttackTemplate.AttackTemplateBuilder()
+                .setDamageSupplier(() -> new Lacerations(EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE)))
+                .setArea(3)
+                .setDepthRange(1, 6)
+                .setDamage(15)
+                .addModifier(MedicalStats::getMovement, 0.3f)
+                .addModifier(MedicalStats::getManipulation, 0.6f)
+                .addModifier(MedicalStats::getSight, 0.1f)
+                .setMessages(
+                        "%s rakes its claws across %s's %s",
+                        "%s slashes viciously at %s's %s with razor claws",
+                        "%s tears into %s's %s with deadly claws",
+                        "%s swipes its massive claws at %s's %s",
+                        "%s rips through %s's %s with sharp claws",
+                        "%s slices at %s's %s with lethal precision",
+                        "%s shreds at %s's %s with wicked claws",
+                        "%s carves through %s's %s's defenses",
+                        "%s slashes wildly at %s's %s",
+                        "%s cleaves at %s's %s with savage claws",
+                        "%s's claws flash as they slice toward %s's %s",
+                        "%s tears viciously at %s's %s with hooked claws",
+                        "%s launches a devastating slash at %s's %s",
+                        "%s's claws cut through the air toward %s's %s",
+                        "%s swipes with murderous intent at %s's %s",
+                        "%s slashes with frightening speed at %s's %s",
+                        "%s rends at %s's %s with cruel claws",
+                        "%s's claws whistle through the air at %s's %s",
+                        "%s unleashes a frenzied series of slashes at %s's %s"
+                )
+                .build()
+        );
+
+        attackTemplates.add(new AttackTemplate.AttackTemplateBuilder()
+                .setDamageSupplier(() -> new BluntForceTrauma(EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE)))
+                .setArea(4)
+                .setDepthRange(1, 5)
+                .setDamage(15)
+                .addModifier(MedicalStats::getMovement, 0.7f)
+                .addModifier(MedicalStats::getManipulation, 0.2f)
+                .addModifier(MedicalStats::getSight, 0.1f)
+                .setMessages(
+                        "%s smashes into %s's %s with devastating force",
+                        "%s rams full force into %s's %s",
+                        "%s crashes down upon %s's %s",
+                        "%s hammers %s's %s with bone-crushing strength",
+                        "%s slams bodily into %s's %s",
+                        "%s batters %s's %s with overwhelming power",
+                        "%s thunders into %s's %s",
+                        "%s crushes %s's %s with unstoppable momentum",
+                        "%s pummels %s's %s with immense force",
+                        "%s drives into %s's %s with crushing weight",
+                        "%s pounds %s's %s with devastating impact",
+                        "%s bulldozes into %s's %s mercilessly",
+                        "%s batters %s's %s with tremendous force",
+                        "%s delivers a crushing blow to %s's %s"
+                )
+                .setCondition((attacker, target) -> !StumbleHandler.containsUUID(target.getUUID())
+                        && !StumbleHandler.containsUUID(attacker.getUUID()))
+                .setSpecialAction((attacker, target) -> StumbleHandler.stumble(target))
+                .build()
+        );
+
+        attackTemplates.add(new AttackTemplate.AttackTemplateBuilder()
+                .setDamageSupplier(() -> new Bite(EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE)))
+                .setArea(3)
+                .setDepthRange(1, 5)
+                .setDamage(12)
+                .setPriority(4)
+                .addModifier(MedicalStats::getMovement, 0.45f)
+                .addModifier(MedicalStats::getManipulation, 0.45f)
+                .addModifier(MedicalStats::getSight, 0.1f)
+                .setMessages(
+                        "%s violently yanks at %s's %s with its jaws",
+                        "%s grabs and tears viciously at %s's %s",
+                        "%s latches onto %s's %s and pulls with savage force",
+                        "%s seizes %s's %s in its teeth and wrenches back",
+                        "%s clamps down on %s's %s and thrashes wildly",
+                        "%s grips %s's %s tightly and rips away",
+                        "%s snags %s's %s and jerks its head violently",
+                        "%s catches hold of %s's %s and tears brutally",
+                        "%s locks its jaws on %s's %s and yanks hard",
+                        "%s grabs %s's %s and shakes ferociously",
+                        "%s clutches %s's %s in its teeth and pulls savagely",
+                        "%s bites down on %s's %s and drags forcefully",
+                        "%s seizes and wrenches at %s's %s ruthlessly",
+                        "%s catches %s's %s and rips with terrifying strength",
+                        "%s snaps onto %s's %s and pulls with brutal force",
+                        "%s grabs hold of %s's %s and tears viciously",
+                        "%s clamps onto %s's %s and yanks mercilessly",
+                        "%s latches onto %s's %s and thrashes with deadly force",
+                        "%s seizes %s's %s and pulls with crushing strength",
+                        "%s grips %s's %s and tears with savage intensity"
+                )
+                .setCondition((attacker, target) -> StumbleHandler.containsUUID(target.getUUID()))
+                .setSpecialAction((attacker, target) -> {
+                    Vec3 pullDirection = attacker.getLookAngle().multiply(-2, 1, -2);
+                    target.setDeltaMovement(pullDirection);
+                    target.hurtMarked = true;
+                })
+                .build()
+        );
+
+        attackTemplates.add(new AttackTemplate.AttackTemplateBuilder()
+                .setDamageSupplier(Stab::new)
+                .setArea(2)
+                .setDepthRange(5, 12)
+                .setDamage(20)
+                .setPriority(0.8f)
+                .addModifier(MedicalStats::getMovement, 0.2f)
+                .addModifier(MedicalStats::getManipulation, 0.6f)
+                .addModifier(MedicalStats::getSight, 0.2f)
+                .setMessages(
+                        "%s drives its claws deep into %s's %s",
+                        "%s punctures %s's %s with razor-sharp claws",
+                        "%s sinks its claws into %s's %s with deadly force",
+                        "%s impales %s's %s with wickedly sharp claws",
+                        "%s pierces through %s's %s with cruel claws",
+                        "%s plunges its claws straight into %s's %s",
+                        "%s thrusts its claws into %s's %s viciously",
+                        "%s drives its claws through %s's %s with brutal force",
+                        "%s skewers %s's %s with razor-tipped claws",
+                        "%s stabs its claws deep within %s's %s",
+                        "%s gouges its claws into %s's %s",
+                        "%s punctures straight through %s's %s with its claws",
+                        "%s impales deeply into %s's %s with its claws",
+                        "%s sinks its claws with frightening speed into %s's %s",
+                        "%s plunges its cruel claws into %s's %s"
+                )
+                .build()
+        );
+
+        attackTemplates.add(new AttackTemplate.AttackTemplateBuilder()
+                .setDamageSupplier(() -> new BluntForceTrauma(EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE)))
+                .setArea(4)
+                .setDepthRange(1, 5)
+                .setDamage(15)
+                .setPriority(4)
+                .addModifier(MedicalStats::getMovement, 0.4f)
+                .addModifier(MedicalStats::getManipulation, 0.5f)
+                .addModifier(MedicalStats::getSight, 0.1f)
+                .setMessages(
+                        "%s stomps down on %s's %s",
+                        "%s stomps heavily onto %s's %s",
+                        "%s brings its foot down on %s's %s",
+                        "%s stomps at %s's %s",
+                        "%s steps down hard on %s's %s",
+                        "%s stomps forcefully on %s's %s",
+                        "%s drives its foot down on %s's %s",
+                        "%s stomps powerfully onto %s's %s",
+                        "%s brings its weight down on %s's %s",
+                        "%s stomps straight down at %s's %s",
+                        "%s slams its foot onto %s's %s",
+                        "%s steps violently onto %s's %s",
+                        "%s stomps directly on %s's %s",
+                        "%s brings its foot crashing onto %s's %s",
+                        "%s stomps swiftly at %s's %s",
+                        "%s stomps hard on %s's %s",
+                        "%s drives its weight onto %s's %s",
+                        "%s stomps viciously at %s's %s",
+                        "%s brings its foot heavily onto %s's %s",
+                        "%s stomps ruthlessly on %s's %s"
+                )
+                .setCondition((attacker, target) -> StumbleHandler.containsUUID(target.getUUID())
+                        && !StumbleHandler.containsUUID(attacker.getUUID()))
+                .build()
+        );
+
+        return attackTemplates;
     }
 }

@@ -1,9 +1,10 @@
 package com.site21.bittermelon.character;
 
 import com.site21.bittermelon.medical.blood.BloodType;
-import com.site21.bittermelon.medical.compartments.Compartment;
+import com.site21.bittermelon.medical.factory.Anatomy;
 import com.site21.bittermelon.medical.factory.HumanFactory;
 import com.site21.bittermelon.medical.medicalstats.MedicalStats;
+import net.minecraft.network.chat.TextColor;
 
 import java.util.EnumMap;
 import java.util.UUID;
@@ -17,27 +18,28 @@ public class Character {
     private int age = 18;
     private float height = 180;
     private float weight = 70;
-    private String emoteColor = "FFFF55";
+    private int emoteColor;
     private transient final MedicalStats medicalStats;
     private final EnumMap<Skills, Float> skills;
 
-    public Character(UUID entityUUID, String name) {
+    public Character(UUID entityUUID, String name, Anatomy anatomy) {
         this.uuid = UUID.randomUUID();
         this.entityUUID = entityUUID;
         this.name = name;
 
-        medicalStats = HumanFactory.build(BloodType.O_MINUS, this);
+        emoteColor = (int) (Math.random() * 0xFFFFFF);
+        medicalStats = anatomy.getFactory().build(BloodType.O_MINUS, this);
         skills = new EnumMap<>(Skills.class);
     }
 
     public Character(UUID entityUUID, String name, String description, String gender, int age, float height, float weight, String emoteColor) {
-        this(entityUUID, name);
+        this(entityUUID, name, Anatomy.HUMAN);
         this.description = description;
         this.gender = gender;
         this.age = age;
         this.height = height;
         this.weight = weight;
-        this.emoteColor = emoteColor;
+        this.emoteColor = TextColor.parseColor("#" + emoteColor).getOrThrow().getValue();
     }
 
     public UUID getUUID() {
@@ -72,7 +74,7 @@ public class Character {
         return weight;
     }
 
-    public String getEmoteColor() {
+    public int getEmoteColor() {
         return emoteColor;
     }
 
@@ -84,8 +86,12 @@ public class Character {
         this.description = description;
     }
 
-    public void setEmoteColor(String emoteColor) {
+    public void setEmoteColor(int emoteColor) {
         this.emoteColor = emoteColor;
+    }
+
+    public void setEmoteColor(String emoteColor) {
+        this.emoteColor = TextColor.parseColor(emoteColor).getOrThrow().getValue();
     }
 
     public void setGender(String gender) {

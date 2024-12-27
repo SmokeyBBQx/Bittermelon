@@ -2,11 +2,15 @@ package com.site21.bittermelon.medical.compartments.conditions;
 
 import com.site21.bittermelon.character.Character;
 import com.site21.bittermelon.client.effects.ScreenshakeHandler;
+import com.site21.bittermelon.entities.behavior.misc.FeelsPain;
 import com.site21.bittermelon.medical.compartments.*;
 import com.site21.bittermelon.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.util.LocalMessageHelper;
+import jdk.jfr.Category;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -29,6 +33,7 @@ public class Pain extends Condition implements HasReminder {
         REMINDER_MAXIMUM_TICKS = Math.max(REMINDER_MINIMUM_TICKS + 100, REMINDER_MAXIMUM_TICKS - maxReduction);
         attributes.put(FunctionType.FUNCTION, -maxHealth / 2);
         attributes.put(FunctionType.TREMOR, maxHealth);
+        attributes.put(FunctionType.PAIN, maxHealth);
     }
 
     @Override
@@ -50,13 +55,6 @@ public class Pain extends Condition implements HasReminder {
 
     @Override
     public void effects() {
-        if (getSeverity() != Severity.MILD && getSeverity() != Severity.MODERATE) {
-            entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40 + (int) getHealth(), (int) getHealth(), false, true));
-            entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40 + (int) getHealth(), (int) getHealth(), false, true));
-            entity.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 40 + (int) getHealth(), (int) getHealth(), false, true));
-            entity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 40 + (int) getHealth(), (int) getHealth(), false, true));
-        }
-
 //        if (entity instanceof ServerPlayer player) {
 //            player.sendSystemMessage(Component.literal(getReminder()).withStyle(ChatFormatting.RED));
 //        }

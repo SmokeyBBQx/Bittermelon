@@ -149,8 +149,7 @@ public class GenericInteraction<E extends LivingEntity & Socializable> extends E
                 String message = messages.get(random.nextInt(messages.size()));
                 LocalMessageHelper.sendLocalMessage(entity, 10,
                         Component.literal(entityCharacter.getName() + message + partnerCharacter.getName() + ".")
-                                .setStyle(Style.EMPTY.withColor(TextColor.parseColor(
-                                        "#" + entityCharacter.getEmoteColor()).getOrThrow()))
+                                .withColor(entityCharacter.getEmoteColor())
                 );
             }
         }

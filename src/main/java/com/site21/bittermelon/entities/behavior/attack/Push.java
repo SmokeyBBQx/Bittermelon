@@ -1,4 +1,4 @@
-package com.site21.bittermelon.entities.scps.SCP939.behavior;
+package com.site21.bittermelon.entities.behavior.attack;
 
 import com.site21.bittermelon.character.Character;
 import com.site21.bittermelon.character.CharacterManager;
@@ -12,8 +12,6 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeA
 import net.tslat.smartbrainlib.util.BrainUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
-
 public class Push<E extends Mob> extends AnimatableMeleeAttack<E> {
     public Push(int delayTicks) {
         super(delayTicks);
@@ -23,6 +21,7 @@ public class Push<E extends Mob> extends AnimatableMeleeAttack<E> {
     protected boolean checkExtraStartConditions(ServerLevel level, E entity) {
         super.checkExtraStartConditions(level, entity);
 
+        assert target != null;
         return !StumbleHandler.containsUUID(target.getUUID()) && !StumbleHandler.containsUUID(entity.getUUID());
     }
 
@@ -41,8 +40,10 @@ public class Push<E extends Mob> extends AnimatableMeleeAttack<E> {
         Character targetCharacter = characterManager.getActiveCharacter(target.getUUID());
 
         if (entityCharacter != null && targetCharacter != null) {
+            int textColor = entityCharacter.getEmoteColor();
+
             LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(
-                    entityCharacter.getName() + " pushes " + targetCharacter.getName() + "."));
+                    entityCharacter.getName() + " pushes " + targetCharacter.getName() + ".").withColor(textColor));
         }
 
         StumbleHandler.stumble(target, entity.getLookAngle());

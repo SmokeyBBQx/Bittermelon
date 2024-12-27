@@ -59,7 +59,6 @@ public class Germ {
         }
     };
 
-    // In ticks
     private final int incubationTime;
     private final int infectionTime;
     private final int contagiousTime;

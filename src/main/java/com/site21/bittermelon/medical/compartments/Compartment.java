@@ -164,6 +164,10 @@ public class Compartment {
         return maxHealth;
     }
 
+    public void modifyMaxHealth(float delta) {
+        this.maxHealth = Math.max(0, Math.min(maxHealth + delta, trueMaxHealth));
+    }
+
     public ItemStack getItem() {
         return item;
     }

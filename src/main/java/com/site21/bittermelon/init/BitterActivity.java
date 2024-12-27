@@ -17,4 +17,9 @@ public class BitterActivity {
     public static final DeferredHolder<Activity, Activity> EAT = ACTIVITY.register("eat", () -> new Activity("eat"));
     public static final DeferredHolder<Activity, Activity> PHOTOSYNTHESIZE = ACTIVITY.register("photosynthesize", () -> new Activity("photosynthesize"));
     public static final DeferredHolder<Activity, Activity> DRINK = ACTIVITY.register("drink", () -> new Activity("drink"));
+    public static final DeferredHolder<Activity, Activity> URINATE = ACTIVITY.register("urinate", () -> new Activity("urinate"));
+    public static final DeferredHolder<Activity, Activity> DEFECATE = ACTIVITY.register("defecate", () -> new Activity("defecate"));
+    public static final DeferredHolder<Activity, Activity> EXPLORE = ACTIVITY.register("explore", () -> new Activity("explore"));
+    public static final DeferredHolder<Activity, Activity> GROOM = ACTIVITY.register("groom", () -> new Activity("groom"));
+    public static final DeferredHolder<Activity, Activity> PLAY = ACTIVITY.register("play", () -> new Activity("play"));
 }

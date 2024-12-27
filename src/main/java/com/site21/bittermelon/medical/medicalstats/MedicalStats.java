@@ -3,11 +3,12 @@ package com.site21.bittermelon.medical.medicalstats;
 import com.site21.bittermelon.blocks.FluidBlock;
 import com.site21.bittermelon.blocks.blockentities.FluidBlockEntity;
 import com.site21.bittermelon.character.Character;
+import com.site21.bittermelon.entities.behavior.misc.FeelsPain;
 import com.site21.bittermelon.medical.blood.BloodType;
 import com.site21.bittermelon.medical.compartments.*;
 import com.site21.bittermelon.medical.compartments.bodyparts.BodyPart;
 import com.site21.bittermelon.medical.compartments.conditions.ForeignSubstance;
-import com.site21.bittermelon.medical.compartments.conditions.infections.Infection;
+import com.site21.bittermelon.medical.compartments.conditions.Infection;
 import com.site21.bittermelon.medical.compartments.organs.HeartRhythm;
 import com.site21.bittermelon.miscellaneous.stumble.StumbleHandler;
 import com.site21.bittermelon.networking.client.S2CSetForcedPose;
@@ -17,11 +18,14 @@ import com.site21.bittermelon.util.ServerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.*;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -47,6 +51,8 @@ public class MedicalStats {
     private static final int GASP_INTERVAL = 200;
     private int stumbleTickCounter = 0;
     private static final int STUMBLE_INTERVAL = 100;
+    private int painTickCounter = 0;
+    private static final int BASE_PAIN_INTERVAL = 300;
     private final Map<Holder<Attribute>, Double> defaultAttributeValues = new HashMap<>();
 
     public MedicalStats(BloodType bloodType, List<Compartment> compartments, @NotNull Character character) {
@@ -82,6 +88,7 @@ public class MedicalStats {
         updateEntityAttributes();
         updateCardiopulmonary();
         updateStats();
+        handlePain();
     }
 
     private void updateCompartments() {
@@ -166,54 +173,6 @@ public class MedicalStats {
         attribute.setBaseValue(value * baseValue);
     }
 
-//    private void updateMovementAttributes() {
-//        float capability = getMovement();
-//
-//        AttributeModifier modifier = new AttributeModifier(
-//                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "movement"),
-//                capability,
-//                AttributeModifier.Operation.ADD_VALUE
-//        );
-//
-//        handleStumbling(capability);
-//
-////        System.out.println(capability);
-//
-//        updateEntityAttribute(Attributes.MOVEMENT_SPEED, modifier);
-//        updateEntityAttribute(Attributes.JUMP_STRENGTH, modifier);
-//    }
-//
-//    private void updateManipulationAttributes() {
-//        float capability = getManipulation();
-//
-//        AttributeModifier modifier = new AttributeModifier(
-//                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "manipulation"),
-//                capability,
-//                AttributeModifier.Operation.ADD_VALUE
-//        );
-//
-//        updateEntityAttribute(Attributes.ATTACK_SPEED, modifier);
-//        updateEntityAttribute(Attributes.ATTACK_DAMAGE, modifier);
-//        updateEntityAttribute(Attributes.BLOCK_BREAK_SPEED, modifier);
-//        updateEntityAttribute(Attributes.BLOCK_INTERACTION_RANGE, modifier);
-//        updateEntityAttribute(Attributes.ENTITY_INTERACTION_RANGE, modifier);
-//    }
-//
-//    private void updateEntityAttribute(Holder<Attribute> attributeHolder, AttributeModifier modifier) {
-//        AttributeInstance attribute = entity.getAttribute(attributeHolder);
-//        if (attribute == null) return;
-//
-//        AttributeModifier currentAttribute = attribute.getModifier(modifier.id());
-//
-//        if (attribute.hasModifier(modifier.id())) {
-//            if (modifier.amount() != currentAttribute.amount()) {
-//                attribute.addOrUpdateTransientModifier(modifier);
-//            }
-//        } else {
-//            attribute.addOrUpdateTransientModifier(modifier);
-//        }
-//    }
-
     private void updateStats() {
         EnumMap<FunctionType, Float> statsCopy = new EnumMap<>(FunctionType.class);
         EnumMap<FunctionType, Integer> countMap = new EnumMap<>(FunctionType.class);
@@ -252,8 +211,11 @@ public class MedicalStats {
 
         if (vitalSigns.bloodVolume < 60 || vitalSigns.oxygenSaturation < 80) {
             for (Compartment compartment : compartments) {
-                if (compartment instanceof BodyPart) {
+                if (compartment instanceof BodyPart && !compartment.hasType(CompartmentType.MAJOR_BODY_PART)) {
                     compartment.modifyHealth(-0.001f);
+                    if (compartment.getHealth() <= 0) {
+                        compartment.modifyMaxHealth(-0.001f);
+                    }
                 }
             }
         }
@@ -266,7 +228,8 @@ public class MedicalStats {
             gaspTickCounter++;
             if (gaspTickCounter >= GASP_INTERVAL) {
                 if (entity != null && stats.get(FunctionType.BRAIN_VITALS) > 0.1f) {
-                    Component message = Component.literal(character.getName() + " gasps for air.");
+                    Component message = Component.literal(character.getName() + " gasps for air.")
+                            .withColor(character.getEmoteColor());
                     LocalMessageHelper.sendLocalMessage(entity, 10, message);
                 }
                 gaspTickCounter = 0;
@@ -294,13 +257,45 @@ public class MedicalStats {
     }
 
     private void updateConsciousness() {
-        vitalSigns.consciousness = stats.get(FunctionType.BRAIN_VITALS);
-
         if (vitalSigns.consciousness < 0.1f) {
             if (entity.getPose() != Pose.SLEEPING) {
                 entity.setPose(Pose.SLEEPING);
                 PacketDistributor.sendToAllPlayers(new S2CSetForcedPose(entity.getUUID(), Pose.SLEEPING));
-                LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(character.getName() + " falls unconscious."));
+                LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(character.getName() + " passes out.").withColor(character.getEmoteColor()));
+            }
+        }
+
+        vitalSigns.consciousness = stats.get(FunctionType.BRAIN_VITALS);
+    }
+
+    private void handlePain() {
+        if (entity instanceof FeelsPain || entity instanceof Player) {
+            if (getPain() <= 0) return;
+            int painInterval = Math.max(60, (int)(BASE_PAIN_INTERVAL * Math.exp(-getPain() / 10)));
+            painTickCounter++;
+
+            if (painTickCounter >= painInterval) {
+                painTickCounter = 0;
+
+                if (getPain() > 8) {
+                    entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40 + (int) getPain(),
+                            (int) getPain(), false, false));
+                    entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40 + (int) getPain(),
+                            (int) getPain(), false, false));
+                    entity.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 40 + (int) getPain(),
+                            (int) getPain(), false, false));
+                    entity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 40 + (int) getPain(),
+                            (int) getPain(), false, false));
+                }
+
+                if (entity instanceof FeelsPain) {
+                    Component message = Component.literal(character.getName() + " " + ((FeelsPain) entity)
+                            .getPainMessage(getPain())).withColor(character.getEmoteColor());
+                    LocalMessageHelper.sendLocalMessage(entity, 10, message);
+
+                    entity.level().playSound(null, entity.getOnPos(), ((FeelsPain) entity)
+                            .getPainSound(getPain()), SoundSource.AMBIENT);
+                }
             }
         }
     }
@@ -434,6 +429,12 @@ public class MedicalStats {
 
     public float getBite() {
         return stats.get(FunctionType.BRAIN_MOTOR_ABILITY) * stats.get(FunctionType.BITE) * getConsciousness();
+    }
+
+    public float getPain() {
+        return stats.get(FunctionType.NERVOUS) * stats.get(FunctionType.PAIN) * getConsciousness();
+
+        // TODO: Better way to get pain?
     }
 
     private static class VitalSigns {

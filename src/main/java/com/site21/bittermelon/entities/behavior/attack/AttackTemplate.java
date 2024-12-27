@@ -1,4 +1,4 @@
-package com.site21.bittermelon.entities.scps.SCP939.behavior;
+package com.site21.bittermelon.entities.behavior.attack;
 
 import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.medical.compartments.CompartmentType;

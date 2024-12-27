@@ -40,7 +40,7 @@ public class WarnHighStress<E extends LivingEntity> extends ExtendedBehaviour<E>
 
             String message = this.messages.get(entity.getRandom().nextInt(messages.size()));
             LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(character.getName() + message)
-                    .setStyle(Style.EMPTY.withColor(TextColor.parseColor("#" + character.getEmoteColor()).getOrThrow())));
+                    .withColor(character.getEmoteColor()));
         }
     }
 }

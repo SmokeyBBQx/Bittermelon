@@ -8,6 +8,7 @@ import com.site21.bittermelon.networking.client.S2CClearForcedPose;
 import com.site21.bittermelon.networking.client.S2CSetForcedPose;
 import com.site21.bittermelon.util.ServerUtil;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
@@ -45,6 +46,16 @@ public class StumbleHandler {
     public static void stumble(@NotNull LivingEntity entity, int length, Vec3 pushDirection) {
         Pose pose = entity.getPose();
         if (pose == Pose.SLEEPING || pose == Pose.SWIMMING) return;
+
+        Character character = CharacterManager.getInstance().getActiveCharacter(entity.getUUID());
+        if (character != null) {
+            int movement = (int) character.getMedicalStats().getMovement();
+            if (movement > 0) {
+                length /= movement;
+            } else {
+                length = 1000;
+            }
+        }
 
         if (!entity.level().isClientSide) {
             instances.put(entity.getUUID(), length);
@@ -133,7 +144,7 @@ public class StumbleHandler {
     private static void announceFall(@NotNull LivingEntity entity) {
         Character character = CharacterManager.getInstance().getActiveCharacter(entity.getUUID());
         if (character != null) {
-            Component component = Component.literal(character.getName() + " falls to the ground.");
+            Component component = Component.literal(character.getName() + " falls to the ground.").withColor(character.getEmoteColor());
             sendLocalMessage(entity, 10, component);
         }
     }

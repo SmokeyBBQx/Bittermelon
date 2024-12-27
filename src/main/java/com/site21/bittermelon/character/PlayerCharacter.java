@@ -1,5 +1,6 @@
 package com.site21.bittermelon.character;
 
+import com.site21.bittermelon.medical.factory.Anatomy;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
@@ -13,8 +14,8 @@ import java.util.UUID;
 public class PlayerCharacter extends Character {
     private String skinURL;
 
-    public PlayerCharacter(UUID entityUUID, String name) {
-        super(entityUUID, name);
+    public PlayerCharacter(UUID entityUUID, String name, Anatomy anatomy) {
+        super(entityUUID, name, anatomy);
     }
 
     public String getSkinURL() {

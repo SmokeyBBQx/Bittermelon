@@ -5,9 +5,9 @@ import com.site21.bittermelon.medical.compartments.Compartment;
 import com.site21.bittermelon.medical.compartments.CompartmentType;
 import com.site21.bittermelon.medical.compartments.Injury;
 import com.site21.bittermelon.medical.medicalstats.MedicalStats;
-import com.site21.bittermelon.util.LocalMessageHelper;
-import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +23,7 @@ public abstract class DamageGenerator {
     }
 
     public DamageGenerator() {
-        this(EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE));
+        this(EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE, CompartmentType.MAJOR_BODY_PART));
     }
 
     /**
@@ -46,10 +46,11 @@ public abstract class DamageGenerator {
         if (initialCompartments.isEmpty()) return null;
 
         Compartment targetBodyPart = initialCompartments.get(random.nextInt(initialCompartments.size()));
+        List<Compartment> validChildren = filterCompartments(targetBodyPart.getChildren());
         List<InjuryResult> injuryResults = new ArrayList<>();
 
         for (int i = 0; i < area; i++) {
-            InjuryResult injuryResult = inflictInjury(targetBodyPart.getChildren(), damage, medicalStats, character, entity);
+            InjuryResult injuryResult = inflictInjury(validChildren, damage, medicalStats, character, entity);
             if (injuryResult == null) return null;
 
             injuryResults.add(injuryResult);
@@ -77,9 +78,6 @@ public abstract class DamageGenerator {
         int area = 1 + random.nextInt((int) (maxArea * performance > 1 ? maxArea * performance : 1));
         maxDepth = 1 + random.nextInt((int) (maxDepth * performance > 1 ? maxDepth * performance : 1));
 
-//        System.out.println("Area " + area);
-//        System.out.println("Max Depth " + maxDepth);
-
         return generateDamage(medicalStats, area, minDepth, maxDepth, damage, character, entity);
     }
 
@@ -87,10 +85,14 @@ public abstract class DamageGenerator {
         if (compartments.isEmpty()) return null;
 
         Compartment target = compartments.get(random.nextInt(compartments.size()));
+        if (target.hasType(CompartmentType.MAJOR_BODY_PART)) {
+            return inflictInjury(target.getChildren(), damage, medicalStats, character, entity);
+        }
+
         float injuryDamage = 1 + random.nextFloat() * damage;
 
         if (shouldDismember && injuryDamage > target.getHealth() && random.nextFloat() > 0.5f) {
-            handleDismemberment(target, character, medicalStats, entity);
+            return handleDismemberment(target, character, medicalStats, entity);
         }
 
         return createInjury(injuryDamage, target, character, entity);
@@ -98,13 +100,22 @@ public abstract class DamageGenerator {
 
     protected abstract InjuryResult createInjury(float damage, Compartment target, Character character, LivingEntity entity);
 
-    private void handleDismemberment(@NotNull Compartment target, @NotNull Character character, @NotNull MedicalStats medicalStats, LivingEntity entity) {
+    @Contract("_, _, _, _ -> new")
+    private @NotNull InjuryResult handleDismemberment(@NotNull Compartment target, @NotNull Character character, @NotNull MedicalStats medicalStats, LivingEntity entity) {
         Injury amputation = new Injury(EnumSet.of(CompartmentType.TRAUMATIC_AMPUTATION), "Traumatic Amputation" + " (" + target.getName() + ")", target.getOwner(), 10, character, entity);
         amputation.reveal();
         medicalStats.addCompartment(amputation);
         medicalStats.removeCompartment(target);
-        String message = character.getName() + "'s " + target.getName().toLowerCase() + " was dismembered.";
-        LocalMessageHelper.sendLocalMessage(entity, 5, Component.literal(message));
+        String message = target.getName().toLowerCase() + " was dismembered.";
+
+        if (target.getItem() != null) {
+            Entity itemEntity = target.getItem().getEntityRepresentation();
+            if (itemEntity != null) {
+                entity.level().addFreshEntity(itemEntity);
+            }
+        }
+
+        return new InjuryResult(amputation, message);
     }
 
     private List<Compartment> filterCompartments(@NotNull List<Compartment> compartments) {
@@ -120,7 +131,10 @@ public abstract class DamageGenerator {
     }
 
     private boolean isValidInitialCompartment(@NotNull Compartment compartment) {
-        return compartment.hasType(CompartmentType.MAJOR_BODY_PART) && !compartment.isHidden() && compartment.getOwner() != null;
+        return compartment.hasType(CompartmentType.MAJOR_BODY_PART)
+                && !compartment.isHidden()
+                && compartment.getOwner() != null
+                && compartment.getOwner().hasType(CompartmentType.MAJOR_BODY_PART);
     }
 
     protected boolean isValidCompartment(@NotNull Compartment compartment) {

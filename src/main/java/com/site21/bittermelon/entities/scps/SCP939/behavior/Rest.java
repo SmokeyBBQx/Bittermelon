@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -27,12 +28,12 @@ public class Rest<E extends SCP939> extends ExtendedBehaviour<E> {
     }
 
     @Override
-    protected void tick(E entity) {
+    protected void tick(@NotNull E entity) {
         entity.modifyRest(restAmount);
     }
 
     @Override
-    protected boolean shouldKeepRunning(E entity) {
+    protected boolean shouldKeepRunning(@NotNull E entity) {
         return entity.getRest() < 100;
     }
 }

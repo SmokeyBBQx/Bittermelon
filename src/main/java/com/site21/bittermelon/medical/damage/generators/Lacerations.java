@@ -34,11 +34,19 @@ public class Lacerations extends DamageGenerator {
                     return new InjuryResult(laceration, message);
                 }
                 case CompartmentType.HARD_TISSUE -> {
-                    Injury scratch = new Injury(EnumSet.of(CompartmentType.SCRATCH), "Scratch", target, damage / 2, character, entity);
-                    target.reveal();
-                    scratch.reveal();
-                    String message = "scratching the " + target.getName().toLowerCase();
-                    return new InjuryResult(scratch, message);
+                    if (damage > target.getHealth()) {
+                        Injury fracture = new Injury(EnumSet.of(CompartmentType.FRACTURE), "Fracture", target, damage, character, entity);
+                        target.reveal();
+                        fracture.reveal();
+                        String message = "fracturing the " + target.getName().toLowerCase();
+                        return new InjuryResult(fracture, message);
+                    } else {
+                        Injury scratch = new Injury(EnumSet.of(CompartmentType.SCRATCH), "Scratch", target, damage / 2, character, entity);
+                        target.reveal();
+                        scratch.reveal();
+                        String message = "scratching the " + target.getName().toLowerCase();
+                        return new InjuryResult(scratch, message);
+                    }
                 }
             }
         }
