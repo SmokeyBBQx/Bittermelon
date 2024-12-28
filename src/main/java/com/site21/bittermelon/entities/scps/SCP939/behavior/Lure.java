@@ -4,10 +4,12 @@ import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.entities.scps.SCP939.SCP939;
 import com.site21.bittermelon.util.LocalMessageHelper;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.tslat.smartbrainlib.api.core.behaviour.DelayedBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -26,7 +28,10 @@ public class Lure<E extends SCP939> extends DelayedBehaviour<E> {
     }
 
     @Override
-    protected void doDelayedAction(E entity) {
-        LocalMessageHelper.sendLocalMessage(entity, 32, entity.getRandomLureLine());
+    protected void doDelayedAction(@NotNull E entity) {
+        Component lureLine = entity.getRandomLureLine();
+        if (lureLine == null) return;
+
+        LocalMessageHelper.sendLocalMessage(entity, 32, lureLine);
     }
 }

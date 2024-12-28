@@ -32,9 +32,7 @@ public class Amnesticize<E extends SCP939> extends DelayedBehaviour<E> {
     }
 
     @Override
-    protected void doDelayedAction(E entity) {
-        LocalMessageHelper.sendLocalMessage(entity, 32, Component.literal("Releasing amnestics"));
-
+    protected void doDelayedAction(@NotNull E entity) {
         entity.modifyRest(-2.5f);
     }
 }

@@ -7,6 +7,7 @@ import com.site21.bittermelon.medical.compartments.CompartmentType;
 import com.site21.bittermelon.medical.damage.*;
 import com.site21.bittermelon.util.LocalMessageHelper;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
@@ -16,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+
+import static com.site21.bittermelon.init.BitterSounds.STAB;
 
 public class Attack<E extends Mob> extends AnimatableMeleeAttack<E> {
     private final List<AttackTemplate> attackTemplates;
@@ -67,8 +70,7 @@ public class Attack<E extends Mob> extends AnimatableMeleeAttack<E> {
         return validAttacks.getLast();
     }
 
-    private void executeAttack(E entity, @NotNull Character attackerCharacter, Character targetCharacter,
-                               @NotNull AttackTemplate selectedAttack) {
+    private void executeAttack(E entity, @NotNull Character attackerCharacter, Character targetCharacter, @NotNull AttackTemplate selectedAttack) {
         float performance = selectedAttack.calculatePerformance(attackerCharacter.getMedicalStats());
         if (performance <= 0) {
             return;
@@ -91,6 +93,7 @@ public class Attack<E extends Mob> extends AnimatableMeleeAttack<E> {
 
         if (entity.getRandom().nextFloat() > performance) {
             sendMissMessage(attackerCharacter, targetCharacter, targetBodyPart, textColor);
+            entity.level().playSound(null, entity.getOnPos(), STAB.get(), SoundSource.AMBIENT);
             return;
         }
 
@@ -98,21 +101,23 @@ public class Attack<E extends Mob> extends AnimatableMeleeAttack<E> {
                 targetBodyPart, textColor);
         selectedAttack.executeSpecialAction(entity, target);
 
+        if (selectedAttack.sound() != null) {
+            entity.level().playSound(null, entity.getOnPos(), selectedAttack.sound(), SoundSource.AMBIENT);
+        }
+
         assert this.target != null;
         this.target.hurt(entity.damageSources().mobAttack(entity), 0.1f);
         this.target.heal(0.1f);
     }
 
-    private void sendMissMessage(@NotNull Character attackerCharacter, @NotNull Character targetCharacter,
-                                 String targetBodyPart, int textColor) {
+    private void sendMissMessage(@NotNull Character attackerCharacter, @NotNull Character targetCharacter, String targetBodyPart, int textColor) {
         String missMessage = String.format("%s attempts to strike %s's %s but misses.", attackerCharacter.getName(),
                 targetCharacter.getName(), targetBodyPart);
         assert target != null;
         LocalMessageHelper.sendLocalMessage(target, 10, Component.literal(missMessage).withColor(textColor));
     }
 
-    private void sendHitMessages(E entity, Character attacker, Character target, AttackTemplate attack,
-                                 DamageResult damageResult, float performance, String targetBodyPart, int textColor) {
+    private void sendHitMessages(E entity, Character attacker, Character target, AttackTemplate attack, DamageResult damageResult, float performance, String targetBodyPart, int textColor) {
         String injuryDescription = getInjuryDescription(damageResult, performance);
         if (injuryDescription != null) {
             String hitMessage = attack.getFormattedMessage(attacker.getName(), target.getName(), targetBodyPart)

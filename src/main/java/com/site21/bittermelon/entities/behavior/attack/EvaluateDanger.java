@@ -46,7 +46,6 @@ public class EvaluateDanger<E extends LivingEntity> extends GroupBehaviour<E> {
         danger += (float) (targetSize / entitySize);
         danger += entityCharacter.getMedicalStats().getPain();
 
-
         return null;
     }
 

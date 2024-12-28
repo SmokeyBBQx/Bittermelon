@@ -1,12 +1,15 @@
 package com.site21.bittermelon.entities.scps.SCP939.behavior;
 
 import com.mojang.datafixers.util.Pair;
+import com.site21.bittermelon.character.Character;
+import com.site21.bittermelon.character.CharacterManager;
 import com.site21.bittermelon.entities.behavior.needs.NeedsUser;
 import com.site21.bittermelon.entities.scps.SCP939.SCP939;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
+import net.minecraft.world.entity.player.Player;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
 import net.tslat.smartbrainlib.util.BrainUtils;
 
@@ -29,8 +32,15 @@ public class RegenBloodlust<E extends SCP939> extends ExtendedBehaviour<E> {
         if (target == null)
             return;
 
-        if (target.isDeadOrDying()) {
+        Character targetCharacter = CharacterManager.getInstance().getActiveCharacter(target.getUUID());
+        if (targetCharacter == null) return;
+
+        if (targetCharacter.getMedicalStats().getConsciousness() < 0.1f) {
             entity.modifyBloodlust(30);
+        }
+
+        if (target instanceof Player) {
+            entity.addVictim(targetCharacter);
         }
     }
 }

@@ -14,6 +14,7 @@ import java.util.List;
 
 public class Procreate<E extends SCP939> extends DelayedBehaviour<E> {
     private static final List<Pair<MemoryModuleType<?>, MemoryStatus>> MEMORY_REQUIREMENTS = ObjectArrayList.of(
+            Pair.of(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_ABSENT)
     );
 
     public Procreate(int delayTicks) {

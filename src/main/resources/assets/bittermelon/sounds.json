@@ -17,6 +17,12 @@
       "bittermelon:entity/scp939/ghostly_exhale"
     ]
   },
+  "entity.scp939.939_scream": {
+    "category": "hostile",
+    "sounds": [
+      "bittermelon:entity/scp939/939_scream"
+    ]
+  },
   "medical.scalpel": {
     "category": "player",
     "sounds": [
@@ -39,6 +45,42 @@
     "category": "ambient",
     "sounds": [
       "bittermelon:entity/fall"
+    ]
+  },
+  "entity.bite": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:entity/bite"
+    ]
+  },
+  "entity.drag": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:entity/drag"
+    ]
+  },
+  "entity.slash": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:entity/slash"
+    ]
+  },
+  "entity.smash": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:entity/smash"
+    ]
+  },
+  "entity.stab": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:entity/stab"
+    ]
+  },
+  "entity.wrestle": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:entity/wrestle"
     ]
   },
   "container.toolbox_open": {

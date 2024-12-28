@@ -13,6 +13,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
 import net.tslat.smartbrainlib.util.BrainUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class FindDarkness<E extends PathfinderMob> extends ExtendedBehaviour<E> 
     }
 
     @Override
-    protected boolean doStartCheck(ServerLevel level, E entity, long gameTime) {
+    protected boolean doStartCheck(@NotNull ServerLevel level, E entity, long gameTime) {
         return level.isDay() && !isInDarkness(level, entity);
     }
 
@@ -39,12 +40,12 @@ public class FindDarkness<E extends PathfinderMob> extends ExtendedBehaviour<E> 
         }
     }
 
-    private boolean isInDarkness(ServerLevel level, E entity) {
+    private boolean isInDarkness(@NotNull ServerLevel level, @NotNull E entity) {
         return level.getMaxLocalRawBrightness(new BlockPos((int) entity.getX(), (int) entity.getEyeY(),
                 (int) entity.getZ())) < 8;
     }
 
-    private BlockPos findDarkArea(ServerLevel level, E entity) {
+    private @Nullable BlockPos findDarkArea(ServerLevel level, E entity) {
         for (var i = 0; i < 10; i++) {
             var x = (int) (entity.getX() + entity.getRandom().nextInt(20) - 10);
             var z = (int) (entity.getZ() + entity.getRandom().nextInt(20) - 10);

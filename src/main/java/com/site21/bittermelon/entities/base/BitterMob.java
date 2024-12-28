@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("unchecked")
 public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob implements SmartBrainOwner<T>, NeedsUser<T> {
 
     protected BitterMob(EntityType<? extends PathfinderMob> entityType, Level level) {

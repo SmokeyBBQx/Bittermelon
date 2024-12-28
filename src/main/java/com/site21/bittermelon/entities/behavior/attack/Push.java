@@ -6,11 +6,15 @@ import com.site21.bittermelon.miscellaneous.stumble.StumbleHandler;
 import com.site21.bittermelon.util.LocalMessageHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
 import net.tslat.smartbrainlib.util.BrainUtils;
 import org.jetbrains.annotations.NotNull;
+
+import static com.site21.bittermelon.init.BitterSounds.STAB;
+import static com.site21.bittermelon.init.BitterSounds.WRESTLE;
 
 public class Push<E extends Mob> extends AnimatableMeleeAttack<E> {
     public Push(int delayTicks) {
@@ -34,6 +38,8 @@ public class Push<E extends Mob> extends AnimatableMeleeAttack<E> {
 
         if (!entity.getSensing().hasLineOfSight(this.target) || !entity.isWithinMeleeAttackRange(this.target))
             return;
+
+        entity.level().playSound(null, entity.getOnPos(), WRESTLE.get(), SoundSource.AMBIENT);
 
         CharacterManager characterManager = CharacterManager.getInstance();
         Character entityCharacter = characterManager.getActiveCharacter(entity.getUUID());

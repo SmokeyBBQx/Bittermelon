@@ -4,15 +4,26 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Dynamic;
 import com.site21.bittermelon.character.Character;
+import com.site21.bittermelon.character.CharacterManager;
 import com.site21.bittermelon.entities.BitterAngerManagement;
 import com.site21.bittermelon.entities.BitterVibrationSystem;
 import com.site21.bittermelon.entities.base.BitterMob;
+import com.site21.bittermelon.entities.behavior.attack.Attack;
 import com.site21.bittermelon.entities.behavior.attack.AttackTemplate;
+import com.site21.bittermelon.entities.behavior.attack.Pull;
+import com.site21.bittermelon.entities.behavior.attack.Push;
+import com.site21.bittermelon.entities.behavior.mood.mentalbreak.MurderousRage;
+import com.site21.bittermelon.entities.behavior.mood.mentalbreak.WarnHighStress;
+import com.site21.bittermelon.entities.behavior.movement.FindDarkness;
 import com.site21.bittermelon.entities.behavior.needs.Need;
 import com.site21.bittermelon.entities.behavior.social.Relationship;
 import com.site21.bittermelon.entities.behavior.social.Socializable;
+import com.site21.bittermelon.entities.behavior.social.interactions.GenericInteraction;
+import com.site21.bittermelon.entities.behavior.target.InvalidateAttackTarget;
 import com.site21.bittermelon.entities.scps.BitterVibrationUser;
+import com.site21.bittermelon.entities.scps.SCP939.behavior.*;
 import com.site21.bittermelon.init.BitterActivity;
+import com.site21.bittermelon.init.BitterMemoryModuleType;
 import com.site21.bittermelon.medical.compartments.CompartmentType;
 import com.site21.bittermelon.medical.damage.generators.*;
 import com.site21.bittermelon.medical.factory.Anatomy;
@@ -21,12 +32,15 @@ import com.site21.bittermelon.miscellaneous.stumble.StumbleHandler;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Unit;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
@@ -45,8 +59,17 @@ import net.minecraft.world.level.gameevent.DynamicGameEventListener;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
+import net.tslat.smartbrainlib.api.core.behaviour.AllApplicableBehaviours;
+import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
 import net.tslat.smartbrainlib.api.core.navigation.SmoothWallClimberNavigation;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
+import net.tslat.smartbrainlib.api.core.sensor.custom.UnreachableTargetSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
@@ -58,6 +81,8 @@ import org.slf4j.Logger;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
+
+import static com.site21.bittermelon.init.BitterSounds.*;
 
 @SuppressWarnings("unchecked")
 public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVibrationSystem {
@@ -74,13 +99,44 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
     private static final float PROCREATION_DECAY = -0.0001f;
     private static final float STRESS_REGEN = 0.0005f;
 
+    private final List<UUID> victims = new ArrayList<>();
+
     private static final Logger LOGGER = LogUtils.getLogger();
     private final Map<Character, Relationship> relationships = new HashMap<>();
     private final DynamicGameEventListener<Listener> dynamicGameEventListener;
     private final BitterVibrationSystem.User vibrationUser;
     private BitterVibrationSystem.Data vibrationData;
     private BitterAngerManagement angerManagement;
-    private final SCP939Brain brainHandler;
+
+    private static final List<String> LURE_LINES = List.of(
+            "Help me please!",
+            "I'm hurt, I need help!",
+            "Someone please help!",
+            "Over here! Help!",
+            "I'm bleeding! Help!",
+            "Please, I'm injured!",
+            "Medic! I need a medic!",
+            "I can't move! Help me!",
+            "Is anyone there? Help!",
+            "Oh god, help me please!",
+            "Come out now!",
+            "Hey, what's up man?",
+            "Jeez, you scared me.",
+            "Cool, cool.",
+            "That's great!",
+            "We'll get out of here in no time.",
+            "What's that?",
+            "Did you hear that?",
+            "Get down!",
+            "We're here to help you.",
+            "Come out, it's safe.",
+            "This is SD, come out!",
+            "I think he's scared.",
+            "There's nothing to be afraid of.",
+            "Did you get that?"
+    );
+
+    private final List<String> remainingLureLines;
 
     public SCP939(EntityType<? extends Mob> entityType, Level level) {
         super((EntityType<? extends Monster>) entityType, level);
@@ -89,7 +145,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
         this.dynamicGameEventListener = new DynamicGameEventListener<>(new BitterVibrationSystem.Listener(this));
         this.angerManagement = new BitterAngerManagement(this::canTargetEntity, Collections.emptyList());
         this.xpReward = 5;
-        this.brainHandler = new SCP939Brain(this);
+        remainingLureLines = new ArrayList<>(LURE_LINES);
 
         initializePathfinding();
     }
@@ -143,6 +199,15 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
         compound.putFloat("procreation", getProcreation());
         compound.putFloat("rest", getRest());
         compound.putFloat("stress", getStress());
+
+        ListTag list = new ListTag();
+        for (UUID uuid : victims) {
+            CompoundTag uuidTag = new CompoundTag();
+            uuidTag.putUUID("UUID", uuid);
+            list.add(uuidTag);
+        }
+        compound.put("Victims", list);
+
         Data.CODEC.encodeStart(NbtOps.INSTANCE, this.vibrationData).resultOrPartial(
                 LOGGER::error).ifPresent(tag -> compound.put("listener", tag));
         BitterAngerManagement.codec(this::canTargetEntity).encodeStart(NbtOps.INSTANCE, this.angerManagement).resultOrPartial(
@@ -157,6 +222,14 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
         this.setProcreation(compound.contains("procreation") ? compound.getFloat("procreation") : 100.0f);
         this.setRest(compound.contains("rest") ? compound.getFloat("rest") : 100.0f);
         this.setStress(compound.contains("stress") ? compound.getFloat("stress") : 100.0f);
+
+        ListTag list = compound.getList("Victims", CompoundTag.TAG_COMPOUND);
+        victims.clear();
+        for (int i = 0; i < list.size(); i++) {
+            CompoundTag uuidTag = list.getCompound(i);
+            victims.add(uuidTag.getUUID("UUID"));
+        }
+
         if (compound.contains("anger")) {
             BitterAngerManagement.codec(this::canTargetEntity).parse(
                     new Dynamic<>(NbtOps.INSTANCE, compound.get("anger"))).resultOrPartial(LOGGER::error).ifPresent(
@@ -233,6 +306,28 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
         return this.entityData.get(STRESS);
     }
 
+    public List<UUID> getVictims() {
+        return victims;
+    }
+
+    public void addVictim(@NotNull Character victim) {
+        // TODO: Human check
+        UUID uuid = victim.getUUID();
+        if (!victims.contains(uuid)) {
+            victims.add(victim.getUUID());
+        }
+    }
+
+    public Character getRandomVictim() {
+        if (victims.isEmpty()) return null;
+
+        List<Character> validVictims = victims.stream()
+                .map(CharacterManager.getInstance()::getCharacter)
+                .filter(Objects::nonNull)
+                .toList();
+
+        return validVictims.isEmpty() ? null : validVictims.get(getRandom().nextInt(validVictims.size()));
+    }
 
     public int getClientAngerLevel() {
         return this.entityData.get(CLIENT_ANGER_LEVEL);
@@ -294,6 +389,10 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
         }
 
         return flag;
+    }
+
+    protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
+        return SCREAM.get();
     }
 
     @Override
@@ -358,7 +457,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
 
     @Override
     public boolean dampensVibrations() {
-        return true;
+        return false;
     }
 
     @Override
@@ -377,31 +476,151 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
     }
 
     public Component getRandomLureLine() {
-        return Component.literal("HELP");
+        String name;
+        Character victim = getRandomVictim();
+
+        if (victim == null) {
+            String[] firstNames = {"John", "Sarah", "Mike", "Emma", "David", "Lisa", "James", "Anna", "Chris", "Amy"};
+            String[] lastNames = {"Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez"};
+
+            name = firstNames[getRandom().nextInt(firstNames.length)] + " " + lastNames[getRandom().nextInt(lastNames.length)];
+        } else {
+            name = victim.getName();
+        }
+
+        if (remainingLureLines.isEmpty()) {
+            remainingLureLines.addAll(LURE_LINES);
+        }
+
+        // TODO: Sounds
+        // TODO: Personality sequences and conversations
+        // TODO: Store messages?
+
+        String lureLine = remainingLureLines.get(getRandom().nextInt(remainingLureLines.size()));
+        remainingLureLines.remove(lureLine);
+
+        return Component.literal(name + ": \"" + lureLine + "\"");
     }
 
     @Override
     public List<? extends ExtendedSensor<? extends SCP939>> getSensors() {
         return ObjectArrayList.of(
-                new NearbyPlayersSensor<SCP939>().setRadius(1000),
+                new NearbyPlayersSensor<>(),
                 new NearbyLivingEntitySensor<>(),
+                new UnreachableTargetSensor<>(),
                 new HurtBySensor<>()
         );
     }
 
-    @Override
     public Map<Activity, BrainActivityGroup<? extends SCP939>> getAdditionalTasks() {
-        return brainHandler.getAdditionalTasks();
+        return Map.of(
+                Activity.INVESTIGATE, getInvestigationTasks(),
+                BitterActivity.HUNT.get(), getHuntTasks(),
+                BitterActivity.PROCREATE.get(), getProcreateTasks(),
+                Activity.REST, getRestTasks(),
+                BitterActivity.SOCIALIZE.get(), getSocializeTasks(),
+                BitterActivity.MENTAL_BREAK.get(), getMentalBreakTasks()
+        );
     }
 
-    @Override
     public BrainActivityGroup<? extends SCP939> getCoreTasks() {
-        return brainHandler.getCoreTasks();
+        return BrainActivityGroup.coreTasks(
+                new LookAtTarget<>(),
+                new MoveToWalkTarget<>(),
+                new FindDarkness<>()
+        );
     }
 
-    @Override
     public BrainActivityGroup<? extends SCP939> getFightTasks() {
-        return brainHandler.getFightTasks();
+        return BrainActivityGroup.fightTasks(
+                new RegenBloodlust<>(),
+                new InvalidateAttackTarget<>(),
+                new SetWalkTargetToAttackTarget<>().stopIf(LivingEntity::isDeadOrDying),
+                new OneRandomBehaviour<>(
+                        new Push<>(10).cooldownFor(scp939 -> 120),
+                        new Attack<>(10, getAttackTemplates()),
+                        new Pull<>(10).cooldownFor(scp939 -> 120)
+                ).cooldownFor(scp939 -> 40)
+
+        );
+    }
+
+    public BrainActivityGroup<? extends SCP939> getHuntTasks() {
+        return new BrainActivityGroup<SCP939>(BitterActivity.HUNT.get()).behaviours(
+//                new SeekNearestPlayer<>()
+//                        .cooldownFor(entity -> 120),
+                new OneRandomBehaviour<>(
+                        new Lure<>(20)
+                                .cooldownFor(entity -> 200),
+                        new Amnesticize<>(60)
+                                .cooldownFor(entity -> 200),
+                        new Listen<>(100)
+                                .cooldownFor(entity -> 300)
+                )
+                        .cooldownFor(entity -> 150),
+                new OneRandomBehaviour<>(
+                        new SetRandomWalkTarget<>()
+                                .setRadius(getRandom().nextInt(10, 20)),
+                        new Idle<>().runFor(entity -> 60)
+                )
+        );
+    }
+
+    public BrainActivityGroup<? extends SCP939> getInvestigationTasks() {
+        return new BrainActivityGroup<SCP939>(Activity.INVESTIGATE).requireAndWipeMemoriesOnUse(
+                        MemoryModuleType.DISTURBANCE_LOCATION
+                )
+                .behaviours(
+                        new FirstApplicableBehaviour<>(
+                                new AllApplicableBehaviours<>(
+                                        new MoveToWalkTarget<>(),
+                                        new Idle<>().runFor(entity -> 60)
+                                )
+                        )
+                );
+    }
+
+    public BrainActivityGroup<? extends SCP939> getProcreateTasks() {
+        return new BrainActivityGroup<SCP939>(BitterActivity.PROCREATE.get()).behaviours(
+                new Procreate<>(20)
+        );
+    }
+
+    public BrainActivityGroup<? extends SCP939> getRestTasks() {
+        return new BrainActivityGroup<SCP939>(Activity.REST).behaviours(
+                new FindDarkness<>(),
+                new Rest<>(0.05f)
+        );
+    }
+
+    public BrainActivityGroup<? extends SCP939> getSocializeTasks() {
+        return new BrainActivityGroup<SCP939>(BitterActivity.SOCIALIZE.get()).behaviours(
+                new GenericInteraction<>()
+                        .closeEnoughDist((entity, partner) -> 8)
+                        .messages(List.of(
+                                        " flickers its bioluminescent spine lights at ",
+                                        " emits a high-pitched tone towards "
+                                )
+                        )
+        );
+    }
+
+    public BrainActivityGroup<? extends SCP939> getMentalBreakTasks() {
+        return new BrainActivityGroup<SCP939>(BitterActivity.MENTAL_BREAK.get()).behaviours(
+                new OneRandomBehaviour<SCP939>(
+                        new WarnHighStress<>(List.of(
+                                " scratches the ground vigorously.",
+                                "'s bioluminescent spine lights flicker in a rapid wave-like rhythm."
+                        )),
+                        new MurderousRage<>(true)
+                )
+                        .cooldownFor(entity -> 400),
+                new OneRandomBehaviour<>(
+                        new SetRandomWalkTarget<>()
+                                .setRadius(getRandom().nextInt(1, 10)),
+                        new Idle<>().runFor(entity -> 30)
+                )
+        );
     }
 
     @Override
@@ -479,6 +698,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
                         "%s lunges with gnashing teeth at %s's %s",
                         "%s attempts to sink its teeth into %s's %s"
                 )
+                .setSound(BITE.get())
                 .build()
         );
 
@@ -511,6 +731,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
                         "%s's claws whistle through the air at %s's %s",
                         "%s unleashes a frenzied series of slashes at %s's %s"
                 )
+                .setSound(SLASH.get())
                 .build()
         );
 
@@ -541,6 +762,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
                 .setCondition((attacker, target) -> !StumbleHandler.containsUUID(target.getUUID())
                         && !StumbleHandler.containsUUID(attacker.getUUID()))
                 .setSpecialAction((attacker, target) -> StumbleHandler.stumble(target))
+                .setSound(SMASH.get())
                 .build()
         );
 
@@ -581,6 +803,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
                     target.setDeltaMovement(pullDirection);
                     target.hurtMarked = true;
                 })
+                .setSound(DRAG.get())
                 .build()
         );
 
@@ -610,6 +833,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
                         "%s sinks its claws with frightening speed into %s's %s",
                         "%s plunges its cruel claws into %s's %s"
                 )
+                .setSound(STAB.get())
                 .build()
         );
 
@@ -646,6 +870,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
                 )
                 .setCondition((attacker, target) -> StumbleHandler.containsUUID(target.getUUID())
                         && !StumbleHandler.containsUUID(attacker.getUUID()))
+                .setSound(WRESTLE.get())
                 .build()
         );
 

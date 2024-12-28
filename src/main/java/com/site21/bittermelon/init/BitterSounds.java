@@ -26,4 +26,18 @@ public class BitterSounds {
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "medical.cautery")));
     public static final DeferredHolder<SoundEvent, SoundEvent> FALL = SOUND_EVENTS.register("entity.fall",
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "entity.fall")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> WRESTLE = SOUND_EVENTS.register("entity.wrestle",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "entity.wrestle")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> STAB = SOUND_EVENTS.register("entity.stab",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "entity.stab")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> SMASH = SOUND_EVENTS.register("entity.smash",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "entity.smash")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> SLASH = SOUND_EVENTS.register("entity.slash",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "entity.slash")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> SCREAM = SOUND_EVENTS.register("entity.scp939.939_scream",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "entity.scp939.939_scream")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> BITE = SOUND_EVENTS.register("entity.bite",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "entity.bite")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> DRAG = SOUND_EVENTS.register("entity.drag",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "entity.drag")));
 }

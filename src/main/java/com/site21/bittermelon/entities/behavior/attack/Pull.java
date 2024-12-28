@@ -6,12 +6,16 @@ import com.site21.bittermelon.miscellaneous.stumble.StumbleHandler;
 import com.site21.bittermelon.util.LocalMessageHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
 import net.tslat.smartbrainlib.util.BrainUtils;
 import org.jetbrains.annotations.NotNull;
+
+import static com.site21.bittermelon.init.BitterSounds.DRAG;
+import static com.site21.bittermelon.init.BitterSounds.STAB;
 
 public class Pull<E extends Mob> extends AnimatableMeleeAttack<E> {
 
@@ -40,6 +44,8 @@ public class Pull<E extends Mob> extends AnimatableMeleeAttack<E> {
         Vec3 pullDirection = entity.getLookAngle().multiply(-2, 1, -2);
         target.setDeltaMovement(pullDirection);
         target.hurtMarked = true;
+
+        entity.level().playSound(null, entity.getOnPos(), DRAG.get(), SoundSource.AMBIENT);
 
         CharacterManager characterManager = CharacterManager.getInstance();
         Character entityCharacter = characterManager.getActiveCharacter(entity.getUUID());

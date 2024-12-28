@@ -3,11 +3,17 @@ package com.site21.bittermelon.entities.scps.chicken;
 import com.google.common.collect.ImmutableList;
 import com.site21.bittermelon.character.Character;
 import com.site21.bittermelon.entities.base.BitterMob;
+import com.site21.bittermelon.entities.behavior.attack.Attack;
 import com.site21.bittermelon.entities.behavior.attack.AttackTemplate;
+import com.site21.bittermelon.entities.behavior.attack.LeapAtTarget;
 import com.site21.bittermelon.entities.behavior.misc.FeelsPain;
+import com.site21.bittermelon.entities.behavior.mood.mentalbreak.MurderousRage;
+import com.site21.bittermelon.entities.behavior.mood.mentalbreak.WarnHighStress;
 import com.site21.bittermelon.entities.behavior.needs.Need;
 import com.site21.bittermelon.entities.behavior.social.Relationship;
 import com.site21.bittermelon.entities.behavior.social.Socializable;
+import com.site21.bittermelon.entities.behavior.social.interactions.GenericInteraction;
+import com.site21.bittermelon.entities.behavior.target.InvalidateAttackTarget;
 import com.site21.bittermelon.init.BitterActivity;
 import com.site21.bittermelon.medical.factory.Anatomy;
 import net.minecraft.core.BlockPos;
@@ -20,10 +26,12 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -33,6 +41,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
+import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Panic;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
 import net.tslat.smartbrainlib.api.core.navigation.SmoothGroundNavigation;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
@@ -40,16 +55,17 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("unchecked")
 public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPain {
     private static final EntityDataAccessor<Float> HUNGER = SynchedEntityData.defineId(Chicken.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> THIRST = SynchedEntityData.defineId(Chicken.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> PROCREATION = SynchedEntityData.defineId(Chicken.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> SOCIALIZATION = SynchedEntityData.defineId(Chicken.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> REST = SynchedEntityData.defineId(Chicken.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> BLADDER = SynchedEntityData.defineId(Chicken.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> DEFECATION = SynchedEntityData.defineId(Chicken.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> MOVEMENT = SynchedEntityData.defineId(Chicken.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> HYGIENE = SynchedEntityData.defineId(Chicken.class, EntityDataSerializers.FLOAT);
@@ -62,7 +78,6 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
     private static final float STRESS_REGEN = 0.0005f;
     private static final float HUNGER_DECAY = -0.002f;
     private static final float THIRST_DECAY = -0.003f;
-    private static final float BLADDER_DECAY = -0.002f;
     private static final float DEFECATION_DECAY = -0.001f;
     private static final float MOVEMENT_DECAY = -0.001f;
     private static final float HYGIENE_DECAY = -0.001f;
@@ -75,11 +90,8 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
     public float flapping = 1.0F;
     private float nextFlap = 1.0F;
 
-    private final ChickenBrain brainHandler;
-
     public Chicken(EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level);
-        this.brainHandler = new ChickenBrain(this);
     }
 
     @Override
@@ -92,20 +104,125 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 4.0).add(Attributes.MOVEMENT_SPEED, 0.25);
     }
 
-    @Override
     public Map<Activity, BrainActivityGroup<? extends Chicken>> getAdditionalTasks() {
-        return brainHandler.getAdditionalTasks();
+        Map<Activity, BrainActivityGroup<? extends Chicken>> tasks = new HashMap<>();
+        tasks.put(BitterActivity.PROCREATE.get(), getProcreateTasks());
+        tasks.put(Activity.REST, getRestTasks());
+        tasks.put(BitterActivity.SOCIALIZE.get(), getSocializeTasks());
+        tasks.put(BitterActivity.MENTAL_BREAK.get(), getMentalBreakTasks());
+        tasks.put(BitterActivity.EAT.get(), getEatTasks());
+        tasks.put(BitterActivity.DRINK.get(), getDrinkTasks());
+        tasks.put(BitterActivity.DEFECATE.get(), getDefecateTasks());
+        tasks.put(BitterActivity.EXPLORE.get(), getExploreTasks());
+        tasks.put(BitterActivity.GROOM.get(), getGroomTasks());
+        tasks.put(BitterActivity.PLAY.get(), getPlayTasks());
+        return tasks;
     }
 
-    @Override
     public BrainActivityGroup<? extends Chicken> getCoreTasks() {
-        return brainHandler.getCoreTasks();
+        return BrainActivityGroup.coreTasks(
+                new LookAtTarget<>(),
+                new MoveToWalkTarget<>(),
+                new OneRandomBehaviour<>(
+                        new SetRandomWalkTarget<>()
+                                .setRadius(getRandom().nextInt(1, 10)),
+                        new Idle<>().runFor(entity -> 30)
+                )
+        );
     }
 
-    @Override
     public BrainActivityGroup<? extends Chicken> getFightTasks() {
-        return brainHandler.getFightTasks();
+        return BrainActivityGroup.fightTasks(
+                new InvalidateAttackTarget<>(),
+                new SetWalkTargetToAttackTarget<>().stopIf(LivingEntity::isDeadOrDying),
+                new Attack<>(10, getAttackTemplates()).cooldownFor(entity -> 40),
+                new LeapAtTarget<>(10)
+        );
     }
+
+    public BrainActivityGroup<? extends Chicken> getProcreateTasks() {
+        return new BrainActivityGroup<Chicken>(BitterActivity.PROCREATE.get()).behaviours(
+        );
+    }
+
+    public BrainActivityGroup<? extends Chicken> getRestTasks() {
+        return new BrainActivityGroup<Chicken>(Activity.REST).behaviours(
+        );
+    }
+
+    public BrainActivityGroup<? extends Chicken> getSocializeTasks() {
+        return new BrainActivityGroup<Chicken>(BitterActivity.SOCIALIZE.get()).behaviours(
+                new GenericInteraction<>()
+                        .closeEnoughDist((entity, partner) -> 8)
+                        .messages(List.of(
+                                        " clucks at "
+                                )
+                        )
+        );
+    }
+
+    public BrainActivityGroup<? extends Chicken> getMentalBreakTasks() {
+        return new BrainActivityGroup<Chicken>(BitterActivity.MENTAL_BREAK.get()).behaviours(
+                new OneRandomBehaviour<Chicken>(
+                        new WarnHighStress<>(List.of(
+                                " cries out."
+                        )),
+                        new MurderousRage<>(true)
+                )
+                        .cooldownFor(entity -> 400),
+                new OneRandomBehaviour<>(
+                        new SetRandomWalkTarget<>()
+                                .setRadius(getRandom().nextInt(1, 10)),
+                        new Idle<>().runFor(entity -> 30)
+                )
+        );
+    }
+
+    public BrainActivityGroup<? extends Chicken> getEatTasks() {
+        return new BrainActivityGroup<Chicken>(BitterActivity.EAT.get()).behaviours(
+        );
+    }
+
+    public BrainActivityGroup<? extends Chicken> getDrinkTasks() {
+        return new BrainActivityGroup<Chicken>(BitterActivity.DRINK.get()).behaviours(
+        );
+    }
+
+    public BrainActivityGroup<? extends Chicken> getDefecateTasks() {
+        return new BrainActivityGroup<Chicken>(BitterActivity.DEFECATE.get()).behaviours(
+        );
+    }
+
+    public BrainActivityGroup<? extends Chicken> getExploreTasks() {
+        return new BrainActivityGroup<Chicken>(BitterActivity.EXPLORE.get()).behaviours(
+                new OneRandomBehaviour<>(
+                        new SetRandomWalkTarget<>()
+                                .setRadius(getRandom().nextInt(5, 15)),
+                        new Idle<>().runFor(entity -> 30)
+                ).whenStarting(entity -> {
+                    if (entity instanceof Chicken chicken) {
+                        chicken.modifyMovement(10.0f);
+                    }
+                })
+        );
+    }
+
+    public BrainActivityGroup<? extends Chicken> getGroomTasks() {
+        return new BrainActivityGroup<Chicken>(BitterActivity.GROOM.get()).behaviours(
+        );
+    }
+
+    public BrainActivityGroup<? extends Chicken> getPlayTasks() {
+        return new BrainActivityGroup<Chicken>(BitterActivity.PLAY.get()).behaviours(
+        );
+    }
+
+    public BrainActivityGroup<? extends Chicken> getPanicTasks() {
+        return new BrainActivityGroup<Chicken>(Activity.PANIC).behaviours(
+                new Panic<>()
+        ).requireAndWipeMemoriesOnUse(MemoryModuleType.HURT_BY);
+    }
+
 
     @Override
     public List<Need<Chicken>> getNeeds() {
@@ -155,12 +272,6 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
                         entity -> true
                 ),
                 new Need<>(
-                        BLADDER,
-                        BitterActivity.URINATE.get(),
-                        value -> (float) Math.pow(value, 2),
-                        entity -> true
-                ),
-                new Need<>(
                         DEFECATION,
                         BitterActivity.DEFECATE.get(),
                         value -> (float) Math.pow(value, 2),
@@ -196,7 +307,6 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
         modifyStress(STRESS_REGEN);
         modifyHunger(HUNGER_DECAY);
         modifyThirst(THIRST_DECAY);
-        modifyBladder(BLADDER_DECAY);
         modifyDefecation(DEFECATION_DECAY);
         modifyMovement(MOVEMENT_DECAY);
         modifyHygiene(HYGIENE_DECAY);
@@ -270,7 +380,6 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
         builder.define(ANGER, 100.0f);
         builder.define(HUNGER, 100.0f);
         builder.define(THIRST, 100.0f);
-        builder.define(BLADDER, 100.0f);
         builder.define(DEFECATION, 100.0f);
         builder.define(MOVEMENT, 100.0f);
         builder.define(HYGIENE, 100.0f);
@@ -286,7 +395,6 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
         compound.putFloat("stress", getStress());
         compound.putFloat("hunger", getHunger());
         compound.putFloat("thirst", getThirst());
-        compound.putFloat("bladder", getBladder());
         compound.putFloat("defecation", getDefecation());
         compound.putFloat("movement", getMovement());
         compound.putFloat("hygiene", getHygiene());
@@ -302,7 +410,6 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
         this.setStress(compound.contains("stress") ? compound.getFloat("stress") : 100.0f);
         this.setHunger(compound.contains("hunger") ? compound.getFloat("hunger") : 100.0f);
         this.setThirst(compound.contains("thirst") ? compound.getFloat("thirst") : 100.0f);
-        this.setBladder(compound.contains("bladder") ? compound.getFloat("bladder") : 100.0f);
         this.setDefecation(compound.contains("defecation") ? compound.getFloat("defecation") : 100.0f);
         this.setMovement(compound.contains("movement") ? compound.getFloat("movement") : 100.0f);
         this.setHygiene(compound.contains("hygiene") ? compound.getFloat("hygiene") : 100.0f);
@@ -331,10 +438,6 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
 
     public void modifyThirst(float amount) {
         this.entityData.set(THIRST, Math.min(100, Math.max(0, getThirst() + amount)));
-    }
-
-    public void modifyBladder(float amount) {
-        this.entityData.set(BLADDER, Math.min(100, Math.max(0, getBladder() + amount)));
     }
 
     public void modifyDefecation(float amount) {
@@ -377,10 +480,6 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
         this.entityData.set(THIRST, amount);
     }
 
-    public void setBladder(float amount) {
-        this.entityData.set(BLADDER, amount);
-    }
-
     public void setDefecation(float amount) {
         this.entityData.set(DEFECATION, amount);
     }
@@ -419,10 +518,6 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
 
     public float getThirst() {
         return this.entityData.get(THIRST);
-    }
-
-    public float getBladder() {
-        return this.entityData.get(BLADDER);
     }
 
     public float getDefecation() {
