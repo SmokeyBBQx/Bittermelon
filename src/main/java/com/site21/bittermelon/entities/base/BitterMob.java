@@ -2,8 +2,8 @@ package com.site21.bittermelon.entities.base;
 
 import com.site21.bittermelon.character.Character;
 import com.site21.bittermelon.character.CharacterManager;
-import com.site21.bittermelon.entities.behavior.needs.Need;
-import com.site21.bittermelon.entities.behavior.needs.NeedsUser;
+import com.site21.bittermelon.entities.ai.behavior.needs.Need;
+import com.site21.bittermelon.entities.ai.behavior.needs.NeedsUser;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.network.protocol.game.DebugPackets;
 import net.minecraft.world.entity.EntityType;
@@ -15,18 +15,25 @@ import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
 public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob implements SmartBrainOwner<T>, NeedsUser<T> {
+    private final int behaviorRandomness;
 
-    protected BitterMob(EntityType<? extends PathfinderMob> entityType, Level level) {
+    protected BitterMob(EntityType<? extends PathfinderMob> entityType, Level level, int behaviorRandomness) {
         super(entityType, level);
+        this.behaviorRandomness = behaviorRandomness;
 
         Character character = initializeCharacter();
         CharacterManager.getInstance().addCharacter(character);
         CharacterManager.getInstance().setActiveCharacter(this.uuid, character);
+    }
+
+    protected BitterMob(EntityType<? extends PathfinderMob> entityType, Level level) {
+        this(entityType, level, 1);
     }
 
     protected abstract Character initializeCharacter();
@@ -35,7 +42,9 @@ public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob im
     public List<Activity> getActivityPriorities() {
         List<Need<T>> needs = new ArrayList<>(this.getNeeds());
 
-        needs.removeIf(need -> !need.canBeFulfilled().test((T) this));
+        needs.removeIf(need ->
+                !need.canBeFulfilled().test((T) this) ||
+                        need.priorityFunction().apply(this.entityData.get(need.data())) < 5);
 
         if (!needs.isEmpty()) {
             needs.sort((n1, n2) -> {
@@ -43,6 +52,11 @@ public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob im
                 float priority2 = n2.priorityFunction().apply(this.getEntityData().get(n2.data()));
                 return Float.compare(priority2, priority1);
             });
+
+            if (needs.size() > behaviorRandomness) {
+                List<Need<T>> randomizedBehaviour = needs.subList(0, behaviorRandomness);
+                Collections.shuffle(randomizedBehaviour);
+            }
 
             return needs.stream()
                     .map(Need::activity)

@@ -7,6 +7,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.BitterEntities.CHICKEN;
 import static com.site21.bittermelon.init.BitterEntities.SCP_939;
@@ -15,7 +16,7 @@ import static com.site21.bittermelon.init.BitterEntities.SCP_939;
 public class ClientSetup {
 
     @SubscribeEvent
-    public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
+    public static void onRegisterRenderers(EntityRenderersEvent.@NotNull RegisterRenderers event) {
         event.registerEntityRenderer(SCP_939.get(), SCP939Renderer::new);
         event.registerEntityRenderer(CHICKEN.get(), ChickenRenderer::new);
     }

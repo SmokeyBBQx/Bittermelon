@@ -28,19 +28,18 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
-import java.util.Optional;
-
 import static com.site21.bittermelon.init.BitterActivity.ACTIVITY;
 import static com.site21.bittermelon.init.BitterAttachmentTypes.ATTACHMENT_TYPES;
 import static com.site21.bittermelon.init.BitterBlockEntities.BLOCK_ENTITY_TYPES;
 import static com.site21.bittermelon.init.BitterBlocks.BLOCKS;
 import static com.site21.bittermelon.init.BitterBlocks.FLUID;
 import static com.site21.bittermelon.init.BitterDataComponents.DATA_COMPONENTS;
-import static com.site21.bittermelon.init.BitterMemoryModuleType.MEMORY_MODULE_TYPES;
+import static com.site21.bittermelon.init.BitterMemoryTypes.MEMORY_MODULE_TYPES;
 import static com.site21.bittermelon.init.BitterItems.ITEMS;
 import static com.site21.bittermelon.init.BitterMenus.MENUS;
 import static com.site21.bittermelon.init.BitterMobEffects.MOB_EFFECTS;
 import static com.site21.bittermelon.init.BitterReactions.REACTIONS;
+import static com.site21.bittermelon.init.BitterSensors.SENSOR_TYPES;
 import static com.site21.bittermelon.init.BitterSounds.SOUND_EVENTS;
 import static com.site21.bittermelon.init.Substances.SUBSTANCES;
 
@@ -78,6 +77,7 @@ public class Bittermelon
         ACTIVITY.register(modEventBus);
         ITEMS.register(modEventBus);
         MEMORY_MODULE_TYPES.register(modEventBus);
+        SENSOR_TYPES.register(modEventBus);
         BitterEntities.register(modEventBus);
         SUBSTANCES.register(modEventBus);
         REACTIONS.register(modEventBus);
@@ -87,6 +87,7 @@ public class Bittermelon
         MENUS.register(modEventBus);
         ATTACHMENT_TYPES.register(modEventBus);
         MOB_EFFECTS.register(modEventBus);
+
 
         modEventBus.addListener(BitterRegistries::registerRegistries);
         modEventBus.addListener(this::commonSetup);

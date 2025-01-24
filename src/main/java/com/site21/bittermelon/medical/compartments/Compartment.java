@@ -7,11 +7,12 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Compartment {
     protected final EnumSet<CompartmentType> types;
     protected String name;
-    protected transient List<Compartment> children;
+    protected transient CopyOnWriteArrayList<Compartment> children;
     protected EnumMap<FunctionType, Float> attributes;
 
     protected transient Compartment owner;
@@ -29,7 +30,7 @@ public class Compartment {
         this.maxHealth = maxHealth;
         this.trueMaxHealth = maxHealth;
         this.health = maxHealth;
-        this.children = new ArrayList<>();
+        this.children = new CopyOnWriteArrayList<>();
         this.attributes = new EnumMap<>(FunctionType.class);
         this.hidden = true;
     }
@@ -47,7 +48,7 @@ public class Compartment {
 
     protected void initializeChildren() {
         if (children == null) {
-            children = new ArrayList<>();
+            children = new CopyOnWriteArrayList<>();
         }
     }
 
@@ -127,7 +128,8 @@ public class Compartment {
     }
 
     public boolean isHidden() {
-        return owner != null && owner.isHidden() || hidden;
+        if (owner == null) return false;
+        return owner.isHidden() || hidden;
     }
 
     public void setHidden(boolean hidden) {

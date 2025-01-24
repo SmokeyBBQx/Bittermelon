@@ -1,9 +1,12 @@
 package com.site21.bittermelon.util;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Map;
 
 public class ColorUtil {
-    public static int mixColors(Map<Integer, Float> colors) {
+    public static int mixColors(@NotNull Map<Integer, Float> colors) {
         float totalAmount = 0;
         float redSum = 0, greenSum = 0, blueSum = 0;
 
@@ -17,10 +20,6 @@ public class ColorUtil {
             blueSum += (color & 0xFF) * amount;
         }
 
-        if (totalAmount == 0) {
-            return 0xFFAAD5DB;
-        }
-
         int red = Math.round(redSum / totalAmount);
         int green = Math.round(greenSum / totalAmount);
         int blue = Math.round(blueSum / totalAmount);
@@ -28,7 +27,8 @@ public class ColorUtil {
         return (red << 16) | (green << 8) | blue;
     }
 
-    public static int[] mixColorsRGB(Map<Integer, Float> colors) {
+    @Contract("_ -> new")
+    public static int @NotNull [] mixColorsRGB(@NotNull Map<Integer, Float> colors) {
         float totalAmount = 0;
         float redSum = 0, greenSum = 0, blueSum = 0;
 

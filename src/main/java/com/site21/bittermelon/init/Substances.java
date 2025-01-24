@@ -127,8 +127,8 @@ public class Substances {
     public static final Supplier<Substance> LIQUID_BLOOD = SUBSTANCES.register("liquid_blood", () -> new Substance(
             "Liquid Blood",
             0xFFB52222,
-            17.031f,
-            0.769f,
+            32,
+            1.10f,
             2.619f
     ));
 }

@@ -4,6 +4,7 @@ import com.site21.bittermelon.character.Character;
 import com.site21.bittermelon.medical.compartments.Compartment;
 import com.site21.bittermelon.medical.compartments.CompartmentType;
 import com.site21.bittermelon.medical.compartments.Injury;
+import com.site21.bittermelon.medical.compartments.conditions.Pain;
 import com.site21.bittermelon.medical.medicalstats.MedicalStats;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -64,6 +65,10 @@ public abstract class DamageGenerator {
                         injury.getMaxHealth() / 2, medicalStats, character, entity);
                 if (injuryResult == null) break;
 
+                if (injuryResult.injury().getHealth() > injuryResult.injury().getOwner().getHealth()) {
+                    depth++;
+                }
+
                 injuryResults.add(injuryResult);
 
                 injury = injuryResult.injury();
@@ -102,9 +107,10 @@ public abstract class DamageGenerator {
 
     @Contract("_, _, _, _ -> new")
     private @NotNull InjuryResult handleDismemberment(@NotNull Compartment target, @NotNull Character character, @NotNull MedicalStats medicalStats, LivingEntity entity) {
-        Injury amputation = new Injury(EnumSet.of(CompartmentType.TRAUMATIC_AMPUTATION), "Traumatic Amputation" + " (" + target.getName() + ")", target.getOwner(), 10, character, entity);
+        Injury amputation = new Injury(EnumSet.of(CompartmentType.TRAUMATIC_AMPUTATION), "Traumatic Amputation" + " (" + target.getName() + ")", target.getOwner(), target.getMaxHealth(), character, entity);
         amputation.reveal();
         medicalStats.addCompartment(amputation);
+
         medicalStats.removeCompartment(target);
         String message = target.getName().toLowerCase() + " was dismembered.";
 

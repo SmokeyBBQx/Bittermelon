@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -26,7 +27,7 @@ public record S2CClearForcedPose(UUID uuid) implements CustomPacketPayload {
         return TYPE;
     }
 
-    public void handle(IPayloadContext ctx) {
+    public void handle(@NotNull IPayloadContext ctx) {
         Player player = ctx.player().level().getPlayerByUUID(uuid());
         if (player != null) {
             player.setForcedPose(null);

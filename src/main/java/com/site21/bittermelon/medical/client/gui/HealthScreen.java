@@ -35,8 +35,9 @@ public class HealthScreen extends Screen {
     private CompartmentList compartmentList;
     private boolean showOnlyInjured = false;
     private Button filterButton;
+    private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/health_screen.png");
 
-    public HealthScreen(Character character, Player player, ItemStack heldItem) {
+    public HealthScreen(@NotNull Character character, Player player, @NotNull ItemStack heldItem) {
         super(Component.literal(character.getName()));
         this.character = character;
         this.player = player;
@@ -116,6 +117,20 @@ public class HealthScreen extends Screen {
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.enableBlend();
+        guiGraphics.blit(BACKGROUND_TEXTURE,
+                0,
+                30,
+                0,
+                0,
+                200,
+                287,
+                200,
+                400
+        );
+        RenderSystem.disableBlend();
+
         this.filterButton.render(guiGraphics, mouseX, mouseY, partialTicks);
         this.compartmentList.render(guiGraphics, mouseX, mouseY, partialTicks);
 
@@ -203,7 +218,7 @@ public class HealthScreen extends Screen {
 //                    32
 //            );
 //            RenderSystem.disableBlend();
-            super.renderListBackground(guiGraphics);
+//            super.renderListBackground(guiGraphics);
         }
 
         @Override

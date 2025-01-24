@@ -7,6 +7,7 @@ import com.site21.bittermelon.medical.compartments.CompartmentType;
 import com.site21.bittermelon.medical.medicalstats.MedicalStats;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 
@@ -29,7 +30,7 @@ public interface AbstractCautery extends MedicalItem {
     }
 
     @Override
-    default void finishAction(Compartment compartment, MedicalStats medicalStats, Character character, float quality, ItemStack item) {
+    default void finishAction(Compartment compartment, @NotNull MedicalStats medicalStats, Character character, float quality, ItemStack item) {
         medicalStats.removeCompartment(compartment);
     }
 }

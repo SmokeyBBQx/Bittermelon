@@ -50,12 +50,12 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
     }
 
     public void tick() {
-        if (getTotalAmount() < 1) {
-            removePuddleBlock();
-            return;
-        }
+//        if (getTotalAmount() <= 0) {
+//            removePuddleBlock();
+//            return;
+//        }
 
-        handleSubstanceInteractions();
+//        handleSubstanceInteractions();
 
         if (!active) {
             updateDelay = 20;
@@ -112,6 +112,8 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
                 return;
             }
         }
+
+        System.out.println("Adding " + substance.getSubstance().getName() + " with volume " + substance.getVolume() + " and amount " + substance.getAmount() + " to " + worldPosition);
 
         substances.add(substance);
 
@@ -237,7 +239,7 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
         setTemperature(Math.max(0, temperature + getTemperature()));
     }
 
-    public void mixWith(List<SubstanceStack> substances) {
+    public void mixWith(@NotNull List<SubstanceStack> substances) {
         substances.forEach(this::updateSubstance);
     }
 
@@ -292,7 +294,7 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
         }
     }
 
-    public void checkIfOnPuddle(BlockPos pos, Level level, List<SubstanceStack> substances) {
+    public void checkIfOnPuddle(@NotNull BlockPos pos, @NotNull Level level, List<SubstanceStack> substances) {
         if (level.getBlockEntity(pos.below()) instanceof FluidBlockEntity blockEntity) {
             if (blockEntity.getTotalVolume() < MAX_CAPACITY) {
                 blockEntity.mixWith(substances);
@@ -380,7 +382,7 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
             for (Direction dir : Direction.Plane.HORIZONTAL.shuffledCopy(level.random)) {
                 BlockPos pos = worldPosition.relative(dir).above();
                 if (level.getBlockEntity(pos) instanceof FluidBlockEntity entity) {
-                    if (getTotalVolume() < entity.getTotalVolume() && entity.getTotalVolume() < SPREAD_THRESHOLD) {
+                    if (getTotalVolume() < entity.getTotalVolume()) {
                         validNeighbors.add(worldPosition.relative(dir).above());
                     }
                 }
@@ -414,7 +416,7 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
         return state.canBeReplaced();
     }
 
-    private void spill(BlockPos blockPos, float amount) {
+    private void spill(BlockPos blockPos, float volumeToTransfer) {
         if (level == null) return;
 
         BlockState targetState = level.getBlockState(blockPos);
@@ -434,19 +436,19 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
         }
 
         List<SubstanceStack> substancesToTransfer = new ArrayList<>();
-        float totalAmount = getTotalAmount();
+        float totalVolume = getTotalVolume();
         float totalTransferred = 0;
 
         for (SubstanceStack stack : substances) {
-            float proportion = stack.getAmount() / totalAmount;
-            float transferAmount = Math.min(amount * proportion, stack.getAmount());
+            float proportion = stack.getVolume() / totalVolume;
+            float transferVolume = Math.min(volumeToTransfer * proportion, stack.getVolume());
 
-            if (transferAmount > 0) {
+            if (transferVolume > 0) {
                 SubstanceStack stackToTransfer = stack.copy();
-                stackToTransfer.setAmount(transferAmount);
+                stackToTransfer.setVolume(transferVolume);
                 substancesToTransfer.add(stackToTransfer);
-                stack.modifyAmount(-transferAmount);
-                totalTransferred += transferAmount;
+                stack.modifyVolume(-transferVolume);
+                totalTransferred += transferVolume;
             }
         }
 
@@ -472,7 +474,7 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
         // TODO: Issue because we're using amounts and not volumes?
     }
 
-    private static void mergeSubstances(List<SubstanceStack> substances, SubstanceStack stack) {
+    private static void mergeSubstances(@NotNull List<SubstanceStack> substances, SubstanceStack stack) {
         for (SubstanceStack substance : substances) {
             if (stack.canMergeWith(substance)) {
                 substance.modifyAmount(stack.getAmount());
@@ -632,7 +634,7 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
         active = tag.getBoolean(ACTIVE_KEY);
     }
 
-    private CompoundTag serializeData(HolderLookup.Provider registries) {
+    private @NotNull CompoundTag serializeData(HolderLookup.Provider registries) {
         CompoundTag nbt = new CompoundTag();
         ListTag substancesList = new ListTag();
         for (SubstanceStack stack : substances) {
@@ -644,7 +646,7 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
         return nbt;
     }
 
-    private void deserializeData(CompoundTag nbt, HolderLookup.Provider registries) {
+    private void deserializeData(@NotNull CompoundTag nbt, HolderLookup.Provider registries) {
         substances.clear();
         ListTag substancesList = nbt.getList(CONTENTS_KEY, 10);
         for (int i = 0; i < substancesList.size(); i++) {

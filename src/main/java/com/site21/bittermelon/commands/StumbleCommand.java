@@ -9,11 +9,12 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
 public class StumbleCommand {
-    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+    public static void register(@NotNull CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("stumble")
                 .requires(source -> source.hasPermission(2))
                 .then(Commands.argument("targets", EntityArgument.entities())
@@ -31,7 +32,7 @@ public class StumbleCommand {
         );
     }
 
-    private static int stumble(CommandContext<CommandSourceStack> context, Collection<? extends Entity> targets) {
+    private static int stumble(CommandContext<CommandSourceStack> context, @NotNull Collection<? extends Entity> targets) {
         int count = 0;
 
         for (Entity target : targets) {

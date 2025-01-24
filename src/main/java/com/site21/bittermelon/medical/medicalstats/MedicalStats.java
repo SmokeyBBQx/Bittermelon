@@ -3,10 +3,13 @@ package com.site21.bittermelon.medical.medicalstats;
 import com.site21.bittermelon.blocks.FluidBlock;
 import com.site21.bittermelon.blocks.blockentities.FluidBlockEntity;
 import com.site21.bittermelon.character.Character;
-import com.site21.bittermelon.entities.behavior.misc.FeelsPain;
+import com.site21.bittermelon.client.effects.ScreenshakeHandler;
+import com.site21.bittermelon.entities.ai.behavior.misc.FeelsPain;
 import com.site21.bittermelon.medical.blood.BloodType;
 import com.site21.bittermelon.medical.compartments.*;
 import com.site21.bittermelon.medical.compartments.bodyparts.BodyPart;
+import com.site21.bittermelon.medical.compartments.bodyparts.Heart;
+import com.site21.bittermelon.medical.compartments.conditions.Bleed;
 import com.site21.bittermelon.medical.compartments.conditions.ForeignSubstance;
 import com.site21.bittermelon.medical.compartments.conditions.Infection;
 import com.site21.bittermelon.medical.compartments.organs.HeartRhythm;
@@ -53,7 +56,11 @@ public class MedicalStats {
     private static final int STUMBLE_INTERVAL = 100;
     private int painTickCounter = 0;
     private static final int BASE_PAIN_INTERVAL = 300;
+    private int bleedTickCounter = 0;
+    private static final int BASE_BLEED_INTERVAL = 100;
     private final Map<Holder<Attribute>, Double> defaultAttributeValues = new HashMap<>();
+
+    private float heartLifeSupport = 0;
 
     public MedicalStats(BloodType bloodType, List<Compartment> compartments, @NotNull Character character) {
         this.bloodType = bloodType;
@@ -89,6 +96,10 @@ public class MedicalStats {
         updateCardiopulmonary();
         updateStats();
         handlePain();
+        handleTremor();
+        bloodPuddle();
+
+//        System.out.println(stats.get(FunctionType.BLEED));
     }
 
     private void updateCompartments() {
@@ -107,6 +118,8 @@ public class MedicalStats {
             handleForeignSubstance(substance);
         } else if (compartment instanceof Injury injury) {
             handleInjury(injury);
+        } else if (compartment instanceof Bleed bleed) {
+            handleCoagulation(bleed);
         }
     }
 
@@ -132,6 +145,10 @@ public class MedicalStats {
     private void handleInjury(@NotNull Injury injury) {
         float healRate = stats.get(FunctionType.HEALING);
         injury.modifyHealth(-healRate);
+    }
+
+    private void handleCoagulation(@NotNull Bleed bleed) {
+        bleed.modifyHealth(-vitalSigns.plateletNumber);
     }
 
     private void updateEntityAttributes() {
@@ -185,7 +202,7 @@ public class MedicalStats {
         for (Compartment compartment : compartments) {
             for (FunctionType stat : FunctionType.values()) {
                 float attribute = compartment.getAttribute(stat);
-                if (attribute > 0) {
+                if (attribute != 0) {
                     statsCopy.compute(stat, (k, currentValue) -> currentValue + attribute);
                     countMap.compute(stat, (k, count) -> count + 1);
                 }
@@ -204,7 +221,7 @@ public class MedicalStats {
     }
 
     private void updateCardiopulmonary() {
-        vitalSigns.modifyBloodVolume(stats.get(FunctionType.CIRCULATION) / 100 - stats.get(FunctionType.BLEED) / 20);
+        vitalSigns.modifyBloodVolume(getCirculation() / 100 - stats.get(FunctionType.BLEED) / 20);
         vitalSigns.modifyOxygenSaturation((stats.get(FunctionType.RESPIRATORY) / 100) * stats.get(FunctionType.BRAIN_VITALS) - 0.01f);
 
         handleGasping();
@@ -221,6 +238,18 @@ public class MedicalStats {
         }
 
         // TODO: Random heart state depending on heart health
+    }
+
+    private void checkForHeartArrhythmia(Compartment compartment) {
+        if (compartment instanceof Heart heart) {
+            float health = heart.getHealth();
+            HeartRhythm currentRhythm = heart.getHeartRhythm();
+            if (currentRhythm == HeartRhythm.SINUS_RHYTHM) {
+
+            } else {
+
+            }
+        }
     }
 
     private void handleGasping() {
@@ -265,13 +294,13 @@ public class MedicalStats {
             }
         }
 
-        vitalSigns.consciousness = stats.get(FunctionType.BRAIN_VITALS);
+        vitalSigns.consciousness = stats.get(FunctionType.BRAIN_VITALS) * stats.get(FunctionType.CIRCULATION);
     }
 
     private void handlePain() {
         if (entity instanceof FeelsPain || entity instanceof Player) {
             if (getPain() <= 0) return;
-            int painInterval = Math.max(60, (int)(BASE_PAIN_INTERVAL * Math.exp(-getPain() / 10)));
+            int painInterval = Math.max(60, (int) (BASE_PAIN_INTERVAL * Math.exp(-getPain() / 10)));
             painTickCounter++;
 
             if (painTickCounter >= painInterval) {
@@ -297,6 +326,12 @@ public class MedicalStats {
                             .getPainSound(getPain()), SoundSource.AMBIENT);
                 }
             }
+        }
+    }
+
+    private void handleTremor() {
+        if (entity instanceof Player player) {
+            ScreenshakeHandler.startScreenshake(player, 80, Math.min(0.8f, getTremor() / 10));
         }
     }
 
@@ -343,18 +378,36 @@ public class MedicalStats {
     }
 
     private void bloodPuddle() {
-        BlockPos pos = entity.getOnPos().above();
-        Level level = entity.level();
-        BlockState existingState = level.getBlockState(pos);
+        float bleedValue = stats.get(FunctionType.BLEED);
+        if (Float.isNaN(bleedValue) || bleedValue <= 0) {
+            stats.put(FunctionType.BLEED, 0f);
+            return;
+        }
 
-        if (existingState.getBlock() instanceof FluidBlock) {
-            if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluid) {
-                fluid.updateSubstance(new SubstanceStack(LIQUID_BLOOD.get(), stats.get(FunctionType.BLEED) / 2));
+        int bleedInterval = Math.max(60, (int) (BASE_BLEED_INTERVAL * Math.exp(-bleedValue / 5)));
+        bleedTickCounter++;
+
+        if (bleedTickCounter >= bleedInterval) {
+            bleedTickCounter = 0;
+
+            BlockPos pos = entity.getOnPos().above();
+            Level level = entity.level();
+            BlockState existingState = level.getBlockState(pos);
+            float bloodAmount = bleedValue;
+            if (Float.isNaN(bloodAmount)) {
+                return;
             }
-        } else if (existingState.canBeReplaced()) {
-            level.setBlock(pos, FLUID.get().defaultBlockState(), 3);
+            SubstanceStack stack = new SubstanceStack(LIQUID_BLOOD.get(), 0);
+            stack.setVolume(bloodAmount);
+
+            if (!(existingState.getBlock() instanceof FluidBlock) && existingState.canBeReplaced()) {
+                level.setBlockAndUpdate(pos, FLUID.get().defaultBlockState());
+            }
+
             if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluid) {
-                fluid.updateSubstance(new SubstanceStack(LIQUID_BLOOD.get(), stats.get(FunctionType.BLEED) / 2));
+                fluid.updateSubstance(stack);
+            } else {
+                System.out.println("Fluid not found at " + pos);
             }
         }
     }
@@ -391,7 +444,7 @@ public class MedicalStats {
         return vitalSigns.bloodVolume;
     }
 
-    public float getBPM() {
+    public int getBPM() {
         return vitalSigns.bpm;
     }
 
@@ -433,15 +486,23 @@ public class MedicalStats {
 
     public float getPain() {
         return stats.get(FunctionType.NERVOUS) * stats.get(FunctionType.PAIN) * getConsciousness();
-
         // TODO: Better way to get pain?
+    }
+
+    public float getCirculation() {
+        return stats.get(FunctionType.CIRCULATION) + heartLifeSupport;
+    }
+
+    public void setHeartLifeSupport(float value) {
+        heartLifeSupport = value;
     }
 
     private static class VitalSigns {
         private float consciousness = 1;
         private float oxygenSaturation = 100;
         private float bloodVolume = 100;
-        private float bpm;
+        private float plateletNumber = 0.0005f;
+        private int bpm;
         private float bloodPressureSystolic;
         private float bloodPressureDiastolic;
         private float temperature;

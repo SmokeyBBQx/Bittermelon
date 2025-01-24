@@ -24,6 +24,7 @@ public enum CompartmentType {
     FRACTURE,
     SCRATCH,
     TRAUMATIC_AMPUTATION,
+    CARDIAC_ARREST,
 
     // FIRST-AID
     BANDAGE,

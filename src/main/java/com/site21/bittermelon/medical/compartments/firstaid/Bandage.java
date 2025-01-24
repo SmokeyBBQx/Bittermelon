@@ -2,6 +2,8 @@ package com.site21.bittermelon.medical.compartments.firstaid;
 
 import com.site21.bittermelon.medical.compartments.Compartment;
 import com.site21.bittermelon.medical.compartments.CompartmentType;
+import com.site21.bittermelon.medical.compartments.FunctionType;
+import com.site21.bittermelon.medical.compartments.conditions.Bleed;
 import com.site21.bittermelon.medical.medicalstats.MedicalStats;
 
 import java.util.EnumSet;
@@ -15,8 +17,21 @@ public class Bandage extends FirstAid {
     @Override
     public void update(MedicalStats medicalStats) {
         super.update(medicalStats);
-        owner.modifyHealth(-0.01f);
-        modifyHealth(-0.01f);
+        modifyHealth(-0.0001f);
+
+        if (getHealth() <= 0) {
+            setAttribute(FunctionType.BLEED, 0f);
+            return;
+        }
+
+        float healthPercentage = getHealth() / maxHealth;
+        float totalBleed = 0;
+        for (Compartment compartment : owner.getChildren()) {
+            if (compartment instanceof Bleed bleed) {
+                totalBleed += bleed.getAttribute(FunctionType.BLEED);
+            }
+        }
+        setAttribute(FunctionType.BLEED, -totalBleed * healthPercentage * 0.9f);
     }
 
     @Override

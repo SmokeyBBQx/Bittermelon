@@ -15,7 +15,6 @@ public class OldBandage extends FirstAid {
     @Override
     public void update(MedicalStats medicalStats) {
         super.update(medicalStats);
-        modifyHealth(-0.01f);
     }
 
     @Override

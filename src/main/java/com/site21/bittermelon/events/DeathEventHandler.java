@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
 public class DeathEventHandler {
 
     @SubscribeEvent
-    public static void onEntityDeath(LivingDeathEvent event) {
+    public static void onEntityDeath(@NotNull LivingDeathEvent event) {
         LivingEntity entity = event.getEntity();
 
         // TODO: Save dead NPC characters so they can be restored or looked back on

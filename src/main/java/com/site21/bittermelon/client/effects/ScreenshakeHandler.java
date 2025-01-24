@@ -7,6 +7,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ViewportEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class ScreenshakeHandler {
         }
     }
 
-    public static void startScreenshake(Player player, int duration, float intensity) {
+    public static void startScreenshake(@NotNull Player player, int duration, float intensity) {
         // TODO: Accessibility settings (reduce intensity)
 
         instances.put(player.getUUID(), new ScreenshakeData(duration, intensity));

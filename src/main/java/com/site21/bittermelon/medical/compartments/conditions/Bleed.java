@@ -62,6 +62,7 @@ public class Bleed extends Condition {
         if (bleedRate > 0) {
             Bleed bleed = new Bleed(bleedType, "Bleed", vessel, damage, character, entity, bleedRate);
             setBleedIcon(bleed);
+            bleed.reveal();
             medicalStats.addCompartment(bleed);
         }
     }
@@ -121,7 +122,8 @@ public class Bleed extends Condition {
             setBleedIcon(bleed);
 
             medicalStats.addCompartment(bleed);
-            if (owner.isHidden()) {
+            if (!owner.isHidden()) {
+                // TODO: if statement is acting weird
                 bleed.reveal();
             }
         }

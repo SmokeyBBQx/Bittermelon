@@ -130,6 +130,14 @@ public class BitterItems {
             ItemWeight.VERY_LIGHT
     ));
 
+    public static final DeferredItem<Bandage> BANDAGE = ITEMS.register("bandage", () -> new Bandage(
+            new Item.Properties().stacksTo(3),
+            1,
+            1,
+            ItemWeight.VERY_LIGHT
+    ));
+
+
     public static final DeferredItem<GermTest> GERM_TEST = ITEMS.register("germ_test", () -> new GermTest(
             new Item.Properties().stacksTo(3)
     ));

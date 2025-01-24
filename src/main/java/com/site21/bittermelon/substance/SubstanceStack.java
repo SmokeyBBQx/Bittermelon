@@ -181,7 +181,7 @@ public class SubstanceStack implements MutableDataComponentHolder {
         }
     }
 
-    public static boolean listMatches(List<SubstanceStack> list, List<SubstanceStack> other) {
+    public static boolean listMatches(@NotNull List<SubstanceStack> list, @NotNull List<SubstanceStack> other) {
         if (list.size() != other.size()) {
             return false;
         } else {

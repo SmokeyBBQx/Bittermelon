@@ -1,0 +1,21 @@
+package com.site21.bittermelon.medical.client.gui.minigame;
+
+import com.site21.bittermelon.character.Character;
+import com.site21.bittermelon.medical.compartments.Compartment;
+import com.site21.bittermelon.medical.medicalstats.MedicalStats;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
+public class SutureMinigame extends MedicalMinigame {
+    public SutureMinigame(ItemStack item, Compartment compartment, MedicalStats medicalStats, Character character) {
+        super(Component.literal("Suture"), item, compartment, medicalStats, character);
+    }
+
+    @Override
+    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
+
+    }
+}

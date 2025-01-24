@@ -2,7 +2,7 @@ package com.site21.bittermelon.client.renderer.entity;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.client.models.entity.SCP939Model;
-import com.site21.bittermelon.entities.scps.SCP939.SCP939;
+import com.site21.bittermelon.entities.implementations.SCP939.SCP939;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;

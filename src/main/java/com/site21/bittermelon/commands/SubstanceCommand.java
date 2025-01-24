@@ -16,6 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -201,7 +202,7 @@ public class SubstanceCommand {
         }
     }
 
-    private static int spawnFluidBlock(CommandSourceStack source) {
+    private static int spawnFluidBlock(@NotNull CommandSourceStack source) {
         BlockPos pos = BlockPos.containing(source.getPosition());
 
         source.getLevel().setBlock(pos, FLUID.get().defaultBlockState(), 3);

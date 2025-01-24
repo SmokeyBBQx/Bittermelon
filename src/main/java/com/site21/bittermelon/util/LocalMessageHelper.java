@@ -3,12 +3,13 @@ package com.site21.bittermelon.util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
 
 public class LocalMessageHelper {
-    public static void sendLocalMessage(Entity entity, int range, Component messageComponent) {
+    public static void sendLocalMessage(@NotNull Entity entity, int range, Component messageComponent) {
         List<ServerPlayer> serverPlayers = Objects.requireNonNull(entity.getServer()).getPlayerList().getPlayers();
         for (ServerPlayer serverPlayer : serverPlayers) {
             if (compareDistance(entity, serverPlayer) <= range) {
@@ -17,7 +18,7 @@ public class LocalMessageHelper {
         }
     }
 
-    public static double compareDistance(Entity entity1, Entity entity2) {
+    public static double compareDistance(@NotNull Entity entity1, @NotNull Entity entity2) {
         double x = Math.abs(entity1.getX() - entity2.getX());
         double y = Math.abs(entity1.getY() - entity2.getY());
         double z = Math.abs(entity1.getZ() - entity2.getZ());

@@ -2,17 +2,11 @@ package com.site21.bittermelon.client.models.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.entities.scps.SCP939.SCP939;
+import com.site21.bittermelon.entities.implementations.SCP939.SCP939;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.text.html.parser.Entity;
 
 public class SCP939Model<T extends SCP939> extends EntityModel<T> {
     private final ModelPart body;

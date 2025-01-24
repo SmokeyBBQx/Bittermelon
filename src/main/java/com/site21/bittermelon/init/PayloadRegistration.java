@@ -37,5 +37,11 @@ public class PayloadRegistration {
                 S2CClearForcedPose.STREAM_CODEC,
                 S2CClearForcedPose::handle
         );
+
+        registrar.playToClient(
+                OpenCPRScreen.TYPE,
+                OpenCPRScreen.STREAM_CODEC,
+                OpenCPRScreen::handle
+        );
     }
 }
