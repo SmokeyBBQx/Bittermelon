@@ -3,10 +3,13 @@ package com.site21.bittermelon;
 import com.site21.bittermelon.character.Character;
 import com.site21.bittermelon.character.CharacterManager;
 import com.site21.bittermelon.client.colorhandlers.FluidBlockColor;
+import com.site21.bittermelon.client.gui.loreopening.LoreOpeningOverlay;
 import com.site21.bittermelon.init.*;
 import com.site21.bittermelon.substance.reactions.Reactions;
 import com.site21.bittermelon.util.ServerUtil;
+import net.minecraft.sounds.SoundSource;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -40,6 +43,7 @@ import static com.site21.bittermelon.init.BitterMenus.MENUS;
 import static com.site21.bittermelon.init.BitterMobEffects.MOB_EFFECTS;
 import static com.site21.bittermelon.init.BitterReactions.REACTIONS;
 import static com.site21.bittermelon.init.BitterSensors.SENSOR_TYPES;
+import static com.site21.bittermelon.init.BitterSounds.LOW_IMPACT;
 import static com.site21.bittermelon.init.BitterSounds.SOUND_EVENTS;
 import static com.site21.bittermelon.init.Substances.SUBSTANCES;
 
@@ -47,6 +51,7 @@ import static com.site21.bittermelon.init.Substances.SUBSTANCES;
 @Mod(Bittermelon.MOD_ID)
 public class Bittermelon
 {
+    public static boolean shouldDisplayText = false;
     public static final String MOD_ID = "bittermelon";
     // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
@@ -88,7 +93,6 @@ public class Bittermelon
         ATTACHMENT_TYPES.register(modEventBus);
         MOB_EFFECTS.register(modEventBus);
 
-
         modEventBus.addListener(BitterRegistries::registerRegistries);
         modEventBus.addListener(this::commonSetup);
     }
@@ -120,6 +124,13 @@ public class Bittermelon
     public void onEntityTick(EntityTickEvent.@NotNull Post event) {
        Character character = CharacterManager.getInstance().getActiveCharacter(event.getEntity().getUUID());
        if (character != null) character.update();
+    }
+
+    @SubscribeEvent
+    public void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        shouldDisplayText = true;
+        LoreOpeningOverlay.displayStartTime = System.currentTimeMillis();
+        event.getEntity().playNotifySound(LOW_IMPACT.get(), SoundSource.MASTER, 1, 1);
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent

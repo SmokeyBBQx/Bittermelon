@@ -28,7 +28,7 @@ public class RiseKeyHandler {
         if (Minecraft.getInstance().options.keyJump.isDown()) {
             keyPressed = true;
             ticksHeld++;
-//                    PacketDistributor.sendToAllPlayers(new S2CSetForcedPose(uuid, Pose.SITTING));
+//                    PacketDistributor.sendToAllPlayers(new SetForcedPose(uuid, Pose.SITTING));
             // TODO: Fix this animation
             if (ticksHeld >= TICKS_REQUIRED) {
                 StumbleHandler.attemptToRise(uuid);

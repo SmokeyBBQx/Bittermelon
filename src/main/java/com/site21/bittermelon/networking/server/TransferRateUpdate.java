@@ -35,7 +35,7 @@ public record TransferRateUpdate(int newRate, InteractionHand hand) implements C
         return TYPE;
     }
 
-    public void handle(IPayloadContext ctx) {
+    public void handle(@NotNull IPayloadContext ctx) {
         ItemStack stack = ctx.player().getItemInHand(hand);
 
         if (stack.getItem() instanceof FluidContainerItem) {

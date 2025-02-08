@@ -12,6 +12,7 @@ import static com.site21.bittermelon.init.BitterRegistries.SUBSTANCE_REGISTRY;
 public class Substance {
     private String smell = "";
     private String taste = "";
+    private float absorptionRate;
     private final int color;
     private final String name;
     private final float molarMass;
@@ -24,6 +25,10 @@ public class Substance {
         this.molarMass = molarMass;
         this.density = density;
         this.heatCapacity = heatCapacity;
+    }
+
+    public float getAbsorptionRate() {
+        return absorptionRate;
     }
 
     public String getName() {
@@ -64,5 +69,9 @@ public class Substance {
 
         return SUBSTANCE_REGISTRY.getHolder(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, name)).get();
 //        return this.holder;
+    }
+
+    public static class Properties {
+
     }
 }

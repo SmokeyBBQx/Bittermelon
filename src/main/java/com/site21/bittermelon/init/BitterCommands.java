@@ -1,10 +1,7 @@
 package com.site21.bittermelon.init;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.commands.CPRCommand;
-import com.site21.bittermelon.commands.CharacterCommand;
-import com.site21.bittermelon.commands.StumbleCommand;
-import com.site21.bittermelon.commands.SubstanceCommand;
+import com.site21.bittermelon.commands.*;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -20,5 +17,6 @@ public class BitterCommands {
         SubstanceCommand.register(event.getDispatcher());
         StumbleCommand.register(event.getDispatcher());
         CPRCommand.register(event.getDispatcher());
+        SetLoreOpeningCommand.register(event.getDispatcher());
     }
 }

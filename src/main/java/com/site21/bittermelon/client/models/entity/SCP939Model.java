@@ -91,9 +91,6 @@ public class SCP939Model<T extends SCP939> extends EntityModel<T> {
         return LayerDefinition.create(meshdefinition, 128, 128);
     }
 
-
-
-
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 

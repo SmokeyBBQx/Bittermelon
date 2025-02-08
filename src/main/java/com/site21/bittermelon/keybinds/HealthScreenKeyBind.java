@@ -14,6 +14,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.InputEvent;
 
 import java.util.Optional;
 
@@ -23,7 +24,7 @@ import static com.site21.bittermelon.init.BitterKeyBindings.HEALTH_SCREEN_KEY;
 public class HealthScreenKeyBind {
 
     @SubscribeEvent
-    public static void onClientTick(ClientTickEvent.Post event) {
+    public static void onKeyInput(InputEvent.Key event) {
         if (HEALTH_SCREEN_KEY.get().consumeClick()) {
             openHealthScreen();
         }

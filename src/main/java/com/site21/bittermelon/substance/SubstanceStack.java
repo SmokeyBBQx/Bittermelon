@@ -46,7 +46,7 @@ public class SubstanceStack implements MutableDataComponentHolder {
         private static final StreamCodec<RegistryFriendlyByteBuf, Holder<Substance>> SUBSTANCE_STREAM_CODEC = ByteBufCodecs.holderRegistry(SUBSTANCE_REGISTRY_KEY);
 
         @Override
-        public @NotNull SubstanceStack decode(RegistryFriendlyByteBuf buf) {
+        public @NotNull SubstanceStack decode(@NotNull RegistryFriendlyByteBuf buf) {
             float amount = buf.readFloat();
             if (amount <= 0) {
                 return SubstanceStack.EMPTY;
@@ -58,7 +58,7 @@ public class SubstanceStack implements MutableDataComponentHolder {
         }
 
         @Override
-        public void encode(@NotNull RegistryFriendlyByteBuf buf, SubstanceStack stack) {
+        public void encode(@NotNull RegistryFriendlyByteBuf buf, @NotNull SubstanceStack stack) {
             if (stack.isEmpty()) {
                 buf.writeFloat(0);
             } else {
@@ -81,7 +81,7 @@ public class SubstanceStack implements MutableDataComponentHolder {
         }
 
         @Override
-        public void encode(@NotNull RegistryFriendlyByteBuf buf, SubstanceStack stack) {
+        public void encode(@NotNull RegistryFriendlyByteBuf buf, @NotNull SubstanceStack stack) {
             if (stack.isEmpty()) {
                 throw new EncoderException("Empty SubstanceStack not allowed");
             } else {
@@ -107,11 +107,11 @@ public class SubstanceStack implements MutableDataComponentHolder {
         this(substance, amount, new PatchedDataComponentMap(substance.components()));
     }
 
-    public SubstanceStack(Holder<Substance> tag, float amount) {
+    public SubstanceStack(@NotNull Holder<Substance> tag, float amount) {
         this(tag.value(), amount);
     }
 
-    public SubstanceStack(Holder<Substance> tag, Float amount, DataComponentPatch components) {
+    public SubstanceStack(@NotNull Holder<Substance> tag, Float amount, DataComponentPatch components) {
         this(tag.value(), amount, new PatchedDataComponentMap(tag.value().components()));
     }
 
@@ -195,7 +195,7 @@ public class SubstanceStack implements MutableDataComponentHolder {
         }
     }
 
-    public static int hashStackList(List<SubstanceStack> list) {
+    public static int hashStackList(@NotNull List<SubstanceStack> list) {
         int i = 0;
 
         for (SubstanceStack stack : list) {
@@ -275,12 +275,12 @@ public class SubstanceStack implements MutableDataComponentHolder {
         return (Tag) (this.isEmpty() ? new CompoundTag() : this.save(levelRegistryAccess, new CompoundTag()));
     }
 
-    public static Optional<SubstanceStack> parse(HolderLookup.Provider lookupProvider, Tag tag) {
+    public static Optional<SubstanceStack> parse(HolderLookup.@NotNull Provider lookupProvider, Tag tag) {
         return CODEC.parse(lookupProvider.createSerializationContext(NbtOps.INSTANCE), tag)
                 .resultOrPartial(error -> LOGGER.error("Tried to load invalid fluid: '{}'", error));
     }
 
-    public static SubstanceStack parseOptional(HolderLookup.Provider lookupProvider, CompoundTag tag) {
+    public static SubstanceStack parseOptional(HolderLookup.Provider lookupProvider, @NotNull CompoundTag tag) {
         return tag.isEmpty() ? EMPTY : parse(lookupProvider, tag).orElse(EMPTY);
     }
 

@@ -23,7 +23,7 @@ public class BitterEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<SCP939>> SCP_939 = ENTITY_TYPES.register("scp939",
             () -> EntityType.Builder.of(SCP939::new, MobCategory.MONSTER)
-                    .sized(1, 2)
+                    .sized(0.9f, 0.9f)
                     .build("scp939"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Chicken>> CHICKEN = ENTITY_TYPES.register("chicken",

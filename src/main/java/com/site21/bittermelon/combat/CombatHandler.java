@@ -2,6 +2,7 @@ package com.site21.bittermelon.combat;
 
 import com.site21.bittermelon.character.Character;
 import com.site21.bittermelon.character.CharacterManager;
+import com.site21.bittermelon.client.effects.ScreenshakeHandler;
 import com.site21.bittermelon.medical.compartments.Compartment;
 import com.site21.bittermelon.medical.compartments.CompartmentType;
 import com.site21.bittermelon.medical.damage.DamageResult;
@@ -13,10 +14,12 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -149,10 +152,7 @@ public class CombatHandler {
 
     private static @NotNull String formatMultipleInjuries(@NotNull List<InjuryResult> injuryResults, float performance) {
         InjuryResult deepestResult = injuryResults.stream()
-                .max((a, b) -> Integer.compare(
-                        getCompartmentDepth(a.injury().getOwner()),
-                        getCompartmentDepth(b.injury().getOwner())
-                ))
+                .max(Comparator.comparingInt(a -> getCompartmentDepth(a.injury().getOwner())))
                 .orElse(injuryResults.getLast());
 
         String targetName = deepestResult.injury().getOwner().getName().toLowerCase();

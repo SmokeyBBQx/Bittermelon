@@ -8,6 +8,7 @@ import com.site21.bittermelon.character.CharacterManager;
 import com.site21.bittermelon.entities.BitterAngerManagement;
 import com.site21.bittermelon.entities.BitterVibrationSystem;
 import com.site21.bittermelon.entities.ai.behavior.attack.YankItem;
+import com.site21.bittermelon.entities.ai.behavior.movement.SearchArea;
 import com.site21.bittermelon.entities.base.BitterMob;
 import com.site21.bittermelon.entities.ai.behavior.attack.Attack;
 import com.site21.bittermelon.combat.AttackTemplate;
@@ -46,7 +47,9 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.memory.WalkTarget;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Monster;
@@ -66,6 +69,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
+import net.tslat.smartbrainlib.api.core.navigation.SmoothGroundNavigation;
 import net.tslat.smartbrainlib.api.core.navigation.SmoothWallClimberNavigation;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.UnreachableTargetSensor;
@@ -160,12 +164,12 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
     }
 
     protected Character initializeCharacter() {
-        return new Character(this.uuid, "SCP-939-" + getRandom().nextInt(1, 24), Anatomy.HUMAN);
+        return new Character(this.uuid, "ContainmentChamber-939-" + getRandom().nextInt(1, 24), Anatomy.HUMAN);
     }
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MOVEMENT_SPEED, 0.6)
+                .add(Attributes.MOVEMENT_SPEED, 0.3)
                 .add(Attributes.MAX_HEALTH, 150.0)
                 .add(Attributes.ATTACK_KNOCKBACK, 1.5)
                 .add(Attributes.ATTACK_DAMAGE, 30.0);
@@ -342,10 +346,11 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
 
     public void increaseAngerAt(@Nullable Entity entity, int offset) {
         if (!this.isNoAi() && this.canTargetEntity(entity)) {
-            boolean flag = !(this.getTarget() instanceof Player);
+            if (!(entity instanceof LivingEntity livingEntity)) return;
+
             int i = this.angerManagement.increaseAnger(entity, offset);
-            if (entity instanceof Player && flag && AngerLevel.byAnger(i).isAngry()) {
-                this.getBrain().eraseMemory(MemoryModuleType.ATTACK_TARGET);
+            if (AngerLevel.byAnger(i).isAngry()) {
+                setAttackTarget(livingEntity);
             }
         }
     }
@@ -424,6 +429,8 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
         modifyProcreation(PROCREATION_DECAY);
         modifyStress(STRESS_REGEN);
         updateStress();
+
+        this.entityData.set(ANGER, Math.min(100, Math.max(0, (float) getActiveAnger())));
     }
 
     @Override
@@ -451,12 +458,12 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
 
     @Override
     protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
-        return new SmoothWallClimberNavigation(this, level);
+        return new SmoothGroundNavigation(this, level);
     }
 
     @Override
     public boolean dampensVibrations() {
-        return false;
+        return true;
     }
 
     @Override
@@ -471,7 +478,9 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
 
     public static void setDisturbanceLocation(BlockPos pos, SCP939 entity) {
         BrainUtils.setForgettableMemory(entity, MemoryModuleType.DISTURBANCE_LOCATION, pos, 600);
-        BrainUtils.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(pos, 1, 1));
+        BrainUtils.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(pos, 1.2f, 1));
+
+        System.out.println("Disturbance location set");
     }
 
     public Component getRandomLureLine() {
@@ -533,11 +542,24 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
     }
 
     @Override
+    public BrainActivityGroup<? extends SCP939> getIdleTasks() {
+        return BrainActivityGroup.idleTasks(
+                new OneRandomBehaviour<>(
+                        new SetRandomWalkTarget<>()
+                                .setRadius(getRandom().nextInt(10, 20)),
+                        new Idle<>().runFor(entity -> 60)
+                )
+        );
+    }
+
+    @Override
     public BrainActivityGroup<? extends SCP939> getFightTasks() {
         return BrainActivityGroup.fightTasks(
                 new RegenBloodlust<>(),
                 new InvalidateAttackTarget<>(),
-                new SetWalkTargetToAttackTarget<>().stopIf(LivingEntity::isDeadOrDying),
+                new SetWalkTargetToAttackTarget<>()
+                        .speedMod((entity, target) -> 1.4f)
+                        .stopIf(LivingEntity::isDeadOrDying),
                 new Attack<>(10, getAttackTemplates())
                         .cooldownFor(scp939 -> 60),
                 new OneRandomBehaviour<>(
@@ -562,11 +584,12 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
                                 .cooldownFor(entity -> 300)
                 )
                         .cooldownFor(entity -> 150),
-                new OneRandomBehaviour<>(
-                        new SetRandomWalkTarget<>()
-                                .setRadius(getRandom().nextInt(10, 20)),
-                        new Idle<>().runFor(entity -> 60)
-                )
+                new SearchArea<>()
+//                new OneRandomBehaviour<>(
+//                        new SetRandomWalkTarget<>()
+//                                .setRadius(getRandom().nextInt(10, 20)),
+//                        new Idle<>().runFor(entity -> 60)
+//                )
         );
     }
 
@@ -633,7 +656,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
                 new Need<>(
                         BLOODLUST,
                         BitterActivity.HUNT.get(),
-                        value -> (float) Math.pow(value, 1.2),
+                        value -> (float) 200,
                         entity -> true
                 ),
                 new Need<>(

@@ -1,8 +1,10 @@
 package com.site21.bittermelon.events;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.client.renderer.blockentity.StructuralBlockEntityRenderer;
 import com.site21.bittermelon.client.renderer.entity.ChickenRenderer;
 import com.site21.bittermelon.client.renderer.entity.SCP939Renderer;
+import com.site21.bittermelon.init.BitterBlockEntities;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -19,5 +21,6 @@ public class ClientSetup {
     public static void onRegisterRenderers(EntityRenderersEvent.@NotNull RegisterRenderers event) {
         event.registerEntityRenderer(SCP_939.get(), SCP939Renderer::new);
         event.registerEntityRenderer(CHICKEN.get(), ChickenRenderer::new);
+        event.registerBlockEntityRenderer(BitterBlockEntities.STRUCTURAL_BLOCK_ENTITY.get(), StructuralBlockEntityRenderer::new);
     }
 }

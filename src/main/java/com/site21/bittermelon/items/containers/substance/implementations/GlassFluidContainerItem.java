@@ -1,0 +1,39 @@
+package com.site21.bittermelon.items.containers.substance.implementations;
+
+import com.site21.bittermelon.items.base.ItemWeight;
+import com.site21.bittermelon.items.containers.substance.FluidContainerItem;
+import com.site21.bittermelon.items.base.FragileItem;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
+
+public class GlassFluidContainerItem extends FluidContainerItem implements FragileItem {
+    public GlassFluidContainerItem(Properties properties, int width, int height, ItemWeight itemWeight, int capacity, int maxTransferRate) {
+        super(properties, width, height, itemWeight, capacity, maxTransferRate);
+    }
+
+    @Override
+    public boolean onEntityItemUpdate(@NotNull ItemStack stack, @NotNull ItemEntity entity) {
+        super.onEntityItemUpdate(stack, entity);
+        checkForBreak(stack, entity);
+        return false;
+    }
+
+    @Override
+    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
+        super.inventoryTick(stack, level, entity, slotId, isSelected);
+        hasLanded(stack);
+    }
+
+    public void projectileHitBlock(ItemStack stack, Level level, @NotNull BlockPos pos) {
+        if (!checkForBreakOnHit(stack, level, pos)) {
+            super.projectileHitBlock(stack, level, pos);
+        } else {
+            super.spill(stack, level, pos.above(), getTotalVolume(stack));
+            // Bug when hitting walls, it replaces it
+        }
+    }
+}

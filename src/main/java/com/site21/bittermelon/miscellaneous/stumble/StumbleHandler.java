@@ -4,11 +4,10 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.character.Character;
 import com.site21.bittermelon.character.CharacterManager;
 import com.site21.bittermelon.client.effects.ScreenshakeHandler;
-import com.site21.bittermelon.networking.client.S2CClearForcedPose;
-import com.site21.bittermelon.networking.client.S2CSetForcedPose;
+import com.site21.bittermelon.networking.client.ClearForcedPose;
+import com.site21.bittermelon.networking.client.SetForcedPose;
 import com.site21.bittermelon.util.ServerUtil;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
@@ -88,7 +87,7 @@ public class StumbleHandler {
             Pose fallPose = dotProduct > 0 ? Pose.SWIMMING : Pose.SLEEPING;
 
             player.setForcedPose(fallPose);
-            PacketDistributor.sendToAllPlayers(new S2CSetForcedPose(player.getUUID(), fallPose));
+            PacketDistributor.sendToAllPlayers(new SetForcedPose(player.getUUID(), fallPose));
 
             if (fallPose == Pose.SLEEPING) {
                 dropItem(player, 0.7);
@@ -194,7 +193,7 @@ public class StumbleHandler {
                 clearEntity(entity);
                 if (entity instanceof ServerPlayer player) {
                     player.setForcedPose(null);
-                    PacketDistributor.sendToAllPlayers(new S2CClearForcedPose(uuid));
+                    PacketDistributor.sendToAllPlayers(new ClearForcedPose(uuid));
                 }
             }
         }

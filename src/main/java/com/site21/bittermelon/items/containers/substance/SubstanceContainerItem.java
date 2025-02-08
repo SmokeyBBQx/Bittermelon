@@ -138,7 +138,7 @@ public class SubstanceContainerItem extends BaseItem implements ReactionContaine
     @Override
     public void inventoryTick(ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
         if (stack.getItem() instanceof ReactionContainer container) {
-            ReactionHandler.getInstance().handleReactions(getContents(stack), container);
+//            ReactionHandler.getInstance().handleReactions(getContents(stack), container);
         }
     }
 

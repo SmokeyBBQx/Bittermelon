@@ -15,14 +15,14 @@ import org.jetbrains.annotations.NotNull;
 import static com.site21.bittermelon.init.BitterEntities.THROWN_ITEM_PROJECTILE;
 
 public class ThrownItemProjectile extends ThrowableItemProjectile {
-    private final float BASE_GRAVITY = 0.03F;
+    private static final float BASE_GRAVITY = 0.03F;
 
     public ThrownItemProjectile(EntityType<? extends ThrownItemProjectile> entityType, Level level) {
         super(entityType, level);
     }
 
     public ThrownItemProjectile(Level level, LivingEntity player, ItemStack itemStack) {
-        super(THROWN_ITEM_PROJECTILE.get(), level);
+        super(THROWN_ITEM_PROJECTILE.get(), player, level);
         this.setItem(itemStack);
     }
 

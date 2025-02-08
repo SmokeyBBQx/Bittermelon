@@ -8,6 +8,9 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.settings.KeyConflictContext;
+import net.neoforged.neoforge.client.settings.KeyModifier;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -22,8 +25,20 @@ public class BitterKeyBindings {
             )
     );
 
+    public static final Lazy<KeyMapping> THROW_ITEM_KEY = Lazy.of(() ->
+            new KeyMapping(
+                    "key.bittermelon.throw_item",
+                    KeyConflictContext.IN_GAME,
+                    KeyModifier.ALT,
+                    InputConstants.Type.KEYSYM,
+                    GLFW.GLFW_KEY_Q,
+                    "key.category.bittermelon"
+            )
+    );
+
     @SubscribeEvent
-    public static void register(RegisterKeyMappingsEvent event) {
+    public static void register(@NotNull RegisterKeyMappingsEvent event) {
         event.register(HEALTH_SCREEN_KEY.get());
+        event.register(THROW_ITEM_KEY.get());
     }
 }

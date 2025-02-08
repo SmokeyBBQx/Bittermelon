@@ -21,5 +21,6 @@ public class ForeignSubstance extends Condition {
     @Override
     public void update(MedicalStats medicalStats) {
         super.update(medicalStats);
+        // TODO: Substance effect
     }
 }

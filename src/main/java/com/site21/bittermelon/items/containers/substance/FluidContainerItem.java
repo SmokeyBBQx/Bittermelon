@@ -1,16 +1,13 @@
 package com.site21.bittermelon.items.containers.substance;
 
-import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.blocks.FluidBlock;
 import com.site21.bittermelon.blocks.blockentities.FluidBlockEntity;
 import com.site21.bittermelon.init.BitterDataComponents;
-import com.site21.bittermelon.items.base.ItemSize;
 import com.site21.bittermelon.items.base.ItemWeight;
-import com.site21.bittermelon.networking.server.TransferRateUpdate;
 import com.site21.bittermelon.substance.SubstanceStack;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -18,31 +15,33 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.InputEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import static com.site21.bittermelon.init.BitterBlocks.FLUID;
+import static com.site21.bittermelon.init.BitterDataComponents.HAS_LANDED;
+import static net.minecraft.world.level.block.Block.UPDATE_ALL_IMMEDIATE;
 
 public class FluidContainerItem extends SubstanceContainerItem {
     public static final int MIN_TRANSFER_RATE = 1;
-    public static final int MAX_TRANSFER_RATE = 100;
     private static final int DRINK_SPEED = 32;
 
-    public FluidContainerItem(Properties properties, int width, int height, ItemWeight itemWeight, int capacity) {
+    public final int maxTransferRate;
+
+    public FluidContainerItem(Properties properties, int width, int height, ItemWeight itemWeight, int capacity, int maxTransferRate) {
         super(properties, width, height, itemWeight, capacity);
+        this.maxTransferRate = maxTransferRate;
     }
 
     @Override
@@ -107,10 +106,10 @@ public class FluidContainerItem extends SubstanceContainerItem {
         BlockState clickedOnState = level.getBlockState(clickedOnPos);
 
         if (clickedOnState.getBlock() instanceof FluidBlock) {
-            transferSubstancesToBlock(clickedOnPos, level, stack);
+            transferSubstancesToBlock(clickedOnPos, level, stack, getLimitedTransferRate(stack));
         } else if (existingState.canBeReplaced()) {
-            level.setBlock(spillPos, FLUID.get().defaultBlockState(), 3);
-            transferSubstancesToBlock(spillPos, level, stack);
+            level.setBlock(spillPos, FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
+            transferSubstancesToBlock(spillPos, level, stack, getLimitedTransferRate(stack));
         } else {
             player.sendSystemMessage(Component.literal("Can't spill here!").withStyle(ChatFormatting.RED));
             return InteractionResult.PASS;
@@ -119,9 +118,9 @@ public class FluidContainerItem extends SubstanceContainerItem {
         return InteractionResult.SUCCESS;
     }
 
-    private void transferSubstancesToBlock(BlockPos pos, @NotNull Level level, ItemStack stack) {
+    private void transferSubstancesToBlock(BlockPos pos, @NotNull Level level, ItemStack stack, float volume) {
         if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluidEntity) {
-            transferSubstances(stack, getTotalVolume(stack), getLimitedTransferRate(stack),
+            transferSubstances(stack, getTotalVolume(stack), volume,
                     (substance, amount) -> fluidEntity.updateSubstance(substance));
             playEmptySound(level, pos);
         }
@@ -162,8 +161,8 @@ public class FluidContainerItem extends SubstanceContainerItem {
     }
 
 
-    private void transferSubstances(ItemStack sourceStack, float totalAmount, float transferRate, SubstanceTransferHandler handler) {
-        if (totalAmount <= 0) return;
+    private void transferSubstances(ItemStack sourceStack, float totalVolume, float transferRate, SubstanceTransferHandler handler) {
+        if (totalVolume <= 0) return;
 
         SubstanceContents.Mutable mutableData = getMutableSubstanceData(sourceStack);
         Iterator<SubstanceStack> iterator = mutableData.substances.iterator();
@@ -172,17 +171,17 @@ public class FluidContainerItem extends SubstanceContainerItem {
             SubstanceStack substance = iterator.next();
             if (substance == null) continue;
 
-            float proportion = totalAmount > 0 ? substance.getVolume() / totalAmount : 0;
-            float transferAmount = Math.min(transferRate * proportion, substance.getVolume());
+            float proportion = totalVolume > 0 ? substance.getVolume() / totalVolume : 0;
+            float transferVolume = Math.min(transferRate * proportion, substance.getVolume());
 
-            if (transferAmount > 0) {
+            if (transferVolume > 0) {
                 SubstanceStack transferredSubstance = substance.copy();
-                transferredSubstance.setVolume(transferAmount);
+                transferredSubstance.setVolume(transferVolume);
 
-                handler.handle(transferredSubstance, transferAmount);
-                substance.modifyVolume(-transferAmount);
+                handler.handle(transferredSubstance, transferVolume);
+                substance.modifyVolume(-transferVolume);
 
-                if (substance.getVolume() <= transferAmount) {
+                if (substance.getVolume() <= 0.001f) {
                     iterator.remove();
                 }
             }
@@ -197,35 +196,37 @@ public class FluidContainerItem extends SubstanceContainerItem {
         setSubstanceDataFromMutable(targetStack, targetData);
     }
 
-    public static int getTransferRate(ItemStack stack) {
+    public static int getTransferRate(@NotNull ItemStack stack) {
         return stack.getOrDefault(BitterDataComponents.TRANSFER_RATE.get(), MIN_TRANSFER_RATE);
     }
 
-    public float getLimitedTransferRate(ItemStack stack) {
+    public float getLimitedTransferRate(@NotNull ItemStack stack) {
         return Math.min(stack.getOrDefault(BitterDataComponents.TRANSFER_RATE.get(), MIN_TRANSFER_RATE), getTotalVolume(stack));
     }
 
-    public static void setTransferRate(ItemStack stack, int rate) {
-        stack.set(BitterDataComponents.TRANSFER_RATE.get(), Mth.clamp(rate, MIN_TRANSFER_RATE, MAX_TRANSFER_RATE));
+    public static void setTransferRate(@NotNull ItemStack stack, int rate) {
+        if (stack.getItem() instanceof FluidContainerItem fluidContainerItem) {
+            stack.set(BitterDataComponents.TRANSFER_RATE.get(), Mth.clamp(rate, MIN_TRANSFER_RATE, fluidContainerItem.maxTransferRate));
+        }
     }
 
-    private void playEmptySound(Level level, BlockPos pos) {
+    private void playEmptySound(@NotNull Level level, BlockPos pos) {
         level.playSound(null, pos,
                 SoundEvents.BOTTLE_EMPTY, SoundSource.PLAYERS, 0.5F, 1.5F);
     }
 
-    private void playFillSound(Level level, BlockPos pos) {
+    private void playFillSound(@NotNull Level level, BlockPos pos) {
         level.playSound(null, pos,
                 SoundEvents.BOTTLE_FILL, SoundSource.PLAYERS, 0.5F, 1.0F);
     }
 
-    private void playDrinkSound(Level level, BlockPos pos) {
+    private void playDrinkSound(@NotNull Level level, BlockPos pos) {
         level.playSound(null, pos,
                 SoundEvents.GENERIC_DRINK, SoundSource.PLAYERS, 0.5F,
                 level.getRandom().nextFloat() * 0.1F + 0.9F);
     }
 
-    private void playBurpSound(Level level, BlockPos pos) {
+    private void playBurpSound(@NotNull Level level, BlockPos pos) {
         level.playSound(null, pos,
                 SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.5F,
                 level.getRandom().nextFloat() * 0.1F + 0.9F);
@@ -273,6 +274,41 @@ public class FluidContainerItem extends SubstanceContainerItem {
 
         return stack;
     }
+
+    @Override
+    public boolean onEntityItemUpdate(@NotNull ItemStack stack, @NotNull ItemEntity entity) {
+        if (getTotalVolume(stack) <= 0) return false;
+
+        Level level = entity.level();
+        if (!level.isClientSide && !entity.isNoGravity() && entity.onGround()) {
+            if (!stack.getOrDefault(HAS_LANDED.get(), false)) {
+                stack.set(HAS_LANDED.get(), true);
+                spill(stack, level, entity.blockPosition(), getTotalVolume(stack) * entity.getRandom().nextFloat());
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
+        super.inventoryTick(stack, level, entity, slotId, isSelected);
+
+        if (stack.getOrDefault(HAS_LANDED.get(), false)) {
+            stack.set(HAS_LANDED.get(), false);
+        }
+    }
+
+    public void spill(ItemStack stack, @NotNull Level level, BlockPos pos, float volume) {
+        BlockState existingState = level.getBlockState(pos);
+
+        if (existingState.getBlock() instanceof FluidBlock) {
+            transferSubstancesToBlock(pos, level, stack, volume);
+        } else if (existingState.canBeReplaced()) {
+            level.setBlock(pos, FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
+            transferSubstancesToBlock(pos, level, stack, volume);
+        }
+    }
+
     @FunctionalInterface
     private interface SubstanceTransferHandler {
         void handle(SubstanceStack substance, float amount);

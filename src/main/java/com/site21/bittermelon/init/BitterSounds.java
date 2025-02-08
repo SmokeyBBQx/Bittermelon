@@ -40,4 +40,6 @@ public class BitterSounds {
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "entity.bite")));
     public static final DeferredHolder<SoundEvent, SoundEvent> DRAG = SOUND_EVENTS.register("entity.drag",
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "entity.drag")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> LOW_IMPACT = SOUND_EVENTS.register("misc.low_impact",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "misc.low_impact")));
 }

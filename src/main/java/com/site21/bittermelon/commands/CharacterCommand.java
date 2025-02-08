@@ -69,7 +69,7 @@ public class CharacterCommand {
         }
 
         List<Character> characters = CharacterManager.getInstance().getCharacters(player.getUUID());
-        characters.forEach(character -> context.getSource().sendSystemMessage(Component.literal("Name: " + character.getName() + ", Age: " + character.getAge() + ", Description: " + character.getDescription())));
+        characters.forEach(character -> context.getSource().sendSystemMessage(Component.literal("Name: " + character.getName() + ", Description: " + character.getDescription())));
         return 1;
     }
 
@@ -85,7 +85,7 @@ public class CharacterCommand {
             context.getSource().sendFailure(Component.literal("Character '" + character.getName() + "' already exists"));
             return 0;
         } else {
-            character = new Character(context.getSource().getPlayer().getUUID(), name, description, "url", age, 1.5F, 80, emoteColor);
+            character = new Character(context.getSource().getPlayer().getUUID(), name, description, emoteColor);
             CharacterManager.getInstance().addCharacter(character);
         }
 

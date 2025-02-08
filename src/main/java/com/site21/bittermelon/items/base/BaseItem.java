@@ -44,12 +44,12 @@ public class BaseItem extends Item {
         return itemWeight;
     }
 
-    public void projectileHitBlock(ItemStack stack, Level level, BlockPos pos) {
+    public void projectileHitBlock(ItemStack stack, Level level, @NotNull BlockPos pos) {
         ItemEntity itemEntity = new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), stack);
         level.addFreshEntity(itemEntity);
     }
 
-    public void projectileHitEntity(ItemStack stack, Entity entity, DamageSources damageSources, ThrownItemProjectile thrownItemProjectile, Entity owner) {
+    public void projectileHitEntity(ItemStack stack, @NotNull Entity entity, @NotNull DamageSources damageSources, ThrownItemProjectile thrownItemProjectile, Entity owner) {
         float dmg = 0;
 //        dmg += (float) item.getAttributeModifiers().modifiers().get(EquipmentSlot.MAINHAND.getIndex()).attribute(). TODO: Figure out how to get damage of item
         dmg += itemWeight.value - 1;

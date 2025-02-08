@@ -13,8 +13,9 @@ import com.site21.bittermelon.medical.compartments.conditions.Bleed;
 import com.site21.bittermelon.medical.compartments.conditions.ForeignSubstance;
 import com.site21.bittermelon.medical.compartments.conditions.Infection;
 import com.site21.bittermelon.medical.compartments.organs.HeartRhythm;
+import com.site21.bittermelon.medical.simulations.Simulation;
 import com.site21.bittermelon.miscellaneous.stumble.StumbleHandler;
-import com.site21.bittermelon.networking.client.S2CSetForcedPose;
+import com.site21.bittermelon.networking.client.SetForcedPose;
 import com.site21.bittermelon.substance.SubstanceStack;
 import com.site21.bittermelon.util.LocalMessageHelper;
 import com.site21.bittermelon.util.ServerUtil;
@@ -30,6 +31,7 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.CarpetBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
@@ -40,27 +42,33 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import static com.site21.bittermelon.init.BitterBlocks.FLUID;
 import static com.site21.bittermelon.init.Substances.LIQUID_BLOOD;
+import static net.minecraft.world.level.block.Block.UPDATE_ALL_IMMEDIATE;
 
 public class MedicalStats {
-    private final CopyOnWriteArrayList<Compartment> compartments;
+    private static final int GASP_INTERVAL = 200;
+    private static final int STUMBLE_INTERVAL = 100;
+    private static final int BASE_PAIN_INTERVAL = 300;
+    private static final int BASE_BLEED_INTERVAL = 100;
+    private static final float MIN_CONSCIOUSNESS_THRESHOLD = 0.1f;
+    private static final float LOW_OXYGEN_THRESHOLD = 80f;
+    private static final float LOW_BLOOD_VOLUME_THRESHOLD = 60f;
+
+    private final List<Compartment> compartments;
     private final Map<FunctionType, Float> stats;
     private final Map<UUID, Float> immunity;
+    private final List<SubstanceStack> substances;
+    private final List<Simulation> simulations;
     private final BloodType bloodType;
     private final Character character;
-    private LivingEntity entity;
     private final VitalSigns vitalSigns;
+    private final Map<Holder<Attribute>, Double> defaultAttributeValues;
 
-    private int gaspTickCounter = 0;
-    private static final int GASP_INTERVAL = 200;
-    private int stumbleTickCounter = 0;
-    private static final int STUMBLE_INTERVAL = 100;
-    private int painTickCounter = 0;
-    private static final int BASE_PAIN_INTERVAL = 300;
-    private int bleedTickCounter = 0;
-    private static final int BASE_BLEED_INTERVAL = 100;
-    private final Map<Holder<Attribute>, Double> defaultAttributeValues = new HashMap<>();
-
-    private float heartLifeSupport = 0;
+    private LivingEntity entity;
+    private float heartLifeSupport;
+    private int gaspTickCounter;
+    private int stumbleTickCounter;
+    private int painTickCounter;
+    private int bleedTickCounter;
 
     public MedicalStats(BloodType bloodType, List<Compartment> compartments, @NotNull Character character) {
         this.bloodType = bloodType;
@@ -69,46 +77,83 @@ public class MedicalStats {
         this.stats = new EnumMap<>(FunctionType.class);
         this.immunity = new ConcurrentHashMap<>();
         this.vitalSigns = new VitalSigns();
+        this.substances = new ArrayList<>();
+        this.simulations = new ArrayList<>();
+        this.defaultAttributeValues = new HashMap<>();
 
+        initializeStats();
+        initializeEntity();
+    }
+
+    private void initializeStats() {
         for (FunctionType type : FunctionType.values()) {
             stats.put(type, 0f);
         }
-
-        initializeEntity();
     }
 
     private void initializeEntity() {
         this.entity = ServerUtil.getLivingEntity(character.getEntityUUID());
+        if (entity == null) return;
 
-        if (entity != null) {
-            EntityType<? extends LivingEntity> entityType = (EntityType<? extends LivingEntity>) entity.getType();
-            AttributeMap attributeMap = new AttributeMap(DefaultAttributes.getSupplier(entityType));
+        EntityType<? extends LivingEntity> entityType = (EntityType<? extends LivingEntity>) entity.getType();
+        AttributeMap attributeMap = new AttributeMap(DefaultAttributes.getSupplier(entityType));
 
-            for (AttributeInstance instance : attributeMap.attributes.values()) {
-                defaultAttributeValues.put(instance.getAttribute(), instance.getBaseValue());
-            }
+        for (AttributeInstance instance : attributeMap.attributes.values()) {
+            defaultAttributeValues.put(instance.getAttribute(), instance.getBaseValue());
         }
     }
 
+
     public void update() {
+        if (entity == null) {
+            initializeEntity();
+            return;
+        }
+
         updateCompartments();
         updateEntityAttributes();
         updateCardiopulmonary();
-        updateStats();
+        updateSubstances();
+        updateSimulations();
         handlePain();
         handleTremor();
         bloodPuddle();
-
-//        System.out.println(stats.get(FunctionType.BLEED));
     }
 
     private void updateCompartments() {
+        EnumMap<FunctionType, Float> statsCopy = new EnumMap<>(FunctionType.class);
+        EnumMap<FunctionType, Integer> countMap = new EnumMap<>(FunctionType.class);
+
+        for (FunctionType type : FunctionType.values()) {
+            statsCopy.put(type, 0f);
+            countMap.put(type, 0);
+        }
+
         for (Compartment compartment : compartments) {
             compartment.update(this);
+
             if (compartment instanceof Condition) {
                 processCondition(compartment);
             }
+
+            for (FunctionType stat : FunctionType.values()) {
+                float attribute = compartment.getAttribute(stat);
+                if (attribute != 0) {
+                    statsCopy.compute(stat, (k, currentValue) -> currentValue + attribute);
+                    countMap.compute(stat, (k, count) -> count + 1);
+                }
+            }
         }
+
+        for (FunctionType type : FunctionType.values()) {
+            int count = countMap.get(type);
+            if (count > 0) {
+                float average = statsCopy.get(type) / count;
+                statsCopy.put(type, average);
+            }
+        }
+
+        stats.putAll(statsCopy);
     }
 
     private void processCondition(Compartment compartment) {
@@ -128,23 +173,19 @@ public class MedicalStats {
         float memory = immunity.getOrDefault(infection.getOrganism(), 0f);
 
         infection.modifyHealth(-immunityRate * memory / 10);
-        immunity.merge(infection.getOrganism(),
-                immunityRate / 10,
-                Float::sum);
+        immunity.merge(infection.getOrganism(), immunityRate / 10, Float::sum);
 
         // TODO: Add inflammation
     }
 
     private void handleForeignSubstance(@NotNull ForeignSubstance substance) {
-        float eliminationRate = stats.get(FunctionType.ELIMINATION);
-        substance.modifyHealth(-eliminationRate / 10);
+        substance.modifyHealth(-stats.get(FunctionType.ELIMINATION) / 10);
 
         // TODO: Separate metabolism and elimination?
     }
 
     private void handleInjury(@NotNull Injury injury) {
-        float healRate = stats.get(FunctionType.HEALING);
-        injury.modifyHealth(-healRate);
+        injury.modifyHealth(-stats.get(FunctionType.HEALING));
     }
 
     private void handleCoagulation(@NotNull Bleed bleed) {
@@ -152,20 +193,15 @@ public class MedicalStats {
     }
 
     private void updateEntityAttributes() {
-        if (entity != null) {
             updateMovementAttributes();
             updateManipulationAttributes();
             updateConsciousness();
-        } else {
-            initializeEntity();
-        }
     }
 
     private void updateMovementAttributes() {
         float capability = getMovement();
 
         handleStumbling(capability);
-//        System.out.println(capability);
 
         updateEntityAttribute(Attributes.MOVEMENT_SPEED, capability);
         updateEntityAttribute(Attributes.JUMP_STRENGTH, capability);
@@ -188,36 +224,6 @@ public class MedicalStats {
         if (defaultAttributeValues.get(attributeHolder) == null) return;
         double baseValue = defaultAttributeValues.get(attributeHolder);
         attribute.setBaseValue(value * baseValue);
-    }
-
-    private void updateStats() {
-        EnumMap<FunctionType, Float> statsCopy = new EnumMap<>(FunctionType.class);
-        EnumMap<FunctionType, Integer> countMap = new EnumMap<>(FunctionType.class);
-
-        for (FunctionType type : FunctionType.values()) {
-            statsCopy.put(type, 0f);
-            countMap.put(type, 0);
-        }
-
-        for (Compartment compartment : compartments) {
-            for (FunctionType stat : FunctionType.values()) {
-                float attribute = compartment.getAttribute(stat);
-                if (attribute != 0) {
-                    statsCopy.compute(stat, (k, currentValue) -> currentValue + attribute);
-                    countMap.compute(stat, (k, count) -> count + 1);
-                }
-            }
-        }
-
-        for (FunctionType type : FunctionType.values()) {
-            int count = countMap.get(type);
-            if (count > 0) {
-                float average = statsCopy.get(type) / count;
-                statsCopy.put(type, average);
-            }
-        }
-
-        stats.putAll(statsCopy);
     }
 
     private void updateCardiopulmonary() {
@@ -285,16 +291,36 @@ public class MedicalStats {
         }
     }
 
+    private void walkClumsiness() {
+    }
+
     private void updateConsciousness() {
         if (vitalSigns.consciousness < 0.1f) {
             if (entity.getPose() != Pose.SLEEPING) {
                 entity.setPose(Pose.SLEEPING);
-                PacketDistributor.sendToAllPlayers(new S2CSetForcedPose(entity.getUUID(), Pose.SLEEPING));
+                PacketDistributor.sendToAllPlayers(new SetForcedPose(entity.getUUID(), Pose.SLEEPING));
                 LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(character.getName() + " passes out.").withColor(character.getEmoteColor()));
             }
         }
 
         vitalSigns.consciousness = stats.get(FunctionType.BRAIN_VITALS) * stats.get(FunctionType.CIRCULATION);
+    }
+
+    private void updateSubstances() {
+        for (SubstanceStack stack : substances) {
+
+        }
+    }
+
+    private void updateSimulations() {
+        Iterator<Simulation> iterator = simulations.iterator();
+        while (iterator.hasNext()) {
+            Simulation simulation = iterator.next();
+            simulation.update();
+            if (simulation.finished) {
+                iterator.remove();
+            }
+        }
     }
 
     private void handlePain() {
@@ -363,8 +389,23 @@ public class MedicalStats {
         compartments.add(compartment);
     }
 
+    public void updateSubstance(SubstanceStack substance) {
+        for (SubstanceStack stack : substances) {
+            if (stack.canMergeWith(substance)) {
+                stack.modifyAmount(substance.getAmount());
+                return;
+            }
+        }
+
+        substances.add(substance);
+    }
+
     public List<Compartment> getCompartments() {
         return compartments;
+    }
+
+    public List<SubstanceStack> getSubstances() {
+        return substances;
     }
 
     protected void sight() {
@@ -392,7 +433,10 @@ public class MedicalStats {
 
             BlockPos pos = entity.getOnPos().above();
             Level level = entity.level();
+            if (level.isClientSide) return;
             BlockState existingState = level.getBlockState(pos);
+            if (level.getBlockState(pos.below()).getBlock() instanceof CarpetBlock) return;
+
             float bloodAmount = bleedValue;
             if (Float.isNaN(bloodAmount)) {
                 return;
@@ -401,8 +445,12 @@ public class MedicalStats {
             stack.setVolume(bloodAmount);
 
             if (!(existingState.getBlock() instanceof FluidBlock) && existingState.canBeReplaced()) {
-                level.setBlockAndUpdate(pos, FLUID.get().defaultBlockState());
+                level.setBlock(pos, FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
             }
+
+            if (level.getBlockEntity(pos) == null) System.out.println("BlockEntity is null");
+
+            // TODO: WHY DOESN'T IT FIND THE FLUID BLOCK ENTITY HALF THE TIME
 
             if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluid) {
                 fluid.updateSubstance(stack);

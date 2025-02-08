@@ -12,6 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -50,10 +51,10 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
     }
 
     public void tick() {
-//        if (getTotalAmount() <= 0) {
-//            removePuddleBlock();
-//            return;
-//        }
+        if (getTotalAmount() <= 0) {
+            removePuddleBlock();
+            return;
+        }
 
 //        handleSubstanceInteractions();
 
@@ -109,6 +110,8 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
         for (SubstanceStack stack : substances) {
             if (stack.canMergeWith(substance)) {
                 stack.modifyAmount(substance.getAmount());
+                updatePuddleLevel();
+                setChanged();
                 return;
             }
         }
@@ -477,7 +480,7 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
     private static void mergeSubstances(@NotNull List<SubstanceStack> substances, SubstanceStack stack) {
         for (SubstanceStack substance : substances) {
             if (stack.canMergeWith(substance)) {
-                substance.modifyAmount(stack.getAmount());
+                substance.modifyVolume(stack.getVolume());
                 return;
             }
         }
@@ -492,7 +495,7 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
         for (Direction dir : Direction.Plane.HORIZONTAL) {
             BlockPos neighborPos = worldPosition.relative(dir);
             if (level != null && level.getBlockEntity(neighborPos) instanceof FluidBlockEntity entity) {
-                if (entity.getTotalAmount() != getTotalAmount()) {
+                if (entity.getTotalVolume() != getTotalVolume()) {
                     flowCandidates.add(entity);
                 }
             }
@@ -500,23 +503,28 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
 
         if (flowCandidates.size() > 1) {
             List<SubstanceStack> totalSubstances = new ArrayList<>();
+
             for (FluidBlockEntity fluid : flowCandidates) {
                 for (SubstanceStack stack : fluid.getSubstances()) {
-                    mergeSubstances(totalSubstances, stack);
+                    SubstanceStack stackCopy = stack.copy();
+                    mergeSubstances(totalSubstances, stackCopy);
                 }
             }
 
             totalSubstances.removeIf(stack -> {
-                if (stack.getAmount() > 0) {
-                    stack.setAmount(stack.getAmount() / flowCandidates.size());
+                if (stack.getVolume() > 0) {
+                    stack.setVolume(stack.getVolume() / flowCandidates.size());
                     return false;
                 }
                 return true;
             });
 
-
             for (FluidBlockEntity puddle : flowCandidates) {
-                puddle.setSubstances(new ArrayList<>(totalSubstances));
+                List<SubstanceStack> puddleSubstances = new ArrayList<>();
+                for (SubstanceStack stack : totalSubstances) {
+                    puddleSubstances.add(stack.copy());
+                }
+                puddle.setSubstances(puddleSubstances);
             }
         }
     }
@@ -628,7 +636,7 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
 
     @Override
     public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
+        super.loadAdditional(tag, registries);
         CompoundTag contentsData = tag.getCompound(CONTENTS_KEY);
         deserializeData(contentsData, registries);
         active = tag.getBoolean(ACTIVE_KEY);
@@ -687,7 +695,7 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
     }
 
     private void syncToClient() {
-        if (level != null && !level.isClientSide) {
+        if (level != null && level.isClientSide) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         }
     }

@@ -3,6 +3,7 @@ package com.site21.bittermelon.init;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.blocks.FluidBlock;
 import com.site21.bittermelon.blocks.SmallBox;
+import com.site21.bittermelon.blocks.StructuralBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
@@ -25,5 +26,9 @@ public class BitterBlocks {
     public static final DeferredBlock<SmallBox> SMALL_CARDBOARD_BOX = BLOCKS.register("small_cardboard_box", () -> new SmallBox(BlockBehaviour.Properties.of()
             .destroyTime(-1)
             .sound(SoundType.WOOL)
+    ));
+
+    public static final DeferredBlock<StructuralBlock> STRUCTURAL_BLOCK = BLOCKS.register("structural_block", () -> new StructuralBlock(BlockBehaviour.Properties.of()
+            .destroyTime(1.5f)
     ));
 }

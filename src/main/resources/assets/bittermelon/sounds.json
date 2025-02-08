@@ -83,6 +83,12 @@
       "bittermelon:entity/wrestle"
     ]
   },
+  "misc.low_impact": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:misc/low_impact"
+    ]
+  },
   "container.toolbox_open": {
     "category": "neutral",
     "sounds": [

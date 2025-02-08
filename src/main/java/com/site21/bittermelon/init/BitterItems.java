@@ -2,10 +2,13 @@ package com.site21.bittermelon.init;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.items.GermTest;
+import com.site21.bittermelon.items.base.BaseItem;
+import com.site21.bittermelon.items.base.ItemSize;
 import com.site21.bittermelon.items.base.ItemWeight;
 import com.site21.bittermelon.items.cardboardbox.CardboardBoxItem;
 import com.site21.bittermelon.items.cardboardbox.CollapsedCardboardBoxItem;
 import com.site21.bittermelon.items.containers.substance.FluidContainerItem;
+import com.site21.bittermelon.items.containers.substance.implementations.GlassFluidContainerItem;
 import com.site21.bittermelon.items.medical.organic.BodyPart;
 import com.site21.bittermelon.items.medical.tools.*;
 import com.site21.bittermelon.items.toolbox.ToolBoxItem;
@@ -19,12 +22,13 @@ import static com.site21.bittermelon.init.BitterBlocks.SMALL_CARDBOARD_BOX;
 public class BitterItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Bittermelon.MOD_ID);
 
-    public static final DeferredItem<FluidContainerItem> BEER_BOTTLE = ITEMS.register("beer_bottle", () -> new FluidContainerItem(
+    public static final DeferredItem<FluidContainerItem> BEER_BOTTLE = ITEMS.register("beer_bottle", () -> new GlassFluidContainerItem(
             new Item.Properties(),
             3,
             2,
             ItemWeight.MEDIUM,
-            75)
+            75,
+            10)
     );
 
     public static final DeferredItem<ToolBoxItem> BLUE_TOOLBOX = ITEMS.register("blue_toolbox", () -> new ToolBoxItem(
@@ -141,4 +145,7 @@ public class BitterItems {
     public static final DeferredItem<GermTest> GERM_TEST = ITEMS.register("germ_test", () -> new GermTest(
             new Item.Properties().stacksTo(3)
     ));
+
+    public static final DeferredItem<BaseItem> GLASS_SHARD = ITEMS.register("glass_shard", () -> new BaseItem(
+            new Item.Properties().stacksTo(8), 1, 1, ItemWeight.VERY_LIGHT));
 }

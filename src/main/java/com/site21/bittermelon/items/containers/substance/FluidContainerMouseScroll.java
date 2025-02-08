@@ -21,11 +21,11 @@ public class FluidContainerMouseScroll {
         Player player = Minecraft.getInstance().player;
         if (player != null && player.isShiftKeyDown()) {
             ItemStack heldItem = player.getMainHandItem();
-            if (heldItem.getItem() instanceof FluidContainerItem) {
+            if (heldItem.getItem() instanceof FluidContainerItem fluidContainerItem) {
                 int currentRate = FluidContainerItem.getTransferRate(heldItem);
                 int newRate = Mth.clamp(currentRate + (event.getScrollDeltaY() > 0 ? 1 : -1),
                         FluidContainerItem.MIN_TRANSFER_RATE,
-                        FluidContainerItem.MAX_TRANSFER_RATE);
+                        fluidContainerItem.maxTransferRate);
                 FluidContainerItem.setTransferRate(heldItem, newRate);
 
                 PacketDistributor.sendToServer(new TransferRateUpdate(newRate, InteractionHand.MAIN_HAND));

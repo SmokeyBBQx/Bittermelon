@@ -44,6 +44,8 @@ public class BitterVibrationUser implements BitterVibrationSystem.User {
 
     @Override
     public void onReceiveVibration(ServerLevel level, BlockPos pos, Holder<GameEvent> gameEvent, @Nullable Entity vibrationEntity, @Nullable Entity playerEntity, float distance) {
+       System.out.println("Vibration received");
+
         if (this.entity.isDeadOrDying()) return;
         if (this.entity.isVehicle()) return;
         if (this.entity instanceof SCP939 scp939) {
