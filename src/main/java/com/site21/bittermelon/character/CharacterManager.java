@@ -2,6 +2,7 @@ package com.site21.bittermelon.character;
 
 import com.site21.bittermelon.util.DataManager;
 import net.neoforged.fml.loading.FMLPaths;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -44,7 +45,7 @@ public class CharacterManager extends DataManager<UUID, Character> {
         }
     }
 
-    public void addCharacter(Character character) {
+    public void addCharacter(@NotNull Character character) {
         UUIDToCharacter.computeIfAbsent(character.getEntityUUID(), k -> new ArrayList<>()).add(character);
         addData(character.getUUID(), character);
     }
@@ -53,7 +54,7 @@ public class CharacterManager extends DataManager<UUID, Character> {
      * Deletes the directory the character corresponds to and removes it from character maps
      * @param character Character to be removed
      */
-    public void removeCharacter(Character character) {
+    public void removeCharacter(@NotNull Character character) {
         deleteData(character.getUUID());
         List<Character> characterList = UUIDToCharacter.get(character.getEntityUUID());
         if (characterList != null) {
@@ -102,12 +103,12 @@ public class CharacterManager extends DataManager<UUID, Character> {
     }
 
     @Override
-    protected String getFileName(Character data) {
+    protected String getFileName(@NotNull Character data) {
         return data.getUUID().toString();
     }
 
     @Override
-    protected UUID getKey(Character data) {
+    protected UUID getKey(@NotNull Character data) {
         return data.getUUID();
     }
 }

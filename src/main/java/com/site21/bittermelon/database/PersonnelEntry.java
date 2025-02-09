@@ -12,6 +12,7 @@ public class PersonnelEntry {
     private String department;
     private String description;
     private String picture;
+//    private final UUID fingerprint;
     private List<String> privileges;
 
     public PersonnelEntry(String name, String occupation, String description) {

@@ -23,14 +23,6 @@ public class PersonnelRegistry extends DataManager<Integer, PersonnelEntry> {
         return data.getID();
     }
 
-    public void addEntry(PersonnelEntry entry) {
-        addData(entry.getID(), entry);
-    }
-
-    public void removeEntry(int entryID) {
-        deleteData(entryID);
-    }
-
     public void addPrivilege(int registryID, String privilege) {
         dataMap.get(registryID).addPrivilege(privilege);
     }

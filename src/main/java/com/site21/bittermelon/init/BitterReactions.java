@@ -9,7 +9,7 @@ import static com.site21.bittermelon.init.BitterRegistries.REACTION_REGISTRY_KEY
 public class BitterReactions {
     public static final DeferredRegister<Reaction> REACTIONS = DeferredRegister.create(REACTION_REGISTRY_KEY, Bittermelon.MOD_ID);
 
-//    public static final Supplier<Reaction> HABER_PROCESS = REACTIONS.register("haber_process",
+//    public static final Vendor<Reaction> HABER_PROCESS = REACTIONS.register("haber_process",
 //            () -> new Reaction.ReactionBuilder()
 //                    .addReactant(NITROGEN.get(), 1, 1)
 //                    .addReactant(HYDROGEN.get(), 3, 1)
