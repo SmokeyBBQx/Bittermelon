@@ -3,7 +3,6 @@ package com.site21.bittermelon.init;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.items.GermTest;
 import com.site21.bittermelon.items.base.BaseItem;
-import com.site21.bittermelon.items.base.ItemSize;
 import com.site21.bittermelon.items.base.ItemWeight;
 import com.site21.bittermelon.items.cardboardbox.CardboardBoxItem;
 import com.site21.bittermelon.items.cardboardbox.CollapsedCardboardBoxItem;
@@ -17,6 +16,7 @@ import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import static com.site21.bittermelon.init.BitterBlocks.ATM;
 import static com.site21.bittermelon.init.BitterBlocks.SMALL_CARDBOARD_BOX;
 
 public class BitterItems {
@@ -54,6 +54,11 @@ public class BitterItems {
 
     public static final DeferredItem<BlockItem> SMALL_CARDBOARD_BOX_ITEM = ITEMS.register("small_cardboard_box_item", () -> new BlockItem(
             SMALL_CARDBOARD_BOX.get(),
+            new Item.Properties()
+    ));
+
+    public static final DeferredItem<BlockItem> ATM_ITEM = ITEMS.register("atm_item", () -> new BlockItem(
+            ATM.get(),
             new Item.Properties()
     ));
 

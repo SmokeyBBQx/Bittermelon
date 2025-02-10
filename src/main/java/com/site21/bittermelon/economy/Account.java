@@ -42,7 +42,7 @@ public class Account {
     }
 
     public boolean canAccess(@NotNull List<String> privileges) {
-        return allowedPrivileges.stream().anyMatch(privileges::contains);
+        return allowedPrivileges.stream().anyMatch(privileges::contains) || allowedPrivileges.isEmpty();
     }
 
     public void setBalance(float balance) {

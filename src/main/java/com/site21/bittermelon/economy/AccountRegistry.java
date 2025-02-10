@@ -6,14 +6,24 @@ import com.site21.bittermelon.util.DataManager;
 import net.neoforged.fml.loading.FMLPaths;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class AccountRegistry extends DataManager<Integer, Account> {
+    private static AccountRegistry instance = null;
 
     protected AccountRegistry() {
         super(FMLPaths.GAMEDIR.get().resolve("bank_account/").toString(), Account.class);
+        Account account = new Account("test");
+        account.setBalance(100);
+        addData(account.getId(), account);
+    }
+
+    public static synchronized AccountRegistry getInstance() {
+        if (instance == null) {
+            instance = new AccountRegistry();
+        }
+        return instance;
     }
 
     public void makeTransfer(int fromAccountID, int toAccountID, float amount, Date timestamp, String description) {
@@ -36,9 +46,45 @@ public class AccountRegistry extends DataManager<Integer, Account> {
         return false;
     }
 
+    public List<Account> getPermittedAccounts(@NotNull PersonnelEntry entry) {
+        List<String> privileges = entry.getPrivileges();
+        List<Account> permittedAccounts = new ArrayList<>();
+
+        for (Account account : dataMap.values()) {
+            if (account.canAccess(privileges)) {
+                permittedAccounts.add(account);
+            }
+        }
+
+        permittedAccounts.sort(Comparator.comparing(Account::getId));
+
+        return permittedAccounts;
+    }
+
+    public void makeAccount(String name) {
+        Account account = new Account(name);
+        addData(account.getId(), account);
+    }
+
+    public boolean doesAccountExist(int accountNumber) {
+        return dataMap.containsKey(accountNumber);
+    }
+
+    public Collection<Account> getAccounts() {
+        return dataMap.values();
+    }
+
+    public List<Account> getSortedAccounts() {
+        return dataMap.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toList());
+    }
+
     @Override
     protected String getFileName(@NotNull Account data) {
-        return data.getName();
+        return String.valueOf(data.getId());
     }
 
     @Override

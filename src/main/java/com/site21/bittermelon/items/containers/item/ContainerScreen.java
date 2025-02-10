@@ -5,23 +5,23 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.items.base.BaseItem;
-import com.site21.bittermelon.networking.client.ContainerDataUpdate;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Set;
 
+@OnlyIn(Dist.CLIENT)
 public class ContainerScreen<T extends ContainerMenu> extends AbstractContainerScreen<T> {
     private static ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/container/container_screen.png");
     private static final int SLOT_SIZE = 16;

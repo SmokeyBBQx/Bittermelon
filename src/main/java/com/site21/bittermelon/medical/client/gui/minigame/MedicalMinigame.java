@@ -10,10 +10,13 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.keybinds.HealthScreenKeyBind.openHealthScreen;
 
+@OnlyIn(Dist.CLIENT)
 public abstract class MedicalMinigame extends Screen {
     protected final ItemStack item;
     protected final Compartment compartment;

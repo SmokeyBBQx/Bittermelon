@@ -1,6 +1,7 @@
 package com.site21.bittermelon.init;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.blocks.ATMBlock;
 import com.site21.bittermelon.blocks.FluidBlock;
 import com.site21.bittermelon.blocks.SmallBox;
 import com.site21.bittermelon.blocks.StructuralBlock;
@@ -30,5 +31,9 @@ public class BitterBlocks {
 
     public static final DeferredBlock<StructuralBlock> STRUCTURAL_BLOCK = BLOCKS.register("structural_block", () -> new StructuralBlock(BlockBehaviour.Properties.of()
             .destroyTime(1.5f)
+    ));
+
+    public static final DeferredBlock<ATMBlock> ATM = BLOCKS.register("atm", () -> new ATMBlock(BlockBehaviour.Properties.of()
+            .noOcclusion()
     ));
 }

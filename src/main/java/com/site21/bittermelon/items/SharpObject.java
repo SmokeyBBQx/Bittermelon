@@ -13,6 +13,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.EnumSet;
 
@@ -30,6 +32,7 @@ public interface SharpObject extends MedicalItem {
         );
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     default void use(Compartment compartment, MedicalStats medicalStats, Character character, ItemStack item) {
         Minecraft.getInstance().setScreen(new IncisionMinigame(item, compartment, medicalStats, character));

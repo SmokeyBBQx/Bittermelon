@@ -5,12 +5,20 @@ import net.neoforged.fml.loading.FMLPaths;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.UUID;
 
 public class PersonnelRegistry extends DataManager<Integer, PersonnelEntry> {
+    private static PersonnelRegistry instance = null;
 
     protected PersonnelRegistry() {
         super(FMLPaths.GAMEDIR.get().resolve("personnel_registry/").toString(), PersonnelEntry.class);
+        addData(0, new PersonnelEntry("test", "test", "test"));
+    }
+
+    public static synchronized PersonnelRegistry getInstance() {
+        if (instance == null) {
+            instance = new PersonnelRegistry();
+        }
+        return instance;
     }
 
     @Override

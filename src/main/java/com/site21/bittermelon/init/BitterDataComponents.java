@@ -57,4 +57,9 @@ public class BitterDataComponents {
             "germs",
             builder -> builder.persistent(Codec.list(UUIDUtil.CODEC)).networkSynchronized(ByteBufCodecs.collection(ArrayList::new, UUIDUtil.STREAM_CODEC)).cacheEncoding()
     );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> ID_NUMBER = DATA_COMPONENTS.registerComponentType(
+            "id_number",
+            builder -> builder.persistent(ExtraCodecs.POSITIVE_INT).networkSynchronized(ByteBufCodecs.VAR_INT)
+    );
 }

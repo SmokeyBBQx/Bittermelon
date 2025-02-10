@@ -357,6 +357,7 @@ public class MedicalStats {
 
     private void handleTremor() {
         if (entity instanceof Player player) {
+            if (!entity.level().isClientSide()) return;
             ScreenshakeHandler.startScreenshake(player, 80, Math.min(0.8f, getTremor() / 10));
         }
     }

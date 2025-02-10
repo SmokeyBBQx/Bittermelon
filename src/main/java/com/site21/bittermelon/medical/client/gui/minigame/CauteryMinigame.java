@@ -8,12 +8,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@OnlyIn(Dist.CLIENT)
 public class CauteryMinigame extends MedicalMinigame {
     private final List<BleedPoint> bleedPoints = new ArrayList<>();
     private final List<BleedPoint> clampedPoints = new ArrayList<>();

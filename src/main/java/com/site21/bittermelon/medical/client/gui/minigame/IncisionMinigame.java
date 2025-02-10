@@ -10,15 +10,17 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 import static com.site21.bittermelon.keybinds.HealthScreenKeyBind.openHealthScreen;
 
+@OnlyIn(Dist.CLIENT)
 public class IncisionMinigame extends MedicalMinigame {
     private final List<Point> drawnPoints = new ArrayList<>();
     private int lineX;

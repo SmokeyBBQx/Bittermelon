@@ -53,6 +53,11 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
+        client2 {
+            client()
+            programArguments.addAll '--username', 'Dev2'
+        }
+
         server {
             server()
             programArgument '--nogui'

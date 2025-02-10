@@ -40,16 +40,22 @@ public class PayloadRegistration {
                 ClearForcedPose::handle
         );
 
-        registrar.playToClient(
-                OpenCPRScreen.TYPE,
-                OpenCPRScreen.STREAM_CODEC,
-                OpenCPRScreen::handle
-        );
+//        registrar.playToClient(
+//                OpenCPRScreen.TYPE,
+//                OpenCPRScreen.STREAM_CODEC,
+//                OpenCPRScreen::handle
+//        );
 
         registrar.playToServer(
                 ThrowItem.TYPE,
                 ThrowItem.STREAM_CODEC,
                 ThrowItem::handle
         );
+//
+//        registrar.playToClient(
+//                OpenATMScreen.TYPE,
+//                OpenATMScreen.STREAM_CODEC,
+//                OpenATMScreen::handle
+//        );
     }
 }

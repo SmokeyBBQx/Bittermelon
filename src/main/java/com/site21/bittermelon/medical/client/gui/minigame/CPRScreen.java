@@ -12,12 +12,15 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Objects;
 
+@OnlyIn(Dist.CLIENT)
 public class CPRScreen extends Screen {
     private static final int CIRCLE_RADIUS = 40;
     // TODO: New indicator texture
@@ -85,7 +88,7 @@ public class CPRScreen extends Screen {
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        long currentTime = System.currentTimeMillis();;
+        long currentTime = System.currentTimeMillis();
         float deltaTime = (currentTime - lastTime) / 1000f;
         lastTime = currentTime;
 

@@ -8,6 +8,8 @@ import com.site21.bittermelon.medical.compartments.conditions.Cut;
 import com.site21.bittermelon.medical.medicalstats.MedicalStats;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.EnumSet;
 
@@ -29,6 +31,7 @@ public interface AbstractRetractor extends MedicalItem {
     }
 
     @Override
+    @OnlyIn(Dist.CLIENT)
     default void use(Compartment compartment, MedicalStats medicalStats, Character character, ItemStack item) {
         Minecraft.getInstance().setScreen(new RetractMinigame(item, compartment, medicalStats, character));
     }

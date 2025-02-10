@@ -7,6 +7,8 @@ import com.site21.bittermelon.medical.compartments.CompartmentType;
 import com.site21.bittermelon.medical.medicalstats.MedicalStats;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
@@ -24,6 +26,7 @@ public interface AbstractCautery extends MedicalItem {
         );
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     default void use(Compartment compartment, MedicalStats medicalStats, Character character, ItemStack item) {
         Minecraft.getInstance().setScreen(new CauteryMinigame(item, compartment, medicalStats, character));

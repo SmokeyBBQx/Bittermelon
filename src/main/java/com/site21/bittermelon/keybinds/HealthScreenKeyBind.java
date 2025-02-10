@@ -1,22 +1,14 @@
 package com.site21.bittermelon.keybinds;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.character.Character;
-import com.site21.bittermelon.character.CharacterManager;
-import com.site21.bittermelon.medical.client.gui.HealthScreen;
+import com.site21.bittermelon.database.PersonnelEntry;
+import com.site21.bittermelon.economy.screen.ATMScreen;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
-
-import java.util.Optional;
 
 import static com.site21.bittermelon.init.BitterKeyBindings.HEALTH_SCREEN_KEY;
 
@@ -34,26 +26,32 @@ public class HealthScreenKeyBind {
         Minecraft mc = Minecraft.getInstance();
         Player player = Minecraft.getInstance().player;
 
-        if (player != null) {
-            HitResult hitResult = mc.hitResult;
-            Character targetCharacter = null;
-            Entity targetEntity = null;
+        ATMScreen screen = new ATMScreen(new PersonnelEntry("user", "user", "user"));
+        mc.setScreen(screen);
+//
+//        AccountManagerScreen screen = new AccountManagerScreen();
+//        mc.setScreen(screen);
 
-            if (hitResult != null && hitResult.getType() == HitResult.Type.ENTITY) {
-                EntityHitResult entityHit = (EntityHitResult) hitResult;
-                targetEntity = entityHit.getEntity();
-
-                targetCharacter = CharacterManager.getInstance().getActiveCharacter(targetEntity.getUUID());
-            }
-
-            if (targetCharacter == null) {
-                targetCharacter = CharacterManager.getInstance().getActiveCharacter(player.getUUID());
-            }
-
-            if (targetCharacter != null) {
-                ItemStack heldItem = player.getMainHandItem();
-                mc.setScreen(new HealthScreen(targetCharacter, player, heldItem));
-            }
-        }
+//        if (player != null) {
+//            HitResult hitResult = mc.hitResult;
+//            Character targetCharacter = null;
+//            Entity targetEntity = null;
+//
+//            if (hitResult != null && hitResult.getType() == HitResult.Type.ENTITY) {
+//                EntityHitResult entityHit = (EntityHitResult) hitResult;
+//                targetEntity = entityHit.getEntity();
+//
+//                targetCharacter = CharacterManager.getInstance().getActiveCharacter(targetEntity.getUUID());
+//            }
+//
+//            if (targetCharacter == null) {
+//                targetCharacter = CharacterManager.getInstance().getActiveCharacter(player.getUUID());
+//            }
+//
+//            if (targetCharacter != null) {
+//                ItemStack heldItem = player.getMainHandItem();
+//                mc.setScreen(new HealthScreen(targetCharacter, player, heldItem));
+//            }
+//        }
     }
 }
