@@ -19,4 +19,8 @@ public class BitterAttachmentTypes {
             "germs", () -> AttachmentType.<List<UUID>>builder(
                     () -> new ArrayList<>()).serialize(Codec.list(UUIDUtil.CODEC)).build()
     );
+
+    public static final Supplier<AttachmentType<UUID>> ACTIVE_CHARACTER = ATTACHMENT_TYPES.register(
+            "active_character", () -> AttachmentType.<UUID>builder(() -> new UUID(0, 0)).serialize(UUIDUtil.CODEC).build()
+    );
 }

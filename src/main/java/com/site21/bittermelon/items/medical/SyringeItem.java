@@ -27,7 +27,7 @@ public class SyringeItem extends FluidContainerItem {
         EntityHitResult hitResult = (EntityHitResult) player.pick(player.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE), 1.0F, false);
 
         if (hitResult.getEntity() instanceof LivingEntity targetEntity) {
-            Character character = CharacterManager.getInstance().getActiveCharacter(targetEntity.getUUID());
+            Character character = CharacterManager.get(level).getActiveCharacter(targetEntity);
 
             if (character == null) {
                 return InteractionResultHolder.fail(player.getItemInHand(usedHand));

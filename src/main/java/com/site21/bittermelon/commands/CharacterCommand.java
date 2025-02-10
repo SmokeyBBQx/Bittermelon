@@ -1,18 +1,16 @@
 package com.site21.bittermelon.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.site21.bittermelon.character.Character;
 import com.site21.bittermelon.character.CharacterManager;
-import com.site21.bittermelon.util.CommandUtil;
+import com.site21.bittermelon.medical.factory.Anatomy;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,160 +20,103 @@ import java.util.Optional;
 public class CharacterCommand {
     public static void register(@NotNull CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("character")
-                .then(Commands.literal("list")
-                        .executes(context -> viewCharacters(context, false))
-                        .then(Commands.argument("target", EntityArgument.player())
-                                .executes(context -> viewCharacters(context, true)))
-                )
                 .then(Commands.literal("switch")
-                        .then(Commands.argument("name", StringArgumentType.string())
-                                .executes(CharacterCommand::switchCharacter))
-                )
+                        .then(Commands.argument("name", StringArgumentType.greedyString())
+                                .executes(context -> switchCharacter(context.getSource(), StringArgumentType.getString(context, "name")))))
                 .then(Commands.literal("create")
-                        .then(Commands.argument("name", StringArgumentType.string())
-                                .then(Commands.argument("age", IntegerArgumentType.integer(1))
-                                        .then(Commands.argument("emoteColor", StringArgumentType.string())
-                                                .then(Commands.argument("description", StringArgumentType.greedyString())
-                                                        .executes(CharacterCommand::createCharacter)))))
-                )
-                .then(Commands.literal("create")
-                        .requires(source -> source.hasPermission(2))
-                        .then(Commands.argument("targets", EntityArgument.entities())
-                                .then(Commands.argument("name", StringArgumentType.string())
-                                        .then(Commands.argument("age", IntegerArgumentType.integer(1))
-                                                .then(Commands.argument("emoteColor", StringArgumentType.string())
-                                                        .then(Commands.argument("description", StringArgumentType.greedyString())
-                                                                .executes(CharacterCommand::createCharacter)))))
-                        )
-                )
-                .then(Commands.literal("remove")
-                        .then(Commands.argument("character", StringArgumentType.string())
-                                .executes(context -> removeCharacter(context, false))
-                                .then(Commands.argument("target", EntityArgument.player())
-                                        .executes(context -> removeCharacter(context, true))))
-                )
-        );
-        dispatcher.register(Commands.literal("switchcharacter")
-                .then(Commands.argument("name", StringArgumentType.string())
-                        .executes(CharacterCommand::switchCharacter)));
+                        .then(Commands.argument("name", StringArgumentType.greedyString())
+                                .executes(context -> createCharacter(context.getSource(), StringArgumentType.getString(context, "name")))))
+                .then(Commands.literal("list")
+                        .executes(CharacterCommand::listCharacters))
+                .then(Commands.literal("info")
+                        .executes(context -> showCharacterInfo(context.getSource()))));
     }
 
-    private static int viewCharacters(CommandContext<CommandSourceStack> context, boolean doesTargetPlayer) throws CommandSyntaxException {
-        ServerPlayer player;
-        if (doesTargetPlayer) {
-            player = EntityArgument.getPlayer(context, "target");
-        } else {
-            player = context.getSource().getPlayerOrException();
+    private static int switchCharacter(@NotNull CommandSourceStack source, String name) {
+        if (!(source.getEntity() instanceof ServerPlayer player)) {
+            source.sendFailure(Component.literal("Must be run by a player"));
+            return 0;
         }
 
-        List<Character> characters = CharacterManager.getInstance().getCharacters(player.getUUID());
-        characters.forEach(character -> context.getSource().sendSystemMessage(Component.literal("Name: " + character.getName() + ", Description: " + character.getDescription())));
+        CharacterManager manager = CharacterManager.get(source.getServer());
+
+        Optional<com.site21.bittermelon.character.Character> targetCharacter = manager.getCharactersByEntityUUID(player.getUUID()).stream()
+                .filter(c -> c.getName().equalsIgnoreCase(name))
+                .findFirst();
+
+        if (targetCharacter.isEmpty()) {
+            source.sendFailure(Component.literal("No character found with name: " + name));
+            return 0;
+        }
+
+        if (targetCharacter.get().equals(manager.getActiveCharacter(player))){
+            source.sendFailure(Component.literal("Already switched to character: " + name));
+            return 0;
+        }
+
+        manager.setActiveCharacter(player, targetCharacter.get().getUUID());
+        source.sendSuccess(() -> Component.literal("Switched to character: " + name), true);
         return 1;
     }
 
-    // does this need a try/catch block?
-    private static int createCharacter(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        String name = StringArgumentType.getString(context, "name");
-        int age = IntegerArgumentType.getInteger(context, "age");
-        String description = StringArgumentType.getString(context, "description");
-        String emoteColor = StringArgumentType.getString(context, "emoteColor");
-        Character character = CommandUtil.getCharacterIgnoreCase(context.getSource().getPlayerOrException(), name);
-
-        if (character != null) {
-            context.getSource().sendFailure(Component.literal("Character '" + character.getName() + "' already exists"));
+    private static int createCharacter(@NotNull CommandSourceStack source, String name) {
+        if (!(source.getEntity() instanceof ServerPlayer player)) {
+            source.sendFailure(Component.literal("Must be run by a player"));
             return 0;
-        } else {
-            character = new Character(context.getSource().getPlayer().getUUID(), name, description, emoteColor);
-            CharacterManager.getInstance().addCharacter(character);
         }
 
-        context.getSource().sendSystemMessage(Component.literal("Character created: " + name));
+        CharacterManager manager = CharacterManager.get(source.getServer());
+        com.site21.bittermelon.character.Character character = new com.site21.bittermelon.character.Character(player.getUUID(), name, Anatomy.HUMAN);
+        manager.addCharacter(character);
+        manager.setActiveCharacter(player, character.getUUID());
+
+        source.sendSuccess(() -> Component.literal("Created and switched to character: " + name), true);
         return 1;
     }
 
-    // TODO: figure out default data for characters
-    private static int switchCharacter(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        String characterName = StringArgumentType.getString(context, "name");
-        ServerPlayer player = context.getSource().getPlayerOrException();
-        Character selectedCharacter = CommandUtil.getCharacterIgnoreCase(player, characterName);
-        Character activeCharacter = CharacterManager.getInstance().getActiveCharacter(player.getUUID());
-
-        if (selectedCharacter == null) {
-            context.getSource().sendFailure(Component.literal("Character not found: " + characterName));
+    private static int listCharacters(@NotNull CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        if (!(source.getEntity() instanceof ServerPlayer player)) {
+            source.sendFailure(Component.literal("Must be run by a player"));
             return 0;
         }
 
-        if (selectedCharacter == activeCharacter) {
-            context.getSource().sendSystemMessage(Component.literal("Character already active: " + characterName));
-            return 1; // someone please tell me if these return 0 or 1
+        CharacterManager manager = CharacterManager.get(source.getServer());
+        com.site21.bittermelon.character.Character activeCharacter = manager.getActiveCharacter(player);
+
+        List<com.site21.bittermelon.character.Character> playerCharacters = manager.getCharactersByEntityUUID(player.getUUID());
+
+        MutableComponent message = Component.literal("Your characters:\n");
+        for (com.site21.bittermelon.character.Character character : playerCharacters) {
+            boolean isActive = activeCharacter != null && character.getUUID().equals(activeCharacter.getUUID());
+            message.append(Component.literal(
+                            (isActive ? "→ " : "  ") + character.getName() + "\n")
+                    .withStyle(isActive ? ChatFormatting.GREEN : ChatFormatting.GRAY));
         }
 
-        // ensures that if there is an active character it is stored in persistent data before saving
-        if (CommandUtil.validateStoredCharacterUUID(player) == 1) {
-            CommandUtil.setActiveLevel(player);
-            CompoundTag playerData = player.saveWithoutId(new CompoundTag());
-//            activeCharacter.savePlayerData(playerData);
-        }
-//
-//        CompoundTag newPlayerData = selectedCharacter.getPlayerData();
-//        if (newPlayerData != null) {
-//            player.load(newPlayerData);
-//
-//            // Sends player to their stored position, if the dimension stored is valid
-//            ServerLevel newLevel = CommandUtil.getActiveLevel(player);
-//            if (newLevel != null) {
-//                player.teleportTo(newLevel, player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
-//            } else {
-//                // implement send to spawn
-//            }
-//
-////            player.refreshDimensions(); // doesn't appear to do anything
-//            player.getInventory().setChanged();
-//            player.resetSentInfo();
-//        } else {
-//            // implement default playerData
-//        }
-
-        CharacterManager.getInstance().setActiveCharacter(player.getUUID(), selectedCharacter);
-        context.getSource().sendSystemMessage(Component.literal("Character switched: " + selectedCharacter.getName()));
-        // retrieve and set player channel
-//        Channel channel = CommandUtil.getActiveChannelFromData(player);
-//        if (channel != null) {
-//            if (ChannelManager.getCharacterActiveChannel(selectedCharacter) != channel) {
-//                CommandUtil.executePlayerCommand(player, "channel switch " + channel.getName());
-//            } else {
-//                // manually sends message for clarity even when command is not called
-//                context.getSource().sendSystemMessage(Component.literal("Now speaking in: " + channel.getName()));
-//            }
-//        }
+        source.sendSuccess(() -> message, false);
         return 1;
-
     }
 
-    private static int removeCharacter(CommandContext<CommandSourceStack> context, boolean doesTargetPlayer) throws CommandSyntaxException {
-        String characterName = StringArgumentType.getString(context, "character");
-        ServerPlayer player;
-        if (doesTargetPlayer) {
-            player = EntityArgument.getPlayer(context, "target");
-        } else {
-            player = context.getSource().getPlayerOrException();
-        }
-
-        Character selectedCharacter = CommandUtil.getCharacterIgnoreCase(player, characterName);
-        Character activeCharacter = CharacterManager.getInstance().getActiveCharacter(player.getUUID());
-
-        if (selectedCharacter == null) {
-            context.getSource().sendFailure(Component.literal("Character not found: " + characterName));
-            return 0;
-        }
-        // replace this return case once there is a way to reset playerData
-        if (selectedCharacter == activeCharacter) {
-            context.getSource().sendFailure(Component.literal("You cannot delete an active character"));
+    private static int showCharacterInfo(@NotNull CommandSourceStack source) {
+        if (!(source.getEntity() instanceof ServerPlayer player)) {
+            source.sendFailure(Component.literal("Must be run by a player"));
             return 0;
         }
 
-        CharacterManager.getInstance().removeCharacter(selectedCharacter);
-        context.getSource().sendSystemMessage(Component.literal("Character removed: " + characterName));
+        CharacterManager manager = CharacterManager.get(source.getServer());
+        Character character = manager.getActiveCharacter(player);
+
+        if (character == null) {
+            source.sendFailure(Component.literal("No active character"));
+            return 0;
+        }
+
+        MutableComponent message = Component.literal("Character Info:\n")
+                .append("Name: " + character.getName() + "\n")
+                .append("Description: " + character.getDescription() + "\n");
+
+        source.sendSuccess(() -> message, false);
         return 1;
     }
 }

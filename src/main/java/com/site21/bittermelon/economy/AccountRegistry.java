@@ -1,56 +1,162 @@
 package com.site21.bittermelon.economy;
 
-
+import com.site21.bittermelon.character.Character;
+import com.site21.bittermelon.character.CharacterManager;
 import com.site21.bittermelon.database.PersonnelEntry;
-import com.site21.bittermelon.util.DataManager;
-import net.neoforged.fml.loading.FMLPaths;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.datafix.DataFixTypes;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.saveddata.SavedData;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class AccountRegistry extends DataManager<Integer, Account> {
-    private static AccountRegistry instance = null;
+public class AccountRegistry extends SavedData {
+    private static AccountRegistry clientInstance;
+    private final Map<Integer, Account> accounts = new HashMap<>();
+    private static final String DATA_NAME = "account_registry";
 
-    protected AccountRegistry() {
-        super(FMLPaths.GAMEDIR.get().resolve("bank_account/").toString(), Account.class);
-        Account account = new Account("test");
-        account.setBalance(100);
-        addData(account.getId(), account);
-    }
-
-    public static synchronized AccountRegistry getInstance() {
-        if (instance == null) {
-            instance = new AccountRegistry();
+    public static AccountRegistry get(@NotNull Level level) {
+        if (level.isClientSide()) {
+            return getClient();
+        } else {
+            ServerLevel overworld = level.getServer().getLevel(Level.OVERWORLD);
+            return overworld.getDataStorage().computeIfAbsent(
+                    new SavedData.Factory<>(
+                            AccountRegistry::new,
+                            AccountRegistry::load,
+                            DataFixTypes.LEVEL
+                    ),
+                    DATA_NAME
+            );
         }
-        return instance;
     }
 
-    public void makeTransfer(int fromAccountID, int toAccountID, float amount, Date timestamp, String description) {
+    public static @NotNull AccountRegistry get(@NotNull MinecraftServer server) {
+        return server.getLevel(Level.OVERWORLD).getDataStorage().computeIfAbsent(
+                new SavedData.Factory<>(
+                        AccountRegistry::new,
+                        AccountRegistry::load,
+                        DataFixTypes.LEVEL
+                ),
+                DATA_NAME
+        );
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private static AccountRegistry getClient() {
+        if (clientInstance == null) {
+            clientInstance = new AccountRegistry();
+        }
+        return clientInstance;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static void clearClientData() {
+        if (clientInstance != null) {
+            clientInstance.accounts.clear();
+        }
+    }
+
+    public Account getAccount(Integer id) {
+        return accounts.get(id);
+    }
+
+    public void addAccount(Account account) {
+        accounts.put(account.getId(), account);
+        setDirty();
+    }
+
+    public void removeAccount(int id) {
+        accounts.remove(id);
+        setDirty();
+    }
+
+    public void updateAccount(int id, Consumer<Account> updater) {
+        Account account = accounts.get(id);
+        if (account != null) {
+            updater.accept(account);
+            setDirty();
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void updateCharacterFromServer(Account account) {
+        accounts.put(account.getId(), account);
+    }
+
+    public void modifyBalance(int id, float amount) {
+        updateAccount(id, account -> account.modifyBalance(amount));
+    }
+
+    public void addTransaction(int id, Transaction transaction) {
+        updateAccount(id, account -> account.addTransaction(transaction));
+    }
+
+    public void makeTransaction(int fromAccountID, int toAccountID, float amount, Date timestamp, String description) {
         UUID id = UUID.randomUUID();
         Transaction transaction = new Transaction(id, fromAccountID, toAccountID, amount, timestamp, description);
-        Account sender = dataMap.get(fromAccountID);
-        Account receiver = dataMap.get(toAccountID);
 
-        sender.modifyBalance(-amount);
-        receiver.modifyBalance(amount);
-        sender.addTransaction(transaction);
-        receiver.addTransaction(transaction);
+        modifyBalance(fromAccountID, -amount);
+        modifyBalance(toAccountID, amount);
+        addTransaction(fromAccountID, transaction);
+        addTransaction(toAccountID, transaction);
     }
 
-    public boolean makeSafeTransfer(List<String> privileges, int fromAccountID, int toAccountID, float amount, Date timestamp, String description) {
-        Account sender = dataMap.get(fromAccountID);
-        if (sender.canAccess(privileges)) {
-            makeTransfer(fromAccountID, toAccountID, amount, timestamp, description);
-        }
-        return false;
+    public static @NotNull AccountRegistry load(@NotNull CompoundTag tag, HolderLookup.Provider lookupProvider) {
+        AccountRegistry registry = new AccountRegistry();
+        ListTag accountList = tag.getList("accounts", ListTag.TAG_COMPOUND);
+
+        accountList.forEach(accountTag -> {
+            Account.CODEC.parse(NbtOps.INSTANCE, accountTag)
+                    .result()
+                    .ifPresent(account -> registry.accounts.put(account.getId(), account));
+        });
+
+        return registry;
+    }
+
+
+    @Override
+    public @NotNull CompoundTag save(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider) {
+        ListTag accountList = new ListTag();
+
+        accounts.values().forEach(account -> {
+            Account.CODEC.encodeStart(NbtOps.INSTANCE, account)
+                    .result()
+                    .ifPresent(accountList::add);
+        });
+
+        tag.put("accounts", accountList);
+        return tag;
+    }
+
+    public Collection<Account> getAccounts() {
+        return new ArrayList<>(accounts.values());
+    }
+
+    public List<Account> getSortedAccounts() {
+        return accounts.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toList());
     }
 
     public List<Account> getPermittedAccounts(@NotNull PersonnelEntry entry) {
         List<String> privileges = entry.getPrivileges();
         List<Account> permittedAccounts = new ArrayList<>();
 
-        for (Account account : dataMap.values()) {
+        for (Account account : accounts.values()) {
             if (account.canAccess(privileges)) {
                 permittedAccounts.add(account);
             }
@@ -61,34 +167,7 @@ public class AccountRegistry extends DataManager<Integer, Account> {
         return permittedAccounts;
     }
 
-    public void makeAccount(String name) {
-        Account account = new Account(name);
-        addData(account.getId(), account);
-    }
-
-    public boolean doesAccountExist(int accountNumber) {
-        return dataMap.containsKey(accountNumber);
-    }
-
-    public Collection<Account> getAccounts() {
-        return dataMap.values();
-    }
-
-    public List<Account> getSortedAccounts() {
-        return dataMap.entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByKey())
-                .map(Map.Entry::getValue)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    protected String getFileName(@NotNull Account data) {
-        return String.valueOf(data.getId());
-    }
-
-    @Override
-    protected Integer getKey(@NotNull Account data) {
-        return data.getId();
+    public boolean doesAccountExist(int id) {
+        return accounts.containsKey(id);
     }
 }

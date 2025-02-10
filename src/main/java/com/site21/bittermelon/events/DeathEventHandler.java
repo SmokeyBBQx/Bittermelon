@@ -24,11 +24,11 @@ public class DeathEventHandler {
 
         if (!entity.level().isClientSide()) {
             if (!(entity instanceof Player)) {
-                CharacterManager characterManager = CharacterManager.getInstance();
-                List<Character> characters = characterManager.getCharacters(entity.getUUID());
+                CharacterManager characterManager = CharacterManager.get(entity.level());
+                List<Character> characters = characterManager.getCharactersByEntityUUID(entity.getUUID());
                 List<Character> charactersToRemove = new ArrayList<>(characters);
                 for (Character character : charactersToRemove) {
-                    characterManager.removeCharacter(character);
+                    characterManager.removeCharacter(character.getUUID());
                 }
             }
         }

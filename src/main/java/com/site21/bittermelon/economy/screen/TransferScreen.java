@@ -2,6 +2,7 @@ package com.site21.bittermelon.economy.screen;
 
 import com.site21.bittermelon.economy.Account;
 import com.site21.bittermelon.economy.AccountRegistry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -35,7 +36,7 @@ public class TransferScreen extends Screen {
         super(Component.literal("Transfer"));
         this.parent = parent;
         this.account = account;
-        accountRegistry = AccountRegistry.getInstance();
+        accountRegistry = AccountRegistry.get(Minecraft.getInstance().level);
     }
 
     @Override
@@ -123,7 +124,7 @@ public class TransferScreen extends Screen {
 
     private void makeTransfer() {
         if (isValidTransfer()) {
-            accountRegistry.makeTransfer(account.getId(), destination, amount, new Date(), description);
+            accountRegistry.makeTransaction(account.getId(), destination, amount, new Date(), description);
         }
     }
 

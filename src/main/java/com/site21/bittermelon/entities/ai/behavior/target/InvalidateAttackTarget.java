@@ -11,7 +11,7 @@ public class InvalidateAttackTarget<E extends LivingEntity> extends net.tslat.sm
         if (entity.level() != target.level())
             return true;
 
-        Character character = CharacterManager.getInstance().getActiveCharacter(target.getUUID());
+        Character character = CharacterManager.get(entity.level()).getActiveCharacter(target);
         if (character != null) {
             return character.getMedicalStats().getConsciousness() <= 0;
         }

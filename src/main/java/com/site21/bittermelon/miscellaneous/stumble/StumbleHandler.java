@@ -46,7 +46,7 @@ public class StumbleHandler {
         Pose pose = entity.getPose();
         if (pose == Pose.SLEEPING || pose == Pose.SWIMMING) return;
 
-        Character character = CharacterManager.getInstance().getActiveCharacter(entity.getUUID());
+        Character character = CharacterManager.get(entity.level()).getActiveCharacter(entity);
         if (character != null) {
             int movement = (int) character.getMedicalStats().getMovement();
             if (movement > 0) {
@@ -141,7 +141,7 @@ public class StumbleHandler {
     }
 
     private static void announceFall(@NotNull LivingEntity entity) {
-        Character character = CharacterManager.getInstance().getActiveCharacter(entity.getUUID());
+        Character character = CharacterManager.get(entity.level()).getActiveCharacter(entity);
         if (character != null) {
             Component component = Component.literal(character.getName() + " falls to the ground.").withColor(character.getEmoteColor());
             sendLocalMessage(entity, 10, component);

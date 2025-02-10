@@ -28,8 +28,8 @@ public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob im
         this.behaviorRandomness = behaviorRandomness;
 
         Character character = initializeCharacter();
-        CharacterManager.getInstance().addCharacter(character);
-        CharacterManager.getInstance().setActiveCharacter(this.uuid, character);
+        CharacterManager.get(level).addCharacter(character);
+        CharacterManager.get(level).setActiveCharacter(this, character.getUUID());
     }
 
     protected BitterMob(EntityType<? extends PathfinderMob> entityType, Level level) {

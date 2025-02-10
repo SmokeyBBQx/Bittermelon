@@ -4,6 +4,7 @@ import com.site21.bittermelon.economy.Account;
 import com.site21.bittermelon.economy.AccountRegistry;
 import com.site21.bittermelon.economy.screen.list.AccountListWidget;
 import com.site21.bittermelon.economy.screen.list.AccountManagerEntry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -43,7 +44,7 @@ public class AccountManagerScreen extends Screen {
                 AccountManagerEntry::new
         );
 
-        for (Account account : AccountRegistry.getInstance().getSortedAccounts()) {
+        for (Account account : AccountRegistry.get(Minecraft.getInstance().level).getSortedAccounts()) {
             accountList.addEntry(account, new AccountManagerEntry(account, this));
         }
 

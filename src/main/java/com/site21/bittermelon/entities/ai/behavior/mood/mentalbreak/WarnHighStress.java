@@ -34,8 +34,8 @@ public class WarnHighStress<E extends LivingEntity> extends ExtendedBehaviour<E>
 
     protected void sendRandomMessage(E entity) {
         if (!messages.isEmpty()) {
-            CharacterManager characterManager = CharacterManager.getInstance();
-            Character character = characterManager.getActiveCharacter(entity.getUUID());
+            CharacterManager characterManager = CharacterManager.get(entity.level());
+            Character character = characterManager.getActiveCharacter(entity);
             if (character == null) return;
 
             String message = this.messages.get(entity.getRandom().nextInt(messages.size()));

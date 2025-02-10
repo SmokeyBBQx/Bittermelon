@@ -38,8 +38,8 @@ public class Groom<E extends Mob & HasBasicNeeds> extends DelayedBehaviour<E> {
         entity.modifyHygiene(-30);
 
         if (messages != null && !messages.isEmpty()) {
-            CharacterManager characterManager = CharacterManager.getInstance();
-            com.site21.bittermelon.character.Character entityCharacter = characterManager.getActiveCharacter(entity.getUUID());
+            CharacterManager characterManager = CharacterManager.get(entity.level());
+            com.site21.bittermelon.character.Character entityCharacter = characterManager.getActiveCharacter(entity);
 
             if (entityCharacter != null) {
                 Random random = new Random();

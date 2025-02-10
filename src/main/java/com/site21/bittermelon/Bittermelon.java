@@ -31,6 +31,9 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
+import java.util.Map;
+import java.util.UUID;
+
 import static com.site21.bittermelon.init.BitterActivity.ACTIVITY;
 import static com.site21.bittermelon.init.BitterAttachmentTypes.ATTACHMENT_TYPES;
 import static com.site21.bittermelon.init.BitterBlockEntities.BLOCK_ENTITY_TYPES;
@@ -122,12 +125,12 @@ public class Bittermelon
 
     @SubscribeEvent
     public void onEntityTick(EntityTickEvent.@NotNull Post event) {
-       Character character = CharacterManager.getInstance().getActiveCharacter(event.getEntity().getUUID());
+       Character character = CharacterManager.get(event.getEntity().level()).getActiveCharacter(event.getEntity());
        if (character != null) character.update();
     }
 
     @SubscribeEvent
-    public void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
+    public void onPlayerJoin(PlayerEvent.@NotNull PlayerLoggedInEvent event) {
         shouldDisplayText = true;
         LoreOpeningOverlay.displayStartTime = System.currentTimeMillis();
         event.getEntity().playNotifySound(LOW_IMPACT.get(), SoundSource.MASTER, 1, 1);

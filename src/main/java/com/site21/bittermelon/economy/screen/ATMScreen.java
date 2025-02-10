@@ -28,7 +28,7 @@ public class ATMScreen extends Screen {
     public ATMScreen(PersonnelEntry user) {
         super(Component.literal("ATM"));
         this.user = user;
-        AccountRegistry accountRegistry = AccountRegistry.getInstance();
+        AccountRegistry accountRegistry = AccountRegistry.get(Minecraft.getInstance().level);
         accounts = accountRegistry.getPermittedAccounts(this.user);
     }
 

@@ -38,8 +38,8 @@ public class PluckAtRandomItem<E extends Chicken> extends ExtendedBehaviour<E> {
 
         if (entity.distanceToSqr(itemEntity) < 1) {
             entity.getNavigation().stop();
-            CharacterManager characterManager = CharacterManager.getInstance();
-            com.site21.bittermelon.character.Character entityCharacter = characterManager.getActiveCharacter(entity.getUUID());
+            CharacterManager characterManager = CharacterManager.get(entity.level());
+            com.site21.bittermelon.character.Character entityCharacter = characterManager.getActiveCharacter(entity);
 
             if (entityCharacter != null) {
                 LocalMessageHelper.sendLocalMessage(entity, 10,

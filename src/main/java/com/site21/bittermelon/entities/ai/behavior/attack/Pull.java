@@ -47,9 +47,9 @@ public class Pull<E extends Mob> extends AnimatableMeleeAttack<E> {
 
         entity.level().playSound(null, entity.getOnPos(), DRAG.get(), SoundSource.AMBIENT);
 
-        CharacterManager characterManager = CharacterManager.getInstance();
-        Character entityCharacter = characterManager.getActiveCharacter(entity.getUUID());
-        Character targetCharacter = characterManager.getActiveCharacter(target.getUUID());
+        CharacterManager characterManager = CharacterManager.get(entity.level());
+        Character entityCharacter = characterManager.getActiveCharacter(entity);
+        Character targetCharacter = characterManager.getActiveCharacter(target);
 
         if (entityCharacter != null && targetCharacter != null) {
             int textColor = entityCharacter.getEmoteColor();

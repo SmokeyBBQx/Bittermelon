@@ -51,9 +51,9 @@ public class YankItem<E extends Mob> extends AnimatableMeleeAttack<E> {
         }
         target.setItemSlot(slot, Items.AIR.getDefaultInstance());
 
-        CharacterManager characterManager = CharacterManager.getInstance();
-        Character entityCharacter = characterManager.getActiveCharacter(attacker.getUUID());
-        Character targetCharacter = characterManager.getActiveCharacter(target.getUUID());
+        CharacterManager characterManager = CharacterManager.get(attacker.level());
+        Character entityCharacter = characterManager.getActiveCharacter(attacker);
+        Character targetCharacter = characterManager.getActiveCharacter(target);
 
         if (entityCharacter != null && targetCharacter != null) {
             int textColor = entityCharacter.getEmoteColor();

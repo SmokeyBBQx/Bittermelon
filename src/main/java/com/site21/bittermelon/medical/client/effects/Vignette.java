@@ -31,7 +31,7 @@ public class Vignette {
         Player player = Minecraft.getInstance().player;
         if (player == null) return;
 
-        Character character = CharacterManager.getInstance().getActiveCharacter(player.getUUID());
+        Character character = CharacterManager.get(player.level()).getActiveCharacter(player);
         if (character == null) return;
 
         MedicalStats medicalStats = character.getMedicalStats();

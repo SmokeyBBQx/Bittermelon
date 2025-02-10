@@ -92,8 +92,8 @@ public class GenericInteraction<E extends LivingEntity & Socializable> extends E
 
         if (entity.closerThan(this.partner, closeEnoughDist.applyAsInt(entity, partner)) && entity.tickCount == this.socializeTick) {
             entity.modifySocialization(-5);
-            CharacterManager characterManager = CharacterManager.getInstance();
-            Character partnerCharacter = characterManager.getActiveCharacter(partner.getUUID());
+            CharacterManager characterManager = CharacterManager.get(entity.level());
+            Character partnerCharacter = characterManager.getActiveCharacter(partner);
 
             if (partnerCharacter != null) {
                 Relationship entityPartnerRelationship = entity.getRelationship(partnerCharacter);
@@ -104,7 +104,7 @@ public class GenericInteraction<E extends LivingEntity & Socializable> extends E
 
             if (partner instanceof Socializable socializable) {
                 socializable.modifySocialization(-5);
-                Character entityCharacter = characterManager.getActiveCharacter(entity.getUUID());
+                Character entityCharacter = characterManager.getActiveCharacter(entity);
                 if (entityCharacter != null) {
                     Relationship partnerEntityRelationship = socializable.getRelationship(entityCharacter);
                     if (partnerEntityRelationship != null) {
@@ -137,9 +137,9 @@ public class GenericInteraction<E extends LivingEntity & Socializable> extends E
 
     protected void sendRandomMessage(E entity) {
         if (messages != null && partner != null && !messages.isEmpty()) {
-            CharacterManager characterManager = CharacterManager.getInstance();
-            Character entityCharacter = characterManager.getActiveCharacter(entity.getUUID());
-            Character partnerCharacter = characterManager.getActiveCharacter(partner.getUUID());
+            CharacterManager characterManager = CharacterManager.get(entity.level());
+            Character entityCharacter = characterManager.getActiveCharacter(entity);
+            Character partnerCharacter = characterManager.getActiveCharacter(partner);
 
             if (entityCharacter != null && partnerCharacter != null) {
                 Random random = new Random();

@@ -27,8 +27,8 @@ public record OpenATMScreen(int userID) implements CustomPacketPayload {
             OpenATMScreen::new
     );
 
-    public void handle(IPayloadContext ctx) {
-        PersonnelEntry entry = PersonnelRegistry.getInstance().getData(userID);
+    public void handle(@NotNull IPayloadContext ctx) {
+        PersonnelEntry entry = PersonnelRegistry.get(ctx.player().level()).getEntry(userID());
         if (entry != null) {
             Minecraft.getInstance().setScreen(new ATMScreen(entry));
         }

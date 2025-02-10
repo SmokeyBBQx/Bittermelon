@@ -1,9 +1,12 @@
 package com.site21.bittermelon.character;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.site21.bittermelon.medical.blood.BloodType;
 import com.site21.bittermelon.medical.factory.Anatomy;
 import com.site21.bittermelon.medical.factory.HumanFactory;
 import com.site21.bittermelon.medical.medicalstats.MedicalStats;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.chat.TextColor;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,6 +14,19 @@ import java.util.EnumMap;
 import java.util.UUID;
 
 public class Character {
+    public static final Codec<Character> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            UUIDUtil.CODEC.fieldOf("uuid").forGetter(Character::getUUID),
+            UUIDUtil.CODEC.fieldOf("entityUUID").forGetter(Character::getEntityUUID),
+            Codec.STRING.fieldOf("name").forGetter(Character::getName),
+            Codec.STRING.fieldOf("description").forGetter(Character::getDescription),
+            Codec.INT.fieldOf("emoteColor").forGetter(Character::getEmoteColor)
+    ).apply(instance, (uuid, entityUUID, name, description, emoteColor) -> {
+        Character character = new Character(entityUUID, name, Anatomy.HUMAN);
+        character.setDescription(description);
+        character.setEmoteColor(emoteColor);
+        return character;
+    }));
+
     private final UUID uuid;
     private final UUID entityUUID;
     private String name;
@@ -72,6 +88,9 @@ public class Character {
     }
 
     public MedicalStats getMedicalStats() {
+        if (medicalStats == null) {
+            return Anatomy.HUMAN.getFactory().build(BloodType.O_MINUS, this);
+        }
         return medicalStats;
     }
 

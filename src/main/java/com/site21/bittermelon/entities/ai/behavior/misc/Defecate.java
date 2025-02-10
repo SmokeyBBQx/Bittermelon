@@ -21,8 +21,8 @@ public class Defecate<E extends Mob & HasBasicNeeds> extends ExtendedBehaviour<E
     }
 
     protected void start(@NotNull E entity) {
-        CharacterManager characterManager = CharacterManager.getInstance();
-        Character entityCharacter = characterManager.getActiveCharacter(entity.getUUID());
+        CharacterManager characterManager = CharacterManager.get(entity.level());
+        Character entityCharacter = characterManager.getActiveCharacter(entity);
 
         if (entityCharacter != null) {
             int textColor = entityCharacter.getEmoteColor();

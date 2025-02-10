@@ -30,9 +30,9 @@ public record OpenCPRScreen(UUID targetCharacterUUID) implements CustomPacketPay
     );
 
     public void handle(IPayloadContext ctx) {
-        Character character = CharacterManager.getInstance().getActiveCharacter(targetCharacterUUID);
-        if (character != null) {
-            Minecraft.getInstance().setScreen(new CPRScreen(character));
-        }
+//        Character character = CharacterManager.get(Minecraft.getInstance().level).getActiveCharacter(targetCharacterUUID);
+//        if (character != null) {
+//            Minecraft.getInstance().setScreen(new CPRScreen(character));
+//        }
     }
 }
