@@ -1,0 +1,8 @@
+{
+  "values": [
+    "#minecraft:leaves",
+    "bittermelon:dirty_floor",
+    "bittermelon:fluid"
+  ],
+  "replace": false
+}

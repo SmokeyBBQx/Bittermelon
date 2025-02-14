@@ -1,114 +1,149 @@
 package com.site21.bittermelon.character;
 
-import com.site21.bittermelon.util.DataManager;
-import net.neoforged.fml.loading.FMLPaths;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.datafix.DataFixTypes;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.saveddata.SavedData;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
-public class CharacterManager extends DataManager<UUID, Character> {
-    private static CharacterManager instance = null;
-    private final Map<UUID, List<Character>> UUIDToCharacter = new ConcurrentHashMap<>();
-    private static final Map<UUID, Character> activeCharacters = new HashMap<>();
+import static com.site21.bittermelon.init.BitterAttachmentTypes.ACTIVE_CHARACTER;
 
+public class CharacterManager extends SavedData {
+    private static CharacterManager clientInstance;
+    private final Map<UUID, Character> characters = new HashMap<>();
+    private static final String DATA_NAME = "character_registry";
 
-    protected CharacterManager() {
-        super(FMLPaths.GAMEDIR.get().resolve("characters/").toString(), Character.class);
-        mapEntitiesToCharacters();
-    }
-
-    // Get the singleton instance of CharacterManager
-    public static synchronized CharacterManager getInstance() {
-        if (instance == null) {
-            instance = new CharacterManager();
+    public static CharacterManager get(@NotNull Level level) {
+        if (level.isClientSide()) {
+            return getClient();
+        } else {
+            ServerLevel overworld = level.getServer().getLevel(Level.OVERWORLD);
+            return overworld.getDataStorage().computeIfAbsent(
+                    new SavedData.Factory<>(
+                            CharacterManager::new,
+                            CharacterManager::load,
+                            DataFixTypes.LEVEL
+                    ),
+                    DATA_NAME
+            );
         }
-        return instance;
     }
 
-    // For adding data and saving it, use addCharacter instead for adding new characters
+    public static @NotNull CharacterManager get(@NotNull MinecraftServer server) {
+        return server.getLevel(Level.OVERWORLD).getDataStorage().computeIfAbsent(
+                new SavedData.Factory<>(
+                        CharacterManager::new,
+                        CharacterManager::load,
+                        DataFixTypes.LEVEL
+                ),
+                DATA_NAME
+        );
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private static CharacterManager getClient() {
+        if (clientInstance == null) {
+            clientInstance = new CharacterManager();
+        }
+        return clientInstance;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public static void clearClientData() {
+        if (clientInstance != null) {
+            clientInstance.characters.clear();
+        }
+    }
+
+    public void setActiveCharacter(Entity entity, UUID characterUUID) {
+        if (characters.containsKey(characterUUID)) {
+            entity.setData(ACTIVE_CHARACTER.get(), characterUUID);
+        }
+    }
+
+    public Character getActiveCharacter(@NotNull Entity entity) {
+        UUID characterUUID = entity.getData(ACTIVE_CHARACTER.get());
+
+        return characters.get(characterUUID);
+    }
+
+    public Character getCharacter(UUID uuid) {
+        return characters.get(uuid);
+    }
+
+    public void addCharacter(Character character) {
+        characters.put(character.getUUID(), character);
+        setDirty();
+    }
+
+    public void removeCharacter(UUID uuid) {
+        characters.remove(uuid);
+        setDirty();
+    }
+
+    public void updateCharacter(UUID uuid, Consumer<Character> updater) {
+        Character character = characters.get(uuid);
+        if (character != null) {
+            updater.accept(character);
+            setDirty();
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void updateCharacterFromServer(Character character) {
+        characters.put(character.getUUID(), character);
+    }
+
+    public static @NotNull CharacterManager load(@NotNull CompoundTag tag, HolderLookup.Provider lookupProvider) {
+        CharacterManager manager = new CharacterManager();
+
+        ListTag characterList = tag.getList("characters", ListTag.TAG_COMPOUND);
+        characterList.forEach(characterTag -> {
+            Character.CODEC.parse(NbtOps.INSTANCE, characterTag)
+                    .result()
+                    .ifPresent(character -> manager.characters.put(character.getUUID(), character));
+        });
+
+        return manager;
+    }
+
     @Override
-    public void addData(UUID characterUUID, Character character) {
-        saveData(character);
-        dataMap.put(characterUUID, character);
+    public @NotNull CompoundTag save(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider) {
+        ListTag characterList = new ListTag();
+        characters.values().forEach(character -> {
+            Character.CODEC.encodeStart(NbtOps.INSTANCE, character)
+                    .result()
+                    .ifPresent(characterList::add);
+        });
+        tag.put("characters", characterList);
+
+        return tag;
     }
 
-    private void mapEntitiesToCharacters() {
-        for (Character character : dataMap.values()) {
-            UUID entityUUID = character.getEntityUUID();
-            if (entityUUID != null) {
-                UUIDToCharacter.computeIfAbsent(entityUUID, k -> new ArrayList<>()).add(character);
-            } else {
-                System.err.println("Warning: Character found with null entityUUID: " + character.getUUID());
+    public void updateAll() {
+        characters.values().forEach(Character::update);
+    }
+
+    public List<Character> getCharactersByEntityUUID(UUID entityUUID) {
+        List<Character> characterList = new ArrayList<>();
+
+        for (Character character : characters.values()) {
+            if (character.getEntityUUID().equals(entityUUID)) {
+                characterList.add(character);
             }
         }
-    }
 
-    public void addCharacter(@NotNull Character character) {
-        UUIDToCharacter.computeIfAbsent(character.getEntityUUID(), k -> new ArrayList<>()).add(character);
-        addData(character.getUUID(), character);
-    }
-
-    /**
-     * Deletes the directory the character corresponds to and removes it from character maps
-     * @param character Character to be removed
-     */
-    public void removeCharacter(@NotNull Character character) {
-        deleteData(character.getUUID());
-        List<Character> characterList = UUIDToCharacter.get(character.getEntityUUID());
-        if (characterList != null) {
-            characterList.remove(character);
-        }
-        if (activeCharacters.containsValue(character)) {
-            activeCharacters.remove(character.getEntityUUID(), character);
-        }
-    }
-
-    public void setActiveCharacter(UUID entityUUID, Character character) {
-        activeCharacters.put(entityUUID, character);
-    }
-
-    public void setActiveCharacter(UUID entityUUID, UUID characterUUID) {
-        activeCharacters.put(entityUUID, getCharacter(characterUUID));
-    }
-
-    @Nullable
-    public Character getActiveCharacter(UUID entityUUID) {
-        return activeCharacters.get(entityUUID);
-    }
-
-    public List<Character> getCharacters(UUID entityUUID) {
-        return UUIDToCharacter.getOrDefault(entityUUID, new ArrayList<>());
-    }
-
-    public Character getCharacter(UUID characterUUID) {
-        return getData(characterUUID);
-    }
-
-    public Map<UUID, Character> getCharacterMap() {
-        return getDataMap();
-    }
-
-    public static Map<UUID, Character> getActiveCharacters() {
-        return activeCharacters;
-    }
-
-    public void updateData(Character character) {
-        saveData(character);
-    }
-
-    public void updateData(UUID characterUUID) {
-        saveData(getCharacter(characterUUID));
-    }
-
-    @Override
-    protected String getFileName(@NotNull Character data) {
-        return data.getUUID().toString();
-    }
-
-    @Override
-    protected UUID getKey(@NotNull Character data) {
-        return data.getUUID();
+        return characterList;
     }
 }

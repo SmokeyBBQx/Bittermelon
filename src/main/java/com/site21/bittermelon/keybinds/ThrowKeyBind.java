@@ -46,7 +46,7 @@ public class ThrowKeyBind {
             player.level().addFreshEntity(projectile);
             heldItem.shrink(1);
 
-            Character character = CharacterManager.getInstance().getActiveCharacter(player.getUUID());
+            Character character = CharacterManager.get(level).getActiveCharacter(player);
             if (character != null) {
                 Component component = Component.literal(character.getName() + " throws a " + heldItem.getHoverName().getString())
                         .setStyle(Style.EMPTY.withColor(character.getEmoteColor()));

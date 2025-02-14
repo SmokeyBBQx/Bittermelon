@@ -32,9 +32,9 @@ public class EvaluateDanger<E extends LivingEntity> extends GroupBehaviour<E> {
     protected @Nullable ExtendedBehaviour<? super E> pickBehaviour(ServerLevel level, E entity, long gameTime, SBLShufflingList<ExtendedBehaviour<? super E>> extendedBehaviours) {
         if (this.target == null) return null;
 
-        CharacterManager characterManager = CharacterManager.getInstance();
-        com.site21.bittermelon.character.Character entityCharacter = characterManager.getActiveCharacter(entity.getUUID());
-        Character targetCharacter = characterManager.getActiveCharacter(target.getUUID());
+        CharacterManager characterManager = CharacterManager.get(entity.level());
+        com.site21.bittermelon.character.Character entityCharacter = characterManager.getActiveCharacter(entity);
+        Character targetCharacter = characterManager.getActiveCharacter(target);
 
         if (entityCharacter == null || targetCharacter == null) return null;
 

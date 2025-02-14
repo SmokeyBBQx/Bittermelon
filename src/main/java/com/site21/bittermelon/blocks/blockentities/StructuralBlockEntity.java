@@ -33,13 +33,13 @@ public class StructuralBlockEntity extends BlockEntity {
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.putFloat("BreakProgress", breakProgress);
+        tag.putFloat("breakProgress", breakProgress);
     }
 
     @Override
     public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.loadAdditional(tag, registries);
-        breakProgress = tag.getFloat("BreakProgress");
+        breakProgress = tag.getFloat("breakProgress");
     }
 
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
@@ -55,7 +55,7 @@ public class StructuralBlockEntity extends BlockEntity {
     @Override
     public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
         CompoundTag tag = new CompoundTag();
-        tag.putFloat("BreakProgress", breakProgress);
+        tag.putFloat("breakProgress", breakProgress);
         return tag;
     }
 

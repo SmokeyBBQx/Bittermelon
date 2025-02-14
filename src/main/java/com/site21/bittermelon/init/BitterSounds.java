@@ -42,4 +42,10 @@ public class BitterSounds {
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "entity.drag")));
     public static final DeferredHolder<SoundEvent, SoundEvent> LOW_IMPACT = SOUND_EVENTS.register("misc.low_impact",
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "misc.low_impact")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> SCANNER_BEEP = SOUND_EVENTS.register("misc.scanner_beep",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "misc.scanner_beep")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> BOOT_UP_TUNE = SOUND_EVENTS.register("machine.boot_up_tune",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "machine.boot_up_tune")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> TERMINAL_HUM = SOUND_EVENTS.register("machine.terminal_hum",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "machine.terminal_hum")));
 }

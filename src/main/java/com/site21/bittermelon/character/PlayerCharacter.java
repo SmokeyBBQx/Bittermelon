@@ -27,13 +27,13 @@ public class PlayerCharacter extends Character {
     }
 
     public void savePlayerData(CompoundTag data) {
-        try {
-            NbtIo.writeCompressed(data, new File(FMLPaths.GAMEDIR.get() + "/characters/" + this.getUUID().toString() + "/playerData.dat").toPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("There is an error with savePlayerData");
-        }
-        CharacterManager.getInstance().updateData(this);
+//        try {
+//            NbtIo.writeCompressed(data, new File(FMLPaths.GAMEDIR.get() + "/characters/" + this.getUUID().toString() + "/playerData.dat").toPath());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            System.err.println("There is an error with savePlayerData");
+//        }
+//        CharacterManager.get().updateData(this);
     }
 
     public CompoundTag getPlayerData() {

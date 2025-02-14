@@ -55,7 +55,7 @@ public class IncisionMinigame extends MedicalMinigame {
     public void tick() {
         super.tick();
 
-        Character playerCharacter = CharacterManager.getInstance().getActiveCharacter(Minecraft.getInstance().player.getUUID());
+        Character playerCharacter = CharacterManager.get(Minecraft.getInstance().level).getActiveCharacter(Minecraft.getInstance().player);
 
         if (playerCharacter != null) {
             shakeTimer++;

@@ -2,7 +2,7 @@ package com.site21.bittermelon.keybinds;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.database.PersonnelEntry;
-import com.site21.bittermelon.economy.screen.ATMScreen;
+import com.site21.bittermelon.economy.client.ATMScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;

@@ -30,7 +30,7 @@ public class DamageEventHandler {
     @SubscribeEvent
     public static void OnIncomingDamage(@NotNull LivingIncomingDamageEvent event) {
         LivingEntity target = event.getEntity();
-        Character character = CharacterManager.getInstance().getActiveCharacter(target.getUUID());
+        Character character = CharacterManager.get(target.level()).getActiveCharacter(target);
         if (character == null) return;
         DamageSource source = event.getSource();
 

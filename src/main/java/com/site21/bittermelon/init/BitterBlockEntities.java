@@ -1,9 +1,7 @@
 package com.site21.bittermelon.init;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.blocks.blockentities.BoxBlockEntity;
-import com.site21.bittermelon.blocks.blockentities.FluidBlockEntity;
-import com.site21.bittermelon.blocks.blockentities.StructuralBlockEntity;
+import com.site21.bittermelon.blocks.blockentities.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -22,4 +20,10 @@ public class BitterBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StructuralBlockEntity>> STRUCTURAL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("structural_block_entity",
             () -> BlockEntityType.Builder.of(StructuralBlockEntity::new, STRUCTURAL_BLOCK.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ContainmentPanelBlockEntity>> CONTAINMENT_PANEL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("containment_panel_block_entity",
+            () -> BlockEntityType.Builder.of(ContainmentPanelBlockEntity::new, CONTAINMENT_PANEL.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ThermometerBlockEntity>> THERMOMETER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("thermometer_block_entity",
+            () -> BlockEntityType.Builder.of(ThermometerBlockEntity::new, THERMOMETER.get()).build(null));
 }

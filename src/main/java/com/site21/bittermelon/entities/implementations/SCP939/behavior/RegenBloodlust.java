@@ -31,7 +31,7 @@ public class RegenBloodlust<E extends SCP939> extends ExtendedBehaviour<E> {
         if (target == null)
             return;
 
-        Character targetCharacter = CharacterManager.getInstance().getActiveCharacter(target.getUUID());
+        Character targetCharacter = CharacterManager.get(entity.level()).getActiveCharacter(target);
         if (targetCharacter == null) return;
 
         if (targetCharacter.getMedicalStats().getConsciousness() < 0.1f) {

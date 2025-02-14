@@ -7,13 +7,11 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public record ThrowItem() implements CustomPacketPayload {
     public static final Type<ThrowItem> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "throw_item"));
 
-    @Contract(pure = true)
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {
         return TYPE;

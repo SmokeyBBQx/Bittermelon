@@ -24,7 +24,7 @@ public class CPRCommand {
 
     private static int performCPR(@NotNull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         Entity target = EntityArgument.getEntity(context, "target");
-        Character targetCharacter = CharacterManager.getInstance().getActiveCharacter(target.getUUID());
+        Character targetCharacter = CharacterManager.get(target.level()).getActiveCharacter(target);
 
         if (targetCharacter == null) return 0;
 

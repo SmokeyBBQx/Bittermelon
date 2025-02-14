@@ -164,7 +164,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
     }
 
     protected Character initializeCharacter() {
-        return new Character(this.uuid, "ContainmentChamber-939-" + getRandom().nextInt(1, 24), Anatomy.HUMAN);
+        return new Character(this.uuid, "SCP-939-" + getRandom().nextInt(1, 24), Anatomy.HUMAN);
     }
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {
@@ -325,7 +325,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
         if (victims.isEmpty()) return null;
 
         List<Character> validVictims = victims.stream()
-                .map(CharacterManager.getInstance()::getCharacter)
+                .map(CharacterManager.get(level())::getCharacter)
                 .filter(Objects::nonNull)
                 .toList();
 

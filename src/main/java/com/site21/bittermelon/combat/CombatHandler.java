@@ -29,9 +29,9 @@ public class CombatHandler {
     public static void handleAttack(LivingEntity attacker, LivingEntity target, AttackTemplate attackTemplate) {
         if (target == null) return;
 
-        CharacterManager characterManager = CharacterManager.getInstance();
-        Character attackerCharacter = characterManager.getActiveCharacter(attacker.getUUID());
-        Character targetCharacter = characterManager.getActiveCharacter(target.getUUID());
+        CharacterManager characterManager = CharacterManager.get(attacker.level());
+        Character attackerCharacter = characterManager.getActiveCharacter(attacker);
+        Character targetCharacter = characterManager.getActiveCharacter(target);
 
         if (attackerCharacter == null || targetCharacter == null) return;
 

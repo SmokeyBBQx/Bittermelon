@@ -5,6 +5,8 @@ import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.atmosphere.AtmosInstance;
+import com.site21.bittermelon.atmosphere.AtmosUtils;
 import com.site21.bittermelon.blocks.blockentities.FluidBlockEntity;
 import com.site21.bittermelon.items.containers.substance.FluidContainerItem;
 import com.site21.bittermelon.substance.Substance;
@@ -82,28 +84,37 @@ public class SubstanceCommand {
                         .then(Commands.literal("show")
                                 .executes(context -> showContainerContents(context.getSource()))
                         )
-                        .then(Commands.literal("atmos")
-                                .then(Commands.literal("add")
-                                        .then(Commands.argument("substance", StringArgumentType.word())
-                                                .then(Commands.argument("amount", IntegerArgumentType.integer())
-                                                        .executes(context -> addSubstanceAtmos(
-                                                                        context.getSource(),
-                                                                        StringArgumentType.getString(context, "substance"),
-                                                                        IntegerArgumentType.getInteger(context, "amount")
-                                                                )
+                )
+                .then(Commands.literal("atmos")
+                        .then(Commands.literal("add")
+                                .then(Commands.argument("substance", StringArgumentType.word())
+                                        .then(Commands.argument("amount", IntegerArgumentType.integer())
+                                                .executes(context -> addSubstanceAtmos(
+                                                                context.getSource(),
+                                                                StringArgumentType.getString(context, "substance"),
+                                                                IntegerArgumentType.getInteger(context, "amount")
                                                         )
                                                 )
                                         )
                                 )
-                                .then(Commands.literal("show")
-                                        .executes(context -> showAtmosContents(context.getSource()))
+                        )
+                        .then(Commands.literal("temperature")
+                                .then(Commands.argument("temperature", FloatArgumentType.floatArg())
+                                        .executes(context -> addTemperatureAtmos(
+                                                        context.getSource(),
+                                                        FloatArgumentType.getFloat(context, "temperature")
+                                                )
+                                        )
                                 )
+                        )
+                        .then(Commands.literal("show")
+                                .executes(context -> showAtmosContents(context.getSource()))
                         )
                 )
         );
     }
 
-    private static int addTemperatureFluid(CommandSourceStack source, float amount) {
+    private static int addTemperatureFluid(@NotNull CommandSourceStack source, float amount) {
         BlockPos pos = BlockPos.containing(source.getPosition());
         BlockEntity blockEntity = source.getLevel().getBlockEntity(pos);
 
@@ -117,12 +128,62 @@ public class SubstanceCommand {
         return 1;
     }
 
-    private static int showAtmosContents(CommandSourceStack source) {
-        return 0;
+    private static int showAtmosContents(@NotNull CommandSourceStack source) {
+        BlockPos pos = BlockPos.containing(source.getPosition());
+        AtmosInstance instance = AtmosUtils.getAtmosInstanceAt(source.getLevel(), pos);
+
+        if (instance == null) {
+            source.sendFailure(Component.literal("No atmosphere found at current position."));
+            return 0;
+        }
+
+        source.sendSuccess(() -> Component.literal("Temperature: " + instance.getTemperature()), true);
+
+        if (instance.getGasses().isEmpty()) {
+            source.sendSuccess(() -> Component.literal("No gases present"), true);
+        } else {
+            source.sendSuccess(() -> Component.literal("Gases:"), true);
+            for (SubstanceStack gas : instance.getGasses()) {
+                source.sendSuccess(() -> Component.literal(" - " + gas.getSubstance().getName() + ": " + gas.getAmount()), true);
+            }
+        }
+
+        return 1;
     }
 
-    private static int addSubstanceAtmos(CommandSourceStack source, String substance, int amount) {
-        return 0;
+    private static int addSubstanceAtmos(@NotNull CommandSourceStack source, String substanceName, int amount) {
+        BlockPos pos = BlockPos.containing(source.getPosition());
+        Optional<Substance> optionalSubstance = SUBSTANCE_REGISTRY.getOptional(
+                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, substanceName)
+        );
+
+        if (optionalSubstance.isEmpty()) {
+            source.sendFailure(Component.literal("Substance not found in registry: " + substanceName));
+            return 0;
+        }
+
+        Substance substance = optionalSubstance.get();
+        SubstanceStack stack = new SubstanceStack(substance, amount);
+
+        AtmosUtils.releaseGas(source.getLevel(), pos, stack);
+        source.sendSuccess(() -> Component.literal(String.format("Added %d %s to the atmosphere",
+                amount, stack.getSubstance().getName())), true);
+
+        return showAtmosContents(source);
+    }
+
+    private static int addTemperatureAtmos(@NotNull CommandSourceStack source, float temperature) {
+        BlockPos pos = BlockPos.containing(source.getPosition());
+        AtmosInstance instance = AtmosUtils.getAtmosInstanceAt(source.getLevel(), pos);
+
+        if (instance == null) {
+            source.sendFailure(Component.literal("No atmosphere found at current position."));
+            return 0;
+        }
+
+        instance.setTemperature(temperature);
+        source.sendSuccess(() -> Component.literal("Set atmosphere temperature to: " + temperature), true);
+        return 1;
     }
 
     private static int showContainerContents(CommandSourceStack source) {
