@@ -3,7 +3,7 @@ package com.site21.bittermelon.networking.client;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.database.PersonnelEntry;
 import com.site21.bittermelon.database.PersonnelRegistry;
-import com.site21.bittermelon.economy.screen.ATMScreen;
+import com.site21.bittermelon.economy.client.ATMScreen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.codec.ByteBufCodecs;

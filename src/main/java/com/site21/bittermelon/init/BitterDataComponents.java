@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.items.containers.item.ItemContainerContents;
 import com.site21.bittermelon.items.containers.substance.SubstanceContents;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -61,5 +62,15 @@ public class BitterDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> ID_NUMBER = DATA_COMPONENTS.registerComponentType(
             "id_number",
             builder -> builder.persistent(ExtraCodecs.POSITIVE_INT).networkSynchronized(ByteBufCodecs.VAR_INT)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<BlockPos>> POSITION_1 = DATA_COMPONENTS.registerComponentType(
+            "position_1",
+            builder -> builder.persistent(BlockPos.CODEC).networkSynchronized(BlockPos.STREAM_CODEC)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<BlockPos>> POSITION_2 = DATA_COMPONENTS.registerComponentType(
+            "position_2",
+            builder -> builder.persistent(BlockPos.CODEC).networkSynchronized(BlockPos.STREAM_CODEC)
     );
 }

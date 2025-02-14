@@ -1,5 +1,7 @@
 package com.site21.bittermelon.medical.medicalstats;
 
+import com.site21.bittermelon.atmosphere.AtmosInstance;
+import com.site21.bittermelon.atmosphere.AtmosUtils;
 import com.site21.bittermelon.blocks.FluidBlock;
 import com.site21.bittermelon.blocks.blockentities.FluidBlockEntity;
 import com.site21.bittermelon.character.Character;
@@ -42,6 +44,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import static com.site21.bittermelon.init.BitterBlocks.FLUID;
 import static com.site21.bittermelon.init.Substances.LIQUID_BLOOD;
+import static com.site21.bittermelon.init.Substances.LIQUID_WATER;
 import static net.minecraft.world.level.block.Block.UPDATE_ALL_IMMEDIATE;
 
 public class MedicalStats {
@@ -228,8 +231,11 @@ public class MedicalStats {
 
     private void updateCardiopulmonary() {
         vitalSigns.modifyBloodVolume(getCirculation() / 100 - stats.get(FunctionType.BLEED) / 20);
-        vitalSigns.modifyOxygenSaturation((stats.get(FunctionType.RESPIRATORY) / 100) * stats.get(FunctionType.BRAIN_VITALS) - 0.01f);
+        vitalSigns.modifyOxygenSaturation((stats.get(FunctionType.RESPIRATORY) / 100) * stats.get(FunctionType.BRAIN_VITALS) * getAirQuality() - 0.01f);
 
+        if (!entity.level().isClientSide) {
+            AtmosUtils.releaseGas(entity.level(), entity.getOnPos(), new SubstanceStack(LIQUID_WATER.get(), 0.001f));
+        }
         handleGasping();
 
         if (vitalSigns.bloodVolume < 60 || vitalSigns.oxygenSaturation < 80) {
@@ -244,6 +250,22 @@ public class MedicalStats {
         }
 
         // TODO: Random heart state depending on heart health
+    }
+
+    private float getAirQuality() {
+        if (!entity.level().isClientSide) {
+            AtmosInstance atmos = AtmosUtils.getAtmosInstanceAt(entity.level(), entity.getOnPos());
+            if (atmos != null) {
+                List<SubstanceStack> gasses = atmos.getGasses();
+                for (SubstanceStack stack : gasses) {
+                    if (Objects.equals(stack.getSubstance().getName(), "gaseous_oxygen")) {
+                        float amount = stack.getAmount();
+                        return amount / 20;
+                    }
+                }
+            }
+        }
+        return 0;
     }
 
     private void checkForHeartArrhythmia(Compartment compartment) {

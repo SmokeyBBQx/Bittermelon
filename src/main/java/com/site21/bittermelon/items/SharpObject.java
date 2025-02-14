@@ -15,6 +15,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 
@@ -39,7 +40,7 @@ public interface SharpObject extends MedicalItem {
     }
 
     @Override
-    default void finishAction(Compartment compartment, MedicalStats medicalStats, Character character, float quality, ItemStack item) {
+    default void finishAction(Compartment compartment, @NotNull MedicalStats medicalStats, @NotNull Character character, float quality, ItemStack item) {
         LivingEntity entity = ServerUtil.getLivingEntity(character.getEntityUUID());
         Cut cut = new Cut("Scalpel Cut", compartment, (int) (1 + 100 - quality * 100), character, entity);
         cut.reveal();

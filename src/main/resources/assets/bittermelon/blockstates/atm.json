@@ -1,7 +1,19 @@
 {
   "variants": {
-    "": {
+    "facing=north": {
       "model": "bittermelon:block/atm"
+    },
+    "facing=east": {
+      "model": "bittermelon:block/atm",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "bittermelon:block/atm",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "bittermelon:block/atm",
+      "y": 270
     }
   }
 }

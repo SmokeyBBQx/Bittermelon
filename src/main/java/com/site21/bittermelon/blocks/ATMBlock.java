@@ -55,6 +55,7 @@ public class ATMBlock extends Block {
         for(Direction direction : adirection) {
             if (direction.getAxis().isHorizontal()) {
                 Direction direction1 = direction.getOpposite();
+                assert blockstate != null;
                 blockstate = blockstate.setValue(FACING, direction1);
                 if (!blockgetter.getBlockState(blockpos.relative(direction)).canBeReplaced(context)) {
                     return blockstate;

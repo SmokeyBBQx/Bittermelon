@@ -89,6 +89,24 @@
       "bittermelon:misc/low_impact"
     ]
   },
+  "misc.scanner_beep": {
+    "category": "players",
+    "sounds": [
+      "bittermelon:misc/scanner_beep"
+    ]
+  },
+  "machine.boot_up_tune": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:machine/boot_up_tune"
+    ]
+  },
+  "machine.terminal_hum": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:machine/terminal_hum"
+    ]
+  },
   "container.toolbox_open": {
     "category": "neutral",
     "sounds": [

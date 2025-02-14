@@ -1,0 +1,6 @@
+{
+  "parent": "bittermelon:block/base/indented_small_block",
+  "textures": {
+    "texture": "bittermelon:block/containment_panel"
+  }
+}

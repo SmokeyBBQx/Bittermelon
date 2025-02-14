@@ -78,7 +78,7 @@ public class StumbleHandler {
         Vec3 lookVector = entity.getLookAngle();
 
         double dotProduct = normalizedPush.dot(lookVector);
-        entity.addDeltaMovement(pushDirection.scale(1.2d));
+        entity.addDeltaMovement(pushDirection.scale(1.2d * entity.getEyeHeight()));
         entity.hurtMarked = true;
 
         // TODO: Speed based distance

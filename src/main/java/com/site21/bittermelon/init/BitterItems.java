@@ -8,6 +8,7 @@ import com.site21.bittermelon.items.cardboardbox.CardboardBoxItem;
 import com.site21.bittermelon.items.cardboardbox.CollapsedCardboardBoxItem;
 import com.site21.bittermelon.items.containers.substance.FluidContainerItem;
 import com.site21.bittermelon.items.containers.substance.implementations.GlassFluidContainerItem;
+import com.site21.bittermelon.items.laserdesignator.LaserDesignatorItem;
 import com.site21.bittermelon.items.medical.organic.BodyPart;
 import com.site21.bittermelon.items.medical.tools.*;
 import com.site21.bittermelon.items.toolbox.ToolBoxItem;
@@ -16,8 +17,7 @@ import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import static com.site21.bittermelon.init.BitterBlocks.ATM;
-import static com.site21.bittermelon.init.BitterBlocks.SMALL_CARDBOARD_BOX;
+import static com.site21.bittermelon.init.BitterBlocks.*;
 
 public class BitterItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Bittermelon.MOD_ID);
@@ -153,4 +153,17 @@ public class BitterItems {
 
     public static final DeferredItem<BaseItem> GLASS_SHARD = ITEMS.register("glass_shard", () -> new BaseItem(
             new Item.Properties().stacksTo(8), 1, 1, ItemWeight.VERY_LIGHT));
+
+    public static final DeferredItem<LaserDesignatorItem> LASER_DESIGNATOR = ITEMS.register("laser_designator", () -> new LaserDesignatorItem(
+            new Item.Properties().stacksTo(1), 1, 2, ItemWeight.MEDIUM));
+
+    public static final DeferredItem<BlockItem> CONTAINMENT_PANEL_ITEM = ITEMS.register("containment_panel_item", () -> new BlockItem(
+            CONTAINMENT_PANEL.get(),
+            new Item.Properties()
+    ));
+
+    public static final DeferredItem<BlockItem> WALL_THERMOMETER_ITEM = ITEMS.register("wall_thermometer_item", () -> new BlockItem(
+            THERMOMETER.get(),
+            new Item.Properties()
+    ));
 }

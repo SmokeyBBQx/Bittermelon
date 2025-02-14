@@ -2,6 +2,7 @@ package com.site21.bittermelon.init;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.networking.client.*;
+import com.site21.bittermelon.networking.server.ContainmentNameUpdate;
 import com.site21.bittermelon.networking.server.ThrowItem;
 import com.site21.bittermelon.networking.server.TransferRateUpdate;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -56,6 +57,18 @@ public class PayloadRegistration {
                 OpenATMScreen.TYPE,
                 OpenATMScreen.STREAM_CODEC,
                 OpenATMScreen::handle
+        );
+
+        registrar.playToClient(
+                OpenContainmentPanelScreen.TYPE,
+                OpenContainmentPanelScreen.STREAM_CODEC,
+                OpenContainmentPanelScreen::handle
+        );
+
+        registrar.playToServer(
+                ContainmentNameUpdate.TYPE,
+                ContainmentNameUpdate.STREAM_CODEC,
+                ContainmentNameUpdate::handle
         );
     }
 }

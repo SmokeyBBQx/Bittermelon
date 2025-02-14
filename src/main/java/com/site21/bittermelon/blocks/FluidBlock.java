@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.site21.bittermelon.blocks.blockentities.FluidBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -104,5 +105,10 @@ public class FluidBlock extends Block implements EntityBlock {
         if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluidEntity) {
             fluidEntity.setActive();
         }
+    }
+
+    @Override
+    public boolean canBeReplaced(@NotNull BlockState state, @NotNull BlockPlaceContext context) {
+        return true;
     }
 }

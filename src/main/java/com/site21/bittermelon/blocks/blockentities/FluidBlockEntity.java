@@ -5,12 +5,18 @@ import com.site21.bittermelon.substance.SubstanceStack;
 import com.site21.bittermelon.substance.reactions.ReactionContainer;
 import com.site21.bittermelon.substance.reactions.ReactionHandler;
 import com.site21.bittermelon.util.ColorUtil;
+import it.unimi.dsi.fastutil.longs.LongArrayFIFOQueue;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -309,7 +315,7 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
     public boolean spread(float amount) {
         if (level == null) return false;
 
-        List<BlockPos> validNeighbors = getValidNeighbors();
+        Set<BlockPos> validNeighbors = getValidNeighbors();
         if (validNeighbors.isEmpty()) return false;
 
         int spreadDirections = Math.min(validNeighbors.size(), 4);
@@ -322,7 +328,104 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
         return true;
     }
 
-    private List<BlockPos> getValidNeighbors() {
+    private Set<BlockPos> getValidNeighbors() {
+        level.getProfiler().push("fluid-bfs");
+
+        if (level == null) return Collections.emptySet();
+
+        LongSet validNeighbors = new LongOpenHashSet(4);
+        LongArrayFIFOQueue queue = new LongArrayFIFOQueue();
+        LongSet visited = new LongOpenHashSet();
+
+        BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
+        BlockPos.MutableBlockPos checkPos = new BlockPos.MutableBlockPos();
+
+        int worldY = worldPosition.getY();
+
+        BlockState currentState = level.getBlockState(worldPosition);
+        boolean isDisplaced = !(currentState.getBlock() instanceof FluidBlock) || getTotalVolume() > MAX_CAPACITY;
+
+        for (Direction dir : Direction.Plane.HORIZONTAL.shuffledCopy(level.random)) {
+            mutablePos.set(worldPosition).move(dir);
+            if (level.getBlockState(mutablePos).canBeReplaced()) {
+                mutablePos.move(Direction.DOWN);
+                queue.enqueue(mutablePos.asLong());
+            }
+        }
+
+        for (Direction dir : Direction.Plane.HORIZONTAL.shuffledCopy(level.random)) {
+            mutablePos.set(worldPosition).move(dir);
+            queue.enqueue(mutablePos.asLong());
+        }
+
+        while (!queue.isEmpty() && validNeighbors.size() < 4) {
+            Long packedPos = queue.dequeueLong();
+            if (!visited.add(packedPos)) continue;
+
+            mutablePos.set(packedPos);
+
+            if (canSpreadTo(mutablePos)) {
+                BlockEntity blockEntity = level.getBlockEntity(mutablePos);
+                if (blockEntity instanceof FluidBlockEntity entity) {
+                    if (entity.getTotalVolume() <= SPREAD_THRESHOLD) {
+                        validNeighbors.add(packedPos);
+                    }
+                } else {
+                    validNeighbors.add(packedPos);
+                }
+            }
+
+            // TODO: Fix issue with four neighbors being found in a straight enclosed line
+
+            BlockState state = level.getBlockState(mutablePos);
+            if (state.canBeReplaced() || state.getBlock() instanceof FluidBlock) {
+                for (Direction dir : Direction.Plane.HORIZONTAL.shuffledCopy(level.random)) {
+                    checkPos.set(mutablePos).move(dir);
+                    long neighborPacked = checkPos.asLong();
+
+                    if (!visited.contains(neighborPacked)) {
+                        queue.enqueue(neighborPacked);
+                    }
+                }
+            }
+
+            if (!validNeighbors.isEmpty()) {
+                for (long neighborPacked : validNeighbors) {
+                    if (worldY - BlockPos.getY(neighborPacked) > 0) {
+                        return longSetToBlockPos(validNeighbors);
+                    }
+                }
+            }
+        }
+
+        if (isDisplaced && validNeighbors.isEmpty()) {
+            for (Direction dir : Direction.Plane.HORIZONTAL.shuffledCopy(level.random)) {
+                mutablePos.set(worldPosition).move(dir).move(Direction.UP);
+                BlockEntity blockEntity = level.getBlockEntity(mutablePos);
+
+                if (blockEntity instanceof FluidBlockEntity entity &&
+                        getTotalVolume() < entity.getTotalVolume()) {
+                    validNeighbors.add(mutablePos.asLong());
+                }
+            }
+        }
+
+        level.getProfiler().pop();
+        return longSetToBlockPos(validNeighbors);
+    }
+
+    private @NotNull Set<BlockPos> longSetToBlockPos(@NotNull LongSet longs) {
+        if (longs.isEmpty()) return Collections.emptySet();
+
+        List<BlockPos> positions = new ArrayList<>(longs.size());
+        for (long packed : longs) {
+            positions.add(BlockPos.of(packed));
+        }
+        Collections.shuffle(positions);
+        return new HashSet<>(positions);
+    }
+
+    private List<BlockPos> getValidNeighborsOld() {
         List<BlockPos> validNeighbors = new ArrayList<>();
         if (level == null) return validNeighbors;
 
@@ -473,6 +576,8 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
             targetPuddle.setChanged();
             setChanged();
         }
+
+        level.playSound(null, worldPosition, SoundEvents.GENERIC_SPLASH, SoundSource.AMBIENT);
 
         // TODO: Issue because we're using amounts and not volumes?
     }

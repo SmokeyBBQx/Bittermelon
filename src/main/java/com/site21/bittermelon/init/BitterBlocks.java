@@ -1,10 +1,7 @@
 package com.site21.bittermelon.init;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.blocks.ATMBlock;
-import com.site21.bittermelon.blocks.FluidBlock;
-import com.site21.bittermelon.blocks.SmallBox;
-import com.site21.bittermelon.blocks.StructuralBlock;
+import com.site21.bittermelon.blocks.*;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
@@ -36,4 +33,19 @@ public class BitterBlocks {
     public static final DeferredBlock<ATMBlock> ATM = BLOCKS.register("atm", () -> new ATMBlock(BlockBehaviour.Properties.of()
             .noOcclusion()
     ));
+
+    public static final DeferredBlock<ContainmentPanelBlock> CONTAINMENT_PANEL = BLOCKS.register("containment_panel",
+            () -> new ContainmentPanelBlock(BlockBehaviour.Properties.of().noOcclusion()
+    ));
+
+    public static final DeferredBlock<DirtyFloorBlock> DIRTY_FLOOR = BLOCKS.register("dirty_floor",
+            () -> new DirtyFloorBlock(BlockBehaviour.Properties.of()
+                    .noOcclusion()
+                    .noCollission()
+                    .destroyTime(-1)
+            ));
+
+    public static final DeferredBlock<ThermometerBlock> THERMOMETER = BLOCKS.register("thermometer",
+            () -> new ThermometerBlock(BlockBehaviour.Properties.of().noOcclusion()
+            ));
 }

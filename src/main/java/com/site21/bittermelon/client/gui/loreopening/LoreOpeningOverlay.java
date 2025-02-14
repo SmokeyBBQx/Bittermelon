@@ -26,7 +26,7 @@ public class LoreOpeningOverlay {
     private static final float TEXT_SCALE = 1.1f;
 
     @SubscribeEvent
-    public static void onRenderGameOverlay(RenderGuiEvent.Post event) {
+    public static void onRenderGUI(RenderGuiEvent.Post event) {
         if (shouldDisplayText) {
             long currentTime = System.currentTimeMillis();
             long elapsedTime = currentTime - displayStartTime;
