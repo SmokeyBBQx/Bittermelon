@@ -72,13 +72,13 @@ public class EdibleSubstanceItem extends SubstanceContainerItem {
         return stack;
     }
 
-    private void playBurpSound(Level level, BlockPos pos) {
+    private void playBurpSound(@NotNull Level level, BlockPos pos) {
         level.playSound(null, pos,
                 SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.5F,
                 level.getRandom().nextFloat() * 0.1F + 0.9F);
     }
 
-    private void playEatingSound(Level level, BlockPos pos) {
+    private void playEatingSound(@NotNull Level level, BlockPos pos) {
         level.playSound(null, pos,
                 SoundEvents.GENERIC_EAT, SoundSource.PLAYERS, 0.5F,
                 level.getRandom().nextFloat() * 0.1F + 0.9F);

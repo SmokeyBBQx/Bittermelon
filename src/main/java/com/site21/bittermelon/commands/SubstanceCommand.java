@@ -192,7 +192,7 @@ public class SubstanceCommand {
         return 0;
     }
 
-    private static int addSubstanceContainerAmount(CommandSourceStack source, String substanceName, int amount) {
+    private static int addSubstanceContainerAmount(@NotNull CommandSourceStack source, String substanceName, int amount) {
         ItemStack stack = source.getPlayer().getMainHandItem();
         if (stack.getItem() instanceof SubstanceContainerItem item) {
             Optional<Substance> optionalSubstance = SUBSTANCE_REGISTRY.getOptional(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, substanceName));
