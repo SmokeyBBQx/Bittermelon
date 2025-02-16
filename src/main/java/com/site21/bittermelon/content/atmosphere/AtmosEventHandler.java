@@ -25,9 +25,7 @@ public class AtmosEventHandler {
             LevelChunk chunk = level.getChunkAt(pos);
             AtmosBlockData data = chunk.getData(ATMOSPHERE.get());
 
-            if (level.getBlockState(pos).getBlock() != Blocks.AIR
-                    && !level.getBlockState(pos).canBeReplaced()
-                    && !level.getBlockState(pos).is(BitterBlockTags.PASSES_ATMOS)) {
+            if (!level.getBlockState(pos).canBeReplaced() && !level.getBlockState(pos).is(BitterBlockTags.PASSES_ATMOS)) {
                 if (AtmosHandler.getAtmosInstanceAt(level, pos) != null) {
                     AtmosHandler.getAtmosInstanceAt(level, pos).removeBlock(pos.asLong());
                 }

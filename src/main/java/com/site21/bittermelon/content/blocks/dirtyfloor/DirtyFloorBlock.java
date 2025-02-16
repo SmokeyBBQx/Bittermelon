@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.blocks;
+package com.site21.bittermelon.content.blocks.dirtyfloor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;

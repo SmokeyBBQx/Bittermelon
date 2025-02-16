@@ -59,7 +59,18 @@ public class ThermometerRenderer implements BlockEntityRenderer<ThermometerBlock
 
         poseStack.scale(scale, scale, scale);
 
-        font.drawInBatch(message, 0, 0, 0xFF000000, false, poseStack.last().pose(), multiBufferSource, Font.DisplayMode.POLYGON_OFFSET, 0, 15728880);
+        font.drawInBatch(
+                message,
+                0,
+                0,
+                0xFF000000,
+                false,
+                poseStack.last().pose(),
+                multiBufferSource,
+                Font.DisplayMode.POLYGON_OFFSET,
+                0,
+                15728880
+        );
 
         poseStack.popPose();
     }

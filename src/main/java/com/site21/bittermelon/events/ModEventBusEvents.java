@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.events;
+package com.site21.bittermelon.events;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.client.models.entity.ChickenModel;

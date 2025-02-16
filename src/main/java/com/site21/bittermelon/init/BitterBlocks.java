@@ -1,7 +1,7 @@
 package com.site21.bittermelon.init;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.DirtyFloorBlock;
+import com.site21.bittermelon.content.blocks.dirtyfloor.DirtyFloorBlock;
 import com.site21.bittermelon.content.blocks.base.structuralblock.StructuralBlock;
 import com.site21.bittermelon.content.blocks.container.smallbox.SmallBox;
 import com.site21.bittermelon.content.blocks.devices.ATMBlock;

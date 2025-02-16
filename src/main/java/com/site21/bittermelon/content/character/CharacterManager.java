@@ -100,6 +100,23 @@ public class CharacterManager extends SavedData {
         }
     }
 
+
+    public void updateAll() {
+        characters.values().forEach(Character::update);
+    }
+
+    public List<Character> getCharactersByEntityUUID(UUID entityUUID) {
+        List<Character> characterList = new ArrayList<>();
+
+        for (Character character : characters.values()) {
+            if (character.getEntityUUID().equals(entityUUID)) {
+                characterList.add(character);
+            }
+        }
+
+        return characterList;
+    }
+
     @OnlyIn(Dist.CLIENT)
     public void updateCharacterFromServer(Character character) {
         characters.put(character.getUUID(), character);
@@ -129,21 +146,5 @@ public class CharacterManager extends SavedData {
         tag.put("characters", characterList);
 
         return tag;
-    }
-
-    public void updateAll() {
-        characters.values().forEach(Character::update);
-    }
-
-    public List<Character> getCharactersByEntityUUID(UUID entityUUID) {
-        List<Character> characterList = new ArrayList<>();
-
-        for (Character character : characters.values()) {
-            if (character.getEntityUUID().equals(entityUUID)) {
-                characterList.add(character);
-            }
-        }
-
-        return characterList;
     }
 }

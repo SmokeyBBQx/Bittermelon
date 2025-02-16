@@ -1,5 +1,6 @@
 {
   "values": [
+    "minecraft:air",
     "#minecraft:leaves",
     "bittermelon:dirty_floor",
     "bittermelon:fluid"

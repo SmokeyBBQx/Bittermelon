@@ -2,7 +2,7 @@ package com.site21.bittermelon.content.blocks.devices.containmentpanel;
 
 import com.site21.bittermelon.content.blocks.base.structuralblock.StructuralBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.ContainmentDevice;
-import com.site21.bittermelon.content.blocks.DirtyFloorBlock;
+import com.site21.bittermelon.content.blocks.dirtyfloor.DirtyFloorBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.site21.bittermelon.content.blocks.DirtyFloorBlock.DIRTINESS;
+import static com.site21.bittermelon.content.blocks.dirtyfloor.DirtyFloorBlock.DIRTINESS;
 import static com.site21.bittermelon.init.BitterBlockEntities.CONTAINMENT_PANEL_BLOCK_ENTITY;
 
 public class ContainmentPanelBlockEntity extends BlockEntity {

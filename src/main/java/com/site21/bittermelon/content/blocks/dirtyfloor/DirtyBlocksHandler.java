@@ -1,7 +1,6 @@
-package com.site21.bittermelon.content.events;
+package com.site21.bittermelon.content.blocks.dirtyfloor;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.DirtyFloorBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
