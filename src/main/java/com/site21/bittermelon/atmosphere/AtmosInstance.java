@@ -28,7 +28,7 @@ public class AtmosInstance {
     ).apply(instance, AtmosInstance::new));
 
     private final List<SubstanceStack> gases;
-    private float temperature;
+    private float temperature; // Kelvin
     private final UUID uuid;
     private final LongSet blocks;
 
