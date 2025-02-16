@@ -35,16 +35,18 @@ public class ThermometerRenderer implements BlockEntityRenderer<ThermometerBlock
 
         switch (facing) {
             case NORTH -> {
-                poseStack.translate(0.61, 0.525, 0.125);
+                poseStack.translate(0.61, 0.525, 0.875);
+            }
+            case SOUTH -> {
+                poseStack.translate(0.39, 0.525, 0.125);
                 poseStack.mulPose(Axis.YN.rotationDegrees(180));
             }
-            case SOUTH -> poseStack.translate(0.39, 0.525, 0.875);
             case EAST -> {
-                poseStack.translate(0.875, 0.525, 0.39);
+                poseStack.translate(0.125, 0.525, 0.61);
                 poseStack.mulPose(Axis.YN.rotationDegrees(90));
             }
             case WEST -> {
-                poseStack.translate(0.125, 0.525, 0.61);
+                poseStack.translate(0.875, 0.525, 0.39);
                 poseStack.mulPose(Axis.YN.rotationDegrees(270));
             }
         }
