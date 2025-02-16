@@ -87,8 +87,6 @@ public class GasContainerItem extends SubstanceContainerItem {
     public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
         super.inventoryTick(stack, level, entity, slotId, isSelected);
 
-        System.out.println(getPressure(stack));
-
         if (level.isClientSide) return;
 
         if (getPressure(stack) > maxPressure * 1.10f) {
@@ -118,6 +116,8 @@ public class GasContainerItem extends SubstanceContainerItem {
 
         float totalVolume = getTotalVolume(stack);
         float transferVolume = ((getReleasePressure(stack) * totalVolume) / atmosInstance.getPressure()) / 100;
+
+        // TODO: Propulsion when transfer volume is too high
 
         SubstanceContents.Mutable mutableData = getMutableSubstanceData(stack);
         Iterator<SubstanceStack> iterator = mutableData.substances.iterator();

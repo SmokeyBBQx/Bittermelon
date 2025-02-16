@@ -2,11 +2,14 @@ package com.site21.bittermelon.client.renderer.blockentity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.site21.bittermelon.blocks.ThermometerBlock;
 import com.site21.bittermelon.blocks.blockentities.ThermometerBlockEntity;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -22,12 +25,29 @@ public class ThermometerRenderer implements BlockEntityRenderer<ThermometerBlock
     @Override
     public void render(@NotNull ThermometerBlockEntity thermometer, float v, @NotNull PoseStack poseStack,
                        @NotNull MultiBufferSource multiBufferSource, int i, int i1) {
+        BlockState blockState = thermometer.getBlockState();
+        Direction facing = blockState.getValue(ThermometerBlock.FACING);
+
         poseStack.pushPose();
 
         float temperature = thermometer.getTemperature();
         String message = String.format("%.1f°C", temperature);
 
-        poseStack.translate(0.61, 0.525, 0.875);
+        switch (facing) {
+            case NORTH -> {
+                poseStack.translate(0.61, 0.525, 0.125);
+                poseStack.mulPose(Axis.YN.rotationDegrees(180));
+            }
+            case SOUTH -> poseStack.translate(0.39, 0.525, 0.875);
+            case EAST -> {
+                poseStack.translate(0.875, 0.525, 0.39);
+                poseStack.mulPose(Axis.YN.rotationDegrees(90));
+            }
+            case WEST -> {
+                poseStack.translate(0.125, 0.525, 0.61);
+                poseStack.mulPose(Axis.YN.rotationDegrees(270));
+            }
+        }
 
         poseStack.mulPose(Axis.ZN.rotationDegrees(180f));
 

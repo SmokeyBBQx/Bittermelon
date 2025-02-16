@@ -20,6 +20,8 @@ public class AtmosClientSyncing {
 
     @SubscribeEvent
     public static void onChunkWatch(ChunkWatchEvent.@NotNull Watch event) {
+        if (event.getLevel().isClientSide) return;
+
         ChunkPos chunkPos = event.getPos();
         ServerPlayer player = event.getPlayer();
         AtmosBlockData data = event.getChunk().getData(ATMOSPHERE.get());
