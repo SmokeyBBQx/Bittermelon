@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public class ColorUtil {
+public final class ColorUtil {
     public static int mixColors(@NotNull Map<Integer, Float> colors) {
         float totalAmount = 0;
         float redSum = 0, greenSum = 0, blueSum = 0;

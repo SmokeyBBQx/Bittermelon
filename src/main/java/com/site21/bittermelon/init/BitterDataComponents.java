@@ -29,6 +29,11 @@ public class BitterDataComponents {
             builder -> builder.persistent(ExtraCodecs.POSITIVE_INT).networkSynchronized(ByteBufCodecs.VAR_INT)
     );
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> RELEASE_PRESSURE = DATA_COMPONENTS.registerComponentType(
+            "release_pressure",
+            builder -> builder.persistent(ExtraCodecs.NON_NEGATIVE_INT).networkSynchronized(ByteBufCodecs.VAR_INT)
+    );
+
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> LAST_UPDATED = DATA_COMPONENTS.registerComponentType(
             "last_updated",
             builder -> builder.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG)

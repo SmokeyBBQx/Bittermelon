@@ -80,7 +80,7 @@ public class SubstanceContainerItem extends BaseItem implements ReactionContaine
         return capacity;
     }
 
-    public int getCapacity(ItemStack stack) {
+    public int getCapacity(@NotNull ItemStack stack) {
         if (stack.getItem() instanceof SubstanceContainerItem item) {
             return item.getCapacity();
         }
@@ -131,12 +131,12 @@ public class SubstanceContainerItem extends BaseItem implements ReactionContaine
         return null;
     }
 
-    private void updateVisuals(ItemStack stack) {
+    private void updateVisuals(@NotNull ItemStack stack) {
         stack.set(LAST_UPDATED.get(), System.currentTimeMillis());
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
+    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
         if (stack.getItem() instanceof ReactionContainer container) {
 //            ReactionHandler.getInstance().handleReactions(getContents(stack), container);
         }
@@ -144,7 +144,7 @@ public class SubstanceContainerItem extends BaseItem implements ReactionContaine
 
     @Override
     public float getTemperature() {
-        return 0;
+        return 273.15f;
     }
 
     @Override

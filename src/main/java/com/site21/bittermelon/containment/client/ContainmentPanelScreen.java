@@ -12,12 +12,15 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.PostChain;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.BitterSounds.BOOT_UP_TUNE;
 import static com.site21.bittermelon.init.BitterSounds.TERMINAL_HUM;
 
+@OnlyIn(Dist.CLIENT)
 public class ContainmentPanelScreen extends Screen {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/containment_panel.png");
     private static final int TEXTURE_WIDTH = 256;

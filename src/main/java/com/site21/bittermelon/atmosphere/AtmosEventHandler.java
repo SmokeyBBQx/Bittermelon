@@ -2,11 +2,10 @@ package com.site21.bittermelon.atmosphere;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.atmosphere.data.AtmosBlockData;
+import com.site21.bittermelon.init.BitterBlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -26,14 +25,18 @@ public class AtmosEventHandler {
             LevelChunk chunk = level.getChunkAt(pos);
             AtmosBlockData data = chunk.getData(ATMOSPHERE.get());
 
-            if (level.getBlockState(pos).getBlock() != Blocks.AIR && !level.getBlockState(pos).canBeReplaced()) {
-                if (AtmosUtils.getAtmosInstanceAt(level, pos) != null) {
-                    AtmosUtils.getAtmosInstanceAt(level, pos).removeBlock(pos.asLong());
+            if (level.getBlockState(pos).getBlock() != Blocks.AIR
+                    && !level.getBlockState(pos).canBeReplaced()
+                    && !level.getBlockState(pos).is(BitterBlockTags.PASSES_ATMOS)) {
+                if (AtmosHandler.getAtmosInstanceAt(level, pos) != null) {
+                    AtmosHandler.getAtmosInstanceAt(level, pos).removeBlock(pos.asLong());
                 }
                 data.removeAtmosBlock(pos);
             }
 
-            AtmosUtils.updateAtmosphereAt(level, event.getPos());
+            // TODO: Proper updating for doors
+
+            AtmosHandler.updateAtmosphereAt(level, event.getPos());
         }
     }
 }

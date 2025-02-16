@@ -7,6 +7,7 @@ import com.site21.bittermelon.items.base.ItemWeight;
 import com.site21.bittermelon.items.cardboardbox.CardboardBoxItem;
 import com.site21.bittermelon.items.cardboardbox.CollapsedCardboardBoxItem;
 import com.site21.bittermelon.items.containers.substance.FluidContainerItem;
+import com.site21.bittermelon.items.containers.substance.GasContainerItem;
 import com.site21.bittermelon.items.containers.substance.implementations.GlassFluidContainerItem;
 import com.site21.bittermelon.items.laserdesignator.LaserDesignatorItem;
 import com.site21.bittermelon.items.medical.organic.BodyPart;
@@ -165,5 +166,22 @@ public class BitterItems {
     public static final DeferredItem<BlockItem> WALL_THERMOMETER_ITEM = ITEMS.register("wall_thermometer_item", () -> new BlockItem(
             THERMOMETER.get(),
             new Item.Properties()
+    ));
+
+    public static final DeferredItem<GasContainerItem> GAS_CYLINDER = ITEMS.register("gas_cylinder", () -> new GasContainerItem(
+            new Item.Properties(),
+            1,
+            3,
+            ItemWeight.MEDIUM,
+            100,
+            2000,
+            1200
+    ));
+
+    public static final DeferredItem<BaseItem> KEYCARD = ITEMS.register("keycard", () -> new BaseItem(
+            new Item.Properties(),
+            1,
+            1,
+            ItemWeight.VERY_LIGHT
     ));
 }

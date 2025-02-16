@@ -1,7 +1,7 @@
 package com.site21.bittermelon.medical.medicalstats;
 
 import com.site21.bittermelon.atmosphere.AtmosInstance;
-import com.site21.bittermelon.atmosphere.AtmosUtils;
+import com.site21.bittermelon.atmosphere.AtmosHandler;
 import com.site21.bittermelon.blocks.FluidBlock;
 import com.site21.bittermelon.blocks.blockentities.FluidBlockEntity;
 import com.site21.bittermelon.character.Character;
@@ -234,7 +234,7 @@ public class MedicalStats {
         vitalSigns.modifyOxygenSaturation((stats.get(FunctionType.RESPIRATORY) / 100) * stats.get(FunctionType.BRAIN_VITALS) * getAirQuality() - 0.01f);
 
         if (!entity.level().isClientSide) {
-            AtmosUtils.releaseGas(entity.level(), entity.getOnPos(), new SubstanceStack(LIQUID_WATER.get(), 0.001f));
+            AtmosHandler.releaseGas(entity.level(), entity.getOnPos(), new SubstanceStack(LIQUID_WATER.get(), 0.001f));
         }
         handleGasping();
 
@@ -254,9 +254,9 @@ public class MedicalStats {
 
     private float getAirQuality() {
         if (!entity.level().isClientSide) {
-            AtmosInstance atmos = AtmosUtils.getAtmosInstanceAt(entity.level(), entity.getOnPos());
+            AtmosInstance atmos = AtmosHandler.getAtmosInstanceAt(entity.level(), entity.getOnPos());
             if (atmos != null) {
-                List<SubstanceStack> gasses = atmos.getGasses();
+                List<SubstanceStack> gasses = atmos.getGases();
                 for (SubstanceStack stack : gasses) {
                     if (Objects.equals(stack.getSubstance().getName(), "gaseous_oxygen")) {
                         float amount = stack.getAmount();

@@ -5,10 +5,13 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
+@OnlyIn(Dist.CLIENT)
 public class ScoreWidget extends AbstractWidget {
     private final String label;
     private final Supplier<Float> scoreSupplier;

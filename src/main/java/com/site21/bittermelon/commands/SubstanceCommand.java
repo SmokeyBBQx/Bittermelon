@@ -6,9 +6,10 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.atmosphere.AtmosInstance;
-import com.site21.bittermelon.atmosphere.AtmosUtils;
+import com.site21.bittermelon.atmosphere.AtmosHandler;
 import com.site21.bittermelon.blocks.blockentities.FluidBlockEntity;
 import com.site21.bittermelon.items.containers.substance.FluidContainerItem;
+import com.site21.bittermelon.items.containers.substance.SubstanceContainerItem;
 import com.site21.bittermelon.substance.Substance;
 import com.site21.bittermelon.substance.SubstanceStack;
 import net.minecraft.commands.CommandSourceStack;
@@ -130,20 +131,21 @@ public class SubstanceCommand {
 
     private static int showAtmosContents(@NotNull CommandSourceStack source) {
         BlockPos pos = BlockPos.containing(source.getPosition());
-        AtmosInstance instance = AtmosUtils.getAtmosInstanceAt(source.getLevel(), pos);
+        AtmosInstance instance = AtmosHandler.getAtmosInstanceAt(source.getLevel(), pos);
 
         if (instance == null) {
             source.sendFailure(Component.literal("No atmosphere found at current position."));
             return 0;
         }
 
-        source.sendSuccess(() -> Component.literal("Temperature: " + instance.getTemperature()), true);
+        source.sendSuccess(() -> Component.literal("Temperature: " + instance.getTemperature() + " K"), true);
+        source.sendSuccess(() -> Component.literal("Pressure: " + instance.getPressure() + " kPa"), true);
 
-        if (instance.getGasses().isEmpty()) {
+        if (instance.getGases().isEmpty()) {
             source.sendSuccess(() -> Component.literal("No gases present"), true);
         } else {
             source.sendSuccess(() -> Component.literal("Gases:"), true);
-            for (SubstanceStack gas : instance.getGasses()) {
+            for (SubstanceStack gas : instance.getGases()) {
                 source.sendSuccess(() -> Component.literal(" - " + gas.getSubstance().getName() + ": " + gas.getAmount()), true);
             }
         }
@@ -165,7 +167,7 @@ public class SubstanceCommand {
         Substance substance = optionalSubstance.get();
         SubstanceStack stack = new SubstanceStack(substance, amount);
 
-        AtmosUtils.releaseGas(source.getLevel(), pos, stack);
+        AtmosHandler.releaseGas(source.getLevel(), pos, stack);
         source.sendSuccess(() -> Component.literal(String.format("Added %d %s to the atmosphere",
                 amount, stack.getSubstance().getName())), true);
 
@@ -174,7 +176,7 @@ public class SubstanceCommand {
 
     private static int addTemperatureAtmos(@NotNull CommandSourceStack source, float temperature) {
         BlockPos pos = BlockPos.containing(source.getPosition());
-        AtmosInstance instance = AtmosUtils.getAtmosInstanceAt(source.getLevel(), pos);
+        AtmosInstance instance = AtmosHandler.getAtmosInstanceAt(source.getLevel(), pos);
 
         if (instance == null) {
             source.sendFailure(Component.literal("No atmosphere found at current position."));
@@ -192,7 +194,7 @@ public class SubstanceCommand {
 
     private static int addSubstanceContainerAmount(CommandSourceStack source, String substanceName, int amount) {
         ItemStack stack = source.getPlayer().getMainHandItem();
-        if (stack.getItem() instanceof FluidContainerItem item) {
+        if (stack.getItem() instanceof SubstanceContainerItem item) {
             Optional<Substance> optionalSubstance = SUBSTANCE_REGISTRY.getOptional(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, substanceName));
 
             if (optionalSubstance.isPresent()) {
@@ -208,7 +210,7 @@ public class SubstanceCommand {
 
     private static int addSubstanceContainerVolume(CommandSourceStack source, String substanceName, int amount) {
         ItemStack stack = source.getPlayer().getMainHandItem();
-        if (stack.getItem() instanceof FluidContainerItem item) {
+        if (stack.getItem() instanceof SubstanceContainerItem item) {
             Optional<Substance> optionalSubstance = SUBSTANCE_REGISTRY.getOptional(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, substanceName));
 
             if (optionalSubstance.isPresent()) {

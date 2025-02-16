@@ -1,14 +1,12 @@
 package com.site21.bittermelon.blocks.blockentities;
 
+import com.site21.bittermelon.atmosphere.AtmosHandler;
 import com.site21.bittermelon.atmosphere.AtmosInstance;
-import com.site21.bittermelon.atmosphere.AtmosUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +21,7 @@ public class ThermometerBlockEntity extends BlockEntity {
 
     public void tick() {
         if (level == null) return;
-        AtmosInstance atmosInstance = AtmosUtils.getAtmosInstanceAt(level, worldPosition);
+        AtmosInstance atmosInstance = AtmosHandler.getAtmosInstanceAt(level, worldPosition);
         if (atmosInstance == null) {
             if (temperature != 22) {
                 temperature = 22;
@@ -40,7 +38,7 @@ public class ThermometerBlockEntity extends BlockEntity {
     }
 
     public float getTemperature() {
-        return temperature;
+        return temperature - 273.15f;
     }
 
     @Override

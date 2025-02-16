@@ -1,12 +1,14 @@
 package com.site21.bittermelon.atmosphere.data;
 
 import com.site21.bittermelon.atmosphere.AtmosInstance;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.LongArrayTag;
-import net.minecraft.nbt.LongTag;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +19,24 @@ import java.util.UUID;
 
 public class AtmosBlockData implements INBTSerializable<CompoundTag> {
     Map<BlockPos, UUID> atmosBlocks = new HashMap<>();
+
+    public static final StreamCodec<ByteBuf, Map<BlockPos, UUID>> ATMOS_BLOCKS_STREAM_CODEC =
+            ByteBufCodecs.map(
+                    HashMap::new,
+                    BlockPos.STREAM_CODEC,
+                    UUIDUtil.STREAM_CODEC
+            );
+
+    public static final StreamCodec<ByteBuf, AtmosBlockData> STREAM_CODEC =
+            StreamCodec.composite(
+                    ATMOS_BLOCKS_STREAM_CODEC,
+                    AtmosBlockData::getAtmosBlocks,
+                    atmosBlocks -> {
+                        AtmosBlockData data = new AtmosBlockData();
+                        data.atmosBlocks.putAll(atmosBlocks);
+                        return data;
+                    }
+            );
 
     @Override
     public CompoundTag serializeNBT(HolderLookup.@NotNull Provider provider) {
@@ -45,6 +65,10 @@ public class AtmosBlockData implements INBTSerializable<CompoundTag> {
             UUID uuid = new UUID(data[i + 1], data[i + 2]);
             atmosBlocks.put(pos, uuid);
         }
+    }
+
+    public void setAtmosBlocks(Map<BlockPos, UUID> atmosBlocks) {
+        this.atmosBlocks = atmosBlocks;
     }
 
     public Map<BlockPos, UUID> getAtmosBlocks() {

@@ -25,13 +25,16 @@ public class ThermometerRenderer implements BlockEntityRenderer<ThermometerBlock
         poseStack.pushPose();
 
         float temperature = thermometer.getTemperature();
-        String message = temperature + "°C";
+        String message = String.format("%.1f°C", temperature);
 
         poseStack.translate(0.61, 0.525, 0.875);
 
         poseStack.mulPose(Axis.ZN.rotationDegrees(180f));
 
-        float scale = 0.0075f;
+        int length = message.length();
+        float baseScale = 0.0075f;
+        float scale = length > 6 ? baseScale * (1.0f - ((length - 6) * 0.2f)) : baseScale;
+
         poseStack.scale(scale, scale, scale);
 
         font.drawInBatch(message, 0, 0, 0xFF000000, false, poseStack.last().pose(), multiBufferSource, Font.DisplayMode.POLYGON_OFFSET, 0, 15728880);

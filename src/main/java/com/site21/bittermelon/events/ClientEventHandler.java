@@ -1,6 +1,7 @@
 package com.site21.bittermelon.events;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.atmosphere.data.AtmosLevelData;
 import com.site21.bittermelon.character.CharacterManager;
 import com.site21.bittermelon.database.PersonnelRegistry;
 import com.site21.bittermelon.economy.AccountRegistry;
@@ -19,6 +20,7 @@ public class ClientEventHandler {
         AccountRegistry.clearClientData();
         CharacterManager.clearClientData();
         PersonnelRegistry.clearClientData();
+        AtmosLevelData.clearClientData();
     }
 
     @SubscribeEvent

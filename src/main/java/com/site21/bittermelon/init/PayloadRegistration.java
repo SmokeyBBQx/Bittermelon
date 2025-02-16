@@ -3,6 +3,7 @@ package com.site21.bittermelon.init;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.networking.client.*;
 import com.site21.bittermelon.networking.server.ContainmentNameUpdate;
+import com.site21.bittermelon.networking.server.ReleasePressureUpdate;
 import com.site21.bittermelon.networking.server.ThrowItem;
 import com.site21.bittermelon.networking.server.TransferRateUpdate;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -70,5 +71,18 @@ public class PayloadRegistration {
                 ContainmentNameUpdate.STREAM_CODEC,
                 ContainmentNameUpdate::handle
         );
+
+        registrar.playToClient(
+                AtmosChunkUpdate.TYPE,
+                AtmosChunkUpdate.STREAM_CODEC,
+                AtmosChunkUpdate::handle
+        );
+
+        registrar.playToServer(
+                ReleasePressureUpdate.TYPE,
+                ReleasePressureUpdate.STREAM_CODEC,
+                ReleasePressureUpdate::handle
+        );
+
     }
 }
