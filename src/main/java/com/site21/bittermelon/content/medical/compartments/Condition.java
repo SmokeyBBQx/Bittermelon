@@ -1,0 +1,41 @@
+package com.site21.bittermelon.content.medical.compartments;
+
+import com.site21.bittermelon.content.character.Character;
+import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
+import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.EnumSet;
+
+public abstract class Condition extends Compartment {
+    protected final LivingEntity entity;
+    protected final Character character;
+
+    public Condition(EnumSet<CompartmentType> types, String name, Compartment owner, float maxHealth, Character character, LivingEntity entity) {
+        super(types, name, owner, maxHealth);
+        this.character = character;
+        this.entity = entity;
+    }
+
+    @Override
+    public void onDeath(@NotNull MedicalStats mammalMedicalStats) {
+       mammalMedicalStats.removeCompartment(this);
+    }
+
+    @Override
+    public float getHealth() {
+        float totalHealth = this.health;
+        for (Compartment child : children) {
+            if (!(child instanceof Condition)) {
+                totalHealth += child.getAttribute(FunctionType.FUNCTION);
+            }
+        }
+        return totalHealth;
+    }
+
+    public void effects() {
+    }
+
+    public Character getCharacter() { return character; }
+    public LivingEntity getEntity() { return entity; }
+}

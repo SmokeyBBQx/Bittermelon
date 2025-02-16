@@ -1,9 +1,8 @@
 package com.site21.bittermelon.init;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.items.containers.item.ContainerMenu;
-import com.site21.bittermelon.items.containers.item.ContainerScreen;
-import net.minecraft.client.gui.screens.MenuScreens;
+import com.site21.bittermelon.content.items.containers.item.client.ContainerMenu;
+import com.site21.bittermelon.content.items.containers.item.client.ContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -11,7 +10,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
 import static com.site21.bittermelon.init.BitterMenus.TOOLBOX_MENU;
 

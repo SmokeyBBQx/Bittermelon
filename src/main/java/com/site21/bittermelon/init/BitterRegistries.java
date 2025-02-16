@@ -1,9 +1,8 @@
 package com.site21.bittermelon.init;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.medical.compartments.Compartment;
-import com.site21.bittermelon.substance.Substance;
-import com.site21.bittermelon.substance.reactions.Reaction;
+import com.site21.bittermelon.content.substance.Substance;
+import com.site21.bittermelon.content.substance.reactions.Reaction;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;

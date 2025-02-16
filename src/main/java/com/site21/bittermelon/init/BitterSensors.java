@@ -1,8 +1,8 @@
 package com.site21.bittermelon.init;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.entities.ai.sensors.NearbyDrinkableFluidsSensor;
-import com.site21.bittermelon.entities.ai.sensors.NearbyFoodSensor;
+import com.site21.bittermelon.content.entities.ai.sensors.NearbyDrinkableFluidsSensor;
+import com.site21.bittermelon.content.entities.ai.sensors.NearbyFoodSensor;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.neoforged.neoforge.registries.DeferredHolder;

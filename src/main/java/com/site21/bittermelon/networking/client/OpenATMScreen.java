@@ -1,9 +1,9 @@
 package com.site21.bittermelon.networking.client;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.database.PersonnelEntry;
-import com.site21.bittermelon.database.PersonnelRegistry;
-import com.site21.bittermelon.economy.client.ATMScreen;
+import com.site21.bittermelon.content.personnel.PersonnelEntry;
+import com.site21.bittermelon.content.personnel.PersonnelRegistry;
+import com.site21.bittermelon.content.economy.client.ATMScreen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.codec.ByteBufCodecs;

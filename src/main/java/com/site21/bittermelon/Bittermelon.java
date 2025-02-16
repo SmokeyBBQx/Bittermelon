@@ -1,11 +1,11 @@
 package com.site21.bittermelon;
 
-import com.site21.bittermelon.character.Character;
-import com.site21.bittermelon.character.CharacterManager;
-import com.site21.bittermelon.client.colorhandlers.FluidBlockColor;
+import com.site21.bittermelon.content.character.Character;
+import com.site21.bittermelon.content.character.CharacterManager;
+import com.site21.bittermelon.content.blocks.substance.fluid.client.FluidBlockColor;
 import com.site21.bittermelon.client.gui.loreopening.LoreOpeningOverlay;
 import com.site21.bittermelon.init.*;
-import com.site21.bittermelon.substance.reactions.Reactions;
+import com.site21.bittermelon.content.substance.reactions.Reactions;
 import com.site21.bittermelon.util.ServerUtil;
 import net.minecraft.sounds.SoundSource;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
@@ -30,9 +30,6 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-
-import java.util.Map;
-import java.util.UUID;
 
 import static com.site21.bittermelon.init.BitterActivity.ACTIVITY;
 import static com.site21.bittermelon.init.BitterAttachmentTypes.ATTACHMENT_TYPES;

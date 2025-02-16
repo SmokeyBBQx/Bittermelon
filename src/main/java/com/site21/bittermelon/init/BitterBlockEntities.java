@@ -1,7 +1,11 @@
 package com.site21.bittermelon.init;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.blocks.blockentities.*;
+import com.site21.bittermelon.content.blocks.base.structuralblock.StructuralBlockEntity;
+import com.site21.bittermelon.content.blocks.container.smallbox.BoxBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.containmentpanel.ContainmentPanelBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.thermometer.ThermometerBlockEntity;
+import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;

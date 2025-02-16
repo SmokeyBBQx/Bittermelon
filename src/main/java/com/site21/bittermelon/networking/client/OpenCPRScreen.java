@@ -1,11 +1,7 @@
 package com.site21.bittermelon.networking.client;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.character.Character;
-import com.site21.bittermelon.character.CharacterManager;
-import com.site21.bittermelon.medical.client.gui.minigame.CPRScreen;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;

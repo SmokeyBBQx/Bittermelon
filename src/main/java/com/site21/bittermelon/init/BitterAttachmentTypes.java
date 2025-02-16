@@ -2,7 +2,7 @@ package com.site21.bittermelon.init;
 
 import com.mojang.serialization.Codec;
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.atmosphere.data.AtmosBlockData;
+import com.site21.bittermelon.content.atmosphere.data.AtmosBlockData;
 import net.minecraft.core.UUIDUtil;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;

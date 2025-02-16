@@ -1,0 +1,66 @@
+package com.site21.bittermelon.content.entities.ai.sensors;
+
+import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
+import com.site21.bittermelon.content.entities.ai.behavior.basicneeds.HasBasicNeeds;
+import com.site21.bittermelon.init.BitterMemoryTypes;
+import com.site21.bittermelon.init.BitterSensors;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.sensing.SensorType;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
+import net.tslat.smartbrainlib.api.core.sensor.PredicateSensor;
+import net.tslat.smartbrainlib.object.SquareRadius;
+import net.tslat.smartbrainlib.util.BrainUtils;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class NearbyDrinkableFluidsSensor<E extends Mob & HasBasicNeeds> extends PredicateSensor<FluidBlockEntity, E> {
+    private static final List<MemoryModuleType<?>> MEMORIES = ObjectArrayList.of(BitterMemoryTypes.NEARBY_DRINKABLE_FLUIDS.get());
+
+    protected SquareRadius radius = new SquareRadius(32, 16);
+
+    public NearbyDrinkableFluidsSensor() {
+        super((fluid, entity) -> entity.wantsToDrink(fluid));
+    }
+
+    @Override
+    public List<MemoryModuleType<?>> memoriesUsed() {
+        return MEMORIES;
+    }
+
+    @Override
+    public SensorType<? extends ExtendedSensor<?>> type() {
+        return BitterSensors.NEARBY_DRINKABLE_FLUIDS.get();
+    }
+
+    @Override
+    protected void doTick(ServerLevel level, @NotNull E entity) {
+        List<FluidBlockEntity> fluids = new ArrayList<>();
+
+        for (BlockPos pos : BlockPos.betweenClosed(
+                entity.blockPosition().subtract(this.radius.toVec3i()),
+                entity.blockPosition().offset(this.radius.toVec3i())
+        )
+        ) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+
+            if (!(blockEntity instanceof FluidBlockEntity fluid)) continue;
+
+            if (this.predicate().test(fluid, entity)) {
+                fluids.add(fluid);
+            }
+        }
+
+        if (fluids.isEmpty()) {
+            BrainUtils.clearMemory(entity, BitterMemoryTypes.NEARBY_DRINKABLE_FLUIDS.get());
+        } else {
+            BrainUtils.setMemory(entity, BitterMemoryTypes.NEARBY_DRINKABLE_FLUIDS.get(), fluids);
+        }
+    }
+}

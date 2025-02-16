@@ -1,0 +1,315 @@
+package com.site21.bittermelon.content.items.containers.substance;
+
+import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlock;
+import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
+import com.site21.bittermelon.content.items.containers.substance.data.SubstanceContents;
+import com.site21.bittermelon.init.BitterDataComponents;
+import com.site21.bittermelon.content.items.base.ItemWeight;
+import com.site21.bittermelon.content.substance.SubstanceStack;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Iterator;
+import java.util.List;
+
+import static com.site21.bittermelon.init.BitterBlocks.FLUID;
+import static com.site21.bittermelon.init.BitterDataComponents.HAS_LANDED;
+import static net.minecraft.world.level.block.Block.UPDATE_ALL_IMMEDIATE;
+
+public class FluidContainerItem extends SubstanceContainerItem {
+    public static final int MIN_TRANSFER_RATE = 1;
+    private static final int DRINK_SPEED = 32;
+
+    public final int maxTransferRate;
+
+    public FluidContainerItem(Properties properties, int width, int height, ItemWeight itemWeight, int capacity, int maxTransferRate) {
+        super(properties, width, height, itemWeight, capacity);
+        this.maxTransferRate = maxTransferRate;
+    }
+
+    @Override
+    public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.literal("Contents: " + getSubstanceData(stack).getTotalVolume() + "/" + capacity));
+    }
+
+    @Override
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
+        // TODO: Figure out a way to make use and useOn not overlap
+
+        ItemStack itemInHand = player.getItemInHand(usedHand);
+        ItemStack offhandItem = player.getOffhandItem();
+
+        if (isContainerEmpty(itemInHand)) {
+            playEmptySound(level, player.getOnPos());
+            return InteractionResultHolder.fail(player.getMainHandItem());
+        }
+
+        if (usedHand == InteractionHand.MAIN_HAND && offhandItem.getItem() instanceof FluidContainerItem) {
+            if (!level.isClientSide) {
+                if (player.isShiftKeyDown()) {
+                    transferSubstancesToContainer(itemInHand, offhandItem, level, player);
+                }
+            }
+        } else {
+            playDrinkSound(level, player.getOnPos());
+
+            return ItemUtils.startUsingInstantly(level, player, usedHand);
+        }
+
+        return super.use(level, player, usedHand);
+    }
+
+    @Override
+    public @NotNull InteractionResult useOn(@NotNull UseOnContext context) {
+        Player player = context.getPlayer();
+        Level level = context.getLevel();
+        ItemStack stack = context.getItemInHand();
+        BlockPos clickedPos = context.getClickedPos();
+
+        if (!level.isClientSide && player != null) {
+            if (!isContainerEmpty(stack)) {
+                if (player.isShiftKeyDown()) {
+                    return handleSpillAction(clickedPos, level, player, stack);
+                }
+            }
+
+            if (level.getBlockState(clickedPos).getBlock() instanceof FluidBlock) {
+                transferSubstancesFromBlock(clickedPos, level, stack);
+                return InteractionResult.SUCCESS;
+            }
+        }
+
+        return super.useOn(context);
+    }
+
+    private InteractionResult handleSpillAction(@NotNull BlockPos clickedOnPos, @NotNull Level level, Player player, ItemStack stack) {
+        BlockPos spillPos = clickedOnPos.above();
+        BlockState existingState = level.getBlockState(spillPos);
+        BlockState clickedOnState = level.getBlockState(clickedOnPos);
+
+        if (clickedOnState.getBlock() instanceof FluidBlock) {
+            transferSubstancesToBlock(clickedOnPos, level, stack, getLimitedTransferRate(stack));
+        } else if (existingState.canBeReplaced()) {
+            level.setBlock(spillPos, FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
+            transferSubstancesToBlock(spillPos, level, stack, getLimitedTransferRate(stack));
+        } else {
+            player.sendSystemMessage(Component.literal("Can't spill here!").withStyle(ChatFormatting.RED));
+            return InteractionResult.PASS;
+        }
+
+        return InteractionResult.SUCCESS;
+    }
+
+    private void transferSubstancesToBlock(BlockPos pos, @NotNull Level level, ItemStack stack, float volume) {
+        if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluidEntity) {
+            transferSubstances(stack, getTotalVolume(stack), volume,
+                    (substance, amount) -> fluidEntity.updateSubstance(substance));
+            playEmptySound(level, pos);
+        }
+    }
+
+    private void transferSubstancesFromBlock(BlockPos pos, @NotNull Level level, ItemStack stack) {
+        if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluidEntity) {
+            float availableCapacity = capacity - getTotalVolume(stack);
+            float transferRate = Math.min(getTransferRate(stack), availableCapacity);
+
+            List<SubstanceStack> transferredSubstances = fluidEntity.transferSubstancesVolume(transferRate);
+            SubstanceContents.Mutable mutableData = getMutableSubstanceData(stack);
+
+            for (SubstanceStack substance : transferredSubstances) {
+                mutableData.updateSubstance(substance);
+            }
+
+            setSubstanceDataFromMutable(stack, mutableData);
+            playFillSound(level, pos);
+        }
+    }
+
+    private void transferSubstancesToContainer(ItemStack sourceStack, ItemStack targetStack, Level level, Player player) {
+        float totalSourceVolume = getTotalVolume(sourceStack);
+        float transferRate = getLimitedTransferRate(sourceStack);
+        float spaceAvailable = getCapacity(targetStack) - getTotalVolume(targetStack);
+
+        if (totalSourceVolume <= 0 || spaceAvailable <= 0) return;
+
+        float totalTransferVolume = Math.min(transferRate, Math.min(totalSourceVolume, spaceAvailable));
+
+        transferSubstances(sourceStack, totalSourceVolume, totalTransferVolume,
+                (substance, amount) -> updateTargetContainer(targetStack, substance, amount));
+
+        if (totalTransferVolume > 0) {
+            playFillSound(level, player.getOnPos());
+        }
+    }
+
+
+    private void transferSubstances(ItemStack sourceStack, float totalVolume, float transferRate, SubstanceTransferHandler handler) {
+        if (totalVolume <= 0) return;
+
+        SubstanceContents.Mutable mutableData = getMutableSubstanceData(sourceStack);
+        Iterator<SubstanceStack> iterator = mutableData.substances.iterator();
+
+        while (iterator.hasNext()) {
+            SubstanceStack substance = iterator.next();
+            if (substance == null) continue;
+
+            float proportion = totalVolume > 0 ? substance.getVolume() / totalVolume : 0;
+            float transferVolume = Math.min(transferRate * proportion, substance.getVolume());
+
+            if (transferVolume > 0) {
+                SubstanceStack transferredSubstance = substance.copy();
+                transferredSubstance.setVolume(transferVolume);
+
+                handler.handle(transferredSubstance, transferVolume);
+                substance.modifyVolume(-transferVolume);
+
+                if (substance.getVolume() <= 0.001f) {
+                    iterator.remove();
+                }
+            }
+        }
+
+        setSubstanceDataFromMutable(sourceStack, mutableData);
+    }
+
+    private void updateTargetContainer(ItemStack targetStack, SubstanceStack substance, float amount) {
+        SubstanceContents.Mutable targetData = getMutableSubstanceData(targetStack);
+        targetData.substances.add(substance);
+        setSubstanceDataFromMutable(targetStack, targetData);
+    }
+
+    public static int getTransferRate(@NotNull ItemStack stack) {
+        return stack.getOrDefault(BitterDataComponents.TRANSFER_RATE.get(), MIN_TRANSFER_RATE);
+    }
+
+    public float getLimitedTransferRate(@NotNull ItemStack stack) {
+        return Math.min(stack.getOrDefault(BitterDataComponents.TRANSFER_RATE.get(), MIN_TRANSFER_RATE), getTotalVolume(stack));
+    }
+
+    public static void setTransferRate(@NotNull ItemStack stack, int rate) {
+        if (stack.getItem() instanceof FluidContainerItem fluidContainerItem) {
+            stack.set(BitterDataComponents.TRANSFER_RATE.get(), Mth.clamp(rate, MIN_TRANSFER_RATE, fluidContainerItem.maxTransferRate));
+        }
+    }
+
+    private void playEmptySound(@NotNull Level level, BlockPos pos) {
+        level.playSound(null, pos,
+                SoundEvents.BOTTLE_EMPTY, SoundSource.PLAYERS, 0.5F, 1.5F);
+    }
+
+    private void playFillSound(@NotNull Level level, BlockPos pos) {
+        level.playSound(null, pos,
+                SoundEvents.BOTTLE_FILL, SoundSource.PLAYERS, 0.5F, 1.0F);
+    }
+
+    private void playDrinkSound(@NotNull Level level, BlockPos pos) {
+        level.playSound(null, pos,
+                SoundEvents.GENERIC_DRINK, SoundSource.PLAYERS, 0.5F,
+                level.getRandom().nextFloat() * 0.1F + 0.9F);
+    }
+
+    private void playBurpSound(@NotNull Level level, BlockPos pos) {
+        level.playSound(null, pos,
+                SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.5F,
+                level.getRandom().nextFloat() * 0.1F + 0.9F);
+    }
+
+    @Override
+    public int getUseDuration(@NotNull ItemStack stack, @NotNull LivingEntity entity) {
+        return DRINK_SPEED + getTransferRate(stack);
+    }
+
+    @Override
+    public @NotNull UseAnim getUseAnimation(@NotNull ItemStack stack) {
+        return UseAnim.DRINK;
+    }
+
+    @Override
+    public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
+        if (entity instanceof Player player) {
+            if (!level.isClientSide()) {
+                player.sendSystemMessage(getFlavorMessageComponent(stack));
+            }
+        }
+
+        float totalAmount = getTotalVolume(stack);
+        float transferRate = getLimitedTransferRate(stack);
+        SubstanceContents.Mutable mutableData = getMutableSubstanceData(stack);
+
+        Iterator<SubstanceStack> iterator = mutableData.substances.iterator();
+
+        while (iterator.hasNext()) {
+            SubstanceStack substance = iterator.next();
+            float proportion = totalAmount > 0 ? substance.getVolume() / totalAmount : 0;
+            float consumeAmount = Math.min(transferRate * proportion, substance.getVolume());
+
+            substance.modifyVolume(-consumeAmount);
+
+            if (substance.getVolume() <= consumeAmount) {
+                iterator.remove();
+            }
+        }
+
+        setSubstanceDataFromMutable(stack, mutableData);
+
+        playBurpSound(level, entity.getOnPos());
+
+        return stack;
+    }
+
+    @Override
+    public boolean onEntityItemUpdate(@NotNull ItemStack stack, @NotNull ItemEntity entity) {
+        if (getTotalVolume(stack) <= 0) return false;
+
+        Level level = entity.level();
+        if (!level.isClientSide && !entity.isNoGravity() && entity.onGround()) {
+            if (!stack.getOrDefault(HAS_LANDED.get(), false)) {
+                stack.set(HAS_LANDED.get(), true);
+                spill(stack, level, entity.blockPosition(), getTotalVolume(stack) * entity.getRandom().nextFloat());
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
+        super.inventoryTick(stack, level, entity, slotId, isSelected);
+
+        if (stack.getOrDefault(HAS_LANDED.get(), false)) {
+            stack.set(HAS_LANDED.get(), false);
+        }
+    }
+
+    public void spill(ItemStack stack, @NotNull Level level, BlockPos pos, float volume) {
+        BlockState existingState = level.getBlockState(pos);
+
+        if (existingState.getBlock() instanceof FluidBlock) {
+            transferSubstancesToBlock(pos, level, stack, volume);
+        } else if (existingState.canBeReplaced()) {
+            level.setBlock(pos, FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
+            transferSubstancesToBlock(pos, level, stack, volume);
+        }
+    }
+
+    @FunctionalInterface
+    private interface SubstanceTransferHandler {
+        void handle(SubstanceStack substance, float amount);
+    }
+}

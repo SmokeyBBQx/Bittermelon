@@ -1,9 +1,9 @@
 package com.site21.bittermelon.init;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.entities.miscellaneous.ThrownItemProjectile;
-import com.site21.bittermelon.entities.implementations.chicken.Chicken;
-import com.site21.bittermelon.entities.implementations.SCP939.SCP939;
+import com.site21.bittermelon.content.entities.miscellaneous.ThrownItemProjectile;
+import com.site21.bittermelon.content.entities.implementations.chicken.Chicken;
+import com.site21.bittermelon.content.entities.implementations.SCP939.SCP939;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;

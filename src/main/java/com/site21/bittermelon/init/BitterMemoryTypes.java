@@ -2,7 +2,7 @@ package com.site21.bittermelon.init;
 
 import com.mojang.serialization.Codec;
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.blocks.blockentities.FluidBlockEntity;
+import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;

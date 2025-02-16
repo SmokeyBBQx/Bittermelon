@@ -1,7 +1,7 @@
 package com.site21.bittermelon.init;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.substance.reactions.Reaction;
+import com.site21.bittermelon.content.substance.reactions.Reaction;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static com.site21.bittermelon.init.BitterRegistries.REACTION_REGISTRY_KEY;

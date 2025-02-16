@@ -1,11 +1,12 @@
 package com.site21.bittermelon.init;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.content.atmosphere.networking.AtmosChunkUpdate;
 import com.site21.bittermelon.networking.client.*;
-import com.site21.bittermelon.networking.server.ContainmentNameUpdate;
-import com.site21.bittermelon.networking.server.ReleasePressureUpdate;
-import com.site21.bittermelon.networking.server.ThrowItem;
-import com.site21.bittermelon.networking.server.TransferRateUpdate;
+import com.site21.bittermelon.content.blocks.devices.containmentpanel.networking.ContainmentNameUpdate;
+import com.site21.bittermelon.content.items.containers.substance.networking.ReleasePressureUpdate;
+import com.site21.bittermelon.content.throwing.ThrowItem;
+import com.site21.bittermelon.content.items.containers.substance.networking.TransferRateUpdate;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;

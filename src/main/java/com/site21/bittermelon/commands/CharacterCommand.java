@@ -3,9 +3,9 @@ package com.site21.bittermelon.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import com.site21.bittermelon.character.Character;
-import com.site21.bittermelon.character.CharacterManager;
-import com.site21.bittermelon.medical.factory.Anatomy;
+import com.site21.bittermelon.content.character.Character;
+import com.site21.bittermelon.content.character.CharacterManager;
+import com.site21.bittermelon.content.medical.factory.Anatomy;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -40,7 +40,7 @@ public class CharacterCommand {
 
         CharacterManager manager = CharacterManager.get(source.getServer());
 
-        Optional<com.site21.bittermelon.character.Character> targetCharacter = manager.getCharactersByEntityUUID(player.getUUID()).stream()
+        Optional<Character> targetCharacter = manager.getCharactersByEntityUUID(player.getUUID()).stream()
                 .filter(c -> c.getName().equalsIgnoreCase(name))
                 .findFirst();
 
@@ -66,7 +66,7 @@ public class CharacterCommand {
         }
 
         CharacterManager manager = CharacterManager.get(source.getServer());
-        com.site21.bittermelon.character.Character character = new com.site21.bittermelon.character.Character(player.getUUID(), name, Anatomy.HUMAN);
+        Character character = new Character(player.getUUID(), name, Anatomy.HUMAN);
         manager.addCharacter(character);
         manager.setActiveCharacter(player, character.getUUID());
 
@@ -82,12 +82,12 @@ public class CharacterCommand {
         }
 
         CharacterManager manager = CharacterManager.get(source.getServer());
-        com.site21.bittermelon.character.Character activeCharacter = manager.getActiveCharacter(player);
+        Character activeCharacter = manager.getActiveCharacter(player);
 
-        List<com.site21.bittermelon.character.Character> playerCharacters = manager.getCharactersByEntityUUID(player.getUUID());
+        List<Character> playerCharacters = manager.getCharactersByEntityUUID(player.getUUID());
 
         MutableComponent message = Component.literal("Your characters:\n");
-        for (com.site21.bittermelon.character.Character character : playerCharacters) {
+        for (Character character : playerCharacters) {
             boolean isActive = activeCharacter != null && character.getUUID().equals(activeCharacter.getUUID());
             message.append(Component.literal(
                             (isActive ? "→ " : "  ") + character.getName() + "\n")

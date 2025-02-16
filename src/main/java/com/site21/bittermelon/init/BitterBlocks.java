@@ -1,7 +1,13 @@
 package com.site21.bittermelon.init;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.blocks.*;
+import com.site21.bittermelon.content.blocks.DirtyFloorBlock;
+import com.site21.bittermelon.content.blocks.base.structuralblock.StructuralBlock;
+import com.site21.bittermelon.content.blocks.container.smallbox.SmallBox;
+import com.site21.bittermelon.content.blocks.devices.ATMBlock;
+import com.site21.bittermelon.content.blocks.devices.containmentpanel.ContainmentPanelBlock;
+import com.site21.bittermelon.content.blocks.devices.thermometer.ThermometerBlock;
+import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
