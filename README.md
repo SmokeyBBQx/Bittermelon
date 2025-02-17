@@ -38,8 +38,6 @@ Follow the steps here: https://docs.github.com/en/repositories/creating-and-mana
 __**Eclipse/VSCode not supported**__
 
 ### 3) Creating a PR ###
-Please do at least one build via `Tasks > build > build` to have the spotless plugin format all code before submitting the PR.
-
 Follow the steps here: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request
 
 
