@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.medical.client.gui.minigame;
+package com.site21.bittermelon.content.medical.client.screen.minigame;
 
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.items.medical.MedicalItem;
@@ -14,7 +14,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.content.medical.client.gui.HealthScreenKeyBind.openHealthScreen;
+import static com.site21.bittermelon.content.medical.client.screen.HealthScreenKeyBind.openHealthScreen;
 
 @OnlyIn(Dist.CLIENT)
 public abstract class MedicalMinigame extends Screen {

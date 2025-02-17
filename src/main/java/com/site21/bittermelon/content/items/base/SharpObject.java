@@ -3,7 +3,7 @@ package com.site21.bittermelon.content.items.base;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.items.medical.MedicalItem;
-import com.site21.bittermelon.content.medical.client.gui.minigame.IncisionMinigame;
+import com.site21.bittermelon.content.medical.client.screen.minigame.IncisionMinigame;
 import com.site21.bittermelon.content.medical.compartments.Compartment;
 import com.site21.bittermelon.content.medical.compartments.CompartmentType;
 import com.site21.bittermelon.content.medical.compartments.conditions.Cut;

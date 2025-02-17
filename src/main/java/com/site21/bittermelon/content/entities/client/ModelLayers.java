@@ -1,4 +1,4 @@
-package com.site21.bittermelon.client.models;
+package com.site21.bittermelon.content.entities.client;
 
 import com.site21.bittermelon.Bittermelon;
 import net.minecraft.client.model.geom.ModelLayerLocation;

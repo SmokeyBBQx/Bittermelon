@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.medical.client.gui.minigame;
+package com.site21.bittermelon.content.medical.client.screen.minigame;
 
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.medical.compartments.Compartment;

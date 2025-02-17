@@ -1,7 +1,6 @@
-package com.site21.bittermelon.client.renderer.entity;
+package com.site21.bittermelon.content.entities.implementations.chicken.client;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.client.models.entity.ChickenModel;
 import com.site21.bittermelon.content.entities.implementations.chicken.Chicken;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
@@ -9,9 +8,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.client.models.ModelLayers.CHICKEN_LAYER;
+import static com.site21.bittermelon.content.entities.client.ModelLayers.CHICKEN_LAYER;
 
-public class ChickenRenderer extends MobRenderer<Chicken, com.site21.bittermelon.client.models.entity.ChickenModel<Chicken>> {
+public class ChickenRenderer extends MobRenderer<Chicken, ChickenModel<Chicken>> {
     private static final ResourceLocation CHICKEN_LOCATION = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/entity/silkie_white.png");
 
     public ChickenRenderer(EntityRendererProvider.Context context) {

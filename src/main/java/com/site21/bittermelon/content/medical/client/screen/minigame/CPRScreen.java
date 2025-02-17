@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.medical.client.gui.minigame;
+package com.site21.bittermelon.content.medical.client.screen.minigame;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;

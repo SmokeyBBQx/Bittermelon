@@ -2,7 +2,7 @@ package com.site21.bittermelon.content.items.medical;
 
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.medical.compartments.firstaid.Retractor;
-import com.site21.bittermelon.content.medical.client.gui.minigame.RetractMinigame;
+import com.site21.bittermelon.content.medical.client.screen.minigame.RetractMinigame;
 import com.site21.bittermelon.content.medical.compartments.Compartment;
 import com.site21.bittermelon.content.medical.compartments.CompartmentType;
 import com.site21.bittermelon.content.medical.compartments.conditions.Cut;

@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.medical.client.gui.minigame;
+package com.site21.bittermelon.content.medical.client.screen.minigame;
 
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static com.site21.bittermelon.content.medical.client.gui.HealthScreenKeyBind.openHealthScreen;
+import static com.site21.bittermelon.content.medical.client.screen.HealthScreenKeyBind.openHealthScreen;
 
 @OnlyIn(Dist.CLIENT)
 public class IncisionMinigame extends MedicalMinigame {

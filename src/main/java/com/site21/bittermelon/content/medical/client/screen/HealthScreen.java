@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.medical.client.gui;
+package com.site21.bittermelon.content.medical.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;

@@ -3,7 +3,7 @@ package com.site21.bittermelon.content.miscellaneous.stumble;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
-import com.site21.bittermelon.client.effects.ScreenshakeHandler;
+import com.site21.bittermelon.client.visualeffects.ScreenshakeHandler;
 import com.site21.bittermelon.networking.client.ClearForcedPose;
 import com.site21.bittermelon.networking.client.SetForcedPose;
 import com.site21.bittermelon.util.ServerUtil;

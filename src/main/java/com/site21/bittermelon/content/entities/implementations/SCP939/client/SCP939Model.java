@@ -1,4 +1,4 @@
-package com.site21.bittermelon.client.models.entity;
+package com.site21.bittermelon.content.entities.implementations.SCP939.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

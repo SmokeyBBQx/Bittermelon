@@ -5,7 +5,7 @@ import com.site21.bittermelon.content.atmosphere.AtmosHandler;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.client.effects.ScreenshakeHandler;
+import com.site21.bittermelon.client.visualeffects.ScreenshakeHandler;
 import com.site21.bittermelon.content.entities.ai.behavior.misc.FeelsPain;
 import com.site21.bittermelon.content.medical.blood.BloodType;
 import com.site21.bittermelon.content.medical.compartments.*;

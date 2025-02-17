@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.items.medical;
 
 import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.medical.client.gui.minigame.CauteryMinigame;
+import com.site21.bittermelon.content.medical.client.screen.minigame.CauteryMinigame;
 import com.site21.bittermelon.content.medical.compartments.Compartment;
 import com.site21.bittermelon.content.medical.compartments.CompartmentType;
 import com.site21.bittermelon.content.medical.compartments.conditions.Cut;

@@ -1,4 +1,4 @@
-package com.site21.bittermelon.client.effects;
+package com.site21.bittermelon.client.visualeffects;
 
 import com.site21.bittermelon.Bittermelon;
 import net.minecraft.client.Minecraft;
