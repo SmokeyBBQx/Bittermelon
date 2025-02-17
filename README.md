@@ -14,7 +14,7 @@
 
 [![discord-shield]][discord-url]
 
-I appreciate all contributions and see anyone who wishes to work on the project as my equal. The procedure is quite loose; however, anything that might alter the server's concept should be discussed on Discord first.
+I appreciate all contributions and see anyone who wishes to work on the project as my equal. The procedure is quite loose; however, anything that might alter the server's concept should be discussed on Discord first. _- SmokeyBBQ, owner of Site-21_
 
 ![image-url]
 
