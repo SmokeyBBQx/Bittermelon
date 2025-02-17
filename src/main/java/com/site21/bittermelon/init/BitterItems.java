@@ -184,4 +184,13 @@ public class BitterItems {
             1,
             ItemWeight.VERY_LIGHT
     ));
+
+    public static final DeferredItem<BaseItem> WHISKEY_BOTTLE = ITEMS.register("whiskey_bottle", () -> new FluidContainerItem(
+            new Item.Properties(),
+            3,
+            2,
+            ItemWeight.MEDIUM,
+            100,
+            10)
+    );
 }
