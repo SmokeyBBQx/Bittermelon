@@ -1,25 +1,46 @@
 
-Installation information
-=======
+[Java Development Kit 21]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+[Gradle]: https://www.gradle.org/
 
-This template repository can be directly cloned to get you started with a new
-mod. Simply create a new repository cloned from this one, by following the
-instructions provided by [GitHub](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
+[discord-shield]: https://dcbadge.limes.pink/api/server/https://discord.gg/BbH6kv6
+[discord-url]: https://discord.gg/BbH6kv6
 
-Once you have your clone, simply open the repository in the IDE of your choice. The usual recommendation for an IDE is either IntelliJ IDEA or Eclipse.
+[image-url]: https://i.imgur.com/YP28cx6.png
 
-If at any point you are missing libraries in your IDE, or you've run into problems you can
-run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
-{this does not affect your code} and then start the process again.
+# Bittermelon #
+## Site-21's Codebase ##
 
-Mapping Names:
-============
-By default, the MDK is configured to use the official mapping names from Mojang for methods and fields 
-in the Minecraft codebase. These names are covered by a specific license. All modders should be aware of this
-license. For the latest license text, refer to the mapping file itself, or the reference copy here:
-https://github.com/NeoForged/NeoForm/blob/main/Mojang.md
+---
 
-Additional Resources: 
-==========
-Community Documentation: https://docs.neoforged.net/  
-NeoForged Discord: https://discord.neoforged.net/
+[![discord-shield]][discord-url]
+
+I appreciate all contributions and see anyone who wishes to work on the project as my equal. The procedure is quite loose; however, anything that might alter the server's concept should be discussed on Discord first.
+
+![image-url]
+
+## Contributing ##
+
+### Prerequisites ###
+* [Java Development Kit 21]
+* [Gradle]
+
+
+
+### 1) Clone The Repository ###
+Follow the steps here: https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository
+
+### 2) Setup in [IntelliJ IDEA] ###
+1. Open the template's root folder as a new project in IDEA. This is the folder that contains this README.md file and the gradlew executable.
+2. If your default JVM/JDK is not Java 21 you will encounter an error when opening the project. This error is fixed by going to `File > Settings > Build, Execution, Deployment > Build Tools > Gradle > Gradle JVM` and changing the value to a valid Java 21 JVM. You will also need to set the Project SDK to Java 21. This can be done by going to `File > Project Structure > Project SDK`. Once both have been set open the Gradle tab in IDEA and click the refresh button to reload the project.
+3. Open your Run/Debug Configurations. Under the `Application` category there should now be options to run Fabric and NeoForge projects. Select one of the client options and try to run it.
+4. Assuming you were able to run the game in step 3 your workspace should now be set up.
+
+__**Eclipse/VSCode not supported**__
+
+### 3) Creating a PR ###
+Please do at least one build via `Tasks > build > build` to have the spotless plugin format all code before submitting the PR.
+
+Follow the steps here: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request
+
+
+
