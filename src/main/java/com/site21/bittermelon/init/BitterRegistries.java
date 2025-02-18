@@ -1,6 +1,7 @@
 package com.site21.bittermelon.init;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.content.chat.VerbSet;
 import com.site21.bittermelon.content.substance.Substance;
 import com.site21.bittermelon.content.substance.reactions.Reaction;
 import net.minecraft.core.Registry;
@@ -9,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
+import org.jetbrains.annotations.NotNull;
 
 public class BitterRegistries {
     public static final ResourceKey<Registry<Substance>> SUBSTANCE_REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "substances"));
@@ -16,13 +18,14 @@ public class BitterRegistries {
             .sync(true)
             .create();
 
-    public static final ResourceKey<Registry<Reaction>> REACTION_REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "reactions"));
-    public static final Registry<Reaction> REACTION_REGISTRY = new RegistryBuilder<>(REACTION_REGISTRY_KEY)
+    public static final ResourceKey<Registry<VerbSet>> VERB_SET_REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "verb_sets"));
+    public static final Registry<VerbSet> VERB_SET_REGISTRY = new RegistryBuilder<>(VERB_SET_REGISTRY_KEY)
+            .sync(true)
             .create();
 
     @SubscribeEvent
-    public static void registerRegistries(NewRegistryEvent event) {
+    public static void registerRegistries(@NotNull NewRegistryEvent event) {
        event.register(SUBSTANCE_REGISTRY);
-       event.register(REACTION_REGISTRY);
+       event.register(VERB_SET_REGISTRY);
     }
 }

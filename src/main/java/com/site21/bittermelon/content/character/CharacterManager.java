@@ -13,6 +13,7 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -72,7 +73,7 @@ public class CharacterManager extends SavedData {
         }
     }
 
-    public Character getActiveCharacter(@NotNull Entity entity) {
+    public @Nullable Character getActiveCharacter(@NotNull Entity entity) {
         UUID characterUUID = entity.getData(ACTIVE_CHARACTER.get());
 
         return characters.get(characterUUID);
