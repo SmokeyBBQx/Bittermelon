@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class ChatCommands {
     public static void register(@NotNull CommandDispatcher<CommandSourceStack> dispatcher) {
         // Whisper command
-        dispatcher.register(Commands.literal("w")
+        dispatcher.register(Commands.literal("whisper")
                 .then(Commands.argument("message", StringArgumentType.greedyString())
                         .executes(context -> {
                             ServerPlayer player = context.getSource().getPlayer();
@@ -32,7 +32,7 @@ public class ChatCommands {
                         })));
 
         // Shout command
-        dispatcher.register(Commands.literal("s")
+        dispatcher.register(Commands.literal("shout")
                 .then(Commands.argument("message", StringArgumentType.greedyString())
                         .executes(context -> {
                             ServerPlayer player = context.getSource().getPlayer();

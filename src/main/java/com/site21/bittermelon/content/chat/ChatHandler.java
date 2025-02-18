@@ -72,13 +72,13 @@ public class ChatHandler {
     }
 
     public static void sendOOCMessage(@NotNull ServerPlayer player, @NotNull Character character, String message) {
-        String nameFormat = "(OOC) (" + character.getName() + ") " + player.getName().getString() + ": " + message;
+        String nameFormat = "(OOC) (" + character.getName() + ") " + player.getName().getString() + ": ";
         Component messageComponent = Component.literal(nameFormat + message).withColor(DEFAULT_GRAY);
         sendMessage(messageComponent, player);
     }
 
     public static void sendLOOCMessage(@NotNull ServerPlayer player, @NotNull Character character, String message) {
-        String nameFormat = "(LOOC) (" + character.getName() + ") " + player.getName().getString() + ": " + message;
+        String nameFormat = "(LOOC) (" + character.getName() + ") " + player.getName().getString() + ": ";
         Component messageComponent = Component.literal(nameFormat + message).withColor(DEFAULT_GRAY);
         sendMessage(messageComponent, player, 16);
     }

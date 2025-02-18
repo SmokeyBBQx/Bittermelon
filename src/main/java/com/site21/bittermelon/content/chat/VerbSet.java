@@ -26,11 +26,11 @@ public class VerbSet {
             return questionVerb;
         }
 
-        else if (message.equals(message.toUpperCase()) && message.contains("!")) {
+        if (message.contains("!!")) {
             return shoutingVerb;
         }
 
-        else if (message.contains("!!") || message.contains("!")) {
+        else if (message.contains("!")) {
             return exclamationVerb;
         }
 
