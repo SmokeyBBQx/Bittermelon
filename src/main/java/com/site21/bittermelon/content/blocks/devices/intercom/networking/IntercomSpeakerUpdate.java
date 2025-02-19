@@ -1,0 +1,38 @@
+package com.site21.bittermelon.content.blocks.devices.intercom.networking;
+
+
+import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.content.blocks.devices.intercom.IntercomBlockEntity;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
+
+public record IntercomSpeakerUpdate(boolean speakerOn, BlockPos pos) implements CustomPacketPayload {
+    public static final Type<IntercomSpeakerUpdate> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "intercom_speaker_update"));
+
+    @Override
+    public @NotNull Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
+
+    public static final StreamCodec<ByteBuf, IntercomSpeakerUpdate> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.BOOL,
+            IntercomSpeakerUpdate::speakerOn,
+            BlockPos.STREAM_CODEC,
+            IntercomSpeakerUpdate::pos,
+            IntercomSpeakerUpdate::new
+    );
+
+    public void handle(@NotNull IPayloadContext ctx) {
+        Level level = ctx.player().level();
+        if (level.getBlockEntity(pos()) instanceof IntercomBlockEntity blockEntity) {
+            blockEntity.setSpeakerOn(speakerOn());
+        }
+    }
+}

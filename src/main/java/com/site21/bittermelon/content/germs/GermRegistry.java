@@ -17,7 +17,7 @@ import java.util.UUID;
 
 public class GermRegistry extends SavedData {
     private final Map<UUID, Germ> germs = new HashMap<>();
-    private static final String NAME = "germ_registry";
+    private static final String DATA_NAME = "germ_registry";
 
     public GermRegistry() {}
 
@@ -32,7 +32,7 @@ public class GermRegistry extends SavedData {
                         GermRegistry::load,
                         DataFixTypes.LEVEL
                 ),
-                NAME
+                DATA_NAME
         );
     }
 

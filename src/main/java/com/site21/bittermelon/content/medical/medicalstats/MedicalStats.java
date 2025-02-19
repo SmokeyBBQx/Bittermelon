@@ -253,19 +253,21 @@ public class MedicalStats {
     }
 
     private float getAirQuality() {
-        if (!entity.level().isClientSide) {
-            AtmosInstance atmos = AtmosHandler.getAtmosInstanceAt(entity.level(), entity.getOnPos());
-            if (atmos != null) {
-                List<SubstanceStack> gasses = atmos.getGases();
-                for (SubstanceStack stack : gasses) {
-                    if (Objects.equals(stack.getSubstance().getName(), "gaseous_oxygen")) {
-                        float amount = stack.getAmount();
-                        return amount / 20;
-                    }
-                }
-            }
-        }
-        return 0;
+        return 1;
+
+//        if (!entity.level().isClientSide) {
+//            AtmosInstance atmos = AtmosHandler.getAtmosInstanceAt(entity.level(), entity.getOnPos());
+//            if (atmos != null) {
+//                List<SubstanceStack> gasses = atmos.getGases();
+//                for (SubstanceStack stack : gasses) {
+//                    if (Objects.equals(stack.getSubstance().getName(), "gaseous_oxygen")) {
+//                        float amount = stack.getAmount();
+//                        return amount / 20;
+//                    }
+//                }
+//            }
+//        }
+//        return 0;
     }
 
     private void checkForHeartArrhythmia(Compartment compartment) {

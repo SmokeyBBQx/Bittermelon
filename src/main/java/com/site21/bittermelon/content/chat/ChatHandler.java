@@ -3,6 +3,8 @@ package com.site21.bittermelon.content.chat;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
+import com.site21.bittermelon.content.syncsound.SyncSoundEvent;
+import com.site21.bittermelon.content.syncsound.SyncSoundType;
 import com.site21.bittermelon.init.VerbSets;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -10,6 +12,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.ServerChatEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,6 +68,9 @@ public class ChatHandler {
         }
 
         sendMessage(messageComponent, player, range);
+        if (!player.level().isClientSide) {
+            NeoForge.EVENT_BUS.post(new SyncSoundEvent(player.level(), player.getOnPos(), SyncSoundType.SPEECH, messageComponent, range));
+        }
     }
 
     public static void sendRPMessage(@NotNull Character character, ServerPlayer player, String message, int range, @NotNull VerbSet verbSet) {

@@ -28,6 +28,7 @@
   "item.bittermelon.gas_cylinder": "Gas Cylinder",
   "item.bittermelon.keycard": "Keycard",
   "item.bittermelon.whiskey_bottle": "Whiskey Bottle",
+  "item.bittermelon.intercom": "Intercom",
 
   "block.bittermelon.small_cardboard_box": "Small Cardboard Box",
   "block.bittermelon.atm": "ATM",
@@ -35,5 +36,6 @@
   "block.bittermelon.thermometer": "Wall Thermometer",
   "block.bittermelon.fluid": "Fluid",
   "block.bittermelon.structural_block": "Structural Block",
+  "block.bittermelon.intercom": "Intercom",
   "block.bittermelon.dirty_floor": "Dirty Floor"
 }

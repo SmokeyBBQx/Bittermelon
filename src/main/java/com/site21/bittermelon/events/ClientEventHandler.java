@@ -5,6 +5,7 @@ import com.site21.bittermelon.content.atmosphere.data.AtmosLevelData;
 import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.personnel.PersonnelRegistry;
 import com.site21.bittermelon.content.economy.AccountRegistry;
+import com.site21.bittermelon.content.telecomms.intercom.IntercomManager;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -21,6 +22,7 @@ public class ClientEventHandler {
         CharacterManager.clearClientData();
         PersonnelRegistry.clearClientData();
         AtmosLevelData.clearClientData();
+        IntercomManager.clearClientData();
     }
 
     @SubscribeEvent

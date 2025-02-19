@@ -4,6 +4,7 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.base.structuralblock.StructuralBlockEntity;
 import com.site21.bittermelon.content.blocks.container.smallbox.BoxBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.containmentpanel.ContainmentPanelBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.intercom.IntercomBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.thermometer.ThermometerBlockEntity;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -30,4 +31,7 @@ public class BitterBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ThermometerBlockEntity>> THERMOMETER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("thermometer_block_entity",
             () -> BlockEntityType.Builder.of(ThermometerBlockEntity::new, THERMOMETER.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<IntercomBlockEntity>> INTERCOM_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("intercom_block_entity",
+            () -> BlockEntityType.Builder.of(IntercomBlockEntity::new, INTERCOM.get()).build(null));
 }

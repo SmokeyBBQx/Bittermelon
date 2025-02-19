@@ -60,8 +60,6 @@ public final class AtmosHandler {
             Set<BlockPos> floodFill = FloodFill.run(level, pos, 1000);
             gas.setAmount(gas.getAmount() / floodFill.size());
 
-            System.out.println(gas.getAmount());
-
             instance.updateGas(gas);
             updateAtmosphere(level, instance, floodFill);
         } else {

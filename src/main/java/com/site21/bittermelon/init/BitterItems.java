@@ -193,4 +193,9 @@ public class BitterItems {
             100,
             10)
     );
+
+    public static final DeferredItem<BlockItem> INTERCOM = ITEMS.register("intercom", () -> new BlockItem(
+            BitterBlocks.INTERCOM.get(),
+            new Item.Properties()
+    ));
 }

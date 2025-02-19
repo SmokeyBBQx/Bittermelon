@@ -1,6 +1,7 @@
 package com.site21.bittermelon.init;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.content.blocks.devices.intercom.IntercomBlock;
 import com.site21.bittermelon.content.blocks.dirtyfloor.DirtyFloorBlock;
 import com.site21.bittermelon.content.blocks.base.structuralblock.StructuralBlock;
 import com.site21.bittermelon.content.blocks.container.smallbox.SmallBox;
@@ -53,5 +54,9 @@ public class BitterBlocks {
 
     public static final DeferredBlock<ThermometerBlock> THERMOMETER = BLOCKS.register("thermometer",
             () -> new ThermometerBlock(BlockBehaviour.Properties.of().noOcclusion()
+            ));
+
+    public static final DeferredBlock<IntercomBlock> INTERCOM = BLOCKS.register("intercom",
+            () -> new IntercomBlock(BlockBehaviour.Properties.of().noOcclusion()
             ));
 }

@@ -1,8 +1,10 @@
 package com.site21.bittermelon.util;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -12,16 +14,19 @@ public class LocalMessageHelper {
     public static void sendLocalMessage(@NotNull Entity entity, int range, Component messageComponent) {
         List<ServerPlayer> serverPlayers = Objects.requireNonNull(entity.getServer()).getPlayerList().getPlayers();
         for (ServerPlayer serverPlayer : serverPlayers) {
-            if (compareDistance(entity, serverPlayer) <= range) {
+            if (entity.distanceTo(serverPlayer) <= range) {
                 serverPlayer.sendSystemMessage(messageComponent);
             }
         }
     }
 
-    public static double compareDistance(@NotNull Entity entity1, @NotNull Entity entity2) {
-        double x = Math.abs(entity1.getX() - entity2.getX());
-        double y = Math.abs(entity1.getY() - entity2.getY());
-        double z = Math.abs(entity1.getZ() - entity2.getZ());
-        return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+    public static void sendLocalMessage(@NotNull Level level, @NotNull BlockPos pos, int range, Component messageComponent) {
+        List<ServerPlayer> serverPlayers = Objects.requireNonNull(level.getServer()).getPlayerList().getPlayers();
+        double rangeSq = range * range;
+        for (ServerPlayer serverPlayer : serverPlayers) {
+            if (pos.distToCenterSqr(serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ()) <= rangeSq) {
+                serverPlayer.sendSystemMessage(messageComponent);
+            }
+        }
     }
 }

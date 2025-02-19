@@ -27,7 +27,7 @@ public class ChatCommands {
                                 return 0;
                             }
 
-                            ChatHandler.sendRPMessage(character, player, message, ChatHandler.WHISPER_RANGE, VerbSets.HUMAN.get().whisperVerb);
+                            ChatHandler.sendRPMessage(character, player, message, ChatHandler.WHISPER_RANGE, VerbSets.HUMAN.get().whisperVerb());
                             return 1;
                         })));
 
@@ -44,7 +44,7 @@ public class ChatCommands {
                                 return 0;
                             }
 
-                            ChatHandler.sendRPMessage(character, player, message, ChatHandler.SHOUT_RANGE, VerbSets.HUMAN.get().shoutingVerb);
+                            ChatHandler.sendRPMessage(character, player, message, ChatHandler.SHOUT_RANGE, VerbSets.HUMAN.get().shoutingVerb());
                             return 1;
                         })));
 

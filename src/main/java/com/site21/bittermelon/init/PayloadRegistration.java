@@ -2,6 +2,11 @@ package com.site21.bittermelon.init;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.atmosphere.networking.AtmosChunkUpdate;
+import com.site21.bittermelon.content.blocks.devices.intercom.networking.IntercomIDUpdate;
+import com.site21.bittermelon.content.blocks.devices.intercom.networking.IntercomMicUpdate;
+import com.site21.bittermelon.content.blocks.devices.intercom.networking.IntercomSpeakerUpdate;
+import com.site21.bittermelon.content.blocks.devices.intercom.networking.IntercomTargetUpdate;
+import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
 import com.site21.bittermelon.networking.client.*;
 import com.site21.bittermelon.content.blocks.devices.containmentpanel.networking.ContainmentNameUpdate;
 import com.site21.bittermelon.content.items.containers.substance.networking.ReleasePressureUpdate;
@@ -85,5 +90,34 @@ public class PayloadRegistration {
                 ReleasePressureUpdate::handle
         );
 
+        registrar.playToServer(
+                IntercomIDUpdate.TYPE,
+                IntercomIDUpdate.STREAM_CODEC,
+                IntercomIDUpdate::handle
+        );
+
+        registrar.playToServer(
+                IntercomMicUpdate.TYPE,
+                IntercomMicUpdate.STREAM_CODEC,
+                IntercomMicUpdate::handle
+        );
+
+        registrar.playToServer(
+                IntercomSpeakerUpdate.TYPE,
+                IntercomSpeakerUpdate.STREAM_CODEC,
+                IntercomSpeakerUpdate::handle
+        );
+
+        registrar.playToServer(
+                IntercomTargetUpdate.TYPE,
+                IntercomTargetUpdate.STREAM_CODEC,
+                IntercomTargetUpdate::handle
+        );
+
+        registrar.playToClient(
+                SyncIntercomList.TYPE,
+                SyncIntercomList.STREAM_CODEC,
+                SyncIntercomList::handle
+        );
     }
 }
