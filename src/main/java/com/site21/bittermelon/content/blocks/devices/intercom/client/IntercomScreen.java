@@ -19,7 +19,9 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @OnlyIn(Dist.CLIENT)
 public class IntercomScreen extends Screen {
@@ -124,12 +126,16 @@ public class IntercomScreen extends Screen {
     private void updateIntercomList(String searchTerm) {
         if (intercom.getLevel() == null) return;
         IntercomManager manager = IntercomManager.get(intercom.getLevel());
+        Set<String> addedIDs = new HashSet<>();
 
         intercomList.clearEntries();
         intercomList.allIntercomIDs.clear();
 
         for (String id : manager.getIntercomIDs().values()) {
-            intercomList.addIntercomID(id, this);
+            if (!addedIDs.contains(id)) {
+                addedIDs.add(id);
+                intercomList.addIntercomID(id, this);
+            }
         }
 
         if (!searchTerm.isEmpty()) {

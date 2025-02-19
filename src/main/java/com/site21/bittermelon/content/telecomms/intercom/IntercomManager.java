@@ -148,7 +148,7 @@ public class IntercomManager extends SavedData {
     @Override
     public void setDirty() {
         super.setDirty();
-        syncToClient();
+//        syncToClient();
     }
 
     @OnlyIn(Dist.CLIENT)

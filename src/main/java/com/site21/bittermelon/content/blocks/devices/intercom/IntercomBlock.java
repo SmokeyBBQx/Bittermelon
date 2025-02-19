@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,6 +32,7 @@ public class IntercomBlock extends Block implements EntityBlock {
 
     public IntercomBlock(Properties properties) {
         super(properties);
+        this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
     }
 
     @Override
@@ -48,6 +50,10 @@ public class IntercomBlock extends Block implements EntityBlock {
     @Override
     public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos blockPos, @NotNull BlockState blockState) {
         return new IntercomBlockEntity(blockPos, blockState);
+    }
+
+    protected @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+        return AABBS.get(state.getValue(FACING));
     }
 
     public BlockState getStateForPlacement(@NotNull BlockPlaceContext context) {

@@ -23,7 +23,7 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
     private String intercomID = "";
     private String targetID = "";
     private boolean speakerOn = true;
-    private boolean micOn = true;
+    private boolean micOn = false;
 
     public IntercomBlockEntity(BlockPos pos, BlockState blockState) {
         super(INTERCOM_BLOCK_ENTITY.get(), pos, blockState);
