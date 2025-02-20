@@ -35,8 +35,10 @@ public class AtmosFogRenderer {
         float fogDensity = calculateFogDensity(instance);
         float fogStart = BASE_FOG_DISTANCE * (1 - fogDensity);
 
+        // TODO: Fix fog density
+
         event.setNearPlaneDistance(fogStart);
-        event.setFarPlaneDistance(BASE_FOG_DISTANCE);
+        event.setFarPlaneDistance(2);
         event.setFogShape(FogShape.CYLINDER);
         event.setCanceled(true);
     }

@@ -17,10 +17,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AtmosLevelData extends SavedData {
     private static AtmosLevelData clientInstance;
-    Map<UUID, AtmosInstance> atmosInstances = new HashMap<>();
+    private final Map<UUID, AtmosInstance> atmosInstances = new ConcurrentHashMap<>();
     private static final String DATA_NAME = "atmosphere_instances";
 
     public static @NotNull AtmosLevelData get(@NotNull Level level) {

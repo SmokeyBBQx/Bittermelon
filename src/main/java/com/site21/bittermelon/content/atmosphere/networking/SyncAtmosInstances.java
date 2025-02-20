@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.site21.bittermelon.Bittermelon.LOGGER;
+
 public record SyncAtmosInstances(Map<UUID, AtmosInstance> atmosInstances) implements CustomPacketPayload {
     public static final Type<SyncAtmosInstances> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "sync_atmos_instances"));
 
@@ -41,7 +43,11 @@ public record SyncAtmosInstances(Map<UUID, AtmosInstance> atmosInstances) implem
 
     public void handle(@NotNull IPayloadContext ctx) {
         AtmosLevelData data = AtmosLevelData.get(ctx.player().level());
-        data.getAtmosInstances().clear();
-        data.getAtmosInstances().putAll(atmosInstances);
+        try {
+            data.getAtmosInstances().clear();
+            data.getAtmosInstances().putAll(atmosInstances);
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("Failed to sync AtmosInstances: {}", e.getMessage());
+        };
     }
 }
