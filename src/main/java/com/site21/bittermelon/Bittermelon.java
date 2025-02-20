@@ -1,22 +1,27 @@
 package com.site21.bittermelon;
 
+import com.site21.bittermelon.content.atmosphere.data.AtmosLevelData;
+import com.site21.bittermelon.content.atmosphere.networking.SyncAtmosInstances;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.blocks.substance.fluid.client.FluidBlockColor;
 import com.site21.bittermelon.client.gui.loreopening.LoreOpeningOverlay;
+import com.site21.bittermelon.content.telecomms.intercom.IntercomManager;
+import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
 import com.site21.bittermelon.init.*;
 import com.site21.bittermelon.content.substance.reactions.Reactions;
 import com.site21.bittermelon.util.ServerUtil;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
@@ -112,6 +117,10 @@ public class Bittermelon
         shouldDisplayText = true;
         LoreOpeningOverlay.displayStartTime = System.currentTimeMillis();
         event.getEntity().playNotifySound(LOW_IMPACT.get(), SoundSource.MASTER, 1, 1);
+        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+            PacketDistributor.sendToPlayer(serverPlayer, new SyncAtmosInstances(AtmosLevelData.get(serverPlayer.level()).getAtmosInstances()));
+            PacketDistributor.sendToPlayer(serverPlayer, new SyncIntercomList(IntercomManager.get(serverPlayer.level()).getIntercomIDs()));
+        }
     }
 
     @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)

@@ -25,9 +25,6 @@ public class IntercomManager extends SavedData {
     private static final String DATA_NAME = "intercom";
     private final Map<BlockPos, String> intercomIDs = new HashMap<>();
 
-    public IntercomManager() {
-    }
-
     public static IntercomManager get(@NotNull Level level) {
         if (level.isClientSide()) {
             return getClient();
@@ -81,28 +78,30 @@ public class IntercomManager extends SavedData {
     }
 
     @Override
-    public @NotNull CompoundTag save(@NotNull CompoundTag compoundTag, HolderLookup.@NotNull Provider provider) {
+    public @NotNull CompoundTag save(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider) {
         ListTag positionsList = new ListTag();
 
-        for (Map.Entry<BlockPos, String> entry : intercomIDs.entrySet()) {
+        System.out.println("Intercoms " + intercomIDs);
+
+        for (BlockPos pos : intercomIDs.keySet()) {
             CompoundTag positionTag = new CompoundTag();
-            BlockPos pos = entry.getKey();
+            String id = intercomIDs.get(pos);
 
             positionTag.putLong("pos", pos.asLong());
-            positionTag.putString("id", entry.getValue());
+            positionTag.putString("id", id);
 
             positionsList.add(positionTag);
         }
 
-        compoundTag.put("positions", positionsList);
+        tag.put("positions", positionsList);
 
-        return compoundTag;
+        return tag;
     }
 
     public static @NotNull IntercomManager load(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider) {
         IntercomManager manager = new IntercomManager();
 
-        ListTag positionsList = tag.getList("positions", Tag.TAG_COMPOUND);
+        ListTag positionsList = tag.getList("positions", ListTag.TAG_COMPOUND);
 
         for (int i = 0; i < positionsList.size(); i++) {
             CompoundTag positionTag = positionsList.getCompound(i);
@@ -114,7 +113,6 @@ public class IntercomManager extends SavedData {
             manager.intercomIDs.put(pos, id);
         }
 
-        manager.setDirty();
         return manager;
     }
 
@@ -123,7 +121,6 @@ public class IntercomManager extends SavedData {
         if (id != null && !id.isEmpty()) {
             intercomIDs.put(pos, id);
             setDirty();
-
         }
     }
 
@@ -148,7 +145,7 @@ public class IntercomManager extends SavedData {
     @Override
     public void setDirty() {
         super.setDirty();
-//        syncToClient();
+        syncToClient();
     }
 
     @OnlyIn(Dist.CLIENT)

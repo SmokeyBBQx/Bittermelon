@@ -1,6 +1,8 @@
 package com.site21.bittermelon.content.atmosphere.data;
 
 import com.site21.bittermelon.content.atmosphere.AtmosInstance;
+import com.site21.bittermelon.content.atmosphere.networking.SyncAtmosInstances;
+import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -9,6 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -89,5 +92,15 @@ public class AtmosLevelData extends SavedData {
     public void removeAtmosInstance(UUID uuid) {
         atmosInstances.remove(uuid);
         setDirty();
+    }
+
+    private void syncToClient() {
+        PacketDistributor.sendToAllPlayers(new SyncAtmosInstances(atmosInstances));
+    }
+
+    @Override
+    public void setDirty() {
+        super.setDirty();
+        syncToClient();
     }
 }

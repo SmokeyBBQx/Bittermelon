@@ -28,7 +28,7 @@ public class AtmosFogRenderer {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null) return;
 
-        AtmosInstance instance = AtmosHandler.getAtmosInstanceAt(mc.level, mc.player.getOnPos());
+        AtmosInstance instance = AtmosHandler.getAtmosInstanceAt(mc.level, mc.player.getOnPos().above());
 
         if (instance == null) return;
 
@@ -46,7 +46,7 @@ public class AtmosFogRenderer {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null) return;
 
-        AtmosInstance instance = AtmosHandler.getAtmosInstanceAt(mc.level, mc.player.getOnPos());
+        AtmosInstance instance = AtmosHandler.getAtmosInstanceAt(mc.level, mc.player.getOnPos().above());
         if (instance == null) return;
 
         Map<Integer, Float> colors = new HashMap<>();

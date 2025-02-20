@@ -4,9 +4,13 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import com.site21.bittermelon.util.SubstanceUtils;
+import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.UUIDUtil;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -26,6 +30,22 @@ public class AtmosInstance {
             UUIDUtil.CODEC.fieldOf("uuid").forGetter(AtmosInstance::getUuid),
             LONG_SET_CODEC.fieldOf("blocks").forGetter(AtmosInstance::getBlocks)
     ).apply(instance, AtmosInstance::new));
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, AtmosInstance> STREAM_CODEC =
+            StreamCodec.composite(
+                    ByteBufCodecs.FLOAT,
+                    AtmosInstance::getTemperature,
+                    SubstanceStack.STREAM_CODEC.apply(ByteBufCodecs.list()),
+                    AtmosInstance::getGases,
+                    UUIDUtil.STREAM_CODEC,
+                    AtmosInstance::getUuid,
+                    ByteBufCodecs.collection(
+                            LongOpenHashSet::new,
+                            ByteBufCodecs.VAR_LONG
+                    ),
+                    AtmosInstance::getBlocks,
+                    AtmosInstance::new
+            );
 
     private final List<SubstanceStack> gases;
     private float temperature; // Kelvin

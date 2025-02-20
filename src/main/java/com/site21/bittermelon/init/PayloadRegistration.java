@@ -2,6 +2,7 @@ package com.site21.bittermelon.init;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.atmosphere.networking.AtmosChunkUpdate;
+import com.site21.bittermelon.content.atmosphere.networking.SyncAtmosInstances;
 import com.site21.bittermelon.content.blocks.devices.intercom.networking.IntercomIDUpdate;
 import com.site21.bittermelon.content.blocks.devices.intercom.networking.IntercomMicUpdate;
 import com.site21.bittermelon.content.blocks.devices.intercom.networking.IntercomSpeakerUpdate;
@@ -118,6 +119,12 @@ public class PayloadRegistration {
                 SyncIntercomList.TYPE,
                 SyncIntercomList.STREAM_CODEC,
                 SyncIntercomList::handle
+        );
+
+        registrar.playToClient(
+                SyncAtmosInstances.TYPE,
+                SyncAtmosInstances.STREAM_CODEC,
+                SyncAtmosInstances::handle
         );
     }
 }
