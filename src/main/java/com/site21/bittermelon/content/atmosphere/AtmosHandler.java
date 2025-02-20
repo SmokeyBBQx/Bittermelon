@@ -31,6 +31,8 @@ public final class AtmosHandler {
     }
 
     public static void updateAtmosphereAt(@NotNull Level level, @NotNull BlockPos pos) {
+        if (level.isClientSide) return;
+
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos(pos.getX(), pos.getY(), pos.getZ());
         Set<AtmosInstance> updatedInstances = new HashSet<>();
 
@@ -60,11 +62,14 @@ public final class AtmosHandler {
         AtmosInstance instance = getAtmosInstanceAt(level, pos);
         if (instance != null) {
             gas.setAmount(gas.getAmount());
-
             instance.updateGas(gas, level);
-            AtmosLevelData.get(level).syncInstance(instance);
         } else {
             addAtmosphere(level, pos, gas.getTemperature(), List.of(gas));
+        }
+
+        if (level instanceof ServerLevel serverLevel) {
+            ChunkPos chunkPos = new ChunkPos(pos);
+            PacketDistributor.sendToPlayersTrackingChunk(serverLevel, chunkPos, new AtmosChunkUpdate(chunkPos, level.getChunk(chunkPos.x, chunkPos.z).getData(ATMOSPHERE)));
         }
     }
 
