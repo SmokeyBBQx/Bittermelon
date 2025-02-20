@@ -182,7 +182,7 @@ public class SubstanceCommand {
             return 0;
         }
 
-        instance.setTemperature(temperature);
+        instance.setTemperature(temperature, source.getLevel());
         source.sendSuccess(() -> Component.literal("Set atmosphere temperature to: " + temperature), true);
         return 1;
     }

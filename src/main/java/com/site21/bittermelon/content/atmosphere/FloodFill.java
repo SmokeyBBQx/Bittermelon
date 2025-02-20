@@ -50,7 +50,8 @@ public final class FloodFill {
         return run(level, start, limit, TEST_FULL_SEAL);
     }
 
-    public static @NotNull Set<BlockPos> run(Level level, @NotNull BlockPos start, int limit, SolidBlockPredicate predicate) {
+    public static @NotNull Set<BlockPos> run(@NotNull Level level, @NotNull BlockPos start, int limit, SolidBlockPredicate predicate) {
+        if (level.isClientSide) return Set.of();
         LongSet visited = new LongOpenHashSet(limit);
         LongArrayFIFOQueue queue = new LongArrayFIFOQueue(limit);
 

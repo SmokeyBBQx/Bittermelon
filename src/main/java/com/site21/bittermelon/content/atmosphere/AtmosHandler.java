@@ -50,18 +50,19 @@ public final class AtmosHandler {
         }
     }
 
-    public static void removeAtmosphere(Level level, @NotNull AtmosInstance instance) {
+    public static void removeAtmosphere(@NotNull Level level, @NotNull AtmosInstance instance) {
         AtmosLevelData.get(level).removeAtmosInstance(instance.getUuid());
     }
 
-    public static void releaseGas(Level level, BlockPos pos, @NotNull SubstanceStack gas) {
+    public static void releaseGas(@NotNull Level level, BlockPos pos, @NotNull SubstanceStack gas) {
+        if (level.isClientSide) return;
+
         AtmosInstance instance = getAtmosInstanceAt(level, pos);
         if (instance != null) {
-            Set<BlockPos> floodFill = FloodFill.run(level, pos, 1000);
-            gas.setAmount(gas.getAmount() / floodFill.size());
+            gas.setAmount(gas.getAmount());
 
-            instance.updateGas(gas);
-            updateAtmosphere(level, instance, floodFill);
+            instance.updateGas(gas, level);
+            AtmosLevelData.get(level).syncInstance(instance);
         } else {
             addAtmosphere(level, pos, gas.getTemperature(), List.of(gas));
         }
@@ -74,6 +75,8 @@ public final class AtmosHandler {
     }
 
     public static void addAtmosphere(@NotNull Level level, BlockPos startPos, float temperature, List<SubstanceStack> gasses) {
+        if (level.isClientSide) return;
+
         AtmosInstance newInstance = new AtmosInstance(temperature, gasses);
         updateAtmosphere(level, startPos, newInstance);
         AtmosLevelData.get(level).addAtmosInstance(newInstance);
@@ -85,6 +88,7 @@ public final class AtmosHandler {
     }
 
     public static void updateAtmosphere(@NotNull Level level, @NotNull AtmosInstance atmosInstance, @NotNull Set<BlockPos> floodFill) {
+        if (level.isClientSide) return;
         Set<UUID> mergedInstances = new HashSet<>();
 
         LongSet newBlocks = new LongOpenHashSet();
@@ -119,7 +123,7 @@ public final class AtmosHandler {
                 LevelChunk chunk = level.getChunkAt(pos);
                 AtmosBlockData data = chunk.getData(ATMOSPHERE.get());
                 data.addAtmosBlock(pos, newInstance.getUuid());
-                newInstance.addBlock(packedPos);
+                newInstance.addBlock(packedPos, level);
             }
 
             AtmosLevelData.get(level).addAtmosInstance(newInstance);
@@ -133,12 +137,14 @@ public final class AtmosHandler {
 
             AtmosInstance existing = getAtmosInstanceAt(level, pos);
             if (existing != null && !mergedInstances.contains(existing.getUuid()) && existing != atmosInstance) {
-                atmosInstance.merge(existing);
+                atmosInstance.merge(existing, level);
                 mergedInstances.add(existing.getUuid());
                 removeAtmosphere(level, existing);
             }
             data.addAtmosBlock(pos, atmosInstance.getUuid());
-            atmosInstance.addBlock(pos.asLong());
+            atmosInstance.addBlock(pos.asLong(), level);
         }
+
+        AtmosLevelData.get(level).syncInstance(atmosInstance);
     }
 }

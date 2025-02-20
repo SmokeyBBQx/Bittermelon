@@ -5,8 +5,11 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.site21.bittermelon.content.medical.blood.BloodType;
 import com.site21.bittermelon.content.medical.factory.Anatomy;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
@@ -25,6 +28,20 @@ public class Character {
         character.setEmoteColor(emoteColor);
         return character;
     }));
+
+    public static final StreamCodec<ByteBuf, Character> STREAM_CODEC = StreamCodec.composite(
+            UUIDUtil.STREAM_CODEC,
+            Character::getUUID,
+            UUIDUtil.STREAM_CODEC,
+            Character::getEntityUUID,
+            ByteBufCodecs.STRING_UTF8,
+            Character::getName,
+            ByteBufCodecs.STRING_UTF8,
+            Character::getDescription,
+            ByteBufCodecs.INT,
+            Character::getEmoteColor,
+            Character::new
+    );
 
     private final UUID uuid;
     private final UUID entityUUID;
@@ -48,6 +65,17 @@ public class Character {
         this(entityUUID, name, Anatomy.HUMAN);
         this.description = description;
         this.emoteColor = TextColor.parseColor("#" + emoteColor).getOrThrow().getValue();
+    }
+
+    public Character(UUID uuid, UUID entityUUID, String name, String description, int emoteColor) {
+        this.uuid = uuid;
+        this.entityUUID = entityUUID;
+        this.name = name;
+        this.description = description;
+        this.emoteColor = emoteColor;
+
+        medicalStats = Anatomy.HUMAN.getFactory().build(BloodType.O_MINUS, this);
+        skills = new EnumMap<>(Skills.class);
     }
 
     public UUID getUUID() {

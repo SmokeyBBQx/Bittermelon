@@ -1,5 +1,7 @@
 package com.site21.bittermelon.content.character;
 
+import com.site21.bittermelon.content.character.networking.SyncCharacters;
+import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -12,6 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,6 +80,10 @@ public class CharacterManager extends SavedData {
         UUID characterUUID = entity.getData(ACTIVE_CHARACTER.get());
 
         return characters.get(characterUUID);
+    }
+
+    public Map<UUID, Character> getCharacters() {
+        return characters;
     }
 
     public Character getCharacter(UUID uuid) {
@@ -147,5 +154,17 @@ public class CharacterManager extends SavedData {
         tag.put("characters", characterList);
 
         return tag;
+    }
+
+    private void syncToClient() {
+        PacketDistributor.sendToAllPlayers(new SyncCharacters(characters));
+
+        // TODO: Add syncing for individual characters
+    }
+
+    @Override
+    public void setDirty() {
+        super.setDirty();
+        syncToClient();
     }
 }

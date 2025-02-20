@@ -6,6 +6,7 @@ import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.blocks.substance.fluid.client.FluidBlockColor;
 import com.site21.bittermelon.client.gui.loreopening.LoreOpeningOverlay;
+import com.site21.bittermelon.content.character.networking.SyncCharacters;
 import com.site21.bittermelon.content.telecomms.intercom.IntercomManager;
 import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
 import com.site21.bittermelon.init.*;
@@ -13,6 +14,7 @@ import com.site21.bittermelon.content.substance.reactions.Reactions;
 import com.site21.bittermelon.util.ServerUtil;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
@@ -108,8 +110,11 @@ public class Bittermelon
 
     @SubscribeEvent
     public void onEntityTick(EntityTickEvent.@NotNull Post event) {
-       Character character = CharacterManager.get(event.getEntity().level()).getActiveCharacter(event.getEntity());
+        Level level = event.getEntity().level();
+        if (level.isClientSide) return;
+       Character character = CharacterManager.get(level).getActiveCharacter(event.getEntity());
        if (character != null) character.update();
+
     }
 
     @SubscribeEvent
@@ -118,8 +123,9 @@ public class Bittermelon
         LoreOpeningOverlay.displayStartTime = System.currentTimeMillis();
         event.getEntity().playNotifySound(LOW_IMPACT.get(), SoundSource.MASTER, 1, 1);
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            PacketDistributor.sendToPlayer(serverPlayer, new SyncAtmosInstances(AtmosLevelData.get(serverPlayer.level()).getAtmosInstances()));
+            AtmosLevelData.get(serverPlayer.level()).syncToClient();
             PacketDistributor.sendToPlayer(serverPlayer, new SyncIntercomList(IntercomManager.get(serverPlayer.level()).getIntercomIDs()));
+            PacketDistributor.sendToPlayer(serverPlayer, new SyncCharacters(CharacterManager.get(serverPlayer.level()).getCharacters()));
         }
     }
 

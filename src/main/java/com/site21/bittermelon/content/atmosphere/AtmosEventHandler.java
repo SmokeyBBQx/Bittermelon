@@ -2,6 +2,8 @@ package com.site21.bittermelon.content.atmosphere;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.atmosphere.data.AtmosBlockData;
+import com.site21.bittermelon.content.atmosphere.data.AtmosLevelData;
+import com.site21.bittermelon.content.atmosphere.networking.SyncAtmosInstances;
 import com.site21.bittermelon.init.BitterBlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -20,20 +22,22 @@ public class AtmosEventHandler {
     @SubscribeEvent
     public static void onBlockUpdate(BlockEvent.@NotNull NeighborNotifyEvent event) {
         if (event.getLevel() instanceof Level level) {
+            if (level.isClientSide) return;
             BlockPos pos = event.getPos();
+
+            if (level.getBlockState(pos).is(BitterBlockTags.PASSES_ATMOS)) return;
 
             LevelChunk chunk = level.getChunkAt(pos);
             AtmosBlockData data = chunk.getData(ATMOSPHERE.get());
 
             if (!level.getBlockState(pos).canBeReplaced() && !level.getBlockState(pos).is(BitterBlockTags.PASSES_ATMOS)) {
                 if (AtmosHandler.getAtmosInstanceAt(level, pos) != null) {
-                    AtmosHandler.getAtmosInstanceAt(level, pos).removeBlock(pos.asLong());
+                    AtmosHandler.getAtmosInstanceAt(level, pos).removeBlock(pos.asLong(), level);
                 }
                 data.removeAtmosBlock(pos);
             }
 
             // TODO: Proper updating for doors
-
             AtmosHandler.updateAtmosphereAt(level, event.getPos());
         }
     }

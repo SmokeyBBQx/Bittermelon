@@ -2,6 +2,9 @@ package com.site21.bittermelon.content.atmosphere;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.site21.bittermelon.content.atmosphere.networking.UpdateAtmosBlocks;
+import com.site21.bittermelon.content.atmosphere.networking.UpdateAtmosGas;
+import com.site21.bittermelon.content.atmosphere.networking.UpdateAtmosTemperature;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import com.site21.bittermelon.util.SubstanceUtils;
 import io.netty.buffer.ByteBuf;
@@ -11,6 +14,8 @@ import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -89,37 +94,53 @@ public class AtmosInstance {
     }
 
 
-    public void addBlock(Long packedPos) {
+    public void addBlock(Long packedPos, Level level) {
         blocks.add(packedPos);
+        if (!level.isClientSide) {
+            PacketDistributor.sendToAllPlayers(new UpdateAtmosBlocks(uuid, true, packedPos));
+        }
     }
 
-    public void removeBlock(Long packedPos) {
+    public void removeBlock(Long packedPos, Level level) {
         blocks.remove(packedPos);
+        if (!level.isClientSide) {
+            PacketDistributor.sendToAllPlayers(new UpdateAtmosBlocks(uuid, false, packedPos));
+        }
     }
 
     public LongSet getBlocks() {
         return blocks;
     }
 
-    public void setTemperature(float temperature) {
+    public void setTemperature(float temperature, Level level) {
         this.temperature = temperature;
-    }
-
-    public void merge(@NotNull AtmosInstance other) {
-        setTemperature((temperature + other.getTemperature()) / 2);
-        for (SubstanceStack gas : other.gases) {
-            updateGas(gas);
+        if (!level.isClientSide) {
+            PacketDistributor.sendToAllPlayers(new UpdateAtmosTemperature(uuid, temperature));
         }
     }
 
-    public void updateGas(SubstanceStack gas) {
+
+    public void merge(@NotNull AtmosInstance other, Level level) {
+        setTemperature((temperature + other.getTemperature()) / 2, level);
+        for (SubstanceStack gas : other.gases) {
+            updateGas(gas, level);
+        }
+    }
+
+    public void updateGas(SubstanceStack gas, Level level) {
         for (SubstanceStack stack : gases) {
             if (stack.canMergeWith(gas)) {
                 stack.modifyAmount(gas.getAmount());
+                if (!level.isClientSide) {
+                    PacketDistributor.sendToAllPlayers(new UpdateAtmosGas(uuid, stack));
+                }
                 return;
             }
         }
 
         gases.add(gas);
+        if (!level.isClientSide) {
+            PacketDistributor.sendToAllPlayers(new UpdateAtmosGas(uuid, gas));
+        }
     }
 }

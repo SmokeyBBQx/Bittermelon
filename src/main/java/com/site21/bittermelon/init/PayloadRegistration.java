@@ -1,12 +1,12 @@
 package com.site21.bittermelon.init;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.atmosphere.networking.AtmosChunkUpdate;
-import com.site21.bittermelon.content.atmosphere.networking.SyncAtmosInstances;
+import com.site21.bittermelon.content.atmosphere.networking.*;
 import com.site21.bittermelon.content.blocks.devices.intercom.networking.IntercomIDUpdate;
 import com.site21.bittermelon.content.blocks.devices.intercom.networking.IntercomMicUpdate;
 import com.site21.bittermelon.content.blocks.devices.intercom.networking.IntercomSpeakerUpdate;
 import com.site21.bittermelon.content.blocks.devices.intercom.networking.IntercomTargetUpdate;
+import com.site21.bittermelon.content.character.networking.SyncCharacters;
 import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
 import com.site21.bittermelon.networking.client.*;
 import com.site21.bittermelon.content.blocks.devices.containmentpanel.networking.ContainmentNameUpdate;
@@ -125,6 +125,48 @@ public class PayloadRegistration {
                 SyncAtmosInstances.TYPE,
                 SyncAtmosInstances.STREAM_CODEC,
                 SyncAtmosInstances::handle
+        );
+
+        registrar.playToClient(
+                SyncAtmosInstance.TYPE,
+                SyncAtmosInstance.STREAM_CODEC,
+                SyncAtmosInstance::handle
+        );
+
+        registrar.playToClient(
+                SyncCharacters.TYPE,
+                SyncCharacters.STREAM_CODEC,
+                SyncCharacters::handle
+        );
+
+        registrar.playToClient(
+                CreateAtmosInstance.TYPE,
+                CreateAtmosInstance.STREAM_CODEC,
+                CreateAtmosInstance::handle
+        );
+
+        registrar.playToClient(
+                RemoveAtmosInstance.TYPE,
+                RemoveAtmosInstance.STREAM_CODEC,
+                RemoveAtmosInstance::handle
+        );
+
+        registrar.playToClient(
+                UpdateAtmosTemperature.TYPE,
+                UpdateAtmosTemperature.STREAM_CODEC,
+                UpdateAtmosTemperature::handle
+        );
+
+        registrar.playToClient(
+                UpdateAtmosBlocks.TYPE,
+                UpdateAtmosBlocks.STREAM_CODEC,
+                UpdateAtmosBlocks::handle
+        );
+
+        registrar.playToClient(
+                UpdateAtmosGas.TYPE,
+                UpdateAtmosGas.STREAM_CODEC,
+                UpdateAtmosGas::handle
         );
     }
 }

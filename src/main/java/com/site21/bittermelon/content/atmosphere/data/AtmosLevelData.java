@@ -1,6 +1,10 @@
 package com.site21.bittermelon.content.atmosphere.data;
 
+import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.atmosphere.AtmosInstance;
+import com.site21.bittermelon.content.atmosphere.networking.CreateAtmosInstance;
+import com.site21.bittermelon.content.atmosphere.networking.RemoveAtmosInstance;
+import com.site21.bittermelon.content.atmosphere.networking.SyncAtmosInstance;
 import com.site21.bittermelon.content.atmosphere.networking.SyncAtmosInstances;
 import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
 import net.minecraft.core.HolderLookup;
@@ -87,21 +91,25 @@ public class AtmosLevelData extends SavedData {
 
     public void addAtmosInstance(AtmosInstance instance) {
         atmosInstances.put(instance.getUuid(), instance);
+        PacketDistributor.sendToAllPlayers(new CreateAtmosInstance(instance));
         setDirty();
     }
 
     public void removeAtmosInstance(UUID uuid) {
         atmosInstances.remove(uuid);
+        syncInstanceRemoval(uuid);
         setDirty();
     }
 
-    private void syncToClient() {
+    public void syncToClient() {
         PacketDistributor.sendToAllPlayers(new SyncAtmosInstances(atmosInstances));
     }
 
-    @Override
-    public void setDirty() {
-        super.setDirty();
-        syncToClient();
+    public void syncInstance(AtmosInstance instance) {
+        PacketDistributor.sendToAllPlayers(new SyncAtmosInstance(instance));
+    }
+
+    public void syncInstanceRemoval(UUID uuid) {
+        PacketDistributor.sendToAllPlayers(new RemoveAtmosInstance(uuid));
     }
 }

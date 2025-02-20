@@ -129,7 +129,7 @@ public class GasContainerItem extends SubstanceContainerItem {
             if (proportionalTransferVolume > 0) {
                 SubstanceStack transferredSubstance = substance.copy();
                 transferredSubstance.setVolume(proportionalTransferVolume);
-                atmosInstance.updateGas(transferredSubstance);
+                atmosInstance.updateGas(transferredSubstance, entity.level());
 
                 substance.modifyVolume(-proportionalTransferVolume);
                 if (substance.getVolume() <= 0.001f) {

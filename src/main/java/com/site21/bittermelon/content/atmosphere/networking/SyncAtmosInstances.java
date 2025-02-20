@@ -11,6 +11,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -29,12 +30,29 @@ public record SyncAtmosInstances(Map<UUID, AtmosInstance> atmosInstances) implem
                     AtmosInstance.STREAM_CODEC
             );
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, SyncAtmosInstances> STREAM_CODEC = StreamCodec.composite(
-            ATMOS_MAP_CODEC,
-            SyncAtmosInstances::atmosInstances,
-            SyncAtmosInstances::new
-    );
+//    public static final StreamCodec<RegistryFriendlyByteBuf, SyncAtmosInstances> STREAM_CODEC = StreamCodec.composite(
+//            ATMOS_MAP_CODEC,
+//            SyncAtmosInstances::atmosInstances,
+//            SyncAtmosInstances::new
+//    );
 
+    public static final StreamCodec<RegistryFriendlyByteBuf, SyncAtmosInstances> STREAM_CODEC = new StreamCodec<>() {
+        @Override
+        public void encode(RegistryFriendlyByteBuf buf, @NotNull SyncAtmosInstances value) {
+//            LOGGER.debug("Encoding {} atmos instances", value.atmosInstances().size());
+            ATMOS_MAP_CODEC.encode(buf, value.atmosInstances());
+//            LOGGER.debug("Encoded buffer size: {}", buf.writerIndex());
+        }
+
+        @Contract("_ -> new")
+        @Override
+        public @NotNull SyncAtmosInstances decode(@NotNull RegistryFriendlyByteBuf buf) {
+//            LOGGER.debug("Starting decode with {} readable bytes", buf.readableBytes());
+            Map<UUID, AtmosInstance> map = ATMOS_MAP_CODEC.decode(buf);
+//            LOGGER.debug("Decoded {} instances, {} bytes remaining", map.size(), buf.readableBytes());
+            return new SyncAtmosInstances(map);
+        }
+    };
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {
@@ -42,12 +60,10 @@ public record SyncAtmosInstances(Map<UUID, AtmosInstance> atmosInstances) implem
     }
 
     public void handle(@NotNull IPayloadContext ctx) {
-        AtmosLevelData data = AtmosLevelData.get(ctx.player().level());
-        try {
+        ctx.enqueueWork(() -> {
+            AtmosLevelData data = AtmosLevelData.get(ctx.player().level());
             data.getAtmosInstances().clear();
             data.getAtmosInstances().putAll(atmosInstances);
-        } catch (IllegalArgumentException e) {
-            LOGGER.error("Failed to sync AtmosInstances: {}", e.getMessage());
-        };
+        });
     }
 }
