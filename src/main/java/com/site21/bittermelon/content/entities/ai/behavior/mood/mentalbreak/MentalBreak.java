@@ -2,7 +2,7 @@ package com.site21.bittermelon.content.entities.ai.behavior.mood.mentalbreak;
 
 import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.content.entities.ai.behavior.needs.NeedsUser;
-import com.site21.bittermelon.init.BitterMemoryTypes;
+import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;

@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
-import static com.site21.bittermelon.init.BitterBlocks.DIRTY_FLOOR;
+import static com.site21.bittermelon.init.neoforge.BitterBlocks.DIRTY_FLOOR;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class DirtyBlocksHandler {

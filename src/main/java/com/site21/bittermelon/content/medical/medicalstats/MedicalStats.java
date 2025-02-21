@@ -1,6 +1,5 @@
 package com.site21.bittermelon.content.medical.medicalstats;
 
-import com.site21.bittermelon.content.atmosphere.AtmosInstance;
 import com.site21.bittermelon.content.atmosphere.AtmosHandler;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
@@ -42,9 +41,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static com.site21.bittermelon.init.BitterBlocks.FLUID;
-import static com.site21.bittermelon.init.Substances.LIQUID_BLOOD;
-import static com.site21.bittermelon.init.Substances.LIQUID_WATER;
+import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
+import static com.site21.bittermelon.init.custom.Substances.LIQUID_BLOOD;
+import static com.site21.bittermelon.init.custom.Substances.LIQUID_WATER;
 import static net.minecraft.world.level.block.Block.UPDATE_ALL_IMMEDIATE;
 
 public class MedicalStats {

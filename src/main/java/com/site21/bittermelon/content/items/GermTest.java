@@ -2,7 +2,7 @@ package com.site21.bittermelon.content.items;
 
 import com.site21.bittermelon.content.germs.Germ;
 import com.site21.bittermelon.content.germs.GermRegistry;
-import com.site21.bittermelon.init.BitterDataComponents;
+import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import net.minecraft.world.InteractionHand;

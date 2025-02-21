@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.germs;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.init.BitterDataComponents;
+import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
-import static com.site21.bittermelon.init.BitterAttachmentTypes.GERMS;
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.GERMS;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class SpreadHandler {

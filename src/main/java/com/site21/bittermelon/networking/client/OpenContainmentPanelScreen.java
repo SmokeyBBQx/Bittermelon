@@ -1,7 +1,7 @@
 package com.site21.bittermelon.networking.client;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.devices.containmentpanel.ContainmentPanelBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.ContainmentPanelBlockEntity;
 import com.site21.bittermelon.content.containment.client.ContainmentPanelScreen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;

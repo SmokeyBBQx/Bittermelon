@@ -5,7 +5,7 @@ import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.entities.ai.behavior.social.Relationship;
 import com.site21.bittermelon.content.entities.ai.behavior.social.Socializable;
-import com.site21.bittermelon.init.BitterMemoryTypes;
+import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
 import com.site21.bittermelon.util.LocalMessageHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;

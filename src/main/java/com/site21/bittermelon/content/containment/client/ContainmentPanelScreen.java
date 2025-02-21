@@ -2,8 +2,8 @@ package com.site21.bittermelon.content.containment.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.devices.containmentpanel.ContainmentPanelBlockEntity;
-import com.site21.bittermelon.content.blocks.devices.containmentpanel.networking.ContainmentNameUpdate;
+import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.ContainmentPanelBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.ContainmentNameUpdate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
@@ -17,8 +17,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.init.BitterSounds.BOOT_UP_TUNE;
-import static com.site21.bittermelon.init.BitterSounds.TERMINAL_HUM;
+import static com.site21.bittermelon.init.neoforge.BitterSounds.BOOT_UP_TUNE;
+import static com.site21.bittermelon.init.neoforge.BitterSounds.TERMINAL_HUM;
 
 @OnlyIn(Dist.CLIENT)
 public class ContainmentPanelScreen extends Screen {

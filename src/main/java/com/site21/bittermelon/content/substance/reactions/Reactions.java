@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.site21.bittermelon.init.Substances.*;
+import static com.site21.bittermelon.init.custom.Substances.*;
 
 public class Reactions {
     private static final List<Reaction> ALL_REACTIONS = new ArrayList<>();

@@ -3,7 +3,7 @@ package com.site21.bittermelon.content.items.containers.substance;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.content.items.containers.substance.data.SubstanceContents;
-import com.site21.bittermelon.init.BitterDataComponents;
+import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import net.minecraft.ChatFormatting;
@@ -28,8 +28,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.site21.bittermelon.init.BitterBlocks.FLUID;
-import static com.site21.bittermelon.init.BitterDataComponents.HAS_LANDED;
+import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.HAS_LANDED;
 import static net.minecraft.world.level.block.Block.UPDATE_ALL_IMMEDIATE;
 
 public class FluidContainerItem extends SubstanceContainerItem {

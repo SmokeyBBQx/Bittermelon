@@ -27,8 +27,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static com.site21.bittermelon.Bittermelon.LOGGER;
-import static com.site21.bittermelon.init.BitterRegistries.SUBSTANCE_REGISTRY;
-import static com.site21.bittermelon.init.BitterRegistries.SUBSTANCE_REGISTRY_KEY;
+import static com.site21.bittermelon.init.neoforge.BitterRegistries.SUBSTANCE_REGISTRY;
+import static com.site21.bittermelon.init.neoforge.BitterRegistries.SUBSTANCE_REGISTRY_KEY;
 
 public class SubstanceStack implements MutableDataComponentHolder {
     public static final Codec<Holder<Substance>> SUBSTANCE_NON_EMPTY_CODEC = SUBSTANCE_REGISTRY.holderByNameCodec().validate(DataResult::success);

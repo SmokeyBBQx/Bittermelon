@@ -14,8 +14,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.site21.bittermelon.init.BitterDataComponents.LAST_UPDATED;
-import static com.site21.bittermelon.init.BitterDataComponents.SUBSTANCE_CONTENTS;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.LAST_UPDATED;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.SUBSTANCE_CONTENTS;
 
 public class SubstanceContainerItem extends BaseItem implements ReactionContainer {
     protected final int capacity;

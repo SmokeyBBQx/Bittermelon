@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.site21.bittermelon.init.BitterSounds.FALL;
+import static com.site21.bittermelon.init.neoforge.BitterSounds.FALL;
 import static com.site21.bittermelon.util.LocalMessageHelper.sendLocalMessage;
 import static net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN;
 

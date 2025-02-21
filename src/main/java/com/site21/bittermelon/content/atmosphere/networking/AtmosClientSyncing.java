@@ -10,7 +10,7 @@ import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.init.BitterAttachmentTypes.ATMOSPHERE;
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ATMOSPHERE;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class AtmosClientSyncing {

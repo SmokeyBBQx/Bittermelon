@@ -2,19 +2,16 @@ package com.site21.bittermelon.content.atmosphere;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.atmosphere.data.AtmosBlockData;
-import com.site21.bittermelon.content.atmosphere.data.AtmosLevelData;
-import com.site21.bittermelon.content.atmosphere.networking.SyncAtmosInstances;
-import com.site21.bittermelon.init.BitterBlockTags;
+import com.site21.bittermelon.init.neoforge.BitterBlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.init.BitterAttachmentTypes.ATMOSPHERE;
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ATMOSPHERE;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class AtmosEventHandler {

@@ -1,7 +1,6 @@
 package com.site21.bittermelon.content.character;
 
 import com.site21.bittermelon.content.character.networking.SyncCharacters;
-import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -21,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
-import static com.site21.bittermelon.init.BitterAttachmentTypes.ACTIVE_CHARACTER;
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ACTIVE_CHARACTER;
 
 public class CharacterManager extends SavedData {
     private static CharacterManager clientInstance;

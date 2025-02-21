@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.init.BitterBlockEntities.BOX_BLOCK_ENTITY;
+import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.BOX_BLOCK_ENTITY;
 
 public class BoxBlockEntity extends BlockEntity {
     private NonNullList<ItemStack> items = NonNullList.withSize(27, ItemStack.EMPTY);

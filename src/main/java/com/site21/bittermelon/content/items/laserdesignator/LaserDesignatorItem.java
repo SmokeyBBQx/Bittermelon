@@ -1,6 +1,6 @@
 package com.site21.bittermelon.content.items.laserdesignator;
 
-import com.site21.bittermelon.content.blocks.devices.containmentpanel.ContainmentPanelBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.ContainmentPanelBlockEntity;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import net.minecraft.core.BlockPos;
@@ -18,9 +18,9 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.init.BitterDataComponents.POSITION_1;
-import static com.site21.bittermelon.init.BitterDataComponents.POSITION_2;
-import static com.site21.bittermelon.init.BitterSounds.SCANNER_BEEP;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.POSITION_1;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.POSITION_2;
+import static com.site21.bittermelon.init.neoforge.BitterSounds.SCANNER_BEEP;
 
 public class LaserDesignatorItem extends BaseItem {
     public LaserDesignatorItem(Properties properties, int width, int height, ItemWeight itemWeight) {

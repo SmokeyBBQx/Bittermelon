@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.site21.bittermelon.init.BitterAttachmentTypes.ATMOSPHERE;
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ATMOSPHERE;
 
 public final class AtmosHandler {
     private static final Direction[] DIRECTIONS = Direction.values();

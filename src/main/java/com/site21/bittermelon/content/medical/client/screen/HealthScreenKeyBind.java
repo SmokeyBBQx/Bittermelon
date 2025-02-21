@@ -14,7 +14,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.InputEvent;
 
-import static com.site21.bittermelon.init.BitterKeyBindings.HEALTH_SCREEN_KEY;
+import static com.site21.bittermelon.init.neoforge.BitterKeyBindings.HEALTH_SCREEN_KEY;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class HealthScreenKeyBind {

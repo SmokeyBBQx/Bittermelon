@@ -6,7 +6,7 @@ import com.site21.bittermelon.content.entities.ai.behavior.needs.NeedsUser;
 import com.site21.bittermelon.content.entities.ai.behavior.social.Relationship;
 import com.site21.bittermelon.content.entities.ai.behavior.social.Socializable;
 import com.site21.bittermelon.content.entities.implementations.SCP843.behavior.Photosynthesize;
-import com.site21.bittermelon.init.BitterActivity;
+import com.site21.bittermelon.init.neoforge.BitterActivity;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;

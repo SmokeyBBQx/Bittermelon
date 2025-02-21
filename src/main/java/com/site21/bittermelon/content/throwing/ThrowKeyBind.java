@@ -18,7 +18,7 @@ import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.init.BitterKeyBindings.THROW_ITEM_KEY;
+import static com.site21.bittermelon.init.neoforge.BitterKeyBindings.THROW_ITEM_KEY;
 import static com.site21.bittermelon.util.LocalMessageHelper.sendLocalMessage;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)

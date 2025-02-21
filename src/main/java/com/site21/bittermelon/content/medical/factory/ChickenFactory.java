@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.site21.bittermelon.init.BitterItems.*;
+import static com.site21.bittermelon.init.neoforge.BitterItems.*;
 
 public class ChickenFactory implements AnatomyFactory {
 

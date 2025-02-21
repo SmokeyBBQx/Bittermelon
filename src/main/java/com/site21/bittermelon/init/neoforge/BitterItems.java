@@ -1,0 +1,201 @@
+package com.site21.bittermelon.init.neoforge;
+
+import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.content.items.GermTest;
+import com.site21.bittermelon.content.items.base.BaseItem;
+import com.site21.bittermelon.content.items.base.ItemWeight;
+import com.site21.bittermelon.content.items.cardboardbox.CardboardBoxItem;
+import com.site21.bittermelon.content.items.cardboardbox.CollapsedCardboardBoxItem;
+import com.site21.bittermelon.content.items.containers.substance.FluidContainerItem;
+import com.site21.bittermelon.content.items.containers.substance.GasContainerItem;
+import com.site21.bittermelon.content.items.containers.substance.implementations.GlassFluidContainerItem;
+import com.site21.bittermelon.content.items.laserdesignator.LaserDesignatorItem;
+import com.site21.bittermelon.content.items.medical.organic.BodyPart;
+import com.site21.bittermelon.content.items.medical.tools.*;
+import com.site21.bittermelon.content.items.toolbox.ToolBoxItem;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.neoforged.neoforge.registries.DeferredItem;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+import static com.site21.bittermelon.init.neoforge.BitterBlocks.*;
+
+public class BitterItems {
+    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Bittermelon.MOD_ID);
+
+    public static final DeferredItem<FluidContainerItem> BEER_BOTTLE = ITEMS.register("beer_bottle", () -> new GlassFluidContainerItem(
+            new Item.Properties(),
+            3,
+            2,
+            ItemWeight.MEDIUM,
+            75,
+            10)
+    );
+
+    public static final DeferredItem<ToolBoxItem> BLUE_TOOLBOX = ITEMS.register("blue_toolbox", () -> new ToolBoxItem(
+            new Item.Properties(),
+            5,
+            4,
+            ItemWeight.MEDIUM)
+    );
+
+    public static final DeferredItem<CardboardBoxItem> CARDBOARD_BOX = ITEMS.register("cardboard_box", () -> new CardboardBoxItem(
+            new Item.Properties(),
+            3,
+            3,
+            ItemWeight.VERY_LIGHT)
+    );
+
+    public static final DeferredItem<CollapsedCardboardBoxItem> COLLAPSED_CARDBOARD_BOX = ITEMS.register("collapsed_cardboard_box", () -> new CollapsedCardboardBoxItem(
+            new Item.Properties(),
+            4,
+            1,
+            ItemWeight.VERY_LIGHT)
+    );
+
+    public static final DeferredItem<BlockItem> SMALL_CARDBOARD_BOX_ITEM = ITEMS.register("small_cardboard_box_item", () -> new BlockItem(
+            SMALL_CARDBOARD_BOX.get(),
+            new Item.Properties()
+    ));
+
+    public static final DeferredItem<BlockItem> ATM_ITEM = ITEMS.register("atm_item", () -> new BlockItem(
+            ATM.get(),
+            new Item.Properties()
+    ));
+
+    public static final DeferredItem<Scalpel> SCALPEL = ITEMS.register("scalpel", () -> new Scalpel(
+            new Item.Properties().stacksTo(1),
+            1,
+            1,
+            ItemWeight.VERY_LIGHT
+    ));
+
+    public static final DeferredItem<Hemostat> HEMOSTAT = ITEMS.register("hemostat", () -> new Hemostat(
+            new Item.Properties().stacksTo(1),
+            1,
+            1,
+            ItemWeight.VERY_LIGHT
+    ));
+
+    public static final DeferredItem<Retractor> RETRACTOR = ITEMS.register("retractor", () -> new Retractor(
+            new Item.Properties().stacksTo(1),
+            1,
+            1,
+            ItemWeight.VERY_LIGHT
+    ));
+
+    public static final DeferredItem<Cautery> CAUTERY = ITEMS.register("cautery", () -> new Cautery(
+            new Item.Properties().stacksTo(1),
+            1,
+            1,
+            ItemWeight.VERY_LIGHT
+    ));
+
+    public static final DeferredItem<BodyPart> KIDNEY = ITEMS.register("kidney", () -> new BodyPart(
+            new Item.Properties().stacksTo(1),
+            1,
+            1,
+            ItemWeight.VERY_LIGHT
+    ));
+
+    public static final DeferredItem<BodyPart> LIVER = ITEMS.register("liver", () -> new BodyPart(
+            new Item.Properties().stacksTo(1),
+            1,
+            1,
+            ItemWeight.VERY_LIGHT
+    ));
+
+    public static final DeferredItem<BodyPart> STOMACH = ITEMS.register("stomach", () -> new BodyPart(
+            new Item.Properties().stacksTo(1),
+            1,
+            1,
+            ItemWeight.VERY_LIGHT
+    ));
+
+    public static final DeferredItem<BodyPart> GALLBLADDER = ITEMS.register("gallbladder", () -> new BodyPart(
+            new Item.Properties().stacksTo(1),
+            1,
+            1,
+            ItemWeight.VERY_LIGHT
+    ));
+
+    public static final DeferredItem<BodyPart> PELVIS = ITEMS.register("pelvis", () -> new BodyPart(
+            new Item.Properties().stacksTo(1),
+            1,
+            1,
+            ItemWeight.VERY_LIGHT
+    ));
+
+    public static final DeferredItem<BodyPart> BLADDER = ITEMS.register("bladder", () -> new BodyPart(
+            new Item.Properties().stacksTo(1),
+            1,
+            1,
+            ItemWeight.VERY_LIGHT
+    ));
+
+    public static final DeferredItem<SurgicalSponge> SURGICAL_SPONGE = ITEMS.register("surgical_sponge", () -> new SurgicalSponge(
+            new Item.Properties().stacksTo(3),
+            1,
+            1,
+            ItemWeight.VERY_LIGHT
+    ));
+
+    public static final DeferredItem<Bandage> BANDAGE = ITEMS.register("bandage", () -> new Bandage(
+            new Item.Properties().stacksTo(3),
+            1,
+            1,
+            ItemWeight.VERY_LIGHT
+    ));
+
+
+    public static final DeferredItem<GermTest> GERM_TEST = ITEMS.register("germ_test", () -> new GermTest(
+            new Item.Properties().stacksTo(3)
+    ));
+
+    public static final DeferredItem<BaseItem> GLASS_SHARD = ITEMS.register("glass_shard", () -> new BaseItem(
+            new Item.Properties().stacksTo(8), 1, 1, ItemWeight.VERY_LIGHT));
+
+    public static final DeferredItem<LaserDesignatorItem> LASER_DESIGNATOR = ITEMS.register("laser_designator", () -> new LaserDesignatorItem(
+            new Item.Properties().stacksTo(1), 1, 2, ItemWeight.MEDIUM));
+
+    public static final DeferredItem<BlockItem> CONTAINMENT_PANEL_ITEM = ITEMS.register("containment_panel_item", () -> new BlockItem(
+            CONTAINMENT_PANEL.get(),
+            new Item.Properties()
+    ));
+
+    public static final DeferredItem<BlockItem> WALL_THERMOMETER_ITEM = ITEMS.register("wall_thermometer_item", () -> new BlockItem(
+            THERMOMETER.get(),
+            new Item.Properties()
+    ));
+
+    public static final DeferredItem<GasContainerItem> GAS_CYLINDER = ITEMS.register("gas_cylinder", () -> new GasContainerItem(
+            new Item.Properties(),
+            1,
+            3,
+            ItemWeight.MEDIUM,
+            100,
+            2000,
+            1200
+    ));
+
+    public static final DeferredItem<BaseItem> KEYCARD = ITEMS.register("keycard", () -> new BaseItem(
+            new Item.Properties(),
+            1,
+            1,
+            ItemWeight.VERY_LIGHT
+    ));
+
+    public static final DeferredItem<BaseItem> WHISKEY_BOTTLE = ITEMS.register("whiskey_bottle", () -> new FluidContainerItem(
+            new Item.Properties(),
+            3,
+            2,
+            ItemWeight.MEDIUM,
+            100,
+            10)
+    );
+
+    public static final DeferredItem<BlockItem> INTERCOM = ITEMS.register("intercom", () -> new BlockItem(
+            BitterBlocks.INTERCOM.get(),
+            new Item.Properties()
+    ));
+}

@@ -2,8 +2,8 @@ package com.site21.bittermelon.content.entities.ai.sensors;
 
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.content.entities.ai.behavior.basicneeds.HasBasicNeeds;
-import com.site21.bittermelon.init.BitterMemoryTypes;
-import com.site21.bittermelon.init.BitterSensors;
+import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
+import com.site21.bittermelon.init.neoforge.BitterSensors;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;

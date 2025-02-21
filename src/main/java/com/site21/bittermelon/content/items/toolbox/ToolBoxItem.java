@@ -17,7 +17,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.site21.bittermelon.init.BitterSounds.TOOLBOX_OPEN;
+import static com.site21.bittermelon.init.neoforge.BitterSounds.TOOLBOX_OPEN;
 
 public class ToolBoxItem extends BaseItem {
 

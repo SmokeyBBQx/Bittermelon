@@ -21,8 +21,8 @@ import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.init.BitterDataComponents.POSITION_1;
-import static com.site21.bittermelon.init.BitterDataComponents.POSITION_2;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.POSITION_1;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.POSITION_2;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class LaserDesignatorRenderer {

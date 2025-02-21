@@ -13,7 +13,7 @@ import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.init.BitterAttachmentTypes.ATMOSPHERE;
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ATMOSPHERE;
 
 public record AtmosChunkUpdate(ChunkPos pos, AtmosBlockData data) implements CustomPacketPayload {
     public static final Type<AtmosChunkUpdate> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "atmos_chunk_update"));

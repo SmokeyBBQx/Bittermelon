@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 
-import static com.site21.bittermelon.init.BitterSounds.WRESTLE;
+import static com.site21.bittermelon.init.neoforge.BitterSounds.WRESTLE;
 import static net.minecraft.world.damagesource.DamageTypes.MOB_ATTACK;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID)

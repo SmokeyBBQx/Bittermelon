@@ -5,7 +5,7 @@ import com.site21.bittermelon.content.substance.reactions.Reaction;
 
 import java.util.Map;
 
-import static com.site21.bittermelon.init.Substances.*;
+import static com.site21.bittermelon.init.custom.Substances.*;
 
 public class Combustion {
     private final Substance substance;

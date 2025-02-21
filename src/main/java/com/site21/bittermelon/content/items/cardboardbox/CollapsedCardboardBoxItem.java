@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-import static com.site21.bittermelon.init.BitterItems.CARDBOARD_BOX;
+import static com.site21.bittermelon.init.neoforge.BitterItems.CARDBOARD_BOX;
 
 public class CollapsedCardboardBoxItem extends BaseItem {
 

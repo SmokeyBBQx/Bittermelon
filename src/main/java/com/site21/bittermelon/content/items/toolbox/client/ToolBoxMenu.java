@@ -9,9 +9,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.init.BitterMenus.TOOLBOX_MENU;
-import static com.site21.bittermelon.init.BitterSounds.METAL_INVENTORY;
-import static com.site21.bittermelon.init.BitterSounds.TOOLBOX_CLOSE;
+import static com.site21.bittermelon.init.neoforge.BitterMenus.TOOLBOX_MENU;
+import static com.site21.bittermelon.init.neoforge.BitterSounds.METAL_INVENTORY;
+import static com.site21.bittermelon.init.neoforge.BitterSounds.TOOLBOX_CLOSE;
 
 public class ToolBoxMenu extends ContainerMenu {
     public static final int ROWS = 4;

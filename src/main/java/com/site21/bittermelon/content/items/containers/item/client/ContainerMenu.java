@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.site21.bittermelon.init.BitterDataComponents.ITEM_CONTAINER_CONTENTS;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.ITEM_CONTAINER_CONTENTS;
 
 public class ContainerMenu extends AbstractContainerMenu {
     public SimpleContainer inventory;

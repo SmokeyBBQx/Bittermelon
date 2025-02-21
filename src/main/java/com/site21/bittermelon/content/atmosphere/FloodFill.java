@@ -1,6 +1,6 @@
 package com.site21.bittermelon.content.atmosphere;
 
-import com.site21.bittermelon.init.BitterBlockTags;
+import com.site21.bittermelon.init.neoforge.BitterBlockTags;
 import it.unimi.dsi.fastutil.longs.LongArrayFIFOQueue;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;

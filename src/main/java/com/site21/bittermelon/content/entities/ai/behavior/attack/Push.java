@@ -13,7 +13,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeA
 import net.tslat.smartbrainlib.util.BrainUtils;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.init.BitterSounds.WRESTLE;
+import static com.site21.bittermelon.init.neoforge.BitterSounds.WRESTLE;
 
 public class Push<E extends Mob> extends AnimatableMeleeAttack<E> {
     public Push(int delayTicks) {

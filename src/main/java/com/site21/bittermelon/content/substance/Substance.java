@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.Map;
 
-import static com.site21.bittermelon.init.BitterRegistries.SUBSTANCE_REGISTRY;
+import static com.site21.bittermelon.init.neoforge.BitterRegistries.SUBSTANCE_REGISTRY;
 
 public class Substance {
     private String smell = "";

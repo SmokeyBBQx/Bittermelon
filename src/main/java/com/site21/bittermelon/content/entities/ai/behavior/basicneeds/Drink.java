@@ -2,7 +2,7 @@ package com.site21.bittermelon.content.entities.ai.behavior.basicneeds;
 
 import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
-import com.site21.bittermelon.init.BitterMemoryTypes;
+import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;

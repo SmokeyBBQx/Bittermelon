@@ -10,8 +10,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.init.BitterDataComponents.HAS_LANDED;
-import static com.site21.bittermelon.init.BitterItems.GLASS_SHARD;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.HAS_LANDED;
+import static com.site21.bittermelon.init.neoforge.BitterItems.GLASS_SHARD;
 
 public interface FragileItem {
     default float getFragility() {

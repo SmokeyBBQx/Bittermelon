@@ -14,7 +14,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeA
 import net.tslat.smartbrainlib.util.BrainUtils;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.init.BitterSounds.DRAG;
+import static com.site21.bittermelon.init.neoforge.BitterSounds.DRAG;
 
 public class Pull<E extends Mob> extends AnimatableMeleeAttack<E> {
 

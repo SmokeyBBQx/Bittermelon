@@ -25,7 +25,7 @@ import com.site21.bittermelon.content.entities.ai.behavior.target.InvalidateAtta
 import com.site21.bittermelon.content.entities.ai.BitterVibrationUser;
 import com.site21.bittermelon.content.entities.implementations.SCP939.behavior.*;
 import com.site21.bittermelon.content.medical.damage.generators.*;
-import com.site21.bittermelon.init.BitterActivity;
+import com.site21.bittermelon.init.neoforge.BitterActivity;
 import com.site21.bittermelon.content.medical.compartments.CompartmentType;
 import com.site21.bittermelon.content.medical.factory.Anatomy;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
@@ -81,7 +81,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
 
-import static com.site21.bittermelon.init.BitterSounds.*;
+import static com.site21.bittermelon.init.neoforge.BitterSounds.*;
 
 @SuppressWarnings("unchecked")
 public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVibrationSystem {
@@ -310,7 +310,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
     }
 
     public void addVictim(@NotNull Character victim) {
-        // TODO: Human check
+        // TODO: Human condition
         UUID uuid = victim.getUUID();
         if (!victims.contains(uuid)) {
             victims.add(victim.getUUID());

@@ -22,9 +22,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-import static com.site21.bittermelon.init.BitterBlocks.FLUID;
-import static com.site21.bittermelon.init.BitterRegistries.SUBSTANCE_REGISTRY;
-import static com.site21.bittermelon.init.Substances.*;
+import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
+import static com.site21.bittermelon.init.neoforge.BitterRegistries.SUBSTANCE_REGISTRY;
+import static com.site21.bittermelon.init.custom.Substances.*;
 
 public class SubstanceCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {

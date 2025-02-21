@@ -15,8 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.site21.bittermelon.init.BitterDataComponents.RELEASE_PRESSURE;
-import static com.site21.bittermelon.init.Substances.GASEOUS_OXYGEN;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.RELEASE_PRESSURE;
+import static com.site21.bittermelon.init.custom.Substances.GASEOUS_OXYGEN;
 
 public class GasContainerItem extends SubstanceContainerItem {
     private final int maxPressure;

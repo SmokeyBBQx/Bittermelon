@@ -1,7 +1,6 @@
 package com.site21.bittermelon;
 
 import com.site21.bittermelon.content.atmosphere.data.AtmosLevelData;
-import com.site21.bittermelon.content.atmosphere.networking.SyncAtmosInstances;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.blocks.substance.fluid.client.FluidBlockColor;
@@ -9,8 +8,9 @@ import com.site21.bittermelon.client.gui.loreopening.LoreOpeningOverlay;
 import com.site21.bittermelon.content.character.networking.SyncCharacters;
 import com.site21.bittermelon.content.telecomms.intercom.IntercomManager;
 import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
-import com.site21.bittermelon.init.*;
 import com.site21.bittermelon.content.substance.reactions.Reactions;
+import com.site21.bittermelon.init.neoforge.BitterEntities;
+import com.site21.bittermelon.init.neoforge.BitterRegistries;
 import com.site21.bittermelon.util.ServerUtil;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
@@ -38,21 +38,21 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
-import static com.site21.bittermelon.init.BitterActivity.ACTIVITY;
-import static com.site21.bittermelon.init.BitterAttachmentTypes.ATTACHMENT_TYPES;
-import static com.site21.bittermelon.init.BitterBlockEntities.BLOCK_ENTITY_TYPES;
-import static com.site21.bittermelon.init.BitterBlocks.BLOCKS;
-import static com.site21.bittermelon.init.BitterBlocks.FLUID;
-import static com.site21.bittermelon.init.BitterDataComponents.DATA_COMPONENTS;
-import static com.site21.bittermelon.init.BitterMemoryTypes.MEMORY_MODULE_TYPES;
-import static com.site21.bittermelon.init.BitterItems.ITEMS;
-import static com.site21.bittermelon.init.BitterMenus.MENUS;
-import static com.site21.bittermelon.init.BitterMobEffects.MOB_EFFECTS;
-import static com.site21.bittermelon.init.BitterSensors.SENSOR_TYPES;
-import static com.site21.bittermelon.init.BitterSounds.LOW_IMPACT;
-import static com.site21.bittermelon.init.BitterSounds.SOUND_EVENTS;
-import static com.site21.bittermelon.init.Substances.SUBSTANCES;
-import static com.site21.bittermelon.init.VerbSets.VERB_SETS;
+import static com.site21.bittermelon.init.neoforge.BitterActivity.ACTIVITY;
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ATTACHMENT_TYPES;
+import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.BLOCK_ENTITY_TYPES;
+import static com.site21.bittermelon.init.neoforge.BitterBlocks.BLOCKS;
+import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.DATA_COMPONENTS;
+import static com.site21.bittermelon.init.neoforge.BitterMemoryTypes.MEMORY_MODULE_TYPES;
+import static com.site21.bittermelon.init.neoforge.BitterItems.ITEMS;
+import static com.site21.bittermelon.init.neoforge.BitterMenus.MENUS;
+import static com.site21.bittermelon.init.neoforge.BitterMobEffects.MOB_EFFECTS;
+import static com.site21.bittermelon.init.neoforge.BitterSensors.SENSOR_TYPES;
+import static com.site21.bittermelon.init.neoforge.BitterSounds.LOW_IMPACT;
+import static com.site21.bittermelon.init.neoforge.BitterSounds.SOUND_EVENTS;
+import static com.site21.bittermelon.init.custom.Substances.SUBSTANCES;
+import static com.site21.bittermelon.init.custom.VerbSets.VERB_SETS;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(Bittermelon.MOD_ID)

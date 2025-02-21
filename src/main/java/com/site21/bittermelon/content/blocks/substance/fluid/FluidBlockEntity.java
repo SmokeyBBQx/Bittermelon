@@ -24,8 +24,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.site21.bittermelon.init.BitterBlockEntities.FLUID_BLOCK_ENTITY;
-import static com.site21.bittermelon.init.BitterBlocks.FLUID;
+import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.FLUID_BLOCK_ENTITY;
+import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
 
 public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
     // Constants

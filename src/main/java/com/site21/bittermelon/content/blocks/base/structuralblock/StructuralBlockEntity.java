@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.init.BitterBlockEntities.STRUCTURAL_BLOCK_ENTITY;
+import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.STRUCTURAL_BLOCK_ENTITY;
 
 public class StructuralBlockEntity extends BlockEntity {
     private float breakProgress = 0.0f;
