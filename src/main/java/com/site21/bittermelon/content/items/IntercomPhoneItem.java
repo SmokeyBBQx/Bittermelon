@@ -6,6 +6,8 @@ import com.site21.bittermelon.content.items.base.ItemWeight;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -29,12 +31,14 @@ public class IntercomPhoneItem extends BaseItem {
             if (!isSelected) {
                 stack.setCount(0);
                 intercom.setPhonePickedUp(false);
+                level.playSound(null, intercomPos, SoundEvents.HEAVY_CORE_HIT, SoundSource.PLAYERS);
                 entity.sendSystemMessage(Component.literal("You must hold the phone.").withStyle(ChatFormatting.RED));
             }
 
             if (entity.distanceToSqr(intercomPos.getX(), intercomPos.getY(), intercomPos.getZ()) > 2 * 2) {
                 stack.setCount(0);
                 intercom.setPhonePickedUp(false);
+                level.playSound(null, intercomPos, SoundEvents.HEAVY_CORE_HIT, SoundSource.PLAYERS);
                 entity.sendSystemMessage(Component.literal("You must stay within range.").withStyle(ChatFormatting.RED));
             }
         }

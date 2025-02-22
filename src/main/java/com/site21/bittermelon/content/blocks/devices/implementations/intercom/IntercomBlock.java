@@ -9,6 +9,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -47,6 +49,11 @@ public class IntercomBlock extends Block implements EntityBlock {
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
         if (player.isCrouching()) {
             if (!level.isClientSide) {
+                if (player.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) > 2 * 2) {
+                    player.sendSystemMessage(Component.literal("Too far away to pick up the phone.").withStyle(ChatFormatting.RED));
+                    return InteractionResult.FAIL;
+                }
+
                 if (level.getBlockEntity(pos) instanceof IntercomBlockEntity intercom) {
                     if (intercom.isPhonePickedUp()) {
                         player.sendSystemMessage(Component.literal("Someone has already picked up the phone.").withStyle(ChatFormatting.RED));
@@ -56,6 +63,7 @@ public class IntercomBlock extends Block implements EntityBlock {
                     phone.set(CORD_CONNECTION.get(), pos);
                     player.setItemInHand(InteractionHand.MAIN_HAND, phone);
                     player.sendSystemMessage(Component.literal("You pick up the phone.").withStyle(ChatFormatting.GRAY));
+                    level.playSound(null, pos, SoundEvents.HEAVY_CORE_HIT, SoundSource.PLAYERS);
                     intercom.setPhonePickedUp(true);
                 }
             }
@@ -80,6 +88,7 @@ public class IntercomBlock extends Block implements EntityBlock {
         if (stack.getItem() instanceof IntercomPhoneItem) {
             stack.setCount(0);
             player.sendSystemMessage(Component.literal("You place the phone back.").withStyle(ChatFormatting.GRAY));
+            level.playSound(null, pos, SoundEvents.HEAVY_CORE_HIT, SoundSource.PLAYERS);
             if (level.getBlockEntity(pos) instanceof IntercomBlockEntity intercom) {
                 intercom.setPhonePickedUp(false);
             }
