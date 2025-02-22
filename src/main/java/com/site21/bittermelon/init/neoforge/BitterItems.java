@@ -2,6 +2,7 @@ package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.items.GermTest;
+import com.site21.bittermelon.content.items.IntercomPhoneItem;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.cardboardbox.CardboardBoxItem;
@@ -197,5 +198,12 @@ public class BitterItems {
     public static final DeferredItem<BlockItem> INTERCOM = ITEMS.register("intercom", () -> new BlockItem(
             BitterBlocks.INTERCOM.get(),
             new Item.Properties()
+    ));
+
+    public static final DeferredItem<IntercomPhoneItem> INTERCOM_PHONE = ITEMS.register("intercom_phone", () -> new IntercomPhoneItem(
+            new Item.Properties(),
+            1,
+            2,
+            ItemWeight.LIGHT
     ));
 }

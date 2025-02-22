@@ -19,11 +19,12 @@ import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.INTERCOM_
 
 public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListener {
     private static final int LISTENING_RADIUS = 8;
-    private static final int SPEAKER_RADIUS = 8;
+    private int speakerRadius = 8;
     private String intercomID = "";
     private String targetID = "";
     private boolean speakerOn = true;
     private boolean micOn = false;
+    private boolean phonePickedUp = false;
 
     public IntercomBlockEntity(BlockPos pos, BlockState blockState) {
         super(INTERCOM_BLOCK_ENTITY.get(), pos, blockState);
@@ -35,7 +36,7 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
 
         if (level == null || level.isClientSide) return;
 
-        if (canHearSound(event, getBlockPos(), LISTENING_RADIUS)) {
+        if (canHearSound(event, getBlockPos(), isPhonePickedUp() ? 1 : LISTENING_RADIUS)) {
             IntercomManager.get(level).transmitMessage(event.getSoundDescription(), targetID, level);
         }
     }
@@ -45,8 +46,8 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
 
         Component intercomMessage = Component.literal("[INTERCOM]: ").append(message);
 
-        NeoForge.EVENT_BUS.post(new SyncSoundEvent(level, getBlockPos(), SyncSoundType.INTERCOM, intercomMessage, SPEAKER_RADIUS));
-        LocalMessageHelper.sendLocalMessage(level, getBlockPos(), SPEAKER_RADIUS, intercomMessage);
+        NeoForge.EVENT_BUS.post(new SyncSoundEvent(level, getBlockPos(), SyncSoundType.INTERCOM, intercomMessage, isPhonePickedUp() ? 1 : speakerRadius));
+        LocalMessageHelper.sendLocalMessage(level, getBlockPos(), isPhonePickedUp() ? 1 : speakerRadius, intercomMessage);
     }
 
     public String getIntercomID() {
@@ -88,6 +89,15 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
         setChanged();
     }
 
+    public boolean isPhonePickedUp() {
+        return phonePickedUp;
+    }
+
+    public void setPhonePickedUp(boolean phonePickedUp) {
+        this.phonePickedUp = phonePickedUp;
+        setChanged();
+    }
+
     @Override
     public void onLoad() {
         super.onLoad();
@@ -113,6 +123,8 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
         tag.putString("targetID", targetID);
         tag.putBoolean("speakerOn", speakerOn);
         tag.putBoolean("micOn", micOn);
+        tag.putBoolean("phonePickedUp", phonePickedUp);
+        tag.putInt("speakerRadius", speakerRadius);
     }
 
     @Override
@@ -123,6 +135,8 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
         targetID = tag.getString("targetID");
         speakerOn = tag.getBoolean("speakerOn");
         micOn = tag.getBoolean("micOn");
+        phonePickedUp = tag.getBoolean("phonePickedUp");
+        speakerRadius = tag.getInt("speakerRadius");
     }
 
     public ClientboundBlockEntityDataPacket getUpdatePacket() {

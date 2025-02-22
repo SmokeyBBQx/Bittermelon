@@ -83,4 +83,9 @@ public class BitterDataComponents {
             "temperature",
             builder -> builder.persistent(Codec.FLOAT).networkSynchronized(ByteBufCodecs.FLOAT)
     );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<BlockPos>> CORD_CONNECTION = DATA_COMPONENTS.registerComponentType(
+            "cord_connection",
+            builder -> builder.persistent(BlockPos.CODEC).networkSynchronized(BlockPos.STREAM_CODEC)
+    );
 }
