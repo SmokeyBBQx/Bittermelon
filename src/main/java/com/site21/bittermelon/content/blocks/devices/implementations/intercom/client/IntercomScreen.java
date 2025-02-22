@@ -1,5 +1,6 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.intercom.client;
 
+import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.networking.IntercomIDUpdate;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.networking.IntercomMicUpdate;
@@ -12,6 +13,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -25,6 +27,8 @@ import java.util.Set;
 
 @OnlyIn(Dist.CLIENT)
 public class IntercomScreen extends Screen {
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/intercom.png");
+
     private final IntercomBlockEntity intercom;
     private final boolean canEdit;
     private EditBox intercomIDField;
@@ -50,26 +54,26 @@ public class IntercomScreen extends Screen {
 
         int centerX = width / 2;
         int centerY = height / 2;
-        int startY = centerY - 60;
+        int startY = centerY - 93;
 
-        int leftColumnX = centerX - 120;
+        int leftColumnX = centerX - 105;
 
         intercomIDField = new EditBox(font,
                 leftColumnX,
-                startY,
+                startY - 8,
                 ELEMENT_WIDTH,
                 ELEMENT_HEIGHT,
                 Component.literal("ID")
         );
         intercomIDField.setValue(intercom.getIntercomID());
-        intercomIDField.setMaxLength(32);
+        intercomIDField.setMaxLength(16);
         intercomIDField.setResponder(this::onIntercomIDChanged);
         intercomIDField.setEditable(canEdit);
         addRenderableWidget(intercomIDField);
 
         targetIDField = new EditBox(font,
                 leftColumnX,
-                startY + 35,
+                startY + 28,
                 ELEMENT_WIDTH,
                 ELEMENT_HEIGHT,
                 Component.literal("Target ID")
@@ -79,27 +83,27 @@ public class IntercomScreen extends Screen {
         targetIDField.setResponder(this::onTargetIDChanged);
         addRenderableWidget(targetIDField);
 
-        speakerToggle = Button.builder(
-                getSpeakerButtonText(),
-                button -> toggleSpeaker()
-        ).pos(
-                leftColumnX,
-                startY + 65
-        ).size(ELEMENT_WIDTH, ELEMENT_HEIGHT).build();
-        addRenderableWidget(speakerToggle);
-
-        micToggle = Button.builder(
-                getMicButtonText(),
-                button -> toggleMic()
-        ).pos(
-                leftColumnX,
-                startY + 90
-        ).size(ELEMENT_WIDTH, ELEMENT_HEIGHT).build();
-        addRenderableWidget(micToggle);
+//        speakerToggle = Button.builder(
+//                getSpeakerButtonText(),
+//                button -> toggleSpeaker()
+//        ).pos(
+//                leftColumnX,
+//                startY + 65
+//        ).size(ELEMENT_WIDTH, ELEMENT_HEIGHT).build();
+//        addRenderableWidget(speakerToggle);
+//
+//        micToggle = Button.builder(
+//                getMicButtonText(),
+//                button -> toggleMic()
+//        ).pos(
+//                leftColumnX,
+//                startY + 90
+//        ).size(ELEMENT_WIDTH, ELEMENT_HEIGHT).build();
+//        addRenderableWidget(micToggle);
 
         searchField = new EditBox(font,
-                width / 2 + 20,
-                startY,
+                width / 2 - 15,
+                startY - 10,
                 ELEMENT_WIDTH,
                 ELEMENT_HEIGHT,
                 Component.literal("Search")
@@ -112,8 +116,8 @@ public class IntercomScreen extends Screen {
                 minecraft,
                 ELEMENT_WIDTH,
                 LIST_HEIGHT,
-                startY + 30,
-                ELEMENT_HEIGHT
+                startY,
+                12
         );
         addRenderableWidget(intercomList);
         updateIntercomList("");
@@ -179,33 +183,43 @@ public class IntercomScreen extends Screen {
     public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
 
+        graphics.blit(
+                TEXTURE,
+                width / 2 - 125,
+                height / 7,
+                0,
+                0,
+                255,
+                256
+        );
+
         int centerX = width / 2;
         int leftColumnX = centerX - 120;
         int rightColumnX = centerX + 20;
-
-        graphics.drawString(
-                font,
-                Component.literal("ID"),
-                leftColumnX,
-                height / 2 - 72,
-                0xA0A0A0
-        );
-
-        graphics.drawString(
-                font,
-                Component.literal("Target"),
-                leftColumnX,
-                height / 2 - 37,
-                0xA0A0A0
-        );
-
-        graphics.drawString(
-                font,
-                Component.literal("Search"),
-                rightColumnX,
-                height / 2 - 72,
-                0xA0A0A0
-        );
+//
+//        graphics.drawString(
+//                font,
+//                Component.literal("ID"),
+//                leftColumnX,
+//                height / 2 - 72,
+//                0xA0A0A0
+//        );
+//
+//        graphics.drawString(
+//                font,
+//                Component.literal("Target"),
+//                leftColumnX,
+//                height / 2 - 37,
+//                0xA0A0A0
+//        );
+//
+//        graphics.drawString(
+//                font,
+//                Component.literal("Search"),
+//                rightColumnX,
+//                height / 2 - 72,
+//                0xA0A0A0
+//        );
     }
 
     @Override
@@ -218,7 +232,7 @@ public class IntercomScreen extends Screen {
 
         public IntercomList(net.minecraft.client.Minecraft minecraft, int width, int height, int y, int itemHeight) {
             super(minecraft, width, height, y, itemHeight);
-            this.setX(minecraft.getWindow().getGuiScaledWidth() / 2 + 20);
+            this.setX(minecraft.getWindow().getGuiScaledWidth() / 2 - 15);
         }
 
         public void addIntercomID(String id, IntercomScreen screen) {
@@ -266,7 +280,7 @@ public class IntercomScreen extends Screen {
 
             @Override
             public void render(@NotNull GuiGraphics graphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hovering, float partialTick) {
-                int textColor = hovering ? 0xFFFF55 : 0xFFFFFF;
+                int textColor = hovering ? 0xFFFF55 : 0x0a1928;
                 graphics.drawString(screen.font, "> " + id, left + 5, top + 4, textColor);
             }
 
