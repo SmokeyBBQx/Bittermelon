@@ -31,13 +31,6 @@ public interface IDeviceEntity {
             id.append(characters.charAt(index));
         }
 
-        id.append("-");
-
-        for (int i = 0; i < 4; i++) {
-            int index = (int)(Math.random() * characters.length());
-            id.append(characters.charAt(index));
-        }
-
         return id.toString();
     }
 

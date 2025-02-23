@@ -132,13 +132,10 @@ public class ContainmentAlarmBlockEntity extends BlockEntity implements IDeviceE
         }
         tag.put("connections", connectionsList);
 
-        ListTag linkedDevicesTag = new ListTag();
-        for (BlockPos pos : linkedDevices) {
-            CompoundTag posTag = new CompoundTag();
-            posTag.putLong("pos", pos.asLong());
-            linkedDevicesTag.add(posTag);
-        }
-        tag.put("linkedDevices", linkedDevicesTag);
+        long[] devicePositions = linkedDevices.stream()
+                .mapToLong(BlockPos::asLong)
+                .toArray();
+        tag.putLongArray("linkedDevices", devicePositions);
     }
 
     @Override
@@ -157,13 +154,10 @@ public class ContainmentAlarmBlockEntity extends BlockEntity implements IDeviceE
             connections.add(Connection.load(connectionTag, level));
         }
 
-        ListTag linkedDevicesTag = tag.getList("linkedDevices", ListTag.TAG_COMPOUND);
+        long[] positions = tag.getLongArray("linkedDevices");
         linkedDevices.clear();
-
-        for (int i = 0; i < linkedDevicesTag.size(); i++) {
-            CompoundTag posTag = linkedDevicesTag.getCompound(i);
-            BlockPos pos = BlockPos.of(posTag.getLong("pos"));
-            linkedDevices.add(pos);
+        for (long pos : positions) {
+            linkedDevices.add(BlockPos.of(pos));
         }
     }
 

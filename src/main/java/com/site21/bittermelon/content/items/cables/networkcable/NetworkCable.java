@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.items.cables;
+package com.site21.bittermelon.content.items.cables.networkcable;
 
 import com.site21.bittermelon.content.blocks.devices.IDeviceEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentalarm.ContainmentAlarmBlockEntity;
