@@ -5,6 +5,7 @@ import com.site21.bittermelon.content.items.GermTest;
 import com.site21.bittermelon.content.items.IntercomPhoneItem;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
+import com.site21.bittermelon.content.items.cables.NetworkCable;
 import com.site21.bittermelon.content.items.cardboardbox.CardboardBoxItem;
 import com.site21.bittermelon.content.items.cardboardbox.CollapsedCardboardBoxItem;
 import com.site21.bittermelon.content.items.containers.substance.FluidContainerItem;
@@ -204,6 +205,28 @@ public class BitterItems {
             new Item.Properties(),
             1,
             2,
+            ItemWeight.LIGHT
+    ));
+
+    public static final DeferredItem<BlockItem> ENVIRONMENT_SENSOR = ITEMS.register("environment_sensor", () -> new BlockItem(
+            BitterBlocks.ENVIRONMENT_SENSOR.get(),
+            new Item.Properties()
+    ));
+
+    public static final DeferredItem<BlockItem> CONTAINMENT_ALARM = ITEMS.register("containment_alarm", () -> new BlockItem(
+            BitterBlocks.CONTAINMENT_ALARM.get(),
+            new Item.Properties()
+    ));
+
+    public static final DeferredItem<BlockItem> STRUCTURAL_BLOCK = ITEMS.register("structural_block", () -> new BlockItem(
+            BitterBlocks.STRUCTURAL_BLOCK.get(),
+            new Item.Properties()
+    ));
+
+    public static final DeferredItem<NetworkCable> NETWORK_CABLE = ITEMS.register("network_cable", () -> new NetworkCable(
+            new Item.Properties(),
+            1,
+            1,
             ItemWeight.LIGHT
     ));
 }

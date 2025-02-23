@@ -3,6 +3,7 @@ package com.site21.bittermelon.content.blocks.devices.implementations.environmen
 import com.site21.bittermelon.content.atmosphere.AtmosHandler;
 import com.site21.bittermelon.content.atmosphere.AtmosInstance;
 import com.site21.bittermelon.content.blocks.devices.IDeviceEntity;
+import com.site21.bittermelon.content.blocks.devices.connection.InputPort;
 import com.site21.bittermelon.content.blocks.devices.connection.OutputPort;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import net.minecraft.core.BlockPos;
@@ -16,20 +17,29 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.ENVIRONMENT_SENSOR_BLOCK_ENTITY;
+
 public class EnvironmentSensorBlockEntity extends BlockEntity implements IDeviceEntity {
     private static final float FALLBACK_TEMPERATURE = 22;
     private static final float FALLBACK_PRESSURE = 101.325f;
+    private final Map<String, OutputPort<?>> outputPorts = new HashMap<>();
     private String address;
     private float temperature = 0; // Kelvin
     private float pressure = 0; // kPa
     private final Set<SubstanceStack> gases = new HashSet<>();
 
-    public final OutputPort<Float> TEMPERATURE = new OutputPort<>("temperature", this::getTemperature);
-    public final OutputPort<Float> PRESSURE = new OutputPort<>("pressure", this::getPressure);
-
-    public EnvironmentSensorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
-        super(type, pos, blockState);
+    public EnvironmentSensorBlockEntity(BlockPos pos, BlockState blockState) {
+        super(ENVIRONMENT_SENSOR_BLOCK_ENTITY.get(), pos, blockState);
         address = generateAddress("ENV");
+        initializePorts();
+    }
+
+    private void initializePorts() {
+        OutputPort<Float> TEMPERATURE = new OutputPort<>("temperature", this::getTemperature, worldPosition);
+        OutputPort<Float> PRESSURE = new OutputPort<>("pressure", this::getPressure, worldPosition);
+
+        outputPorts.put(TEMPERATURE.id(), TEMPERATURE);
+        outputPorts.put(PRESSURE.id(), PRESSURE);
     }
 
     public void tick() {
@@ -63,6 +73,16 @@ public class EnvironmentSensorBlockEntity extends BlockEntity implements IDevice
         }
 
         if (changed) setChanged();
+    }
+
+    @Override
+    public Map<String, OutputPort<?>> getOutputPorts() {
+        return outputPorts;
+    }
+
+    @Override
+    public Map<String, InputPort<?>> getInputPorts() {
+        return Map.of();
     }
 
     public String getAddress() {

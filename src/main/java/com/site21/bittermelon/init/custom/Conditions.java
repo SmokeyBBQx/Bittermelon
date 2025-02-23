@@ -13,4 +13,24 @@ import static com.site21.bittermelon.init.neoforge.BitterRegistries.SUBSTANCE_RE
 public class Conditions {
     public static final DeferredRegister<Function<?, ?>> CONDITIONS = DeferredRegister.create(CONDITIONS_REGISTRY_KEY, Bittermelon.MOD_ID);
 
+    public static final Supplier<Function<Boolean, Boolean>> NOT = CONDITIONS.register("not",
+            () -> value -> !value);
+
+    public static final Supplier<Function<Boolean[], Boolean>> AND = CONDITIONS.register("and",
+            () -> values -> values[0] && values[1]);
+
+    public static final Supplier<Function<Boolean[], Boolean>> OR = CONDITIONS.register("or",
+            () -> values -> values[0] || values[1]);
+
+    public static final Supplier<Function<Boolean[], Boolean>> XOR = CONDITIONS.register("xor",
+            () -> values -> values[0] ^ values[1]);
+
+    public static final Supplier<Function<Number[], Boolean>> GREATER_THAN = CONDITIONS.register("greater_than",
+            () -> values -> values[0].doubleValue() > values[1].doubleValue());
+
+    public static final Supplier<Function<Number[], Boolean>> LESS_THAN = CONDITIONS.register("less_than",
+            () -> values -> values[0].doubleValue() < values[1].doubleValue());
+
+    public static final Supplier<Function<Number[], Boolean>> EQUALS = CONDITIONS.register("equals",
+            () -> values -> values[0].doubleValue() == values[1].doubleValue());
 }

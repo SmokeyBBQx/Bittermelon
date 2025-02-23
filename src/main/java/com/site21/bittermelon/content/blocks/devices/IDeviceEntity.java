@@ -1,8 +1,25 @@
 package com.site21.bittermelon.content.blocks.devices;
 
+import com.site21.bittermelon.content.blocks.devices.connection.InputPort;
+import com.site21.bittermelon.content.blocks.devices.connection.OutputPort;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
 public interface IDeviceEntity {
+    Map<String, OutputPort<?>> getOutputPorts();
+    Map<String, InputPort<?>> getInputPorts();
+
+    @SuppressWarnings("unchecked")
+    default <T> OutputPort<T> findOutputPort(String id) {
+        return (OutputPort<T>) getOutputPorts().get(id);
+    }
+
+    @SuppressWarnings("unchecked")
+    default <T> InputPort<T> findInputPort(String id) {
+        return (InputPort<T>) getInputPorts().get(id);
+    }
+
     default @NotNull String generateAddress(String prefix) {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         StringBuilder id = new StringBuilder();
