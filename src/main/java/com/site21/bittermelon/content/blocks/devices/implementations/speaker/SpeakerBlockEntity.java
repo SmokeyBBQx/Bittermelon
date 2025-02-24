@@ -1,6 +1,6 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.speaker;
 
-import com.site21.bittermelon.content.blocks.devices.IDeviceEntity;
+import com.site21.bittermelon.content.blocks.devices.IElectronic;
 import com.site21.bittermelon.content.blocks.devices.connection.InputPort;
 import com.site21.bittermelon.content.blocks.devices.connection.OutputPort;
 import net.minecraft.core.BlockPos;
@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SpeakerBlockEntity extends BlockEntity implements IDeviceEntity {
+public class SpeakerBlockEntity extends BlockEntity implements IElectronic {
     private final Map<String, InputPort<?>> inputPorts = new HashMap<>();
     private String address = "";
 

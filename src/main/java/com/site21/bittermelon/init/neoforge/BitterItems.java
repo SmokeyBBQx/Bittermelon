@@ -5,7 +5,7 @@ import com.site21.bittermelon.content.items.GermTest;
 import com.site21.bittermelon.content.items.IntercomPhoneItem;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
-import com.site21.bittermelon.content.items.cables.networkcable.NetworkCable;
+import com.site21.bittermelon.content.items.wires.networkcable.NetworkCable;
 import com.site21.bittermelon.content.items.cardboardbox.CardboardBoxItem;
 import com.site21.bittermelon.content.items.cardboardbox.CollapsedCardboardBoxItem;
 import com.site21.bittermelon.content.items.containers.substance.FluidContainerItem;

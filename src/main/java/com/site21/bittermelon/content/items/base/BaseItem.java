@@ -1,5 +1,6 @@
 package com.site21.bittermelon.content.items.base;
 
+import com.site21.bittermelon.content.atmosphere.AtmosHandler;
 import com.site21.bittermelon.content.entities.miscellaneous.ThrownItemProjectile;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -14,6 +15,8 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.TEMPERATURE;
 
 public class BaseItem extends Item {
     protected final ItemWeight itemWeight;
@@ -63,5 +66,4 @@ public class BaseItem extends Item {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
         tooltipComponents.add(Component.literal("⇲" + getItemSize().description + " ⚖" + getItemWeight().description).withStyle(ChatFormatting.GRAY));
     }
-
 }

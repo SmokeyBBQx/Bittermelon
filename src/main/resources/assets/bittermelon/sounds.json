@@ -107,6 +107,12 @@
       "bittermelon:machine/terminal_hum"
     ]
   },
+  "machine.containment_alert": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:machine/containment_alert"
+    ]
+  },
   "container.toolbox_open": {
     "category": "neutral",
     "sounds": [

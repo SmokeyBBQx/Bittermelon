@@ -1,32 +1,35 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.containmentalarm;
 
-import com.site21.bittermelon.content.blocks.devices.IDeviceEntity;
-import com.site21.bittermelon.content.blocks.devices.connection.Connection;
-import com.site21.bittermelon.content.blocks.devices.connection.InputPort;
-import com.site21.bittermelon.content.blocks.devices.connection.OutputPort;
-import com.site21.bittermelon.content.blocks.devices.connection.hub.IDeviceHub;
+import com.site21.bittermelon.content.blocks.devices.IElectronic;
+import com.site21.bittermelon.content.blocks.devices.connection.*;
+import com.site21.bittermelon.content.syncsound.SyncSoundEvent;
+import com.site21.bittermelon.content.syncsound.SyncSoundType;
+import com.site21.bittermelon.init.neoforge.BitterSounds;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.CONTAINMENT_ALARM_BLOCK_ENTITY;
 
-public class ContainmentAlarmBlockEntity extends BlockEntity implements IDeviceEntity, IDeviceHub {
-    private final List<Connection<?, ?>> connections = new ArrayList<>();
+public class ContainmentAlarmBlockEntity extends BlockEntity implements IElectronic, PLCUser {
     private final Map<String, OutputPort<?>> outputPorts = new HashMap<>();
     private final Map<String, InputPort<?>> inputPorts = new HashMap<>();
     private final List<BlockPos> linkedDevices = new ArrayList<>();
     private boolean isActive = false;
     private boolean isAlerted = false;
     private boolean isEmergency = false;
+    private int alertSoundCounter = 0;
+    private static final int ALERT_SOUND_INTERVAL = 40;
 
     public ContainmentAlarmBlockEntity(BlockPos pos, BlockState blockState) {
         super(CONTAINMENT_ALARM_BLOCK_ENTITY.get(), pos, blockState);
@@ -50,8 +53,13 @@ public class ContainmentAlarmBlockEntity extends BlockEntity implements IDeviceE
     public void tick() {
         if (level == null || level.isClientSide) return;
 
-        for (Connection<?, ?> connection : connections) {
-            connection.update();
+        if (isAlerted) {
+            alertSoundCounter++;
+            if (alertSoundCounter >= ALERT_SOUND_INTERVAL) {
+                level.playSound(null, worldPosition, BitterSounds.CONTAINMENT_ALERT.get(), SoundSource.NEUTRAL, 0.3f, 1);
+                NeoForge.EVENT_BUS.post(new SyncSoundEvent(level, getBlockPos(), SyncSoundType.INTERCOM, Component.literal("(alarm)").withStyle(ChatFormatting.ITALIC).withColor(0xFF808080), 16));
+                alertSoundCounter = 0;
+            }
         }
     }
 
@@ -92,31 +100,11 @@ public class ContainmentAlarmBlockEntity extends BlockEntity implements IDeviceE
         }
     }
 
-    public void addConnection(Connection<?, ?> connection) {
-        connections.add(connection);
-        setChanged();
-    }
-
-    public void removeConnection(Connection<?, ?> connection) {
-        connections.remove(connection);
-        setChanged();
-    }
-
     public void addLinkedDevice(BlockPos pos) {
         if (!linkedDevices.contains(pos)) {
             linkedDevices.add(pos);
             setChanged();
         }
-    }
-
-    public void removeLinkedDevice(BlockPos pos) {
-        if (linkedDevices.remove(pos)) {
-            setChanged();
-        }
-    }
-
-    public List<BlockPos> getLinkedDevices() {
-        return Collections.unmodifiableList(linkedDevices);
     }
 
     @Override
@@ -125,12 +113,6 @@ public class ContainmentAlarmBlockEntity extends BlockEntity implements IDeviceE
         tag.putBoolean("isActive", isActive);
         tag.putBoolean("isAlerted", isAlerted);
         tag.putBoolean("isEmergency", isEmergency);
-
-        ListTag connectionsList = new ListTag();
-        for (Connection<?, ?> connection : connections) {
-            connectionsList.add(connection.save());
-        }
-        tag.put("connections", connectionsList);
 
         long[] devicePositions = linkedDevices.stream()
                 .mapToLong(BlockPos::asLong)
@@ -144,15 +126,6 @@ public class ContainmentAlarmBlockEntity extends BlockEntity implements IDeviceE
         isActive = tag.getBoolean("isActive");
         isAlerted = tag.getBoolean("isAlerted");
         isEmergency = tag.getBoolean("isEmergency");
-
-        ListTag connectionsList = tag.getList("connections", ListTag.TAG_COMPOUND);
-        if (level == null) return;
-        connections.clear();
-
-        for (int i = 0; i < connectionsList.size(); i++) {
-            CompoundTag connectionTag = connectionsList.getCompound(i);
-            connections.add(Connection.load(connectionTag, level));
-        }
 
         long[] positions = tag.getLongArray("linkedDevices");
         linkedDevices.clear();
@@ -181,5 +154,10 @@ public class ContainmentAlarmBlockEntity extends BlockEntity implements IDeviceE
         if (level != null && !level.isClientSide) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         }
+    }
+
+    @Override
+    public PLC getPLC() {
+        return null;
     }
 }

@@ -1,6 +1,6 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.panicbutton;
 
-import com.site21.bittermelon.content.blocks.devices.IDeviceEntity;
+import com.site21.bittermelon.content.blocks.devices.IElectronic;
 import com.site21.bittermelon.content.blocks.devices.connection.InputPort;
 import com.site21.bittermelon.content.blocks.devices.connection.OutputPort;
 import net.minecraft.core.BlockPos;
@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PanicButtonBlockEntity extends BlockEntity implements IDeviceEntity {
+public class PanicButtonBlockEntity extends BlockEntity implements IElectronic {
     private final Map<String, OutputPort<?>> outputPorts = new HashMap<>();
     private boolean isOn = false;
 

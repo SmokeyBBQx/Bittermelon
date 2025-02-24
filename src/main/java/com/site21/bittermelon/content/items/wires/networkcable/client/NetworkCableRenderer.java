@@ -1,10 +1,9 @@
-package com.site21.bittermelon.content.items.cables.networkcable.client;
+package com.site21.bittermelon.content.items.wires.networkcable.client;
 
 import com.mojang.blaze3d.platform.Window;
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.devices.IDeviceEntity;
-import com.site21.bittermelon.content.items.cables.networkcable.NetworkCable;
-import com.site21.bittermelon.content.items.laserdesignator.LaserDesignatorItem;
+import com.site21.bittermelon.content.blocks.devices.IElectronic;
+import com.site21.bittermelon.content.items.wires.networkcable.NetworkCable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
@@ -29,7 +28,7 @@ public class NetworkCableRenderer {
 
                 if (device == null) return;
 
-                if (minecraft.player.level().getBlockEntity(device) instanceof IDeviceEntity deviceEntity) {
+                if (minecraft.player.level().getBlockEntity(device) instanceof IElectronic deviceEntity) {
                     Component text = Component.literal("Linking from " + deviceEntity.getAddress());
                     GuiGraphics guiGraphics = event.getGuiGraphics();
                     Window window = minecraft.getWindow();

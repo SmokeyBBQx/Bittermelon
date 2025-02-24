@@ -2,7 +2,7 @@ package com.site21.bittermelon.content.blocks.devices.implementations.environmen
 
 import com.site21.bittermelon.content.atmosphere.AtmosHandler;
 import com.site21.bittermelon.content.atmosphere.AtmosInstance;
-import com.site21.bittermelon.content.blocks.devices.IDeviceEntity;
+import com.site21.bittermelon.content.blocks.devices.IElectronic;
 import com.site21.bittermelon.content.blocks.devices.connection.InputPort;
 import com.site21.bittermelon.content.blocks.devices.connection.OutputPort;
 import com.site21.bittermelon.content.substance.SubstanceStack;
@@ -11,7 +11,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +18,7 @@ import java.util.*;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.ENVIRONMENT_SENSOR_BLOCK_ENTITY;
 
-public class EnvironmentSensorBlockEntity extends BlockEntity implements IDeviceEntity {
+public class EnvironmentSensorBlockEntity extends BlockEntity implements IElectronic {
     private static final float FALLBACK_TEMPERATURE = 22;
     private static final float FALLBACK_PRESSURE = 101.325f;
     private final Map<String, OutputPort<?>> outputPorts = new HashMap<>();
@@ -44,7 +43,8 @@ public class EnvironmentSensorBlockEntity extends BlockEntity implements IDevice
 
     public void tick() {
         if (level == null) return;
-        AtmosInstance atmosInstance = AtmosHandler.getAtmosInstanceAt(level, worldPosition);
+        AtmosInstance atmosInstance = AtmosHandler.getAtmosInstanceAt(level, worldPosition.above());
+        // TODO: Remove above once shape is fixed
         if (atmosInstance == null) {
             if (temperature != FALLBACK_TEMPERATURE || pressure != FALLBACK_PRESSURE) {
                 temperature = FALLBACK_TEMPERATURE;

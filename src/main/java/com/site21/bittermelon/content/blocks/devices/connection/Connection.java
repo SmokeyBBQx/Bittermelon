@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.blocks.devices.connection;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.devices.IDeviceEntity;
+import com.site21.bittermelon.content.blocks.devices.IElectronic;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -62,10 +62,10 @@ public class Connection<T, U> {
         OutputPort<?> outputPort = null;
         InputPort<?> inputPort = null;
 
-        if (level.getBlockEntity(outputPos) instanceof IDeviceEntity outputDevice) {
+        if (level.getBlockEntity(outputPos) instanceof IElectronic outputDevice) {
             outputPort = outputDevice.findOutputPort(outputID);
         }
-        if (level.getBlockEntity(inputPos) instanceof IDeviceEntity inputDevice) {
+        if (level.getBlockEntity(inputPos) instanceof IElectronic inputDevice) {
             inputPort = inputDevice.findInputPort(inputID);
         }
 

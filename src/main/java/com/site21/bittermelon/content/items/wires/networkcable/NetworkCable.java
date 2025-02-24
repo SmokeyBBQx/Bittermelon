@@ -1,6 +1,6 @@
-package com.site21.bittermelon.content.items.cables.networkcable;
+package com.site21.bittermelon.content.items.wires.networkcable;
 
-import com.site21.bittermelon.content.blocks.devices.IDeviceEntity;
+import com.site21.bittermelon.content.blocks.devices.IElectronic;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentalarm.ContainmentAlarmBlockEntity;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
@@ -29,7 +29,7 @@ public class NetworkCable extends BaseItem {
 
         if (player == null) return InteractionResult.FAIL;
 
-        if (level.getBlockEntity(pos) instanceof IDeviceEntity) {
+        if (level.getBlockEntity(pos) instanceof IElectronic) {
             if (stack.get(CORD_CONNECTION) != null) {
                 makeConnection(pos, level, stack);
             } else {
@@ -50,6 +50,8 @@ public class NetworkCable extends BaseItem {
 
     @Override
     public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
+        super.inventoryTick(stack, level, entity, slotId, isSelected);
+
         if (level.isClientSide) return;
 
         if (!isSelected) {

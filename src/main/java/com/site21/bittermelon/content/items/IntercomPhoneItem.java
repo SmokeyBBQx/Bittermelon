@@ -22,6 +22,8 @@ public class IntercomPhoneItem extends BaseItem {
 
     @Override
     public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
+        super.inventoryTick(stack, level, entity, slotId, isSelected);
+
         if (level.isClientSide) return;
         BlockPos intercomPos = stack.get(CORD_CONNECTION.get());
 

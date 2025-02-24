@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public interface IDeviceEntity {
+public interface IElectronic {
     Map<String, OutputPort<?>> getOutputPorts();
     Map<String, InputPort<?>> getInputPorts();
 

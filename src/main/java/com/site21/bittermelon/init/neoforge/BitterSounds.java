@@ -48,4 +48,6 @@ public class BitterSounds {
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "machine.boot_up_tune")));
     public static final DeferredHolder<SoundEvent, SoundEvent> TERMINAL_HUM = SOUND_EVENTS.register("machine.terminal_hum",
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "machine.terminal_hum")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> CONTAINMENT_ALERT = SOUND_EVENTS.register("machine.containment_alert",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "machine.containment_alert")));
 }

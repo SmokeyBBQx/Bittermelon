@@ -1,7 +1,5 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.containmentalarm;
 
-import com.site21.bittermelon.content.blocks.devices.IDeviceEntity;
-import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.ContainmentPanelBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
