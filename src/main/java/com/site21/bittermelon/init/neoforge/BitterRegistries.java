@@ -1,6 +1,7 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.content.blocks.devices.connection.Signal;
 import com.site21.bittermelon.content.chat.VerbSet;
 import com.site21.bittermelon.content.substance.Substance;
 import net.minecraft.core.Registry;
@@ -24,8 +25,8 @@ public class BitterRegistries {
             .sync(true)
             .create();
 
-    public static final ResourceKey<Registry<Function<?, ?>>> CONDITIONS_REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "conditions"));
-    public static final Registry<Function<?, ?>> CONDITION_REGISTRY = new RegistryBuilder<>(CONDITIONS_REGISTRY_KEY)
+    public static final ResourceKey<Registry<Function<Signal, Signal>>> CONDITIONS_REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "conditions"));
+    public static final Registry<Function<Signal, Signal>> CONDITION_REGISTRY = new RegistryBuilder<>(CONDITIONS_REGISTRY_KEY)
             .sync(true)
             .create();
 

@@ -5,6 +5,7 @@ import com.site21.bittermelon.content.blocks.base.structuralblock.StructuralBloc
 import com.site21.bittermelon.content.blocks.container.smallbox.BoxBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentalarm.ContainmentAlarmBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.ContainmentPanelBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.implementations.detonator.DetonatorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.environmentsensor.EnvironmentSensorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.thermometer.ThermometerBlockEntity;
@@ -42,4 +43,7 @@ public class BitterBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ContainmentAlarmBlockEntity>> CONTAINMENT_ALARM_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("containment_alarm_block_entity",
             () -> BlockEntityType.Builder.of(ContainmentAlarmBlockEntity::new, CONTAINMENT_ALARM.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DetonatorBlockEntity>> DETONATOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("detonator_block_entity",
+            () -> BlockEntityType.Builder.of(DetonatorBlockEntity::new, DETONATOR.get()).build(null));
 }

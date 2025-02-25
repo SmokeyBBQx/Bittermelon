@@ -15,6 +15,7 @@ import com.site21.bittermelon.content.items.laserdesignator.LaserDesignatorItem;
 import com.site21.bittermelon.content.items.medical.organic.BodyPart;
 import com.site21.bittermelon.content.items.medical.tools.*;
 import com.site21.bittermelon.content.items.toolbox.ToolBoxItem;
+import com.site21.bittermelon.content.items.wires.wire.Wire;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -224,6 +225,13 @@ public class BitterItems {
     ));
 
     public static final DeferredItem<NetworkCable> NETWORK_CABLE = ITEMS.register("network_cable", () -> new NetworkCable(
+            new Item.Properties(),
+            1,
+            1,
+            ItemWeight.LIGHT
+    ));
+
+    public static final DeferredItem<Wire> WIRE = ITEMS.register("wire", () -> new Wire(
             new Item.Properties(),
             1,
             1,

@@ -6,100 +6,57 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
-public class PLC {
-    private final List<Connection<?, ?>> connections = new ArrayList<>();
-    public final OutputPort<?>[] inputs;
-    public final InputPort<?>[] outputs;
+public class PLC implements IElectronic {
+    private final List<WireConnection> connections = new ArrayList<>();
+    private final BlockPos worldPosition;
+    private final Level level;
 
-    public PLC(int inputAmount, int outputAmount) {
-        inputs = new OutputPort[inputAmount];
-        outputs = new InputPort[outputAmount];
+    public PLC(BlockPos worldPosition, Level level) {
+        this.worldPosition = worldPosition;
+        this.level = level;
     }
 
-    public void update() {
-        for (Connection<?, ?> connection : connections) {
-            connection.update();
-        }
+    @Override
+    public String getAddress() {
+        return "";
     }
 
-    public CompoundTag save() {
-        CompoundTag tag = new CompoundTag();
+    @Override
+    public Map<String, OutputPort> getOutputPorts() {
+        return Map.of(
 
-        ListTag connectionsList = new ListTag();
-        for (Connection<?, ?> connection : connections) {
-            connectionsList.add(connection.save());
-        }
-        tag.put("connections", connectionsList);
-
-        ListTag inputsList = new ListTag();
-        for (OutputPort<?> port : inputs) {
-            CompoundTag portTag = new CompoundTag();
-            portTag.putLong("pos", port.pos().asLong());
-            portTag.putString("id", port.id());
-            inputsList.add(portTag);
-        }
-        tag.put("inputs", inputsList);
-
-        ListTag outputsList = new ListTag();
-        for (InputPort<?> port : outputs) {
-            CompoundTag portTag = new CompoundTag();
-            portTag.putLong("pos", port.pos().asLong());
-            portTag.putString("id", port.id());
-            outputsList.add(portTag);
-        }
-        tag.put("outputs", outputsList);
-
-        return tag;
+        );
     }
 
-    public void load(@NotNull CompoundTag tag, @NotNull Level level) {
-        connections.clear();
-        Arrays.fill(inputs, null);
-        Arrays.fill(outputs, null);
+    @Override
+    public Map<String, InputPort> getInputPorts() {
+        return Map.of(
+                "input_1", new InputPort("input_1", this::handleInput, worldPosition),
+                "input_2", new InputPort("input_2", this::handleInput, worldPosition),
+                "input_3", new InputPort("input_3", this::handleInput, worldPosition),
+                "input_4", new InputPort("input_4", this::handleInput, worldPosition),
+                "input_5", new InputPort("input_5", this::handleInput, worldPosition),
+                "input_6", new InputPort("input_6", this::handleInput, worldPosition)
+        );
+    }
 
-        ListTag connectionsList = tag.getList("connections", CompoundTag.TAG_COMPOUND);
-        for (int i = 0; i < connectionsList.size(); i++) {
-            CompoundTag connectionTag = connectionsList.getCompound(i);
-            try {
-                Connection<?, ?> connection = Connection.load(connectionTag, level);
-                connections.add(connection);
-            } catch (IllegalArgumentException e) {
-                Bittermelon.LOGGER.error("Failed to load connection: {}", e.getMessage());
-            }
-        }
+    private void handleInput(Signal signal) {
 
-        ListTag inputsList = tag.getList("inputs", CompoundTag.TAG_COMPOUND);
-        for (int i = 0; i < Math.min(inputsList.size(), inputs.length); i++) {
-            CompoundTag portTag = inputsList.getCompound(i);
-            BlockPos pos = BlockPos.of(portTag.getLong("pos"));
-            String id = portTag.getString("id");
+    }
 
-            if (level.getBlockEntity(pos) instanceof IElectronic device) {
-                OutputPort<?> port = device.findOutputPort(id);
-                if (port != null) {
-                    inputs[i] = port;
-                }
-            }
-        }
-
-        ListTag outputsList = tag.getList("outputs", CompoundTag.TAG_COMPOUND);
-        for (int i = 0; i < Math.min(outputsList.size(), outputs.length); i++) {
-            CompoundTag portTag = outputsList.getCompound(i);
-            BlockPos pos = BlockPos.of(portTag.getLong("pos"));
-            String id = portTag.getString("id");
-
-            if (level.getBlockEntity(pos) instanceof IElectronic device) {
-                InputPort<?> port = device.findInputPort(id);
-                if (port != null) {
-                    outputs[i] = port;
-                }
-            }
-        }
+    @Override
+    public List<WireConnection> getConnections() {
+        return connections;
     }
 }
+

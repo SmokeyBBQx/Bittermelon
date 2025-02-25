@@ -43,7 +43,6 @@ public class NetworkCable extends BaseItem {
 
     private void makeConnection(BlockPos pos, @NotNull Level level, ItemStack stack) {
         if (level.getBlockEntity(pos) instanceof ContainmentAlarmBlockEntity device) {
-            device.addLinkedDevice(stack.get(CORD_CONNECTION));
             stack.remove(CORD_CONNECTION);
         }
     }

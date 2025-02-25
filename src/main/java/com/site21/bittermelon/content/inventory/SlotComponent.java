@@ -17,7 +17,7 @@ public abstract class SlotComponent {
     // Two arrays: items and slots
     // Draw slots
     // Slot data contains a target item
-    // When a slot is clicked on, it checks the slot's data and calls the action on the item
+    // When a slot is clicked on, it checks the slot's data and calls the handler on the item
     // When an item is placed, it will first condition if the slots do not contain a value
     // Otherwise, it will fill the numbers in the array
     // Quick place, it will search the whole list of slots for an area containing the number of empty slots

@@ -7,6 +7,8 @@ import com.site21.bittermelon.content.blocks.devices.implementations.intercom.ne
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.networking.IntercomSpeakerUpdate;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.networking.IntercomTargetUpdate;
 import com.site21.bittermelon.content.character.networking.SyncCharacters;
+import com.site21.bittermelon.content.items.wires.wire.networking.MakeWireConnection;
+import com.site21.bittermelon.content.items.wires.wire.networking.WiringDataUpdate;
 import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
 import com.site21.bittermelon.networking.client.*;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.ContainmentNameUpdate;
@@ -167,6 +169,18 @@ public class PayloadRegistration {
                 UpdateAtmosGas.TYPE,
                 UpdateAtmosGas.STREAM_CODEC,
                 UpdateAtmosGas::handle
+        );
+
+        registrar.playToServer(
+                WiringDataUpdate.TYPE,
+                WiringDataUpdate.STREAM_CODEC,
+                WiringDataUpdate::handle
+        );
+
+        registrar.playToServer(
+                MakeWireConnection.TYPE,
+                MakeWireConnection.STREAM_CODEC,
+                MakeWireConnection::handle
         );
     }
 }

@@ -3,8 +3,7 @@ package com.site21.bittermelon.content.blocks.devices.implementations.environmen
 import com.site21.bittermelon.content.atmosphere.AtmosHandler;
 import com.site21.bittermelon.content.atmosphere.AtmosInstance;
 import com.site21.bittermelon.content.blocks.devices.IElectronic;
-import com.site21.bittermelon.content.blocks.devices.connection.InputPort;
-import com.site21.bittermelon.content.blocks.devices.connection.OutputPort;
+import com.site21.bittermelon.content.blocks.devices.connection.*;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -21,11 +20,12 @@ import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.ENVIRONME
 public class EnvironmentSensorBlockEntity extends BlockEntity implements IElectronic {
     private static final float FALLBACK_TEMPERATURE = 22;
     private static final float FALLBACK_PRESSURE = 101.325f;
-    private final Map<String, OutputPort<?>> outputPorts = new HashMap<>();
+    private final Map<String, OutputPort> outputPorts = new HashMap<>();
     private String address;
     private float temperature = 0; // Kelvin
     private float pressure = 0; // kPa
     private final Set<SubstanceStack> gases = new HashSet<>();
+    private final List<WireConnection> connections = new ArrayList<>();
 
     public EnvironmentSensorBlockEntity(BlockPos pos, BlockState blockState) {
         super(ENVIRONMENT_SENSOR_BLOCK_ENTITY.get(), pos, blockState);
@@ -34,8 +34,8 @@ public class EnvironmentSensorBlockEntity extends BlockEntity implements IElectr
     }
 
     private void initializePorts() {
-        OutputPort<Float> TEMPERATURE = new OutputPort<>("temperature", this::getTemperature, worldPosition);
-        OutputPort<Float> PRESSURE = new OutputPort<>("pressure", this::getPressure, worldPosition);
+        OutputPort TEMPERATURE = new OutputPort("temperature", this::getTemperature, worldPosition);
+        OutputPort PRESSURE = new OutputPort("pressure", this::getPressure, worldPosition);
 
         outputPorts.put(TEMPERATURE.id(), TEMPERATURE);
         outputPorts.put(PRESSURE.id(), PRESSURE);
@@ -73,20 +73,29 @@ public class EnvironmentSensorBlockEntity extends BlockEntity implements IElectr
         }
 
         if (changed) setChanged();
+
+        for (WireConnection connection : connections) {
+            connection.update();
+        }
     }
 
     @Override
-    public Map<String, OutputPort<?>> getOutputPorts() {
+    public Map<String, OutputPort> getOutputPorts() {
         return outputPorts;
     }
 
     @Override
-    public Map<String, InputPort<?>> getInputPorts() {
+    public Map<String, InputPort> getInputPorts() {
         return Map.of();
     }
 
     public String getAddress() {
         return address;
+    }
+
+    @Override
+    public List<WireConnection> getConnections() {
+        return connections;
     }
 
     public float getTemperature() {
@@ -103,6 +112,8 @@ public class EnvironmentSensorBlockEntity extends BlockEntity implements IElectr
         tag.putString("address", address);
         tag.putFloat("temperature", temperature);
         tag.putFloat("pressure", pressure);
+
+        saveConnections(tag);
     }
 
     @Override
@@ -111,6 +122,8 @@ public class EnvironmentSensorBlockEntity extends BlockEntity implements IElectr
         address = tag.getString("address");
         temperature = tag.getFloat("temperature");
         pressure = tag.getFloat("pressure");
+
+        loadConnections(tag, level);
     }
 
     @Override

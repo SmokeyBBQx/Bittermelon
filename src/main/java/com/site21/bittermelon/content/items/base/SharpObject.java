@@ -47,6 +47,6 @@ public interface SharpObject extends MedicalItem {
         cut.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/medical/cut.png"));
         medicalStats.addCompartment(cut);
 
-        // TODO: Announce action
+        // TODO: Announce handler
     }
 }

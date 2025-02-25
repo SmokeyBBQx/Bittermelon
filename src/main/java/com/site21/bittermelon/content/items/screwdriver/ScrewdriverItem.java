@@ -1,26 +1,20 @@
-package com.site21.bittermelon.content.items.wires.wire;
+package com.site21.bittermelon.content.items.screwdriver;
 
 import com.site21.bittermelon.content.blocks.devices.IElectronic;
-import com.site21.bittermelon.content.blocks.devices.connection.PLCUser;
-import com.site21.bittermelon.content.blocks.devices.implementations.containmentalarm.ContainmentAlarmBlockEntity;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.wires.wire.client.WiringScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.CORD_CONNECTION;
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.PORT_ID;
-
-public class Wire extends BaseItem {
-    public Wire(Properties properties, int width, int height, ItemWeight itemWeight) {
+public class ScrewdriverItem extends BaseItem {
+    public ScrewdriverItem(Properties properties, int width, int height, ItemWeight itemWeight) {
         super(properties, width, height, itemWeight);
     }
 
@@ -41,15 +35,5 @@ public class Wire extends BaseItem {
         }
 
         return InteractionResult.FAIL;
-    }
-
-    @Override
-    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
-        super.inventoryTick(stack, level, entity, slotId, isSelected);
-
-        if (!isSelected) {
-            stack.remove(CORD_CONNECTION);
-            stack.remove(PORT_ID);
-        }
     }
 }

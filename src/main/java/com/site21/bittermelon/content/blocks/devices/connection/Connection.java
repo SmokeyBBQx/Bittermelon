@@ -13,14 +13,14 @@ import java.util.function.Function;
 
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.CONDITION_REGISTRY;
 
-public class Connection<T, U> {
-    private final OutputPort<T> outputPort;
-    private final InputPort<U> inputPort;
-    private final Function<T, U> condition;
+public class Connection {
+    private final OutputPort outputPort;
+    private final InputPort inputPort;
+    private final Function<Signal, Signal> condition;
     private final String conditionID;
 
-    public Connection(OutputPort<T> outputPort, InputPort<U> inputPort,
-                      Function<T, U> condition, String conditionID) {
+    public Connection(OutputPort outputPort, InputPort inputPort,
+                      Function<Signal, Signal> condition, String conditionID) {
         this.outputPort = outputPort;
         this.inputPort = inputPort;
         this.condition = condition;
@@ -28,8 +28,8 @@ public class Connection<T, U> {
     }
 
     public void update() {
-        T value = outputPort.output().get();
-        inputPort.action().accept(condition.apply(value));
+//        T value = outputPort.supplier().get();
+//        inputPort.handler().accept(condition.apply(value));
     }
 
     public CompoundTag save() {
@@ -45,7 +45,7 @@ public class Connection<T, U> {
         return tag;
     }
 
-    public static @NotNull Connection<?, ?> load(@NotNull CompoundTag tag, Level level) {
+    public static @NotNull Connection load(@NotNull CompoundTag tag, Level level) {
         return tryCreateConnection(
                 tag.getString("outputID"),
                 tag.getString("inputID"),
@@ -58,9 +58,9 @@ public class Connection<T, U> {
 
     @Contract("_, _, _, _, _, _ -> new")
     @SuppressWarnings("unchecked")
-    public static @NotNull Connection<?, ?> tryCreateConnection(String outputID, String inputID, BlockPos outputPos, BlockPos inputPos, String conditionID, @NotNull Level level) {
-        OutputPort<?> outputPort = null;
-        InputPort<?> inputPort = null;
+    public static @NotNull Connection tryCreateConnection(String outputID, String inputID, BlockPos outputPos, BlockPos inputPos, String conditionID, @NotNull Level level) {
+        OutputPort outputPort = null;
+        InputPort inputPort = null;
 
         if (level.getBlockEntity(outputPos) instanceof IElectronic outputDevice) {
             outputPort = outputDevice.findOutputPort(outputID);
@@ -73,7 +73,7 @@ public class Connection<T, U> {
             throw new IllegalArgumentException("Could not find ports");
         }
 
-        Function<?, ?> condition = CONDITION_REGISTRY
+        Function<Signal, Signal> condition = CONDITION_REGISTRY
                 .getOptional(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, conditionID))
                 .orElseThrow(() -> new IllegalArgumentException("Could not find condition: " + conditionID));
 

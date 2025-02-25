@@ -4,5 +4,8 @@ import net.minecraft.core.BlockPos;
 
 import java.util.function.Consumer;
 
-public record InputPort<T>(String id, Consumer<T> action, BlockPos pos) {
+public record InputPort(String id, Consumer<Signal> handler, BlockPos pos) {
+    public void receive(Signal signal) {
+        handler.accept(signal);
+    }
 }

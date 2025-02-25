@@ -22,9 +22,9 @@ import java.util.*;
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.CONTAINMENT_ALARM_BLOCK_ENTITY;
 
 public class ContainmentAlarmBlockEntity extends BlockEntity implements IElectronic, PLCUser {
-    private final Map<String, OutputPort<?>> outputPorts = new HashMap<>();
-    private final Map<String, InputPort<?>> inputPorts = new HashMap<>();
-    private final List<BlockPos> linkedDevices = new ArrayList<>();
+    private final Map<String, OutputPort> outputPorts = new HashMap<>();
+    private final Map<String, InputPort> inputPorts = new HashMap<>();
+    private PLC plc = new PLC(worldPosition, level);
     private boolean isActive = false;
     private boolean isAlerted = false;
     private boolean isEmergency = false;
@@ -37,14 +37,14 @@ public class ContainmentAlarmBlockEntity extends BlockEntity implements IElectro
     }
 
     private void initializePorts() {
-        InputPort<Boolean> SET_ALERT = new InputPort<>("set_alert", this::setAlert, worldPosition);
-        InputPort<Boolean> SET_EMERGENCY = new InputPort<>("set_emergency", this::setEmergency, worldPosition);
+        InputPort SET_ALERT = new InputPort("set_alert", this::setAlert, worldPosition);
+        InputPort SET_EMERGENCY = new InputPort("set_emergency", this::setEmergency, worldPosition);
 
         inputPorts.put(SET_ALERT.id(), SET_ALERT);
         inputPorts.put(SET_EMERGENCY.id(), SET_EMERGENCY);
 
-        OutputPort<Boolean> IS_ALERTED = new OutputPort<>("is_alerted", this::isAlerted, worldPosition);
-        OutputPort<Boolean> IS_EMERGENCY = new OutputPort<>("is_emergency", this::isEmergency, worldPosition);
+        OutputPort IS_ALERTED = new OutputPort("is_alerted", this::isAlerted, worldPosition);
+        OutputPort IS_EMERGENCY = new OutputPort("is_emergency", this::isEmergency, worldPosition);
 
         outputPorts.put(IS_ALERTED.id(), IS_ALERTED);
         outputPorts.put(IS_EMERGENCY.id(), IS_EMERGENCY);
@@ -64,18 +64,23 @@ public class ContainmentAlarmBlockEntity extends BlockEntity implements IElectro
     }
 
     @Override
-    public Map<String, OutputPort<?>> getOutputPorts() {
+    public Map<String, OutputPort> getOutputPorts() {
         return outputPorts;
     }
 
     @Override
-    public Map<String, InputPort<?>> getInputPorts() {
+    public Map<String, InputPort> getInputPorts() {
         return inputPorts;
     }
 
     @Override
     public String getAddress() {
         return "";
+    }
+
+    @Override
+    public List<WireConnection> getConnections() {
+        return plc.getConnections();
     }
 
     public boolean isAlerted() {
@@ -93,6 +98,10 @@ public class ContainmentAlarmBlockEntity extends BlockEntity implements IElectro
         }
     }
 
+    public void setAlert(@NotNull Signal signal) {
+        setAlert(signal.asBoolean());
+    }
+
     public void setEmergency(boolean value) {
         if (isEmergency != value) {
             isEmergency = value;
@@ -100,11 +109,8 @@ public class ContainmentAlarmBlockEntity extends BlockEntity implements IElectro
         }
     }
 
-    public void addLinkedDevice(BlockPos pos) {
-        if (!linkedDevices.contains(pos)) {
-            linkedDevices.add(pos);
-            setChanged();
-        }
+    private void setEmergency(@NotNull Signal signal) {
+        setEmergency(signal.asBoolean());
     }
 
     @Override
@@ -113,11 +119,6 @@ public class ContainmentAlarmBlockEntity extends BlockEntity implements IElectro
         tag.putBoolean("isActive", isActive);
         tag.putBoolean("isAlerted", isAlerted);
         tag.putBoolean("isEmergency", isEmergency);
-
-        long[] devicePositions = linkedDevices.stream()
-                .mapToLong(BlockPos::asLong)
-                .toArray();
-        tag.putLongArray("linkedDevices", devicePositions);
     }
 
     @Override
@@ -126,12 +127,6 @@ public class ContainmentAlarmBlockEntity extends BlockEntity implements IElectro
         isActive = tag.getBoolean("isActive");
         isAlerted = tag.getBoolean("isAlerted");
         isEmergency = tag.getBoolean("isEmergency");
-
-        long[] positions = tag.getLongArray("linkedDevices");
-        linkedDevices.clear();
-        for (long pos : positions) {
-            linkedDevices.add(BlockPos.of(pos));
-        }
     }
 
     @Override
@@ -158,6 +153,6 @@ public class ContainmentAlarmBlockEntity extends BlockEntity implements IElectro
 
     @Override
     public PLC getPLC() {
-        return null;
+        return plc;
     }
 }

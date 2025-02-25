@@ -88,4 +88,9 @@ public class BitterDataComponents {
             "cord_connection",
             builder -> builder.persistent(BlockPos.CODEC).networkSynchronized(BlockPos.STREAM_CODEC)
     );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> PORT_ID = DATA_COMPONENTS.registerComponentType(
+            "port_id",
+            builder -> builder.persistent(Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8)
+    );
 }

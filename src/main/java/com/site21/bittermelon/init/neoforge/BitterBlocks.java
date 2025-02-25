@@ -2,6 +2,7 @@ package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentalarm.ContainmentAlarm;
+import com.site21.bittermelon.content.blocks.devices.implementations.detonator.DetonatorBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.environmentsensor.EnvironmentSensor;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlock;
 import com.site21.bittermelon.content.blocks.dirtyfloor.DirtyFloorBlock;
@@ -68,5 +69,9 @@ public class BitterBlocks {
 
     public static final DeferredBlock<ContainmentAlarm> CONTAINMENT_ALARM = BLOCKS.register("containment_alarm",
             () -> new ContainmentAlarm(BlockBehaviour.Properties.of().noOcclusion()
+            ));
+
+    public static final DeferredBlock<DetonatorBlock> DETONATOR = BLOCKS.register("detonator",
+            () -> new DetonatorBlock(BlockBehaviour.Properties.of().noOcclusion()
             ));
 }
