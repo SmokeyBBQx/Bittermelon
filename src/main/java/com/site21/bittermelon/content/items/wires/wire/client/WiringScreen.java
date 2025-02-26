@@ -98,4 +98,9 @@ public class WiringScreen extends Screen {
         }
         onClose();
     }
+
+    @Override
+    public boolean isPauseScreen() {
+        return false;
+    }
 }
