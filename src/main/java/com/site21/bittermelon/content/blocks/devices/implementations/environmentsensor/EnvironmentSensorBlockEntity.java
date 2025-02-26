@@ -80,10 +80,7 @@ public class EnvironmentSensorBlockEntity extends BlockEntity implements IElectr
 
     @Override
     public Map<String, OutputPort> getOutputPorts() {
-        return Map.of(
-                "TEMPERATURE", new OutputPort("TEMPERATURE", this::getTemperature, worldPosition),
-                "PRESSURE", new OutputPort("PRESSURE", this::getPressure, worldPosition)
-        );
+        return outputPorts;
     }
 
     public String getAddress() {

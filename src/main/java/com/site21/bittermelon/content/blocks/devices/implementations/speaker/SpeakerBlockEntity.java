@@ -10,6 +10,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,26 +25,34 @@ import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.SPEAKER_B
 public class SpeakerBlockEntity extends BlockEntity implements IElectronic {
     private String address = "";
     private int speakerRadius = 16;
+    private final Map<String, InputPort> inputPorts;
 
     public SpeakerBlockEntity(BlockPos pos, BlockState blockState) {
         super(SPEAKER_BLOCK_ENTITY.get(), pos, blockState);
         address = generateAddress("SPE");
+
+        inputPorts = Map.of(
+                "BROADCAST", new InputPort("BROADCAST", this::broadcast, worldPosition)
+        );
     }
 
     private void broadcast(Signal signal) {
         if (level == null || level.isClientSide) return;
 
-        Component intercomMessage = Component.literal("[SPEAKER]: ").append((Component) signal.value());
+        if (signal.value() instanceof SyncSoundEvent event) {
+            Component intercomMessage = Component.literal("[SPEAKER]: ").append(event.getSoundDescription());
 
-        NeoForge.EVENT_BUS.post(new SyncSoundEvent(level, getBlockPos(), SyncSoundType.SPEAKER, intercomMessage, speakerRadius));
-        LocalMessageHelper.sendLocalMessage(level, getBlockPos(), speakerRadius, intercomMessage);
+            NeoForge.EVENT_BUS.post(new SyncSoundEvent(level, getBlockPos(), SyncSoundType.SPEAKER, intercomMessage, speakerRadius, event.getSoundEvent()));
+            if (event.getSoundEvent() != null) {
+                level.playSound(null, worldPosition, event.getSoundEvent(), SoundSource.NEUTRAL, 0.1f, 1);
+            }
+            LocalMessageHelper.sendLocalMessage(level, getBlockPos(), speakerRadius, intercomMessage);
+        }
     }
 
     @Override
     public Map<String, InputPort> getInputPorts() {
-        return Map.of(
-                "BROADCAST", new InputPort("BROADCAST", this::broadcast, worldPosition)
-        );
+        return inputPorts;
     }
 
     @Override

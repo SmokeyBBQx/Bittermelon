@@ -1,6 +1,7 @@
 package com.site21.bittermelon.content.telecomms.intercom;
 
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlockEntity;
+import com.site21.bittermelon.content.syncsound.SyncSoundEvent;
 import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -66,11 +67,11 @@ public class IntercomManager extends SavedData {
         }
     }
 
-    public void transmitMessage(Component message, String targetID, Level level) {
+    public void transmitMessage(SyncSoundEvent event, String targetID, Level level) {
         for (Map.Entry<BlockPos, String> entry : intercomIDs.entrySet()) {
             if (Objects.equals(entry.getValue(), targetID)) {
                 if (level.getBlockEntity(entry.getKey()) instanceof IntercomBlockEntity intercom) {
-                    intercom.transmitMessage(message);
+                    intercom.transmitMessage(event);
                 }
             }
         }

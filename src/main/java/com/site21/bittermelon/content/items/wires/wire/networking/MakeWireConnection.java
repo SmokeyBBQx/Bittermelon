@@ -53,6 +53,8 @@ public record MakeWireConnection(BlockPos inputPos, BlockPos outputPos, String i
         inputPort.connectedPort = outputPort;
         outputPort.connectedPort = inputPort;
 
+        System.out.println("Wire connection made. InputPort connected port: " + inputPort.connectedPort.id + " OutputPort connected port: " + outputPort.connectedPort.id);
+
         if (level.getBlockEntity(inputPos) instanceof BlockEntity entity) {
             entity.setChanged();
         }

@@ -8,6 +8,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -47,7 +49,8 @@ public class ExplosionHandler {
                     Component.literal("(explosion)")
                             .withColor(0xFF808080)
                             .withStyle(ChatFormatting.ITALIC),
-                    (int) explosion.radius() * 4));
+                    (int) explosion.radius() * 4,
+                    SoundEvents.GENERIC_EXPLODE.value()));
         }
     }
 

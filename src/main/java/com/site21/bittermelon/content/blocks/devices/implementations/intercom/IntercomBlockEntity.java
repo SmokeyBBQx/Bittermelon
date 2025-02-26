@@ -14,6 +14,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.NeoForge;
@@ -31,9 +32,14 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
     private boolean speakerOn = true;
     private boolean micOn = true;
     private boolean phonePickedUp = false;
+    private final Map<String, OutputPort> outputPorts;
 
     public IntercomBlockEntity(BlockPos pos, BlockState blockState) {
         super(INTERCOM_BLOCK_ENTITY.get(), pos, blockState);
+
+        outputPorts = Map.of(
+                "SOUND", new OutputPort("SOUND", null, worldPosition)
+        );
     }
 
     @Override
@@ -43,20 +49,23 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
         if (level == null || level.isClientSide) return;
 
         if (canHearSound(event, getBlockPos(), isPhonePickedUp() ? 1 : LISTENING_RADIUS)) {
-            IntercomManager.get(level).transmitMessage(event.getSoundDescription(), targetID, level);
+            IntercomManager.get(level).transmitMessage(event, targetID, level);
         }
     }
 
-    public void transmitMessage(Component message) {
+    public void transmitMessage(SyncSoundEvent event) {
         if (!speakerOn || level == null || level.isClientSide) return;
 
-        Component intercomMessage = Component.literal("[INTERCOM]: ").append(message);
+        Component intercomMessage = Component.literal("[INTERCOM]: ").append(event.getSoundDescription());
 
-        NeoForge.EVENT_BUS.post(new SyncSoundEvent(level, getBlockPos(), SyncSoundType.SPEAKER, intercomMessage, isPhonePickedUp() ? 1 : speakerRadius));
+        NeoForge.EVENT_BUS.post(new SyncSoundEvent(level, getBlockPos(), SyncSoundType.SPEAKER, intercomMessage, isPhonePickedUp() ? 1 : speakerRadius, event.getSoundEvent()));
+        if (event.getSoundEvent() != null) {
+            level.playSound(null, worldPosition, event.getSoundEvent(), SoundSource.NEUTRAL, 0.05f, 1);
+        }
         LocalMessageHelper.sendLocalMessage(level, getBlockPos(), isPhonePickedUp() ? 1 : speakerRadius, intercomMessage);
         InputPort connectedPort = findOutputPort("SOUND").connectedPort;
         if (connectedPort != null) {
-            connectedPort.receive(new Signal(intercomMessage));
+            connectedPort.receive(new Signal(event));
         }
     }
 
@@ -110,9 +119,7 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
 
     @Override
     public Map<String, OutputPort> getOutputPorts() {
-        return Map.of(
-                "SOUND", new OutputPort("SOUND", null, worldPosition)
-        );
+        return outputPorts;
     }
 
     @Override

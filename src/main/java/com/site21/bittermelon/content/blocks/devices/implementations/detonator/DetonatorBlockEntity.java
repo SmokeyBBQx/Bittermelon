@@ -22,9 +22,13 @@ import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.DETONATOR
 
 public class DetonatorBlockEntity extends BlockEntity implements IElectronic {
     private ItemStack payload = new ItemStack(Items.FEATHER);
+    private final Map<String, InputPort> inputPorts;
 
     public DetonatorBlockEntity(BlockPos pos, BlockState blockState) {
         super(DETONATOR_BLOCK_ENTITY.get(), pos, blockState);
+        inputPorts = Map.of(
+                "DETONATE", new InputPort("DETONATE", this::detonate, worldPosition)
+        );
     }
 
     public ItemStack getPayload() {
@@ -75,9 +79,7 @@ public class DetonatorBlockEntity extends BlockEntity implements IElectronic {
 
     @Override
     public Map<String, InputPort> getInputPorts() {
-        return Map.of(
-                "DETONATE", new InputPort("DETONATE", this::detonate, worldPosition)
-        );
+        return inputPorts;
     }
 
     @Override

@@ -61,8 +61,7 @@ public interface IElectronic {
     default void saveInputPorts(CompoundTag tag) {
         ListTag portsListTag = new ListTag();
 
-        for (Map.Entry<String, InputPort> entry : getInputPorts().entrySet()) {
-            InputPort port = entry.getValue();
+        for (InputPort port : getInputPorts().values()) {
             CompoundTag portTag = new CompoundTag();
 
             portTag.putString("id", port.id);
@@ -78,7 +77,6 @@ public interface IElectronic {
     }
 
     default void loadInputPorts(@NotNull CompoundTag tag, Level level) {
-        if (level == null || level.isClientSide) return;
         ListTag portsListTag = tag.getList("inputPorts", Tag.TAG_COMPOUND);
 
         for (int i = 0; i < portsListTag.size(); i++) {
@@ -95,9 +93,7 @@ public interface IElectronic {
                     outputPort = electronic.findOutputPort(connectedID);
                 }
 
-                if (outputPort != null) {
-                    port.connectedPort = outputPort;
-                }
+                port.connectedPort = outputPort;
             }
         }
     }
@@ -105,8 +101,7 @@ public interface IElectronic {
     default void saveOutputPorts(CompoundTag tag) {
         ListTag portsListTag = new ListTag();
 
-        for (Map.Entry<String, OutputPort> entry : getOutputPorts().entrySet()) {
-            OutputPort port = entry.getValue();
+        for (OutputPort port : getOutputPorts().values()) {
             CompoundTag portTag = new CompoundTag();
 
             portTag.putString("id", port.id);
@@ -123,7 +118,6 @@ public interface IElectronic {
     }
 
     default void loadOutputPorts(@NotNull CompoundTag tag, Level level) {
-        if (level == null || level.isClientSide) return;
         ListTag portsListTag = tag.getList("outputPorts", Tag.TAG_COMPOUND);
 
         for (int i = 0; i < portsListTag.size(); i++) {
@@ -132,17 +126,15 @@ public interface IElectronic {
             OutputPort port = findOutputPort(portId);
 
             if (portTag.contains("connectedPos") && portTag.contains("connectedID")) {
-            BlockPos connectedPos = BlockPos.of(portTag.getLong("connectedPos"));
-            String connectedID = portTag.getString("connectedID");
+                BlockPos connectedPos = BlockPos.of(portTag.getLong("connectedPos"));
+                String connectedID = portTag.getString("connectedID");
 
-            InputPort inputPort = null;
-            if (level.getBlockEntity(connectedPos) instanceof IElectronic electronic) {
-                inputPort = electronic.findInputPort(connectedID);
-            }
+                InputPort inputPort = null;
+                if (level.getBlockEntity(connectedPos) instanceof IElectronic electronic) {
+                    inputPort = electronic.findInputPort(connectedID);
+                }
 
-            if (inputPort != null) {
                 port.connectedPort = inputPort;
-            }
             }
         }
     }
