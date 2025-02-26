@@ -1,9 +1,9 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.intercom;
 
 import com.site21.bittermelon.content.blocks.devices.IElectronic;
-import com.site21.bittermelon.content.blocks.devices.connection.InputPort;
-import com.site21.bittermelon.content.blocks.devices.connection.OutputPort;
-import com.site21.bittermelon.content.blocks.devices.connection.Signal;
+import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
+import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
+import com.site21.bittermelon.content.blocks.devices.wiring.Signal;
 import com.site21.bittermelon.content.syncsound.ISyncSoundListener;
 import com.site21.bittermelon.content.syncsound.SyncSoundEvent;
 import com.site21.bittermelon.content.syncsound.SyncSoundType;

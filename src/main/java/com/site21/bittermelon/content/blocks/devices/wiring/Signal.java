@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.blocks.devices.connection;
+package com.site21.bittermelon.content.blocks.devices.wiring;
 
 public record Signal(Object value) {
     public boolean asBoolean() {

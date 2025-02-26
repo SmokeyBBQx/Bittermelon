@@ -1,11 +1,10 @@
-package com.site21.bittermelon.content.blocks.devices.connection;
+package com.site21.bittermelon.content.blocks.devices.wiring;
 
 import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class OutputPort {

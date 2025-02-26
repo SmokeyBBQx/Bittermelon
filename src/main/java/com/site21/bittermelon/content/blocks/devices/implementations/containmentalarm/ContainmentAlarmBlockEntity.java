@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.containmentalarm;
 
 import com.site21.bittermelon.content.blocks.devices.IElectronic;
-import com.site21.bittermelon.content.blocks.devices.connection.*;
+import com.site21.bittermelon.content.blocks.devices.wiring.*;
 import com.site21.bittermelon.content.syncsound.SyncSoundEvent;
 import com.site21.bittermelon.content.syncsound.SyncSoundType;
 import com.site21.bittermelon.init.neoforge.BitterSounds;

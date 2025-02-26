@@ -3,7 +3,7 @@ package com.site21.bittermelon.content.blocks.devices.implementations.environmen
 import com.site21.bittermelon.content.atmosphere.AtmosHandler;
 import com.site21.bittermelon.content.atmosphere.AtmosInstance;
 import com.site21.bittermelon.content.blocks.devices.IElectronic;
-import com.site21.bittermelon.content.blocks.devices.connection.*;
+import com.site21.bittermelon.content.blocks.devices.wiring.*;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;

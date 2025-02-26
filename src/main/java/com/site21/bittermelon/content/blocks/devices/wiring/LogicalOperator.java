@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.blocks.devices.connection;
+package com.site21.bittermelon.content.blocks.devices.wiring;
 
 import com.site21.bittermelon.Bittermelon;
 import net.minecraft.nbt.CompoundTag;

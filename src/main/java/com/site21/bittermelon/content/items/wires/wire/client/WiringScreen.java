@@ -1,8 +1,8 @@
 package com.site21.bittermelon.content.items.wires.wire.client;
 
 import com.site21.bittermelon.content.blocks.devices.IElectronic;
-import com.site21.bittermelon.content.blocks.devices.connection.InputPort;
-import com.site21.bittermelon.content.blocks.devices.connection.OutputPort;
+import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
+import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
 import com.site21.bittermelon.content.items.wires.wire.networking.MakeWireConnection;
 import com.site21.bittermelon.content.items.wires.wire.networking.WiringDataUpdate;
 import net.minecraft.client.gui.GuiGraphics;

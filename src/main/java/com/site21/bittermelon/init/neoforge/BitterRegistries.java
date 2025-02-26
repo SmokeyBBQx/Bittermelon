@@ -1,8 +1,7 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.devices.connection.LogicalOperator;
-import com.site21.bittermelon.content.blocks.devices.connection.Signal;
+import com.site21.bittermelon.content.blocks.devices.wiring.Signal;
 import com.site21.bittermelon.content.chat.VerbSet;
 import com.site21.bittermelon.content.substance.Substance;
 import net.minecraft.core.Registry;
@@ -14,7 +13,6 @@ import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class BitterRegistries {
     public static final ResourceKey<Registry<Substance>> SUBSTANCE_REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "substances"));

@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.blocks.devices;
 
-import com.site21.bittermelon.content.blocks.devices.connection.InputPort;
-import com.site21.bittermelon.content.blocks.devices.connection.OutputPort;
+import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
+import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;

@@ -1,14 +1,12 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.panicbutton;
 
 import com.site21.bittermelon.content.blocks.devices.IElectronic;
-import com.site21.bittermelon.content.blocks.devices.connection.InputPort;
-import com.site21.bittermelon.content.blocks.devices.connection.OutputPort;
+import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class PanicButtonBlockEntity extends BlockEntity implements IElectronic {

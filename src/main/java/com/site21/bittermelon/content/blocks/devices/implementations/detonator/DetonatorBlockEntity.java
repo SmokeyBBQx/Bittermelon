@@ -1,8 +1,8 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.detonator;
 
 import com.site21.bittermelon.content.blocks.devices.IElectronic;
-import com.site21.bittermelon.content.blocks.devices.connection.InputPort;
-import com.site21.bittermelon.content.blocks.devices.connection.Signal;
+import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
+import com.site21.bittermelon.content.blocks.devices.wiring.Signal;
 import com.site21.bittermelon.content.items.payload.Payload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;

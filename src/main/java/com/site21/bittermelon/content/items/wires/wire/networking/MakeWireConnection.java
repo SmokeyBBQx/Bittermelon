@@ -2,8 +2,8 @@ package com.site21.bittermelon.content.items.wires.wire.networking;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.devices.IElectronic;
-import com.site21.bittermelon.content.blocks.devices.connection.InputPort;
-import com.site21.bittermelon.content.blocks.devices.connection.OutputPort;
+import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
+import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.ByteBufCodecs;

@@ -1,6 +1,5 @@
-package com.site21.bittermelon.content.blocks.devices.connection;
+package com.site21.bittermelon.content.blocks.devices.wiring;
 
-import it.unimi.dsi.fastutil.Function;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

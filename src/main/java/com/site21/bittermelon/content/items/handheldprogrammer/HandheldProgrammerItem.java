@@ -1,6 +1,6 @@
 package com.site21.bittermelon.content.items.handheldprogrammer;
 
-import com.site21.bittermelon.content.blocks.devices.connection.PLCUser;
+import com.site21.bittermelon.content.blocks.devices.wiring.PLCUser;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.handheldprogrammer.client.ProgrammingScreen;

@@ -1,9 +1,7 @@
 package com.site21.bittermelon.init.custom;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.devices.connection.LogicalOperator;
-import com.site21.bittermelon.content.blocks.devices.connection.Signal;
-import com.site21.bittermelon.content.substance.Substance;
+import com.site21.bittermelon.content.blocks.devices.wiring.Signal;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Function;

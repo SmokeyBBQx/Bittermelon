@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.blocks.devices.implementations;
+package com.site21.bittermelon.content.blocks.devices.implementations.securedoor;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

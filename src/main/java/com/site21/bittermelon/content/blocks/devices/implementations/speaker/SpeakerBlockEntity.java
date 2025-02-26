@@ -1,19 +1,18 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.speaker;
 
 import com.site21.bittermelon.content.blocks.devices.IElectronic;
-import com.site21.bittermelon.content.blocks.devices.connection.*;
+import com.site21.bittermelon.content.blocks.devices.wiring.*;
 import com.site21.bittermelon.content.syncsound.SyncSoundEvent;
 import com.site21.bittermelon.content.syncsound.SyncSoundType;
 import com.site21.bittermelon.util.LocalMessageHelper;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
@@ -39,15 +38,21 @@ public class SpeakerBlockEntity extends BlockEntity implements IElectronic {
     private void broadcast(Signal signal) {
         if (level == null || level.isClientSide) return;
 
-        if (signal.value() instanceof SyncSoundEvent event) {
-            Component intercomMessage = Component.literal("[SPEAKER]: ").append(event.getSoundDescription());
+        SyncSoundEvent event;
 
-            NeoForge.EVENT_BUS.post(new SyncSoundEvent(level, getBlockPos(), SyncSoundType.SPEAKER, intercomMessage, speakerRadius, event.getSoundEvent()));
-            if (event.getSoundEvent() != null) {
-                level.playSound(null, worldPosition, event.getSoundEvent(), SoundSource.NEUTRAL, 0.1f, 1);
-            }
-            LocalMessageHelper.sendLocalMessage(level, getBlockPos(), speakerRadius, intercomMessage);
+        if (signal.value() instanceof SyncSoundEvent receivedEvent) {
+            event = receivedEvent;
+        } else {
+            event = new SyncSoundEvent(level, getBlockPos(), SyncSoundType.SPEAKER, Component.literal(("Bzzzz..")).withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), speakerRadius);
         }
+
+        Component speakerMessage = Component.literal("[SPEAKER]: ").append(event.getSoundDescription());
+
+        NeoForge.EVENT_BUS.post(new SyncSoundEvent(level, getBlockPos(), SyncSoundType.SPEAKER, speakerMessage, speakerRadius, event.getSoundEvent()));
+        if (event.getSoundEvent() != null) {
+            level.playSound(null, worldPosition, event.getSoundEvent(), SoundSource.NEUTRAL, 0.1f, 1);
+        }
+        LocalMessageHelper.sendLocalMessage(level, getBlockPos(), speakerRadius, speakerMessage);
     }
 
     @Override
