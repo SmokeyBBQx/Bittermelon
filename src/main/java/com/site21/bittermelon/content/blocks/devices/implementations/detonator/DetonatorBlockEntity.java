@@ -2,9 +2,7 @@ package com.site21.bittermelon.content.blocks.devices.implementations.detonator;
 
 import com.site21.bittermelon.content.blocks.devices.IElectronic;
 import com.site21.bittermelon.content.blocks.devices.connection.InputPort;
-import com.site21.bittermelon.content.blocks.devices.connection.OutputPort;
 import com.site21.bittermelon.content.blocks.devices.connection.Signal;
-import com.site21.bittermelon.content.blocks.devices.connection.WireConnection;
 import com.site21.bittermelon.content.items.payload.Payload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -12,22 +10,17 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.DETONATOR_BLOCK_ENTITY;
 
 public class DetonatorBlockEntity extends BlockEntity implements IElectronic {
     private ItemStack payload = new ItemStack(Items.FEATHER);
-    private final List<WireConnection> connections = new ArrayList<>();
 
     public DetonatorBlockEntity(BlockPos pos, BlockState blockState) {
         super(DETONATOR_BLOCK_ENTITY.get(), pos, blockState);
@@ -69,15 +62,14 @@ public class DetonatorBlockEntity extends BlockEntity implements IElectronic {
     protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.saveAdditional(tag, registries);
         tag.put("payload", payload.save(registries));
-        saveConnections(tag);
+        saveInputPorts(tag);
     }
 
     @Override
     public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.loadAdditional(tag, registries);
         ItemStack.parse(registries, tag.get("payload")).ifPresent(stack -> payload = stack);
-
-        loadConnections(tag, level);
+        loadInputPorts(tag, level);
     }
 
     @Override
@@ -90,10 +82,5 @@ public class DetonatorBlockEntity extends BlockEntity implements IElectronic {
     @Override
     public String getAddress() {
         return "";
-    }
-
-    @Override
-    public List<WireConnection> getConnections() {
-        return connections;
     }
 }

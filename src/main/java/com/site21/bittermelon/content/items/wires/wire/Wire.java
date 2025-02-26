@@ -1,8 +1,6 @@
 package com.site21.bittermelon.content.items.wires.wire;
 
 import com.site21.bittermelon.content.blocks.devices.IElectronic;
-import com.site21.bittermelon.content.blocks.devices.connection.PLCUser;
-import com.site21.bittermelon.content.blocks.devices.implementations.containmentalarm.ContainmentAlarmBlockEntity;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.wires.wire.client.WiringScreen;

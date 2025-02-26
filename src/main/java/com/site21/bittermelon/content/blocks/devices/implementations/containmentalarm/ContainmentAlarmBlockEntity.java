@@ -21,10 +21,10 @@ import java.util.*;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.CONTAINMENT_ALARM_BLOCK_ENTITY;
 
-public class ContainmentAlarmBlockEntity extends BlockEntity implements IElectronic, PLCUser {
+public class ContainmentAlarmBlockEntity extends BlockEntity implements IElectronic {
     private final Map<String, OutputPort> outputPorts = new HashMap<>();
     private final Map<String, InputPort> inputPorts = new HashMap<>();
-    private PLC plc = new PLC(worldPosition, level);
+    private PLC plc = new PLC(worldPosition);
     private boolean isActive = false;
     private boolean isAlerted = false;
     private boolean isEmergency = false;
@@ -40,14 +40,20 @@ public class ContainmentAlarmBlockEntity extends BlockEntity implements IElectro
         InputPort SET_ALERT = new InputPort("set_alert", this::setAlert, worldPosition);
         InputPort SET_EMERGENCY = new InputPort("set_emergency", this::setEmergency, worldPosition);
 
-        inputPorts.put(SET_ALERT.id(), SET_ALERT);
-        inputPorts.put(SET_EMERGENCY.id(), SET_EMERGENCY);
+        inputPorts.put(SET_ALERT.id, SET_ALERT);
+        inputPorts.put(SET_EMERGENCY.id, SET_EMERGENCY);
 
         OutputPort IS_ALERTED = new OutputPort("is_alerted", this::isAlerted, worldPosition);
         OutputPort IS_EMERGENCY = new OutputPort("is_emergency", this::isEmergency, worldPosition);
 
-        outputPorts.put(IS_ALERTED.id(), IS_ALERTED);
-        outputPorts.put(IS_EMERGENCY.id(), IS_EMERGENCY);
+        outputPorts.put(IS_ALERTED.id, IS_ALERTED);
+        outputPorts.put(IS_EMERGENCY.id, IS_EMERGENCY);
+
+        connectToOutputPort("output_1", SET_ALERT);
+        connectToOutputPort("output_2", SET_EMERGENCY);
+
+        connectToInputPort("input_1", IS_ALERTED);
+        connectToInputPort("input_2", IS_EMERGENCY);
     }
 
     public void tick() {
@@ -65,22 +71,17 @@ public class ContainmentAlarmBlockEntity extends BlockEntity implements IElectro
 
     @Override
     public Map<String, OutputPort> getOutputPorts() {
-        return outputPorts;
+        return plc.getOutputPorts();
     }
 
     @Override
     public Map<String, InputPort> getInputPorts() {
-        return inputPorts;
+        return plc.getInputPorts();
     }
 
     @Override
     public String getAddress() {
         return "";
-    }
-
-    @Override
-    public List<WireConnection> getConnections() {
-        return plc.getConnections();
     }
 
     public boolean isAlerted() {
@@ -119,6 +120,7 @@ public class ContainmentAlarmBlockEntity extends BlockEntity implements IElectro
         tag.putBoolean("isActive", isActive);
         tag.putBoolean("isAlerted", isAlerted);
         tag.putBoolean("isEmergency", isEmergency);
+        plc.save(tag);
     }
 
     @Override
@@ -127,6 +129,7 @@ public class ContainmentAlarmBlockEntity extends BlockEntity implements IElectro
         isActive = tag.getBoolean("isActive");
         isAlerted = tag.getBoolean("isAlerted");
         isEmergency = tag.getBoolean("isEmergency");
+        plc.load(tag, level);
     }
 
     @Override
@@ -149,10 +152,5 @@ public class ContainmentAlarmBlockEntity extends BlockEntity implements IElectro
         if (level != null && !level.isClientSide) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         }
-    }
-
-    @Override
-    public PLC getPLC() {
-        return plc;
     }
 }

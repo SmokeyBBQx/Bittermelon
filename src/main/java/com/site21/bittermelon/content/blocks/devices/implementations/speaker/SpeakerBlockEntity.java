@@ -24,16 +24,11 @@ public class SpeakerBlockEntity extends BlockEntity implements IElectronic {
     private void initializePorts() {
         InputPort BROADCAST = new InputPort("BROADCAST", this::broadcast, worldPosition);
 
-        inputPorts.put(BROADCAST.id(), BROADCAST);
+        inputPorts.put(BROADCAST.id, BROADCAST);
     }
 
     private void broadcast(Signal signal) {
 
-    }
-
-    @Override
-    public Map<String, OutputPort> getOutputPorts() {
-        return Map.of();
     }
 
     @Override
@@ -44,10 +39,5 @@ public class SpeakerBlockEntity extends BlockEntity implements IElectronic {
     @Override
     public String getAddress() {
         return address;
-    }
-
-    @Override
-    public List<WireConnection> getConnections() {
-        return List.of();
     }
 }

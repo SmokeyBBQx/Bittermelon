@@ -38,7 +38,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
-import static com.site21.bittermelon.init.custom.Conditions.CONDITIONS;
+import static com.site21.bittermelon.init.custom.LogicalOperators.LOGICAL_OPERATORS;
 import static com.site21.bittermelon.init.neoforge.BitterActivity.ACTIVITY;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ATTACHMENT_TYPES;
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.BLOCK_ENTITY_TYPES;
@@ -79,7 +79,7 @@ public class Bittermelon
         BitterEntities.register(modEventBus);
         SUBSTANCES.register(modEventBus);
         VERB_SETS.register(modEventBus);
-        CONDITIONS.register(modEventBus);
+        LOGICAL_OPERATORS.register(modEventBus);
         BLOCK_ENTITY_TYPES.register(modEventBus);
         DATA_COMPONENTS.register(modEventBus);
         SOUND_EVENTS.register(modEventBus);

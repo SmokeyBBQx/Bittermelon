@@ -1,16 +1,14 @@
 package com.site21.bittermelon.content.blocks.devices;
 
-import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.devices.connection.Connection;
 import com.site21.bittermelon.content.blocks.devices.connection.InputPort;
 import com.site21.bittermelon.content.blocks.devices.connection.OutputPort;
-import com.site21.bittermelon.content.blocks.devices.connection.WireConnection;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Map;
 
 public interface IElectronic {
@@ -30,6 +28,20 @@ public interface IElectronic {
         return getInputPorts().get(id);
     }
 
+    default void connectToOutputPort(String outputPortID, InputPort inputPort) {
+        OutputPort outputPort = findOutputPort(outputPortID);
+        if (outputPort != null) {
+            outputPort.connectedPort = inputPort;
+        }
+    }
+
+    default void connectToInputPort(String inputPortID, OutputPort outputPort) {
+        InputPort inputPort = findInputPort(inputPortID);
+        if (inputPort != null) {
+            inputPort.connectedPort = outputPort;
+        }
+    }
+
     default @NotNull String generateAddress(String prefix) {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         StringBuilder id = new StringBuilder();
@@ -46,26 +58,82 @@ public interface IElectronic {
 
     String getAddress();
 
-    List<WireConnection> getConnections();
+    default void saveInputPorts(CompoundTag tag) {
+        ListTag portsListTag = new ListTag();
 
-    default void saveConnections(CompoundTag tag) {
-        ListTag connectionsList = new ListTag();
-        for (WireConnection connection : getConnections()) {
-            connectionsList.add(connection.save());
+        for (Map.Entry<String, InputPort> entry : getInputPorts().entrySet()) {
+            InputPort port = entry.getValue();
+            CompoundTag portTag = new CompoundTag();
+
+            portTag.putString("id", port.id);
+            if (port.connectedPort != null) {
+                portTag.putLong("connectedPos", port.connectedPort.pos.asLong());
+                portTag.putString("connectedID", port.connectedPort.id);
+            }
+
+            portsListTag.add(portTag);
         }
-        tag.put("connections", connectionsList);
+
+        tag.put("inputPorts", portsListTag);
     }
 
-    default void loadConnections(@NotNull CompoundTag tag, Level level) {
-        getConnections().clear();
+    default void loadInputPorts(@NotNull CompoundTag tag, Level level) {
+        ListTag portsListTag = tag.getList("inputPorts", Tag.TAG_COMPOUND);
 
-        ListTag connectionsList = tag.getList("connections", CompoundTag.TAG_COMPOUND);
-        for (int i = 0; i < connectionsList.size(); i++) {
-            CompoundTag connectionTag = connectionsList.getCompound(i);
-            WireConnection connection = WireConnection.load(connectionTag, level);
-            if (connection != null) {
-                getConnections().add(connection);
+        for (int i = 0; i < portsListTag.size(); i++) {
+            CompoundTag portTag = portsListTag.getCompound(i);
+            String portId = portTag.getString("id");
+            InputPort port = findInputPort(portId);
+
+            BlockPos connectedPos = BlockPos.of(portTag.getLong("connectedPos"));
+            String connectedID = portTag.getString("connectedID");
+
+            OutputPort outputPort = null;
+            if (level.getBlockEntity(connectedPos) instanceof IElectronic electronic) {
+                outputPort = electronic.findOutputPort(connectedID);
             }
+
+            port.connectedPort = outputPort;
+        }
+    }
+
+    default void saveOutputPorts(CompoundTag tag) {
+        ListTag portsListTag = new ListTag();
+
+        for (Map.Entry<String, OutputPort> entry : getOutputPorts().entrySet()) {
+            OutputPort port = entry.getValue();
+            CompoundTag portTag = new CompoundTag();
+
+            portTag.putString("id", port.id);
+
+            if (port.connectedPort != null) {
+                portTag.putLong("connectedPos", port.connectedPort.pos.asLong());
+                portTag.putString("connectedID", port.connectedPort.id);
+            }
+
+            portsListTag.add(portTag);
+        }
+
+        tag.put("outputPorts", portsListTag);
+    }
+
+    default void loadOutputPorts(@NotNull CompoundTag tag, Level level) {
+        ListTag portsListTag = tag.getList("outputPorts", Tag.TAG_COMPOUND);
+
+        for (int i = 0; i < portsListTag.size(); i++) {
+            CompoundTag portTag = portsListTag.getCompound(i);
+            String portId = portTag.getString("id");
+            OutputPort port = findOutputPort(portId);
+
+            BlockPos connectedPos = BlockPos.of(portTag.getLong("connectedPos"));
+            String connectedID = portTag.getString("connectedID");
+
+            InputPort inputPort = null;
+            if (level.getBlockEntity(connectedPos) instanceof IElectronic electronic) {
+                inputPort = electronic.findInputPort(connectedID);
+            }
+
+            port.connectedPort = inputPort;
         }
     }
 }

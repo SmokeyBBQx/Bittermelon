@@ -1,17 +1,13 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.panicbutton;
 
 import com.site21.bittermelon.content.blocks.devices.IElectronic;
-import com.site21.bittermelon.content.blocks.devices.connection.Connection;
-import com.site21.bittermelon.content.blocks.devices.connection.InputPort;
 import com.site21.bittermelon.content.blocks.devices.connection.OutputPort;
-import com.site21.bittermelon.content.blocks.devices.connection.WireConnection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class PanicButtonBlockEntity extends BlockEntity implements IElectronic {
@@ -25,7 +21,7 @@ public class PanicButtonBlockEntity extends BlockEntity implements IElectronic {
     private void initializePorts() {
         OutputPort ON = new OutputPort("ON", this::isOn, worldPosition);
 
-        outputPorts.put(ON.id(), ON);
+        outputPorts.put(ON.id, ON);
     }
 
     public boolean isOn() {
@@ -45,17 +41,7 @@ public class PanicButtonBlockEntity extends BlockEntity implements IElectronic {
     }
 
     @Override
-    public Map<String, InputPort> getInputPorts() {
-        return Map.of();
-    }
-
-    @Override
     public String getAddress() {
         return "";
-    }
-
-    @Override
-    public List<WireConnection> getConnections() {
-        return List.of();
     }
 }

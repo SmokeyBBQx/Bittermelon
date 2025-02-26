@@ -25,7 +25,6 @@ public class EnvironmentSensorBlockEntity extends BlockEntity implements IElectr
     private float temperature = 0; // Kelvin
     private float pressure = 0; // kPa
     private final Set<SubstanceStack> gases = new HashSet<>();
-    private final List<WireConnection> connections = new ArrayList<>();
 
     public EnvironmentSensorBlockEntity(BlockPos pos, BlockState blockState) {
         super(ENVIRONMENT_SENSOR_BLOCK_ENTITY.get(), pos, blockState);
@@ -37,8 +36,8 @@ public class EnvironmentSensorBlockEntity extends BlockEntity implements IElectr
         OutputPort TEMPERATURE = new OutputPort("temperature", this::getTemperature, worldPosition);
         OutputPort PRESSURE = new OutputPort("pressure", this::getPressure, worldPosition);
 
-        outputPorts.put(TEMPERATURE.id(), TEMPERATURE);
-        outputPorts.put(PRESSURE.id(), PRESSURE);
+        outputPorts.put(TEMPERATURE.id, TEMPERATURE);
+        outputPorts.put(PRESSURE.id, PRESSURE);
     }
 
     public void tick() {
@@ -74,8 +73,8 @@ public class EnvironmentSensorBlockEntity extends BlockEntity implements IElectr
 
         if (changed) setChanged();
 
-        for (WireConnection connection : connections) {
-            connection.update();
+        for (OutputPort outputPort : outputPorts.values()) {
+            outputPort.update();
         }
     }
 
@@ -84,18 +83,8 @@ public class EnvironmentSensorBlockEntity extends BlockEntity implements IElectr
         return outputPorts;
     }
 
-    @Override
-    public Map<String, InputPort> getInputPorts() {
-        return Map.of();
-    }
-
     public String getAddress() {
         return address;
-    }
-
-    @Override
-    public List<WireConnection> getConnections() {
-        return connections;
     }
 
     public float getTemperature() {
@@ -113,7 +102,7 @@ public class EnvironmentSensorBlockEntity extends BlockEntity implements IElectr
         tag.putFloat("temperature", temperature);
         tag.putFloat("pressure", pressure);
 
-        saveConnections(tag);
+        saveOutputPorts(tag);
     }
 
     @Override
@@ -123,7 +112,7 @@ public class EnvironmentSensorBlockEntity extends BlockEntity implements IElectr
         temperature = tag.getFloat("temperature");
         pressure = tag.getFloat("pressure");
 
-        loadConnections(tag, level);
+        loadOutputPorts(tag, level);
     }
 
     @Override
