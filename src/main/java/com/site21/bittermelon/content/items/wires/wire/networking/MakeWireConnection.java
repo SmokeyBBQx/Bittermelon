@@ -11,6 +11,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,5 +52,13 @@ public record MakeWireConnection(BlockPos inputPos, BlockPos outputPos, String i
 
         inputPort.connectedPort = outputPort;
         outputPort.connectedPort = inputPort;
+
+        if (level.getBlockEntity(inputPos) instanceof BlockEntity entity) {
+            entity.setChanged();
+        }
+
+        if (level.getBlockEntity(outputPos) instanceof BlockEntity entity) {
+            entity.setChanged();
+        }
     }
 }

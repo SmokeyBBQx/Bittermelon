@@ -8,6 +8,7 @@ import com.site21.bittermelon.content.blocks.devices.implementations.containment
 import com.site21.bittermelon.content.blocks.devices.implementations.detonator.DetonatorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.environmentsensor.EnvironmentSensorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.implementations.speaker.SpeakerBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.thermometer.ThermometerBlockEntity;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -46,4 +47,7 @@ public class BitterBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DetonatorBlockEntity>> DETONATOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("detonator_block_entity",
             () -> BlockEntityType.Builder.of(DetonatorBlockEntity::new, DETONATOR.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SpeakerBlockEntity>> SPEAKER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("speaker_block_entity",
+            () -> BlockEntityType.Builder.of(SpeakerBlockEntity::new, SPEAKER.get()).build(null));
 }

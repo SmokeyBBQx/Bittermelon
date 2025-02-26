@@ -1,5 +1,9 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.intercom;
 
+import com.site21.bittermelon.content.blocks.devices.IElectronic;
+import com.site21.bittermelon.content.blocks.devices.connection.InputPort;
+import com.site21.bittermelon.content.blocks.devices.connection.OutputPort;
+import com.site21.bittermelon.content.blocks.devices.connection.Signal;
 import com.site21.bittermelon.content.syncsound.ISyncSoundListener;
 import com.site21.bittermelon.content.syncsound.SyncSoundEvent;
 import com.site21.bittermelon.content.syncsound.SyncSoundType;
@@ -15,15 +19,17 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.INTERCOM_BLOCK_ENTITY;
 
-public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListener {
+public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListener, IElectronic {
     private static final int LISTENING_RADIUS = 8;
     private int speakerRadius = 8;
     private String intercomID = "";
     private String targetID = "";
     private boolean speakerOn = true;
-    private boolean micOn = false;
+    private boolean micOn = true;
     private boolean phonePickedUp = false;
 
     public IntercomBlockEntity(BlockPos pos, BlockState blockState) {
@@ -32,7 +38,7 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
 
     @Override
     public void onSyncSound(@NotNull SyncSoundEvent event) {
-        if (!micOn || event.getSoundType() == SyncSoundType.INTERCOM) return;
+        if (!micOn || event.getSoundType() == SyncSoundType.SPEAKER) return;
 
         if (level == null || level.isClientSide) return;
 
@@ -46,8 +52,12 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
 
         Component intercomMessage = Component.literal("[INTERCOM]: ").append(message);
 
-        NeoForge.EVENT_BUS.post(new SyncSoundEvent(level, getBlockPos(), SyncSoundType.INTERCOM, intercomMessage, isPhonePickedUp() ? 1 : speakerRadius));
+        NeoForge.EVENT_BUS.post(new SyncSoundEvent(level, getBlockPos(), SyncSoundType.SPEAKER, intercomMessage, isPhonePickedUp() ? 1 : speakerRadius));
         LocalMessageHelper.sendLocalMessage(level, getBlockPos(), isPhonePickedUp() ? 1 : speakerRadius, intercomMessage);
+        InputPort connectedPort = findOutputPort("SOUND").connectedPort;
+        if (connectedPort != null) {
+            connectedPort.receive(new Signal(intercomMessage));
+        }
     }
 
     public String getIntercomID() {
@@ -99,6 +109,13 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
     }
 
     @Override
+    public Map<String, OutputPort> getOutputPorts() {
+        return Map.of(
+                "SOUND", new OutputPort("SOUND", null, worldPosition)
+        );
+    }
+
+    @Override
     public void onLoad() {
         super.onLoad();
         if (level != null && !level.isClientSide()) {
@@ -125,6 +142,7 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
         tag.putBoolean("micOn", micOn);
         tag.putBoolean("phonePickedUp", phonePickedUp);
         tag.putInt("speakerRadius", speakerRadius);
+        saveOutputPorts(tag);
     }
 
     @Override
@@ -137,6 +155,7 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
         micOn = tag.getBoolean("micOn");
         phonePickedUp = tag.getBoolean("phonePickedUp");
         speakerRadius = tag.getInt("speakerRadius");
+        loadOutputPorts(tag, level);
     }
 
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
@@ -157,5 +176,10 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
         if (level != null && !level.isClientSide) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         }
+    }
+
+    @Override
+    public String getAddress() {
+        return "";
     }
 }

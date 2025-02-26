@@ -7,6 +7,7 @@ import com.site21.bittermelon.content.items.payload.Payload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -75,7 +76,7 @@ public class DetonatorBlockEntity extends BlockEntity implements IElectronic {
     @Override
     public Map<String, InputPort> getInputPorts() {
         return Map.of(
-                "detonate", new InputPort("detonate", this::detonate, worldPosition)
+                "DETONATE", new InputPort("DETONATE", this::detonate, worldPosition)
         );
     }
 
@@ -83,4 +84,25 @@ public class DetonatorBlockEntity extends BlockEntity implements IElectronic {
     public String getAddress() {
         return "";
     }
+
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
+        return this.saveCustomOnly(registries);
+    }
+
+    @Override
+    public void setChanged() {
+        super.setChanged();
+        syncToClient();
+    }
+
+    public void syncToClient() {
+        if (level != null && !level.isClientSide) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        }
+    }
+
 }

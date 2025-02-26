@@ -5,6 +5,7 @@ import com.site21.bittermelon.content.items.GermTest;
 import com.site21.bittermelon.content.items.IntercomPhoneItem;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
+import com.site21.bittermelon.content.items.handheldprogrammer.HandheldProgrammerItem;
 import com.site21.bittermelon.content.items.wires.networkcable.NetworkCable;
 import com.site21.bittermelon.content.items.cardboardbox.CardboardBoxItem;
 import com.site21.bittermelon.content.items.cardboardbox.CollapsedCardboardBoxItem;
@@ -236,5 +237,22 @@ public class BitterItems {
             1,
             1,
             ItemWeight.LIGHT
+    ));
+
+    public static final DeferredItem<HandheldProgrammerItem> HANDHELD_PROGRAMMER = ITEMS.register("handheld_programmer", () -> new HandheldProgrammerItem(
+            new Item.Properties(),
+            2,
+            2,
+            ItemWeight.MEDIUM
+    ));
+
+    public static final DeferredItem<BlockItem> DETONATOR = ITEMS.register("detonator", () -> new BlockItem(
+            BitterBlocks.DETONATOR.get(),
+            new Item.Properties()
+    ));
+
+    public static final DeferredItem<BlockItem> SPEAKER = ITEMS.register("speaker", () -> new BlockItem(
+            BitterBlocks.SPEAKER.get(),
+            new Item.Properties()
     ));
 }

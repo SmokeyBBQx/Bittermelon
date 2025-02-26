@@ -34,24 +34,24 @@ public class PLC implements IElectronic {
     @Override
     public Map<String, OutputPort> getOutputPorts() {
         return Map.of(
-                "output_1", new OutputPort("output_1", null, worldPosition),
-                "output_2", new OutputPort("output_2", null, worldPosition),
-                "output_3", new OutputPort("output_3", null, worldPosition),
-                "output_4", new OutputPort("output_4", null, worldPosition),
-                "output_5", new OutputPort("output_5", null, worldPosition),
-                "output_6", new OutputPort("output_6", null, worldPosition)
+                "OUTPUT_1", new OutputPort("OUTPUT_1", null, worldPosition),
+                "OUTPUT_2", new OutputPort("OUTPUT_2", null, worldPosition),
+                "OUTPUT_3", new OutputPort("OUTPUT_3", null, worldPosition),
+                "OUTPUT_4", new OutputPort("OUTPUT_4", null, worldPosition),
+                "OUTPUT_5", new OutputPort("OUTPUT_5", null, worldPosition),
+                "OUTPUT_6", new OutputPort("OUTPUT_6", null, worldPosition)
         );
     }
 
     @Override
     public Map<String, InputPort> getInputPorts() {
         return Map.of(
-                "input_1", new InputPort("input_1", signal -> handleInput(signal, "input_1"), worldPosition),
-                "input_2", new InputPort("input_2", signal -> handleInput(signal, "input_2"), worldPosition),
-                "input_3", new InputPort("input_3", signal -> handleInput(signal, "input_3"), worldPosition),
-                "input_4", new InputPort("input_4", signal -> handleInput(signal, "input_4"), worldPosition),
-                "input_5", new InputPort("input_5", signal -> handleInput(signal, "input_5"), worldPosition),
-                "input_6", new InputPort("input_6", signal -> handleInput(signal, "input_6"), worldPosition)
+                "INPUT_1", new InputPort("INPUT_1", signal -> handleInput(signal, "INPUT_1"), worldPosition),
+                "INPUT_2", new InputPort("INPUT_2", signal -> handleInput(signal, "INPUT_2"), worldPosition),
+                "INPUT_3", new InputPort("INPUT_3", signal -> handleInput(signal, "INPUT_3"), worldPosition),
+                "INPUT_4", new InputPort("INPUT_4", signal -> handleInput(signal, "INPUT_4"), worldPosition),
+                "INPUT_5", new InputPort("INPUT_5", signal -> handleInput(signal, "INPUT_5"), worldPosition),
+                "INPUT_6", new InputPort("INPUT_6", signal -> handleInput(signal, "INPUT_6"), worldPosition)
         );
     }
 

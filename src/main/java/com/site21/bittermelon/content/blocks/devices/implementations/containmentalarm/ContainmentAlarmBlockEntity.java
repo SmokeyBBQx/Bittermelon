@@ -21,7 +21,7 @@ import java.util.*;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.CONTAINMENT_ALARM_BLOCK_ENTITY;
 
-public class ContainmentAlarmBlockEntity extends BlockEntity implements IElectronic {
+public class ContainmentAlarmBlockEntity extends BlockEntity implements IElectronic, PLCUser {
     private final Map<String, OutputPort> outputPorts = new HashMap<>();
     private final Map<String, InputPort> inputPorts = new HashMap<>();
     private PLC plc = new PLC(worldPosition);
@@ -37,23 +37,23 @@ public class ContainmentAlarmBlockEntity extends BlockEntity implements IElectro
     }
 
     private void initializePorts() {
-        InputPort SET_ALERT = new InputPort("set_alert", this::setAlert, worldPosition);
-        InputPort SET_EMERGENCY = new InputPort("set_emergency", this::setEmergency, worldPosition);
+        InputPort SET_ALERT = new InputPort("SET_ALERT", this::setAlert, worldPosition);
+        InputPort SET_EMERGENCY = new InputPort("SET_EMERGENCY", this::setEmergency, worldPosition);
 
         inputPorts.put(SET_ALERT.id, SET_ALERT);
         inputPorts.put(SET_EMERGENCY.id, SET_EMERGENCY);
 
-        OutputPort IS_ALERTED = new OutputPort("is_alerted", this::isAlerted, worldPosition);
-        OutputPort IS_EMERGENCY = new OutputPort("is_emergency", this::isEmergency, worldPosition);
+        OutputPort IS_ALERTED = new OutputPort("IS_ALERTED", this::isAlerted, worldPosition);
+        OutputPort IS_EMERGENCY = new OutputPort("IS_EMERGENCY", this::isEmergency, worldPosition);
 
         outputPorts.put(IS_ALERTED.id, IS_ALERTED);
         outputPorts.put(IS_EMERGENCY.id, IS_EMERGENCY);
 
-        connectToOutputPort("output_1", SET_ALERT);
-        connectToOutputPort("output_2", SET_EMERGENCY);
+        connectToOutputPort("OUTPUT_1", SET_ALERT);
+        connectToOutputPort("OUTPUT_2", SET_EMERGENCY);
 
-        connectToInputPort("input_1", IS_ALERTED);
-        connectToInputPort("input_2", IS_EMERGENCY);
+        connectToInputPort("INPUT_1", IS_ALERTED);
+        connectToInputPort("INPUT_2", IS_EMERGENCY);
     }
 
     public void tick() {
@@ -63,7 +63,7 @@ public class ContainmentAlarmBlockEntity extends BlockEntity implements IElectro
             alertSoundCounter++;
             if (alertSoundCounter >= ALERT_SOUND_INTERVAL) {
                 level.playSound(null, worldPosition, BitterSounds.CONTAINMENT_ALERT.get(), SoundSource.NEUTRAL, 0.3f, 1);
-                NeoForge.EVENT_BUS.post(new SyncSoundEvent(level, getBlockPos(), SyncSoundType.INTERCOM, Component.literal("(alarm)").withStyle(ChatFormatting.ITALIC).withColor(0xFF808080), 16));
+                NeoForge.EVENT_BUS.post(new SyncSoundEvent(level, getBlockPos(), SyncSoundType.SPEAKER, Component.literal("(alarm)").withStyle(ChatFormatting.ITALIC).withColor(0xFF808080), 16));
                 alertSoundCounter = 0;
             }
         }
@@ -152,5 +152,10 @@ public class ContainmentAlarmBlockEntity extends BlockEntity implements IElectro
         if (level != null && !level.isClientSide) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         }
+    }
+
+    @Override
+    public PLC getPLC() {
+        return plc;
     }
 }

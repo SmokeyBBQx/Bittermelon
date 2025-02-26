@@ -5,6 +5,7 @@ import com.site21.bittermelon.content.blocks.devices.implementations.containment
 import com.site21.bittermelon.content.blocks.devices.implementations.detonator.DetonatorBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.environmentsensor.EnvironmentSensor;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlock;
+import com.site21.bittermelon.content.blocks.devices.implementations.speaker.SpeakerBlock;
 import com.site21.bittermelon.content.blocks.dirtyfloor.DirtyFloorBlock;
 import com.site21.bittermelon.content.blocks.base.structuralblock.StructuralBlock;
 import com.site21.bittermelon.content.blocks.container.smallbox.SmallBox;
@@ -73,5 +74,9 @@ public class BitterBlocks {
 
     public static final DeferredBlock<DetonatorBlock> DETONATOR = BLOCKS.register("detonator",
             () -> new DetonatorBlock(BlockBehaviour.Properties.of().noOcclusion()
+            ));
+
+    public static final DeferredBlock<SpeakerBlock> SPEAKER = BLOCKS.register("speaker",
+            () -> new SpeakerBlock(BlockBehaviour.Properties.of().noOcclusion()
             ));
 }
