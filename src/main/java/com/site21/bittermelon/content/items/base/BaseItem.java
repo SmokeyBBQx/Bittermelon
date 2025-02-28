@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.ROTATION;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.TEMPERATURE;
 
 public class BaseItem extends Item {
@@ -65,5 +66,17 @@ public class BaseItem extends Item {
     public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
         tooltipComponents.add(Component.literal("⇲" + getItemSize().description + " ⚖" + getItemWeight().description).withStyle(ChatFormatting.GRAY));
+    }
+
+    public int[] getShape(@NotNull ItemStack stack) {
+        int width = getItemWidth();
+        int height = getItemHeight();
+        int rotation = stack.getOrDefault(ROTATION.get(), 0);
+
+        if (rotation == 1) {
+            return new int[] { height, width };
+        }
+
+        return new int[] { width, height };
     }
 }

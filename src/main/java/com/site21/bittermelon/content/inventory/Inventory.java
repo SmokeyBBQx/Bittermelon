@@ -4,28 +4,20 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class Inventory implements Container {
-    public final NonNullList<ItemStack> items;
-    public final NonNullList<ItemStack> offhand;
-    public int selected;
+    public final NonNullList<ItemStack> mainHand;
+    public final NonNullList<ItemStack> offHand;
+    public final NonNullList<ItemStack> wearables;
     public final Player player;
 
     public Inventory(Player player) {
-        this.items = NonNullList.withSize(36, ItemStack.EMPTY);
-        this.offhand = NonNullList.withSize(1, ItemStack.EMPTY);
+        this.mainHand = NonNullList.withSize(1, ItemStack.EMPTY);
+        this.offHand = NonNullList.withSize(1, ItemStack.EMPTY);
+        this.wearables = NonNullList.withSize(12, ItemStack.EMPTY);
         this.player = player;
     }
-
-    public ItemStack getSelected() {
-        return isHotbarSlot(this.selected) ? (ItemStack)this.items.get(this.selected) : ItemStack.EMPTY;
-    }
-
-    public static boolean isHotbarSlot(int index) {
-        return index == 0 || index == 1;
-    }
-
-
 
     @Override
     public int getContainerSize() {
@@ -38,22 +30,22 @@ public class Inventory implements Container {
     }
 
     @Override
-    public ItemStack getItem(int i) {
+    public @NotNull ItemStack getItem(int i) {
         return null;
     }
 
     @Override
-    public ItemStack removeItem(int i, int i1) {
+    public @NotNull ItemStack removeItem(int i, int i1) {
         return null;
     }
 
     @Override
-    public ItemStack removeItemNoUpdate(int i) {
+    public @NotNull ItemStack removeItemNoUpdate(int i) {
         return null;
     }
 
     @Override
-    public void setItem(int i, ItemStack itemStack) {
+    public void setItem(int i, @NotNull ItemStack itemStack) {
 
     }
 
@@ -63,7 +55,7 @@ public class Inventory implements Container {
     }
 
     @Override
-    public boolean stillValid(Player player) {
+    public boolean stillValid(@NotNull Player player) {
         return false;
     }
 

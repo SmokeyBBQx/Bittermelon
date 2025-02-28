@@ -93,4 +93,9 @@ public class BitterDataComponents {
             "port_id",
             builder -> builder.persistent(Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8)
     );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> ROTATION = DATA_COMPONENTS.registerComponentType(
+            "rotation",
+            builder -> builder.persistent(ExtraCodecs.NON_NEGATIVE_INT).networkSynchronized(ByteBufCodecs.INT)
+    );
 }

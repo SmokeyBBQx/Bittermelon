@@ -4,8 +4,14 @@
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
   "mixins": [
+    "InventoryMixin",
+    "KeyHandlerMixin",
+    "LocalPlayerDropMixin",
+    "ServerPlayerDropMixin"
   ],
-  "client": [],
+  "client": [
+    "GuiMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }
