@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.combat;
 
 import com.mojang.datafixers.util.Pair;
-import com.site21.bittermelon.content.medical.compartments.CompartmentType;
+import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
 import com.site21.bittermelon.content.medical.damage.DamageGenerator;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import net.minecraft.sounds.SoundEvent;
@@ -19,7 +19,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class AttackTemplate {
-    private final EnumSet<CompartmentType> allowedCompartments;
+    private final EnumSet<CompartmentTag> allowedCompartments;
     private final Supplier<DamageGenerator> damageGeneratorSupplier;
     private final int area;
     private final float damage;
@@ -80,7 +80,7 @@ public class AttackTemplate {
         }
     }
 
-    public EnumSet<CompartmentType> allowedCompartments() {
+    public EnumSet<CompartmentTag> allowedCompartments() {
         return allowedCompartments;
     }
 
@@ -117,7 +117,7 @@ public class AttackTemplate {
     }
 
     public static class AttackTemplateBuilder {
-        private EnumSet<CompartmentType> allowedCompartments = EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE);
+        private EnumSet<CompartmentTag> allowedCompartments = EnumSet.of(CompartmentTag.SOFT_TISSUE, CompartmentTag.HARD_TISSUE);
         private Supplier<DamageGenerator> damageGeneratorSupplier;
         private int area = 2;
         private float damage = 5;
@@ -130,7 +130,7 @@ public class AttackTemplate {
         private BiConsumer<LivingEntity, LivingEntity> specialAction;
         private SoundEvent sound;
 
-        public AttackTemplateBuilder setAllowedCompartments(EnumSet<CompartmentType> allowedCompartments) {
+        public AttackTemplateBuilder setAllowedCompartments(EnumSet<CompartmentTag> allowedCompartments) {
             this.allowedCompartments = allowedCompartments;
             return this;
         }

@@ -1,23 +1,23 @@
 package com.site21.bittermelon.content.medical.compartments.firstaid;
 
-import com.site21.bittermelon.content.medical.compartments.Compartment;
-import com.site21.bittermelon.content.medical.compartments.CompartmentType;
-import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.content.medical.compartments.CompartmentOld;
+import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
+import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
 
 import java.util.EnumSet;
 
 public class OldBandage extends FirstAid {
-    public OldBandage(String name, Compartment owner, float maxHealth) {
-        super(EnumSet.of(CompartmentType.OLD_BANDAGE), name, owner, maxHealth, 0);
+    public OldBandage(String name, CompartmentOld owner, float maxHealth) {
+        super(EnumSet.of(CompartmentTag.OLD_BANDAGE), name, owner, maxHealth, 0);
     }
 
     @Override
-    public void update(MedicalStats medicalStats) {
+    public void update(MedicalStatsOld medicalStats) {
         super.update(medicalStats);
     }
 
     @Override
-    public void onDeath(MedicalStats medicalStats) {
+    public void onDeath(MedicalStatsOld medicalStats) {
         // TODO: Infection
     }
 }

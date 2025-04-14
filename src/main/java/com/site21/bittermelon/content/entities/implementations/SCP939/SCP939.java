@@ -25,10 +25,10 @@ import com.site21.bittermelon.content.entities.ai.behavior.target.InvalidateAtta
 import com.site21.bittermelon.content.entities.ai.BitterVibrationUser;
 import com.site21.bittermelon.content.entities.implementations.SCP939.behavior.*;
 import com.site21.bittermelon.content.medical.damage.generators.*;
-import com.site21.bittermelon.init.neoforge.BitterActivity;
-import com.site21.bittermelon.content.medical.compartments.CompartmentType;
-import com.site21.bittermelon.content.medical.factory.Anatomy;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.init.neoforge.BitterActivity;
+import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
+import com.site21.bittermelon.content.medical.factory.Anatomy;
 import com.site21.bittermelon.content.miscellaneous.stumble.StumbleHandler;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
@@ -692,7 +692,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
         List<AttackTemplate> attackTemplates = new ArrayList<>();
 
         attackTemplates.add(new AttackTemplate.AttackTemplateBuilder()
-                .setDamageSupplier(() -> new BoneBreakingBite(EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE)))
+                .setDamageSupplier(() -> new BoneBreakingBite(EnumSet.of(CompartmentTag.SOFT_TISSUE, CompartmentTag.HARD_TISSUE)))
                 .setArea(2)
                 .setDepthRange(1, 6)
                 .setDamage(15)
@@ -726,7 +726,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
         );
 
         attackTemplates.add(new AttackTemplate.AttackTemplateBuilder()
-                .setDamageSupplier(() -> new Lacerations(EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE)))
+                .setDamageSupplier(() -> new Lacerations(EnumSet.of(CompartmentTag.SOFT_TISSUE, CompartmentTag.HARD_TISSUE)))
                 .setArea(3)
                 .setDepthRange(1, 6)
                 .setDamage(15)
@@ -759,7 +759,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
         );
 
         attackTemplates.add(new AttackTemplate.AttackTemplateBuilder()
-                .setDamageSupplier(() -> new BluntForceTrauma(EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE)))
+                .setDamageSupplier(() -> new BluntForceTrauma(EnumSet.of(CompartmentTag.SOFT_TISSUE, CompartmentTag.HARD_TISSUE)))
                 .setArea(4)
                 .setDepthRange(1, 5)
                 .setDamage(15)
@@ -790,7 +790,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
         );
 
         attackTemplates.add(new AttackTemplate.AttackTemplateBuilder()
-                .setDamageSupplier(() -> new Bite(EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE)))
+                .setDamageSupplier(() -> new Bite(EnumSet.of(CompartmentTag.SOFT_TISSUE, CompartmentTag.HARD_TISSUE)))
                 .setArea(3)
                 .setDepthRange(1, 5)
                 .setDamage(12)
@@ -861,7 +861,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
         );
 
         attackTemplates.add(new AttackTemplate.AttackTemplateBuilder()
-                .setDamageSupplier(() -> new BluntForceTrauma(EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE)))
+                .setDamageSupplier(() -> new BluntForceTrauma(EnumSet.of(CompartmentTag.SOFT_TISSUE, CompartmentTag.HARD_TISSUE)))
                 .setArea(4)
                 .setDepthRange(1, 5)
                 .setDamage(15)

@@ -2,11 +2,13 @@ package com.site21.bittermelon.content.items.medical;
 
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.medical.client.screen.minigame.CauteryMinigame;
-import com.site21.bittermelon.content.medical.compartments.Compartment;
-import com.site21.bittermelon.content.medical.compartments.CompartmentType;
+import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
+import com.site21.bittermelon.content.medical.compartments.CompartmentOld;
+import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
 import com.site21.bittermelon.content.medical.compartments.firstaid.Clamp;
-import com.site21.bittermelon.content.medical.compartments.conditions.Bleed;
+import com.site21.bittermelon.content.medical.compartments.conditionsold.Bleed;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -14,25 +16,27 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.EnumSet;
 
+import static com.site21.bittermelon.init.custom.Compartments.TOOL;
+
 public interface AbstractClamp extends MedicalItem {
     @Override
-    default EnumSet<CompartmentType> getAllowedCompartments() {
+    default EnumSet<CompartmentTag> getAllowedCompartments() {
         return EnumSet.of(
-                CompartmentType.ARTERIAL_BLEED,
-                CompartmentType.VENOUS_BLEED
+                CompartmentTag.ARTERIAL_BLEED,
+                CompartmentTag.VENOUS_BLEED
         );
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    default void use(Compartment compartment, MedicalStats medicalStats, Character character, ItemStack item) {
+    default void use(CompartmentInstance compartment, MedicalStats medicalStats, Character character, ItemStack item) {
         Minecraft.getInstance().setScreen(new CauteryMinigame(item, compartment, medicalStats, character));
     }
 
     @Override
-    default void finishAction(Compartment compartment, MedicalStats medicalStats, Character character, float quality, ItemStack item) {
-        if (compartment instanceof Bleed bleed) {
-            Clamp clamp = new Clamp("Clamp", bleed, 20, 5, item);
+    default void finishAction(CompartmentInstance compartment, MedicalStats medicalStats, Character character, float quality, ItemStack item) {
+        if (compartment.hasTag(CompartmentTag.BLEED)) {
+            CompartmentInstance clamp = new CompartmentInstance(TOOL.get(), 20, "Clamp", false);
             medicalStats.addCompartment(clamp);
         }
     }

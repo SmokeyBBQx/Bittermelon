@@ -98,4 +98,9 @@ public class BitterDataComponents {
             "rotation",
             builder -> builder.persistent(ExtraCodecs.NON_NEGATIVE_INT).networkSynchronized(ByteBufCodecs.INT)
     );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> CAN_SPILL = DATA_COMPONENTS.registerComponentType(
+            "can_spill",
+            builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL)
+    );
 }

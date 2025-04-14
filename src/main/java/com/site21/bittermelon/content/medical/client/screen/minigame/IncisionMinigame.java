@@ -2,10 +2,12 @@ package com.site21.bittermelon.content.medical.client.screen.minigame;
 
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
+import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
+import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import com.site21.bittermelon.content.items.medical.MedicalItem;
-import com.site21.bittermelon.content.medical.compartments.Compartment;
-import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.content.medical.compartments.CompartmentOld;
+import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -39,7 +41,7 @@ public class IncisionMinigame extends MedicalMinigame {
     private record Point(int x, int y) {
     }
 
-    public IncisionMinigame(ItemStack item, Compartment compartment, MedicalStats medicalStats, Character character) {
+    public IncisionMinigame(ItemStack item, CompartmentInstance compartment, MedicalStats medicalStats, Character character) {
         super(Component.literal("Make Incision"), item, compartment, medicalStats, character);
     }
 

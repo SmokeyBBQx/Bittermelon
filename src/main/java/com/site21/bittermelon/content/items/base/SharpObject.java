@@ -5,9 +5,13 @@ import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.items.medical.MedicalItem;
 import com.site21.bittermelon.content.medical.client.screen.minigame.IncisionMinigame;
 import com.site21.bittermelon.content.medical.compartments.Compartment;
-import com.site21.bittermelon.content.medical.compartments.CompartmentType;
-import com.site21.bittermelon.content.medical.compartments.conditions.Cut;
+import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
+import com.site21.bittermelon.content.medical.compartments.CompartmentOld;
+import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
+import com.site21.bittermelon.content.medical.compartments.conditionsold.Cut;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
+import com.site21.bittermelon.init.custom.Compartments;
 import com.site21.bittermelon.util.ServerUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -26,24 +30,22 @@ public interface SharpObject extends MedicalItem {
     }
 
     @Override
-    default EnumSet<CompartmentType> getAllowedCompartments() {
+    default EnumSet<CompartmentTag> getAllowedCompartments() {
         return EnumSet.of(
-                CompartmentType.SOFT_TISSUE,
-                CompartmentType.HARD_TISSUE
+                CompartmentTag.SOFT_TISSUE,
+                CompartmentTag.HARD_TISSUE
         );
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    default void use(Compartment compartment, MedicalStats medicalStats, Character character, ItemStack item) {
+    default void use(CompartmentInstance compartment, MedicalStats medicalStats, Character character, ItemStack item) {
         Minecraft.getInstance().setScreen(new IncisionMinigame(item, compartment, medicalStats, character));
     }
 
     @Override
-    default void finishAction(Compartment compartment, @NotNull MedicalStats medicalStats, @NotNull Character character, float quality, ItemStack item) {
-        LivingEntity entity = ServerUtil.getLivingEntity(character.getEntityUUID());
-        Cut cut = new Cut("Scalpel Cut", compartment, (int) (1 + 100 - quality * 100), character, entity);
-        cut.reveal();
+    default void finishAction(CompartmentInstance compartment, @NotNull MedicalStats medicalStats, @NotNull Character character, float quality, ItemStack item) {
+        CompartmentInstance cut = new CompartmentInstance(Compartments.INJURY.get(), (int) (1 + 100 - quality * 100), "Scalpel Cut", false);
         cut.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/medical/cut.png"));
         medicalStats.addCompartment(cut);
 

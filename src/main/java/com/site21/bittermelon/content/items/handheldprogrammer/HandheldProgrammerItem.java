@@ -25,12 +25,12 @@ public class HandheldProgrammerItem extends BaseItem {
 
         if (player == null) return InteractionResult.FAIL;
 
-        if (level.getBlockEntity(pos) instanceof PLCUser plcUser) {
-            if (level.isClientSide) {
-                Minecraft.getInstance().setScreen(new ProgrammingScreen(plcUser.getPLC()));
-            }
-            return InteractionResult.SUCCESS;
-        }
+//        if (level.getBlockEntity(pos) instanceof PLCUser plcUser) {
+//            if (level.isClientSide) {
+//                Minecraft.getInstance().setScreen(new ProgrammingScreen(plcUser.getPLC()));
+//            }
+//            return InteractionResult.SUCCESS;
+//        }
 
         return InteractionResult.FAIL;
     }

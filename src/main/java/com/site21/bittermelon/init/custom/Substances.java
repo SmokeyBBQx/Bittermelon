@@ -13,6 +13,7 @@ public class Substances {
 
     // --- ATOMS ---
     public static final Supplier<Substance> GASEOUS_OXYGEN = SUBSTANCES.register("gaseous_oxygen", () -> new Substance(
+            new Substance.Properties(),
             "Gaseous Oxygen",
             1,
             32,
@@ -21,6 +22,7 @@ public class Substances {
     ));
 
     public static final Supplier<Substance> CARBON = SUBSTANCES.register("carbon", () -> new Substance(
+            new Substance.Properties(),
             "Carbon",
             1,
             32,
@@ -29,6 +31,7 @@ public class Substances {
     ));
 
     public static final Supplier<Substance> OXYGEN = SUBSTANCES.register("oxygen", () -> new Substance(
+            new Substance.Properties(),
             "Carbon",
             1,
             32,
@@ -37,6 +40,7 @@ public class Substances {
     ));
 
     public static final Supplier<Substance> HYDROGEN = SUBSTANCES.register("hydrogen", () -> new Substance(
+            new Substance.Properties(),
             "Carbon",
             1,
             32,
@@ -45,6 +49,7 @@ public class Substances {
     ));
 
     public static final Supplier<Substance> NITROGEN = SUBSTANCES.register("nitrogen", () -> new Substance(
+            new Substance.Properties(),
             "Carbon",
             1,
             32,
@@ -53,6 +58,7 @@ public class Substances {
     ));
 
     public static final Supplier<Substance> GASEOUS_NITROGEN = SUBSTANCES.register("gaseous_nitrogen", () -> new Substance(
+            new Substance.Properties(),
             "Carbon",
             1,
             32,
@@ -61,6 +67,7 @@ public class Substances {
     ));
 
     public static final Supplier<Substance> GASEOUS_HYDROGEN = SUBSTANCES.register("gaseous_hydrogen", () -> new Substance(
+            new Substance.Properties(),
             "Oxygen",
             1,
             32,
@@ -69,6 +76,7 @@ public class Substances {
     ));
 
     public static final Supplier<Substance> GASEOUS_CARBON_DIOXIDE = SUBSTANCES.register("gaseous_carbon_dioxide", () -> new Substance(
+            new Substance.Properties(),
             "Oxygen",
             1,
             32,
@@ -77,6 +85,7 @@ public class Substances {
     ));
 
     public static final Supplier<Substance> GASEOUS_WATER = SUBSTANCES.register("gaseous_water", () -> new Substance(
+            new Substance.Properties(),
             "Oxygen",
             1,
             32,
@@ -85,14 +94,18 @@ public class Substances {
     ));
 
     public static final Supplier<Substance> LIQUID_WATER = SUBSTANCES.register("liquid_water", () -> new Substance(
+            new Substance.Properties()
+                    .slipperiness(0.2f),
             "Liquid Water",
-            1,
+            0xFFAAD5DB,
             32,
             1.429f,
             29.378f
-    ));
+            )
+    );
 
     public static final Supplier<Substance> SOLID_SODIUM_CHLORIDE = SUBSTANCES.register("solid_sodium_chloride", () -> new Substance(
+            new Substance.Properties(),
             "Salt",
             1,
             58.443f,
@@ -101,6 +114,7 @@ public class Substances {
     ));
 
     public static final Supplier<Substance> LIQUID_HYDROGEN_PEROXIDE = SUBSTANCES.register("liquid_hydrogen_peroxide", () -> new Substance(
+            new Substance.Properties(),
             "Liquid Hydrogen Peroxide",
             1,
             34.014f,
@@ -109,6 +123,7 @@ public class Substances {
     ));
 
     public static final Supplier<Substance> SOLID_UREA = SUBSTANCES.register("solid_urea", () -> new Substance(
+            new Substance.Properties(),
             "Urea",
             1,
             60.06f,
@@ -117,6 +132,7 @@ public class Substances {
     ));
 
     public static final Supplier<Substance> GASEOUS_AMMONIA = SUBSTANCES.register("gaseous_ammonia", () -> new Substance(
+            new Substance.Properties(),
             "Ammonia",
             1,
             17.031f,
@@ -125,6 +141,7 @@ public class Substances {
     ));
 
     public static final Supplier<Substance> LIQUID_BLOOD = SUBSTANCES.register("liquid_blood", () -> new Substance(
+            new Substance.Properties(),
             "Liquid Blood",
             0xFFB52222,
             32,

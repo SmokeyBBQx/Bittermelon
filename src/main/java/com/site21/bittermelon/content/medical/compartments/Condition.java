@@ -1,31 +1,31 @@
 package com.site21.bittermelon.content.medical.compartments;
 
 import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 
-public abstract class Condition extends Compartment {
+public abstract class Condition extends CompartmentOld {
     protected final LivingEntity entity;
     protected final Character character;
 
-    public Condition(EnumSet<CompartmentType> types, String name, Compartment owner, float maxHealth, Character character, LivingEntity entity) {
+    public Condition(EnumSet<CompartmentTag> types, String name, CompartmentOld owner, float maxHealth, Character character, LivingEntity entity) {
         super(types, name, owner, maxHealth);
         this.character = character;
         this.entity = entity;
     }
 
     @Override
-    public void onDeath(@NotNull MedicalStats mammalMedicalStats) {
+    public void onDeath(@NotNull MedicalStatsOld mammalMedicalStats) {
        mammalMedicalStats.removeCompartment(this);
     }
 
     @Override
     public float getHealth() {
         float totalHealth = this.health;
-        for (Compartment child : children) {
+        for (CompartmentOld child : children) {
             if (!(child instanceof Condition)) {
                 totalHealth += child.getAttribute(FunctionType.FUNCTION);
             }

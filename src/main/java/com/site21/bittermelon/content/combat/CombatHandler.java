@@ -2,10 +2,11 @@ package com.site21.bittermelon.content.combat;
 
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
-import com.site21.bittermelon.content.medical.compartments.Compartment;
-import com.site21.bittermelon.content.medical.compartments.CompartmentType;
+import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
+import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
 import com.site21.bittermelon.content.medical.damage.DamageResult;
 import com.site21.bittermelon.content.medical.damage.InjuryResult;
+import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.util.LocalMessageHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -118,7 +119,7 @@ public class CombatHandler {
             float performance,
             String targetBodyPart
     ) {
-        String injuryDescription = getInjuryDescription(damageResult, performance);
+        String injuryDescription = getInjuryDescription(damageResult, performance, target.getMedicalStats());
         if (injuryDescription == null) return null;
 
         return attack.getFormattedMessage(attacker.getName(), target.getName(), targetBodyPart)
@@ -127,20 +128,20 @@ public class CombatHandler {
 
     public static List<String> getAmputationMessages(Character target, @NotNull DamageResult damageResult) {
         return damageResult.injuryResults().stream()
-                .filter(result -> result.injury().hasType(CompartmentType.TRAUMATIC_AMPUTATION))
+                .filter(result -> result.injury().hasTag(CompartmentTag.TRAUMATIC_AMPUTATION))
                 .map(result -> target.getName() + "'s " + result.message())
                 .toList();
     }
 
-    private static @Nullable String getInjuryDescription(@NotNull DamageResult damageResult, float performance) {
+    private static @Nullable String getInjuryDescription(@NotNull DamageResult damageResult, float performance, MedicalStats medicalStats) {
         List<InjuryResult> injuryResults = damageResult.injuryResults().stream()
-                .filter(result -> !result.injury().hasType(CompartmentType.TRAUMATIC_AMPUTATION))
+                .filter(result -> !result.injury().hasTag(CompartmentTag.TRAUMATIC_AMPUTATION))
                 .toList();
 
         if (injuryResults.isEmpty()) return null;
 
         if (injuryResults.size() > 2) {
-            return formatMultipleInjuries(injuryResults, performance);
+            return formatMultipleInjuries(injuryResults, performance, medicalStats);
         } else if (injuryResults.size() > 1) {
             return formatTwoInjuries(injuryResults, performance);
         } else {
@@ -148,12 +149,12 @@ public class CombatHandler {
         }
     }
 
-    private static @NotNull String formatMultipleInjuries(@NotNull List<InjuryResult> injuryResults, float performance) {
+    private static @NotNull String formatMultipleInjuries(@NotNull List<InjuryResult> injuryResults, float performance, MedicalStats medicalStats) {
         InjuryResult deepestResult = injuryResults.stream()
-                .max(Comparator.comparingInt(a -> getCompartmentDepth(a.injury().getOwner())))
+                .max(Comparator.comparingInt(a -> getCompartmentDepth(a.injury().getParent(medicalStats), medicalStats)))
                 .orElse(injuryResults.getLast());
 
-        String targetName = deepestResult.injury().getOwner().getName().toLowerCase();
+        String targetName = deepestResult.injury().getParent(medicalStats).getName().toLowerCase();
         String action = deepestResult.message().split(" ")[0];
 
         return String.format("the injury reaching through and %s %s the %s",
@@ -172,12 +173,12 @@ public class CombatHandler {
         return getSeverityDescription(performance) + " " + firstInjury;
     }
 
-    private static int getCompartmentDepth(Compartment compartment) {
+    private static int getCompartmentDepth(CompartmentInstance compartment, MedicalStats medicalStats) {
         int depth = 0;
-        Compartment current = compartment;
-        while (current.getOwner() != null) {
+        CompartmentInstance current = compartment;
+        while (current.getParent(medicalStats) != null) {
             depth++;
-            current = current.getOwner();
+            current = current.getParent(medicalStats);
         }
         return depth;
     }

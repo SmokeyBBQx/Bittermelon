@@ -8,6 +8,7 @@ import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercom
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -22,14 +23,14 @@ import java.util.UUID;
 public record SyncCharacters(Map<UUID, Character> characters) implements CustomPacketPayload {
     public static final Type<SyncCharacters> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "sync_characters"));
 
-    public static final StreamCodec<ByteBuf, Map<UUID, Character>> CHARACTER_MAP_CODEC =
+    public static final StreamCodec<RegistryFriendlyByteBuf, Map<UUID, Character>> CHARACTER_MAP_CODEC =
             ByteBufCodecs.map(
                     HashMap::new,
                     UUIDUtil.STREAM_CODEC,
                     Character.STREAM_CODEC
             );
 
-    public static final StreamCodec<ByteBuf, SyncCharacters> STREAM_CODEC = StreamCodec.composite(
+    public static final StreamCodec<RegistryFriendlyByteBuf, SyncCharacters> STREAM_CODEC = StreamCodec.composite(
             CHARACTER_MAP_CODEC,
             SyncCharacters::characters,
             SyncCharacters::new

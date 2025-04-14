@@ -13,6 +13,9 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
+
+import java.util.UUID;
 
 import static com.site21.bittermelon.init.neoforge.BitterKeyBindings.HEALTH_SCREEN_KEY;
 
@@ -30,6 +33,8 @@ public class HealthScreenKeyBind {
         Minecraft mc = Minecraft.getInstance();
         Player player = Minecraft.getInstance().player;
 
+        System.out.println("Key clicked");
+
         if (player != null) {
             HitResult hitResult = mc.hitResult;
             Character targetCharacter = null;
@@ -39,14 +44,23 @@ public class HealthScreenKeyBind {
                 EntityHitResult entityHit = (EntityHitResult) hitResult;
                 targetEntity = entityHit.getEntity();
 
+                PacketDistributor.sendToServer(new OpenHealthScreenC2S(player.getUUID(), targetEntity.getUUID()));
+
                 targetCharacter = CharacterManager.get(player.level()).getActiveCharacter(targetEntity);
+            } else {
+                PacketDistributor.sendToServer(new OpenHealthScreenC2S(player.getUUID(), UUID.randomUUID()));
             }
 
             if (targetCharacter == null) {
                 targetCharacter = CharacterManager.get(player.level()).getActiveCharacter(player);
+                if (targetCharacter == null) {
+                    System.out.println("Target null!");
+                }
             }
 
             if (targetCharacter != null) {
+                System.out.println("Character not null");
+
                 ItemStack heldItem = player.getMainHandItem();
                 mc.setScreen(new HealthScreen(targetCharacter, player, heldItem));
             }

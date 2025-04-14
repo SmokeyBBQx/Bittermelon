@@ -5,7 +5,7 @@ import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.combat.AttackTemplate;
 import com.site21.bittermelon.content.combat.CombatHandler;
-import com.site21.bittermelon.content.medical.compartments.CompartmentType;
+import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
 import com.site21.bittermelon.content.medical.damage.generators.BluntForceTrauma;
 import com.site21.bittermelon.content.medical.damage.generators.Stab;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
@@ -47,7 +47,7 @@ public class DamageEventHandler {
 
             if (stack == null || stack.getItem() == Items.AIR) {
                 attackTemplate = new AttackTemplate.AttackTemplateBuilder()
-                        .setDamageSupplier(() -> new BluntForceTrauma(EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE)))
+                        .setDamageSupplier(() -> new BluntForceTrauma(EnumSet.of(CompartmentTag.SOFT_TISSUE, CompartmentTag.HARD_TISSUE)))
                         .setArea(4)
                         .setDepthRange(1, 5)
                         .setDamage(15)

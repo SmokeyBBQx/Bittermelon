@@ -112,7 +112,7 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
     @Override
     protected Character initializeCharacter() {
         // TODO: Procgen descriptions
-        return new Character(this.uuid, "Chicken", Anatomy.CHICKEN);
+        return new Character(this.uuid, "Chicken", Anatomy.HUMAN);
     }
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {

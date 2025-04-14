@@ -3,6 +3,7 @@ package com.site21.bittermelon.init.neoforge;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.devices.wiring.Signal;
 import com.site21.bittermelon.content.chat.VerbSet;
+import com.site21.bittermelon.content.medical.compartments.Compartment;
 import com.site21.bittermelon.content.substance.Substance;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -30,11 +31,16 @@ public class BitterRegistries {
             .sync(true)
             .create();
 
+    public static final ResourceKey<Registry<Compartment>> COMPARTMENT_REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "compartments"));
+    public static final Registry<Compartment> COMPARTMENT_REGISTRY = new RegistryBuilder<>(COMPARTMENT_REGISTRY_KEY)
+            .sync(true)
+            .create();
 
     @SubscribeEvent
     public static void registerRegistries(@NotNull NewRegistryEvent event) {
        event.register(SUBSTANCE_REGISTRY);
        event.register(VERB_SET_REGISTRY);
        event.register(LOGICAL_OPERATORS_REGISTRY);
+       event.register(COMPARTMENT_REGISTRY);
     }
 }

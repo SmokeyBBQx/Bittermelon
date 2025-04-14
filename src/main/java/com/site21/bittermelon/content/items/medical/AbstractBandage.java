@@ -1,10 +1,13 @@
 package com.site21.bittermelon.content.items.medical;
 
 import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.medical.compartments.Compartment;
-import com.site21.bittermelon.content.medical.compartments.CompartmentType;
+import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
+import com.site21.bittermelon.content.medical.compartments.CompartmentOld;
+import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
 import com.site21.bittermelon.content.medical.compartments.firstaid.Bandage;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
+import com.site21.bittermelon.init.custom.Compartments;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -19,18 +22,18 @@ public interface AbstractBandage extends MedicalItem {
     }
 
     @Override
-    default EnumSet<CompartmentType> getAllowedCompartments() {
+    default EnumSet<CompartmentTag> getAllowedCompartments() {
         return EnumSet.of(
-                CompartmentType.CUT,
-                CompartmentType.BITE,
-                CompartmentType.STAB
+                CompartmentTag.CUT,
+                CompartmentTag.BITE,
+                CompartmentTag.STAB
         );
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    default void use(@NotNull Compartment compartment, @NotNull MedicalStats medicalStats, Character character, ItemStack item) {
-        medicalStats.addCompartment(new Bandage("Bandage", compartment, 10, 1));
+    default void use(@NotNull CompartmentInstance compartment, @NotNull MedicalStats medicalStats, Character character, ItemStack item) {
+        medicalStats.addCompartment(new CompartmentInstance(Compartments.BANDAGE.get(), 10, "Bandage", false));
     }
 
     @Override
@@ -39,6 +42,6 @@ public interface AbstractBandage extends MedicalItem {
     }
 
     @Override
-    default void finishAction(Compartment compartment, MedicalStats medicalStats, Character character, float quality, ItemStack item) {
+    default void finishAction(CompartmentInstance compartment, MedicalStats medicalStats, Character character, float quality, ItemStack item) {
     }
 }

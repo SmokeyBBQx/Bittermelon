@@ -2,13 +2,15 @@ package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.atmosphere.networking.*;
-import com.site21.bittermelon.content.blocks.devices.implementations.intercom.networking.IntercomIDUpdate;
-import com.site21.bittermelon.content.blocks.devices.implementations.intercom.networking.IntercomMicUpdate;
-import com.site21.bittermelon.content.blocks.devices.implementations.intercom.networking.IntercomSpeakerUpdate;
-import com.site21.bittermelon.content.blocks.devices.implementations.intercom.networking.IntercomTargetUpdate;
+import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.OpenContainmentPanelScreen;
+import com.site21.bittermelon.content.blocks.devices.implementations.intercom.networking.*;
 import com.site21.bittermelon.content.character.networking.SyncCharacters;
+import com.site21.bittermelon.content.economy.networking.OpenATMScreen;
 import com.site21.bittermelon.content.items.wires.wire.networking.MakeWireConnection;
+import com.site21.bittermelon.content.items.wires.wire.networking.OpenWiringScreen;
 import com.site21.bittermelon.content.items.wires.wire.networking.WiringDataUpdate;
+import com.site21.bittermelon.content.medical.client.screen.OpenHealthScreenC2S;
+import com.site21.bittermelon.content.medical.client.screen.OpenHealthScreenS2C;
 import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
 import com.site21.bittermelon.networking.client.*;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.ContainmentNameUpdate;
@@ -181,6 +183,30 @@ public class PayloadRegistration {
                 MakeWireConnection.TYPE,
                 MakeWireConnection.STREAM_CODEC,
                 MakeWireConnection::handle
+        );
+
+        registrar.playToServer(
+                OpenHealthScreenC2S.TYPE,
+                OpenHealthScreenC2S.STREAM_CODEC,
+                OpenHealthScreenC2S::handle
+        );
+
+        registrar.playToClient(
+                OpenHealthScreenS2C.TYPE,
+                OpenHealthScreenS2C.STREAM_CODEC,
+                OpenHealthScreenS2C::handle
+        );
+
+        registrar.playToClient(
+                OpenIntercomScreen.TYPE,
+                OpenIntercomScreen.STREAM_CODEC,
+                OpenIntercomScreen::handle
+        );
+
+        registrar.playToClient(
+                OpenWiringScreen.TYPE,
+                OpenWiringScreen.STREAM_CODEC,
+                OpenWiringScreen::handle
         );
     }
 }

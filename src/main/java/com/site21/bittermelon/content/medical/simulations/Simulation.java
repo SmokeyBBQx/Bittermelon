@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.medical.simulations;
 
 import com.mojang.datafixers.util.Pair;
-import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,12 +10,12 @@ import java.util.function.Function;
 
 public class Simulation {
     protected final SubstanceStack stack;
-    protected final MedicalStats medicalStats;
-    protected final List<Pair<Function<MedicalStats, Float>, Float>> absorptionModifiers;
+    protected final MedicalStatsOld medicalStats;
+    protected final List<Pair<Function<MedicalStatsOld, Float>, Float>> absorptionModifiers;
     protected final SubstanceStack stackCopy;
     public boolean finished = false;
 
-    public Simulation(@NotNull SubstanceStack stack, MedicalStats medicalStats, List<Pair<Function<MedicalStats, Float>, Float>> absorptionModifiers) {
+    public Simulation(@NotNull SubstanceStack stack, MedicalStatsOld medicalStats, List<Pair<Function<MedicalStatsOld, Float>, Float>> absorptionModifiers) {
         this.stack = stack;
         this.medicalStats = medicalStats;
         this.absorptionModifiers = absorptionModifiers;

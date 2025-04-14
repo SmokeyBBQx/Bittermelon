@@ -1,34 +1,34 @@
 package com.site21.bittermelon.content.medical.compartments.firstaid;
 
-import com.site21.bittermelon.content.medical.compartments.Compartment;
-import com.site21.bittermelon.content.medical.compartments.CompartmentType;
-import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.content.medical.compartments.CompartmentOld;
+import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
+import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.EnumSet;
 
 public class Retractor extends FirstAid {
-    public Retractor(String name, Compartment owner, int maxHealth, float quality, ItemStack item) {
-        super(EnumSet.of(CompartmentType.RETRACTOR), name, owner, maxHealth, quality);
+    public Retractor(String name, CompartmentOld owner, int maxHealth, float quality, ItemStack item) {
+        super(EnumSet.of(CompartmentTag.RETRACTOR), name, owner, maxHealth, quality);
         this.item = item;
 
-        for (Compartment compartment : owner.getChildren()) {
+        for (CompartmentOld compartment : owner.getChildren()) {
             compartment.reveal();
         }
     }
 
     @Override
-    public void onDeath(MedicalStats medicalStats) {
+    public void onDeath(MedicalStatsOld medicalStats) {
         super.onDeath(medicalStats);
-        for (Compartment child : owner.getChildren()) {
+        for (CompartmentOld child : owner.getChildren()) {
             child.setHidden(true);
         }
     }
 
     @Override
-    public void onExtract(MedicalStats medicalStats) {
+    public void onExtract(MedicalStatsOld medicalStats) {
         super.onExtract(medicalStats);
-        for (Compartment child : owner.getChildren()) {
+        for (CompartmentOld child : owner.getChildren()) {
             child.setHidden(true);
         }
     }

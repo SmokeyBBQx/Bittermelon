@@ -2,12 +2,11 @@ package com.site21.bittermelon.content.medical.compartments.conditions;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.medical.compartments.Compartment;
-import com.site21.bittermelon.content.medical.compartments.CompartmentType;
-import com.site21.bittermelon.content.medical.compartments.Condition;
-import com.site21.bittermelon.content.medical.compartments.FunctionType;
+import com.site21.bittermelon.content.medical.compartments.*;
 import com.site21.bittermelon.content.medical.compartments.bodyparts.BodyPart;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
+import com.site21.bittermelon.init.custom.Compartments;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
@@ -16,77 +15,76 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 import java.util.Random;
 
-import static com.site21.bittermelon.content.medical.compartments.CompartmentType.*;
+import static com.site21.bittermelon.content.medical.compartments.CompartmentTag.*;
+import static com.site21.bittermelon.content.medical.compartments.CompartmentTag.CAPILLARY_BLEED;
 
-public class Bleed extends Condition {
-    protected final float bleedRate;
+public class Bleed extends Compartment {
     public static final float BASE_MAJOR_ARTERIAL_BLEED_RATE = 2.0f;
     public static final float BASE_ARTERIAL_BLEED_RATE = 1.0f;
     public static final float BASE_VENOUS_BLEED_RATE = 0.5f;
     public static final float BASE_CAPILLARY_BLEED_RATE = 0.2f;
 
-    public Bleed(CompartmentType bleedType, String name, Compartment owner, float maxHealth, Character character,
-                 LivingEntity entity, float bleedRate) {
-        super(EnumSet.of(BLEED, bleedType), name, owner, maxHealth, character, entity);
-        this.bleedRate = bleedRate;
-        setAttribute(FunctionType.BLEED, bleedRate);
+    public Bleed(String id, EnumSet<CompartmentTag> defaultTags) {
+        super(id, defaultTags);
     }
 
     @Override
-    public void update(MedicalStats medicalStats) {
-        super.update(medicalStats);
+    public void tick(MedicalStats medicalStats, @NotNull CompartmentInstance instance) {
+        super.tick(medicalStats, instance);
+        instance.modifyHealth(-0.001f);
     }
 
-    public static void generateBleed(@NotNull Compartment owner, Character character, LivingEntity entity, float damage) {
-        if (owner.getOwner() instanceof BodyPart bodyPart && bodyPart.doesBleed()) {
-            if (bodyPart.hasType(BLOOD_VESSEL)) {
-                generateVesselBleed(bodyPart, character, entity, damage);
+    public static void generateBleed(@NotNull CompartmentInstance target, MedicalStats medicalStats, float damage) {
+        CompartmentInstance parent = target.getParent(medicalStats);
+
+        if (parent.hasTag(BODY_PART) && parent.getCompartment().doesBleed()) {
+            if (parent.hasTag(BLOOD_VESSEL)) {
+                generateVesselBleed(parent, damage, medicalStats);
             } else {
-                randomBleeds(owner, character, entity, damage);
+                randomBleeds(parent, damage, medicalStats);
             }
         }
     }
 
-    private static void generateVesselBleed(Compartment vessel, @NotNull Character character, LivingEntity entity, float damage) {
-        MedicalStats medicalStats = character.getMedicalStats();
+    private static void generateVesselBleed(CompartmentInstance vessel, float damage, MedicalStats medicalStats) {
         float bleedRate = getBleedRateForVessel(vessel);
-        CompartmentType bleedType = getBleedTypeForVessel(vessel);
+        CompartmentTag bleedType = getBleedTypeForVessel(vessel);
         if (bleedRate > 0) {
-            Bleed bleed = new Bleed(bleedType, "Bleed", vessel, damage, character, entity, bleedRate);
+            CompartmentInstance bleed = new CompartmentInstance(Compartments.BLEED.get(), damage, "Bleed", false);
+            bleed.addTag(bleedType);
+            bleed.setAttribute(FunctionType.BLEED, bleedRate);
             setBleedIcon(bleed);
-            bleed.reveal();
             medicalStats.addCompartment(bleed);
         }
     }
 
-    private static float getBleedRateForVessel(@NotNull Compartment vessel) {
-        if (vessel.hasType(MAJOR_ARTERY)) return BASE_MAJOR_ARTERIAL_BLEED_RATE;
-        if (vessel.hasType(ARTERY)) return BASE_ARTERIAL_BLEED_RATE;
-        if (vessel.hasType(VEIN)) return BASE_VENOUS_BLEED_RATE;
-        if (vessel.hasType(CAPILLARY)) return BASE_CAPILLARY_BLEED_RATE;
+    private static float getBleedRateForVessel(@NotNull CompartmentInstance vessel) {
+        if (vessel.hasTag(MAJOR_ARTERY)) return BASE_MAJOR_ARTERIAL_BLEED_RATE;
+        if (vessel.hasTag(ARTERY)) return BASE_ARTERIAL_BLEED_RATE;
+        if (vessel.hasTag(VEIN)) return BASE_VENOUS_BLEED_RATE;
+        if (vessel.hasTag(CAPILLARY)) return BASE_CAPILLARY_BLEED_RATE;
         return 0f;
     }
 
-    private static @Nullable CompartmentType getBleedTypeForVessel(@NotNull Compartment vessel) {
-        if (vessel.hasType(MAJOR_ARTERY)) return MAJOR_ARTERIAL_BLEED;
-        if (vessel.hasType(ARTERY)) return ARTERIAL_BLEED;
-        if (vessel.hasType(VEIN)) return VENOUS_BLEED;
-        if (vessel.hasType(CAPILLARY)) return CAPILLARY_BLEED;
+    private static @Nullable CompartmentTag getBleedTypeForVessel(@NotNull CompartmentInstance vessel) {
+        if (vessel.hasTag(MAJOR_ARTERY)) return MAJOR_ARTERIAL_BLEED;
+        if (vessel.hasTag(ARTERY)) return ARTERIAL_BLEED;
+        if (vessel.hasTag(VEIN)) return VENOUS_BLEED;
+        if (vessel.hasTag(CAPILLARY)) return CAPILLARY_BLEED;
         return null;
     }
 
-    private static void setBleedIcon(@NotNull Compartment bleed) {
-        if (bleed.hasType(ARTERIAL_BLEED)) {
+    private static void setBleedIcon(@NotNull CompartmentInstance bleed) {
+        if (bleed.hasTag(ARTERIAL_BLEED)) {
             bleed.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/medical/arterial_bleed.png"));
-        } else if (bleed.hasType(VENOUS_BLEED)) {
+        } else if (bleed.hasTag(VENOUS_BLEED)) {
             bleed.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/medical/venous_bleed.png"));
         } else {
             bleed.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/medical/capillary_bleed.png"));
         }
     }
 
-    public static void randomBleeds(Compartment owner, @NotNull Character character, LivingEntity entity, float damage) {
-        MedicalStats medicalStats = character.getMedicalStats();
+    public static void randomBleeds(CompartmentInstance parent, float damage, MedicalStats medicalStats) {
         Random random = new Random();
 
         int MAX_BLEED = 5;
@@ -99,29 +97,28 @@ public class Bleed extends Condition {
             float damageImpact = damage / 100;
             float bleedSeverity = 1 + damage * random.nextFloat();
 
-            Bleed bleed;
+            CompartmentInstance bleed;
             if (severityRoll > 0.8 - damageImpact) {
-                bleed = new Bleed(ARTERIAL_BLEED,
-                        "Arterial Bleed", owner, bleedSeverity, character, entity, BASE_ARTERIAL_BLEED_RATE);
+                bleed = new CompartmentInstance(Compartments.BLEED.get(), bleedSeverity, "Arterial Bleed", true);
+                bleed.addTag(ARTERIAL_BLEED);
+                bleed.setAttribute(FunctionType.BLEED, BASE_ARTERIAL_BLEED_RATE);
             } else if (severityRoll > 0.6 - damageImpact) {
-                bleed = new Bleed(VENOUS_BLEED,
-                        "Venous Bleed", owner, bleedSeverity, character, entity, BASE_VENOUS_BLEED_RATE);
+                bleed = new CompartmentInstance(Compartments.BLEED.get(), bleedSeverity, "Venous Bleed", true);
+                bleed.addTag(VENOUS_BLEED);
+                bleed.setAttribute(FunctionType.BLEED, BASE_VENOUS_BLEED_RATE);
             } else {
-                bleed = new Bleed(CAPILLARY_BLEED,
-                        "Capillary Bleed", owner, bleedSeverity, character, entity, BASE_CAPILLARY_BLEED_RATE);
+                bleed = new CompartmentInstance(Compartments.BLEED.get(), bleedSeverity, "Capillary Bleed", true);
+                bleed.addTag(CAPILLARY_BLEED);
+                bleed.setAttribute(FunctionType.BLEED, BASE_CAPILLARY_BLEED_RATE);
             }
 
             setBleedIcon(bleed);
 
             medicalStats.addCompartment(bleed);
-            if (!owner.isHidden()) {
+            if (!parent.isHidden()) {
                 // TODO: if statement is acting weird
-                bleed.reveal();
+                bleed.setHidden(false);
             }
         }
-    }
-
-    public float getBleedRate() {
-        return bleedRate;
     }
 }

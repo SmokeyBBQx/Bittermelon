@@ -1,8 +1,7 @@
 package com.site21.bittermelon.content.medical.factory;
 
 public enum Anatomy {
-    HUMAN(new HumanFactory()),
-    CHICKEN(new ChickenFactory());
+    HUMAN(new HumanFactory());
 
     private final AnatomyFactory factory;
 

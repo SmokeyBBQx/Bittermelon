@@ -1,10 +1,10 @@
 package com.site21.bittermelon.content.medical.damage;
 
 import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.medical.compartments.Compartment;
-import com.site21.bittermelon.content.medical.compartments.CompartmentType;
-import com.site21.bittermelon.content.medical.compartments.Injury;
+import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
+import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.init.custom.Compartments;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Contract;
@@ -14,16 +14,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public abstract class DamageGenerator {
-    protected final EnumSet<CompartmentType> allowedCompartments;
+    protected final EnumSet<CompartmentTag> allowedCompartments;
     protected static final Random random = new Random();
     protected boolean shouldDismember = false;
 
-    public DamageGenerator(EnumSet<CompartmentType> allowedCompartments) {
+    public DamageGenerator(EnumSet<CompartmentTag> allowedCompartments) {
         this.allowedCompartments = allowedCompartments;
     }
 
     public DamageGenerator() {
-        this(EnumSet.of(CompartmentType.SOFT_TISSUE, CompartmentType.HARD_TISSUE, CompartmentType.MAJOR_BODY_PART));
+        this(EnumSet.of(CompartmentTag.SOFT_TISSUE, CompartmentTag.HARD_TISSUE, CompartmentTag.MAJOR_BODY_PART));
     }
 
     /**
@@ -41,12 +41,12 @@ public abstract class DamageGenerator {
      * @return A DamageResult containing the targeted body part and list of created injuries, or null if no valid target was found
      */
 
-    public @Nullable DamageResult generateDamage(@NotNull MedicalStats medicalStats, int area, int minDepth, int maxDepth, float damage, Character character, LivingEntity entity) {
-        List<Compartment> initialCompartments = getInitialCompartments(medicalStats);
+    public @Nullable DamageResult generateDamage(MedicalStats medicalStats, int area, int minDepth, int maxDepth, float damage, Character character, LivingEntity entity) {
+        List<CompartmentInstance> initialCompartments = getInitialCompartments(medicalStats);
         if (initialCompartments.isEmpty()) return null;
 
-        Compartment targetBodyPart = initialCompartments.get(random.nextInt(initialCompartments.size()));
-        List<Compartment> validChildren = filterCompartments(targetBodyPart.getChildren());
+        CompartmentInstance targetBodyPart = initialCompartments.get(random.nextInt(initialCompartments.size()));
+        List<UUID> validChildren = filterCompartments(targetBodyPart.getChildren(), medicalStats);
         List<InjuryResult> injuryResults = new ArrayList<>();
 
         for (int i = 0; i < area; i++) {
@@ -55,16 +55,16 @@ public abstract class DamageGenerator {
 
             injuryResults.add(injuryResult);
 
-            Injury injury = injuryResult.injury();
+            CompartmentInstance injury = injuryResult.injury();
             medicalStats.addCompartment(injury);
 
             int depth = minDepth + (int) (Math.pow(random.nextFloat(), 2) * (maxDepth - minDepth));
             for (int j = 0; j < depth; j++) {
-                injuryResult = inflictInjury(filterCompartments(injury.getOwner().getChildren()),
+                injuryResult = inflictInjury(filterCompartments(injury.getParent(medicalStats).getChildren(), medicalStats),
                         injury.getMaxHealth() / 2, medicalStats, character, entity);
                 if (injuryResult == null) break;
 
-                if (injuryResult.injury().getHealth() > injuryResult.injury().getOwner().getHealth()) {
+                if (injuryResult.injury().getHealth() > injuryResult.injury().getParent(medicalStats).getHealth()) {
                     depth++;
                 }
 
@@ -85,29 +85,30 @@ public abstract class DamageGenerator {
         return generateDamage(medicalStats, area, minDepth, maxDepth, damage, character, entity);
     }
 
-    private @Nullable InjuryResult inflictInjury(@NotNull List<Compartment> compartments, float damage, MedicalStats medicalStats, Character character, LivingEntity entity) {
+    private @Nullable InjuryResult inflictInjury(@NotNull List<UUID> compartments, float damage, MedicalStats medicalStats, Character character, LivingEntity entity) {
         if (compartments.isEmpty()) return null;
 
-        Compartment target = compartments.get(random.nextInt(compartments.size()));
-        if (target.hasType(CompartmentType.MAJOR_BODY_PART)) {
-            return inflictInjury(target.getChildren(), damage, medicalStats, character, entity);
+        UUID targetID = compartments.get(random.nextInt(compartments.size()));
+        CompartmentInstance target = medicalStats.getCompartment(targetID);
+        if (target.hasTag(CompartmentTag.MAJOR_BODY_PART)) {
+            return inflictInjury(new ArrayList<>(target.getChildren()), damage, medicalStats, character, entity);
         }
 
         float injuryDamage = 1 + random.nextFloat() * damage;
 
         if (shouldDismember && injuryDamage > target.getHealth() && random.nextFloat() > 0.5f) {
-            return handleDismemberment(target, character, medicalStats, entity);
+            return handleDismemberment(target, medicalStats, entity);
         }
 
-        return createInjury(injuryDamage, target, character, entity);
+        return createInjury(injuryDamage, target, medicalStats);
     }
 
-    protected abstract InjuryResult createInjury(float damage, Compartment target, Character character, LivingEntity entity);
+    protected abstract InjuryResult createInjury(float damage, CompartmentInstance target, MedicalStats medicalStats);
 
-    @Contract("_, _, _, _ -> new")
-    private @NotNull InjuryResult handleDismemberment(@NotNull Compartment target, @NotNull Character character, @NotNull MedicalStats medicalStats, LivingEntity entity) {
-        Injury amputation = new Injury(EnumSet.of(CompartmentType.TRAUMATIC_AMPUTATION), "Traumatic Amputation" + " (" + target.getName() + ")", target.getOwner(), target.getMaxHealth(), character, entity);
-        amputation.reveal();
+    @Contract("_, _, _ -> new")
+    private @NotNull InjuryResult handleDismemberment(@NotNull CompartmentInstance target, @NotNull MedicalStats medicalStats, LivingEntity entity) {
+        CompartmentInstance amputation = new CompartmentInstance(Compartments.TRAUMATIC_AMPUTATION.get(), target.getMaxHealth(), "Traumatic Amputation" + " (" + target.getName() + ")", false);
+        amputation.setParent(target.getParentID());
         medicalStats.addCompartment(amputation);
 
         medicalStats.removeCompartment(target);
@@ -123,27 +124,27 @@ public abstract class DamageGenerator {
         return new InjuryResult(amputation, message);
     }
 
-    private List<Compartment> filterCompartments(@NotNull List<Compartment> compartments) {
+    private List<UUID> filterCompartments(@NotNull HashSet<UUID> compartments, MedicalStats medicalStats) {
         return compartments.stream()
-                .filter(this::isValidCompartment)
+                .filter(id -> isValidCompartment(id, medicalStats))
                 .toList();
     }
 
-    protected List<Compartment> getInitialCompartments(@NotNull MedicalStats medicalStats) {
-        return medicalStats.getCompartments().stream()
-                .filter(this::isValidInitialCompartment)
+    protected List<CompartmentInstance> getInitialCompartments(@NotNull MedicalStats medicalStats) {
+        return medicalStats.getCompartments().values().stream()
+                .filter(id -> isValidInitialCompartment(id, medicalStats))
                 .toList();
     }
 
-    private boolean isValidInitialCompartment(@NotNull Compartment compartment) {
-        return compartment.hasType(CompartmentType.MAJOR_BODY_PART)
+    private boolean isValidInitialCompartment(@NotNull CompartmentInstance compartment, MedicalStats medicalStats) {
+        return compartment.hasTag(CompartmentTag.MAJOR_BODY_PART)
                 && !compartment.isHidden()
-                && compartment.getOwner() != null
-                && compartment.getOwner().hasType(CompartmentType.MAJOR_BODY_PART);
+                && compartment.getParentID() != null
+                && medicalStats.getCompartment(compartment.getParentID()).hasTag(CompartmentTag.MAJOR_BODY_PART);
     }
 
-    protected boolean isValidCompartment(@NotNull Compartment compartment) {
-        return compartment.getTypes().stream().anyMatch(allowedCompartments::contains);
+    protected boolean isValidCompartment(@NotNull UUID compartmentID, @NotNull MedicalStats medicalStats) {
+        return medicalStats.getCompartment(compartmentID).getTags().stream().anyMatch(allowedCompartments::contains);
     }
 }
 

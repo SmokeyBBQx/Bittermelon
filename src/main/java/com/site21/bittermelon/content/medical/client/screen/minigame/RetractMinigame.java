@@ -2,9 +2,11 @@ package com.site21.bittermelon.content.medical.client.screen.minigame;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.init.neoforge.BitterSounds;
-import com.site21.bittermelon.content.medical.compartments.Compartment;
+import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
+import com.site21.bittermelon.content.medical.compartments.CompartmentOld;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.init.neoforge.BitterSounds;
+import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -23,7 +25,7 @@ public class RetractMinigame extends MedicalMinigame {
     private int retractUp = height / 2 + 130;
     private boolean spaceWasPressed = false;
 
-    public RetractMinigame(ItemStack item, Compartment compartment, MedicalStats medicalStats, Character character) {
+    public RetractMinigame(ItemStack item, CompartmentInstance compartment, MedicalStats medicalStats, Character character) {
         super(Component.literal("Retract"), item, compartment, medicalStats, character);
     }
 

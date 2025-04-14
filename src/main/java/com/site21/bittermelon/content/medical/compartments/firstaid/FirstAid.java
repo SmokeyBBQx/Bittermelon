@@ -1,19 +1,19 @@
 package com.site21.bittermelon.content.medical.compartments.firstaid;
 
-import com.site21.bittermelon.content.medical.compartments.Compartment;
-import com.site21.bittermelon.content.medical.compartments.CompartmentType;
-import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.content.medical.compartments.CompartmentOld;
+import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
+import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
 
 import java.util.EnumSet;
 
-public class FirstAid extends Compartment {
-    public FirstAid(EnumSet<CompartmentType> types, String name, Compartment owner, float maxHealth, float quality) {
+public class FirstAid extends CompartmentOld {
+    public FirstAid(EnumSet<CompartmentTag> types, String name, CompartmentOld owner, float maxHealth, float quality) {
         super(types, name, owner, maxHealth);
         hidden = false;
     }
 
     @Override
-    public void onDeath(MedicalStats medicalStats) {
+    public void onDeath(MedicalStatsOld medicalStats) {
         medicalStats.removeCompartment(this);
     }
 

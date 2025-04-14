@@ -1,25 +1,25 @@
 package com.site21.bittermelon.content.medical.compartments.bodyparts;
 
-import com.site21.bittermelon.content.medical.compartments.Compartment;
-import com.site21.bittermelon.content.medical.compartments.CompartmentType;
+import com.site21.bittermelon.content.medical.compartments.CompartmentOld;
+import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
 import com.site21.bittermelon.content.medical.compartments.FunctionType;
-import com.site21.bittermelon.content.medical.compartments.conditions.Cut;
+import com.site21.bittermelon.content.medical.compartments.conditionsold.Cut;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-public class BodyPart extends Compartment {
-    private final List<Compartment> connective = new ArrayList<>();
+public class BodyPart extends CompartmentOld {
+    private final List<CompartmentOld> connective = new ArrayList<>();
     private boolean doesBleed;
 
-    public BodyPart(EnumSet<CompartmentType> types, String name, Compartment owner, float maxHealth) {
+    public BodyPart(EnumSet<CompartmentTag> types, String name, CompartmentOld owner, float maxHealth) {
         super(types, name, owner, maxHealth);
         connective.add(this);
         setAttribute(FunctionType.NERVOUS, 1f);
     }
 
-    public BodyPart(EnumSet<CompartmentType> types, String name, Compartment owner, float maxHealth, boolean hidden) {
+    public BodyPart(EnumSet<CompartmentTag> types, String name, CompartmentOld owner, float maxHealth, boolean hidden) {
         this(types, name, owner, maxHealth);
         this.hidden = hidden;
     }
@@ -32,11 +32,11 @@ public class BodyPart extends Compartment {
         this.doesBleed = doesBleed;
     }
 
-    public void addConnector(Compartment compartment) {
+    public void addConnector(CompartmentOld compartment) {
         connective.add(compartment);
     }
 
-    public boolean isConnected(Compartment compartment) {
+    public boolean isConnected(CompartmentOld compartment) {
         return connective.contains(compartment);
     }
 

@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.medical.compartments.bodyparts;
 
-import com.site21.bittermelon.content.medical.compartments.Compartment;
-import com.site21.bittermelon.content.medical.compartments.CompartmentType;
+import com.site21.bittermelon.content.medical.compartments.CompartmentOld;
+import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
 import com.site21.bittermelon.content.medical.compartments.organs.HeartRhythm;
 
 import java.util.EnumSet;
@@ -9,7 +9,7 @@ import java.util.EnumSet;
 public class Heart extends BodyPart {
     private HeartRhythm heartRhythm = HeartRhythm.SINUS_RHYTHM;
 
-    public Heart(EnumSet<CompartmentType> types, String name, Compartment owner, float maxHealth) {
+    public Heart(EnumSet<CompartmentTag> types, String name, CompartmentOld owner, float maxHealth) {
         super(types, name, owner, maxHealth);
     }
 

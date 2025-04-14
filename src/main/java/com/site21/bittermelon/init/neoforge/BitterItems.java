@@ -3,6 +3,7 @@ package com.site21.bittermelon.init.neoforge;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.items.GermTest;
 import com.site21.bittermelon.content.items.IntercomPhoneItem;
+import com.site21.bittermelon.content.items.SCP109;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.handheldprogrammer.HandheldProgrammerItem;
@@ -33,7 +34,8 @@ public class BitterItems {
             2,
             ItemWeight.MEDIUM,
             75,
-            10)
+            10,
+            true)
     );
 
     public static final DeferredItem<ToolBoxItem> BLUE_TOOLBOX = ITEMS.register("blue_toolbox", () -> new ToolBoxItem(
@@ -195,7 +197,8 @@ public class BitterItems {
             2,
             ItemWeight.MEDIUM,
             100,
-            10)
+            10,
+            true)
     );
 
     public static final DeferredItem<BlockItem> INTERCOM = ITEMS.register("intercom", () -> new BlockItem(
@@ -253,6 +256,10 @@ public class BitterItems {
 
     public static final DeferredItem<BlockItem> SPEAKER = ITEMS.register("speaker", () -> new BlockItem(
             BitterBlocks.SPEAKER.get(),
+            new Item.Properties()
+    ));
+
+    public static final DeferredItem<SCP109> SCP_109 = ITEMS.register("scp109", () -> new SCP109(
             new Item.Properties()
     ));
 }

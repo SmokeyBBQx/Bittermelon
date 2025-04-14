@@ -4,10 +4,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.items.medical.MedicalItem;
-import com.site21.bittermelon.content.medical.compartments.Compartment;
-import com.site21.bittermelon.content.medical.compartments.Condition;
-import com.site21.bittermelon.content.medical.compartments.firstaid.FirstAid;
-import com.site21.bittermelon.content.medical.compartments.conditions.Bleed;
+import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
+import com.site21.bittermelon.content.medical.compartments.FunctionType;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -28,6 +26,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.*;
+
+import static com.site21.bittermelon.content.medical.compartments.CompartmentTag.*;
 
 @OnlyIn(Dist.CLIENT)
 public class HealthScreen extends Screen {
@@ -85,17 +85,16 @@ public class HealthScreen extends Screen {
         Set<String> savedNodes = PersistentScreen.getExpandedNodes(player.getUUID(), character.getUUID());
         this.compartmentList.clearEntries();
 
-        for (Compartment compartment : medicalStats.getCompartments()) {
-            if (compartment.getOwner() != null && compartment.getOwner().getOwner() == null) {
-                if (!showOnlyInjured || hasInjuredChild(compartment)) {
-                    CompartmentEntry entry = new CompartmentEntry(compartment, 0, this);
-                    this.compartmentList.addEntry(entry);
-                }
+        for (CompartmentInstance compartment : medicalStats.getCompartments().values()) {
+            CompartmentInstance parent = medicalStats.getCompartment(compartment.getParentID());
+            boolean isRootLevel = parent != null && medicalStats.getCompartment(parent.getParentID()) == null;
+
+            if (isRootLevel && (!showOnlyInjured || hasInjuredChild(compartment))) {
+                compartmentList.addEntry(new CompartmentEntry(compartment, 0, this));
             }
         }
 
-        for (int i = 0; i < this.compartmentList.children().size(); i++) {
-            CompartmentEntry entry = this.compartmentList.children().get(i);
+        for (CompartmentEntry entry : compartmentList.children()) {
             if (savedNodes.contains(entry.getNodePath())) {
                 entry.updateExpansion();
             }
@@ -104,13 +103,13 @@ public class HealthScreen extends Screen {
         this.compartmentList.setScrollAmount(savedScroll);
     }
 
-    private boolean hasInjuredChild(Compartment compartment) {
-        if (compartment instanceof Condition) {
+    private boolean hasInjuredChild(@NotNull CompartmentInstance compartment) {
+        if (compartment.hasTag(INJURY)) {
             return true;
         }
 
-        for (Compartment child : compartment.getChildren()) {
-            if (hasInjuredChild(child)) {
+        for (UUID childID : compartment.getChildren()) {
+            if (hasInjuredChild(medicalStats.getCompartment(childID))) {
                 return true;
             }
         }
@@ -260,12 +259,12 @@ public class HealthScreen extends Screen {
     }
 
     private static class CompartmentEntry extends ObjectSelectionList.Entry<CompartmentEntry> {
-        private final Compartment compartment;
+        private final CompartmentInstance compartment;
         private final int depth;
         private final HealthScreen screen;
         private boolean isExpanded;
 
-        public CompartmentEntry(Compartment compartment, int depth, @NotNull HealthScreen screen) {
+        public CompartmentEntry(CompartmentInstance compartment, int depth, @NotNull HealthScreen screen) {
             this.compartment = compartment;
             this.depth = depth;
             this.screen = screen;
@@ -279,7 +278,7 @@ public class HealthScreen extends Screen {
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             if (button == 0) {
-                if (!compartment.areChildrenEmpty() &&
+                if (!compartment.areChildrenEmpty(screen.medicalStats) &&
                         mouseX < (double) screen.width / 2 + 100) {
                     toggleExpanded();
                 }
@@ -288,7 +287,7 @@ public class HealthScreen extends Screen {
             if (button == 1) {
                 if (screen.heldItem != null) {
                     if (screen.heldItem.getItem() instanceof MedicalItem medicalItem) {
-                        if (medicalItem.canInteract(compartment)) {
+                        if (medicalItem.canInteract(compartment, screen.medicalStats)) {
                             medicalItem.use(compartment, screen.medicalStats, screen.character, screen.heldItem);
                             screen.refreshCompartmentList();
                         }
@@ -297,7 +296,7 @@ public class HealthScreen extends Screen {
             }
 
             if (button == 2) {
-                if (compartment.canExtract() && compartment.getItem() != null) {
+                if (compartment.getCompartment().canExtract(compartment) && !compartment.getItem().isEmpty()) {
                     screen.character.getMedicalStats().extractCompartment(compartment);
                     screen.refreshCompartmentList();
                     screen.player.getInventory().add(compartment.getItem());
@@ -313,7 +312,8 @@ public class HealthScreen extends Screen {
             if (isExpanded) {
                 nodes.add(getNodePath());
                 int index = screen.compartmentList.children().indexOf(this) + 1;
-                for (Compartment child : compartment.getChildren()) {
+                for (UUID childID : compartment.getChildren()) {
+                    CompartmentInstance child = screen.medicalStats.getCompartment(childID);
                     if (!child.isHidden()) {
                         screen.compartmentList.children().add(index++,
                                 new CompartmentEntry(child, depth + 1, screen));
@@ -327,7 +327,8 @@ public class HealthScreen extends Screen {
 
         private void updateExpansion() {
             int index = screen.compartmentList.children().indexOf(this) + 1;
-            for (Compartment child : compartment.getChildren()) {
+            for (UUID childID : compartment.getChildren()) {
+                CompartmentInstance child = screen.medicalStats.getCompartment(childID);
                 if (!child.isHidden() && (!screen.showOnlyInjured || screen.hasInjuredChild(child))) {
                     screen.compartmentList.children().add(index++,
                             new CompartmentEntry(child, depth + 1, screen));
@@ -354,7 +355,7 @@ public class HealthScreen extends Screen {
             List<Component> tooltipLines = new ArrayList<>();
 
             if (screen.heldItem != null && screen.heldItem.getItem() instanceof MedicalItem medicalItem) {
-                if (medicalItem.canInteract(compartment)) {
+                if (medicalItem.canInteract(compartment, screen.medicalStats)) {
                     tooltipLines.add(Component.literal("\uE002 " + medicalItem.getActionDescription())
                             .withStyle(style -> style.withFont(
                                     ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "default"))));
@@ -362,7 +363,7 @@ public class HealthScreen extends Screen {
             }
 
             if (!compartment.isObscured()) {
-                if (compartment.canExtract() && compartment.getItem() != null) {
+                if (compartment.getCompartment().canExtract(compartment) && !compartment.getItem().isEmpty()) {
                     tooltipLines.add(Component.literal("\uE001 Extract")
                             .withStyle(style -> style.withFont(
                                     ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "default"))));
@@ -389,105 +390,98 @@ public class HealthScreen extends Screen {
                 guiGraphics.fill(left - 1, top - 1, left + width + 1, top + 22, 0x22FFFFFF);
             }
 
-            int color = 0xFFFFFF;
+            int textColor = 0xFFFFFF;
             Component name;
+
             if (compartment.isObscured()) {
                 name = Component.literal(compartment.getName()).withStyle(style -> style.withObfuscated(true).withColor(0xFF7D1010));
             } else {
                 name = Component.literal(compartment.getName());
             }
 
-            if (compartment instanceof FirstAid) {
-                color = 0xFF3CC9C5;
-            } else if (compartment instanceof Condition) {
-                color = 0xFFCF1515;
+            if (compartment.hasTag(FIRST_AID)) {
+                textColor = 0xFF3CC9C5;
+            } else if (compartment.hasTag(CONDITION)) {
+                textColor = 0xFFCF1515;
             }
 
             int indent = depth * 12;
-            int currentX = left + indent + 2;
+            int xPosition = left + indent + 2;
 
-            if (!compartment.areChildrenEmpty() && !compartment.isObscured()) {
-                ResourceLocation UNEXPANDED_ICON = ResourceLocation.fromNamespaceAndPath("bittermelon", "textures/gui/sprites/icon/arrow_right.png");
-                ResourceLocation EXPANDED_ICON = ResourceLocation.fromNamespaceAndPath("bittermelon", "textures/gui/sprites/icon/arrow_down.png");
-                guiGraphics.blit(
-                        isExpanded ? EXPANDED_ICON : UNEXPANDED_ICON,
-                        currentX - 3,
-                        top,
-                        0,
-                        0,
-                        16,
-                        16,
-                        16,
-                        16
-                );
+            renderExpandIcon(guiGraphics, xPosition, top);
+            xPosition += 13;
+
+            xPosition = renderIconOrItem(guiGraphics, xPosition, top);
+
+            guiGraphics.drawString(Minecraft.getInstance().font, name, xPosition, top + 2, textColor);
+
+            renderHealthOrDivider(guiGraphics, xPosition, top);
+        }
+
+        private void renderExpandIcon(GuiGraphics guiGraphics, int x, int top) {
+            if (!compartment.areChildrenEmpty(screen.medicalStats) && !compartment.isObscured()) {
+                ResourceLocation iconTexture = isExpanded ?
+                        ResourceLocation.fromNamespaceAndPath("bittermelon", "textures/gui/sprites/icon/arrow_down.png") :
+                        ResourceLocation.fromNamespaceAndPath("bittermelon", "textures/gui/sprites/icon/arrow_right.png");
+
+                guiGraphics.blit(iconTexture, x - 3, top, 0, 0, 16, 16, 16, 16);
             } else {
-                ResourceLocation SQUARE = ResourceLocation.fromNamespaceAndPath("bittermelon", "textures/gui/sprites/icon/square.png");
-                guiGraphics.blit(
-                        SQUARE,
-                        currentX - 3,
-                        top,
-                        0,
-                        0,
-                        16,
-                        16,
-                        16,
-                        16
-                );
+                ResourceLocation squareTexture = ResourceLocation.fromNamespaceAndPath("bittermelon", "textures/gui/sprites/icon/square.png");
+                guiGraphics.blit(squareTexture, x - 3, top, 0, 0, 16, 16, 16, 16);
             }
-            currentX += 13;
+        }
 
-            if (compartment.getIcon() != null && !compartment.isObscured()) {
-                guiGraphics.blit(
-                        compartment.getIcon(),
-                        currentX,
-                        top + 2,
-                        0,
-                        0,
-                        16,
-                        16,
-                        16,
-                        16
-                );
-                currentX += 20;
-            } else if (compartment.getItem() != null && !compartment.isObscured()) {
-                if (compartment.canExtract()) {
+        private int renderIconOrItem(GuiGraphics guiGraphics, int x, int top) {
+            if (compartment.isObscured()) {
+                return x;
+            }
+
+            if (compartment.getIcon() != null) {
+                guiGraphics.blit(compartment.getIcon(), x, top + 2, 0, 0, 16, 16, 16, 16);
+                return x + 20;
+            }
+
+            if (!compartment.getItem().isEmpty()) {
+                boolean canExtract = compartment.getCompartment().canExtract(compartment);
+
+                if (canExtract) {
                     float pulse = (float) (Math.sin(System.currentTimeMillis() / 500.0) * 0.4f + 0.8f);
                     RenderSystem.enableBlend();
                     RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, pulse);
                 }
 
-                guiGraphics.renderFakeItem(compartment.getItem(), currentX, top + 3);
+                guiGraphics.renderFakeItem(compartment.getItem(), x, top + 3);
 
-                if (compartment.canExtract()) {
+                if (canExtract) {
                     RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
                     RenderSystem.disableBlend();
                 }
-                currentX += 20;
+
+                return x + 20;
             }
 
-            guiGraphics.drawString(Minecraft.getInstance().font, name,
-                    currentX, top + 2, color);
+            return x;
+        }
 
+        private void renderHealthOrDivider(GuiGraphics guiGraphics, int x, int top) {
             if (compartment.getMaxHealth() >= 0 && !compartment.isObscured()) {
                 Component health = Component.literal(
-                        String.format("%.1f/%.0f", compartment.getHealth(),
-                                compartment.getMaxHealth()));
-                guiGraphics.drawString(Minecraft.getInstance().font, health,
-                        currentX, top + 12, 0x808080);
+                        String.format("%.1f/%.0f", compartment.getHealth(), compartment.getMaxHealth()));
+                guiGraphics.drawString(Minecraft.getInstance().font, health, x, top + 12, 0x808080);
             } else {
-                guiGraphics.drawString(Minecraft.getInstance().font, "------------------",
-                        currentX, top + 12, 0x808080);
+                guiGraphics.drawString(Minecraft.getInstance().font, "------------------", x, top + 12, 0x808080);
             }
         }
 
+
         private void obscure() {
-            List<Compartment> children = compartment.getChildren();
-            List<Compartment> ownerChildren = compartment.getOwner().getChildren();
+            HashSet<UUID> children = compartment.getChildren();
             int bleedCount = 0;
 
-            for (Compartment child : children) {
-                if (child instanceof Bleed bleed) {
-                    bleedCount += (int) (bleed.getHealth() * bleed.getBleedRate());
+            for (UUID childID : children) {
+                CompartmentInstance child = screen.medicalStats.getCompartment(childID);
+                if (child.hasTag(BLEED)) {
+                    bleedCount += (int) child.getAttribute(FunctionType.BLEED);
                 }
             }
 
@@ -496,33 +490,36 @@ public class HealthScreen extends Screen {
                 float obscureChance = Math.min(0.01f + (0.05f * bleedCount), 0.05f);
 
                 if (random.nextFloat() < obscureChance) {
-                    List<Compartment> eligibleChildren = ownerChildren.stream()
-                            .filter(child -> !(child instanceof Condition) && !child.isObscured())
+                    HashSet<UUID> siblings = screen.medicalStats.getCompartment(compartment.getParentID()).getChildren();
+
+                    List<UUID> eligibleSiblings = siblings.stream()
+                            .filter(id -> {
+                                CompartmentInstance comp = screen.medicalStats.getCompartment(id);
+                                return !comp.hasTag(CONDITION) && !comp.isObscured();
+                            })
                             .toList();
 
-                    if (!eligibleChildren.isEmpty()) {
-                        Compartment selectedChild = eligibleChildren.get(
-                                random.nextInt(eligibleChildren.size())
-                        );
-                        selectedChild.setObscured(true);
+                    if (!eligibleSiblings.isEmpty()) {
+                        UUID selectedSibling = eligibleSiblings.get(random.nextInt(eligibleSiblings.size()));
+                        screen.medicalStats.getCompartment(selectedSibling).setObscured(true);
                     }
                 }
             }
         }
     }
 
-    private static class PersistentScreen {
-        private record CharacterKey(UUID playerId, UUID characterId) {
-        }
+        private static class PersistentScreen {
+            private record CharacterKey(UUID playerId, UUID characterId) {
+            }
 
-        private static final Map<CharacterKey, Set<String>> expandedHealthNodes = new HashMap<>();
+            private static final Map<CharacterKey, Set<String>> expandedHealthNodes = new HashMap<>();
 
-        public static Set<String> getExpandedNodes(UUID playerId, UUID characterId) {
-            return expandedHealthNodes.computeIfAbsent(
-                    new CharacterKey(playerId, characterId),
-                    k -> new HashSet<>()
-            );
+            public static Set<String> getExpandedNodes(UUID playerId, UUID characterId) {
+                return expandedHealthNodes.computeIfAbsent(
+                        new CharacterKey(playerId, characterId),
+                        k -> new HashSet<>()
+                );
+            }
         }
     }
-}
 

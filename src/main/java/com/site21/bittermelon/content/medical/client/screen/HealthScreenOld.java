@@ -2,10 +2,10 @@
 //
 //import com.site21.bittermelon.character.Character;
 //import com.site21.bittermelon.items.medical.MedicalItem;
-//import com.site21.bittermelon.medical.compartments.Compartment;
+//import com.site21.bittermelon.medical.compartments.CompartmentOld;
 //import com.site21.bittermelon.medical.compartments.Condition;
 //import com.site21.bittermelon.medical.compartments.firstaid.FirstAid;
-//import com.site21.bittermelon.medical.medicalstats.MedicalStats;
+//import com.site21.bittermelon.medical.medicalstats.MedicalStatsOld;
 //import net.minecraft.client.Minecraft;
 //import net.minecraft.client.gui.GuiGraphics;
 //import net.minecraft.client.gui.components.ObjectSelectionList;
@@ -25,7 +25,7 @@
 //public class HealthScreenOld extends Screen {
 //    private final Character character;
 //    private final Player player;
-//    private final MedicalStats medicalStats;
+//    private final MedicalStatsOld medicalStats;
 //    private CompartmentList compartmentList;
 //    private final Set<String> expandedNodes = new HashSet<>();
 //    private final List<InstrumentSlot> instrumentSlots = new ArrayList<>();
@@ -44,7 +44,7 @@
 //    @Override
 //    protected void init() {
 //        this.compartmentList = new CompartmentList(this.minecraft, 200, height - 50, 30, 25);
-//        for (Compartment compartment : medicalStats.getCompartments()) {
+//        for (CompartmentOld compartment : medicalStats.getCompartments()) {
 //            if (compartment.getOwner() != null) {
 //                if (compartment.getOwner().getOwner() == null) {
 //                    this.compartmentList.addEntry(new CompartmentEntry(compartment, 0, this));
@@ -226,13 +226,13 @@
 //    }
 //
 //    private static class CompartmentEntry extends ObjectSelectionList.Entry<CompartmentEntry> {
-//        private final Compartment compartment;
+//        private final CompartmentOld compartment;
 //        private final int depth;
 //        private final HealthScreen screen;
 //        private boolean isExpanded;
 //        private static final int REMOVE_BUTTON_WIDTH = 16;
 //
-//        public CompartmentEntry(Compartment compartment, int depth, HealthScreen screen) {
+//        public CompartmentEntry(CompartmentOld compartment, int depth, HealthScreen screen) {
 //            this.compartment = compartment;
 //            this.depth = depth;
 //            this.screen = screen;
@@ -278,7 +278,7 @@
 //            if (isExpanded) {
 //                screen.expandedNodes.add(getNodePath());
 //                int index = screen.compartmentList.children().indexOf(this) + 1;
-//                for (Compartment child : compartment.getChildren()) {
+//                for (CompartmentOld child : compartment.getChildren()) {
 //                    if (!child.isHidden()) {
 //                        screen.compartmentList.children().add(index++,
 //                                new CompartmentEntry(child, depth + 1, screen));

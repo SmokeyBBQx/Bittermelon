@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 public class SyringeItem extends FluidContainerItem {
 
     public SyringeItem(Properties properties, int width, int height, ItemWeight itemWeight, int capacity, int maxTransferRate) {
-        super(properties, width, height, itemWeight, capacity, maxTransferRate);
+        super(properties, width, height, itemWeight, capacity, maxTransferRate, false);
     }
 
     @Override

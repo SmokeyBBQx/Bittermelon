@@ -4,14 +4,17 @@ import com.site21.bittermelon.content.blocks.devices.IElectronic;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.wires.wire.client.WiringScreen;
+import com.site21.bittermelon.content.items.wires.wire.networking.OpenWiringScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.CORD_CONNECTION;
@@ -31,9 +34,9 @@ public class Wire extends BaseItem {
 
         if (player == null) return InteractionResult.FAIL;
 
-        if (level.getBlockEntity(pos) instanceof IElectronic electronic) {
-            if (level.isClientSide) {
-                Minecraft.getInstance().setScreen(new WiringScreen(electronic, stack));
+        if (level.getBlockEntity(pos) instanceof IElectronic) {
+            if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+                PacketDistributor.sendToPlayer(serverPlayer, new OpenWiringScreen(pos, stack));
             }
             return InteractionResult.SUCCESS;
         }

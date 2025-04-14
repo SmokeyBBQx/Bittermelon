@@ -2,25 +2,26 @@ package com.site21.bittermelon.content.medical.factory;
 
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.medical.blood.BloodType;
-import com.site21.bittermelon.content.medical.compartments.Compartment;
-import com.site21.bittermelon.content.medical.compartments.CompartmentType;
+import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
 import com.site21.bittermelon.content.medical.compartments.FunctionType;
-import com.site21.bittermelon.content.medical.compartments.bodyparts.BodyPart;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+import static com.site21.bittermelon.init.custom.Compartments.*;
 import static com.site21.bittermelon.init.neoforge.BitterItems.*;
 
 public class HumanFactory implements AnatomyFactory {
 
-    @Contract("_, _ -> new")
-    public @NotNull MedicalStats build(BloodType bloodType, Character character) {
-        List<Compartment> compartments = new ArrayList<>();
+    @Override
+    public MedicalStats build(BloodType bloodType, @NotNull Character character) {
+        List<CompartmentInstance> compartments = new ArrayList<>();
 
-        BodyPart wholeBody = createMajorBodyPart("Whole Body", null);
+        CompartmentInstance wholeBody = createMajorBodyPart("Whole Body", null);
         compartments.add(wholeBody);
 
         buildHead(wholeBody, compartments);
@@ -30,169 +31,169 @@ public class HumanFactory implements AnatomyFactory {
         buildLegs(wholeBody, compartments);
         buildBack(wholeBody, compartments);
 
-        return new MedicalStats(bloodType, compartments, character);
+        return new MedicalStats(compartments, bloodType, character.getUUID());
     }
 
-    private static void buildHead(BodyPart wholeBody, @NotNull List<Compartment> compartments) {
-        BodyPart head = createMajorBodyPart("Head", wholeBody);
+    private static void buildHead(CompartmentInstance wholeBody, @NotNull List<CompartmentInstance> compartments) {
+        CompartmentInstance head = createMajorBodyPart("Head", wholeBody);
         compartments.add(head);
 
         // Head layers
-        BodyPart headSkin = createRevealedBodyPart("Skin", head, 10, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart headFat = createBodyPart("Fat", headSkin, 15, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart skull = createBodyPart("Skull", headFat, 150, EnumSet.of(CompartmentType.HARD_TISSUE));
+        CompartmentInstance headSkin = createRevealedSoftTissue("Skin", head, 10);
+        CompartmentInstance headFat = createSoftTissue("Fat", headSkin, 15);
+        CompartmentInstance skull = createHardTissue("Skull", headFat, 150);
 
         // Brain and components
-        BodyPart brain = createMajorBodyPart("Brain", skull);
-        BodyPart meninges = createRevealedBodyPart("Meninges", brain, 2, EnumSet.of(CompartmentType.SOFT_TISSUE));
+        CompartmentInstance brain = createMajorBodyPart("Brain", skull);
+        CompartmentInstance meninges = createRevealedSoftTissue("Meninges", brain, 2);
 
         // Brain regions
-        BodyPart frontalLobe = createBodyPart("Frontal Lobe", meninges, 5, EnumSet.of(CompartmentType.SOFT_TISSUE));
+        CompartmentInstance frontalLobe = createSoftTissue("Frontal Lobe", meninges, 5);
         frontalLobe.setAttribute(FunctionType.BRAIN_MOTOR_ABILITY, 1f);
-        BodyPart parietalLobe = createBodyPart("Parietal Lobe", meninges, 5, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart temporalLobe = createBodyPart("Temporal Lobe", meninges, 4, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart occipitalLobe = createBodyPart("Occipital Lobe", meninges, 3, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart cerebellum = createBodyPart("Cerebellum", meninges, 4, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart brainstem = createBodyPart("Brainstem", meninges, 2, EnumSet.of(CompartmentType.SOFT_TISSUE));
+        CompartmentInstance parietalLobe = createSoftTissue("Parietal Lobe", meninges, 5);
+        CompartmentInstance temporalLobe = createSoftTissue("Temporal Lobe", meninges, 4);
+        CompartmentInstance occipitalLobe = createSoftTissue("Occipital Lobe", meninges, 3);
+        CompartmentInstance cerebellum = createSoftTissue("Cerebellum", meninges, 4);
+        CompartmentInstance brainstem = createSoftTissue("Brainstem", meninges, 2);
         brainstem.setAttribute(FunctionType.BRAIN_VITALS, 1f);
 
         // Face components
-        BodyPart leftEye = createRevealedBodyPart("Left Eye", head, 2, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart rightEye = createRevealedBodyPart("Right Eye", head, 2, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart leftEar = createRevealedBodyPart("Left Ear", head, 1, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart rightEar = createRevealedBodyPart("Right Ear", head, 1, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart nose = createRevealedBodyPart("Nose", head, 2, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart mouth = createRevealedBodyPart("Mouth", head, 2, EnumSet.of(CompartmentType.SOFT_TISSUE));
+        CompartmentInstance leftEye = createRevealedSoftTissue("Left Eye", head, 2);
+        CompartmentInstance rightEye = createRevealedSoftTissue("Right Eye", head, 2);
+        CompartmentInstance leftEar = createRevealedSoftTissue("Left Ear", head, 1);
+        CompartmentInstance rightEar = createRevealedSoftTissue("Right Ear", head, 1);
+        CompartmentInstance nose = createRevealedSoftTissue("Nose", head, 2);
+        CompartmentInstance mouth = createRevealedSoftTissue("Mouth", head, 2);
         mouth.setAttribute(FunctionType.BITE, 1f);
-        BodyPart tongue = createRevealedBodyPart("Tongue", mouth, 2, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart teeth = createRevealedBodyPart("Teeth", mouth, 2, EnumSet.of(CompartmentType.HARD_TISSUE));
+        CompartmentInstance tongue = createRevealedSoftTissue("Tongue", mouth, 2);
+        CompartmentInstance teeth = createRevealedHardTissue("Teeth", mouth, 2);
         teeth.setAttribute(FunctionType.BITE, 1f);
 
         compartments.addAll(Arrays.asList(headSkin, headFat, skull, brain, meninges,
-                frontalLobe, parietalLobe, temporalLobe, occipitalLobe, cerebellum, brainstem, leftEye, rightEye, leftEar, rightEar, nose, mouth, tongue, teeth));
+                frontalLobe, parietalLobe, temporalLobe, occipitalLobe, cerebellum, brainstem,
+                leftEye, rightEye, leftEar, rightEar, nose, mouth, tongue, teeth));
     }
 
-    private static void buildChest(BodyPart wholeBody, @NotNull List<Compartment> compartments) {
-        BodyPart chest = createMajorBodyPart("Chest", wholeBody);
+    private static void buildChest(CompartmentInstance wholeBody, @NotNull List<CompartmentInstance> compartments) {
+        CompartmentInstance chest = createMajorBodyPart("Chest", wholeBody);
         compartments.add(chest);
 
         // Chest layers
-        BodyPart chestSkin = createRevealedBodyPart("Skin", chest, 30, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart chestFat = createBodyPart("Fat", chestSkin, 40, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart chestMuscles = createBodyPart("Muscles", chestFat, 100, EnumSet.of(CompartmentType.SOFT_TISSUE));
+        CompartmentInstance chestSkin = createRevealedSoftTissue("Skin", chest, 30);
+        CompartmentInstance chestFat = createSoftTissue("Fat", chestSkin, 40);
+        CompartmentInstance chestMuscles = createSoftTissue("Muscles", chestFat, 100);
 
         // Skeletal components
-        BodyPart ribs = createBodyPart("Ribs", chestMuscles, 60, EnumSet.of(CompartmentType.HARD_TISSUE));
-        BodyPart sternum = createBodyPart("Sternum", chestMuscles, 20, EnumSet.of(CompartmentType.HARD_TISSUE));
+        CompartmentInstance ribs = createHardTissue("Ribs", chestMuscles, 60);
+        CompartmentInstance sternum = createHardTissue("Sternum", chestMuscles, 20);
 
         // Membrane layer
-        BodyPart pleuralMembrane = createBodyPart("Pleural Membrane", ribs, 5, EnumSet.of(CompartmentType.SOFT_TISSUE));
+        CompartmentInstance pleuralMembrane = createSoftTissue("Pleural Membrane", ribs, 5);
 
         // Cardiopulmonary system
-        BodyPart heart = createBodyPart("Heart", pleuralMembrane, 30, EnumSet.of(CompartmentType.SOFT_TISSUE));
+        CompartmentInstance heart = createSoftTissue("Heart", pleuralMembrane, 30);
         heart.setAttribute(FunctionType.CIRCULATION, 1f);
-        BodyPart pericardium = createBodyPart("Pericardium", heart, 2, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart leftLung = createBodyPart("Left Lung", pleuralMembrane, 40, EnumSet.of(CompartmentType.SOFT_TISSUE));
+        CompartmentInstance pericardium = createSoftTissue("Pericardium", heart, 2);
+        CompartmentInstance leftLung = createSoftTissue("Left Lung", pleuralMembrane, 40);
         leftLung.setAttribute(FunctionType.RESPIRATORY, 1f);
-        BodyPart rightLung = createBodyPart("Right Lung", pleuralMembrane, 40, EnumSet.of(CompartmentType.SOFT_TISSUE));
+        CompartmentInstance rightLung = createSoftTissue("Right Lung", pleuralMembrane, 40);
         rightLung.setAttribute(FunctionType.RESPIRATORY, 1f);
 
         // Other organs
-        BodyPart thymus = createBodyPart("Thymus", pleuralMembrane, 5, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart esophagus = createBodyPart("Esophagus", pleuralMembrane, 10, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart trachea = createBodyPart("Trachea", pleuralMembrane, 10, EnumSet.of(CompartmentType.SOFT_TISSUE));
+        CompartmentInstance thymus = createSoftTissue("Thymus", pleuralMembrane, 5);
+        CompartmentInstance esophagus = createSoftTissue("Esophagus", pleuralMembrane, 10);
+        CompartmentInstance trachea = createSoftTissue("Trachea", pleuralMembrane, 10);
 
         compartments.addAll(Arrays.asList(chestSkin, chestFat, chestMuscles, ribs, sternum,
                 pleuralMembrane, heart, pericardium, leftLung, rightLung, thymus, esophagus, trachea));
     }
 
-    private static void buildAbdomen(BodyPart wholeBody, @NotNull List<Compartment> compartments) {
-        BodyPart abdomen = createMajorBodyPart("Abdomen", wholeBody);
+    private static void buildAbdomen(CompartmentInstance wholeBody, @NotNull List<CompartmentInstance> compartments) {
+        CompartmentInstance abdomen = createMajorBodyPart("Abdomen", wholeBody);
         compartments.add(abdomen);
 
         // Abdominal layers
-        BodyPart abdomenSkin = createRevealedBodyPart("Skin", abdomen, 40, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart abdomenFat = createBodyPart("Fat", abdomenSkin, 60, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart abdominalMuscles = createBodyPart("Abdominal Muscles", abdomenFat, 100, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart peritoneum = createBodyPart("Peritoneum", abdominalMuscles, 5, EnumSet.of(CompartmentType.SOFT_TISSUE));
+        CompartmentInstance abdomenSkin = createRevealedSoftTissue("Skin", abdomen, 40);
+        CompartmentInstance abdomenFat = createSoftTissue("Fat", abdomenSkin, 60);
+        CompartmentInstance abdominalMuscles = createSoftTissue("Abdominal Muscles", abdomenFat, 100);
+        CompartmentInstance peritoneum = createSoftTissue("Peritoneum", abdominalMuscles, 5);
 
         // Digestive organs
-        BodyPart stomach = createBodyPart("Stomach", peritoneum, 30, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        stomach.defaultItem(STOMACH.get());
-        BodyPart smallIntestine = createBodyPart("Small Intestine", peritoneum, 40, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart largeIntestine = createBodyPart("Large Intestine", peritoneum, 40, EnumSet.of(CompartmentType.SOFT_TISSUE));
+        CompartmentInstance stomach = createSoftTissue("Stomach", peritoneum, 30);
+        stomach.setItem(STOMACH.get());
+        CompartmentInstance smallIntestine = createSoftTissue("Small Intestine", peritoneum, 40);
+        CompartmentInstance largeIntestine = createSoftTissue("Large Intestine", peritoneum, 40);
 
         // Accessory organs
-        BodyPart liver = createBodyPart("Liver", peritoneum, 45, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        liver.defaultItem(LIVER.get());
-        BodyPart gallbladder = createBodyPart("Gallbladder", liver, 5, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        gallbladder.defaultItem(GALLBLADDER.get());
-        gallbladder.reveal();
-        BodyPart pancreas = createBodyPart("Pancreas", peritoneum, 10, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart spleen = createBodyPart("Spleen", peritoneum, 15, EnumSet.of(CompartmentType.SOFT_TISSUE));
+        CompartmentInstance liver = createSoftTissue("Liver", peritoneum, 45);
+        liver.setItem(LIVER.get());
+        CompartmentInstance gallbladder = createSoftTissue("Gallbladder", liver, 5);
+        gallbladder.setItem(GALLBLADDER.get());
+        gallbladder.setHidden(false); // Revealed
+        CompartmentInstance pancreas = createSoftTissue("Pancreas", peritoneum, 10);
+        CompartmentInstance spleen = createSoftTissue("Spleen", peritoneum, 15);
 
         // Urinary system
-        BodyPart leftKidney = createBodyPart("Left Kidney", peritoneum, 15, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        leftKidney.defaultItem(KIDNEY.get());
-        BodyPart rightKidney = createBodyPart("Right Kidney", peritoneum, 15, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        rightKidney.defaultItem(KIDNEY.get());
-        BodyPart bladder = createBodyPart("Bladder", peritoneum, 20, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        bladder.defaultItem(BLADDER.get());
+        CompartmentInstance leftKidney = createSoftTissue("Left Kidney", peritoneum, 15);
+        leftKidney.setItem(KIDNEY.get());
+        CompartmentInstance rightKidney = createSoftTissue("Right Kidney", peritoneum, 15);
+        rightKidney.setItem(KIDNEY.get());
+        CompartmentInstance bladder = createSoftTissue("Bladder", peritoneum, 20);
+        bladder.setItem(BLADDER.get());
 
         // Skeletal component
-        BodyPart pelvis = createBodyPart("Pelvis", peritoneum, 80, EnumSet.of(CompartmentType.HARD_TISSUE));
-        pelvis.defaultItem(PELVIS.get());
+        CompartmentInstance pelvis = createHardTissue("Pelvis", peritoneum, 80);
+        pelvis.setItem(PELVIS.get());
 
         compartments.addAll(Arrays.asList(abdomenSkin, abdomenFat, abdominalMuscles, peritoneum,
                 stomach, smallIntestine, largeIntestine, liver, gallbladder, pancreas, spleen,
                 leftKidney, rightKidney, bladder, pelvis));
     }
 
-    private static void buildArms(BodyPart wholeBody, List<Compartment> compartments) {
+    private static void buildArms(CompartmentInstance wholeBody, List<CompartmentInstance> compartments) {
         // Left Arm
-        BodyPart leftArm = createMajorBodyPart("Left Arm", wholeBody);
+        CompartmentInstance leftArm = createMajorBodyPart("Left Arm", wholeBody);
         buildLimb(leftArm, "Left", true, compartments);
 
         // Right Arm
-        BodyPart rightArm = createMajorBodyPart("Right Arm", wholeBody);
+        CompartmentInstance rightArm = createMajorBodyPart("Right Arm", wholeBody);
         buildLimb(rightArm, "Right", true, compartments);
 
         compartments.addAll(Arrays.asList(leftArm, rightArm));
     }
 
-    private static void buildLegs(BodyPart wholeBody, List<Compartment> compartments) {
+    private static void buildLegs(CompartmentInstance wholeBody, List<CompartmentInstance> compartments) {
         // Left Leg
-        BodyPart leftLeg = createMajorBodyPart("Left Leg", wholeBody);
+        CompartmentInstance leftLeg = createMajorBodyPart("Left Leg", wholeBody);
         buildLimb(leftLeg, "Left", false, compartments);
 
         // Right Leg
-        BodyPart rightLeg = createMajorBodyPart("Right Leg", wholeBody);
+        CompartmentInstance rightLeg = createMajorBodyPart("Right Leg", wholeBody);
         buildLimb(rightLeg, "Right", false, compartments);
 
         compartments.addAll(Arrays.asList(leftLeg, rightLeg));
     }
 
-    private static void buildLimb(BodyPart limb, String side, boolean isArm, List<Compartment> compartments) {
-        String limbType = isArm ? "Arm" : "Leg";
+    private static void buildLimb(CompartmentInstance limb, String side, boolean isArm, List<CompartmentInstance> compartments) {
         int baseHealth = isArm ? 15 : 25;
 
-        BodyPart skin = createRevealedBodyPart("Skin", limb, baseHealth, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart fat = createBodyPart(String.format("Fat", side, limbType), skin, baseHealth + 5, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart muscles = createBodyPart(String.format("Muscles", side, limbType), fat, isArm ? 50 : 150, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart tendons = createBodyPart(String.format("Tendons", side, limbType), muscles, isArm ? 10 : 20, EnumSet.of(CompartmentType.SOFT_TISSUE));
+        CompartmentInstance skin = createRevealedSoftTissue("Skin", limb, baseHealth);
+        CompartmentInstance fat = createSoftTissue("Fat", skin, baseHealth + 5);
+        CompartmentInstance muscles = createSoftTissue("Muscles", fat, isArm ? 50 : 150);
+        CompartmentInstance tendons = createSoftTissue("Tendons", muscles, isArm ? 10 : 20);
 
         if (isArm) {
             skin.setAttribute(FunctionType.MANIPULATION, 1f);
             fat.setAttribute(FunctionType.MANIPULATION, 1f);
             muscles.setAttribute(FunctionType.MANIPULATION, 1f);
             tendons.setAttribute(FunctionType.MANIPULATION, 1f);
-            BodyPart humerus = createBodyPart(side + " Humerus", muscles, 30, EnumSet.of(CompartmentType.HARD_TISSUE));
+            CompartmentInstance humerus = createHardTissue(side + " Humerus", muscles, 30);
             humerus.setAttribute(FunctionType.MANIPULATION, 1f);
-            BodyPart radiusUlna = createBodyPart(side + " Radius Ulna", muscles, 20, EnumSet.of(CompartmentType.HARD_TISSUE));
+            CompartmentInstance radiusUlna = createHardTissue(side + " Radius Ulna", muscles, 20);
             radiusUlna.setAttribute(FunctionType.MANIPULATION, 1f);
-            BodyPart hand = createRevealedBodyPart(side + " Hand", limb, 20, EnumSet.of(CompartmentType.SOFT_TISSUE));
+            CompartmentInstance hand = createRevealedSoftTissue(side + " Hand", limb, 20);
             hand.setAttribute(FunctionType.MANIPULATION, 1f);
-            BodyPart wrist = createRevealedBodyPart(side + " Wrist", limb, 10, EnumSet.of(CompartmentType.SOFT_TISSUE));
+            CompartmentInstance wrist = createRevealedSoftTissue(side + " Wrist", limb, 10);
             wrist.setAttribute(FunctionType.MANIPULATION, 1f);
             compartments.addAll(Arrays.asList(humerus, radiusUlna, hand, wrist));
         } else {
@@ -200,13 +201,13 @@ public class HumanFactory implements AnatomyFactory {
             fat.setAttribute(FunctionType.MOVEMENT, 1f);
             muscles.setAttribute(FunctionType.MOVEMENT, 1f);
             tendons.setAttribute(FunctionType.MOVEMENT, 1f);
-            BodyPart femur = createBodyPart(side + " Femur", muscles, 50, EnumSet.of(CompartmentType.HARD_TISSUE));
+            CompartmentInstance femur = createHardTissue(side + " Femur", muscles, 50);
             femur.setAttribute(FunctionType.MOVEMENT, 1f);
-            BodyPart tibiaFibula = createBodyPart(side + " Tibia Fibula", muscles, 40, EnumSet.of(CompartmentType.HARD_TISSUE));
+            CompartmentInstance tibiaFibula = createHardTissue(side + " Tibia Fibula", muscles, 40);
             tibiaFibula.setAttribute(FunctionType.MOVEMENT, 1f);
-            BodyPart foot = createRevealedBodyPart(side + " Foot", limb, 30, EnumSet.of(CompartmentType.SOFT_TISSUE));
+            CompartmentInstance foot = createRevealedSoftTissue(side + " Foot", limb, 30);
             foot.setAttribute(FunctionType.MOVEMENT, 1f);
-            BodyPart ankle = createRevealedBodyPart(side + " Ankle", limb, 10, EnumSet.of(CompartmentType.SOFT_TISSUE));
+            CompartmentInstance ankle = createRevealedSoftTissue(side + " Ankle", limb, 10);
             ankle.setAttribute(FunctionType.MOVEMENT, 1f);
             compartments.addAll(Arrays.asList(femur, tibiaFibula, foot, ankle));
         }
@@ -214,44 +215,52 @@ public class HumanFactory implements AnatomyFactory {
         compartments.addAll(Arrays.asList(skin, fat, muscles, tendons));
     }
 
-    private static void buildBack(BodyPart wholeBody, List<Compartment> compartments) {
-        BodyPart back = createMajorBodyPart("Back", wholeBody);
+    private static void buildBack(CompartmentInstance wholeBody, @NotNull List<CompartmentInstance> compartments) {
+        CompartmentInstance back = createMajorBodyPart("Back", wholeBody);
         compartments.add(back);
 
         // Back layers
-        BodyPart backSkin = createRevealedBodyPart("Skin", back, 25, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart backFat = createBodyPart("Fat", backSkin, 35, EnumSet.of(CompartmentType.SOFT_TISSUE));
-        BodyPart backMuscles = createBodyPart("Muscles", backFat, 150, EnumSet.of(CompartmentType.SOFT_TISSUE));
+        CompartmentInstance backSkin = createRevealedSoftTissue("Skin", back, 25);
+        CompartmentInstance backFat = createSoftTissue("Fat", backSkin, 35);
+        CompartmentInstance backMuscles = createSoftTissue("Muscles", backFat, 150);
 
         // Skeletal components
-        BodyPart spine = createBodyPart("Spine", backMuscles, 100, EnumSet.of(CompartmentType.HARD_TISSUE));
-        BodyPart scapula = createBodyPart("Scapula", backMuscles, 30, EnumSet.of(CompartmentType.HARD_TISSUE));
+        CompartmentInstance spine = createHardTissue("Spine", backMuscles, 100);
+        CompartmentInstance scapula = createHardTissue("Scapula", backMuscles, 30);
 
         compartments.addAll(Arrays.asList(backSkin, backFat, backMuscles, spine, scapula));
     }
 
     @Contract("_, _ -> new")
-    private static @NotNull BodyPart createMajorBodyPart(String name, Compartment owner) {
-        return new BodyPart(EnumSet.of(CompartmentType.MAJOR_BODY_PART), name, owner, -1, false);
-    }
-
-    private static @NotNull BodyPart createBodyPart(String name, Compartment owner, float maxHealth, EnumSet<CompartmentType> types) {
-        BodyPart part = new BodyPart(types, name, owner, maxHealth);
-        if (types.contains(CompartmentType.SOFT_TISSUE)) {
-            part.setDoesBleed(true);
+    private static @NotNull CompartmentInstance createMajorBodyPart(String name, CompartmentInstance parent) {
+        CompartmentInstance bodyPart = new CompartmentInstance(MAJOR_BODY_PART.get(), -1, name, false);
+        if (parent != null) {
+            bodyPart.initializeWithParent(parent);
         }
-        return part;
+        return bodyPart;
     }
 
-    private static @NotNull BodyPart createRevealedBodyPart(String name, Compartment owner, float maxHealth, EnumSet<CompartmentType> types) {
-        BodyPart part = new BodyPart(types, name, owner, maxHealth, false);
-        if (types.contains(CompartmentType.SOFT_TISSUE)) {
-            part.setDoesBleed(true);
-        }
-        return part;
+    private static @NotNull CompartmentInstance createSoftTissue(String name, CompartmentInstance parent, float maxHealth) {
+        CompartmentInstance tissue = new CompartmentInstance(SOFT_TISSUE.get(), maxHealth, name, true);
+        tissue.initializeWithParent(parent);
+        return tissue;
     }
 
-    private static @NotNull BodyPart createVessel(String name, Compartment owner, float maxHealth, CompartmentType type) {
-        return createBodyPart(name, owner, maxHealth, EnumSet.of(CompartmentType.SOFT_TISSUE, type));
+    private static @NotNull CompartmentInstance createRevealedSoftTissue(String name, CompartmentInstance parent, float maxHealth) {
+        CompartmentInstance tissue = new CompartmentInstance(SOFT_TISSUE.get(), maxHealth, name, false);
+        tissue.initializeWithParent(parent);
+        return tissue;
+    }
+
+    private static @NotNull CompartmentInstance createHardTissue(String name, CompartmentInstance parent, float maxHealth) {
+        CompartmentInstance tissue = new CompartmentInstance(HARD_TISSUE.get(), maxHealth, name, true);
+        tissue.initializeWithParent(parent);
+        return tissue;
+    }
+
+    private static @NotNull CompartmentInstance createRevealedHardTissue(String name, CompartmentInstance parent, float maxHealth) {
+        CompartmentInstance tissue = new CompartmentInstance(HARD_TISSUE.get(), maxHealth, name, false);
+        tissue.initializeWithParent(parent);
+        return tissue;
     }
 }

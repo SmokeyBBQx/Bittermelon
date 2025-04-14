@@ -1,11 +1,11 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel;
 
 import com.site21.bittermelon.content.blocks.base.IndentedSmallBlock;
-import com.site21.bittermelon.content.containment.client.ContainmentPanelScreen;
-import net.minecraft.client.Minecraft;
+import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.OpenContainmentPanelScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,11 +44,10 @@ public class ContainmentPanelBlock extends IndentedSmallBlock implements EntityB
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
         BlockState newState = state.setValue(ON, true);
         level.setBlock(pos, newState, 3);
-        if (level.isClientSide()) {
-            BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof ContainmentPanelBlockEntity containmentPanel) {
-                Minecraft.getInstance().setScreen(new ContainmentPanelScreen(containmentPanel, true));
-            }
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (!level.isClientSide) {
+            if (player instanceof ServerPlayer serverPlayer)
+                PacketDistributor.sendToPlayer(serverPlayer, new OpenContainmentPanelScreen(pos));
         }
 
         return InteractionResult.SUCCESS_NO_ITEM_USED;

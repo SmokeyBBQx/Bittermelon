@@ -10,8 +10,7 @@ import java.util.Map;
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.SUBSTANCE_REGISTRY;
 
 public class Substance {
-    private String smell = "";
-    private String taste = "";
+    private final Properties properties;
     private float absorptionRate;
     private final int color;
     private final String name;
@@ -19,12 +18,17 @@ public class Substance {
     private final float density;
     private final float heatCapacity;
 
-    public Substance(String name, int color, float molarMass, float density, float heatCapacity) {
+    public Substance(Properties properties, String name, int color, float molarMass, float density, float heatCapacity) {
+        this.properties = properties;
         this.name = name;
         this.color = color;
         this.molarMass = molarMass;
         this.density = density;
         this.heatCapacity = heatCapacity;
+    }
+
+    public Properties getProperties() {
+        return properties;
     }
 
     public float getAbsorptionRate() {
@@ -72,6 +76,45 @@ public class Substance {
     }
 
     public static class Properties {
+        private float transparency = 1;
+        private float slipperiness = 0.1f;
+        private String flavor;
+        private String smell;
 
+        public float getTransparency() {
+            return transparency;
+        }
+
+        public float getSlipperiness() {
+            return slipperiness;
+        }
+
+        public String getFlavor() {
+            return flavor;
+        }
+
+        public String getSmell() {
+            return smell;
+        }
+
+        public Properties slipperiness(float slipperiness) {
+            this.slipperiness = slipperiness;
+            return this;
+        }
+
+        public Properties flavor(String flavor) {
+            this.flavor = flavor;
+            return this;
+        }
+
+        public Properties smell(String smell) {
+            this.smell = smell;
+            return this;
+        }
+
+        public Properties transparency(float transparency) {
+            this.transparency = transparency;
+            return this;
+        }
     }
 }

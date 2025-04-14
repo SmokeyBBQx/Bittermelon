@@ -26,7 +26,6 @@ public class BitterBlocks {
     public static final DeferredBlock<FluidBlock> FLUID = BLOCKS.register("fluid", () -> new FluidBlock(BlockBehaviour.Properties.of()
             .mapColor(MapColor.WATER)
             .noOcclusion()
-            .noCollission()
             .destroyTime(-1)
             .sound(SoundType.SLIME_BLOCK)
             .pushReaction(PushReaction.NORMAL)

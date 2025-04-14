@@ -1,12 +1,16 @@
 package com.site21.bittermelon.content.blocks.substance.fluid;
 
 import com.google.common.collect.ImmutableMap;
+import com.site21.bittermelon.content.miscellaneous.stumble.StumbleHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.PipeBlock;
@@ -109,5 +113,36 @@ public class FluidBlock extends Block implements EntityBlock {
     @Override
     public boolean canBeReplaced(@NotNull BlockState state, @NotNull BlockPlaceContext context) {
         return true;
+    }
+
+    @Override
+    protected void entityInside(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Entity entity) {
+        if (level.isClientSide) return;
+
+        if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluidBlockEntity) {
+            float slipperiness = fluidBlockEntity.getSlipperiness();
+
+            if (entity instanceof LivingEntity livingEntity) {
+                if (entity.getDeltaMovement().length() > 0) {
+                    if (entity.getRandom().nextFloat() > (entity.isSprinting() ? 1 - slipperiness : 1 - slipperiness / 10)) {
+                        StumbleHandler.stumble(livingEntity);
+                    }
+                }
+            }
+        }
+
+        // TODO: Implement getting chemicals on skin
+    }
+
+    @Override
+    public float getFriction(@NotNull BlockState state, @NotNull LevelReader level, @NotNull BlockPos pos, @Nullable Entity entity) {
+        // TODO: Friction don't work
+
+        if (entity == null) return friction;
+
+        if (entity.level().getBlockEntity(pos) instanceof FluidBlockEntity fluidBlockEntity) {
+            return friction + fluidBlockEntity.getSlipperiness();
+        }
+        return friction;
     }
 }

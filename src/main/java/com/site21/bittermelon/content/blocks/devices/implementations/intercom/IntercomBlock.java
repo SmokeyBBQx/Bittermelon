@@ -2,12 +2,14 @@ package com.site21.bittermelon.content.blocks.devices.implementations.intercom;
 
 import com.site21.bittermelon.content.blocks.base.IndentedSmallBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.client.IntercomScreen;
+import com.site21.bittermelon.content.blocks.devices.implementations.intercom.networking.OpenIntercomScreen;
 import com.site21.bittermelon.content.items.IntercomPhoneItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -20,6 +22,7 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,10 +61,9 @@ public class IntercomBlock extends IndentedSmallBlock implements EntityBlock {
             return InteractionResult.SUCCESS_NO_ITEM_USED;
         }
 
-        if (level.isClientSide()) {
-            BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof IntercomBlockEntity intercomBlockEntity) {
-                Minecraft.getInstance().setScreen(new IntercomScreen(intercomBlockEntity, true));
+        if (!level.isClientSide()) {
+            if (player instanceof ServerPlayer serverPlayer) {
+                PacketDistributor.sendToPlayer(serverPlayer, new OpenIntercomScreen(pos));
             }
         }
 

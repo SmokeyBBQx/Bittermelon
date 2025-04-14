@@ -1,28 +1,31 @@
 package com.site21.bittermelon.content.medical.medicalstats;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.site21.bittermelon.client.visualeffects.ScreenshakeHandler;
 import com.site21.bittermelon.content.atmosphere.AtmosHandler;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.client.visualeffects.ScreenshakeHandler;
+import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.entities.ai.behavior.misc.FeelsPain;
 import com.site21.bittermelon.content.medical.blood.BloodType;
 import com.site21.bittermelon.content.medical.compartments.*;
-import com.site21.bittermelon.content.medical.compartments.bodyparts.BodyPart;
-import com.site21.bittermelon.content.medical.compartments.bodyparts.Heart;
-import com.site21.bittermelon.content.medical.compartments.conditions.Bleed;
-import com.site21.bittermelon.content.medical.compartments.conditions.ForeignSubstance;
-import com.site21.bittermelon.content.medical.compartments.conditions.Infection;
 import com.site21.bittermelon.content.medical.compartments.organs.HeartRhythm;
 import com.site21.bittermelon.content.medical.simulations.Simulation;
 import com.site21.bittermelon.content.miscellaneous.stumble.StumbleHandler;
-import com.site21.bittermelon.networking.client.SetForcedPose;
 import com.site21.bittermelon.content.substance.SubstanceStack;
+import com.site21.bittermelon.networking.client.SetForcedPose;
 import com.site21.bittermelon.util.LocalMessageHelper;
 import com.site21.bittermelon.util.ServerUtil;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.UUIDUtil;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -39,14 +42,38 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
 import static com.site21.bittermelon.init.custom.Substances.LIQUID_BLOOD;
 import static com.site21.bittermelon.init.custom.Substances.LIQUID_WATER;
+import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
 import static net.minecraft.world.level.block.Block.UPDATE_ALL_IMMEDIATE;
 
 public class MedicalStats {
+    public static final Codec<MedicalStats> CODEC = RecordCodecBuilder.create(
+            instance -> instance.group(
+                    Codec.list(CompartmentInstance.CODEC).fieldOf("compartments").forGetter(
+                            stats -> new ArrayList<>(stats.compartments.values())
+                    ),
+                    BloodType.CODEC.fieldOf("bloodType").forGetter(MedicalStats::getBloodType),
+                    UUIDUtil.CODEC.fieldOf("characterID").forGetter(MedicalStats::getCharacterID),
+                    VitalSigns.CODEC.fieldOf("vitalSigns").forGetter(MedicalStats::getVitalSigns)
+            ).apply(instance, MedicalStats::new)
+    );
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, MedicalStats> STREAM_CODEC = StreamCodec.composite(
+            CompartmentInstance.STREAM_CODEC.apply(
+                    ByteBufCodecs.collection(ArrayList::new)
+            ),
+            MedicalStats::getCompartmentsCollection,
+            BloodType.STREAM_CODEC,
+            MedicalStats::getBloodType,
+            UUIDUtil.STREAM_CODEC,
+            MedicalStats::getCharacterID,
+            VitalSigns.STREAM_CODEC,
+            MedicalStats::getVitalSigns,
+            MedicalStats::new
+    );
+
     private static final int GASP_INTERVAL = 200;
     private static final int STUMBLE_INTERVAL = 100;
     private static final int BASE_PAIN_INTERVAL = 300;
@@ -55,14 +82,15 @@ public class MedicalStats {
     private static final float LOW_OXYGEN_THRESHOLD = 80f;
     private static final float LOW_BLOOD_VOLUME_THRESHOLD = 60f;
 
-    private final List<Compartment> compartments;
+    private final HashMap<UUID, CompartmentInstance> compartments;
     private final Map<FunctionType, Float> stats;
     private final Map<UUID, Float> immunity;
     private final List<SubstanceStack> substances;
     private final List<Simulation> simulations;
     private final BloodType bloodType;
-    private final Character character;
-    private final VitalSigns vitalSigns;
+    private final UUID characterID;
+    private Character character;
+    private final MedicalStats.VitalSigns vitalSigns;
     private final Map<Holder<Attribute>, Double> defaultAttributeValues;
 
     private LivingEntity entity;
@@ -72,13 +100,17 @@ public class MedicalStats {
     private int painTickCounter;
     private int bleedTickCounter;
 
-    public MedicalStats(BloodType bloodType, List<Compartment> compartments, @NotNull Character character) {
+    public MedicalStats(@NotNull Collection<CompartmentInstance> compartments, BloodType bloodType, UUID characterID, VitalSigns vitalSigns) {
         this.bloodType = bloodType;
-        this.compartments = new CopyOnWriteArrayList<>(compartments);
-        this.character = character;
+        this.compartments = new HashMap<>();
+        for (CompartmentInstance instance : compartments) {
+            this.compartments.put(instance.getUUID(), instance);
+        }
+        this.characterID = characterID;
+        this.vitalSigns = vitalSigns;
+        this.character = CharacterManager.get(ServerUtil.getServer()).getCharacter(characterID);
         this.stats = new EnumMap<>(FunctionType.class);
         this.immunity = new ConcurrentHashMap<>();
-        this.vitalSigns = new VitalSigns();
         this.substances = new ArrayList<>();
         this.simulations = new ArrayList<>();
         this.defaultAttributeValues = new HashMap<>();
@@ -87,13 +119,23 @@ public class MedicalStats {
         initializeEntity();
     }
 
+    public MedicalStats(@NotNull List<CompartmentInstance> compartments, BloodType bloodType, UUID characterID) {
+        this(compartments, bloodType, characterID, new VitalSigns());
+    }
+
     private void initializeStats() {
         for (FunctionType type : FunctionType.values()) {
             stats.put(type, 0f);
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void initializeEntity() {
+        if (character == null) {
+            character = CharacterManager.get(ServerUtil.getServer()).getCharacter(characterID);
+            return;
+        }
+
         this.entity = ServerUtil.getLivingEntity(character.getEntityUUID());
         if (entity == null) return;
 
@@ -105,7 +147,6 @@ public class MedicalStats {
         }
     }
 
-
     public void update() {
         if (entity == null) {
             initializeEntity();
@@ -115,8 +156,8 @@ public class MedicalStats {
         updateCompartments();
         updateEntityAttributes();
         updateCardiopulmonary();
-        updateSubstances();
-        updateSimulations();
+//        updateSubstances();
+//        updateSimulations();
         handlePain();
         handleTremor();
         bloodPuddle();
@@ -131,12 +172,12 @@ public class MedicalStats {
             countMap.put(type, 0);
         }
 
-        for (Compartment compartment : compartments) {
-            compartment.update(this);
+        for (CompartmentInstance compartment : compartments.values()) {
+            compartment.tick(this);
 
-            if (compartment instanceof Condition) {
-                processCondition(compartment);
-            }
+//            if (compartment instanceof Condition) {
+//                processCondition(compartment);
+//            }
 
             for (FunctionType stat : FunctionType.values()) {
                 float attribute = compartment.getAttribute(stat);
@@ -158,46 +199,10 @@ public class MedicalStats {
         stats.putAll(statsCopy);
     }
 
-    private void processCondition(Compartment compartment) {
-        if (compartment instanceof Infection infection) {
-            handleInfection(infection);
-        } else if (compartment instanceof ForeignSubstance substance) {
-            handleForeignSubstance(substance);
-        } else if (compartment instanceof Injury injury) {
-            handleInjury(injury);
-        } else if (compartment instanceof Bleed bleed) {
-            handleCoagulation(bleed);
-        }
-    }
-
-    private void handleInfection(@NotNull Infection infection) {
-        float immunityRate = stats.get(FunctionType.IMMUNITY);
-        float memory = immunity.getOrDefault(infection.getOrganism(), 0f);
-
-        infection.modifyHealth(-immunityRate * memory / 10);
-        immunity.merge(infection.getOrganism(), immunityRate / 10, Float::sum);
-
-        // TODO: Add inflammation
-    }
-
-    private void handleForeignSubstance(@NotNull ForeignSubstance substance) {
-        substance.modifyHealth(-stats.get(FunctionType.ELIMINATION) / 10);
-
-        // TODO: Separate metabolism and elimination?
-    }
-
-    private void handleInjury(@NotNull Injury injury) {
-        injury.modifyHealth(-stats.get(FunctionType.HEALING));
-    }
-
-    private void handleCoagulation(@NotNull Bleed bleed) {
-        bleed.modifyHealth(-vitalSigns.plateletNumber);
-    }
-
     private void updateEntityAttributes() {
-            updateMovementAttributes();
-            updateManipulationAttributes();
-            updateConsciousness();
+        updateMovementAttributes();
+        updateManipulationAttributes();
+        updateConsciousness();
     }
 
     private void updateMovementAttributes() {
@@ -232,19 +237,17 @@ public class MedicalStats {
         vitalSigns.modifyBloodVolume(getCirculation() / 100 - stats.get(FunctionType.BLEED) / 20);
         vitalSigns.modifyOxygenSaturation((stats.get(FunctionType.RESPIRATORY) / 100) * stats.get(FunctionType.BRAIN_VITALS) * getAirQuality() - 0.01f);
 
-        if (!entity.level().isClientSide) {
-            AtmosHandler.releaseGas(entity.level(), entity.getOnPos(), new SubstanceStack(LIQUID_WATER.get(), 0.001f));
-        }
+//        if (!entity.level().isClientSide) {
+//            AtmosHandler.releaseGas(entity.level(), entity.getOnPos(), new SubstanceStack(LIQUID_WATER.get(), 0.001f));
+//        }
         handleGasping();
 
         if (vitalSigns.bloodVolume < 60 || vitalSigns.oxygenSaturation < 80) {
-            for (Compartment compartment : compartments) {
-                if (compartment instanceof BodyPart && !compartment.hasType(CompartmentType.MAJOR_BODY_PART)) {
+            for (CompartmentInstance compartment : compartments.values()) {
                     compartment.modifyHealth(-0.001f);
                     if (compartment.getHealth() <= 0) {
                         compartment.modifyMaxHealth(-0.001f);
                     }
-                }
             }
         }
 
@@ -267,18 +270,6 @@ public class MedicalStats {
 //            }
 //        }
 //        return 0;
-    }
-
-    private void checkForHeartArrhythmia(Compartment compartment) {
-        if (compartment instanceof Heart heart) {
-            float health = heart.getHealth();
-            HeartRhythm currentRhythm = heart.getHeartRhythm();
-            if (currentRhythm == HeartRhythm.SINUS_RHYTHM) {
-
-            } else {
-
-            }
-        }
     }
 
     private void handleGasping() {
@@ -314,36 +305,16 @@ public class MedicalStats {
         }
     }
 
-    private void walkClumsiness() {
-    }
-
     private void updateConsciousness() {
         if (vitalSigns.consciousness < 0.1f) {
             if (entity.getPose() != Pose.SLEEPING) {
                 entity.setPose(Pose.SLEEPING);
                 PacketDistributor.sendToAllPlayers(new SetForcedPose(entity.getUUID(), Pose.SLEEPING));
-                LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(character.getName() + " passes out.").withColor(character.getEmoteColor()));
+//                LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(character.getName() + " passes out.").withColor(character.getEmoteColor()));
             }
         }
 
         vitalSigns.consciousness = stats.get(FunctionType.BRAIN_VITALS) * stats.get(FunctionType.CIRCULATION);
-    }
-
-    private void updateSubstances() {
-        for (SubstanceStack stack : substances) {
-
-        }
-    }
-
-    private void updateSimulations() {
-        Iterator<Simulation> iterator = simulations.iterator();
-        while (iterator.hasNext()) {
-            Simulation simulation = iterator.next();
-            simulation.update();
-            if (simulation.finished) {
-                iterator.remove();
-            }
-        }
     }
 
     private void handlePain() {
@@ -382,63 +353,6 @@ public class MedicalStats {
         if (entity instanceof Player player) {
             if (!entity.level().isClientSide()) return;
             ScreenshakeHandler.startScreenshake(player, 80, Math.min(0.8f, getTremor() / 10));
-        }
-    }
-
-    public void removeCompartment(@NotNull Compartment compartment) {
-        compartment.getOwner().getChildren().remove(compartment);
-        compartments.remove(compartment);
-
-        List<Compartment> childrenToRemove = new ArrayList<>(compartment.getChildren());
-        for (Compartment child : childrenToRemove) {
-            if (compartment.hasType(CompartmentType.MAJOR_BODY_PART)) {
-                removeCompartment(child);
-            } else if (child instanceof Condition) {
-                removeCompartment(child);
-            } else {
-                child.initializeWithOwner(compartment.getOwner());
-            }
-        }
-
-
-        // TODO: Severed vessels and such for connecting compartments
-    }
-
-    public void extractCompartment(@NotNull Compartment compartment) {
-        compartment.onExtract(this);
-        removeCompartment(compartment);
-    }
-
-    public void addCompartment(Compartment compartment) {
-        compartments.add(compartment);
-    }
-
-    public void updateSubstance(SubstanceStack substance) {
-        for (SubstanceStack stack : substances) {
-            if (stack.canMergeWith(substance)) {
-                stack.modifyAmount(substance.getAmount());
-                return;
-            }
-        }
-
-        substances.add(substance);
-    }
-
-    public List<Compartment> getCompartments() {
-        return compartments;
-    }
-
-    public List<SubstanceStack> getSubstances() {
-        return substances;
-    }
-
-    protected void sight() {
-        if (stats.get(FunctionType.BRAIN_SIGHT) <= 10) {
-
-        }
-
-        if (stats.get(FunctionType.SIGHT) <= 10) {
-
         }
     }
 
@@ -483,6 +397,47 @@ public class MedicalStats {
             }
         }
     }
+
+    public CompartmentInstance getCompartment(UUID uuid) {
+        return compartments.get(uuid);
+    }
+
+    public HashMap<UUID, CompartmentInstance> getCompartments() {
+        return compartments;
+    }
+
+    public Collection<CompartmentInstance> getCompartmentsCollection() {
+        return compartments.values();
+    }
+
+    public void extractCompartment(@NotNull CompartmentInstance compartment) {
+        compartment.getCompartment().onExtract(this, compartment);
+        removeCompartment(compartment);
+    }
+
+    public void removeCompartment(@NotNull CompartmentInstance compartment) {
+        getCompartment(compartment.getParentID()).getChildren().remove(compartment.getUUID());
+        compartments.remove(compartment.getUUID());
+
+        List<UUID> childrenToRemove = new ArrayList<>(compartment.getChildren());
+        for (UUID child : childrenToRemove) {
+            if (getCompartment(child).hasTag(CompartmentTag.MAJOR_BODY_PART)) {
+                removeCompartment(getCompartment(child));
+            } else if (getCompartment(child).hasTag(CompartmentTag.CONDITION)) {
+                removeCompartment(getCompartment(child));
+            } else {
+                getCompartment(child).initializeWithParent(getCompartment(compartment.getParentID()));
+            }
+        }
+
+
+        // TODO: Severed vessels and such for connecting compartments
+    }
+
+    public void addCompartment(CompartmentInstance compartment) {
+        compartments.put(compartment.getUUID(), compartment);
+    }
+
 
     public float getTasteAbility() {
         return stats.get(FunctionType.BRAIN_TASTE) * stats.get(FunctionType.TASTE);
@@ -569,16 +524,104 @@ public class MedicalStats {
         heartLifeSupport = value;
     }
 
-    private static class VitalSigns {
-        private float consciousness = 1;
-        private float oxygenSaturation = 100;
-        private float bloodVolume = 100;
-        private float plateletNumber = 0.0005f;
+    public UUID getCharacterID() {
+        return characterID;
+    }
+
+    public VitalSigns getVitalSigns() {
+        return vitalSigns;
+    }
+
+    public static class VitalSigns {
+        public static final Codec<VitalSigns> CODEC = RecordCodecBuilder.create(
+                instance -> instance.group(
+                        Codec.FLOAT.fieldOf("consciousness").forGetter(vs -> vs.consciousness),
+                        Codec.FLOAT.fieldOf("oxygenSaturation").forGetter(vs -> vs.oxygenSaturation),
+                        Codec.FLOAT.fieldOf("bloodVolume").forGetter(vs -> vs.bloodVolume),
+                        Codec.FLOAT.fieldOf("plateletNumber").forGetter(vs -> vs.plateletNumber),
+                        Codec.INT.fieldOf("bpm").forGetter(vs -> vs.bpm),
+                        Codec.FLOAT.fieldOf("bloodPressureSystolic").forGetter(vs -> vs.bloodPressureSystolic),
+                        Codec.FLOAT.fieldOf("bloodPressureDiastolic").forGetter(vs -> vs.bloodPressureDiastolic),
+                        Codec.FLOAT.fieldOf("temperature").forGetter(vs -> vs.temperature),
+                        HeartRhythm.CODEC.fieldOf("heartRhythm").forGetter(vs -> vs.heartRhythm)
+                ).apply(instance, VitalSigns::new)
+        );
+
+        public static final StreamCodec<ByteBuf, VitalSigns> STREAM_CODEC = new StreamCodec<>() {
+            @Override
+            public void encode(@NotNull ByteBuf buf, @NotNull VitalSigns value) {
+                buf.writeFloat(value.getConsciousness());
+                buf.writeFloat(value.getOxygenSaturation());
+                buf.writeFloat(value.getBloodVolume());
+                buf.writeFloat(value.getPlateletNumber());
+                buf.writeInt(value.getBpm());
+                buf.writeFloat(value.getBloodPressureSystolic());
+                buf.writeFloat(value.getBloodPressureDiastolic());
+                buf.writeFloat(value.getTemperature());
+                HeartRhythm.STREAM_CODEC.encode(buf, value.getHeartRhythm());
+            }
+
+            @Override
+            public @NotNull VitalSigns decode(@NotNull ByteBuf buf) {
+                float consciousness = buf.readFloat();
+                float oxygenSaturation = buf.readFloat();
+                float bloodVolume = buf.readFloat();
+                float plateletNumber = buf.readFloat();
+                int bpm = buf.readInt();
+                float bloodPressureSystolic = buf.readFloat();
+                float bloodPressureDiastolic = buf.readFloat();
+                float temperature = buf.readFloat();
+                HeartRhythm heartRhythm = HeartRhythm.STREAM_CODEC.decode(buf);
+
+                return new VitalSigns(
+                        consciousness,
+                        oxygenSaturation,
+                        bloodVolume,
+                        plateletNumber,
+                        bpm,
+                        bloodPressureSystolic,
+                        bloodPressureDiastolic,
+                        temperature,
+                        heartRhythm
+                );
+            }
+        };
+
+        private float consciousness;
+        private float oxygenSaturation;
+        private float bloodVolume;
+        private float plateletNumber;
         private int bpm;
         private float bloodPressureSystolic;
         private float bloodPressureDiastolic;
         private float temperature;
         private HeartRhythm heartRhythm;
+
+        public VitalSigns(float consciousness, float oxygenSaturation, float bloodVolume,
+                          float plateletNumber, int bpm, float bloodPressureSystolic,
+                          float bloodPressureDiastolic, float temperature, HeartRhythm heartRhythm) {
+            this.consciousness = consciousness;
+            this.oxygenSaturation = oxygenSaturation;
+            this.bloodVolume = bloodVolume;
+            this.plateletNumber = plateletNumber;
+            this.bpm = bpm;
+            this.bloodPressureSystolic = bloodPressureSystolic;
+            this.bloodPressureDiastolic = bloodPressureDiastolic;
+            this.temperature = temperature;
+            this.heartRhythm = heartRhythm;
+        }
+
+        public VitalSigns() {
+            this.consciousness = 1;
+            this.oxygenSaturation = 100;
+            this.bloodVolume = 100;
+            this.plateletNumber = 0.0005f;
+            this.bpm = 0;
+            this.bloodPressureSystolic = 0;
+            this.bloodPressureDiastolic = 0;
+            this.temperature = 37.0f;
+            this.heartRhythm = HeartRhythm.SINUS_RHYTHM;
+        }
 
         public void modifyBloodVolume(float amount) {
             bloodVolume = Math.max(0, Math.min(amount + bloodVolume, 100));
@@ -586,6 +629,42 @@ public class MedicalStats {
 
         public void modifyOxygenSaturation(float amount) {
             oxygenSaturation = Math.max(0, Math.min(amount + oxygenSaturation, 100));
+        }
+
+        public float getConsciousness() {
+            return consciousness;
+        }
+
+        public float getOxygenSaturation() {
+            return oxygenSaturation;
+        }
+
+        public float getBloodVolume() {
+            return bloodVolume;
+        }
+
+        public float getPlateletNumber() {
+            return plateletNumber;
+        }
+
+        public int getBpm() {
+            return bpm;
+        }
+
+        public float getBloodPressureSystolic() {
+            return bloodPressureSystolic;
+        }
+
+        public float getBloodPressureDiastolic() {
+            return bloodPressureDiastolic;
+        }
+
+        public float getTemperature() {
+            return temperature;
+        }
+
+        public HeartRhythm getHeartRhythm() {
+            return heartRhythm;
         }
     }
 }

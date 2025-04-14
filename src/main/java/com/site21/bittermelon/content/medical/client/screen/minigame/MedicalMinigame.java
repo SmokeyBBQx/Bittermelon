@@ -2,8 +2,10 @@ package com.site21.bittermelon.content.medical.client.screen.minigame;
 
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.items.medical.MedicalItem;
-import com.site21.bittermelon.content.medical.compartments.Compartment;
+import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
+import com.site21.bittermelon.content.medical.compartments.CompartmentOld;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -19,7 +21,7 @@ import static com.site21.bittermelon.content.medical.client.screen.HealthScreenK
 @OnlyIn(Dist.CLIENT)
 public abstract class MedicalMinigame extends Screen {
     protected final ItemStack item;
-    protected final Compartment compartment;
+    protected final CompartmentInstance compartment;
     protected final MedicalStats medicalStats;
     protected final Character character;
     protected int completionTime;
@@ -29,7 +31,7 @@ public abstract class MedicalMinigame extends Screen {
     protected static long SOUND_DELAY;
 
 
-    protected MedicalMinigame(Component title, ItemStack item, Compartment compartment, MedicalStats medicalStats, Character character) {
+    protected MedicalMinigame(Component title, ItemStack item, CompartmentInstance compartment, MedicalStats medicalStats, Character character) {
         super(title);
         this.item = item;
         this.compartment = compartment;

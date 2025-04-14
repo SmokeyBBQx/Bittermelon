@@ -1,9 +1,11 @@
 package com.site21.bittermelon.content.items.medical;
 
 import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.medical.compartments.Compartment;
-import com.site21.bittermelon.content.medical.compartments.CompartmentType;
+import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
+import com.site21.bittermelon.content.medical.compartments.CompartmentOld;
+import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -12,10 +14,10 @@ import net.neoforged.api.distmarker.OnlyIn;
 import java.util.EnumSet;
 
 public interface MedicalItem {
-    EnumSet<CompartmentType> getAllowedCompartments();
+    EnumSet<CompartmentTag> getAllowedCompartments();
     @OnlyIn(Dist.CLIENT)
-    void use(Compartment compartment, MedicalStats medicalStats, Character character, ItemStack item);
-    void finishAction(Compartment compartment, MedicalStats medicalStats, Character character, float quality, ItemStack item);
+    void use(CompartmentInstance compartment, MedicalStats medicalStats, Character character, ItemStack item);
+    void finishAction(CompartmentInstance compartment, MedicalStats medicalStats, Character character, float quality, ItemStack item);
     default boolean shouldConsumeItem() {
         return false;
     }
@@ -24,9 +26,9 @@ public interface MedicalItem {
             player.getInventory().removeItem(item);
         }
     }
-    default boolean canInteract(Compartment compartment) {
-        for (CompartmentType type : getAllowedCompartments()) {
-            if (compartment.hasType(type)) {
+    default boolean canInteract(CompartmentInstance compartment, MedicalStats medicalStats) {
+        for (CompartmentTag type : getAllowedCompartments()) {
+            if (compartment.hasTag(type)) {
                 return true;
             }
         }
