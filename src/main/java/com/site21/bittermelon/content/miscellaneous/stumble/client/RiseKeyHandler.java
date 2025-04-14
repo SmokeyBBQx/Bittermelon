@@ -2,12 +2,14 @@ package com.site21.bittermelon.content.miscellaneous.stumble.client;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.miscellaneous.stumble.StumbleHandler;
+import com.site21.bittermelon.content.miscellaneous.stumble.networking.AttemptToRise;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.UUID;
 
@@ -32,7 +34,7 @@ public class RiseKeyHandler {
 //                    PacketDistributor.sendToAllPlayers(new SetForcedPose(uuid, Pose.SITTING));
             // TODO: Fix this animation
             if (ticksHeld >= TICKS_REQUIRED) {
-                StumbleHandler.attemptToRise(uuid);
+                PacketDistributor.sendToServer(new AttemptToRise(uuid));
                 keyPressed = false;
                 ticksHeld = 0;
             }

@@ -10,6 +10,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
@@ -119,9 +120,11 @@ public class Character {
         return medicalStats;
     }
 
-    public void update() {
+    public void update(Level level) {
         if (medicalStats != null) {
-            medicalStats.update();
+            medicalStats.update(level);
+        } else {
+            System.out.println("Medical stats null for " + name);
         }
     }
 

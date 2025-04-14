@@ -11,7 +11,6 @@ import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercom
 import com.site21.bittermelon.content.substance.reactions.Reactions;
 import com.site21.bittermelon.init.neoforge.BitterEntities;
 import com.site21.bittermelon.init.neoforge.BitterRegistries;
-import com.site21.bittermelon.util.ServerUtil;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
@@ -109,7 +108,6 @@ public class Bittermelon
     @SubscribeEvent
     public void onServerStarting(@NotNull ServerStartingEvent event)
     {
-        ServerUtil.setMinecraftServer(event.getServer());
     }
 
     @SubscribeEvent
@@ -117,7 +115,7 @@ public class Bittermelon
         Level level = event.getEntity().level();
         if (level.isClientSide) return;
        Character character = CharacterManager.get(level).getActiveCharacter(event.getEntity());
-       if (character != null) character.update();
+       if (character != null) character.update(level);
 
     }
 

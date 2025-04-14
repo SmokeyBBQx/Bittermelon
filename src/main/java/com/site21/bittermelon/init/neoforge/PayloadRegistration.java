@@ -11,6 +11,7 @@ import com.site21.bittermelon.content.items.wires.wire.networking.OpenWiringScre
 import com.site21.bittermelon.content.items.wires.wire.networking.WiringDataUpdate;
 import com.site21.bittermelon.content.medical.client.screen.OpenHealthScreenC2S;
 import com.site21.bittermelon.content.medical.client.screen.OpenHealthScreenS2C;
+import com.site21.bittermelon.content.miscellaneous.stumble.networking.AttemptToRise;
 import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
 import com.site21.bittermelon.networking.client.*;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.ContainmentNameUpdate;
@@ -207,6 +208,12 @@ public class PayloadRegistration {
                 OpenWiringScreen.TYPE,
                 OpenWiringScreen.STREAM_CODEC,
                 OpenWiringScreen::handle
+        );
+
+        registrar.playToServer(
+                AttemptToRise.TYPE,
+                AttemptToRise.STREAM_CODEC,
+                AttemptToRise::handle
         );
     }
 }

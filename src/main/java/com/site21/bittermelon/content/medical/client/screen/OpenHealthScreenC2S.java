@@ -1,20 +1,16 @@
 package com.site21.bittermelon.content.medical.client.screen;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.atmosphere.networking.SyncAtmosInstances;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
-import com.site21.bittermelon.util.ServerUtil;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -41,20 +37,20 @@ public record OpenHealthScreenC2S(UUID playerUUID, UUID hitEntityUUID) implement
     public void handle(@NotNull IPayloadContext ctx) {
         Level level = ctx.player().level();
 
-        if (level.isClientSide) return;
+        if (level instanceof ServerLevel serverLevel) {
+            Character targetCharacter = null;
+            Entity hitEntity = serverLevel.getEntities().get(hitEntityUUID);
+            Entity playerEntity = serverLevel.getEntities().get(playerUUID);
 
-        Character targetCharacter = null;
-        Entity hitEntity = ServerUtil.getEntity(hitEntityUUID);
-        Entity playerEntity = ServerUtil.getEntity(playerUUID);
+            if (hitEntity != null) {
+                targetCharacter = CharacterManager.get(level).getActiveCharacter(hitEntity);
+            } else if (playerEntity != null) {
+                targetCharacter = CharacterManager.get(level).getActiveCharacter(playerEntity);
+            }
 
-        if (hitEntity != null) {
-            targetCharacter = CharacterManager.get(level).getActiveCharacter(hitEntity);
-        } else if (playerEntity != null) {
-            targetCharacter = CharacterManager.get(level).getActiveCharacter(playerEntity);
-        }
-
-        if (targetCharacter != null && ctx.player() instanceof ServerPlayer serverPlayer) {
-            PacketDistributor.sendToPlayer(serverPlayer, new OpenHealthScreenS2C(targetCharacter.getUUID(), serverPlayer.getMainHandItem()));
+            if (targetCharacter != null && ctx.player() instanceof ServerPlayer serverPlayer) {
+                PacketDistributor.sendToPlayer(serverPlayer, new OpenHealthScreenS2C(targetCharacter, serverPlayer.getMainHandItem()));
+            }
         }
     }
 }

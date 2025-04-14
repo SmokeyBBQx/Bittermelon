@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public record OpenHealthScreenS2C(UUID characterID, ItemStack stack) implements CustomPacketPayload {
+public record OpenHealthScreenS2C(Character character, ItemStack stack) implements CustomPacketPayload {
     public static final Type<OpenHealthScreenS2C> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "open_health_screen_s2c"));
 
     @Override
@@ -27,8 +27,8 @@ public record OpenHealthScreenS2C(UUID characterID, ItemStack stack) implements 
     }
 
     public static final StreamCodec<RegistryFriendlyByteBuf, OpenHealthScreenS2C> STREAM_CODEC = StreamCodec.composite(
-            UUIDUtil.STREAM_CODEC,
-            OpenHealthScreenS2C::characterID,
+            Character.STREAM_CODEC,
+            OpenHealthScreenS2C::character,
             ItemStack.OPTIONAL_STREAM_CODEC,
             OpenHealthScreenS2C::stack,
             OpenHealthScreenS2C::new
@@ -36,7 +36,6 @@ public record OpenHealthScreenS2C(UUID characterID, ItemStack stack) implements 
 
     public void handle(@NotNull IPayloadContext ctx) {
         Player player = ctx.player();
-        Character character = CharacterManager.get(player.level()).getCharacter(characterID);
         if (character != null) {
             ClientHandler.displayHealthScreen(character, player, stack);
         }

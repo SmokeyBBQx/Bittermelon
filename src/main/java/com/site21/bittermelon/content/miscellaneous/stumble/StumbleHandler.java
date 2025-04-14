@@ -3,12 +3,12 @@ package com.site21.bittermelon.content.miscellaneous.stumble;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
-import com.site21.bittermelon.client.visualeffects.ScreenshakeHandler;
+import com.site21.bittermelon.client.visualeffects.screenshake.ScreenshakeHandler;
 import com.site21.bittermelon.networking.client.ClearForcedPose;
 import com.site21.bittermelon.networking.client.SetForcedPose;
-import com.site21.bittermelon.util.ServerUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -20,6 +20,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -46,6 +47,8 @@ public class StumbleHandler {
         Pose pose = entity.getPose();
         if (pose == Pose.SLEEPING || pose == Pose.SWIMMING) return;
 
+        if (entity.level().isClientSide) return;
+
         Character character = CharacterManager.get(entity.level()).getActiveCharacter(entity);
         if (character != null) {
             int movement = (int) character.getMedicalStats().getMovement();
@@ -56,13 +59,12 @@ public class StumbleHandler {
             }
         }
 
-        if (!entity.level().isClientSide) {
-            instances.put(entity.getUUID(), length);
-            effectDelays.put(entity.getUUID(), 5);
-            motion(entity, length, pushDirection);
-            addStun(entity);
-            announceFall(entity);
-        }
+        instances.put(entity.getUUID(), length);
+        effectDelays.put(entity.getUUID(), 5);
+        motion(entity, length, pushDirection);
+        addStun(entity);
+        announceFall(entity);
+
     }
 
     public static void stumble(LivingEntity entity) {
@@ -185,10 +187,10 @@ public class StumbleHandler {
         }
     }
 
-    public static void attemptToRise(UUID uuid) {
+    public static void attemptToRise(UUID uuid, ServerLevel level) {
         Integer value = instances.get(uuid);
         if (value == null || value <= 0) {
-            Entity entity = ServerUtil.getEntity(uuid);
+            Entity entity = level.getEntities().get(uuid);
             if (entity != null) {
                 clearEntity(entity);
                 if (entity instanceof ServerPlayer player) {

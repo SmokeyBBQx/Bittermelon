@@ -4,7 +4,7 @@ import com.site21.bittermelon.content.atmosphere.AtmosHandler;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.client.visualeffects.ScreenshakeHandler;
+import com.site21.bittermelon.client.visualeffects.screenshake.ScreenshakeHandler;
 import com.site21.bittermelon.content.entities.ai.behavior.misc.FeelsPain;
 import com.site21.bittermelon.content.medical.blood.BloodType;
 import com.site21.bittermelon.content.medical.compartments.*;
@@ -19,7 +19,6 @@ import com.site21.bittermelon.content.miscellaneous.stumble.StumbleHandler;
 import com.site21.bittermelon.networking.client.SetForcedPose;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import com.site21.bittermelon.util.LocalMessageHelper;
-import com.site21.bittermelon.util.ServerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
@@ -94,7 +93,6 @@ public class MedicalStatsOld {
     }
 
     private void initializeEntity() {
-        this.entity = ServerUtil.getLivingEntity(character.getEntityUUID());
         if (entity == null) return;
 
         EntityType<? extends LivingEntity> entityType = (EntityType<? extends LivingEntity>) entity.getType();

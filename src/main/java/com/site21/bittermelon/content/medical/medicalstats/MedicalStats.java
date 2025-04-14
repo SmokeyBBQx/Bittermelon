@@ -2,8 +2,7 @@ package com.site21.bittermelon.content.medical.medicalstats;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.site21.bittermelon.client.visualeffects.ScreenshakeHandler;
-import com.site21.bittermelon.content.atmosphere.AtmosHandler;
+import com.site21.bittermelon.client.visualeffects.screenshake.ScreenshakeHandler;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.content.character.Character;
@@ -17,7 +16,6 @@ import com.site21.bittermelon.content.miscellaneous.stumble.StumbleHandler;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import com.site21.bittermelon.networking.client.SetForcedPose;
 import com.site21.bittermelon.util.LocalMessageHelper;
-import com.site21.bittermelon.util.ServerUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -26,6 +24,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -44,7 +43,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.site21.bittermelon.init.custom.Substances.LIQUID_BLOOD;
-import static com.site21.bittermelon.init.custom.Substances.LIQUID_WATER;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
 import static net.minecraft.world.level.block.Block.UPDATE_ALL_IMMEDIATE;
 
@@ -108,7 +106,6 @@ public class MedicalStats {
         }
         this.characterID = characterID;
         this.vitalSigns = vitalSigns;
-        this.character = CharacterManager.get(ServerUtil.getServer()).getCharacter(characterID);
         this.stats = new EnumMap<>(FunctionType.class);
         this.immunity = new ConcurrentHashMap<>();
         this.substances = new ArrayList<>();
@@ -116,7 +113,6 @@ public class MedicalStats {
         this.defaultAttributeValues = new HashMap<>();
 
         initializeStats();
-        initializeEntity();
     }
 
     public MedicalStats(@NotNull List<CompartmentInstance> compartments, BloodType bloodType, UUID characterID) {
@@ -130,26 +126,30 @@ public class MedicalStats {
     }
 
     @SuppressWarnings("unchecked")
-    private void initializeEntity() {
+    private void initializeEntity(Level level) {
         if (character == null) {
-            character = CharacterManager.get(ServerUtil.getServer()).getCharacter(characterID);
+            character = CharacterManager.get(level).getCharacter(characterID);
             return;
         }
 
-        this.entity = ServerUtil.getLivingEntity(character.getEntityUUID());
-        if (entity == null) return;
+        if (level instanceof ServerLevel serverLevel) {
+            this.entity = (LivingEntity) serverLevel.getEntities().get(character.getEntityUUID());
+            if (entity == null) return;
 
-        EntityType<? extends LivingEntity> entityType = (EntityType<? extends LivingEntity>) entity.getType();
-        AttributeMap attributeMap = new AttributeMap(DefaultAttributes.getSupplier(entityType));
+            EntityType<? extends LivingEntity> entityType = (EntityType<? extends LivingEntity>) entity.getType();
+            AttributeMap attributeMap = new AttributeMap(DefaultAttributes.getSupplier(entityType));
 
-        for (AttributeInstance instance : attributeMap.attributes.values()) {
-            defaultAttributeValues.put(instance.getAttribute(), instance.getBaseValue());
+            for (AttributeInstance instance : attributeMap.attributes.values()) {
+                defaultAttributeValues.put(instance.getAttribute(), instance.getBaseValue());
+            }
         }
     }
 
-    public void update() {
+    public void update(Level level) {
+        if (level.isClientSide) return;
+
         if (entity == null) {
-            initializeEntity();
+            initializeEntity(level);
             return;
         }
 
@@ -308,7 +308,6 @@ public class MedicalStats {
     private void updateConsciousness() {
         if (vitalSigns.consciousness < 0.1f) {
             if (entity.getPose() != Pose.SLEEPING) {
-                entity.setPose(Pose.SLEEPING);
                 PacketDistributor.sendToAllPlayers(new SetForcedPose(entity.getUUID(), Pose.SLEEPING));
 //                LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(character.getName() + " passes out.").withColor(character.getEmoteColor()));
             }

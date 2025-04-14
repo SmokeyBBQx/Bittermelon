@@ -107,11 +107,6 @@ public class CharacterManager extends SavedData {
         }
     }
 
-
-    public void updateAll() {
-        characters.values().forEach(Character::update);
-    }
-
     public List<Character> getCharactersByEntityUUID(UUID entityUUID) {
         List<Character> characterList = new ArrayList<>();
 

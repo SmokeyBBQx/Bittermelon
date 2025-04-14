@@ -33,36 +33,13 @@ public class HealthScreenKeyBind {
         Minecraft mc = Minecraft.getInstance();
         Player player = Minecraft.getInstance().player;
 
-        System.out.println("Key clicked");
-
         if (player != null) {
             HitResult hitResult = mc.hitResult;
-            Character targetCharacter = null;
-            Entity targetEntity = null;
-
             if (hitResult != null && hitResult.getType() == HitResult.Type.ENTITY) {
                 EntityHitResult entityHit = (EntityHitResult) hitResult;
-                targetEntity = entityHit.getEntity();
-
-                PacketDistributor.sendToServer(new OpenHealthScreenC2S(player.getUUID(), targetEntity.getUUID()));
-
-                targetCharacter = CharacterManager.get(player.level()).getActiveCharacter(targetEntity);
+                PacketDistributor.sendToServer(new OpenHealthScreenC2S(player.getUUID(), entityHit.getEntity().getUUID()));
             } else {
                 PacketDistributor.sendToServer(new OpenHealthScreenC2S(player.getUUID(), UUID.randomUUID()));
-            }
-
-            if (targetCharacter == null) {
-                targetCharacter = CharacterManager.get(player.level()).getActiveCharacter(player);
-                if (targetCharacter == null) {
-                    System.out.println("Target null!");
-                }
-            }
-
-            if (targetCharacter != null) {
-                System.out.println("Character not null");
-
-                ItemStack heldItem = player.getMainHandItem();
-                mc.setScreen(new HealthScreen(targetCharacter, player, heldItem));
             }
         }
     }
