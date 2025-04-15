@@ -53,6 +53,7 @@ public class BitterBlocks {
                     .noOcclusion()
                     .noCollission()
                     .destroyTime(-1)
+                    .replaceable()
             ));
 
     public static final DeferredBlock<ThermometerBlock> THERMOMETER = BLOCKS.register("thermometer",

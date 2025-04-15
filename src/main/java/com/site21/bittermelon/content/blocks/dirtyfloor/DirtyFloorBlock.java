@@ -29,11 +29,6 @@ public class DirtyFloorBlock extends Block {
     }
 
     @Override
-    public boolean canBeReplaced(@NotNull BlockState state, @NotNull BlockPlaceContext context) {
-        return true;
-    }
-
-    @Override
     protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         builder.add(DIRTINESS, FACING);
     }
@@ -50,15 +45,13 @@ public class DirtyFloorBlock extends Block {
     }
 
     @Override
-    public boolean canSurvive(BlockState pState, LevelReader pLevel, @NotNull BlockPos pPos) {
+    public boolean canSurvive(@NotNull BlockState pState, @NotNull LevelReader pLevel, @NotNull BlockPos pPos) {
         return canSupportRigidBlock(pLevel, pPos.below());
     }
 
     @Override
-    public void neighborChanged(@NotNull BlockState pState, Level pLevel, BlockPos pPos, Block pBlock, BlockPos pFromPos, boolean pIsMoving) {
-        if (pState.canSurvive(pLevel, pPos)) {
-            return;
-        } else {
+    public void neighborChanged(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Block pBlock, @NotNull BlockPos pFromPos, boolean pIsMoving) {
+        if (!pState.canSurvive(pLevel, pPos)) {
             pLevel.removeBlock(pPos, false);
         }
     }
