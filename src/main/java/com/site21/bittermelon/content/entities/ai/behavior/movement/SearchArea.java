@@ -53,8 +53,6 @@ public class SearchArea<E extends BitterMob<?>> extends ExtendedBehaviour<E> {
             visitedLocations.clear();
         }
 
-        System.out.println("Starting for 939");
-
         visitedLocations.add(entity.blockPosition());
         resetStuckDetection(entity);
         findNewTarget(entity);
@@ -83,7 +81,6 @@ public class SearchArea<E extends BitterMob<?>> extends ExtendedBehaviour<E> {
 
         if (entity.getNavigation().isDone()) {
             visitedLocations.add(currentTarget);
-            System.out.println("Visited locations " + visitedLocations.size());
             findNewTarget(entity);
         }
     }
@@ -164,11 +161,11 @@ public class SearchArea<E extends BitterMob<?>> extends ExtendedBehaviour<E> {
         }
 
         if (newTarget != null) {
-            if (entity.level().getBlockState(newTarget.below()).getBlock() != AIR) {
-                entity.level().setBlock(newTarget.below(), GLOWSTONE.defaultBlockState(), 3);
-            } else {
-                entity.level().setBlock(newTarget.below(), TORCH.defaultBlockState(), 3);
-            }
+//            if (entity.level().getBlockState(newTarget.below()).getBlock() != AIR) {
+//                entity.level().setBlock(newTarget.below(), GLOWSTONE.defaultBlockState(), 3);
+//            } else {
+//                entity.level().setBlock(newTarget.below(), TORCH.defaultBlockState(), 3);
+//            }
             currentTarget = newTarget;
 //            entity.getNavigation().moveTo(newTarget.getX(), newTarget.getY(), newTarget.getZ(), 1.0F);
             BrainUtils.setMemory(entity, MemoryModuleType.WALK_TARGET,
