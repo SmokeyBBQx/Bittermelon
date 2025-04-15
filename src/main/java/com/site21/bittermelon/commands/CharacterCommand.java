@@ -1,6 +1,7 @@
 package com.site21.bittermelon.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.site21.bittermelon.content.character.Character;
@@ -9,6 +10,7 @@ import com.site21.bittermelon.content.medical.factory.Anatomy;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.ColorArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,6 +30,9 @@ public class CharacterCommand {
                                 .executes(context -> createCharacter(context.getSource(), StringArgumentType.getString(context, "name")))))
                 .then(Commands.literal("list")
                         .executes(CharacterCommand::listCharacters))
+                .then(Commands.literal("color")
+                        .then(Commands.argument("color", StringArgumentType.string())
+                                .executes(context -> setCharacterColor(context.getSource(), StringArgumentType.getString(context, "color")))))
                 .then(Commands.literal("info")
                         .executes(context -> showCharacterInfo(context.getSource()))));
     }
@@ -49,7 +54,7 @@ public class CharacterCommand {
             return 0;
         }
 
-        if (targetCharacter.get().equals(manager.getActiveCharacter(player))){
+        if (targetCharacter.get().equals(manager.getActiveCharacter(player))) {
             source.sendFailure(Component.literal("Already switched to character: " + name));
             return 0;
         }
@@ -95,6 +100,45 @@ public class CharacterCommand {
         }
 
         source.sendSuccess(() -> message, false);
+        return 1;
+    }
+
+    private static int setCharacterColor(@NotNull CommandSourceStack source, String colorString) {
+        if (colorString.startsWith("#")) {
+            colorString = colorString.substring(1);
+        }
+
+        if (!colorString.matches("[0-9A-Fa-f]{6}")) {
+            source.sendFailure(Component.literal("Invalid hex color format. Use: #RRGGBB or RRGGBB"));
+            return 0;
+        }
+
+        int color;
+        try {
+            color = Integer.parseInt(colorString, 16);
+        } catch (NumberFormatException e) {
+            source.sendFailure(Component.literal("Invalid hex color format"));
+            return 0;
+        }
+
+        if (!(source.getEntity() instanceof ServerPlayer player)) {
+            source.sendFailure(Component.literal("Must be run by a player"));
+            return 0;
+        }
+
+        CharacterManager manager = CharacterManager.get(source.getServer());
+        Character character = manager.getActiveCharacter(player);
+
+        if (character == null) {
+            source.sendFailure(Component.literal("No active character"));
+            return 0;
+        }
+
+        character.setEmoteColor(color);
+        manager.setDirty();
+
+        source.sendSuccess(() -> Component.literal("Color set to: #" + color + " ")
+                .append(Component.literal("■").withStyle(style -> style.withColor(color))), false);
         return 1;
     }
 
