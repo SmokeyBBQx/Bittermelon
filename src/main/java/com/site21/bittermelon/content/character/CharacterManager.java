@@ -5,6 +5,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.datafix.DataFixTypes;
@@ -129,10 +131,15 @@ public class CharacterManager extends SavedData {
 
         ListTag characterList = tag.getList("characters", ListTag.TAG_COMPOUND);
         characterList.forEach(characterTag -> {
-            Character.CODEC.parse(NbtOps.INSTANCE, characterTag)
-                    .result()
+            RegistryOps<Tag> ops = RegistryOps.create(NbtOps.INSTANCE, lookupProvider);
+            Character.CODEC.parse(ops, characterTag)
+                    .resultOrPartial(error -> {
+                        System.err.println("Failed to parse character: " + error);
+                        new Exception("Debug Stack Trace").printStackTrace();
+                    })
                     .ifPresent(character -> manager.characters.put(character.getUUID(), character));
         });
+
 
         return manager;
     }
@@ -141,8 +148,12 @@ public class CharacterManager extends SavedData {
     public @NotNull CompoundTag save(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider) {
         ListTag characterList = new ListTag();
         characters.values().forEach(character -> {
-            Character.CODEC.encodeStart(NbtOps.INSTANCE, character)
-                    .result()
+            RegistryOps<Tag> ops = RegistryOps.create(NbtOps.INSTANCE, provider);
+            Character.CODEC.encodeStart(ops, character)
+                    .resultOrPartial(error -> {
+                        System.err.println("Failed to encode character: " + error);
+                        new Exception("Debug Stack Trace").printStackTrace();
+                    })
                     .ifPresent(characterList::add);
         });
         tag.put("characters", characterList);

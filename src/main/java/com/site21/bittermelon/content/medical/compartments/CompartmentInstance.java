@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.content.substance.Substance;
 import io.netty.buffer.ByteBuf;
@@ -14,6 +15,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.Contract;
@@ -26,32 +28,6 @@ import static com.site21.bittermelon.init.neoforge.BitterRegistries.*;
 public class CompartmentInstance {
     public static final Codec<Holder<Compartment>> COMPARTMENT_NON_EMPTY_CODEC = COMPARTMENT_REGISTRY.holderByNameCodec().validate(DataResult::success);
     private static final StreamCodec<RegistryFriendlyByteBuf, Holder<Compartment>> COMPARTMENT_STREAM_CODEC = ByteBufCodecs.holderRegistry(COMPARTMENT_REGISTRY_KEY);
-    public static final Codec<UUID> NULLABLE_UUID_CODEC = Codec.either(
-            UUIDUtil.CODEC,
-            Codec.BOOL
-    ).xmap(
-            either -> either.map(
-                    uuid -> uuid,
-                    unused -> null
-            ),
-            uuid -> uuid == null
-                    ? Either.right(Boolean.FALSE)
-                    : Either.left(uuid)
-    );
-
-    public static final Codec<ResourceLocation> NULLABLE_RESOURCE_LOCATION_CODEC = Codec.either(
-            ResourceLocation.CODEC,
-            Codec.BOOL
-    ).xmap(
-            either -> either.map(
-                    resourceLocation -> resourceLocation,
-                    unused -> null
-            ),
-            resourceLocation -> resourceLocation == null
-                    ? Either.right(Boolean.FALSE)
-                    : Either.left(resourceLocation)
-    );
-
 
     public static <E extends Enum<E>> Codec<EnumSet<E>> enumSetCodec(Class<E> enumClass) {
         return Codec.list(
@@ -110,13 +86,13 @@ public class CompartmentInstance {
                                     Codec.FLOAT.fieldOf("modifiedMaxHealth").forGetter(CompartmentInstance::getMaxHealth),
                                     Codec.BOOL.fieldOf("isHidden").forGetter(CompartmentInstance::isHidden),
                                     Codec.BOOL.fieldOf("isObscured").forGetter(CompartmentInstance::isObscured),
-                                    NULLABLE_UUID_CODEC.fieldOf("parent").forGetter(CompartmentInstance::getParentID),
+                                    UUIDUtil.CODEC.lenientOptionalFieldOf("parent").forGetter(CompartmentInstance::getOptionalParentID),
                                     Codec.list(UUIDUtil.CODEC).xmap(HashSet::new, ArrayList::new).fieldOf("children").forGetter(CompartmentInstance::getChildren),
                                     ATTRIBUTE_MAP_CODEC.fieldOf("attributes").forGetter(CompartmentInstance::getAttributes),
                                     COMPARTMENT_TAGS_CODEC.fieldOf("compartmentTags").forGetter(CompartmentInstance::getTags),
-                                    ItemStack.CODEC.fieldOf("item").forGetter(CompartmentInstance::getItem),
+                                    ItemStack.OPTIONAL_CODEC.fieldOf("item").forGetter(CompartmentInstance::getItem),
                                     Codec.STRING.fieldOf("displayName").forGetter(CompartmentInstance::getName),
-                                    NULLABLE_RESOURCE_LOCATION_CODEC.fieldOf("icon").forGetter(CompartmentInstance::getIcon))
+                                    ResourceLocation.CODEC.lenientOptionalFieldOf("icon").forGetter(CompartmentInstance::getOptionalIcon))
                             .apply(instance, CompartmentInstance::new)));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, CompartmentInstance> STREAM_CODEC = new StreamCodec<>() {
@@ -163,6 +139,7 @@ public class CompartmentInstance {
             if (hasParent) {
                 parent = buf.readUUID();
             }
+            Optional<UUID> optionalParent = Optional.ofNullable(parent);
             HashSet<UUID> children = new HashSet<>(buf.readCollection(HashSet::new, RegistryFriendlyByteBuf::readUUID));
             EnumMap<FunctionType, Float> attributes = new EnumMap<>(FunctionType.class);
             Map<FunctionType, Float> tempMap = buf.readMap(
@@ -177,11 +154,12 @@ public class CompartmentInstance {
             if (buf.readBoolean()) {
                 icon = buf.readResourceLocation();
             }
+            Optional<ResourceLocation> optionalIcon = Optional.ofNullable(icon);
 
             return new CompartmentInstance(
                     compartmentHolder, id, health, trueMaxHealth, modifiedMaxHealth,
-                    isHidden, isObscured, parent, children, attributes, tags,
-                    item, displayName, icon
+                    isHidden, isObscured, optionalParent, children, attributes, tags,
+                    item, displayName, optionalIcon
             );
         }
     };
@@ -203,10 +181,10 @@ public class CompartmentInstance {
     private float function;
 
     public CompartmentInstance(@NotNull Holder<Compartment> compartment, UUID id, float health, float trueMaxHealth,
-                               float modifiedMaxHealth, boolean isHidden, boolean isObscured, UUID parent,
+                               float modifiedMaxHealth, boolean isHidden, boolean isObscured, @NotNull Optional<UUID> optionalParent,
                                HashSet<UUID> children, EnumMap<FunctionType, Float> attributes,
                                EnumSet<CompartmentTag> compartmentTags, ItemStack item, String displayName,
-                               ResourceLocation icon) {
+                               @NotNull Optional<ResourceLocation> optionalIcon) {
         this.compartment = compartment.value();
         this.uuid = id;
         this.health = health;
@@ -214,13 +192,13 @@ public class CompartmentInstance {
         this.modifiedMaxHealth = modifiedMaxHealth;
         this.isHidden = isHidden;
         this.isObscured = isObscured;
-        this.parent = parent;
+        optionalParent.ifPresent(parent -> this.parent = parent);
         this.children = children;
         this.attributes = attributes;
         this.compartmentTags = compartmentTags;
         this.item = item;
         this.displayName = displayName;
-        this.icon = icon;
+        optionalIcon.ifPresent(icon -> this.icon = icon);
     }
 
     @Contract(pure = true)
@@ -298,6 +276,10 @@ public class CompartmentInstance {
         return parent;
     }
 
+    public Optional<UUID> getOptionalParentID() {
+        return Optional.ofNullable(parent);
+    }
+
     public CompartmentInstance getParent(MedicalStats medicalStats) {
         return medicalStats.getCompartment(parent);
     }
@@ -324,6 +306,10 @@ public class CompartmentInstance {
 
     public ResourceLocation getIcon() {
         return icon;
+    }
+
+    public Optional<ResourceLocation> getOptionalIcon() {
+        return Optional.ofNullable(icon);
     }
 
     public void setHealth(float health) {
