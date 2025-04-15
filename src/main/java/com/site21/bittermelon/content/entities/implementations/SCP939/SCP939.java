@@ -782,8 +782,8 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
                         "%s batters %s's %s with tremendous force",
                         "%s delivers a crushing blow to %s's %s"
                 )
-                .setCondition((attacker, target) -> !StumbleHandler.containsUUID(target.getUUID())
-                        && !StumbleHandler.containsUUID(attacker.getUUID()))
+                .setCondition((attacker, target) -> !StumbleHandler.isStumbled(target)
+                        && !StumbleHandler.isStumbled(attacker))
                 .setSpecialAction((attacker, target) -> StumbleHandler.stumble(target))
                 .setSound(SMASH.get())
                 .build()
@@ -820,7 +820,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
                         "%s seizes %s's %s and pulls with crushing strength",
                         "%s grips %s's %s and tears with savage intensity"
                 )
-                .setCondition((attacker, target) -> StumbleHandler.containsUUID(target.getUUID()))
+                .setCondition((attacker, target) -> StumbleHandler.isStumbled(target))
                 .setSpecialAction((attacker, target) -> {
                     Vec3 pullDirection = attacker.getLookAngle().multiply(-2, 1, -2);
                     target.setDeltaMovement(pullDirection);
@@ -891,8 +891,8 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
                         "%s brings its foot heavily onto %s's %s",
                         "%s stomps ruthlessly on %s's %s"
                 )
-                .setCondition((attacker, target) -> StumbleHandler.containsUUID(target.getUUID())
-                        && !StumbleHandler.containsUUID(attacker.getUUID()))
+                .setCondition((attacker, target) -> StumbleHandler.isStumbled(target)
+                        && !StumbleHandler.isStumbled(attacker))
                 .setSound(WRESTLE.get())
                 .build()
         );

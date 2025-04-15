@@ -2,7 +2,7 @@ package com.site21.bittermelon.content.medical.medicalstats;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.site21.bittermelon.client.visualeffects.screenshake.ScreenshakeHandler;
+import com.site21.bittermelon.client.visualeffects.screenshake.StartScreenshake;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.content.character.Character;
@@ -25,6 +25,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -349,9 +350,9 @@ public class MedicalStats {
     }
 
     private void handleTremor() {
-        if (entity instanceof Player player) {
+        if (entity instanceof ServerPlayer player) {
             if (!entity.level().isClientSide()) return;
-            ScreenshakeHandler.startScreenshake(player, 80, Math.min(0.8f, getTremor() / 10));
+            PacketDistributor.sendToPlayer(player, new StartScreenshake(80, Math.min(0.8f, getTremor() / 10)));
         }
     }
 

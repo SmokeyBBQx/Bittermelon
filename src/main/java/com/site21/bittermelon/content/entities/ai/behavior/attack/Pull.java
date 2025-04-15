@@ -27,7 +27,7 @@ public class Pull<E extends Mob> extends AnimatableMeleeAttack<E> {
         super.checkExtraStartConditions(level, entity);
 
         assert target != null;
-        return StumbleHandler.containsUUID(target.getUUID()) && !StumbleHandler.containsUUID(entity.getUUID());
+        return StumbleHandler.isStumbled(target) && !StumbleHandler.isStumbled(entity);
     }
 
     @Override

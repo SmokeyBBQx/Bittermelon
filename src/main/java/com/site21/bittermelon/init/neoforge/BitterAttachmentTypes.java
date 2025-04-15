@@ -22,7 +22,11 @@ public class BitterAttachmentTypes {
     );
 
     public static final Supplier<AttachmentType<UUID>> ACTIVE_CHARACTER = ATTACHMENT_TYPES.register(
-            "active_character", () -> AttachmentType.<UUID>builder(() -> new UUID(0, 0)).serialize(UUIDUtil.CODEC).build()
+            "active_character", () -> AttachmentType.builder(() -> new UUID(0, 0)).serialize(UUIDUtil.CODEC).build()
+    );
+
+    public static final Supplier<AttachmentType<Integer>> STUMBLE_TICKS = ATTACHMENT_TYPES.register(
+            "stumble_ticks", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).build()
     );
 
     public static final Supplier<AttachmentType<AtmosBlockData>> ATMOSPHERE = ATTACHMENT_TYPES.register(

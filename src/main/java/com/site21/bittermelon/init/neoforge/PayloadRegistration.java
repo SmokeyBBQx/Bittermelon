@@ -1,6 +1,7 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.client.visualeffects.screenshake.StartScreenshake;
 import com.site21.bittermelon.content.atmosphere.networking.*;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.OpenContainmentPanelScreen;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.networking.*;
@@ -12,6 +13,8 @@ import com.site21.bittermelon.content.items.wires.wire.networking.WiringDataUpda
 import com.site21.bittermelon.content.medical.client.screen.OpenHealthScreenC2S;
 import com.site21.bittermelon.content.medical.client.screen.OpenHealthScreenS2C;
 import com.site21.bittermelon.content.miscellaneous.stumble.networking.AttemptToRise;
+import com.site21.bittermelon.content.miscellaneous.stumble.networking.ClearStumbleTimer;
+import com.site21.bittermelon.content.miscellaneous.stumble.networking.UpdateStumbleTimer;
 import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
 import com.site21.bittermelon.networking.client.*;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.ContainmentNameUpdate;
@@ -214,6 +217,24 @@ public class PayloadRegistration {
                 AttemptToRise.TYPE,
                 AttemptToRise.STREAM_CODEC,
                 AttemptToRise::handle
+        );
+
+        registrar.playToClient(
+                UpdateStumbleTimer.TYPE,
+                UpdateStumbleTimer.STREAM_CODEC,
+                UpdateStumbleTimer::handle
+        );
+
+        registrar.playToClient(
+                ClearStumbleTimer.TYPE,
+                ClearStumbleTimer.STREAM_CODEC,
+                ClearStumbleTimer::handle
+        );
+
+        registrar.playToClient(
+                StartScreenshake.TYPE,
+                StartScreenshake.STREAM_CODEC,
+                StartScreenshake::handle
         );
     }
 }

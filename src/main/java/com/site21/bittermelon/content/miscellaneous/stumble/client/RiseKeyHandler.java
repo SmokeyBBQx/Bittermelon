@@ -13,6 +13,8 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.UUID;
 
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.STUMBLE_TICKS;
+
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class RiseKeyHandler {
     private static int ticksHeld = 0;
@@ -25,22 +27,24 @@ public class RiseKeyHandler {
         if (player == null) return;
 
         UUID uuid = player.getUUID();
-        if (!StumbleHandler.containsUUID(uuid)) return;
-        if (StumbleHandler.isStunned(uuid)) return;
+        if (StumbleHandler.isStumbled(player)) {
+            player.setData(STUMBLE_TICKS, player.getData(STUMBLE_TICKS) - 1);
+            if (StumbleHandler.isStunned(player)) return;
 
-        if (Minecraft.getInstance().options.keyJump.isDown()) {
-            keyPressed = true;
-            ticksHeld++;
+            if (Minecraft.getInstance().options.keyJump.isDown()) {
+                keyPressed = true;
+                ticksHeld++;
 //                    PacketDistributor.sendToAllPlayers(new SetForcedPose(uuid, Pose.SITTING));
-            // TODO: Fix this animation
-            if (ticksHeld >= TICKS_REQUIRED) {
-                PacketDistributor.sendToServer(new AttemptToRise(uuid));
-                keyPressed = false;
+                // TODO: Fix this animation
+                if (ticksHeld >= TICKS_REQUIRED) {
+                    PacketDistributor.sendToServer(new AttemptToRise(uuid));
+                    keyPressed = false;
+                    ticksHeld = 0;
+                }
+            } else {
                 ticksHeld = 0;
+                keyPressed = false;
             }
-        } else {
-            ticksHeld = 0;
-            keyPressed = false;
         }
     }
 

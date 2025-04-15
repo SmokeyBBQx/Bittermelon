@@ -1,10 +1,10 @@
 package com.site21.bittermelon.content.medical.medicalstats;
 
+import com.site21.bittermelon.client.visualeffects.screenshake.StartScreenshake;
 import com.site21.bittermelon.content.atmosphere.AtmosHandler;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.client.visualeffects.screenshake.ScreenshakeHandler;
 import com.site21.bittermelon.content.entities.ai.behavior.misc.FeelsPain;
 import com.site21.bittermelon.content.medical.blood.BloodType;
 import com.site21.bittermelon.content.medical.compartments.*;
@@ -22,6 +22,7 @@ import com.site21.bittermelon.util.LocalMessageHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -92,6 +93,7 @@ public class MedicalStatsOld {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void initializeEntity() {
         if (entity == null) return;
 
@@ -381,9 +383,9 @@ public class MedicalStatsOld {
     }
 
     private void handleTremor() {
-        if (entity instanceof Player player) {
+        if (entity instanceof ServerPlayer player) {
             if (!entity.level().isClientSide()) return;
-            ScreenshakeHandler.startScreenshake(player, 80, Math.min(0.8f, getTremor() / 10));
+            PacketDistributor.sendToPlayer(player, new StartScreenshake(80, Math.min(0.8f, getTremor() / 10)));
         }
     }
 

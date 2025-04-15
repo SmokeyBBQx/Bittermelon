@@ -13,9 +13,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-
 import static com.site21.bittermelon.content.miscellaneous.stumble.client.RiseKeyHandler.TICKS_REQUIRED;
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.STUMBLE_TICKS;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class RiseProgressBar {
@@ -53,8 +52,8 @@ public class RiseProgressBar {
         RenderSystem.disableBlend();
     }
 
-    private static void renderStunBar(@NotNull GuiGraphics guiGraphics, int x, int y, UUID uuid) {
-        int stunTime = StumbleHandler.getStunTime(uuid);
+    private static void renderStunBar(@NotNull GuiGraphics guiGraphics, int x, int y, @NotNull Player player) {
+        int stunTime = player.getData(STUMBLE_TICKS);
 
         guiGraphics.blit(PROGRESS_BAR_BACKGROUND,
                 x, y,
@@ -82,12 +81,13 @@ public class RiseProgressBar {
         int x = guiGraphics.guiWidth() / 2 - 91;
         int y = guiGraphics.guiHeight() - 32 + 3;
 
+        if (player == null) return;
+        if (!StumbleHandler.isStumbled(player)) return;
+
         if (RiseKeyHandler.isKeyPressed()) {
             renderProgressBar(guiGraphics, x, y);
-        } else if (player != null) {
-            if (StumbleHandler.containsUUID(player.getUUID())) {
-                renderStunBar(guiGraphics, x, y, player.getUUID());
-            }
+        } else if (StumbleHandler.isStunned(player)) {
+            renderStunBar(guiGraphics, x, y, player);
         }
     }
 }

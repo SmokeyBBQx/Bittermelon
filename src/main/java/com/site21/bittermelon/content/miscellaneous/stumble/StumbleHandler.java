@@ -1,9 +1,11 @@
 package com.site21.bittermelon.content.miscellaneous.stumble;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.client.visualeffects.screenshake.StartScreenshake;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
-import com.site21.bittermelon.client.visualeffects.screenshake.ScreenshakeHandler;
+import com.site21.bittermelon.content.miscellaneous.stumble.networking.ClearStumbleTimer;
+import com.site21.bittermelon.content.miscellaneous.stumble.networking.UpdateStumbleTimer;
 import com.site21.bittermelon.networking.client.ClearForcedPose;
 import com.site21.bittermelon.networking.client.SetForcedPose;
 import net.minecraft.network.chat.Component;
@@ -20,7 +22,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -30,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.STUMBLE_TICKS;
 import static com.site21.bittermelon.init.neoforge.BitterSounds.FALL;
 import static com.site21.bittermelon.util.LocalMessageHelper.sendLocalMessage;
 import static net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN;
@@ -37,7 +39,6 @@ import static net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class StumbleHandler {
-    private static final Map<UUID, Integer> instances = new HashMap<>();
     private static final Map<UUID, Integer> effectDelays = new HashMap<>();
     private static final ResourceLocation JUMP_STUN_ID = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "jump_stun");
     private static final ResourceLocation MOVEMENT_STUN_ID = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "movement_stun");
@@ -59,12 +60,16 @@ public class StumbleHandler {
             }
         }
 
-        instances.put(entity.getUUID(), length);
+        entity.setData(STUMBLE_TICKS.get(), length);
         effectDelays.put(entity.getUUID(), 5);
         motion(entity, length, pushDirection);
         addStun(entity);
         announceFall(entity);
 
+        // Client Handling
+        if (entity instanceof ServerPlayer serverPlayer) {
+            PacketDistributor.sendToPlayer(serverPlayer, new UpdateStumbleTimer(length));
+        }
     }
 
     public static void stumble(LivingEntity entity) {
@@ -157,8 +162,9 @@ public class StumbleHandler {
         UUID uuid = event.getEntity().getUUID();
         Entity entity = event.getEntity();
 
-        if (instances.containsKey(uuid)) {
-            Integer newValue = instances.compute(uuid, (k, v) -> (v == null) ? 0 : v - 1);
+        if (entity.hasData(STUMBLE_TICKS)) {
+            int newValue = entity.getData(STUMBLE_TICKS) - 1;
+            entity.setData(STUMBLE_TICKS, newValue);
             if (!(entity instanceof Player)) {
                 if (newValue <= 0) {
                     clearEntity(entity);
@@ -171,7 +177,7 @@ public class StumbleHandler {
             Integer delay = effectDelays.compute(uuid, (k, v) -> (v == null) ? 0 : v - 1);
             if (delay <= 0) {
                 if (entity instanceof ServerPlayer player) {
-                    ScreenshakeHandler.startScreenshake(player, 70, 10);
+                    PacketDistributor.sendToPlayer(player, new StartScreenshake(70, 10));
                 }
                 entity.level().playSound(null, entity.getOnPos(), FALL.get(), SoundSource.PLAYERS);
                 effectDelays.remove(uuid);
@@ -180,36 +186,34 @@ public class StumbleHandler {
     }
 
     private static void clearEntity(@NotNull Entity entity) {
-        instances.remove(entity.getUUID());
+        entity.removeData(STUMBLE_TICKS);
         if (entity instanceof LivingEntity livingEntity) {
             Objects.requireNonNull(livingEntity.getAttribute(Attributes.JUMP_STRENGTH)).removeModifier(JUMP_STUN_ID);
             Objects.requireNonNull(livingEntity.getAttribute(Attributes.MOVEMENT_SPEED)).removeModifier(MOVEMENT_STUN_ID);
         }
     }
 
-    public static void attemptToRise(UUID uuid, ServerLevel level) {
-        Integer value = instances.get(uuid);
-        if (value == null || value <= 0) {
-            Entity entity = level.getEntities().get(uuid);
-            if (entity != null) {
-                clearEntity(entity);
-                if (entity instanceof ServerPlayer player) {
-                    player.setForcedPose(null);
-                    PacketDistributor.sendToAllPlayers(new ClearForcedPose(uuid));
-                }
+    public static void attemptToRise(UUID uuid, @NotNull ServerLevel level) {
+        Player player = level.getPlayerByUUID(uuid);
+        if (player == null) return;
+        int value = player.getData(STUMBLE_TICKS.get());
+        if (value <= 0) {
+            clearEntity(player);
+
+            // Client Handling
+            if (player instanceof ServerPlayer serverPlayer) {
+                serverPlayer.setForcedPose(null);
+                PacketDistributor.sendToAllPlayers(new ClearForcedPose(uuid));
+                PacketDistributor.sendToPlayer(serverPlayer, new ClearStumbleTimer());
             }
         }
     }
 
-    public static boolean containsUUID(UUID uuid) {
-        return instances.containsKey(uuid);
+    public static boolean isStunned(@NotNull Entity entity) {
+        return entity.getData(STUMBLE_TICKS) > 0;
     }
 
-    public static boolean isStunned(UUID uuid) {
-        return instances.get(uuid) > 0;
-    }
-
-    public static int getStunTime(UUID uuid) {
-        return instances.get(uuid);
+    public static boolean isStumbled(@NotNull Entity entity) {
+        return entity.hasData(STUMBLE_TICKS);
     }
 }
