@@ -148,7 +148,6 @@ public class IntercomScreen extends Screen {
     }
     private void onIntercomIDChanged(String newID) {
         PacketDistributor.sendToServer(new IntercomIDUpdate(newID, intercom.getBlockPos()));
-        intercom.setIntercomID(newID);
     }
 
     private void onTargetIDChanged(String newID) {

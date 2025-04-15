@@ -568,6 +568,7 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
         if (totalTransferred > 0) {
             if (targetPuddle == null) {
                 level.setBlock(blockPos, FLUID.get().defaultBlockState(), 3);
+                level.playSound(null, worldPosition, SoundEvents.GENERIC_SPLASH, SoundSource.AMBIENT, 0.1f, 1.2f);
                 BlockEntity newBlockEntity = level.getBlockEntity(blockPos);
                 if (!(newBlockEntity instanceof FluidBlockEntity)) {
                     return;
@@ -583,9 +584,6 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
             targetPuddle.setChanged();
             setChanged();
         }
-
-        level.playSound(null, worldPosition, SoundEvents.GENERIC_SPLASH, SoundSource.AMBIENT);
-
         // TODO: Issue because we're using amounts and not volumes?
     }
 

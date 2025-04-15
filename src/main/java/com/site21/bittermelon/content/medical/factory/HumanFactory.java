@@ -237,30 +237,35 @@ public class HumanFactory implements AnatomyFactory {
         if (parent != null) {
             bodyPart.initializeWithParent(parent);
         }
+        bodyPart.setAttribute(FunctionType.FUNCTION, 1);
         return bodyPart;
     }
 
     private static @NotNull CompartmentInstance createSoftTissue(String name, CompartmentInstance parent, float maxHealth) {
         CompartmentInstance tissue = new CompartmentInstance(SOFT_TISSUE.get(), maxHealth, name, true);
         tissue.initializeWithParent(parent);
+        tissue.setAttribute(FunctionType.FUNCTION, 1);
         return tissue;
     }
 
     private static @NotNull CompartmentInstance createRevealedSoftTissue(String name, CompartmentInstance parent, float maxHealth) {
         CompartmentInstance tissue = new CompartmentInstance(SOFT_TISSUE.get(), maxHealth, name, false);
         tissue.initializeWithParent(parent);
+        tissue.setAttribute(FunctionType.FUNCTION, 1);
         return tissue;
     }
 
     private static @NotNull CompartmentInstance createHardTissue(String name, CompartmentInstance parent, float maxHealth) {
         CompartmentInstance tissue = new CompartmentInstance(HARD_TISSUE.get(), maxHealth, name, true);
         tissue.initializeWithParent(parent);
+        tissue.setAttribute(FunctionType.FUNCTION, 1);
         return tissue;
     }
 
     private static @NotNull CompartmentInstance createRevealedHardTissue(String name, CompartmentInstance parent, float maxHealth) {
         CompartmentInstance tissue = new CompartmentInstance(HARD_TISSUE.get(), maxHealth, name, false);
         tissue.initializeWithParent(parent);
+        tissue.setAttribute(FunctionType.FUNCTION, 1);
         return tissue;
     }
 }

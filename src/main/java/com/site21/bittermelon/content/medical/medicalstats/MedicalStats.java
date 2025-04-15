@@ -145,7 +145,7 @@ public class MedicalStats {
         }
     }
 
-    public void update(Level level) {
+    public void update(@NotNull Level level) {
         if (level.isClientSide) return;
 
         if (entity == null) {
@@ -313,7 +313,7 @@ public class MedicalStats {
             }
         }
 
-        vitalSigns.consciousness = stats.get(FunctionType.BRAIN_VITALS) * stats.get(FunctionType.CIRCULATION);
+        vitalSigns.consciousness = stats.get(FunctionType.BRAIN_VITALS) * getCirculation();
     }
 
     private void handlePain() {
