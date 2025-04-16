@@ -1,35 +1,33 @@
 package com.site21.bittermelon.content.medical.compartments.firstaid;
 
-import com.site21.bittermelon.content.medical.compartments.CompartmentOld;
+import com.site21.bittermelon.content.medical.compartments.Compartment;
+import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
-import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
-import net.minecraft.world.item.ItemStack;
+import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 
 import java.util.EnumSet;
+import java.util.UUID;
+import java.util.function.Consumer;
 
-public class Retractor extends FirstAid {
-    public Retractor(String name, CompartmentOld owner, int maxHealth, float quality, ItemStack item) {
-        super(EnumSet.of(CompartmentTag.RETRACTOR), name, owner, maxHealth, quality);
-        this.item = item;
+public class Retractor extends Compartment {
+    public Retractor(String id, EnumSet<CompartmentTag> defaultTags) {
+        super(id, defaultTags, compartmentInstance -> {});
+    }
 
-        for (CompartmentOld compartment : owner.getChildren()) {
-            compartment.reveal();
+    @Override
+    public void onExtract(MedicalStats medicalStats, CompartmentInstance instance) {
+        super.onExtract(medicalStats, instance);
+
+        for (UUID childID : instance.getParent(medicalStats).getChildren()) {
+            CompartmentInstance child = medicalStats.getCompartment(childID);
+            if (child != null) {
+                child.setHidden(true);
+            }
         }
     }
 
     @Override
-    public void onDeath(MedicalStatsOld medicalStats) {
-        super.onDeath(medicalStats);
-        for (CompartmentOld child : owner.getChildren()) {
-            child.setHidden(true);
-        }
-    }
-
-    @Override
-    public void onExtract(MedicalStatsOld medicalStats) {
-        super.onExtract(medicalStats);
-        for (CompartmentOld child : owner.getChildren()) {
-            child.setHidden(true);
-        }
+    public boolean canExtract(CompartmentInstance instance, MedicalStats medicalStats) {
+        return true;
     }
 }

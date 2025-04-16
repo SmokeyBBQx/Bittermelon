@@ -2,11 +2,8 @@ package com.site21.bittermelon.content.items.medical;
 
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
-import com.site21.bittermelon.content.medical.compartments.CompartmentOld;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
-import com.site21.bittermelon.content.medical.compartments.firstaid.Bandage;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
-import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
 import com.site21.bittermelon.init.custom.Compartments;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -33,7 +30,10 @@ public interface AbstractBandage extends MedicalItem {
     @OnlyIn(Dist.CLIENT)
     @Override
     default void use(@NotNull CompartmentInstance compartment, @NotNull MedicalStats medicalStats, Character character, ItemStack item) {
-        medicalStats.addCompartment(new CompartmentInstance(Compartments.BANDAGE.get(), 10, "Bandage", false));
+        CompartmentInstance bandage = new CompartmentInstance(Compartments.BANDAGE.get(), 10, "Bandage", false);
+        bandage.setItem(item);
+        bandage.initializeWithParent(compartment);
+        medicalStats.addCompartment(bandage);
     }
 
     @Override
@@ -42,6 +42,6 @@ public interface AbstractBandage extends MedicalItem {
     }
 
     @Override
-    default void finishAction(CompartmentInstance compartment, MedicalStats medicalStats, Character character, float quality, ItemStack item) {
+    default void finishAction(CompartmentInstance compartment, MedicalStats medicalStats, float quality, ItemStack item) {
     }
 }

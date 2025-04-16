@@ -1,13 +1,9 @@
 package com.site21.bittermelon.content.medical.compartments;
 
-import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
-import com.site21.bittermelon.content.substance.Substance;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.core.Holder;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.FriendlyByteBuf;
@@ -15,11 +11,11 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -105,11 +101,13 @@ public class CompartmentInstance {
             buf.writeFloat(value.getMaxHealth());
             buf.writeBoolean(value.isHidden());
             buf.writeBoolean(value.isObscured());
+
             boolean hasParent = value.getParentID() != null;
             buf.writeBoolean(hasParent);
             if (hasParent) {
                 buf.writeUUID(value.getParentID());
             }
+
             buf.writeCollection(value.getChildren(), RegistryFriendlyByteBuf::writeUUID);
             buf.writeMap(value.getAttributes(),
                     FriendlyByteBuf::writeEnum,
@@ -118,6 +116,7 @@ public class CompartmentInstance {
             buf.writeEnumSet(value.getTags(), CompartmentTag.class);
             ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, value.getItem());
             buf.writeUtf(value.getName());
+
             boolean hasIcon = value.getIcon() != null;
             buf.writeBoolean(hasIcon);
             if (hasIcon) {
@@ -134,22 +133,29 @@ public class CompartmentInstance {
             float modifiedMaxHealth = buf.readFloat();
             boolean isHidden = buf.readBoolean();
             boolean isObscured = buf.readBoolean();
+
             UUID parent = null;
             boolean hasParent = buf.readBoolean();
             if (hasParent) {
                 parent = buf.readUUID();
             }
             Optional<UUID> optionalParent = Optional.ofNullable(parent);
-            HashSet<UUID> children = new HashSet<>(buf.readCollection(HashSet::new, RegistryFriendlyByteBuf::readUUID));
+
+            HashSet<UUID> children = new HashSet<>(buf.readCollection(
+                    HashSet::new, RegistryFriendlyByteBuf::readUUID)
+            );
+
             EnumMap<FunctionType, Float> attributes = new EnumMap<>(FunctionType.class);
             Map<FunctionType, Float> tempMap = buf.readMap(
                     byteBuf -> byteBuf.readEnum(FunctionType.class),
                     FriendlyByteBuf::readFloat
             );
             attributes.putAll(tempMap);
+
             EnumSet<CompartmentTag> tags = buf.readEnumSet(CompartmentTag.class);
             ItemStack item = ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
             String displayName = buf.readUtf();
+
             ResourceLocation icon = null;
             if (buf.readBoolean()) {
                 icon = buf.readResourceLocation();
@@ -178,8 +184,11 @@ public class CompartmentInstance {
     private ItemStack item;
     private String displayName;
     protected ResourceLocation icon;
-    private float function;
+    private float function = 1.0f;
 
+    /**
+     * Codec deserialization constructor
+     */
     public CompartmentInstance(@NotNull Holder<Compartment> compartment, UUID id, float health, float trueMaxHealth,
                                float modifiedMaxHealth, boolean isHidden, boolean isObscured, @NotNull Optional<UUID> optionalParent,
                                HashSet<UUID> children, EnumMap<FunctionType, Float> attributes,
@@ -201,8 +210,11 @@ public class CompartmentInstance {
         optionalIcon.ifPresent(icon -> this.icon = icon);
     }
 
+    /**
+     * Constructor for new compartment instances
+     */
     @Contract(pure = true)
-    public CompartmentInstance(Compartment compartment, EnumMap<FunctionType, Float> attributes, EnumSet<CompartmentTag> compartmentTags, float maxHealth, String displayName, boolean isHidden) {
+    public CompartmentInstance(@NotNull Compartment compartment, EnumMap<FunctionType, Float> attributes, EnumSet<CompartmentTag> compartmentTags, float maxHealth, String displayName, boolean isHidden) {
         this.compartment = compartment;
         this.attributes = attributes;
         this.compartmentTags = compartmentTags;
@@ -215,6 +227,8 @@ public class CompartmentInstance {
         this.item = ItemStack.EMPTY;
         isObscured = false;
         children = new HashSet<>();
+
+        compartment.attributeInitializer.accept(this);
     }
 
     @Contract(pure = true)
@@ -224,7 +238,7 @@ public class CompartmentInstance {
 
     @Contract(pure = true)
     public CompartmentInstance(@NotNull Compartment compartment, float maxHealth, String displayName, boolean isHidden) {
-        this(compartment, compartment.makeAttributes(maxHealth), compartment.getDefaultTags().clone(), maxHealth, displayName, isHidden);
+        this(compartment, new EnumMap<>(FunctionType.class), compartment.getDefaultTags().clone(), maxHealth, displayName, isHidden);
     }
 
     public void initializeWithParent(@NotNull CompartmentInstance parent) {
@@ -238,6 +252,24 @@ public class CompartmentInstance {
 
     public boolean hasTag(CompartmentTag tag) {
         return compartmentTags.contains(tag);
+    }
+
+    public void updateFunction(float functionMultiplier) {
+        function = 1 * getHealth() / trueMaxHealth * functionMultiplier;
+    }
+
+    public boolean areChildrenEmpty(MedicalStats medicalStats) {
+        return children.isEmpty() || children.stream().allMatch(child -> medicalStats.getCompartment(child).isHidden);
+    }
+
+    public float getAttribute(FunctionType type) {
+        if (attributes == null) return 0f;
+
+        if (type == FunctionType.FUNCTION) {
+            return attributes.getOrDefault(type, 1f) * function;
+        }
+
+        return attributes.getOrDefault(type, 0f) * function;
     }
 
     public Compartment getCompartment() {
@@ -272,6 +304,7 @@ public class CompartmentInstance {
         return isObscured;
     }
 
+    @Nullable
     public UUID getParentID() {
         return parent;
     }
@@ -281,6 +314,7 @@ public class CompartmentInstance {
     }
 
     public CompartmentInstance getParent(MedicalStats medicalStats) {
+        if (parent == null) return null;
         return medicalStats.getCompartment(parent);
     }
 
@@ -304,6 +338,7 @@ public class CompartmentInstance {
         return displayName;
     }
 
+    @Nullable
     public ResourceLocation getIcon() {
         return icon;
     }
@@ -332,6 +367,10 @@ public class CompartmentInstance {
         this.item = item.asItem().getDefaultInstance();
     }
 
+    public void setItem(ItemStack stack) {
+        this.item = stack;
+    }
+
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
@@ -358,18 +397,5 @@ public class CompartmentInstance {
 
     public void addTag(CompartmentTag tag) {
         compartmentTags.add(tag);
-    }
-
-    public void updateFunction(float functionMultiplier) {
-        function = 1 * getHealth() / trueMaxHealth * functionMultiplier;
-    }
-
-    public boolean areChildrenEmpty(MedicalStats medicalStats) {
-        return children.isEmpty() || children.stream().allMatch(child -> medicalStats.getCompartment(child).isHidden);
-    }
-
-    public float getAttribute(FunctionType type) {
-        if (attributes == null) return 0f;
-        return attributes.getOrDefault(type, 0f) * function;
     }
 }

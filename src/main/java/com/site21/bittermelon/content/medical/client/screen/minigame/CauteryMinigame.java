@@ -2,9 +2,7 @@ package com.site21.bittermelon.content.medical.client.screen.minigame;
 
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
-import com.site21.bittermelon.content.medical.compartments.CompartmentOld;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
-import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

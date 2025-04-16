@@ -3,6 +3,7 @@ package com.site21.bittermelon.content.medical.factory;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.medical.blood.BloodType;
 import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
+import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
 import com.site21.bittermelon.content.medical.compartments.FunctionType;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import org.jetbrains.annotations.Contract;
@@ -51,6 +52,7 @@ public class HumanFactory implements AnatomyFactory {
         CompartmentInstance frontalLobe = createSoftTissue("Frontal Lobe", meninges, 5);
         frontalLobe.setAttribute(FunctionType.BRAIN_MOTOR_ABILITY, 1f);
         CompartmentInstance parietalLobe = createSoftTissue("Parietal Lobe", meninges, 5);
+        parietalLobe.setAttribute(FunctionType.NERVOUS, 1f);
         CompartmentInstance temporalLobe = createSoftTissue("Temporal Lobe", meninges, 4);
         CompartmentInstance occipitalLobe = createSoftTissue("Occipital Lobe", meninges, 3);
         CompartmentInstance cerebellum = createSoftTissue("Cerebellum", meninges, 4);
@@ -245,6 +247,7 @@ public class HumanFactory implements AnatomyFactory {
         CompartmentInstance tissue = new CompartmentInstance(SOFT_TISSUE.get(), maxHealth, name, true);
         tissue.initializeWithParent(parent);
         tissue.setAttribute(FunctionType.FUNCTION, 1);
+        tissue.addTag(CompartmentTag.DOES_BLEED);
         return tissue;
     }
 
@@ -252,6 +255,7 @@ public class HumanFactory implements AnatomyFactory {
         CompartmentInstance tissue = new CompartmentInstance(SOFT_TISSUE.get(), maxHealth, name, false);
         tissue.initializeWithParent(parent);
         tissue.setAttribute(FunctionType.FUNCTION, 1);
+        tissue.addTag(CompartmentTag.DOES_BLEED);
         return tissue;
     }
 
@@ -259,6 +263,7 @@ public class HumanFactory implements AnatomyFactory {
         CompartmentInstance tissue = new CompartmentInstance(HARD_TISSUE.get(), maxHealth, name, true);
         tissue.initializeWithParent(parent);
         tissue.setAttribute(FunctionType.FUNCTION, 1);
+        tissue.addTag(CompartmentTag.DOES_BLEED);
         return tissue;
     }
 
@@ -266,6 +271,7 @@ public class HumanFactory implements AnatomyFactory {
         CompartmentInstance tissue = new CompartmentInstance(HARD_TISSUE.get(), maxHealth, name, false);
         tissue.initializeWithParent(parent);
         tissue.setAttribute(FunctionType.FUNCTION, 1);
+        tissue.addTag(CompartmentTag.DOES_BLEED);
         return tissue;
     }
 }

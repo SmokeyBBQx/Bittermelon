@@ -2,10 +2,8 @@ package com.site21.bittermelon.content.items.medical;
 
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
-import com.site21.bittermelon.content.medical.compartments.CompartmentOld;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
-import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -17,7 +15,7 @@ public interface MedicalItem {
     EnumSet<CompartmentTag> getAllowedCompartments();
     @OnlyIn(Dist.CLIENT)
     void use(CompartmentInstance compartment, MedicalStats medicalStats, Character character, ItemStack item);
-    void finishAction(CompartmentInstance compartment, MedicalStats medicalStats, Character character, float quality, ItemStack item);
+    void finishAction(CompartmentInstance compartment, MedicalStats medicalStats, float quality, ItemStack item);
     default boolean shouldConsumeItem() {
         return false;
     }

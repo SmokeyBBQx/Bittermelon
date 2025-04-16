@@ -7,31 +7,34 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_REGISTRY;
 
 public class Compartment {
     protected final String id;
-    protected EnumSet<CompartmentTag> defaultTags;
-    protected boolean doesBleed = false;
+    protected final EnumSet<CompartmentTag> defaultTags;
+    protected final Consumer<CompartmentInstance> attributeInitializer;
 
-    public Compartment(String id, EnumSet<CompartmentTag> defaultTags) {
+    public Compartment(String id, EnumSet<CompartmentTag> defaultTags, Consumer<CompartmentInstance> attributeInitializer) {
         this.id = id;
         this.defaultTags = defaultTags;
+        this.attributeInitializer = attributeInitializer;
     }
 
-    public Compartment(String id) {
-        this(id, EnumSet.noneOf(CompartmentTag.class));
+    public Compartment(String id, EnumSet<CompartmentTag> defaultTags) {
+        this(id, defaultTags, compartmentInstance -> {});
     }
 
     public void tick(MedicalStats medicalStats, @NotNull CompartmentInstance instance) {
         float functionMultiplier = 1;
+        float totalHealth = instance.getMaxHealth();
         for (UUID childID : instance.getChildren()) {
             CompartmentInstance child = medicalStats.getCompartment(childID);
-            instance.setHealth(Math.max(0, Math.min(instance.getMaxHealth(), instance.getHealth() +
-                    child.getAttribute(FunctionType.DAMAGE))));
+            totalHealth += child.getAttribute(FunctionType.HEALTH);
             functionMultiplier *= child.getAttribute(FunctionType.FUNCTION);
         }
+        instance.setHealth(totalHealth);
         instance.updateFunction(functionMultiplier);
     }
 
@@ -39,20 +42,12 @@ public class Compartment {
 
     }
 
-    public boolean canExtract(CompartmentInstance instance) {
+    public boolean canExtract(CompartmentInstance instance, MedicalStats medicalStats) {
         return false;
-    }
-
-    public EnumMap<FunctionType, Float> makeAttributes(float maxHealth) {
-        return new EnumMap<>(FunctionType.class);
     }
 
     public EnumSet<CompartmentTag> getDefaultTags() {
         return defaultTags;
-    }
-
-    public boolean doesBleed() {
-        return doesBleed;
     }
 
     public Holder<Compartment> builtInRegistryHolder() {

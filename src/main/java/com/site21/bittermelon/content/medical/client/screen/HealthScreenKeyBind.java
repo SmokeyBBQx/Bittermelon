@@ -1,12 +1,9 @@
 package com.site21.bittermelon.content.medical.client.screen;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.character.CharacterManager;
+import com.site21.bittermelon.content.medical.client.screen.networking.OpenHealthScreenC2S;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;

@@ -31,7 +31,7 @@ public record OpenContainmentPanelScreen(BlockPos blockPos) implements CustomPac
         if (Minecraft.getInstance().player == null) return;
 
         if (Minecraft.getInstance().player.level().getBlockEntity(blockPos) instanceof ContainmentPanelBlockEntity blockEntity) {
-            ClientHandler.displayContainmentPanelScreen(blockEntity, false);
+            ClientHandler.displayContainmentPanelScreen(blockEntity, true);
         }
     }
 }

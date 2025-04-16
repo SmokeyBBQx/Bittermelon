@@ -1,14 +1,10 @@
 package com.site21.bittermelon.content.medical.compartments.conditions;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.medical.compartments.*;
-import com.site21.bittermelon.content.medical.compartments.bodyparts.BodyPart;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
-import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
 import com.site21.bittermelon.init.custom.Compartments;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,11 +33,13 @@ public class Bleed extends Compartment {
     public static void generateBleed(@NotNull CompartmentInstance target, MedicalStats medicalStats, float damage) {
         CompartmentInstance parent = target.getParent(medicalStats);
 
-        if (parent.hasTag(BODY_PART) && parent.getCompartment().doesBleed()) {
+        if (parent == null) return;
+
+        if (parent.hasTag(BODY_PART) && parent.hasTag(DOES_BLEED)) {
             if (parent.hasTag(BLOOD_VESSEL)) {
                 generateVesselBleed(parent, damage, medicalStats);
             } else {
-                randomBleeds(parent, damage, medicalStats);
+                randomBleeds(target, damage, medicalStats);
             }
         }
     }
@@ -112,6 +110,7 @@ public class Bleed extends Compartment {
                 bleed.setAttribute(FunctionType.BLEED, BASE_CAPILLARY_BLEED_RATE);
             }
 
+            bleed.initializeWithParent(parent);
             setBleedIcon(bleed);
 
             medicalStats.addCompartment(bleed);

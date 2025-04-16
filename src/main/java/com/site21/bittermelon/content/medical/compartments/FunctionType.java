@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.medical.compartments;
 
 public enum FunctionType {
-    DAMAGE,
+    HEALTH,
     FUNCTION,
     TREMOR,
     PAIN,

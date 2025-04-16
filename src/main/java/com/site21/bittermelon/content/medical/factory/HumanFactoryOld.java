@@ -2,10 +2,10 @@ package com.site21.bittermelon.content.medical.factory;
 
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.medical.blood.BloodType;
-import com.site21.bittermelon.content.medical.compartments.CompartmentOld;
+import com.site21.bittermelon.content.medical.compartments.deprecated.CompartmentOld;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
 import com.site21.bittermelon.content.medical.compartments.FunctionType;
-import com.site21.bittermelon.content.medical.compartments.bodyparts.BodyPart;
+import com.site21.bittermelon.content.medical.compartments.deprecated.bodyparts.BodyPart;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

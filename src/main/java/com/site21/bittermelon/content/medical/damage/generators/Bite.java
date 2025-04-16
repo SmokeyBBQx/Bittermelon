@@ -28,6 +28,7 @@ public class Bite extends DamageGenerator {
             switch (type) {
                 case CompartmentTag.SOFT_TISSUE -> {
                     CompartmentInstance bite = new CompartmentInstance(INJURY.get(), damage, "Bite Wound", false);
+                    bite.initializeWithParent(target);
                     target.setHidden(false);
                     String message = "tearing the " + target.getName().toLowerCase();
                     Bleed.generateBleed(bite, medicalStats, bite.getMaxHealth());
@@ -36,11 +37,13 @@ public class Bite extends DamageGenerator {
                 case CompartmentTag.HARD_TISSUE -> {
                     if (damage > target.getHealth()) {
                         CompartmentInstance fracture = new CompartmentInstance(INJURY.get(), damage, "Fracture", false);
+                        fracture.initializeWithParent(target);
                         target.setHidden(false);
                         String message = "fracturing the " + target.getName().toLowerCase();
                         return new InjuryResult(fracture, message);
                     } else {
                         CompartmentInstance scratch = new CompartmentInstance(INJURY.get(), damage, "Scratch", false);
+                        scratch.initializeWithParent(target);
                         target.setHidden(false);
                         String message = "scratching the " + target.getName().toLowerCase();
                         return new InjuryResult(scratch, message);

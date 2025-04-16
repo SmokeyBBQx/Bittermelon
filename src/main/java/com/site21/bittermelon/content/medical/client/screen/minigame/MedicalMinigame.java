@@ -2,10 +2,9 @@ package com.site21.bittermelon.content.medical.client.screen.minigame;
 
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.items.medical.MedicalItem;
+import com.site21.bittermelon.content.medical.client.screen.networking.CompleteMinigame;
 import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
-import com.site21.bittermelon.content.medical.compartments.CompartmentOld;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
-import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -14,6 +13,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.content.medical.client.screen.HealthScreenKeyBind.openHealthScreen;
@@ -45,10 +45,12 @@ public abstract class MedicalMinigame extends Screen {
     }
 
     protected void complete() {
-        if (item.getItem() instanceof MedicalItem medicalItem) {
-            medicalItem.finishAction(compartment, medicalStats, character, 1, item);
-            medicalItem.consumeItem(item, getMinecraft().player);
-        }
+        if (getMinecraft().player == null) return;
+        PacketDistributor.sendToServer(new CompleteMinigame(item,
+                compartment.getUUID(),
+                character.getUUID(),
+                getMinecraft().player.getUUID(),
+                1));
         this.onClose();
         openHealthScreen();
     }

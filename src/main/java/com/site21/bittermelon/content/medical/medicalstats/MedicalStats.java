@@ -9,8 +9,9 @@ import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.entities.ai.behavior.misc.FeelsPain;
 import com.site21.bittermelon.content.medical.blood.BloodType;
+import com.site21.bittermelon.content.medical.client.screen.networking.UpdateHealthScreen;
 import com.site21.bittermelon.content.medical.compartments.*;
-import com.site21.bittermelon.content.medical.compartments.organs.HeartRhythm;
+import com.site21.bittermelon.content.medical.compartments.deprecated.organs.HeartRhythm;
 import com.site21.bittermelon.content.medical.simulations.Simulation;
 import com.site21.bittermelon.content.miscellaneous.stumble.StumbleHandler;
 import com.site21.bittermelon.content.substance.SubstanceStack;
@@ -27,6 +28,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
@@ -43,6 +45,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.site21.bittermelon.content.medical.compartments.CompartmentTag.BLEED;
+import static com.site21.bittermelon.content.medical.compartments.CompartmentTag.CONDITION;
 import static com.site21.bittermelon.init.custom.Substances.LIQUID_BLOOD;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
 import static net.minecraft.world.level.block.Block.UPDATE_ALL_IMMEDIATE;
@@ -81,19 +85,20 @@ public class MedicalStats {
     private static final float LOW_OXYGEN_THRESHOLD = 80f;
     private static final float LOW_BLOOD_VOLUME_THRESHOLD = 60f;
 
-    private final HashMap<UUID, CompartmentInstance> compartments;
+    private final Map<UUID, CompartmentInstance> compartments;
     private final Map<FunctionType, Float> stats;
     private final Map<UUID, Float> immunity;
     private final List<SubstanceStack> substances;
     private final List<Simulation> simulations;
     private final BloodType bloodType;
     private final UUID characterID;
-    private Character character;
     private final MedicalStats.VitalSigns vitalSigns;
     private final Map<Holder<Attribute>, Double> defaultAttributeValues;
 
     private LivingEntity entity;
+    private Character character;
     private float heartLifeSupport;
+
     private int gaspTickCounter;
     private int stumbleTickCounter;
     private int painTickCounter;
@@ -101,7 +106,7 @@ public class MedicalStats {
 
     public MedicalStats(@NotNull Collection<CompartmentInstance> compartments, BloodType bloodType, UUID characterID, VitalSigns vitalSigns) {
         this.bloodType = bloodType;
-        this.compartments = new HashMap<>();
+        this.compartments = new ConcurrentHashMap<>();
         for (CompartmentInstance instance : compartments) {
             this.compartments.put(instance.getUUID(), instance);
         }
@@ -175,10 +180,7 @@ public class MedicalStats {
 
         for (CompartmentInstance compartment : compartments.values()) {
             compartment.tick(this);
-
-//            if (compartment instanceof Condition) {
-//                processCondition(compartment);
-//            }
+            handleObscuring(compartment);
 
             for (FunctionType stat : FunctionType.values()) {
                 float attribute = compartment.getAttribute(stat);
@@ -208,7 +210,6 @@ public class MedicalStats {
 
     private void updateMovementAttributes() {
         float capability = getMovement();
-
         handleStumbling(capability);
 
         updateEntityAttribute(Attributes.MOVEMENT_SPEED, capability);
@@ -231,6 +232,7 @@ public class MedicalStats {
 
         if (defaultAttributeValues.get(attributeHolder) == null) return;
         double baseValue = defaultAttributeValues.get(attributeHolder);
+
         attribute.setBaseValue(value * baseValue);
     }
 
@@ -238,17 +240,14 @@ public class MedicalStats {
         vitalSigns.modifyBloodVolume(getCirculation() / 100 - stats.get(FunctionType.BLEED) / 20);
         vitalSigns.modifyOxygenSaturation((stats.get(FunctionType.RESPIRATORY) / 100) * stats.get(FunctionType.BRAIN_VITALS) * getAirQuality() - 0.01f);
 
-//        if (!entity.level().isClientSide) {
-//            AtmosHandler.releaseGas(entity.level(), entity.getOnPos(), new SubstanceStack(LIQUID_WATER.get(), 0.001f));
-//        }
         handleGasping();
 
         if (vitalSigns.bloodVolume < 60 || vitalSigns.oxygenSaturation < 80) {
             for (CompartmentInstance compartment : compartments.values()) {
-                    compartment.modifyHealth(-0.001f);
-                    if (compartment.getHealth() <= 0) {
-                        compartment.modifyMaxHealth(-0.001f);
-                    }
+                compartment.modifyHealth(-0.001f);
+                if (compartment.getHealth() <= 0) {
+                    compartment.modifyMaxHealth(-0.001f);
+                }
             }
         }
 
@@ -257,20 +256,7 @@ public class MedicalStats {
 
     private float getAirQuality() {
         return 1;
-
-//        if (!entity.level().isClientSide) {
-//            AtmosInstance atmos = AtmosHandler.getAtmosInstanceAt(entity.level(), entity.getOnPos());
-//            if (atmos != null) {
-//                List<SubstanceStack> gasses = atmos.getGases();
-//                for (SubstanceStack stack : gasses) {
-//                    if (Objects.equals(stack.getSubstance().getName(), "gaseous_oxygen")) {
-//                        float amount = stack.getAmount();
-//                        return amount / 20;
-//                    }
-//                }
-//            }
-//        }
-//        return 0;
+        // TODO: Implement atmospheric system integration
     }
 
     private void handleGasping() {
@@ -307,52 +293,91 @@ public class MedicalStats {
     }
 
     private void updateConsciousness() {
+        vitalSigns.consciousness = stats.get(FunctionType.BRAIN_VITALS) * getCirculation();
+
         if (vitalSigns.consciousness < 0.1f) {
             if (entity.getPose() != Pose.SLEEPING) {
                 PacketDistributor.sendToAllPlayers(new SetForcedPose(entity.getUUID(), Pose.SLEEPING));
-//                LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(character.getName() + " passes out.").withColor(character.getEmoteColor()));
+                if (entity.level().isClientSide) {
+                    if (entity.getPose() != Pose.SLEEPING) {
+                        LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(character.getName() + " passes out.").withColor(character.getEmoteColor()));
+                    }
+                }
             }
         }
-
-        vitalSigns.consciousness = stats.get(FunctionType.BRAIN_VITALS) * getCirculation();
     }
 
     private void handlePain() {
-        if (entity instanceof FeelsPain || entity instanceof Player) {
-            if (getPain() <= 0) return;
-            int painInterval = Math.max(60, (int) (BASE_PAIN_INTERVAL * Math.exp(-getPain() / 10)));
-            painTickCounter++;
+        if (!(entity instanceof FeelsPain || entity instanceof Player)) {
+            return;
+        }
 
-            if (painTickCounter >= painInterval) {
-                painTickCounter = 0;
+        float pain = getPain();
+        if (pain <= 0) return;
+        int painInterval = Math.max(60, (int) (BASE_PAIN_INTERVAL * Math.exp(-pain / 10)));
+        painTickCounter++;
 
-                if (getPain() > 8) {
-                    entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40 + (int) getPain(),
-                            (int) getPain(), false, false));
-                    entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40 + (int) getPain(),
-                            (int) getPain(), false, false));
-                    entity.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 40 + (int) getPain(),
-                            (int) getPain(), false, false));
-                    entity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 40 + (int) getPain(),
-                            (int) getPain(), false, false));
-                }
+        if (painTickCounter >= painInterval) {
+            painTickCounter = 0;
 
-                if (entity instanceof FeelsPain) {
-                    Component message = Component.literal(character.getName() + " " + ((FeelsPain) entity)
-                            .getPainMessage(getPain())).withColor(character.getEmoteColor());
-                    LocalMessageHelper.sendLocalMessage(entity, 10, message);
+            if (getPain() > 8) {
+                entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40 + (int) pain,
+                        (int) pain, false, false));
+                entity.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40 + (int) pain,
+                        (int) pain, false, false));
+                entity.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 40 + (int) pain,
+                        (int) pain, false, false));
+                entity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 40 + (int) pain,
+                        (int) pain, false, false));
+            }
 
-                    entity.level().playSound(null, entity.getOnPos(), ((FeelsPain) entity)
-                            .getPainSound(getPain()), SoundSource.AMBIENT);
-                }
+            if (entity instanceof FeelsPain) {
+                Component message = Component.literal(character.getName() + " " + ((FeelsPain) entity)
+                        .getPainMessage(pain)).withColor(character.getEmoteColor());
+                LocalMessageHelper.sendLocalMessage(entity, 10, message);
+
+                entity.level().playSound(null, entity.getOnPos(), ((FeelsPain) entity)
+                        .getPainSound(pain), SoundSource.AMBIENT);
             }
         }
     }
 
     private void handleTremor() {
         if (entity instanceof ServerPlayer player) {
-            if (!entity.level().isClientSide()) return;
             PacketDistributor.sendToPlayer(player, new StartScreenshake(80, Math.min(0.8f, getTremor() / 10)));
+        }
+    }
+
+    private void handleObscuring(@NotNull CompartmentInstance compartment) {
+        HashSet<UUID> children = compartment.getChildren();
+        int bleedCount = 0;
+
+        for (UUID childID : children) {
+            CompartmentInstance child = getCompartment(childID);
+            if (child.hasTag(BLEED)) {
+                bleedCount += (int) child.getAttribute(FunctionType.BLEED);
+            }
+        }
+
+        if (bleedCount > 0) {
+            RandomSource random = entity.getRandom();
+            float obscureChance = Math.min(0.01f + (0.05f * bleedCount), 0.05f);
+
+            if (random.nextFloat() < obscureChance) {
+                HashSet<UUID> siblings = getCompartment(compartment.getParentID()).getChildren();
+
+                List<UUID> eligibleSiblings = siblings.stream()
+                        .filter(id -> {
+                            CompartmentInstance comp = getCompartment(id);
+                            return !comp.hasTag(CONDITION) && !comp.isObscured();
+                        })
+                        .toList();
+
+                if (!eligibleSiblings.isEmpty()) {
+                    UUID selectedSibling = eligibleSiblings.get(random.nextInt(eligibleSiblings.size()));
+                    getCompartment(selectedSibling).setObscured(true);
+                }
+            }
         }
     }
 
@@ -386,10 +411,6 @@ public class MedicalStats {
                 level.setBlock(pos, FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
             }
 
-            if (level.getBlockEntity(pos) == null) System.out.println("BlockEntity is null");
-
-            // TODO: WHY DOESN'T IT FIND THE FLUID BLOCK ENTITY HALF THE TIME
-
             if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluid) {
                 fluid.updateSubstance(stack);
             } else {
@@ -399,10 +420,11 @@ public class MedicalStats {
     }
 
     public CompartmentInstance getCompartment(UUID uuid) {
+        if (uuid == null) return null;
         return compartments.get(uuid);
     }
 
-    public HashMap<UUID, CompartmentInstance> getCompartments() {
+    public Map<UUID, CompartmentInstance> getCompartments() {
         return compartments;
     }
 
@@ -416,7 +438,9 @@ public class MedicalStats {
     }
 
     public void removeCompartment(@NotNull CompartmentInstance compartment) {
-        getCompartment(compartment.getParentID()).getChildren().remove(compartment.getUUID());
+        if (compartment.getParent(this) != null) {
+            compartment.getParent(this).getChildren().remove(compartment.getUUID());
+        }
         compartments.remove(compartment.getUUID());
 
         List<UUID> childrenToRemove = new ArrayList<>(compartment.getChildren());
@@ -430,12 +454,18 @@ public class MedicalStats {
             }
         }
 
-
+        if (entity != null) {
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new UpdateHealthScreen(characterID));
+        }
         // TODO: Severed vessels and such for connecting compartments
     }
 
     public void addCompartment(CompartmentInstance compartment) {
         compartments.put(compartment.getUUID(), compartment);
+
+        if (entity != null) {
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new UpdateHealthScreen(characterID));
+        }
     }
 
 
@@ -452,7 +482,7 @@ public class MedicalStats {
     }
 
     public float getTremor() {
-        return stats.get(FunctionType.TREMOR);
+        return stats.get(FunctionType.TREMOR) + getPain();
     }
 
     public BloodType getBloodType() {

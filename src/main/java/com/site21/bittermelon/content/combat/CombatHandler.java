@@ -23,10 +23,11 @@ import java.util.List;
 import java.util.Objects;
 
 public class CombatHandler {
-    public record AttackResult(boolean hit, DamageResult damageResult, String message) {}
+    public record AttackResult(boolean hit, DamageResult damageResult, String message) {
+    }
 
     public static void handleAttack(LivingEntity attacker, LivingEntity target, AttackTemplate attackTemplate) {
-        if (target == null) return;
+        if (target == null || attacker.level().isClientSide) return;
 
         CharacterManager characterManager = CharacterManager.get(attacker.level());
         Character attackerCharacter = characterManager.getActiveCharacter(attacker);
@@ -47,7 +48,6 @@ public class CombatHandler {
         sendCombatMessages(result, attacker, target, attackerCharacter, targetCharacter, result.hit());
 
         playAttackSound(attacker.getOnPos(), attackTemplate.sound(), attacker);
-
     }
 
     private static void sendCombatMessages(@NotNull AttackResult result, Entity attacker, Entity target, @NotNull Character attackerCharacter, @NotNull Character targetCharacter, boolean hit) {
@@ -154,7 +154,10 @@ public class CombatHandler {
                 .max(Comparator.comparingInt(a -> getCompartmentDepth(a.injury().getParent(medicalStats), medicalStats)))
                 .orElse(injuryResults.getLast());
 
-        String targetName = deepestResult.injury().getParent(medicalStats).getName().toLowerCase();
+        String targetName = deepestResult.injury().getName().toLowerCase();
+        if (deepestResult.injury().getParent(medicalStats) != null) {
+            targetName = deepestResult.injury().getParent(medicalStats).getName().toLowerCase();
+        }
         String action = deepestResult.message().split(" ")[0];
 
         return String.format("the injury reaching through and %s %s the %s",
@@ -176,6 +179,8 @@ public class CombatHandler {
     private static int getCompartmentDepth(CompartmentInstance compartment, MedicalStats medicalStats) {
         int depth = 0;
         CompartmentInstance current = compartment;
+        if (current == null) return 0;
+
         while (current.getParent(medicalStats) != null) {
             depth++;
             current = current.getParent(medicalStats);

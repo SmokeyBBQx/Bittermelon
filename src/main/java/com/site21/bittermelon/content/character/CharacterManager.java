@@ -20,13 +20,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ACTIVE_CHARACTER;
 
 public class CharacterManager extends SavedData {
     private static CharacterManager clientInstance;
-    private final Map<UUID, Character> characters = new HashMap<>();
+    private final Map<UUID, Character> characters = new ConcurrentHashMap<>();
     private static final String DATA_NAME = "character_registry";
 
     public static CharacterManager get(@NotNull Level level) {

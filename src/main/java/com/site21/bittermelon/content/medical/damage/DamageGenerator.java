@@ -1,5 +1,6 @@
 package com.site21.bittermelon.content.medical.damage;
 
+import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
@@ -41,7 +42,9 @@ public abstract class DamageGenerator {
      * @return A DamageResult containing the targeted body part and list of created injuries, or null if no valid target was found
      */
 
-    public @Nullable DamageResult generateDamage(MedicalStats medicalStats, int area, int minDepth, int maxDepth, float damage, Character character, LivingEntity entity) {
+    public @Nullable DamageResult generateDamage(MedicalStats medicalStats, int area, int minDepth, int maxDepth, float damage, Character character, @NotNull LivingEntity entity) {
+        if (entity.level().isClientSide) return null;
+
         List<CompartmentInstance> initialCompartments = getInitialCompartments(medicalStats);
         if (initialCompartments.isEmpty()) return null;
 
@@ -50,7 +53,7 @@ public abstract class DamageGenerator {
         List<InjuryResult> injuryResults = new ArrayList<>();
 
         for (int i = 0; i < area; i++) {
-            InjuryResult injuryResult = inflictInjury(validChildren, damage, medicalStats, character, entity);
+            InjuryResult injuryResult = inflictInjury(validChildren, damage, medicalStats, entity);
             if (injuryResult == null) return null;
 
             injuryResults.add(injuryResult);
@@ -60,9 +63,13 @@ public abstract class DamageGenerator {
 
             int depth = minDepth + (int) (Math.pow(random.nextFloat(), 2) * (maxDepth - minDepth));
             for (int j = 0; j < depth; j++) {
+                if (injury.getParent(medicalStats) == null) break;
+
                 injuryResult = inflictInjury(filterCompartments(injury.getParent(medicalStats).getChildren(), medicalStats),
-                        injury.getMaxHealth() / 2, medicalStats, character, entity);
+                        injury.getMaxHealth() / 2, medicalStats, entity);
                 if (injuryResult == null) break;
+
+                if (injuryResult.injury().getParent(medicalStats) == null) break;
 
                 if (injuryResult.injury().getHealth() > injuryResult.injury().getParent(medicalStats).getHealth()) {
                     depth++;
@@ -75,6 +82,11 @@ public abstract class DamageGenerator {
             }
         }
 
+        if (injuryResults.isEmpty()) {
+            Bittermelon.LOGGER.error("No injuries for damage inflicted upon {} with area: {} minDepth: {} maxDepth: {} damage: {} for character: {} ({})", targetBodyPart, area, minDepth, maxDepth, damage, character.getName(), character.getUUID());
+            return null;
+        }
+
         return new DamageResult(targetBodyPart, injuryResults);
     }
 
@@ -85,13 +97,20 @@ public abstract class DamageGenerator {
         return generateDamage(medicalStats, area, minDepth, maxDepth, damage, character, entity);
     }
 
-    private @Nullable InjuryResult inflictInjury(@NotNull List<UUID> compartments, float damage, MedicalStats medicalStats, Character character, LivingEntity entity) {
+    private @Nullable InjuryResult inflictInjury(@NotNull List<UUID> compartments, float damage, MedicalStats medicalStats, LivingEntity entity) {
         if (compartments.isEmpty()) return null;
 
         UUID targetID = compartments.get(random.nextInt(compartments.size()));
         CompartmentInstance target = medicalStats.getCompartment(targetID);
+        if (target == null) {
+            Bittermelon.LOGGER.error("Skipping target compartment for injury with UUID: {}", targetID);
+            List<UUID> newCompartments = new ArrayList<>(compartments);
+            newCompartments.remove(targetID);
+            return inflictInjury(newCompartments, damage, medicalStats, entity);
+        }
+
         if (target.hasTag(CompartmentTag.MAJOR_BODY_PART)) {
-            return inflictInjury(new ArrayList<>(target.getChildren()), damage, medicalStats, character, entity);
+            return inflictInjury(new ArrayList<>(target.getChildren()), damage, medicalStats, entity);
         }
 
         float injuryDamage = 1 + random.nextFloat() * damage;
@@ -132,18 +151,19 @@ public abstract class DamageGenerator {
 
     protected List<CompartmentInstance> getInitialCompartments(@NotNull MedicalStats medicalStats) {
         return medicalStats.getCompartments().values().stream()
-                .filter(id -> isValidInitialCompartment(id, medicalStats))
+                .filter(compartment -> isValidInitialCompartment(compartment, medicalStats))
                 .toList();
     }
 
     private boolean isValidInitialCompartment(@NotNull CompartmentInstance compartment, MedicalStats medicalStats) {
         return compartment.hasTag(CompartmentTag.MAJOR_BODY_PART)
                 && !compartment.isHidden()
-                && compartment.getParentID() != null
-                && medicalStats.getCompartment(compartment.getParentID()).hasTag(CompartmentTag.MAJOR_BODY_PART);
+                && compartment.getParent(medicalStats) != null
+                && compartment.getParent(medicalStats).hasTag(CompartmentTag.MAJOR_BODY_PART);
     }
 
     protected boolean isValidCompartment(@NotNull UUID compartmentID, @NotNull MedicalStats medicalStats) {
+        if (medicalStats.getCompartment(compartmentID) == null) return false;
         return medicalStats.getCompartment(compartmentID).getTags().stream().anyMatch(allowedCompartments::contains);
     }
 }

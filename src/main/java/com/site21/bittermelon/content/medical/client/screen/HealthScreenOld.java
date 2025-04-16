@@ -3,7 +3,7 @@
 //import com.site21.bittermelon.character.Character;
 //import com.site21.bittermelon.items.medical.MedicalItem;
 //import com.site21.bittermelon.medical.compartments.CompartmentOld;
-//import com.site21.bittermelon.medical.compartments.Condition;
+//import com.site21.bittermelon.medical.compartments.ConditionOld;
 //import com.site21.bittermelon.medical.compartments.firstaid.FirstAid;
 //import com.site21.bittermelon.medical.medicalstats.MedicalStatsOld;
 //import net.minecraft.client.Minecraft;
@@ -316,7 +316,7 @@
 //
 //            if (compartment instanceof FirstAid) {
 //                color = 0xFF3CC9C5;
-//            } else if (compartment instanceof Condition) {
+//            } else if (compartment instanceof ConditionOld) {
 //                color = 0xFFCF1515;
 //            }
 //

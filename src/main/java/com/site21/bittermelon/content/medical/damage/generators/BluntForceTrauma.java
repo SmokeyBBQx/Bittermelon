@@ -1,16 +1,12 @@
 package com.site21.bittermelon.content.medical.damage.generators;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
-import com.site21.bittermelon.content.medical.compartments.CompartmentOld;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
-import com.site21.bittermelon.content.medical.compartments.Injury;
 import com.site21.bittermelon.content.medical.damage.DamageGenerator;
 import com.site21.bittermelon.content.medical.damage.InjuryResult;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
@@ -29,6 +25,7 @@ public class BluntForceTrauma extends DamageGenerator {
             switch (type) {
                 case CompartmentTag.SOFT_TISSUE -> {
                     CompartmentInstance bruise = new CompartmentInstance(INJURY.get(), damage, "Bruise", true);
+                    bruise.initializeWithParent(target);
                     if (!target.isHidden()) {
                         bruise.setHidden(false);
                     }
@@ -38,12 +35,14 @@ public class BluntForceTrauma extends DamageGenerator {
                 }
                 case CompartmentTag.JOINT -> {
                     CompartmentInstance dislocation = new CompartmentInstance(INJURY.get(), damage, "Dislocation", false);
+                    dislocation.initializeWithParent(target);
                     target.setHidden(false);
                     String message = "dislocating the " + target.getName().toLowerCase();
                     return new InjuryResult(dislocation, message);
                 }
                 case CompartmentTag.HARD_TISSUE -> {
                     CompartmentInstance fracture = new CompartmentInstance(INJURY.get(), damage, "Fracture", true);
+                    fracture.initializeWithParent(target);
                     if (!target.isHidden()) {
                         fracture.setHidden(false);
                     }

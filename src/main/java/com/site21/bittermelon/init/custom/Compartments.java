@@ -3,7 +3,9 @@ package com.site21.bittermelon.init.custom;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.medical.compartments.Compartment;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
+import com.site21.bittermelon.content.medical.compartments.FunctionType;
 import com.site21.bittermelon.content.medical.compartments.conditions.Bleed;
+import com.site21.bittermelon.content.medical.compartments.firstaid.Retractor;
 import com.site21.bittermelon.content.substance.Substance;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -27,10 +29,23 @@ public class Compartments {
             CompartmentTag.INJURY
     )));
 
-    public static final Supplier<Compartment> INJURY = COMPARTMENTS.register("injury", () -> new Compartment("injury", EnumSet.of(
-            CompartmentTag.CONDITION,
-            CompartmentTag.INJURY
-    )));
+    public static final Supplier<Compartment> INJURY = COMPARTMENTS.register("injury", () -> new Compartment(
+            "injury",
+            EnumSet.of(CompartmentTag.CONDITION, CompartmentTag.INJURY),
+            compartmentInstance -> {
+                compartmentInstance.setAttribute(FunctionType.HEALTH, -compartmentInstance.getMaxHealth());
+                compartmentInstance.setAttribute(FunctionType.PAIN, compartmentInstance.getMaxHealth());
+            }
+    ));
+
+    public static final Supplier<Compartment> PAIN = COMPARTMENTS.register("pain", () -> new Compartment(
+            "pain",
+            EnumSet.of(CompartmentTag.CONDITION, CompartmentTag.PAIN),
+            compartmentInstance -> {
+                compartmentInstance.setAttribute(FunctionType.FUNCTION, 0.5f);
+                compartmentInstance.setAttribute(FunctionType.PAIN, compartmentInstance.getMaxHealth());
+            }
+    ));
 
     public static final Supplier<Compartment> BANDAGE = COMPARTMENTS.register("bandage", () -> new Compartment("bandage", EnumSet.of(
             CompartmentTag.FIRST_AID,
@@ -38,6 +53,10 @@ public class Compartments {
     )));
 
     public static final Supplier<Compartment> TOOL = COMPARTMENTS.register("tool", () -> new Compartment("tool", EnumSet.of(
+            CompartmentTag.FIRST_AID
+    )));
+
+    public static final Supplier<Compartment> RETRACTOR = COMPARTMENTS.register("retractor", () -> new Retractor("retractor", EnumSet.of(
             CompartmentTag.FIRST_AID
     )));
 

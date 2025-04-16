@@ -8,12 +8,15 @@ import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.entities.ai.behavior.misc.FeelsPain;
 import com.site21.bittermelon.content.medical.blood.BloodType;
 import com.site21.bittermelon.content.medical.compartments.*;
-import com.site21.bittermelon.content.medical.compartments.bodyparts.BodyPart;
-import com.site21.bittermelon.content.medical.compartments.bodyparts.Heart;
-import com.site21.bittermelon.content.medical.compartments.conditionsold.Bleed;
-import com.site21.bittermelon.content.medical.compartments.conditionsold.ForeignSubstance;
-import com.site21.bittermelon.content.medical.compartments.conditionsold.Infection;
-import com.site21.bittermelon.content.medical.compartments.organs.HeartRhythm;
+import com.site21.bittermelon.content.medical.compartments.deprecated.bodyparts.BodyPart;
+import com.site21.bittermelon.content.medical.compartments.deprecated.bodyparts.Heart;
+import com.site21.bittermelon.content.medical.compartments.deprecated.CompartmentOld;
+import com.site21.bittermelon.content.medical.compartments.deprecated.ConditionOld;
+import com.site21.bittermelon.content.medical.compartments.deprecated.InjuryOld;
+import com.site21.bittermelon.content.medical.compartments.deprecated.conditionsold.Bleed;
+import com.site21.bittermelon.content.medical.compartments.deprecated.conditionsold.ForeignSubstance;
+import com.site21.bittermelon.content.medical.compartments.deprecated.conditionsold.Infection;
+import com.site21.bittermelon.content.medical.compartments.deprecated.organs.HeartRhythm;
 import com.site21.bittermelon.content.medical.simulations.Simulation;
 import com.site21.bittermelon.content.miscellaneous.stumble.StumbleHandler;
 import com.site21.bittermelon.networking.client.SetForcedPose;
@@ -138,7 +141,7 @@ public class MedicalStatsOld {
         for (CompartmentOld compartment : compartments) {
             compartment.update(this);
 
-            if (compartment instanceof Condition) {
+            if (compartment instanceof ConditionOld) {
                 processCondition(compartment);
             }
 
@@ -167,7 +170,7 @@ public class MedicalStatsOld {
             handleInfection(infection);
         } else if (compartment instanceof ForeignSubstance substance) {
             handleForeignSubstance(substance);
-        } else if (compartment instanceof Injury injury) {
+        } else if (compartment instanceof InjuryOld injury) {
             handleInjury(injury);
         } else if (compartment instanceof Bleed bleed) {
             handleCoagulation(bleed);
@@ -190,7 +193,7 @@ public class MedicalStatsOld {
         // TODO: Separate metabolism and elimination?
     }
 
-    private void handleInjury(@NotNull Injury injury) {
+    private void handleInjury(@NotNull InjuryOld injury) {
         injury.modifyHealth(-stats.get(FunctionType.HEALING));
     }
 
@@ -397,7 +400,7 @@ public class MedicalStatsOld {
         for (CompartmentOld child : childrenToRemove) {
             if (compartment.hasType(CompartmentTag.MAJOR_BODY_PART)) {
                 removeCompartment(child);
-            } else if (child instanceof Condition) {
+            } else if (child instanceof ConditionOld) {
                 removeCompartment(child);
             } else {
                 child.initializeWithOwner(compartment.getOwner());

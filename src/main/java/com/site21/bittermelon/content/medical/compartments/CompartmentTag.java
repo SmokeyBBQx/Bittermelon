@@ -45,5 +45,8 @@ public enum CompartmentTag {
     HARD_TISSUE,
     SOFT_TISSUE,
     MAJOR_BODY_PART,
-    BODY_PART, JOINT
+    BODY_PART, JOINT,
+
+    // MISC
+    DOES_BLEED
 }

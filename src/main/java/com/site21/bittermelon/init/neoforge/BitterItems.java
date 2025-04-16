@@ -12,7 +12,7 @@ import com.site21.bittermelon.content.items.cardboardbox.CardboardBoxItem;
 import com.site21.bittermelon.content.items.cardboardbox.CollapsedCardboardBoxItem;
 import com.site21.bittermelon.content.items.containers.substance.FluidContainerItem;
 import com.site21.bittermelon.content.items.containers.substance.GasContainerItem;
-import com.site21.bittermelon.content.items.containers.substance.implementations.GlassFluidContainerItem;
+import com.site21.bittermelon.content.items.containers.substance.GlassFluidContainerItem;
 import com.site21.bittermelon.content.items.laserdesignator.LaserDesignatorItem;
 import com.site21.bittermelon.content.items.medical.organic.BodyPart;
 import com.site21.bittermelon.content.items.medical.tools.*;

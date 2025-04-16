@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.items.medical.MedicalItem;
+import com.site21.bittermelon.content.medical.client.screen.networking.ExtractCompartment;
 import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
 import com.site21.bittermelon.content.medical.compartments.FunctionType;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
@@ -22,6 +23,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -70,9 +72,6 @@ public class HealthScreen extends Screen {
     @Override
     public void tick() {
         super.tick();
-        for (CompartmentEntry entry : this.compartmentList.children()) {
-            entry.obscure();
-        }
     }
 
     public void refreshCompartmentList() {
@@ -148,6 +147,10 @@ public class HealthScreen extends Screen {
         if (heldItem != null) {
             guiGraphics.renderItem(heldItem, mouseX - 8, mouseY - 8);
         }
+    }
+
+    public Character getCharacter() {
+        return character;
     }
 
     @Override
@@ -296,10 +299,12 @@ public class HealthScreen extends Screen {
             }
 
             if (button == 2) {
-                if (compartment.getCompartment().canExtract(compartment) && !compartment.getItem().isEmpty()) {
-                    screen.character.getMedicalStats().extractCompartment(compartment);
+                if (compartment.getCompartment().canExtract(compartment, screen.medicalStats) && !compartment.getItem().isEmpty()) {
+                    PacketDistributor.sendToServer(new ExtractCompartment(
+                            compartment.getUUID(),
+                            screen.character.getUUID(),
+                            screen.player.getUUID()));
                     screen.refreshCompartmentList();
-                    screen.player.getInventory().add(compartment.getItem());
                 }
             }
 
@@ -363,7 +368,7 @@ public class HealthScreen extends Screen {
             }
 
             if (!compartment.isObscured()) {
-                if (compartment.getCompartment().canExtract(compartment) && !compartment.getItem().isEmpty()) {
+                if (compartment.getCompartment().canExtract(compartment, screen.medicalStats) && !compartment.getItem().isEmpty()) {
                     tooltipLines.add(Component.literal("\uE001 Extract")
                             .withStyle(style -> style.withFont(
                                     ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "default"))));
@@ -442,7 +447,7 @@ public class HealthScreen extends Screen {
             }
 
             if (!compartment.getItem().isEmpty()) {
-                boolean canExtract = compartment.getCompartment().canExtract(compartment);
+                boolean canExtract = compartment.getCompartment().canExtract(compartment, screen.medicalStats);
 
                 if (canExtract) {
                     float pulse = (float) (Math.sin(System.currentTimeMillis() / 500.0) * 0.4f + 0.8f);
@@ -472,54 +477,20 @@ public class HealthScreen extends Screen {
                 guiGraphics.drawString(Minecraft.getInstance().font, "------------------", x, top + 12, 0x808080);
             }
         }
-
-
-        private void obscure() {
-            HashSet<UUID> children = compartment.getChildren();
-            int bleedCount = 0;
-
-            for (UUID childID : children) {
-                CompartmentInstance child = screen.medicalStats.getCompartment(childID);
-                if (child.hasTag(BLEED)) {
-                    bleedCount += (int) child.getAttribute(FunctionType.BLEED);
-                }
-            }
-
-            if (bleedCount > 0) {
-                RandomSource random = screen.player.getRandom();
-                float obscureChance = Math.min(0.01f + (0.05f * bleedCount), 0.05f);
-
-                if (random.nextFloat() < obscureChance) {
-                    HashSet<UUID> siblings = screen.medicalStats.getCompartment(compartment.getParentID()).getChildren();
-
-                    List<UUID> eligibleSiblings = siblings.stream()
-                            .filter(id -> {
-                                CompartmentInstance comp = screen.medicalStats.getCompartment(id);
-                                return !comp.hasTag(CONDITION) && !comp.isObscured();
-                            })
-                            .toList();
-
-                    if (!eligibleSiblings.isEmpty()) {
-                        UUID selectedSibling = eligibleSiblings.get(random.nextInt(eligibleSiblings.size()));
-                        screen.medicalStats.getCompartment(selectedSibling).setObscured(true);
-                    }
-                }
-            }
-        }
     }
 
-        private static class PersistentScreen {
-            private record CharacterKey(UUID playerId, UUID characterId) {
-            }
+    private static class PersistentScreen {
+        private record CharacterKey(UUID playerId, UUID characterId) {
+        }
 
-            private static final Map<CharacterKey, Set<String>> expandedHealthNodes = new HashMap<>();
+        private static final Map<CharacterKey, Set<String>> expandedHealthNodes = new HashMap<>();
 
-            public static Set<String> getExpandedNodes(UUID playerId, UUID characterId) {
-                return expandedHealthNodes.computeIfAbsent(
-                        new CharacterKey(playerId, characterId),
-                        k -> new HashSet<>()
-                );
-            }
+        public static Set<String> getExpandedNodes(UUID playerId, UUID characterId) {
+            return expandedHealthNodes.computeIfAbsent(
+                    new CharacterKey(playerId, characterId),
+                    k -> new HashSet<>()
+            );
         }
     }
+}
 

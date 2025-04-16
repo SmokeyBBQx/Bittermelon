@@ -10,8 +10,7 @@ import com.site21.bittermelon.content.economy.networking.OpenATMScreen;
 import com.site21.bittermelon.content.items.wires.wire.networking.MakeWireConnection;
 import com.site21.bittermelon.content.items.wires.wire.networking.OpenWiringScreen;
 import com.site21.bittermelon.content.items.wires.wire.networking.WiringDataUpdate;
-import com.site21.bittermelon.content.medical.client.screen.OpenHealthScreenC2S;
-import com.site21.bittermelon.content.medical.client.screen.OpenHealthScreenS2C;
+import com.site21.bittermelon.content.medical.client.screen.networking.*;
 import com.site21.bittermelon.content.miscellaneous.stumble.networking.AttemptToRise;
 import com.site21.bittermelon.content.miscellaneous.stumble.networking.ClearStumbleTimer;
 import com.site21.bittermelon.content.miscellaneous.stumble.networking.UpdateStumbleTimer;
@@ -235,6 +234,24 @@ public class PayloadRegistration {
                 StartScreenshake.TYPE,
                 StartScreenshake.STREAM_CODEC,
                 StartScreenshake::handle
+        );
+
+        registrar.playToServer(
+                CompleteMinigame.TYPE,
+                CompleteMinigame.STREAM_CODEC,
+                CompleteMinigame::handle
+        );
+
+        registrar.playToServer(
+                ExtractCompartment.TYPE,
+                ExtractCompartment.STREAM_CODEC,
+                ExtractCompartment::handle
+        );
+
+        registrar.playToClient(
+                UpdateHealthScreen.TYPE,
+                UpdateHealthScreen.STREAM_CODEC,
+                UpdateHealthScreen::handle
         );
     }
 }

@@ -6,6 +6,7 @@ import com.site21.bittermelon.content.items.medical.MedicalItem;
 import com.site21.bittermelon.content.medical.client.screen.minigame.IncisionMinigame;
 import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
+import com.site21.bittermelon.content.medical.compartments.conditions.Bleed;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.init.custom.Compartments;
 import net.minecraft.client.Minecraft;
@@ -38,8 +39,11 @@ public interface SharpObject extends MedicalItem {
     }
 
     @Override
-    default void finishAction(CompartmentInstance compartment, @NotNull MedicalStats medicalStats, @NotNull Character character, float quality, ItemStack item) {
-        CompartmentInstance cut = new CompartmentInstance(Compartments.INJURY.get(), (int) (1 + 100 - quality * 100), "Scalpel Cut", false);
+    default void finishAction(CompartmentInstance compartment, @NotNull MedicalStats medicalStats, float quality, ItemStack item) {
+        CompartmentInstance cut = new CompartmentInstance(Compartments.INJURY.get(), (1 + 100 - quality * 100), "Scalpel Cut", false);
+        cut.addTag(CompartmentTag.CUT);
+        cut.initializeWithParent(compartment);
+        Bleed.generateBleed(cut, medicalStats, (1 + 100 - quality * 100));
         cut.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/medical/cut.png"));
         medicalStats.addCompartment(cut);
 
