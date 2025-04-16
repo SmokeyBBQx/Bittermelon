@@ -21,13 +21,13 @@ public class MajorBodyPart extends Compartment {
         float childrenTotalMaxHealth = 0;
         for (UUID childID : instance.getChildren()) {
             CompartmentInstance child = medicalStats.getCompartment(childID);
-            instance.setHealth(Math.max(0, Math.min(instance.getMaxHealth(), instance.getHealth() +
+            instance.setHealth(Math.max(0, Math.min(instance.getMaxHealth(), instance.getHealth(medicalStats) +
                     child.getAttribute(FunctionType.HEALTH))));
             functionMultiplier *= child.getAttribute(FunctionType.FUNCTION);
             if (child.hasTag(CompartmentTag.BODY_PART)) {
                 childrenTotalMaxHealth += child.getTrueMaxHealth();
             }
         }
-        instance.updateFunction(functionMultiplier);
+        instance.updateFunction(functionMultiplier, medicalStats);
     }
 }

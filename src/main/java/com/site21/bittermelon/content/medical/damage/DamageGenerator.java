@@ -71,7 +71,7 @@ public abstract class DamageGenerator {
 
                 if (injuryResult.injury().getParent(medicalStats) == null) break;
 
-                if (injuryResult.injury().getHealth() > injuryResult.injury().getParent(medicalStats).getHealth()) {
+                if (injuryResult.injury().getHealth(medicalStats) > injuryResult.injury().getParent(medicalStats).getHealth(medicalStats)) {
                     depth++;
                 }
 
@@ -115,7 +115,7 @@ public abstract class DamageGenerator {
 
         float injuryDamage = 1 + random.nextFloat() * damage;
 
-        if (shouldDismember && injuryDamage > target.getHealth() && random.nextFloat() > 0.5f) {
+        if (shouldDismember && injuryDamage > target.getHealth(medicalStats) && random.nextFloat() > 0.5f) {
             return handleDismemberment(target, medicalStats, entity);
         }
 

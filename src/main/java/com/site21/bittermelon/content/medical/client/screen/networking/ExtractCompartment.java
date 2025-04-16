@@ -53,7 +53,7 @@ public record ExtractCompartment(UUID compartmentID, UUID characterID, UUID play
         }
 
         if (ctx.player() instanceof ServerPlayer serverPlayer) {
-            PacketDistributor.sendToPlayer(serverPlayer, new UpdateHealthScreen(characterID));
+            PacketDistributor.sendToPlayer(serverPlayer, new UpdateHealthScreen(characterID, medicalStats));
         }
     }
 }

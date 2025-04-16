@@ -9,6 +9,7 @@ import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.entities.ai.behavior.misc.FeelsPain;
 import com.site21.bittermelon.content.medical.blood.BloodType;
+import com.site21.bittermelon.content.medical.client.screen.networking.UpdateCompartmentHealth;
 import com.site21.bittermelon.content.medical.client.screen.networking.UpdateHealthScreen;
 import com.site21.bittermelon.content.medical.compartments.*;
 import com.site21.bittermelon.content.medical.compartments.deprecated.organs.HeartRhythm;
@@ -245,10 +246,13 @@ public class MedicalStats {
         if (vitalSigns.bloodVolume < 60 || vitalSigns.oxygenSaturation < 80) {
             for (CompartmentInstance compartment : compartments.values()) {
                 compartment.modifyHealth(-0.001f);
-                if (compartment.getHealth() <= 0) {
+                if (compartment.getHealth(this) <= 0) {
                     compartment.modifyMaxHealth(-0.001f);
                 }
             }
+        }
+        if (entity != null) {
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new UpdateHealthScreen(characterID, this));
         }
 
         // TODO: Random heart state depending on heart health
@@ -462,7 +466,7 @@ public class MedicalStats {
         }
 
         if (entity != null) {
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new UpdateHealthScreen(characterID));
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new UpdateHealthScreen(characterID, this));
         }
         // TODO: Severed vessels and such for connecting compartments
     }
@@ -471,7 +475,7 @@ public class MedicalStats {
         compartments.put(compartment.getUUID(), compartment);
 
         if (entity != null) {
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new UpdateHealthScreen(characterID));
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new UpdateHealthScreen(characterID, this));
         }
     }
 

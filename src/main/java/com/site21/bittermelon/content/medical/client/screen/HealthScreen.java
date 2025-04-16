@@ -36,7 +36,7 @@ public class HealthScreen extends Screen {
     private final Character character;
     private final Player player;
     private ItemStack heldItem;
-    private final MedicalStats medicalStats;
+    private MedicalStats medicalStats;
     private CompartmentList compartmentList;
     private boolean showOnlyInjured = false;
     private Button filterButton;
@@ -151,6 +151,14 @@ public class HealthScreen extends Screen {
 
     public Character getCharacter() {
         return character;
+    }
+
+    public MedicalStats getMedicalStats() {
+        return medicalStats;
+    }
+
+    public void setMedicalStats(MedicalStats medicalStats) {
+        this.medicalStats = medicalStats;
     }
 
     @Override
@@ -304,8 +312,6 @@ public class HealthScreen extends Screen {
                             compartment.getUUID(),
                             screen.character.getUUID(),
                             screen.player.getUUID()));
-                    screen.medicalStats.removeCompartment(compartment);
-                    screen.refreshCompartmentList();
                 }
             }
 
@@ -472,7 +478,7 @@ public class HealthScreen extends Screen {
         private void renderHealthOrDivider(GuiGraphics guiGraphics, int x, int top) {
             if (compartment.getMaxHealth() > 0 && !compartment.isObscured()) {
                 Component health = Component.literal(
-                        String.format("%.1f/%.0f", compartment.getHealth(), compartment.getMaxHealth()));
+                        String.format("%.1f/%.0f", compartment.getHealth(screen.medicalStats), compartment.getMaxHealth()));
                 guiGraphics.drawString(Minecraft.getInstance().font, health, x, top + 12, 0x808080);
             } else {
                 guiGraphics.drawString(Minecraft.getInstance().font, "------------------", x, top + 12, 0x808080);

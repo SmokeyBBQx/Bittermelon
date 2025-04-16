@@ -35,7 +35,7 @@ public class Bite extends DamageGenerator {
                     return new InjuryResult(bite, message);
                 }
                 case CompartmentTag.HARD_TISSUE -> {
-                    if (damage > target.getHealth()) {
+                    if (damage > target.getHealth(medicalStats)) {
                         CompartmentInstance fracture = new CompartmentInstance(INJURY.get(), damage, "Fracture", false);
                         fracture.initializeWithParent(target);
                         target.setHidden(false);

@@ -253,5 +253,11 @@ public class PayloadRegistration {
                 UpdateHealthScreen.STREAM_CODEC,
                 UpdateHealthScreen::handle
         );
+
+        registrar.playToClient(
+                UpdateCompartmentHealth.TYPE,
+                UpdateCompartmentHealth.STREAM_CODEC,
+                UpdateCompartmentHealth::handle
+        );
     }
 }

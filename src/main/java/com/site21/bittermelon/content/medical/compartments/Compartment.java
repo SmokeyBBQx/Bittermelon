@@ -28,14 +28,11 @@ public class Compartment {
 
     public void tick(MedicalStats medicalStats, @NotNull CompartmentInstance instance) {
         float functionMultiplier = 1;
-        float totalHealth = instance.getMaxHealth();
         for (UUID childID : instance.getChildren()) {
             CompartmentInstance child = medicalStats.getCompartment(childID);
-            totalHealth += child.getAttribute(FunctionType.HEALTH);
             functionMultiplier *= child.getAttribute(FunctionType.FUNCTION);
         }
-        instance.setHealth(totalHealth);
-        instance.updateFunction(functionMultiplier);
+        instance.updateFunction(functionMultiplier, medicalStats);
     }
 
     public void onExtract(MedicalStats medicalStats, CompartmentInstance instance) {

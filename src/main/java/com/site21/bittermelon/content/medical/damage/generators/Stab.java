@@ -24,7 +24,7 @@ public class Stab extends DamageGenerator {
                     return new InjuryResult(stab, message);
                 }
                 case CompartmentTag.HARD_TISSUE -> {
-                    if (damage > target.getHealth()) {
+                    if (damage > target.getHealth(medicalStats)) {
                         CompartmentInstance fracture = new CompartmentInstance(INJURY.get(), damage, "Fracture", false);
                         fracture.initializeWithParent(target);
                         target.setHidden(false);

@@ -3,6 +3,7 @@ package com.site21.bittermelon.content.medical.compartments;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.site21.bittermelon.content.medical.compartments.deprecated.CompartmentOld;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import net.minecraft.core.Holder;
 import net.minecraft.core.UUIDUtil;
@@ -77,7 +78,7 @@ public class CompartmentInstance {
                     instance -> instance.group(
                                     COMPARTMENT_NON_EMPTY_CODEC.fieldOf("compartmentID").forGetter(CompartmentInstance::getCompartmentHolder),
                                     UUIDUtil.CODEC.fieldOf("id").forGetter(CompartmentInstance::getUUID),
-                                    Codec.FLOAT.fieldOf("health").forGetter(CompartmentInstance::getHealth),
+                                    Codec.FLOAT.fieldOf("health").forGetter(CompartmentInstance::getHealthRaw),
                                     Codec.FLOAT.fieldOf("trueMaxHealth").forGetter(CompartmentInstance::getTrueMaxHealth),
                                     Codec.FLOAT.fieldOf("modifiedMaxHealth").forGetter(CompartmentInstance::getMaxHealth),
                                     Codec.BOOL.fieldOf("isHidden").forGetter(CompartmentInstance::isHidden),
@@ -96,7 +97,7 @@ public class CompartmentInstance {
         public void encode(@NotNull RegistryFriendlyByteBuf buf, @NotNull CompartmentInstance value) {
             COMPARTMENT_STREAM_CODEC.encode(buf, value.getCompartmentHolder());
             buf.writeUUID(value.getUUID());
-            buf.writeFloat(value.getHealth());
+            buf.writeFloat(value.getHealthRaw());
             buf.writeFloat(value.getTrueMaxHealth());
             buf.writeFloat(value.getMaxHealth());
             buf.writeBoolean(value.isHidden());
@@ -254,8 +255,8 @@ public class CompartmentInstance {
         return compartmentTags.contains(tag);
     }
 
-    public void updateFunction(float functionMultiplier) {
-        function = 1 * getHealth() / trueMaxHealth * functionMultiplier;
+    public void updateFunction(float functionMultiplier, MedicalStats medicalStats) {
+        function = 1 * getHealth(medicalStats) / trueMaxHealth * functionMultiplier;
     }
 
     public boolean areChildrenEmpty(MedicalStats medicalStats) {
@@ -284,7 +285,18 @@ public class CompartmentInstance {
         return uuid;
     }
 
-    public float getHealth() {
+    public float getHealth(MedicalStats medicalStats) {
+        float totalHealth = this.health;
+        for (UUID childID : children) {
+            CompartmentInstance child = medicalStats.getCompartment(childID);
+            if (child != null) {
+                totalHealth += child.getAttribute(FunctionType.HEALTH);
+            }
+        }
+        return totalHealth;
+    }
+
+    public float getHealthRaw() {
         return health;
     }
 

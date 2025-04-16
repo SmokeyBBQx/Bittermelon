@@ -53,7 +53,7 @@ public record CompleteMinigame(ItemStack stack, UUID compartmentID, UUID charact
         }
 
         if (ctx.player() instanceof ServerPlayer serverPlayer) {
-            PacketDistributor.sendToPlayer(serverPlayer, new UpdateHealthScreen(characterID));
+            PacketDistributor.sendToPlayer(serverPlayer, new UpdateHealthScreen(characterID, medicalStats));
         }
     }
 }
