@@ -51,5 +51,9 @@ public record ExtractCompartment(UUID compartmentID, UUID characterID, UUID play
         if (player != null) {
             player.getInventory().add(compartment.getItem().copy());
         }
+
+        if (ctx.player() instanceof ServerPlayer serverPlayer) {
+            PacketDistributor.sendToPlayer(serverPlayer, new UpdateHealthScreen(characterID));
+        }
     }
 }

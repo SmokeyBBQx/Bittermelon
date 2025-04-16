@@ -304,6 +304,7 @@ public class HealthScreen extends Screen {
                             compartment.getUUID(),
                             screen.character.getUUID(),
                             screen.player.getUUID()));
+                    screen.medicalStats.removeCompartment(compartment);
                     screen.refreshCompartmentList();
                 }
             }
@@ -469,7 +470,7 @@ public class HealthScreen extends Screen {
         }
 
         private void renderHealthOrDivider(GuiGraphics guiGraphics, int x, int top) {
-            if (compartment.getMaxHealth() >= 0 && !compartment.isObscured()) {
+            if (compartment.getMaxHealth() > 0 && !compartment.isObscured()) {
                 Component health = Component.literal(
                         String.format("%.1f/%.0f", compartment.getHealth(), compartment.getMaxHealth()));
                 guiGraphics.drawString(Minecraft.getInstance().font, health, x, top + 12, 0x808080);

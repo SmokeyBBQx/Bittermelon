@@ -421,7 +421,14 @@ public class MedicalStats {
 
     public CompartmentInstance getCompartment(UUID uuid) {
         if (uuid == null) return null;
-        return compartments.get(uuid);
+
+        CompartmentInstance compartment = compartments.get(uuid);
+
+        if (compartment == null) {
+            compartments.remove(uuid);
+        }
+
+        return compartment;
     }
 
     public Map<UUID, CompartmentInstance> getCompartments() {

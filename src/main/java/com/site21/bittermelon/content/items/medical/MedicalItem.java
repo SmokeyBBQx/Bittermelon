@@ -22,6 +22,7 @@ public interface MedicalItem {
     default void consumeItem(ItemStack item, Player player) {
         if (shouldConsumeItem()) {
             player.getInventory().removeItem(item);
+            player.getInventory().removeItem(0, 1);
         }
     }
     default boolean canInteract(CompartmentInstance compartment, MedicalStats medicalStats) {

@@ -51,6 +51,7 @@ public abstract class MedicalMinigame extends Screen {
                 character.getUUID(),
                 getMinecraft().player.getUUID(),
                 1));
+
         this.onClose();
         openHealthScreen();
     }

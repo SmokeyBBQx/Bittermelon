@@ -4,6 +4,7 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.medical.compartments.Compartment;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
 import com.site21.bittermelon.content.medical.compartments.FunctionType;
+import com.site21.bittermelon.content.medical.compartments.MajorBodyPart;
 import com.site21.bittermelon.content.medical.compartments.conditions.Bleed;
 import com.site21.bittermelon.content.medical.compartments.firstaid.Retractor;
 import com.site21.bittermelon.content.substance.Substance;
@@ -60,7 +61,7 @@ public class Compartments {
             CompartmentTag.FIRST_AID
     )));
 
-    public static final Supplier<Compartment> MAJOR_BODY_PART = COMPARTMENTS.register("major_body_part", () -> new Compartment("major_body_part", EnumSet.of(
+    public static final Supplier<Compartment> MAJOR_BODY_PART = COMPARTMENTS.register("major_body_part", () -> new MajorBodyPart("major_body_part", EnumSet.of(
             CompartmentTag.MAJOR_BODY_PART
     )));
 
