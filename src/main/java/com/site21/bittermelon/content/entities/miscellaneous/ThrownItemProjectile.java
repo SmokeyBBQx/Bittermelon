@@ -13,6 +13,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.neoforge.BitterEntities.THROWN_ITEM_PROJECTILE;
+import static net.minecraft.world.item.Items.SNOWBALL;
 
 public class ThrownItemProjectile extends ThrowableItemProjectile {
     private static final float BASE_GRAVITY = 0.03F;
@@ -32,7 +33,7 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
 
     @Override
     protected @NotNull Item getDefaultItem() {
-        return this.getItem().getItem();
+        return SNOWBALL;
     }
 
     @Override

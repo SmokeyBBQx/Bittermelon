@@ -3,7 +3,6 @@ package com.site21.bittermelon.content.medical.client.screen.networking;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.medical.client.screen.HealthScreen;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;

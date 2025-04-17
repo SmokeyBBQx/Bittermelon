@@ -11,6 +11,7 @@ import com.site21.bittermelon.content.entities.ai.behavior.misc.FeelsPain;
 import com.site21.bittermelon.content.medical.blood.BloodType;
 import com.site21.bittermelon.content.medical.client.screen.networking.UpdateCompartmentHealth;
 import com.site21.bittermelon.content.medical.client.screen.networking.UpdateHealthScreen;
+import com.site21.bittermelon.content.medical.client.screen.networking.UpdateTremor;
 import com.site21.bittermelon.content.medical.compartments.*;
 import com.site21.bittermelon.content.medical.compartments.deprecated.organs.HeartRhythm;
 import com.site21.bittermelon.content.medical.simulations.Simulation;
@@ -349,6 +350,7 @@ public class MedicalStats {
     private void handleTremor() {
         if (entity instanceof ServerPlayer player) {
             PacketDistributor.sendToPlayer(player, new StartScreenshake(80, Math.min(0.8f, getTremor() / 10)));
+            PacketDistributor.sendToPlayer(player, new UpdateTremor(getTremor()));
         }
     }
 
@@ -571,6 +573,11 @@ public class MedicalStats {
 
     public VitalSigns getVitalSigns() {
         return vitalSigns;
+    }
+
+    public UUID getEntityID() {
+        if (entity == null) return null;
+        return entity.getUUID();
     }
 
     public static class VitalSigns {

@@ -259,5 +259,11 @@ public class PayloadRegistration {
                 UpdateCompartmentHealth.STREAM_CODEC,
                 UpdateCompartmentHealth::handle
         );
+
+        registrar.playToClient(
+                UpdateTremor.TYPE,
+                UpdateTremor.STREAM_CODEC,
+                UpdateTremor::handle
+        );
     }
 }

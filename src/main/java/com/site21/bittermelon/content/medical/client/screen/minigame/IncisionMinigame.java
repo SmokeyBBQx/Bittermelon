@@ -1,13 +1,10 @@
 package com.site21.bittermelon.content.medical.client.screen.minigame;
 
 import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.medical.client.screen.networking.CompleteMinigame;
 import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
-import com.site21.bittermelon.content.items.medical.MedicalItem;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -37,6 +34,7 @@ public class IncisionMinigame extends MedicalMinigame {
     private int shakeXDraw = 0;
     private int shakeYDraw = 0;
     private static final int SHAKE_TIMER_THRESHOLD = 40;
+    private float tremor = 0;
 
     private record Point(int x, int y) {
     }
@@ -57,21 +55,16 @@ public class IncisionMinigame extends MedicalMinigame {
     public void tick() {
         super.tick();
 
-        Character playerCharacter = CharacterManager.get(Minecraft.getInstance().level).getActiveCharacter(Minecraft.getInstance().player);
+        shakeTimer++;
+        int shakeIntensity = (int) Math.min(tremor / 10, 10);
 
-        if (playerCharacter != null) {
-            shakeTimer++;
-            float tremorValue = playerCharacter.getMedicalStats().getTremor();
-            int shakeIntensity = (int) Math.min(tremorValue / 10, 10);
-
-            if (shakeIntensity > 1) {
-                if (shakeTimer >= SHAKE_TIMER_THRESHOLD / shakeIntensity) {
-                    shakeTimer = 0;
-                    shakeX = random.nextInt(shakeIntensity * 2) - shakeIntensity;
-                    shakeY = random.nextInt(shakeIntensity * 2) - shakeIntensity;
-                    shakeXDraw = random.nextInt(shakeIntensity * 2) - shakeIntensity;
-                    shakeYDraw = random.nextInt(shakeIntensity * 2) - shakeIntensity;
-                }
+        if (shakeIntensity > 1) {
+            if (shakeTimer >= SHAKE_TIMER_THRESHOLD / shakeIntensity) {
+                shakeTimer = 0;
+                shakeX = random.nextInt(shakeIntensity * 2) - shakeIntensity;
+                shakeY = random.nextInt(shakeIntensity * 2) - shakeIntensity;
+                shakeXDraw = random.nextInt(shakeIntensity * 2) - shakeIntensity;
+                shakeYDraw = random.nextInt(shakeIntensity * 2) - shakeIntensity;
             }
         }
 
@@ -162,5 +155,9 @@ public class IncisionMinigame extends MedicalMinigame {
                 calculateAccuracy()));
         this.onClose();
         openHealthScreen();
+    }
+
+    public void setTremor(float tremor) {
+        this.tremor = tremor;
     }
 }
