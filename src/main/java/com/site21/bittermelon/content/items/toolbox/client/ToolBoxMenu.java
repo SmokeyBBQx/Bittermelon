@@ -1,6 +1,6 @@
 package com.site21.bittermelon.content.items.toolbox.client;
 
-import com.site21.bittermelon.content.items.containers.item.client.ContainerMenu;
+import com.site21.bittermelon.content.items.itemcontainers.client.ContainerMenu;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;

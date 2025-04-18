@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.items.containers.item.client;
+package com.site21.bittermelon.content.items.itemcontainers.client;
 
 import com.site21.bittermelon.content.items.base.BaseItem;
 import net.minecraft.world.SimpleContainer;

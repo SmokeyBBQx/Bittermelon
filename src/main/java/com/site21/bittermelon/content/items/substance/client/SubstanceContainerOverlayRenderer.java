@@ -1,8 +1,8 @@
-package com.site21.bittermelon.content.items.containers.substance.client;
+package com.site21.bittermelon.content.items.substance.client;
 
 import com.mojang.blaze3d.platform.Window;
-import com.site21.bittermelon.content.items.containers.substance.FluidContainerItem;
-import com.site21.bittermelon.content.items.containers.substance.GasContainerItem;
+import com.site21.bittermelon.content.items.substance.FluidContainerItem;
+import com.site21.bittermelon.content.items.substance.GasContainerItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;

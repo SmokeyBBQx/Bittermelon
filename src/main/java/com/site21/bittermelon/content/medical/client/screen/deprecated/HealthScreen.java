@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.medical.client.screen;
+package com.site21.bittermelon.content.medical.client.screen.deprecated;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
@@ -6,7 +6,6 @@ import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.items.medical.MedicalItem;
 import com.site21.bittermelon.content.medical.client.screen.networking.ExtractCompartment;
 import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
-import com.site21.bittermelon.content.medical.compartments.FunctionType;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -18,7 +17,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -147,6 +145,14 @@ public class HealthScreen extends Screen {
         if (heldItem != null) {
             guiGraphics.renderItem(heldItem, mouseX - 8, mouseY - 8);
         }
+
+        guiGraphics.drawString(
+                font,
+                character.getName(),
+                135,
+                12,
+                0xFFFFFF
+        );
     }
 
     public Character getCharacter() {

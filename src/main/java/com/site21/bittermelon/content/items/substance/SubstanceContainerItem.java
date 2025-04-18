@@ -1,8 +1,8 @@
-package com.site21.bittermelon.content.items.containers.substance;
+package com.site21.bittermelon.content.items.substance;
 
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
-import com.site21.bittermelon.content.items.containers.substance.data.SubstanceContents;
+import com.site21.bittermelon.content.items.substance.data.SubstanceContents;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import com.site21.bittermelon.content.substance.reactions.ReactionContainer;
 import net.minecraft.network.chat.Component;

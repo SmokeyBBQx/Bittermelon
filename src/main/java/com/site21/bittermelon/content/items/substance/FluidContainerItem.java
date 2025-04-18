@@ -1,8 +1,8 @@
-package com.site21.bittermelon.content.items.containers.substance;
+package com.site21.bittermelon.content.items.substance;
 
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
-import com.site21.bittermelon.content.items.containers.substance.data.SubstanceContents;
+import com.site21.bittermelon.content.items.substance.data.SubstanceContents;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.substance.SubstanceStack;
@@ -28,7 +28,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.Iterator;
 import java.util.List;
 

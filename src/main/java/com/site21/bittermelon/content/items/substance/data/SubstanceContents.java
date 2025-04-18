@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.items.containers.substance.data;
+package com.site21.bittermelon.content.items.substance.data;
 
 import com.mojang.serialization.Codec;
 import com.site21.bittermelon.content.substance.SubstanceStack;

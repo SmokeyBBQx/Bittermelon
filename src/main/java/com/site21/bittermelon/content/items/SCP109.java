@@ -1,9 +1,8 @@
 package com.site21.bittermelon.content.items;
 
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
-import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
-import com.site21.bittermelon.content.items.containers.substance.FluidContainerItem;
+import com.site21.bittermelon.content.items.substance.FluidContainerItem;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -11,7 +10,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;

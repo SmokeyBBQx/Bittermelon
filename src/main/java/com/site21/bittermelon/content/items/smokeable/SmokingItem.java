@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.items.smokeable;
 
 import com.site21.bittermelon.content.items.base.ItemWeight;
-import com.site21.bittermelon.content.items.containers.substance.SubstanceContainerItem;
+import com.site21.bittermelon.content.items.substance.SubstanceContainerItem;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;

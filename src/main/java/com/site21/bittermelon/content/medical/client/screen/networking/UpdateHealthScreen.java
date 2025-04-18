@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.medical.client.screen.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.medical.client.screen.HealthScreen;
+import com.site21.bittermelon.content.medical.client.screen.deprecated.HealthScreen;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.UUIDUtil;

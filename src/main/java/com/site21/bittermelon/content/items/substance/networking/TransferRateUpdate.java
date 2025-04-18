@@ -1,7 +1,7 @@
-package com.site21.bittermelon.content.items.containers.substance.networking;
+package com.site21.bittermelon.content.items.substance.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.items.containers.substance.FluidContainerItem;
+import com.site21.bittermelon.content.items.substance.FluidContainerItem;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.content.items.containers.substance.FluidContainerItem.setTransferRate;
+import static com.site21.bittermelon.content.items.substance.FluidContainerItem.setTransferRate;
 
 public record TransferRateUpdate(int newRate, InteractionHand hand) implements CustomPacketPayload {
     // TODO: Somehow replace this with ItemStack instead of hand

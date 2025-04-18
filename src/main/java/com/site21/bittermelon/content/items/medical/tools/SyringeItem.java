@@ -3,7 +3,7 @@ package com.site21.bittermelon.content.items.medical.tools;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.items.base.ItemWeight;
-import com.site21.bittermelon.content.items.containers.substance.FluidContainerItem;
+import com.site21.bittermelon.content.items.substance.FluidContainerItem;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;

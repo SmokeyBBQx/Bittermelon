@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.items.containers.item.client;
+package com.site21.bittermelon.content.items.itemcontainers.client;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.network.RegistryFriendlyByteBuf;

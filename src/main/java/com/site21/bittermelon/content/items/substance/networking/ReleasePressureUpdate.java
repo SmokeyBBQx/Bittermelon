@@ -1,7 +1,7 @@
-package com.site21.bittermelon.content.items.containers.substance.networking;
+package com.site21.bittermelon.content.items.substance.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.items.containers.substance.GasContainerItem;
+import com.site21.bittermelon.content.items.substance.GasContainerItem;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;

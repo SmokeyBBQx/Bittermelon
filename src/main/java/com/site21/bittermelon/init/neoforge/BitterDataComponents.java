@@ -2,8 +2,8 @@ package com.site21.bittermelon.init.neoforge;
 
 import com.mojang.serialization.Codec;
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.items.containers.item.client.ItemContainerContents;
-import com.site21.bittermelon.content.items.containers.substance.data.SubstanceContents;
+import com.site21.bittermelon.content.items.itemcontainers.client.ItemContainerContents;
+import com.site21.bittermelon.content.items.substance.data.SubstanceContents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentType;

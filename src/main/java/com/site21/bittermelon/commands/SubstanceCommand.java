@@ -8,7 +8,7 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.atmosphere.AtmosInstance;
 import com.site21.bittermelon.content.atmosphere.AtmosHandler;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
-import com.site21.bittermelon.content.items.containers.substance.SubstanceContainerItem;
+import com.site21.bittermelon.content.items.substance.SubstanceContainerItem;
 import com.site21.bittermelon.content.substance.Substance;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import net.minecraft.commands.CommandSourceStack;

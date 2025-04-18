@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.items.containers.substance;
+package com.site21.bittermelon.content.items.substance;
 
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.base.FragileItem;

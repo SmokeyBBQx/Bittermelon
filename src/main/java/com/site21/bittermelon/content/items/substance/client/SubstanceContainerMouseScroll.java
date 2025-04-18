@@ -1,10 +1,10 @@
-package com.site21.bittermelon.content.items.containers.substance.client;
+package com.site21.bittermelon.content.items.substance.client;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.items.containers.substance.FluidContainerItem;
-import com.site21.bittermelon.content.items.containers.substance.GasContainerItem;
-import com.site21.bittermelon.content.items.containers.substance.networking.ReleasePressureUpdate;
-import com.site21.bittermelon.content.items.containers.substance.networking.TransferRateUpdate;
+import com.site21.bittermelon.content.items.substance.FluidContainerItem;
+import com.site21.bittermelon.content.items.substance.GasContainerItem;
+import com.site21.bittermelon.content.items.substance.networking.ReleasePressureUpdate;
+import com.site21.bittermelon.content.items.substance.networking.TransferRateUpdate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
