@@ -54,7 +54,7 @@ public record ThrowItem(UUID playerUUID) implements CustomPacketPayload {
 
             Character character = CharacterManager.get(level).getActiveCharacter(player);
             if (character != null) {
-                Component component = Component.literal(character.getName() + " throws a " + heldItem.getHoverName().getString().toLowerCase() + ".")
+                Component component = Component.literal(character.getName() + " throws " + heldItem.getHoverName().getString().toLowerCase() + ".")
                         .setStyle(Style.EMPTY.withColor(character.getEmoteColor()));
                 sendLocalMessage(player, 10, component);
             }

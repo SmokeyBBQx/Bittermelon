@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.blocks.substance.fluid;
 
 import com.google.common.collect.ImmutableMap;
-import com.site21.bittermelon.content.miscellaneous.stumble.StumbleHandler;
+import com.site21.bittermelon.content.stumble.StumbleHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;

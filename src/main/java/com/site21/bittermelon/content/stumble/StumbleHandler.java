@@ -1,11 +1,11 @@
-package com.site21.bittermelon.content.miscellaneous.stumble;
+package com.site21.bittermelon.content.stumble;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.client.visualeffects.screenshake.StartScreenshake;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
-import com.site21.bittermelon.content.miscellaneous.stumble.networking.ClearStumbleTimer;
-import com.site21.bittermelon.content.miscellaneous.stumble.networking.UpdateStumbleTimer;
+import com.site21.bittermelon.content.stumble.networking.ClearStumbleTimer;
+import com.site21.bittermelon.content.stumble.networking.UpdateStumbleTimer;
 import com.site21.bittermelon.networking.client.ClearForcedPose;
 import com.site21.bittermelon.networking.client.SetForcedPose;
 import net.minecraft.network.chat.Component;

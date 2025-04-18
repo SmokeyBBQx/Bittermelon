@@ -1,8 +1,8 @@
-package com.site21.bittermelon.content.miscellaneous.stumble.client;
+package com.site21.bittermelon.content.stumble.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.miscellaneous.stumble.StumbleHandler;
+import com.site21.bittermelon.content.stumble.StumbleHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
@@ -13,7 +13,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.content.miscellaneous.stumble.client.RiseKeyHandler.TICKS_REQUIRED;
+import static com.site21.bittermelon.content.stumble.client.RiseKeyHandler.TICKS_REQUIRED;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.STUMBLE_TICKS;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)

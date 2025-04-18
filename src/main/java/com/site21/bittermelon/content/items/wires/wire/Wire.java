@@ -36,7 +36,7 @@ public class Wire extends BaseItem {
 
         if (level.getBlockEntity(pos) instanceof IElectronic) {
             if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-                PacketDistributor.sendToPlayer(serverPlayer, new OpenWiringScreen(pos, stack));
+                PacketDistributor.sendToPlayer(serverPlayer, new OpenWiringScreen(pos, context.getHand()));
             }
             return InteractionResult.SUCCESS;
         }

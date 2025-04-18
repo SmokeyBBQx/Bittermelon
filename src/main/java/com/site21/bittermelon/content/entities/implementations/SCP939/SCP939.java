@@ -29,7 +29,7 @@ import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.init.neoforge.BitterActivity;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
 import com.site21.bittermelon.content.medical.factory.Anatomy;
-import com.site21.bittermelon.content.miscellaneous.stumble.StumbleHandler;
+import com.site21.bittermelon.content.stumble.StumbleHandler;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

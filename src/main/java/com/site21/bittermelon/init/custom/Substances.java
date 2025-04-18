@@ -148,4 +148,13 @@ public class Substances {
             1.10f,
             2.619f
     ));
+
+    public static final Supplier<Substance> LIQUID_URINE = SUBSTANCES.register("liquid_urine", () -> new Substance(
+            new Substance.Properties(),
+            "Liquid Urine",
+            0xFFFFDC65,
+            32,
+            1.10f,
+            2.619f
+    ));
 }

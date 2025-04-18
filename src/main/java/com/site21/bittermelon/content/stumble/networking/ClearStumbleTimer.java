@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.miscellaneous.stumble.networking;
+package com.site21.bittermelon.content.stumble.networking;
 
 import com.site21.bittermelon.Bittermelon;
 import io.netty.buffer.ByteBuf;

@@ -1,8 +1,8 @@
-package com.site21.bittermelon.content.miscellaneous.stumble.client;
+package com.site21.bittermelon.content.stumble.client;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.miscellaneous.stumble.StumbleHandler;
-import com.site21.bittermelon.content.miscellaneous.stumble.networking.AttemptToRise;
+import com.site21.bittermelon.content.stumble.StumbleHandler;
+import com.site21.bittermelon.content.stumble.networking.AttemptToRise;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;

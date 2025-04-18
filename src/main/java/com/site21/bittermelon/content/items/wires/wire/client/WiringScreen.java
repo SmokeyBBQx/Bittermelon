@@ -4,24 +4,31 @@ import com.site21.bittermelon.content.blocks.devices.IElectronic;
 import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
 import com.site21.bittermelon.content.items.wires.wire.networking.MakeWireConnection;
+import com.site21.bittermelon.content.items.wires.wire.networking.RemoveWiringData;
 import com.site21.bittermelon.content.items.wires.wire.networking.WiringDataUpdate;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.CORD_CONNECTION;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.PORT_ID;
 
 @OnlyIn(Dist.CLIENT)
 public class WiringScreen extends Screen {
+    private static final Logger log = LoggerFactory.getLogger(WiringScreen.class);
     private final IElectronic electronic;
-    private final ItemStack wireItem;
+    private final InteractionHand hand;
 
     private static final int PORT_BUTTON_WIDTH = 100;
     private static final int PORT_BUTTON_HEIGHT = 20;
@@ -30,10 +37,10 @@ public class WiringScreen extends Screen {
     private static final int RIGHT_MARGIN = 50;
     private static final int TOP_MARGIN = 40;
 
-    public WiringScreen(@NotNull IElectronic electronic, ItemStack wireItem) {
+    public WiringScreen(@NotNull IElectronic electronic, InteractionHand hand) {
         super(Component.literal("Wiring"));
         this.electronic = electronic;
-        this.wireItem = wireItem;
+        this.hand = hand;
     }
 
     @Override
@@ -78,23 +85,37 @@ public class WiringScreen extends Screen {
     }
 
     private void handleInputPortClick(@NotNull InputPort port) {
+        Player player = Minecraft.getInstance().player;
+        if (player == null) return;
+        ItemStack wireItem = player.getItemInHand(hand);
+
         if (wireItem.get(CORD_CONNECTION) == null) {
-            PacketDistributor.sendToServer(new WiringDataUpdate(port.pos, port.id, wireItem));
+            PacketDistributor.sendToServer(new WiringDataUpdate(port.pos, port.id, player.getUUID(), hand));
             wireItem.set(CORD_CONNECTION, port.pos);
             wireItem.set(PORT_ID, port.id);
         } else {
             PacketDistributor.sendToServer(new MakeWireConnection(port.pos, wireItem.get(CORD_CONNECTION), port.id, wireItem.get(PORT_ID)));
+            PacketDistributor.sendToServer(new RemoveWiringData(player.getUUID(), hand));
+            wireItem.remove(CORD_CONNECTION);
+            wireItem.remove(PORT_ID);
         }
         onClose();
     }
 
     private void handleOutputPortClick(@NotNull OutputPort port) {
+        Player player = Minecraft.getInstance().player;
+        if (player == null) return;
+        ItemStack wireItem = player.getItemInHand(hand);
+
         if (wireItem.get(CORD_CONNECTION) == null) {
-            PacketDistributor.sendToServer(new WiringDataUpdate(port.pos, port.id, wireItem));
+            PacketDistributor.sendToServer(new WiringDataUpdate(port.pos, port.id, player.getUUID(), hand));
             wireItem.set(CORD_CONNECTION, port.pos);
             wireItem.set(PORT_ID, port.id);
         } else {
             PacketDistributor.sendToServer(new MakeWireConnection(wireItem.get(CORD_CONNECTION), port.pos, wireItem.get(PORT_ID), port.id));
+            PacketDistributor.sendToServer(new RemoveWiringData(player.getUUID(), hand));
+            wireItem.remove(CORD_CONNECTION);
+            wireItem.remove(PORT_ID);
         }
         onClose();
     }

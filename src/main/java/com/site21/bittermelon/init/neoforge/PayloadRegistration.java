@@ -9,11 +9,12 @@ import com.site21.bittermelon.content.character.networking.SyncCharacters;
 import com.site21.bittermelon.content.economy.networking.OpenATMScreen;
 import com.site21.bittermelon.content.items.wires.wire.networking.MakeWireConnection;
 import com.site21.bittermelon.content.items.wires.wire.networking.OpenWiringScreen;
+import com.site21.bittermelon.content.items.wires.wire.networking.RemoveWiringData;
 import com.site21.bittermelon.content.items.wires.wire.networking.WiringDataUpdate;
 import com.site21.bittermelon.content.medical.client.screen.networking.*;
-import com.site21.bittermelon.content.miscellaneous.stumble.networking.AttemptToRise;
-import com.site21.bittermelon.content.miscellaneous.stumble.networking.ClearStumbleTimer;
-import com.site21.bittermelon.content.miscellaneous.stumble.networking.UpdateStumbleTimer;
+import com.site21.bittermelon.content.stumble.networking.AttemptToRise;
+import com.site21.bittermelon.content.stumble.networking.ClearStumbleTimer;
+import com.site21.bittermelon.content.stumble.networking.UpdateStumbleTimer;
 import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
 import com.site21.bittermelon.networking.client.*;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.ContainmentNameUpdate;
@@ -264,6 +265,12 @@ public class PayloadRegistration {
                 UpdateTremor.TYPE,
                 UpdateTremor.STREAM_CODEC,
                 UpdateTremor::handle
+        );
+
+        registrar.playToServer(
+                RemoveWiringData.TYPE,
+                RemoveWiringData.STREAM_CODEC,
+                RemoveWiringData::handle
         );
     }
 }

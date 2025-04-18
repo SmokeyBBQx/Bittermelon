@@ -29,7 +29,7 @@ public class ScrewdriverItem extends BaseItem {
 
         if (level.getBlockEntity(pos) instanceof IElectronic electronic) {
             if (level.isClientSide) {
-                Minecraft.getInstance().setScreen(new WiringScreen(electronic, stack));
+                Minecraft.getInstance().setScreen(new WiringScreen(electronic, context.getHand()));
             }
             return InteractionResult.SUCCESS;
         }

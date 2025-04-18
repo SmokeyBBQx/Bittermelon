@@ -18,7 +18,7 @@ import com.site21.bittermelon.content.medical.compartments.deprecated.conditions
 import com.site21.bittermelon.content.medical.compartments.deprecated.conditionsold.Infection;
 import com.site21.bittermelon.content.medical.compartments.deprecated.organs.HeartRhythm;
 import com.site21.bittermelon.content.medical.simulations.Simulation;
-import com.site21.bittermelon.content.miscellaneous.stumble.StumbleHandler;
+import com.site21.bittermelon.content.stumble.StumbleHandler;
 import com.site21.bittermelon.networking.client.SetForcedPose;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import com.site21.bittermelon.util.LocalMessageHelper;

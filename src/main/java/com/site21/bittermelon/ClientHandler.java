@@ -11,6 +11,7 @@ import com.site21.bittermelon.content.items.wires.wire.client.WiringScreen;
 import com.site21.bittermelon.content.medical.client.screen.HealthScreen;
 import com.site21.bittermelon.content.personnel.PersonnelEntry;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -30,8 +31,8 @@ public class ClientHandler {
         Minecraft.getInstance().setScreen(new IntercomScreen(blockEntity, canEdit));
     }
 
-    public static void displayWiringScreen(IElectronic electronic, ItemStack wiringStack) {
-        Minecraft.getInstance().setScreen(new WiringScreen(electronic, wiringStack));
+    public static void displayWiringScreen(IElectronic electronic, InteractionHand hand) {
+        Minecraft.getInstance().setScreen(new WiringScreen(electronic, hand));
     }
 
     public static void displayHealthScreen(Character character, Player player, ItemStack heldItem) {

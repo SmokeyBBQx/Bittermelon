@@ -1,8 +1,7 @@
-package com.site21.bittermelon.content.miscellaneous.stumble.networking;
+package com.site21.bittermelon.content.stumble.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.miscellaneous.stumble.StumbleHandler;
-import com.site21.bittermelon.networking.client.ClearForcedPose;
+import com.site21.bittermelon.content.stumble.StumbleHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.codec.StreamCodec;

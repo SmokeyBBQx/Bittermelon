@@ -9,13 +9,12 @@ import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.entities.ai.behavior.misc.FeelsPain;
 import com.site21.bittermelon.content.medical.blood.BloodType;
-import com.site21.bittermelon.content.medical.client.screen.networking.UpdateCompartmentHealth;
 import com.site21.bittermelon.content.medical.client.screen.networking.UpdateHealthScreen;
 import com.site21.bittermelon.content.medical.client.screen.networking.UpdateTremor;
 import com.site21.bittermelon.content.medical.compartments.*;
 import com.site21.bittermelon.content.medical.compartments.deprecated.organs.HeartRhythm;
 import com.site21.bittermelon.content.medical.simulations.Simulation;
-import com.site21.bittermelon.content.miscellaneous.stumble.StumbleHandler;
+import com.site21.bittermelon.content.stumble.StumbleHandler;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import com.site21.bittermelon.networking.client.SetForcedPose;
 import com.site21.bittermelon.util.LocalMessageHelper;
@@ -301,14 +300,7 @@ public class MedicalStats {
         vitalSigns.consciousness = stats.get(FunctionType.BRAIN_VITALS) * getCirculation();
 
         if (vitalSigns.consciousness < 0.1f) {
-            if (entity.getPose() != Pose.SLEEPING) {
-                PacketDistributor.sendToAllPlayers(new SetForcedPose(entity.getUUID(), Pose.SLEEPING));
-                if (entity.level().isClientSide) {
-                    if (entity.getPose() != Pose.SLEEPING) {
-                        LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(character.getName() + " passes out.").withColor(character.getEmoteColor()));
-                    }
-                }
-            }
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new SetForcedPose(entity.getUUID(), Pose.SLEEPING));
         }
     }
 
