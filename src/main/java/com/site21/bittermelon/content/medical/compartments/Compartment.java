@@ -28,10 +28,10 @@ public class Compartment {
 
     public void tick(MedicalStats medicalStats, @NotNull CompartmentInstance instance) {
         float functionMultiplier = 1;
-        for (UUID childID : instance.getChildren()) {
-            CompartmentInstance child = medicalStats.getCompartment(childID);
-            functionMultiplier *= child.getAttribute(FunctionType.FUNCTION);
-        }
+//        for (UUID childID : instance.getChildren()) {
+//            CompartmentInstance child = medicalStats.getCompartment(childID);
+//            functionMultiplier *= child.getAttribute(FunctionType.FUNCTION);
+//        }
         instance.updateFunction(functionMultiplier, medicalStats);
     }
 

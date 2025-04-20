@@ -47,7 +47,7 @@ public class Character {
     private String name;
     private String description = "";
     private int emoteColor;
-    private final MedicalStats medicalStats;
+    private MedicalStats medicalStats;
     private final EnumMap<Skills, Float> skills;
 
     public Character(UUID uuid, UUID entityUUID, String name, String description, int emoteColor, MedicalStats medicalStats) {
@@ -111,6 +111,10 @@ public class Character {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setMedicalStats(MedicalStats medicalStats) {
+        this.medicalStats = medicalStats;
     }
 
     public MedicalStats getMedicalStats() {

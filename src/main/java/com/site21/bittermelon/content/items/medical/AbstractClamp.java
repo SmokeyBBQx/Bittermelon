@@ -31,12 +31,12 @@ public interface AbstractClamp extends MedicalItem {
 
     @Override
     default void finishAction(CompartmentInstance compartment, MedicalStats medicalStats, float quality, ItemStack item) {
-        if (compartment.hasTag(CompartmentTag.BLEED)) {
-            CompartmentInstance clamp = new CompartmentInstance(TOOL.get(), 20, "Clamp", false);
-            clamp.setItem(item);
-            clamp.initializeWithParent(compartment);
-            medicalStats.addCompartment(clamp);
-        }
+//        if (compartment.hasTag(CompartmentTag.BLEED)) {
+//            CompartmentInstance clamp = new CompartmentInstance(TOOL.get(), 20, "Clamp", false);
+//            clamp.setItem(item);
+//            clamp.initializeWithParent(compartment);
+//            medicalStats.addCompartment(clamp);
+//        }
     }
 
     @Override

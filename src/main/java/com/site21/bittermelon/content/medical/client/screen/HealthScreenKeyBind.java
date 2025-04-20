@@ -1,6 +1,8 @@
 package com.site21.bittermelon.content.medical.client.screen;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.content.character.Character;
+import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.medical.client.screen.networking.OpenHealthScreenC2S;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
@@ -29,15 +31,15 @@ public class HealthScreenKeyBind {
     public static void openHealthScreen() {
         Minecraft mc = Minecraft.getInstance();
         Player player = Minecraft.getInstance().player;
+        if (player == null) return;
 
-        if (player != null) {
-            HitResult hitResult = mc.hitResult;
-            if (hitResult != null && hitResult.getType() == HitResult.Type.ENTITY) {
-                EntityHitResult entityHit = (EntityHitResult) hitResult;
-                PacketDistributor.sendToServer(new OpenHealthScreenC2S(player.getUUID(), entityHit.getEntity().getUUID()));
-            } else {
-                PacketDistributor.sendToServer(new OpenHealthScreenC2S(player.getUUID(), UUID.randomUUID()));
-            }
+        HitResult hitResult = mc.hitResult;
+        if (hitResult != null && hitResult.getType() == HitResult.Type.ENTITY) {
+            EntityHitResult entityHit = (EntityHitResult) hitResult;
+            PacketDistributor.sendToServer(new OpenHealthScreenC2S(player.getUUID(), entityHit.getEntity().getUUID()));
+        } else {
+            PacketDistributor.sendToServer(new OpenHealthScreenC2S(player.getUUID(), UUID.randomUUID()));
         }
+
     }
 }

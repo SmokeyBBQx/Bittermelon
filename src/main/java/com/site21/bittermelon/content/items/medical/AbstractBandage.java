@@ -30,10 +30,10 @@ public interface AbstractBandage extends MedicalItem {
     @OnlyIn(Dist.CLIENT)
     @Override
     default void use(@NotNull CompartmentInstance compartment, @NotNull MedicalStats medicalStats, Character character, ItemStack item) {
-        CompartmentInstance bandage = new CompartmentInstance(Compartments.BANDAGE.get(), 10, "Bandage", false);
-        bandage.setItem(item);
-        bandage.initializeWithParent(compartment);
-        medicalStats.addCompartment(bandage);
+//        CompartmentInstance bandage = new CompartmentInstance(Compartments.BANDAGE.get(), 10, "Bandage", false);
+//        bandage.setItem(item);
+//        bandage.initializeWithParent(compartment);
+//        medicalStats.addCompartment(bandage);
     }
 
     @Override

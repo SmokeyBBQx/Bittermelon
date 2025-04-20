@@ -29,7 +29,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
@@ -46,8 +45,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.site21.bittermelon.content.medical.compartments.CompartmentTag.BLEED;
-import static com.site21.bittermelon.content.medical.compartments.CompartmentTag.CONDITION;
 import static com.site21.bittermelon.init.custom.Substances.LIQUID_BLOOD;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
 import static net.minecraft.world.level.block.Block.UPDATE_ALL_IMMEDIATE;
@@ -58,6 +55,7 @@ public class MedicalStats {
                     Codec.list(CompartmentInstance.CODEC).fieldOf("compartments").forGetter(
                             stats -> new ArrayList<>(stats.compartments.values())
                     ),
+                    UUIDUtil.CODEC.fieldOf("mainCompartmentID").forGetter(MedicalStats::getMainCompartmentID),
                     BloodType.CODEC.fieldOf("bloodType").forGetter(MedicalStats::getBloodType),
                     UUIDUtil.CODEC.fieldOf("characterID").forGetter(MedicalStats::getCharacterID),
                     VitalSigns.CODEC.fieldOf("vitalSigns").forGetter(MedicalStats::getVitalSigns)
@@ -69,6 +67,8 @@ public class MedicalStats {
                     ByteBufCodecs.collection(ArrayList::new)
             ),
             MedicalStats::getCompartmentsCollection,
+            UUIDUtil.STREAM_CODEC,
+            MedicalStats::getMainCompartmentID,
             BloodType.STREAM_CODEC,
             MedicalStats::getBloodType,
             UUIDUtil.STREAM_CODEC,
@@ -87,6 +87,7 @@ public class MedicalStats {
     private static final float LOW_BLOOD_VOLUME_THRESHOLD = 60f;
 
     private final Map<UUID, CompartmentInstance> compartments;
+    private final UUID mainCompartmentID;
     private final Map<FunctionType, Float> stats;
     private final Map<UUID, Float> immunity;
     private final List<SubstanceStack> substances;
@@ -105,7 +106,8 @@ public class MedicalStats {
     private int painTickCounter;
     private int bleedTickCounter;
 
-    public MedicalStats(@NotNull Collection<CompartmentInstance> compartments, BloodType bloodType, UUID characterID, VitalSigns vitalSigns) {
+    public MedicalStats(@NotNull Collection<CompartmentInstance> compartments, UUID mainCompartmentID, BloodType bloodType, UUID characterID, VitalSigns vitalSigns) {
+        this.mainCompartmentID = mainCompartmentID;
         this.bloodType = bloodType;
         this.compartments = new ConcurrentHashMap<>();
         for (CompartmentInstance instance : compartments) {
@@ -122,8 +124,8 @@ public class MedicalStats {
         initializeStats();
     }
 
-    public MedicalStats(@NotNull List<CompartmentInstance> compartments, BloodType bloodType, UUID characterID) {
-        this(compartments, bloodType, characterID, new VitalSigns());
+    public MedicalStats(@NotNull List<CompartmentInstance> compartments, UUID mainCompartmentID, BloodType bloodType, UUID characterID) {
+        this(compartments, mainCompartmentID, bloodType, characterID, new VitalSigns());
     }
 
     private void initializeStats() {
@@ -347,36 +349,36 @@ public class MedicalStats {
     }
 
     private void handleObscuring(@NotNull CompartmentInstance compartment) {
-        HashSet<UUID> children = compartment.getChildren();
-        int bleedCount = 0;
-
-        for (UUID childID : children) {
-            CompartmentInstance child = getCompartment(childID);
-            if (child.hasTag(BLEED)) {
-                bleedCount += (int) child.getAttribute(FunctionType.BLEED);
-            }
-        }
-
-        if (bleedCount > 0) {
-            RandomSource random = entity.getRandom();
-            float obscureChance = Math.min(0.01f + (0.05f * bleedCount), 0.05f);
-
-            if (random.nextFloat() < obscureChance) {
-                HashSet<UUID> siblings = getCompartment(compartment.getParentID()).getChildren();
-
-                List<UUID> eligibleSiblings = siblings.stream()
-                        .filter(id -> {
-                            CompartmentInstance comp = getCompartment(id);
-                            return !comp.hasTag(CONDITION) && !comp.isObscured();
-                        })
-                        .toList();
-
-                if (!eligibleSiblings.isEmpty()) {
-                    UUID selectedSibling = eligibleSiblings.get(random.nextInt(eligibleSiblings.size()));
-                    getCompartment(selectedSibling).setObscured(true);
-                }
-            }
-        }
+//        HashSet<UUID> children = compartment.getChildren();
+//        int bleedCount = 0;
+//
+//        for (UUID childID : children) {
+//            CompartmentInstance child = getCompartment(childID);
+//            if (child.hasTag(BLEED)) {
+//                bleedCount += (int) child.getAttribute(FunctionType.BLEED);
+//            }
+//        }
+//
+//        if (bleedCount > 0) {
+//            RandomSource random = entity.getRandom();
+//            float obscureChance = Math.min(0.01f + (0.05f * bleedCount), 0.05f);
+//
+//            if (random.nextFloat() < obscureChance) {
+//                HashSet<UUID> siblings = getCompartment(compartment.getParentID()).getChildren();
+//
+//                List<UUID> eligibleSiblings = siblings.stream()
+//                        .filter(id -> {
+//                            CompartmentInstance comp = getCompartment(id);
+//                            return !comp.hasTag(CONDITION) && !comp.isObscured();
+//                        })
+//                        .toList();
+//
+//                if (!eligibleSiblings.isEmpty()) {
+//                    UUID selectedSibling = eligibleSiblings.get(random.nextInt(eligibleSiblings.size()));
+//                    getCompartment(selectedSibling).setObscured(true);
+//                }
+//            }
+//        }
     }
 
     private void bloodPuddle() {
@@ -443,25 +445,25 @@ public class MedicalStats {
     }
 
     public void removeCompartment(@NotNull CompartmentInstance compartment) {
-        if (compartment.getParent(this) != null) {
-            compartment.getParent(this).getChildren().remove(compartment.getUUID());
-        }
-        compartments.remove(compartment.getUUID());
-
-        List<UUID> childrenToRemove = new ArrayList<>(compartment.getChildren());
-        for (UUID child : childrenToRemove) {
-            if (getCompartment(child).hasTag(CompartmentTag.MAJOR_BODY_PART)) {
-                removeCompartment(getCompartment(child));
-            } else if (getCompartment(child).hasTag(CompartmentTag.CONDITION)) {
-                removeCompartment(getCompartment(child));
-            } else {
-                getCompartment(child).initializeWithParent(getCompartment(compartment.getParentID()));
-            }
-        }
-
-        if (entity != null) {
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new UpdateHealthScreen(characterID, this));
-        }
+//        if (compartment.getParent(this) != null) {
+//            compartment.getParent(this).getChildren().remove(compartment.getUUID());
+//        }
+//        compartments.remove(compartment.getUUID());
+//
+//        List<UUID> childrenToRemove = new ArrayList<>(compartment.getChildren());
+//        for (UUID child : childrenToRemove) {
+//            if (getCompartment(child).hasTag(CompartmentTag.MAJOR_BODY_PART)) {
+//                removeCompartment(getCompartment(child));
+//            } else if (getCompartment(child).hasTag(CompartmentTag.CONDITION)) {
+//                removeCompartment(getCompartment(child));
+//            } else {
+//                getCompartment(child).initializeWithParent(getCompartment(compartment.getParentID()));
+//            }
+//        }
+//
+//        if (entity != null) {
+//            PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new UpdateHealthScreen(characterID, this));
+//        }
         // TODO: Severed vessels and such for connecting compartments
     }
 
@@ -557,6 +559,14 @@ public class MedicalStats {
 
     public void setHeartLifeSupport(float value) {
         heartLifeSupport = value;
+    }
+
+    public UUID getMainCompartmentID() {
+        return mainCompartmentID;
+    }
+
+    public CompartmentInstance getMainCompartment() {
+        return getCompartment(mainCompartmentID);
     }
 
     public UUID getCharacterID() {
