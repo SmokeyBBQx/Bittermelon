@@ -446,8 +446,8 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(contentX, contentY, 0.0F);
 
-        int tileOffsetX = -(int) scrollX;
-        int tileOffsetY = -(int) scrollY;
+        int tileOffsetX = -(int) scrollX / 5;
+        int tileOffsetY = -(int) scrollY / 5;
 
         int tilesX = (contentWidth / 16 * 5) + 2;
         int tilesY = (contentHeight / 16 * 5) + 2;
