@@ -3,6 +3,7 @@ package com.site21.bittermelon.content.medical.client.screen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
+import com.site21.bittermelon.content.medical.compartments.VisualData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -67,17 +68,18 @@ public class CompartmentNodeWidget extends AbstractWidget {
 //            ResourceLocation frameSprite = getFrameSpriteForHealth();
 //            guiGraphics.blitSprite(frameSprite, this.getX() + 3, this.getY(), 26, 26);
 
-            float scaleFactor = compartment.getVisualData().scale;
+            VisualData visualData = compartment.getVisualData();
+            float scaleFactor = visualData.scale;
 
             guiGraphics.pose().pushPose();
 
             guiGraphics.pose().translate(
                     this.getX() + ICON_X + 8,
                     this.getY() + ICON_Y + 8,
-                    0
+                    visualData.getZ()
             );
 
-            guiGraphics.pose().scale(scaleFactor, scaleFactor, scaleFactor);
+            guiGraphics.pose().scale(scaleFactor, scaleFactor, 0);
 
             guiGraphics.pose().translate(
                     -8,
@@ -86,8 +88,10 @@ public class CompartmentNodeWidget extends AbstractWidget {
             );
 
             if (compartment.getIcon() != null) {
+                int width = visualData.width;
+                int height = visualData.height;
                 RenderSystem.enableBlend();
-                guiGraphics.blit(compartment.getIcon(), 0, 0, 0, 0, 16, 16, 16, 16);
+                guiGraphics.blit(compartment.getIcon(), 0, 0, 0, 0, width, height, width, height);
                 RenderSystem.disableBlend();
             } else {
                 guiGraphics.renderFakeItem(compartment.getItem(), 0, 0);
@@ -109,7 +113,15 @@ public class CompartmentNodeWidget extends AbstractWidget {
         return minScale + (healthValue - minHealth) * (maxScale - minScale) / (maxHealth - minHealth);
     }
 
-    public void drawHover(GuiGraphics guiGraphics, int mouseX, int mouseY, float fade, int screenWidth, int screenHeight) {
+    public void drawHover(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float fade, int screenWidth, int screenHeight) {
+        guiGraphics.pose().pushPose();
+
+        guiGraphics.pose().translate(
+                0,
+                0,
+                100
+        );
+
         boolean isRightSide = screenWidth + mouseX + this.getX() + 200 >= healthScreen.width;
 
         List<Component> tooltipLines = new ArrayList<>();
@@ -165,11 +177,13 @@ public class CompartmentNodeWidget extends AbstractWidget {
             guiGraphics.drawString(Minecraft.getInstance().font, tooltipLines.get(i), tooltipX + 5, tooltipY + 20 + (i * 12), -1);
         }
 
-        if (compartment.getIcon() != null) {
+        if (compartment.getIcon() != null && compartment.getItem().isEmpty()) {
             guiGraphics.blitSprite(compartment.getIcon(), this.getX() + ICON_X, this.getY() + ICON_Y, 16, 16);
         } else {
             guiGraphics.renderFakeItem(compartment.getItem(), this.getX() + ICON_X, this.getY() + ICON_Y);
         }
+
+        guiGraphics.pose().popPose();
     }
 
 
@@ -204,13 +218,23 @@ public class CompartmentNodeWidget extends AbstractWidget {
 
     public boolean isMouseOver(int mouseX, int mouseY) {
         if (!compartment.isHidden() || (compartment.getHealthRaw() <= 0)) {
-            int left = this.getX();
-            int right = left + 26;
-            int top = this.getY();
-            int bottom = top + 26;
-            return mouseX >= left && mouseX <= right && mouseY >= top && mouseY <= bottom;
+            float scaleFactor = compartment.getVisualData().scale;
+
+            int centerX = this.getX() + ICON_X + 8;
+            int centerY = this.getY() + ICON_Y + 8;
+
+            float mouseDistanceX = Math.abs(mouseX - centerX);
+            float mouseDistanceY = Math.abs(mouseY - centerY);
+
+            float hitboxRadius = (float) (8 + (2 * Math.sqrt(scaleFactor)));
+
+            return mouseDistanceX <= hitboxRadius && mouseDistanceY <= hitboxRadius;
         }
         return false;
+    }
+
+    public CompartmentInstance getCompartment() {
+        return compartment;
     }
 
     @Override

@@ -16,8 +16,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -61,15 +63,37 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     private final int INCREASE_TOP_MARGIN = 20;
     private final int DECREASE_TOP_MARGIN = 32;
 
-    private int getCloseButtonRelX() { return width - CLOSE_RIGHT_MARGIN; }
-    private int getCollapseButtonRelX() { return width - COLLAPSE_RIGHT_MARGIN; }
-    private int getIncreaseLayerButtonRelX() { return width - LAYER_RIGHT_MARGIN; }
-    private int getDecreaseLayerButtonRelX() { return width - LAYER_RIGHT_MARGIN; }
+    private int getCloseButtonRelX() {
+        return width - CLOSE_RIGHT_MARGIN;
+    }
 
-    private int getCloseButtonRelY() { return TOP_MARGIN; }
-    private int getCollapseButtonRelY() { return TOP_MARGIN; }
-    private int getIncreaseLayerButtonRelY() { return INCREASE_TOP_MARGIN; }
-    private int getDecreaseLayerButtonRelY() { return DECREASE_TOP_MARGIN; }
+    private int getCollapseButtonRelX() {
+        return width - COLLAPSE_RIGHT_MARGIN;
+    }
+
+    private int getIncreaseLayerButtonRelX() {
+        return width - LAYER_RIGHT_MARGIN;
+    }
+
+    private int getDecreaseLayerButtonRelX() {
+        return width - LAYER_RIGHT_MARGIN;
+    }
+
+    private int getCloseButtonRelY() {
+        return TOP_MARGIN;
+    }
+
+    private int getCollapseButtonRelY() {
+        return TOP_MARGIN;
+    }
+
+    private int getIncreaseLayerButtonRelY() {
+        return INCREASE_TOP_MARGIN;
+    }
+
+    private int getDecreaseLayerButtonRelY() {
+        return DECREASE_TOP_MARGIN;
+    }
 
     private final Button[] buttons;
     private ResourceLocation backgroundTexture;
@@ -280,13 +304,25 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
 
         if (isOpen) {
             guiGraphics.enableScissor(contentX, contentY, contentX + contentWidth, contentY + contentHeight);
+            RenderSystem.enableBlend();
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
             drawTiledBackground(guiGraphics, contentX, contentY, contentWidth, contentHeight);
 
+            compartmentWidgets.sort((a, b) -> Float.compare(a.getCompartment().getVisualData().z, b.getCompartment().getVisualData().z));
+
             for (CompartmentNodeWidget widget : compartmentWidgets) {
+                CompartmentNodeWidget hoveredWidget = getHoveredWidget(mouseX, mouseY);
+                if (hoveredWidget != null && hoveredWidget.equals(widget)) continue;
                 widget.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
             }
 
+            RenderSystem.disableBlend();
+            GL11.glEnable(GL11.GL_DEPTH_TEST);
+            GL11.glDepthMask(false);
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(0, 0, 100);
 
             renderLayerIndicators(guiGraphics);
 
@@ -322,6 +358,8 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
                 0xFFFFFF
         );
 
+        guiGraphics.pose().popPose();
+
         if (isOpen) {
             if (isMouseInContentArea(mouseX, mouseY, contentX, contentY, contentWidth, contentHeight)) {
                 boolean isMouseOverButton = false;
@@ -332,6 +370,20 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
                 }
                 CompartmentNodeWidget hoveredWidget = getHoveredWidget(mouseX, mouseY);
                 if (hoveredWidget != null && !isMouseOverButton) {
+                    guiGraphics.enableScissor(contentX, contentY, contentX + contentWidth, contentY + contentHeight);
+                    guiGraphics.pose().pushPose();
+                    guiGraphics.pose().translate(0, 0, 50);
+                    float pulse = (float) (Math.sin(System.currentTimeMillis() / 500.0) * 0.4f + 0.95f);
+                    RenderSystem.enableBlend();
+                    RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, pulse);
+
+                    hoveredWidget.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+
+                    RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                    RenderSystem.disableBlend();
+                    guiGraphics.disableScissor();
+                    guiGraphics.pose().popPose();
+
                     hoveredWidget.drawHover(guiGraphics, mouseX, mouseY, partialTick, width, height);
                 }
             }
@@ -394,22 +446,22 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(contentX, contentY, 0.0F);
 
-        int tileOffsetX = -(int)scrollX;
-        int tileOffsetY = -(int)scrollY;
+        int tileOffsetX = -(int) scrollX;
+        int tileOffsetY = -(int) scrollY;
 
-        int tilesX = (contentWidth / 16) + 2;
-        int tilesY = (contentHeight / 16) + 2;
+        int tilesX = (contentWidth / 16 * 5) + 2;
+        int tilesY = (contentHeight / 16 * 5) + 2;
 
-        int startX = (tileOffsetX % 16);
-        int startY = (tileOffsetY % 16);
+        int startX = (tileOffsetX % 16 * 5);
+        int startY = (tileOffsetY % 16 * 5);
 
         for (int i = -1; i <= tilesX; i++) {
             for (int j = -1; j <= tilesY; j++) {
                 guiGraphics.blit(
                         backgroundTexture,
-                        startX + (16 * i),
-                        startY + (16 * j),
-                        0, 0, 16, 16, 16, 16
+                        startX + (16 * 5 * i),
+                        startY + (16 * 5 * j),
+                        0, 0, 16 * 5, 16 * 5, 16 * 5, 16 * 5
                 );
             }
         }
@@ -543,7 +595,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         super.setX(x);
 
         for (CompartmentNodeWidget widget : compartmentWidgets) {
-            widget.setX(x + widget.getRelativeX() - (int)scrollX);
+            widget.setX(x + widget.getRelativeX() - (int) scrollX);
         }
 
         updateButtons();
@@ -554,7 +606,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         super.setY(y);
 
         for (CompartmentNodeWidget widget : compartmentWidgets) {
-            widget.setY(y + widget.getRelativeY() - (int)scrollY);
+            widget.setY(y + widget.getRelativeY() - (int) scrollY);
         }
 
         updateButtons();

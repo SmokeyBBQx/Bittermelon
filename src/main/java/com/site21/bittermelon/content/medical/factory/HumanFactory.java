@@ -56,6 +56,8 @@ public class HumanFactory implements AnatomyFactory {
         CompartmentInstance cut1 = new CompartmentInstance(INJURY.get(), new VisualData(2, -5, 1.2f), headSkin, 0, 10, "Cut", false);
         cut1.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/medical/cut_visual.png"));
 
+        headFat.getCompartmentSpace().addToLayer(1, cut1.getUUID());
+
         CompartmentInstance cut2 = new CompartmentInstance(INJURY.get(), new VisualData(0, 0, 2.3f), headFat, 0, 15, "Cut", false);
         cut2.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/medical/cut_visual.png"));
 
@@ -143,21 +145,37 @@ public class HumanFactory implements AnatomyFactory {
 
         // Abdominal layers
         CompartmentInstance abdomenSkin = createSoftTissue("Skin", new VisualData(0, 0), abdomen, 0, 40);
+        abdomenSkin.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/white_terracotta.png"));
+
         CompartmentInstance abdomenFat = createSoftTissue("Fat", new VisualData(0, 0), abdomen, 1, 60);
+        abdomenFat.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/horn_coral_block.png"));
+
         CompartmentInstance abdominalMuscles = createSoftTissue("Abdominal Muscles", new VisualData(0, 0), abdomen, 2, 100);
         CompartmentInstance peritoneum = createSoftTissue("Peritoneum", new VisualData(0, 0), abdomen, 3, 5);
+        peritoneum.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/dead_brain_coral_block.png"));
 
         // Digestive organs
-        CompartmentInstance stomach = createSoftTissue("Stomach", new VisualData(10, 10, 4.5f), abdomen, 4, 30);
+        CompartmentInstance stomach = createSoftTissue("Stomach", new VisualData(4 * 5, 0, 2, 5, 15, 14), abdomen, 4, 30);
         stomach.setItem(STOMACH.get());
-        CompartmentInstance smallIntestine = createSoftTissue("Small Intestine", new VisualData(0, 0, 6f), abdomen, 4, 40);
-        CompartmentInstance largeIntestine = createSoftTissue("Large Intestine", new VisualData(0, 5, 6.5f), abdomen, 4, 40);
+        stomach.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_stomach.png"));
+        stomach.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/stripped_cherry_log_side.png"));
+        CompartmentInstance smallIntestine = createSoftTissue("Small Intestine", new VisualData(1 * 5, 8 * 5, 0, 5, 17, 19), abdomen, 4, 40);
+        smallIntestine.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_small_intestine.png"));
+        CompartmentInstance colon = createSoftTissue("Colon", new VisualData(-1 * 5, 9 * 5, 1, 5, 22, 19), abdomen, 4, 40);
+        colon.setItem(COLON.get());
+        colon.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/brain_coral_block.png"));
+        colon.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_colon.png"));
 
         // Accessory organs
-        CompartmentInstance liver = createSoftTissue("Liver", new VisualData(-5, -5, 6.2f), abdomen, 4, 45);
+        CompartmentInstance liver = createSoftTissue("Liver", new VisualData(0, 0, 4, 5, 19, 14), abdomen, 4, 45);
         liver.setItem(LIVER.get());
-        CompartmentInstance gallbladder = createSoftTissue("Gallbladder", new VisualData(-20, 16, 1.2f), abdomen, 4, 5);
+        liver.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/red_terracotta.png"));
+        liver.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_liver.png"));
+
+        CompartmentInstance gallbladder = createSoftTissue("Gallbladder", new VisualData(5 * 5, 10 * 5, 3, 5, 3, 3), abdomen, 4, 5);
         gallbladder.setItem(GALLBLADDER.get());
+        gallbladder.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_gallbladder.png"));
+
         CompartmentInstance pancreas = createSoftTissue("Pancreas", new VisualData(5, -2, 1.8f), abdomen, 4, 10);
         CompartmentInstance spleen = createSoftTissue("Spleen", new VisualData(6, -5, 1.8f), abdomen, 4, 15);
 
@@ -166,15 +184,17 @@ public class HumanFactory implements AnatomyFactory {
         leftKidney.setItem(KIDNEY.get());
         CompartmentInstance rightKidney = createSoftTissue("Right Kidney", new VisualData(7, 0, 2.8f), abdomen, 5, 15);
         rightKidney.setItem(KIDNEY.get());
-        CompartmentInstance bladder = createSoftTissue("Bladder", new VisualData(0, 70, 1.5f), abdomen, 4, 20);
+        CompartmentInstance bladder = createSoftTissue("Bladder", new VisualData(0, 150, 1.5f), abdomen, 4, 20);
         bladder.setItem(BLADDER.get());
+
+        abdomen.getCompartmentSpace().addToLayer(5, bladder.getUUID());
 
         // Skeletal component
         CompartmentInstance pelvis = createHardTissue("Pelvis", new VisualData(0, 12, 6.2f), abdomen, 3, 80);
         pelvis.setItem(PELVIS.get());
 
         compartments.addAll(Arrays.asList(abdomenSkin, abdomenFat, abdominalMuscles, peritoneum,
-                stomach, smallIntestine, largeIntestine, liver, gallbladder, pancreas, spleen,
+                stomach, smallIntestine, colon, liver, gallbladder, pancreas, spleen,
                 leftKidney, rightKidney, bladder, pelvis));
     }
 
