@@ -11,6 +11,7 @@ import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.content.items.substance.SubstanceContainerItem;
 import com.site21.bittermelon.content.substance.Substance;
 import com.site21.bittermelon.content.substance.SubstanceStack;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
@@ -201,6 +202,8 @@ public class SubstanceCommand {
                 SubstanceStack substanceStack = new SubstanceStack(substance, amount);
                 item.updateSubstance(stack, substanceStack);
                 return 1;
+            } else {
+                source.sendFailure(Component.literal("That substance is not valid.").withStyle(ChatFormatting.RED));
             }
         }
 
@@ -218,6 +221,8 @@ public class SubstanceCommand {
                 substanceStack.setVolume(amount);
                 item.updateSubstance(stack, substanceStack);
                 return 1;
+            } else {
+                source.sendFailure(Component.literal("That substance is not valid.").withStyle(ChatFormatting.RED));
             }
         }
 

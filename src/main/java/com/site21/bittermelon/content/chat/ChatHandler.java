@@ -18,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ACTIVE_CHANNEL;
+
 @EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class ChatHandler {
     private static final Pattern EMOTE_PATTERN = Pattern.compile("\\*(.*?)\\*|([^*]+)");
@@ -40,7 +42,13 @@ public class ChatHandler {
             return;
         }
 
-        sendRPMessage(character, player, message, NORMAL_RANGE, VerbSets.HUMAN.get());
+        int channel = player.getData(ACTIVE_CHANNEL.get());
+
+        switch (channel) {
+            case 0 -> sendRPMessage(character, player, message, NORMAL_RANGE, VerbSets.HUMAN.get());
+            case 1 -> sendOOCMessage(player, character, message);
+            case 2 -> sendLOOCMessage(player, character, message);
+        }
     }
 
     public static void sendRPMessage(@NotNull Character character, ServerPlayer player, @NotNull String message, int range, String verb) {

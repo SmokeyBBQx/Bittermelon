@@ -32,4 +32,8 @@ public class BitterAttachmentTypes {
     public static final Supplier<AttachmentType<AtmosBlockData>> ATMOSPHERE = ATTACHMENT_TYPES.register(
             "atmosphere", () -> AttachmentType.serializable(AtmosBlockData::new).build()
     );
+
+    public static final Supplier<AttachmentType<Integer>> ACTIVE_CHANNEL = ATTACHMENT_TYPES.register(
+            "active_channel", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).build()
+    );
 }
