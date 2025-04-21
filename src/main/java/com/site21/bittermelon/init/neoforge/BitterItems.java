@@ -262,4 +262,11 @@ public class BitterItems {
     public static final DeferredItem<SCP109> SCP_109 = ITEMS.register("scp109", () -> new SCP109(
             new Item.Properties()
     ));
+
+    public static final DeferredItem<BaseItem> HELLO_KITTY_CELLPHONE = ITEMS.register("hello_kitty_cellphone", () -> new BaseItem(
+            new Item.Properties(),
+            1,
+            2,
+            ItemWeight.LIGHT
+    ));
 }
