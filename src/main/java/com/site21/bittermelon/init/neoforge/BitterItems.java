@@ -3,10 +3,11 @@ package com.site21.bittermelon.init.neoforge;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.items.GermTest;
 import com.site21.bittermelon.content.items.IntercomPhoneItem;
-import com.site21.bittermelon.content.items.SCP109;
+import com.site21.bittermelon.content.items.scps.SCP109;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.handheldprogrammer.HandheldProgrammerItem;
+import com.site21.bittermelon.content.items.scps.SCP2398;
 import com.site21.bittermelon.content.items.wires.networkcable.NetworkCable;
 import com.site21.bittermelon.content.items.cardboardbox.CardboardBoxItem;
 import com.site21.bittermelon.content.items.cardboardbox.CollapsedCardboardBoxItem;
@@ -267,6 +268,20 @@ public class BitterItems {
             new Item.Properties(),
             1,
             2,
+            ItemWeight.LIGHT
+    ));
+
+    public static final DeferredItem<SCP2398> SCP_2398 = ITEMS.register("scp2398", () -> new SCP2398(
+            new Item.Properties(),
+            1,
+            3,
+            ItemWeight.MEDIUM
+    ));
+
+    public static final DeferredItem<BaseItem> BASEBALL = ITEMS.register("baseball", () -> new BaseItem(
+            new Item.Properties(),
+            1,
+            1,
             ItemWeight.LIGHT
     ));
 }

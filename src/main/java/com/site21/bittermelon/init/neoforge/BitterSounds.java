@@ -50,4 +50,6 @@ public class BitterSounds {
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "machine.terminal_hum")));
     public static final DeferredHolder<SoundEvent, SoundEvent> CONTAINMENT_ALERT = SOUND_EVENTS.register("machine.containment_alert",
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "machine.containment_alert")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> BAT_IMPACT = SOUND_EVENTS.register("misc.bat_impact",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "misc.bat_impact")));
 }

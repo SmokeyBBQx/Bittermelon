@@ -113,6 +113,12 @@
       "bittermelon:machine/containment_alert"
     ]
   },
+  "misc.bat_impact": {
+    "category": "players",
+    "sounds": [
+      "bittermelon:misc/bat_impact"
+    ]
+  },
   "container.toolbox_open": {
     "category": "neutral",
     "sounds": [

@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.items;
+package com.site21.bittermelon.content.items.scps;
 
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.content.items.base.ItemWeight;

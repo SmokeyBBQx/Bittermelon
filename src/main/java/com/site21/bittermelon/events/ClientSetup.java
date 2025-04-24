@@ -23,6 +23,7 @@ public class ClientSetup {
         event.registerEntityRenderer(SCP_939.get(), SCP939Renderer::new);
         event.registerEntityRenderer(CHICKEN.get(), ChickenRenderer::new);
         event.registerEntityRenderer(THROWN_ITEM_PROJECTILE.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(SCP_2398_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.STRUCTURAL_BLOCK_ENTITY.get(), StructuralBlockRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.THERMOMETER_BLOCK_ENTITY.get(), ThermometerRenderer::new);
     }

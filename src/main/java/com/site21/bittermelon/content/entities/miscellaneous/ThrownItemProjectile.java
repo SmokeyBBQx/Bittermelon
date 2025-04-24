@@ -1,6 +1,8 @@
 package com.site21.bittermelon.content.entities.miscellaneous;
 
 import com.site21.bittermelon.content.items.base.BaseItem;
+import com.site21.bittermelon.content.items.scps.SCP2398;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,13 +24,14 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
         super(entityType, level);
     }
 
-    public ThrownItemProjectile(Level level, LivingEntity player, ItemStack itemStack) {
+    public ThrownItemProjectile(Level level, LivingEntity player, ItemStack stack) {
         super(THROWN_ITEM_PROJECTILE.get(), player, level);
-        this.setItem(itemStack);
+        this.setItem(stack);
     }
 
-    public ThrownItemProjectile(Level pLevel, double pX, double pY, double pZ) {
+    public ThrownItemProjectile(Level pLevel, double pX, double pY, double pZ, ItemStack stack) {
         super(THROWN_ITEM_PROJECTILE.get(), pX, pY, pZ, pLevel);
+        this.setItem(stack);
     }
 
     @Override
@@ -66,6 +69,11 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
                 entity.hurt(this.damageSources().thrown(this, this.getOwner()), dmg);
             }
         }
+
+        if (this.getItem().getItem() instanceof SCP2398) {
+            this.level().broadcastEntityEvent(this, (byte) 3);
+            this.discard();
+        }
     }
 
     @Override
@@ -74,6 +82,17 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
             return BASE_GRAVITY + (float) item.getItemWeight().value / 100;
         }
         return BASE_GRAVITY;
+    }
+
+    @Override
+    public boolean hurt(@NotNull net.minecraft.world.damagesource.DamageSource source, float amount) {
+        if (source.is(DamageTypes.EXPLOSION) ||
+                source.is(DamageTypes.PLAYER_EXPLOSION) ||
+                source.is(DamageTypes.BAD_RESPAWN_POINT)) {
+            return false;
+        }
+
+        return super.hurt(source, amount);
     }
 }
 

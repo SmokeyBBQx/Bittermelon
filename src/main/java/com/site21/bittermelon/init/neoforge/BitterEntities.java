@@ -4,6 +4,7 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.entities.miscellaneous.ThrownItemProjectile;
 import com.site21.bittermelon.content.entities.implementations.chicken.Chicken;
 import com.site21.bittermelon.content.entities.implementations.SCP939.SCP939;
+import com.site21.bittermelon.content.items.scps.SCP2398Projectile;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -20,6 +21,11 @@ public class BitterEntities {
             () -> EntityType.Builder.<ThrownItemProjectile>of(ThrownItemProjectile::new, MobCategory.MISC)
                     .sized(0.5f, 0.5f)
                     .build("thrown_item_projectile"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<SCP2398Projectile>> SCP_2398_PROJECTILE = ENTITY_TYPES.register("scp_2398_projectile",
+            () -> EntityType.Builder.<SCP2398Projectile>of(SCP2398Projectile::new, MobCategory.MISC)
+                    .sized(0.5f, 0.5f)
+                    .build("scp_2398_projectile"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SCP939>> SCP_939 = ENTITY_TYPES.register("scp939",
             () -> EntityType.Builder.of(SCP939::new, MobCategory.MONSTER)
