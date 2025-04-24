@@ -105,7 +105,9 @@ public class HumanFactory implements AnatomyFactory {
     }
 
     private static void buildChest(CompartmentInstance wholeBody, @NotNull List<CompartmentInstance> compartments) {
-        CompartmentInstance chest = createMajorBodyPart("Chest", new VisualData(0, -15), wholeBody, 0);
+        CompartmentInstance chest = createMajorBodyPart("Chest", new VisualData(30, -15), wholeBody, 0);
+        chest.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/netherrack.png"));
+        chest.setItem(Items.BLUE_WOOL);
         compartments.add(chest);
 
         // Chest layers
@@ -114,27 +116,32 @@ public class HumanFactory implements AnatomyFactory {
         CompartmentInstance chestMuscles = createSoftTissue("Muscles", new VisualData(0, 0), chest, 2, 100);
 
         // Skeletal components
-        CompartmentInstance ribs = createHardTissue("Ribs", new VisualData(0, 0), chest, 3, 60);
-        CompartmentInstance sternum = createHardTissue("Sternum", new VisualData(0, -4), chest, 3, 20);
+        CompartmentInstance ribs = createHardTissue("Ribs", new VisualData(0 * 5, 1 * 5, 3, 5, 27, 20), chest, 4, 60);
+        ribs.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_ribs.png"));
+//        CompartmentInstance sternum = createHardTissue("Sternum", new VisualData(0, -4), chest, 3, 20);
 
         // Membrane layer
-        CompartmentInstance pleuralMembrane = createSoftTissue("Pleural Membrane", new VisualData(0, 0), chest, 4, 5);
+        CompartmentInstance pleuralMembrane = createSoftTissue("Pleural Membrane", new VisualData(0, 0), chest, 3, 5);
 
         // Cardiopulmonary system
-        CompartmentInstance heart = createSoftTissue("Heart", new VisualData(0, 0), chest, 5, 30);
+        CompartmentInstance heart = createSoftTissue("Heart", new VisualData(10 * 5, 9 * 5, 0, 5, 10, 9), chest, 4, 30);
         heart.setAttribute(FunctionType.CIRCULATION, 1f);
+        heart.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_heart.png"));
         CompartmentInstance pericardium = createSoftTissue("Pericardium", new VisualData(0, 0), heart, 0, 2);
-        CompartmentInstance leftLung = createSoftTissue("Left Lung", new VisualData(-6, 0), chest, 5, 40);
+        CompartmentInstance leftLung = createSoftTissue("Left Lung", new VisualData(14 * 5, 2 * 5, 1, 5, 13, 18), chest, 4, 40);
+        leftLung.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_left_lung.png"));
         leftLung.setAttribute(FunctionType.RESPIRATORY, 1f);
-        CompartmentInstance rightLung = createSoftTissue("Right Lung", new VisualData(6, 0), chest, 5, 40);
+        CompartmentInstance rightLung = createSoftTissue("Right Lung", new VisualData(0 * 5, 2 * 5, 1, 5, 13, 18), chest, 4, 40);
         rightLung.setAttribute(FunctionType.RESPIRATORY, 1f);
+        rightLung.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_right_lung.png"));
 
         // Other organs
-        CompartmentInstance thymus = createSoftTissue("Thymus", new VisualData(0, -8), chest, 5, 5);
-        CompartmentInstance esophagus = createSoftTissue("Esophagus", new VisualData(0, -10), chest, 5, 10);
-        CompartmentInstance trachea = createSoftTissue("Trachea", new VisualData(0, -12), chest, 5, 10);
+        CompartmentInstance thymus = createSoftTissue("Thymus", new VisualData(0, -8), chest, 4, 5);
+        CompartmentInstance esophagus = createSoftTissue("Esophagus", new VisualData(0, -10), chest, 4, 10);
+        CompartmentInstance trachea = createSoftTissue("Trachea", new VisualData(12 * 5, 0 * 5, 2, 5, 3, 9), chest, 4, 10);
+        trachea.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_trachea.png"));
 
-        compartments.addAll(Arrays.asList(chestSkin, chestFat, chestMuscles, ribs, sternum,
+        compartments.addAll(Arrays.asList(chestSkin, chestFat, chestMuscles, ribs,
                 pleuralMembrane, heart, pericardium, leftLung, rightLung, thymus, esophagus, trachea));
     }
 
@@ -153,6 +160,18 @@ public class HumanFactory implements AnatomyFactory {
         CompartmentInstance abdominalMuscles = createSoftTissue("Abdominal Muscles", new VisualData(0, 0), abdomen, 2, 100);
         CompartmentInstance peritoneum = createSoftTissue("Peritoneum", new VisualData(0, 0), abdomen, 3, 5);
         peritoneum.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/dead_brain_coral_block.png"));
+        CompartmentInstance cut = new CompartmentInstance(INJURY.get(), new VisualData(20, 40, 5, 2.3f, 16, 16), abdomen, 0, 15, "Cut", false);
+        cut.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/medical/cut_visual.png"));
+        cut.addTag(CompartmentTag.CUT);
+
+        abdomen.getCompartmentSpace().addToLayer(1, cut.getUUID());
+        abdomen.getCompartmentSpace().addToLayer(2, cut.getUUID());
+        abdomen.getCompartmentSpace().addToLayer(3, cut.getUUID());
+        abdomen.getCompartmentSpace().addToLayer(4, cut.getUUID());
+//
+//        CompartmentInstance cut2 = new CompartmentInstance(INJURY.get(), new VisualData(40, 40, 0, 2.3f, 20, 20), abdomen, 3, 15, "Cut", false);
+//        cut2.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/medical/cut_visual.png"));
+//        cut2.addTag(CompartmentTag.CUT);
 
         // Digestive organs
         CompartmentInstance stomach = createSoftTissue("Stomach", new VisualData(4 * 5, 0, 2, 5, 15, 14), abdomen, 4, 30);
@@ -193,7 +212,7 @@ public class HumanFactory implements AnatomyFactory {
         CompartmentInstance pelvis = createHardTissue("Pelvis", new VisualData(0, 12, 6.2f), abdomen, 3, 80);
         pelvis.setItem(PELVIS.get());
 
-        compartments.addAll(Arrays.asList(abdomenSkin, abdomenFat, abdominalMuscles, peritoneum,
+        compartments.addAll(Arrays.asList(abdomenSkin, abdomenFat, abdominalMuscles, peritoneum, cut,
                 stomach, smallIntestine, colon, liver, gallbladder, pancreas, spleen,
                 leftKidney, rightKidney, bladder, pelvis));
     }

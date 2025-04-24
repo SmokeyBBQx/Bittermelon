@@ -12,9 +12,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.EnumSet;
 
-import static com.site21.bittermelon.init.custom.Compartments.TOOL;
-
-public interface AbstractClamp extends MedicalItem {
+public interface IClamp extends MedicalItem {
     @Override
     default EnumSet<CompartmentTag> getAllowedCompartments() {
         return EnumSet.of(

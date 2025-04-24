@@ -1,5 +1,6 @@
 package com.site21.bittermelon.content.medical.client.screen;
 
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
@@ -13,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,9 +30,6 @@ public class CompartmentNodeWidget extends AbstractWidget {
     private static final ResourceLocation FRAME_TASK = ResourceLocation.withDefaultNamespace("advancements/task_frame_unobtained");
     private static final ResourceLocation FRAME_CHALLENGE = ResourceLocation.withDefaultNamespace("advancements/challenge_frame_unobtained");
     private static final ResourceLocation FRAME_GOAL = ResourceLocation.withDefaultNamespace("advancements/goal_frame_unobtained");
-
-    private static final int ICON_X = 8;
-    private static final int ICON_Y = 5;
 
     private HealthScreenV2 healthScreen;
     private CompartmentInstance compartment;
@@ -73,19 +72,9 @@ public class CompartmentNodeWidget extends AbstractWidget {
 
             guiGraphics.pose().pushPose();
 
-            guiGraphics.pose().translate(
-                    this.getX() + ICON_X + 8,
-                    this.getY() + ICON_Y + 8,
-                    visualData.getZ()
-            );
+            guiGraphics.pose().translate(this.getX(), this.getY(), visualData.getZ());
 
             guiGraphics.pose().scale(scaleFactor, scaleFactor, 0);
-
-            guiGraphics.pose().translate(
-                    -8,
-                    -8,
-                    0
-            );
 
             if (compartment.getIcon() != null) {
                 int width = visualData.width;
@@ -178,9 +167,9 @@ public class CompartmentNodeWidget extends AbstractWidget {
         }
 
         if (compartment.getIcon() != null && compartment.getItem().isEmpty()) {
-            guiGraphics.blitSprite(compartment.getIcon(), this.getX() + ICON_X, this.getY() + ICON_Y, 16, 16);
+            guiGraphics.blitSprite(compartment.getIcon(), this.getX() + 8, this.getY() + 5, 16, 16);
         } else {
-            guiGraphics.renderFakeItem(compartment.getItem(), this.getX() + ICON_X, this.getY() + ICON_Y);
+            guiGraphics.renderFakeItem(compartment.getItem(), this.getX() + 8, this.getY() + 5);
         }
 
         guiGraphics.pose().popPose();
@@ -218,19 +207,51 @@ public class CompartmentNodeWidget extends AbstractWidget {
 
     public boolean isMouseOver(int mouseX, int mouseY) {
         if (!compartment.isHidden() || (compartment.getHealthRaw() <= 0)) {
-            float scaleFactor = compartment.getVisualData().scale;
+            VisualData visualData = compartment.getVisualData();
+            float scaleFactor = visualData.scale;
 
-            int centerX = this.getX() + ICON_X + 8;
-            int centerY = this.getY() + ICON_Y + 8;
+            int centerX = this.getX() + 8;
+            int centerY = this.getY() + 8;
 
-            float mouseDistanceX = Math.abs(mouseX - centerX);
-            float mouseDistanceY = Math.abs(mouseY - centerY);
+            int relX = mouseX - centerX;
+            int relY = mouseY - centerY;
 
-            float hitboxRadius = (float) (8 + (2 * Math.sqrt(scaleFactor)));
+            if (compartment.getIcon() == null) {
+                float distance = (float) Math.sqrt(relX * relX + relY * relY);
+                float hitboxRadius = 8 + (2 * (float) Math.sqrt(scaleFactor));
+                return distance <= hitboxRadius;
+            }
 
-            return mouseDistanceX <= hitboxRadius && mouseDistanceY <= hitboxRadius;
+            float unscaledRelX = relX / scaleFactor;
+            float unscaledRelY = relY / scaleFactor;
+
+            int texX = Math.round(unscaledRelX);
+            int texY = Math.round(unscaledRelY);
+
+            if (texX >= 0 && texX < visualData.width && texY >= 0 && texY < visualData.height) {
+                return getAlphaAtPixel(compartment.getIcon(), texX, texY) >= 1;
+            }
         }
         return false;
+    }
+
+    private float getAlphaAtPixel(ResourceLocation resourceLocation, int x, int y) {
+        NativeImage image;
+        try {
+            image = NativeImage.read(Minecraft.getInstance().getResourceManager().getResource(resourceLocation).get().open());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (x >= 0 && x < image.getWidth() && y >= 0 && y < image.getHeight()) {
+            int rgba = image.getPixelRGBA(x, y);
+            int alpha = (rgba >> 24) & 0xFF;
+//            System.out.println("Pixel at " + x + "," + y + " - RGBA: " + Integer.toHexString(rgba) + ", Alpha: " + alpha);
+            image.close();
+            return alpha / 255.0f;
+        }
+
+        return 0.5f;
     }
 
     public CompartmentInstance getCompartment() {

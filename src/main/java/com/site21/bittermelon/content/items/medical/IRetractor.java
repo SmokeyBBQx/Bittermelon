@@ -12,12 +12,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
-import java.util.UUID;
 
-import static com.site21.bittermelon.init.custom.Compartments.RETRACTOR;
-import static com.site21.bittermelon.init.custom.Compartments.TOOL;
-
-public interface AbstractRetractor extends MedicalItem {
+public interface IRetractor extends MedicalItem {
     @Override
     default EnumSet<CompartmentTag> getAllowedCompartments() {
         return EnumSet.of(
