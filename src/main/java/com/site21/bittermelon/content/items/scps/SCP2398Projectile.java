@@ -86,7 +86,7 @@ public class SCP2398Projectile extends ThrownItemProjectile {
         );
 
         BlockState state = level().getBlockState(pos);
-        level().playSound(null, getOnPos(), state.getSoundType(level(), pos, this).getBreakSound(), SoundSource.PLAYERS, 10, 1);
+        level().playSound(null, getOnPos(), state.getSoundType(level(), pos, this).getBreakSound(), SoundSource.PLAYERS, 1, 1);
 
         if (state.getBlock() instanceof BellBlock block) {
             block.attemptToRing(level(), pos, result.getDirection());
