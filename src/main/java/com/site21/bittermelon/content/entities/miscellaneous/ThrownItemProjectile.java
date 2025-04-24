@@ -2,6 +2,9 @@ package com.site21.bittermelon.content.entities.miscellaneous;
 
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.scps.SCP2398;
+import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -10,6 +13,9 @@ import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BellBlock;
+import net.minecraft.world.level.block.ButtonBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import org.jetbrains.annotations.NotNull;
@@ -44,6 +50,17 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
         super.onHitBlock(result);
 
         if (!this.level().isClientSide) {
+            BlockPos pos = result.getBlockPos();
+            BlockState state = level().getBlockState(pos);
+
+            if (state.getBlock() instanceof BellBlock block) {
+                block.attemptToRing(level(), pos, result.getDirection());
+            } else if (state.getBlock() instanceof ButtonBlock block) {
+                block.press(state, level(), pos, null);
+            }
+
+            level().playSound(null, pos, SoundEvents.STONE_FALL, SoundSource.PLAYERS, 2, 1);
+
             if (this.getItem().getItem() instanceof BaseItem item) {
                 item.projectileHitBlock(this.getItem(), this.level(), result.getBlockPos());
             } else {

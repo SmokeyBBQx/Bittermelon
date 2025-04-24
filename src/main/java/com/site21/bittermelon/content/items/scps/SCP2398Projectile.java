@@ -85,11 +85,11 @@ public class SCP2398Projectile extends ThrownItemProjectile {
                 0.1
         );
 
-        level().playSound(null, getOnPos(), SoundEvents.ITEM_BREAK, SoundSource.PLAYERS, 2, 1);
         BlockState state = level().getBlockState(pos);
+        level().playSound(null, getOnPos(), state.getSoundType(level(), pos, this).getBreakSound(), SoundSource.PLAYERS, 10, 1);
 
         if (state.getBlock() instanceof BellBlock block) {
-            block.attemptToRing(level(), pos, getDirection().getOpposite());
+            block.attemptToRing(level(), pos, result.getDirection());
         } else if (state.getBlock() instanceof ButtonBlock block) {
             block.press(state, level(), pos, null);
         }
@@ -100,7 +100,8 @@ public class SCP2398Projectile extends ThrownItemProjectile {
             if (level().getBlockEntity(pos) instanceof StructuralBlockEntity blockEntity) {
                 blockEntity.setBreakProgress(blockEntity.getBreakProgress() + 0.4f);
             }
-            remove(RemovalReason.DISCARDED);
+            this.level().broadcastEntityEvent(this, (byte) 3);
+            this.discard();
             level().addFreshEntity(itemEntity);
         }
     }
@@ -124,6 +125,7 @@ public class SCP2398Projectile extends ThrownItemProjectile {
 
         float dmg = 15;
         entity.hurt(this.damageSources().thrown(this, this.getOwner()), dmg);
-        remove(RemovalReason.DISCARDED);
+        this.level().broadcastEntityEvent(this, (byte) 3);
+        this.discard();
     }
 }
