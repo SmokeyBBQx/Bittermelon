@@ -272,7 +272,7 @@ public class BitterItems {
     ));
 
     public static final DeferredItem<SCP2398> SCP_2398 = ITEMS.register("scp2398", () -> new SCP2398(
-            new Item.Properties(),
+            new Item.Properties().stacksTo(1),
             1,
             3,
             ItemWeight.MEDIUM
