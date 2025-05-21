@@ -99,16 +99,16 @@ public class SearchArea<E extends BitterMob<?>> extends ExtendedBehaviour<E> {
                 if (distanceMoved < STUCK_DISTANCE_THRESHOLD) {
                     stuckTicks += STUCK_CHECK_INTERVAL;
                     consecutiveStuckChecks++;
-
-                    if (stuckTicks >= STUCK_TIME_THRESHOLD || entity.getNavigation().isStuck()) {
-                        handleStuckSituation(entity);
-                    }
                 } else {
                     resetStuckDetection(entity);
                 }
             }
 
             lastPosition = currentPos;
+        }
+
+        if (stuckTicks >= STUCK_TIME_THRESHOLD || entity.getNavigation().isStuck()) {
+            handleStuckSituation(entity);
         }
     }
 

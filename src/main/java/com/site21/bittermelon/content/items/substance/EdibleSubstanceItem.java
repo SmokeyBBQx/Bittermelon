@@ -49,27 +49,9 @@ public class EdibleSubstanceItem extends SubstanceContainerItem {
             }
         }
 
-        float totalAmount = getTotalVolume(stack);
-        SubstanceContents.Mutable mutableData = getMutableSubstanceData(stack);
-        Iterator<SubstanceStack> iterator = mutableData.substances.iterator();
-
-        while (iterator.hasNext()) {
-            SubstanceStack substance = iterator.next();
-
-            float proportion = totalAmount > 0 ? substance.getVolume() / totalAmount : 0;
-            float consumeAmount = Math.min(CONSUME_RATE * proportion, substance.getVolume());
-
-            substance.modifyVolume(-consumeAmount);
-
-            if (substance.getVolume() <= consumeAmount) {
-                iterator.remove();
-            }
-        }
-
-        setSubstanceDataFromMutable(stack, mutableData);
         playBurpSound(level, entity.getOnPos());
 
-        return stack;
+        return consumeSubstances(stack, CONSUME_RATE);
     }
 
     private void playBurpSound(@NotNull Level level, BlockPos pos) {

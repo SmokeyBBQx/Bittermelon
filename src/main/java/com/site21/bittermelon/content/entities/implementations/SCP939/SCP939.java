@@ -9,6 +9,7 @@ import com.site21.bittermelon.content.entities.BitterAngerManagement;
 import com.site21.bittermelon.content.entities.BitterVibrationSystem;
 import com.site21.bittermelon.content.entities.ai.behavior.attack.YankItem;
 import com.site21.bittermelon.content.entities.ai.behavior.movement.SearchArea;
+import com.site21.bittermelon.content.entities.ai.behavior.movement.SeekNearestPlayer;
 import com.site21.bittermelon.content.entities.base.BitterMob;
 import com.site21.bittermelon.content.entities.ai.behavior.attack.Attack;
 import com.site21.bittermelon.content.combat.AttackTemplate;
@@ -41,6 +42,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Unit;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
@@ -54,6 +56,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.warden.AngerLevel;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.DynamicGameEventListener;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
@@ -71,7 +74,6 @@ import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.UnreachableTargetSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
-import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
 import net.tslat.smartbrainlib.util.BrainUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -395,6 +397,16 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
         return SCREAM.get();
     }
 
+    @Nullable
+    protected SoundEvent getAmbientSound() {
+        return this.getAngerLevel().getAmbientSound();
+    }
+
+    protected void playStepSound(@NotNull BlockPos pos, @NotNull BlockState state) {
+//        this.playSound(SoundEvents.WARDEN_STEP, 10.0F, 1.0F);
+        super.playStepSound(pos, state);
+    }
+
     @Override
     protected void doPush(@NotNull Entity entity) {
         if (!this.isNoAi() && !this.getBrain().hasMemoryValue(MemoryModuleType.TOUCH_COOLDOWN)) {
@@ -509,7 +521,6 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
     @Override
     public List<? extends ExtendedSensor<? extends SCP939>> getSensors() {
         return ObjectArrayList.of(
-                new NearbyPlayersSensor<>(),
                 new NearbyLivingEntitySensor<>(),
                 new UnreachableTargetSensor<>(),
                 new HurtBySensor<>()
@@ -569,8 +580,8 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
 
     public BrainActivityGroup<? extends SCP939> getHuntTasks() {
         return new BrainActivityGroup<SCP939>(BitterActivity.HUNT.get()).behaviours(
-//                new SeekNearestPlayer<>()
-//                        .cooldownFor(entity -> 120),
+                new SeekNearestPlayer<>()
+                        .cooldownFor(entity -> 120),
                 new OneRandomBehaviour<>(
                         new Lure<>(20)
                                 .cooldownFor(entity -> 200),
@@ -581,11 +592,6 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
                 )
                         .cooldownFor(entity -> 150),
                 new SearchArea<>()
-//                new OneRandomBehaviour<>(
-//                        new SetRandomWalkTarget<>()
-//                                .setRadius(getRandom().nextInt(10, 20)),
-//                        new Idle<>().runFor(entity -> 60)
-//                )
         );
     }
 

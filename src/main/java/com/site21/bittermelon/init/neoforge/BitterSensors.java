@@ -3,6 +3,7 @@ package com.site21.bittermelon.init.neoforge;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.entities.ai.sensors.NearbyDrinkableFluidsSensor;
 import com.site21.bittermelon.content.entities.ai.sensors.NearbyFoodSensor;
+import com.site21.bittermelon.content.entities.ai.sensors.VisionConeLivingEntitySensor;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -19,5 +20,10 @@ public final class BitterSensors {
     public static final DeferredHolder<SensorType<?>, SensorType<NearbyDrinkableFluidsSensor<?>>> NEARBY_DRINKABLE_FLUIDS = SENSOR_TYPES.register(
             "nearby_drinkable_fluids",
             () -> new SensorType<>(NearbyDrinkableFluidsSensor::new)
+    );
+
+    public static final DeferredHolder<SensorType<?>, SensorType<VisionConeLivingEntitySensor<?>>> VISION_CONE_LIVING_ENTITIES = SENSOR_TYPES.register(
+            "vision_cone_living_entities",
+            () -> new SensorType<>(VisionConeLivingEntitySensor::new)
     );
 }

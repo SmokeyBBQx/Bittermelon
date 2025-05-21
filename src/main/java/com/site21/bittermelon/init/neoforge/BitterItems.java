@@ -8,6 +8,7 @@ import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.handheldprogrammer.HandheldProgrammerItem;
 import com.site21.bittermelon.content.items.scps.SCP2398;
+import com.site21.bittermelon.content.items.smokable.SmokableItem;
 import com.site21.bittermelon.content.items.wires.networkcable.NetworkCable;
 import com.site21.bittermelon.content.items.cardboardbox.CardboardBoxItem;
 import com.site21.bittermelon.content.items.cardboardbox.CollapsedCardboardBoxItem;
@@ -283,5 +284,21 @@ public class BitterItems {
             1,
             1,
             ItemWeight.LIGHT
+    ));
+
+    public static final DeferredItem<BaseItem> CIGARETTE_BUTT = ITEMS.register("cigarette_butt", () -> new BaseItem(
+            new Item.Properties(),
+            1,
+            1,
+            ItemWeight.VERY_LIGHT
+    ));
+
+    public static final DeferredItem<BaseItem> CIGARETTE = ITEMS.register("cigarette", () -> new SmokableItem(
+            new Item.Properties(),
+            1,
+            1,
+            ItemWeight.VERY_LIGHT,
+            20,
+            CIGARETTE_BUTT.get()
     ));
 }

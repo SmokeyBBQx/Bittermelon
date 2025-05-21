@@ -108,4 +108,9 @@ public class BitterDataComponents {
             "cooldown",
             builder -> builder.persistent(ExtraCodecs.NON_NEGATIVE_INT).networkSynchronized(ByteBufCodecs.INT)
     );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> LIT = DATA_COMPONENTS.registerComponentType(
+            "lit",
+            builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL)
+    );
 }

@@ -5,6 +5,9 @@ import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.init.neoforge.BitterItemTags;
 import com.site21.bittermelon.init.neoforge.BitterItems;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -17,6 +20,7 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.site21.bittermelon.init.neoforge.BitterSounds.BAT_IMPACT;
 
@@ -125,8 +129,10 @@ public class SCP2398 extends BaseItem {
         attacker.level().playSound(null, attacker.getOnPos(), BAT_IMPACT.get(), SoundSource.PLAYERS, 2, 1);
         explodeEntity(stack, target, attacker);
 
+
         if (attacker instanceof Player player) {
             player.getCooldowns().addCooldown(this, COOLDOWN_TICKS);
+            spawnSweepParticles(attacker.level(), player);
         }
 
         return true;
@@ -180,6 +186,32 @@ public class SCP2398 extends BaseItem {
             );
 
             level.addFreshEntity(projectile);
+        }
+    }
+
+    private void spawnSweepParticles(Level level, Player player) {
+        if (level instanceof ServerLevel serverLevel) {
+            Vec3 lookVec = player.getLookAngle();
+
+            double x = player.getX() + (lookVec.x);
+            double y = player.getY() + player.getEyeHeight() - 0.2;
+            double z = player.getZ() + (lookVec.z);
+
+            serverLevel.sendParticles(ParticleTypes.SWEEP_ATTACK, x, y, z, 1, 0, 0, 0, 0);
+
+            for (int i = 0; i < 4; i++) {
+                double offsetX = (level.random.nextDouble() - 0.5) * 0.8;
+                double offsetY = (level.random.nextDouble() - 0.5) * 0.5;
+                double offsetZ = (level.random.nextDouble() - 0.5) * 0.8;
+
+                serverLevel.sendParticles(
+                        ParticleTypes.SWEEP_ATTACK,
+                        x + offsetX,
+                        y + offsetY,
+                        z + offsetZ,
+                        1, 0, 0, 0, 0
+                );
+            }
         }
     }
 }

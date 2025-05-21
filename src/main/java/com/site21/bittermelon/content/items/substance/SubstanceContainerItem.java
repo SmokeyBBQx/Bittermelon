@@ -12,6 +12,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.LAST_UPDATED;
@@ -89,6 +90,28 @@ public class SubstanceContainerItem extends BaseItem implements ReactionContaine
 
     public boolean isContainerEmpty(ItemStack stack) {
         return getContents(stack).isEmpty();
+    }
+
+    public ItemStack consumeSubstances(ItemStack stack, float consumeRate) {
+        float totalAmount = getTotalVolume(stack);
+        SubstanceContents.Mutable mutableData = getMutableSubstanceData(stack);
+        Iterator<SubstanceStack> iterator = mutableData.substances.iterator();
+
+        while (iterator.hasNext()) {
+            SubstanceStack substance = iterator.next();
+
+            float proportion = totalAmount > 0 ? substance.getVolume() / totalAmount : 0;
+            float consumeAmount = Math.min(consumeRate * proportion, substance.getVolume());
+
+            substance.modifyVolume(-consumeAmount);
+
+            if (substance.getVolume() <= consumeAmount) {
+                iterator.remove();
+            }
+        }
+
+        setSubstanceDataFromMutable(stack, mutableData);
+        return stack;
     }
 
     @Override

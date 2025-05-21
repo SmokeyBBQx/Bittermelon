@@ -1,22 +1,31 @@
 package com.site21.bittermelon.content.entities.ai.behavior.movement;
 
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.memory.WalkTarget;
 import net.minecraft.world.entity.player.Player;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
-import net.tslat.smartbrainlib.object.MemoryTest;
 import net.tslat.smartbrainlib.util.BrainUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class SeekNearestPlayer<E extends PathfinderMob> extends ExtendedBehaviour<E> {
-    private static final MemoryTest MEMORY_REQUIREMENTS = MemoryTest.builder(1).noMemory(MemoryModuleType.WALK_TARGET);
-    private final int DISTANCE_THRESHOLD = 15;
-    private ServerPlayer nearestPlayer;
+    private int distanceThreshold = 50;
+    private double searchDistance = 200;
+
+    public SeekNearestPlayer<E> distanceThreshold(int distanceThreshold) {
+        this.distanceThreshold = distanceThreshold;
+        return this;
+    }
+
+    public SeekNearestPlayer<E> searchDistance(double searchDistance) {
+        this.searchDistance = searchDistance;
+        return this;
+    }
 
     @Override
     protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
@@ -24,12 +33,16 @@ public class SeekNearestPlayer<E extends PathfinderMob> extends ExtendedBehaviou
     }
 
     @Override
-    protected void start(E entity) {
-        List<Player> nearestPlayers = BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_PLAYERS);
-        if (nearestPlayers != null && !nearestPlayers.isEmpty()) {
-            nearestPlayer = (ServerPlayer) nearestPlayers.get(0);
-        }
+    protected boolean checkExtraStartConditions(@NotNull ServerLevel level, @NotNull E entity) {
+        Player nearestPlayer = level.getNearestPlayer(entity, searchDistance);
+        return nearestPlayer != null && nearestPlayer.distanceTo(entity) > distanceThreshold;
+    }
 
-        BrainUtils.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(nearestPlayer.position(), 1.5f, DISTANCE_THRESHOLD));
+    @Override
+    protected void start(@NotNull E entity) {
+        Player nearestPlayer = entity.level().getNearestPlayer(entity, searchDistance);
+
+        if (nearestPlayer == null) return;
+        BrainUtils.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(nearestPlayer.getOnPos(), 1.5f, distanceThreshold));
     }
 }
