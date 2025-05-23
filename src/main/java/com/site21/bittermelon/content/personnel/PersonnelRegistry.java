@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class PersonnelRegistry extends SavedData {
@@ -25,7 +26,8 @@ public class PersonnelRegistry extends SavedData {
         if (level.isClientSide()) {
             return getClient();
         } else {
-            ServerLevel overworld = level.getServer().getLevel(Level.OVERWORLD);
+            ServerLevel overworld = Objects.requireNonNull(level.getServer()).getLevel(Level.OVERWORLD);
+            assert overworld != null;
             return overworld.getDataStorage().computeIfAbsent(
                     new SavedData.Factory<>(
                             PersonnelRegistry::new,
@@ -39,7 +41,7 @@ public class PersonnelRegistry extends SavedData {
 
     // Alternative static getter that doesn't require a level
     public static @NotNull PersonnelRegistry get(@NotNull MinecraftServer server) {
-        return server.getLevel(Level.OVERWORLD).getDataStorage().computeIfAbsent(
+        return Objects.requireNonNull(server.getLevel(Level.OVERWORLD)).getDataStorage().computeIfAbsent(
                 new SavedData.Factory<>(
                         PersonnelRegistry::new,
                         PersonnelRegistry::load,

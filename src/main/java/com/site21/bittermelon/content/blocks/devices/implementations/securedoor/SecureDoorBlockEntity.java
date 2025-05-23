@@ -11,51 +11,87 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
+import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.SECURE_DOOR_BLOCK_ENTITY;
 
 public class SecureDoorBlockEntity extends BlockEntity implements IElectronic {
     private final Map<String, OutputPort> outputPorts;
     private final Map<String, InputPort> inputPorts;
     private boolean isLocked = true;
-    private List<String> requiredPrivileges = new ArrayList<>();
+    private final List<String> requiredPrivileges = new ArrayList<>();
     private int lockTickCounter = 0;
-    private int lockTickThreshold = 80;
+    private static final int LOCK_TICK_THRESHOLD = 80;
 
     public SecureDoorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
 
         outputPorts = Map.of(
-                "IS_LOCKED", new OutputPort("IS_LOCKED", this::isLocked, worldPosition)
+                "IS_LOCKED", new OutputPort("IS_LOCKED", this::isLocked, worldPosition),
+                "MOTORS_ACTIVE", new OutputPort("MOTORS_ACTIVE", null, worldPosition)
         );
 
         inputPorts = Map.of(
                 "TOGGLE_LOCK", new InputPort("TOGGLE_LOCK", this::toggleLocked, worldPosition),
-                "SET_LOCK", new InputPort("SET_LOCK", this::setLocked, worldPosition)
+                "SET_LOCK", new InputPort("SET_LOCK", this::setLocked, worldPosition),
+                "TOGGLE_MOTORS", new InputPort("TOGGLE_MOTORS", this::toggleMotors, worldPosition),
+                "SET_MOTORS", new InputPort("SET_MOTORS", this::setMotors, worldPosition)
         );
+    }
+
+    public SecureDoorBlockEntity(BlockPos pos, BlockState state) {
+        this(SECURE_DOOR_BLOCK_ENTITY.get(), pos, state);
     }
 
     public void tick() {
         if (!isLocked) {
             lockTickCounter++;
-            if (lockTickCounter >= lockTickThreshold) {
+            if (lockTickCounter >= LOCK_TICK_THRESHOLD) {
+                lockTickCounter = 0;
                 setLocked(true);
+                setMotors(false);
+                if (level == null) return;
+                level.playSound(null, worldPosition, SoundEvents.NOTE_BLOCK_IRON_XYLOPHONE.value(), SoundSource.BLOCKS);
             }
         }
     }
 
-    public void scan(int id) {
-        if (level == null || level.isClientSide) return;
-        List<String> privileges = PersonnelRegistry.get(level).getEntry(id).getPrivileges();
-        if (privileges.stream().anyMatch(privilege -> requiredPrivileges.contains(privilege))) {
-            setLocked(false);
+    private void toggleMotors(@NotNull Signal signal) {
+        if (signal.asBoolean()) {
+            if (level == null) return;
+            BlockState blockState = level.getBlockState(worldPosition);
+            if (blockState.getBlock() instanceof SecureDoorBlock secureDoorBlock) {
+                setMotors(!secureDoorBlock.isOpen(blockState));
+            }
+        }
+    }
+
+    private void setMotors(@NotNull Signal signal) {
+        setMotors(signal.asBoolean());
+    }
+
+    public void setMotors(boolean open) {
+        if (level == null) return;
+        BlockState blockState = level.getBlockState(worldPosition);
+        if (blockState.getBlock() instanceof SecureDoorBlock secureDoorBlock) {
+            if (isLocked && !secureDoorBlock.isOpen(blockState)) return;
+            secureDoorBlock.setOpen(null, level, blockState, worldPosition, open);
+
+            InputPort connectedPort = findOutputPort("MOTORS_ACTIVE").connectedPort;
+            if (connectedPort != null) {
+                connectedPort.receive(new Signal(true));
+            }
         }
     }
 
@@ -75,6 +111,7 @@ public class SecureDoorBlockEntity extends BlockEntity implements IElectronic {
 
     public void setLocked(boolean locked) {
         if (locked != isLocked) {
+            lockTickCounter = 0;
             isLocked = locked;
             setChanged();
         }

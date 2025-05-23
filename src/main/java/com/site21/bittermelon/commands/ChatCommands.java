@@ -20,13 +20,13 @@ import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ACTIVE_
 public class ChatCommands {
     public static void register(@NotNull CommandDispatcher<CommandSourceStack> dispatcher) {
         // Whisper command
-        dispatcher.register(Commands.literal("irp")
+        dispatcher.register(Commands.literal("ic")
                 .executes(context -> {
                     ServerPlayer player = context.getSource().getPlayer();
                     if (player == null) return 0;
                     player.setData(ACTIVE_CHANNEL.get(), 0);
                     context.getSource().sendSuccess(() ->
-                            Component.literal("Switched to IRP").withStyle(ChatFormatting.GRAY), true);
+                            Component.literal("Switched to IC").withStyle(ChatFormatting.GRAY), true);
                     return 1;
                 })
                 .then(Commands.argument("message", StringArgumentType.greedyString())

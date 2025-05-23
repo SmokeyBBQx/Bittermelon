@@ -3,6 +3,7 @@ package com.site21.bittermelon.init.neoforge;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.items.GermTest;
 import com.site21.bittermelon.content.items.IntercomPhoneItem;
+import com.site21.bittermelon.content.items.KeycardItem;
 import com.site21.bittermelon.content.items.scps.SCP109;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
@@ -186,13 +187,6 @@ public class BitterItems {
             1200
     ));
 
-    public static final DeferredItem<BaseItem> KEYCARD = ITEMS.register("keycard", () -> new BaseItem(
-            new Item.Properties(),
-            1,
-            1,
-            ItemWeight.VERY_LIGHT
-    ));
-
     public static final DeferredItem<BaseItem> WHISKEY_BOTTLE = ITEMS.register("whiskey_bottle", () -> new FluidContainerItem(
             new Item.Properties(),
             3,
@@ -300,5 +294,22 @@ public class BitterItems {
             ItemWeight.VERY_LIGHT,
             20,
             CIGARETTE_BUTT.get()
+    ));
+
+    public static final DeferredItem<KeycardItem> KEYCARD = ITEMS.register("keycard", () -> new KeycardItem(
+            new Item.Properties(),
+            1,
+            1,
+            ItemWeight.VERY_LIGHT
+    ));
+
+    public static final DeferredItem<BlockItem> SECURE_DOOR = ITEMS.register("secure_door", () -> new BlockItem(
+            BitterBlocks.SECURE_DOOR.get(),
+            new Item.Properties()
+    ));
+
+    public static final DeferredItem<BlockItem> KEYCARD_READER_SECURE_DOOR = ITEMS.register("keycard_reader_secure_door", () -> new BlockItem(
+            BitterBlocks.KEYCARD_READER_SECURE_DOOR.get(),
+            new Item.Properties()
     ));
 }
