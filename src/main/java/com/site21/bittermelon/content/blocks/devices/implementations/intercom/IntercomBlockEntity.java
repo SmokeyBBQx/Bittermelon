@@ -1,6 +1,7 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.intercom;
 
-import com.site21.bittermelon.content.blocks.devices.IElectronic;
+import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
+import com.site21.bittermelon.content.blocks.devices.implementations.ElectronicBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.Signal;
@@ -24,7 +25,7 @@ import java.util.Map;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.INTERCOM_BLOCK_ENTITY;
 
-public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListener, IElectronic {
+public class IntercomBlockEntity extends ElectronicBlockEntity implements ISyncSoundListener, ElectronicDevice {
     private static final int LISTENING_RADIUS = 8;
     private int speakerRadius = 8;
     private String intercomID = "";
@@ -136,6 +137,7 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
         if (level != null && !level.isClientSide()) {
             IntercomManager.get(level).removeIntercom(worldPosition);
             NeoForge.EVENT_BUS.unregister(this);
+            clearElectronicData(level);
         }
     }
 
@@ -167,26 +169,5 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
 
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
-        return this.saveCustomOnly(registries);
-    }
-
-    @Override
-    public void setChanged() {
-        super.setChanged();
-        syncToClient();
-    }
-
-    public void syncToClient() {
-        if (level != null && !level.isClientSide) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-        }
-    }
-
-    @Override
-    public String getAddress() {
-        return "";
     }
 }

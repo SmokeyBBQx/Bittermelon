@@ -2,6 +2,7 @@ package com.site21.bittermelon.content.blocks.devices.implementations.containmen
 
 import com.site21.bittermelon.content.blocks.base.structuralblock.StructuralBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.ContainmentDevice;
+import com.site21.bittermelon.content.blocks.devices.implementations.ElectronicBlockEntity;
 import com.site21.bittermelon.content.blocks.dirtyfloor.DirtyFloorBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -19,7 +20,7 @@ import java.util.List;
 import static com.site21.bittermelon.content.blocks.dirtyfloor.DirtyFloorBlock.DIRTINESS;
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.CONTAINMENT_PANEL_BLOCK_ENTITY;
 
-public class ContainmentPanelBlockEntity extends BlockEntity {
+public class ContainmentPanelBlockEntity extends ElectronicBlockEntity {
     private String name = "";
     private float containmentScore;
     private float securityScore;
@@ -272,21 +273,5 @@ public class ContainmentPanelBlockEntity extends BlockEntity {
 
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
-        return this.saveCustomOnly(registries);
-    }
-
-    @Override
-    public void setChanged() {
-        super.setChanged();
-        syncToClient();
-    }
-
-    public void syncToClient() {
-        if (level != null && !level.isClientSide) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-        }
     }
 }

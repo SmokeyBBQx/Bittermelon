@@ -1,10 +1,11 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.securedoor;
 
-import com.site21.bittermelon.content.blocks.devices.IElectronic;
+import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
+import com.site21.bittermelon.content.blocks.devices.NetworkDevice;
+import com.site21.bittermelon.content.blocks.devices.implementations.ElectronicBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.Signal;
-import com.site21.bittermelon.content.personnel.PersonnelRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -13,29 +14,32 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.SECURE_DOOR_BLOCK_ENTITY;
 
-public class SecureDoorBlockEntity extends BlockEntity implements IElectronic {
+public class SecureDoorBlockEntity extends ElectronicBlockEntity implements ElectronicDevice, NetworkDevice {
     private final Map<String, OutputPort> outputPorts;
     private final Map<String, InputPort> inputPorts;
     private boolean isLocked = true;
     private final List<String> requiredPrivileges = new ArrayList<>();
     private int lockTickCounter = 0;
     private static final int LOCK_TICK_THRESHOLD = 80;
+    private String address;
 
     public SecureDoorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
+        address = generateAddress("DOOR");
 
         outputPorts = Map.of(
                 "IS_LOCKED", new OutputPort("IS_LOCKED", this::isLocked, worldPosition),
@@ -69,40 +73,47 @@ public class SecureDoorBlockEntity extends BlockEntity implements IElectronic {
 
     private void toggleMotors(@NotNull Signal signal) {
         if (signal.asBoolean()) {
-            if (level == null) return;
-            BlockState blockState = level.getBlockState(worldPosition);
+            BlockState blockState = getBlockState();
             if (blockState.getBlock() instanceof SecureDoorBlock secureDoorBlock) {
+                if (isLocked && !secureDoorBlock.isOpen(blockState)) return;
                 setMotors(!secureDoorBlock.isOpen(blockState));
+                runForOtherHalf(otherHalf -> triggerMotorsActiveOutput());
             }
         }
     }
 
     private void setMotors(@NotNull Signal signal) {
         setMotors(signal.asBoolean());
+        runForOtherHalf(otherHalf -> triggerMotorsActiveOutput());
     }
 
     public void setMotors(boolean open) {
         if (level == null) return;
-        BlockState blockState = level.getBlockState(worldPosition);
+        BlockState blockState = getBlockState();
         if (blockState.getBlock() instanceof SecureDoorBlock secureDoorBlock) {
             if (isLocked && !secureDoorBlock.isOpen(blockState)) return;
             secureDoorBlock.setOpen(null, level, blockState, worldPosition, open);
+            triggerMotorsActiveOutput();
+        }
+    }
 
-            InputPort connectedPort = findOutputPort("MOTORS_ACTIVE").connectedPort;
-            if (connectedPort != null) {
-                connectedPort.receive(new Signal(true));
-            }
+    private void triggerMotorsActiveOutput() {
+        InputPort connectedPort = findOutputPort("MOTORS_ACTIVE").connectedPort;
+        if (connectedPort != null) {
+            connectedPort.receive(new Signal(true));
         }
     }
 
     private void toggleLocked(@NotNull Signal signal) {
         if (signal.asBoolean()) {
             setLocked(!isLocked);
+            runForOtherHalf(otherHalf -> setLocked(isLocked));
         }
     }
 
     private void setLocked(@NotNull Signal signal) {
         setLocked(signal.asBoolean());
+        runForOtherHalf(otherHalf -> setLocked(signal.asBoolean()));
     }
 
     public boolean isLocked() {
@@ -137,7 +148,12 @@ public class SecureDoorBlockEntity extends BlockEntity implements IElectronic {
 
     @Override
     public String getAddress() {
-        return "";
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+        setChanged();
     }
 
     @Override
@@ -153,6 +169,7 @@ public class SecureDoorBlockEntity extends BlockEntity implements IElectronic {
             privilegesList.add(privilegeTag);
         }
         tag.put("privileges", privilegesList);
+        tag.putString("address", address);
     }
 
     @Override
@@ -169,25 +186,26 @@ public class SecureDoorBlockEntity extends BlockEntity implements IElectronic {
             CompoundTag privilegeTag = privilegesList.getCompound(i);
             requiredPrivileges.add(privilegeTag.getString("privilege"));
         }
+        address = tag.getString("address");
+    }
+
+    public void runForOtherHalf(Consumer<SecureDoorBlockEntity> action) {
+        BlockEntity otherBlockEntity = null;
+
+        if (level == null) return;
+
+        if (getBlockState().getValue(DoorBlock.HALF) == DoubleBlockHalf.LOWER) {
+            otherBlockEntity = level.getBlockEntity(worldPosition.above());
+        } else if (getBlockState().getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER) {
+            otherBlockEntity = level.getBlockEntity(worldPosition.below());
+        }
+
+        if (otherBlockEntity instanceof SecureDoorBlockEntity otherHalf) {
+            action.accept(otherHalf);
+        }
     }
 
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
-        return this.saveCustomOnly(registries);
-    }
-
-    @Override
-    public void setChanged() {
-        super.setChanged();
-        syncToClient();
-    }
-
-    public void syncToClient() {
-        if (level != null && !level.isClientSide) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-        }
     }
 }

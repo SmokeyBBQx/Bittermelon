@@ -2,7 +2,7 @@ package com.site21.bittermelon.content.items.wires.wire.networking;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.ClientHandler;
-import com.site21.bittermelon.content.blocks.devices.IElectronic;
+import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -36,7 +36,7 @@ public record OpenWiringScreen(BlockPos pos, InteractionHand hand) implements Cu
     public void handle(@NotNull IPayloadContext ctx) {
         if (Minecraft.getInstance().player == null) return;
 
-        if (Minecraft.getInstance().player.level().getBlockEntity(pos) instanceof IElectronic blockEntity) {
+        if (Minecraft.getInstance().player.level().getBlockEntity(pos) instanceof ElectronicDevice blockEntity) {
             ClientHandler.displayWiringScreen(blockEntity, hand);
         }
     }

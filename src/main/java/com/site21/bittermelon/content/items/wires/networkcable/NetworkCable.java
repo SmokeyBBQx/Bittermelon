@@ -1,6 +1,6 @@
 package com.site21.bittermelon.content.items.wires.networkcable;
 
-import com.site21.bittermelon.content.blocks.devices.IElectronic;
+import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentalarm.ContainmentAlarmBlockEntity;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
@@ -29,7 +29,7 @@ public class NetworkCable extends BaseItem {
 
         if (player == null) return InteractionResult.FAIL;
 
-        if (level.getBlockEntity(pos) instanceof IElectronic) {
+        if (level.getBlockEntity(pos) instanceof ElectronicDevice) {
             if (stack.get(CORD_CONNECTION) != null) {
                 makeConnection(pos, level, stack);
             } else {

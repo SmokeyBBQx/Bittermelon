@@ -1,6 +1,7 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.panicbutton;
 
-import com.site21.bittermelon.content.blocks.devices.IElectronic;
+import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
+import com.site21.bittermelon.content.blocks.devices.implementations.ElectronicBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -9,7 +10,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Map;
 
-public class PanicButtonBlockEntity extends BlockEntity implements IElectronic {
+public class PanicButtonBlockEntity extends ElectronicBlockEntity implements ElectronicDevice {
     private boolean isOn = false;
 
     public PanicButtonBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
@@ -32,10 +33,5 @@ public class PanicButtonBlockEntity extends BlockEntity implements IElectronic {
         return Map.of(
                 "ON", new OutputPort("ON", this::isOn, worldPosition)
         );
-    }
-
-    @Override
-    public String getAddress() {
-        return "";
     }
 }

@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.items.wires.wire.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.devices.IElectronic;
+import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
 import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
 import io.netty.buffer.ByteBuf;
@@ -40,11 +40,11 @@ public record MakeWireConnection(BlockPos inputPos, BlockPos outputPos, String i
         InputPort inputPort = null;
         OutputPort outputPort = null;
 
-        if (level.getBlockEntity(inputPos) instanceof IElectronic electronic) {
+        if (level.getBlockEntity(inputPos) instanceof ElectronicDevice electronic) {
             inputPort = electronic.findInputPort(inputID);
         }
 
-        if (level.getBlockEntity(outputPos) instanceof IElectronic electronic) {
+        if (level.getBlockEntity(outputPos) instanceof ElectronicDevice electronic) {
             outputPort = electronic.findOutputPort(outputID);
         }
 

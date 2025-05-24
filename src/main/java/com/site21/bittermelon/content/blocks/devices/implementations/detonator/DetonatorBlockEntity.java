@@ -1,6 +1,7 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.detonator;
 
-import com.site21.bittermelon.content.blocks.devices.IElectronic;
+import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
+import com.site21.bittermelon.content.blocks.devices.implementations.ElectronicBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.Signal;
 import com.site21.bittermelon.content.items.payload.Payload;
@@ -20,7 +21,7 @@ import java.util.Map;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.DETONATOR_BLOCK_ENTITY;
 
-public class DetonatorBlockEntity extends BlockEntity implements IElectronic {
+public class DetonatorBlockEntity extends ElectronicBlockEntity implements ElectronicDevice {
     private ItemStack payload = new ItemStack(Items.FEATHER);
     private final Map<String, InputPort> inputPorts;
 
@@ -82,29 +83,7 @@ public class DetonatorBlockEntity extends BlockEntity implements IElectronic {
         return inputPorts;
     }
 
-    @Override
-    public String getAddress() {
-        return "";
-    }
-
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
-
-    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
-        return this.saveCustomOnly(registries);
-    }
-
-    @Override
-    public void setChanged() {
-        super.setChanged();
-        syncToClient();
-    }
-
-    public void syncToClient() {
-        if (level != null && !level.isClientSide) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-        }
-    }
-
 }

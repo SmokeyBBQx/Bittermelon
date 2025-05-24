@@ -1,6 +1,6 @@
 package com.site21.bittermelon;
 
-import com.site21.bittermelon.content.blocks.devices.IElectronic;
+import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.ContainmentPanelBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.client.IntercomScreen;
@@ -31,7 +31,7 @@ public class ClientHandler {
         Minecraft.getInstance().setScreen(new IntercomScreen(blockEntity, canEdit));
     }
 
-    public static void displayWiringScreen(IElectronic electronic, InteractionHand hand) {
+    public static void displayWiringScreen(ElectronicDevice electronic, InteractionHand hand) {
         Minecraft.getInstance().setScreen(new WiringScreen(electronic, hand));
     }
 

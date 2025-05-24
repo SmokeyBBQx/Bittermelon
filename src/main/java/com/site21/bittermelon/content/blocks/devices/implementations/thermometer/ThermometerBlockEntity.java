@@ -2,6 +2,7 @@ package com.site21.bittermelon.content.blocks.devices.implementations.thermomete
 
 import com.site21.bittermelon.content.atmosphere.AtmosHandler;
 import com.site21.bittermelon.content.atmosphere.AtmosInstance;
+import com.site21.bittermelon.content.blocks.devices.implementations.ElectronicBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -12,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.THERMOMETER_BLOCK_ENTITY;
 
-public class ThermometerBlockEntity extends BlockEntity {
+public class ThermometerBlockEntity extends ElectronicBlockEntity {
     private float temperature = 0;
 
     public ThermometerBlockEntity(BlockPos pos, BlockState blockState) {
@@ -56,22 +57,5 @@ public class ThermometerBlockEntity extends BlockEntity {
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    @Override
-    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
-        return this.saveCustomOnly(registries);
-    }
-
-    @Override
-    public void setChanged() {
-        super.setChanged();
-        syncToClient();
-    }
-
-    public void syncToClient() {
-        if (level != null && !level.isClientSide) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-        }
     }
 }
