@@ -72,12 +72,12 @@ public class ContainmentAlarmBlockEntity extends ElectronicBlockEntity implement
 
     @Override
     public Map<String, OutputPort> getOutputPorts() {
-        return plc.getOutputPorts();
+        return outputPorts;
     }
 
     @Override
     public Map<String, InputPort> getInputPorts() {
-        return plc.getInputPorts();
+        return inputPorts;
     }
 
     public boolean isAlerted() {

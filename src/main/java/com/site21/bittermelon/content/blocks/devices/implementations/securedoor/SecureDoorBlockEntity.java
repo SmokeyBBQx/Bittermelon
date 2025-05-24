@@ -64,10 +64,17 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
             if (lockTickCounter >= LOCK_TICK_THRESHOLD) {
                 lockTickCounter = 0;
                 setLocked(true);
+                runForOtherHalf(otherHalf -> otherHalf.setLocked(true));
                 setMotors(false);
+                runForOtherHalf(SecureDoorBlockEntity::triggerMotorsActiveOutput);
                 if (level == null) return;
                 level.playSound(null, worldPosition, SoundEvents.NOTE_BLOCK_IRON_XYLOPHONE.value(), SoundSource.BLOCKS);
             }
+        }
+
+        InputPort connectedPort = findOutputPort("IS_LOCKED").connectedPort;
+        if (connectedPort != null) {
+            connectedPort.receive(new Signal(!isLocked));
         }
     }
 
@@ -77,14 +84,14 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
             if (blockState.getBlock() instanceof SecureDoorBlock secureDoorBlock) {
                 if (isLocked && !secureDoorBlock.isOpen(blockState)) return;
                 setMotors(!secureDoorBlock.isOpen(blockState));
-                runForOtherHalf(otherHalf -> triggerMotorsActiveOutput());
+                runForOtherHalf(SecureDoorBlockEntity::triggerMotorsActiveOutput);
             }
         }
     }
 
     private void setMotors(@NotNull Signal signal) {
         setMotors(signal.asBoolean());
-        runForOtherHalf(otherHalf -> triggerMotorsActiveOutput());
+        runForOtherHalf(SecureDoorBlockEntity::triggerMotorsActiveOutput);
     }
 
     public void setMotors(boolean open) {
@@ -107,13 +114,13 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
     private void toggleLocked(@NotNull Signal signal) {
         if (signal.asBoolean()) {
             setLocked(!isLocked);
-            runForOtherHalf(otherHalf -> setLocked(isLocked));
+            runForOtherHalf(otherHalf -> otherHalf.setLocked(isLocked));
         }
     }
 
     private void setLocked(@NotNull Signal signal) {
         setLocked(signal.asBoolean());
-        runForOtherHalf(otherHalf -> setLocked(signal.asBoolean()));
+        runForOtherHalf(otherHalf -> otherHalf.setLocked(signal.asBoolean()));
     }
 
     public boolean isLocked() {

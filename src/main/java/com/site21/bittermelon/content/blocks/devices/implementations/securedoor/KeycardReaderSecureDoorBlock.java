@@ -58,6 +58,7 @@ public class KeycardReaderSecureDoorBlock extends SecureDoorBlock implements Ent
 //            setLocked(false);
 //        }
         blockEntity.setLocked(false);
+        blockEntity.runForOtherHalf(otherHalf -> otherHalf.setLocked(false));
         level.playSound(null, pos, SoundEvents.NOTE_BLOCK_BELL.value(), SoundSource.BLOCKS);
     }
 }

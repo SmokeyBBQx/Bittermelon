@@ -52,6 +52,7 @@ public class SecureDoorBlock extends DoorBlock implements EntityBlock {
                 level.gameEvent(player, !this.isOpen(state) ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
                 if (this.isOpen(state)) {
                     blockEntity.setLocked(true);
+                    blockEntity.runForOtherHalf(otherHalf -> otherHalf.setLocked(true));
                     level.playSound(null, pos, SoundEvents.NOTE_BLOCK_IRON_XYLOPHONE.value(), SoundSource.BLOCKS);
                 }
                 return InteractionResult.sidedSuccess(level.isClientSide);

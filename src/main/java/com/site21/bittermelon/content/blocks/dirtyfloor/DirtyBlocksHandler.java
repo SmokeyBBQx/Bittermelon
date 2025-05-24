@@ -31,7 +31,8 @@ public class DirtyBlocksHandler {
 
         if (random.nextFloat() < SPAWN_CHANCE) {
 
-            if (!level.getBlockState(entityPos.below()).canBeReplaced()) {
+            BlockState stateBelow = level.getBlockState(entityPos.below());
+            if (!stateBelow.canBeReplaced() && stateBelow.isCollisionShapeFullBlock(level, entityPos.below())) {
                 if (blockState.isAir()) {
                     BlockState dirtyState = DIRTY_FLOOR.get().defaultBlockState()
                             .setValue(DirtyFloorBlock.DIRTINESS, 0)
