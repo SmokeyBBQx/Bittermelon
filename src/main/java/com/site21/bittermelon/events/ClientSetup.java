@@ -2,6 +2,7 @@ package com.site21.bittermelon.events;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.base.structuralblock.client.StructuralBlockRenderer;
+import com.site21.bittermelon.content.blocks.devices.implementations.intercom.client.PhoneCordRenderer;
 import com.site21.bittermelon.content.blocks.devices.implementations.thermometer.client.ThermometerRenderer;
 import com.site21.bittermelon.content.entities.implementations.chicken.client.ChickenRenderer;
 import com.site21.bittermelon.content.entities.implementations.SCP939.client.SCP939Renderer;
@@ -45,5 +46,6 @@ public class ClientSetup {
         event.registerEntityRenderer(SCP_2398_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.STRUCTURAL_BLOCK_ENTITY.get(), StructuralBlockRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.THERMOMETER_BLOCK_ENTITY.get(), ThermometerRenderer::new);
+        event.registerBlockEntityRenderer(BitterBlockEntities.INTERCOM_BLOCK_ENTITY.get(), PhoneCordRenderer::new);
     }
 }

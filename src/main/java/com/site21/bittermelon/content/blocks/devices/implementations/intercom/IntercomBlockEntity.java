@@ -16,12 +16,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.UUID;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.INTERCOM_BLOCK_ENTITY;
 
@@ -33,6 +35,7 @@ public class IntercomBlockEntity extends ElectronicBlockEntity implements ISyncS
     private boolean speakerOn = true;
     private boolean micOn = true;
     private boolean phonePickedUp = false;
+    private Player phoneUser;
     private final Map<String, OutputPort> outputPorts;
 
     public IntercomBlockEntity(BlockPos pos, BlockState blockState) {
@@ -118,6 +121,15 @@ public class IntercomBlockEntity extends ElectronicBlockEntity implements ISyncS
         setChanged();
     }
 
+    public Player getPhoneUser() {
+        return phoneUser;
+    }
+
+    public void setPhoneUser(Player player) {
+        this.phoneUser = player;
+        setChanged();
+    }
+
     @Override
     public Map<String, OutputPort> getOutputPorts() {
         return outputPorts;
@@ -151,6 +163,9 @@ public class IntercomBlockEntity extends ElectronicBlockEntity implements ISyncS
         tag.putBoolean("micOn", micOn);
         tag.putBoolean("phonePickedUp", phonePickedUp);
         tag.putInt("speakerRadius", speakerRadius);
+        if (phoneUser != null) {
+            tag.putUUID("phoneUser", phoneUser.getUUID());
+        }
         saveOutputPorts(tag);
     }
 
@@ -164,6 +179,13 @@ public class IntercomBlockEntity extends ElectronicBlockEntity implements ISyncS
         micOn = tag.getBoolean("micOn");
         phonePickedUp = tag.getBoolean("phonePickedUp");
         speakerRadius = tag.getInt("speakerRadius");
+        if (level == null) return;
+        if (tag.hasUUID("phoneUser")) {
+            Player loadedPhoneUser = level.getPlayerByUUID(tag.getUUID("phoneUser"));
+            if (loadedPhoneUser != null) {
+                phoneUser = loadedPhoneUser;
+            }
+        }
         loadOutputPorts(tag, level);
     }
 

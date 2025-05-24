@@ -74,7 +74,7 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
 
         InputPort connectedPort = findOutputPort("IS_LOCKED").connectedPort;
         if (connectedPort != null) {
-            connectedPort.receive(new Signal(!isLocked));
+            connectedPort.receive(new Signal(isLocked));
         }
     }
 

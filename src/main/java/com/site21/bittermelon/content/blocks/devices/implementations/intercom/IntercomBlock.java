@@ -51,6 +51,7 @@ public class IntercomBlock extends IndentedSmallBlock implements EntityBlock {
                         return InteractionResult.FAIL;
                     }
                     ItemStack phone = new ItemStack(INTERCOM_PHONE.get());
+                    intercom.setPhoneUser(player);
                     phone.set(CORD_CONNECTION.get(), pos);
                     player.setItemInHand(InteractionHand.MAIN_HAND, phone);
                     player.sendSystemMessage(Component.literal("You pick up the phone.").withStyle(ChatFormatting.GRAY));
@@ -81,6 +82,7 @@ public class IntercomBlock extends IndentedSmallBlock implements EntityBlock {
             level.playSound(null, pos, SoundEvents.HEAVY_CORE_HIT, SoundSource.PLAYERS);
             if (level.getBlockEntity(pos) instanceof IntercomBlockEntity intercom) {
                 intercom.setPhonePickedUp(false);
+                intercom.setPhoneUser(null);
             }
             return ItemInteractionResult.SUCCESS;
         }

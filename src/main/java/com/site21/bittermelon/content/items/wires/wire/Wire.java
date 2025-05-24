@@ -27,7 +27,6 @@ public class Wire extends BaseItem {
     public @NotNull InteractionResult useOn(@NotNull UseOnContext context) {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
-        ItemStack stack = context.getItemInHand();
         Player player = context.getPlayer();
 
         if (player == null) return InteractionResult.FAIL;
