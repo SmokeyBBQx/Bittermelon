@@ -1,17 +1,14 @@
-package com.site21.bittermelon.content.blocks.devices.implementations;
+package com.site21.bittermelon.content.blocks.devices;
 
-import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
-import com.site21.bittermelon.content.telecomms.intercom.IntercomManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 
-public class ElectronicBlockEntity extends BlockEntity implements ElectronicDevice {
+public abstract class ElectronicBlockEntity extends BlockEntity implements ElectronicDevice {
     public ElectronicBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
     }

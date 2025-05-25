@@ -3,14 +3,13 @@ package com.site21.bittermelon.content.blocks.devices.implementations.environmen
 import com.site21.bittermelon.content.atmosphere.AtmosHandler;
 import com.site21.bittermelon.content.atmosphere.AtmosInstance;
 import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
-import com.site21.bittermelon.content.blocks.devices.implementations.ElectronicBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.ElectronicBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.wiring.*;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 

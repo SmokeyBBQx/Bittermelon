@@ -1,10 +1,9 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.panicbutton;
 
 import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
-import com.site21.bittermelon.content.blocks.devices.implementations.ElectronicBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.ElectronicBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 

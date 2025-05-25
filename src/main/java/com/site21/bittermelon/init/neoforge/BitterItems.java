@@ -312,4 +312,9 @@ public class BitterItems {
             BitterBlocks.KEYCARD_READER_SECURE_DOOR.get(),
             new Item.Properties()
     ));
+
+    public static final DeferredItem<BlockItem> LARGE_SLIDING_DOOR = ITEMS.register("large_sliding_door", () -> new BlockItem(
+            BitterBlocks.LARGE_SLIDING_DOOR.get(),
+            new Item.Properties()
+    ));
 }

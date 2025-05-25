@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.speaker;
 
 import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
-import com.site21.bittermelon.content.blocks.devices.implementations.ElectronicBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.ElectronicBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.wiring.*;
 import com.site21.bittermelon.content.syncsound.SyncSoundEvent;
 import com.site21.bittermelon.content.syncsound.SyncSoundType;
@@ -13,7 +13,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;

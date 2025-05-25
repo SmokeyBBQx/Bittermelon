@@ -2,14 +2,13 @@ package com.site21.bittermelon.content.blocks.devices.implementations.containmen
 
 import com.site21.bittermelon.content.blocks.base.structuralblock.StructuralBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.ContainmentDevice;
-import com.site21.bittermelon.content.blocks.devices.implementations.ElectronicBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.ElectronicBlockEntity;
 import com.site21.bittermelon.content.blocks.dirtyfloor.DirtyFloorBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import org.jetbrains.annotations.NotNull;

@@ -52,4 +52,10 @@ public class BitterSounds {
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "machine.containment_alert")));
     public static final DeferredHolder<SoundEvent, SoundEvent> BAT_IMPACT = SOUND_EVENTS.register("misc.bat_impact",
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "misc.bat_impact")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> LARGE_SLIDING_DOOR_CLOSE = SOUND_EVENTS.register("machine.large_sliding_door_close",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "machine.large_sliding_door_close")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> LARGE_SLIDING_DOOR_OPEN = SOUND_EVENTS.register("machine.large_sliding_door_open",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "machine.large_sliding_door_open")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> LARGE_SLIDING_DOOR_STUCK = SOUND_EVENTS.register("machine.large_sliding_door_stuck",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "machine.large_sliding_door_stuck")));
 }

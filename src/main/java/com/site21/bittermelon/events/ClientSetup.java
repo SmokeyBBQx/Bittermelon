@@ -3,6 +3,7 @@ package com.site21.bittermelon.events;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.base.structuralblock.client.StructuralBlockRenderer;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.client.PhoneCordRenderer;
+import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.client.LargeSlidingDoorRenderer;
 import com.site21.bittermelon.content.blocks.devices.implementations.thermometer.client.ThermometerRenderer;
 import com.site21.bittermelon.content.entities.implementations.chicken.client.ChickenRenderer;
 import com.site21.bittermelon.content.entities.implementations.SCP939.client.SCP939Renderer;
@@ -11,6 +12,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -19,9 +21,11 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.client.LargeSlidingDoorRenderer.*;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.LIT;
 import static com.site21.bittermelon.init.neoforge.BitterEntities.*;
 import static com.site21.bittermelon.init.neoforge.BitterItems.CIGARETTE;
@@ -47,5 +51,13 @@ public class ClientSetup {
         event.registerBlockEntityRenderer(BitterBlockEntities.STRUCTURAL_BLOCK_ENTITY.get(), StructuralBlockRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.THERMOMETER_BLOCK_ENTITY.get(), ThermometerRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.INTERCOM_BLOCK_ENTITY.get(), PhoneCordRenderer::new);
+        event.registerBlockEntityRenderer(BitterBlockEntities.LARGE_SLIDING_DOOR_BLOCK_ENTITY.get(), LargeSlidingDoorRenderer::new);
+    }
+
+    @SubscribeEvent
+    public static void onRegisterAdditional(ModelEvent.@NotNull RegisterAdditional event) {
+        event.register(LEFT_DOOR_MODEL);
+        event.register(RIGHT_DOOR_MODEL);
+        event.register(FRAME_MODEL);
     }
 }

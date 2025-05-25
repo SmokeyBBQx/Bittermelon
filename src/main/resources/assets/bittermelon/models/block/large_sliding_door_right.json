@@ -1,0 +1,22 @@
+{
+  "credit": "Made with Blockbench",
+  "texture_size": [128, 128],
+  "textures": {
+    "0": "bittermelon:block/large_doors"
+  },
+  "elements": [
+    {
+      "from": [-13, -16, 7],
+      "to": [8, 29, 9],
+      "rotation": {"angle": 0, "axis": "y", "origin": [8, -16, 8]},
+      "faces": {
+        "north": {"uv": [0.25, 1.25, 2.875, 6.875], "texture": "#0"},
+        "east": {"uv": [0, 1.25, 0.25, 6.875], "texture": "#0"},
+        "south": {"uv": [3.125, 1.25, 5.75, 6.875], "texture": "#0"},
+        "west": {"uv": [2.875, 1.25, 3.125, 6.875], "texture": "#0"},
+        "up": {"uv": [2.875, 1.25, 0.25, 1], "texture": "#0"},
+        "down": {"uv": [5.5, 1, 2.875, 1.25], "texture": "#0"}
+      }
+    }
+  ]
+}

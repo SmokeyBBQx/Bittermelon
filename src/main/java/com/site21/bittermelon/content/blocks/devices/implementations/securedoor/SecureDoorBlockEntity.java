@@ -2,7 +2,7 @@ package com.site21.bittermelon.content.blocks.devices.implementations.securedoor
 
 import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
 import com.site21.bittermelon.content.blocks.devices.NetworkDevice;
-import com.site21.bittermelon.content.blocks.devices.implementations.ElectronicBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.ElectronicBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.Signal;

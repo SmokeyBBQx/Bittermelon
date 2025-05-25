@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.detonator;
 
 import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
-import com.site21.bittermelon.content.blocks.devices.implementations.ElectronicBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.ElectronicBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.Signal;
 import com.site21.bittermelon.content.items.payload.Payload;
@@ -13,7 +13,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.intercom;
 
 import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
-import com.site21.bittermelon.content.blocks.devices.implementations.ElectronicBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.ElectronicBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.Signal;
@@ -17,13 +17,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.UUID;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.INTERCOM_BLOCK_ENTITY;
 

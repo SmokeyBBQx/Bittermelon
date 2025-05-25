@@ -7,6 +7,7 @@ import com.site21.bittermelon.content.blocks.devices.implementations.environment
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.KeycardReaderSecureDoorBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.SecureDoorBlock;
+import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.LargeSlidingDoorBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.speaker.SpeakerBlock;
 import com.site21.bittermelon.content.blocks.dirtyfloor.DirtyFloorBlock;
 import com.site21.bittermelon.content.blocks.base.structuralblock.StructuralBlock;
@@ -84,8 +85,11 @@ public class BitterBlocks {
             ));
 
     public static final DeferredBlock<SecureDoorBlock> SECURE_DOOR = BLOCKS.register("secure_door",
-            () -> new SecureDoorBlock( BlockSetType.IRON, BlockBehaviour.Properties.of()));
+            () -> new SecureDoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.of()));
 
     public static final DeferredBlock<KeycardReaderSecureDoorBlock> KEYCARD_READER_SECURE_DOOR = BLOCKS.register("keycard_reader_secure_door",
             () -> new KeycardReaderSecureDoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.of()));
+
+    public static final DeferredBlock<LargeSlidingDoorBlock> LARGE_SLIDING_DOOR = BLOCKS.register("large_sliding_door",
+            () -> new LargeSlidingDoorBlock(BlockBehaviour.Properties.of()));
 }
