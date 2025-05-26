@@ -10,6 +10,7 @@ import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor
 import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.networking.UpdateSlidingDoorState;
 import com.site21.bittermelon.content.character.networking.SyncCharacters;
 import com.site21.bittermelon.content.economy.networking.OpenATMScreen;
+import com.site21.bittermelon.content.entities.implementations.scp650.networking.SetEntityPos;
 import com.site21.bittermelon.content.items.wires.wire.networking.MakeWireConnection;
 import com.site21.bittermelon.content.items.wires.wire.networking.OpenWiringScreen;
 import com.site21.bittermelon.content.items.wires.wire.networking.RemoveWiringData;
@@ -292,6 +293,12 @@ public class PayloadRegistration {
                 UpdateSlidingDoorProgress.TYPE,
                 UpdateSlidingDoorProgress.STREAM_CODEC,
                 UpdateSlidingDoorProgress::handle
+        );
+
+        registrar.playToClient(
+                SetEntityPos.TYPE,
+                SetEntityPos.STREAM_CODEC,
+                SetEntityPos::handle
         );
     }
 }

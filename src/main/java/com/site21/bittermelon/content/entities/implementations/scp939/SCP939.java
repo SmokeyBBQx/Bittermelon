@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.entities.implementations.SCP939;
+package com.site21.bittermelon.content.entities.implementations.scp939;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.logging.LogUtils;
@@ -24,7 +24,7 @@ import com.site21.bittermelon.content.entities.ai.behavior.social.Socializable;
 import com.site21.bittermelon.content.entities.ai.behavior.social.interactions.GenericInteraction;
 import com.site21.bittermelon.content.entities.ai.behavior.target.InvalidateAttackTarget;
 import com.site21.bittermelon.content.entities.ai.BitterVibrationUser;
-import com.site21.bittermelon.content.entities.implementations.SCP939.behavior.*;
+import com.site21.bittermelon.content.entities.implementations.scp939.behavior.*;
 import com.site21.bittermelon.content.medical.damage.generators.*;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.init.neoforge.BitterActivity;
@@ -42,7 +42,6 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Unit;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;

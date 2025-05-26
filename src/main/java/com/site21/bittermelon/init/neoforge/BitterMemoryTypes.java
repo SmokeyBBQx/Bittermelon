@@ -12,7 +12,9 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 public class BitterMemoryTypes {
     public static final DeferredRegister<MemoryModuleType<?>> MEMORY_MODULE_TYPES = DeferredRegister.create(BuiltInRegistries.MEMORY_MODULE_TYPE, Bittermelon.MOD_ID);
@@ -26,5 +28,11 @@ public class BitterMemoryTypes {
     public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<List<ItemEntity>>> NEARBY_EDIBLE_ITEMS = MEMORY_MODULE_TYPES.register("nearby_edible_items",
             () -> new MemoryModuleType<>(Optional.empty()));
     public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<List<FluidBlockEntity>>> NEARBY_DRINKABLE_FLUIDS = MEMORY_MODULE_TYPES.register("nearby_drinkable_fluids",
+            () -> new MemoryModuleType<>(Optional.empty()));
+    public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<Boolean>> FOUND_TARGET = MEMORY_MODULE_TYPES.register("found_target",
+            () -> new MemoryModuleType<>(Optional.of(Codec.BOOL)));
+    public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<List<LivingEntity>>> OBSERVERS = MEMORY_MODULE_TYPES.register("observers",
+            () -> new MemoryModuleType<>(Optional.empty()));
+    public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<Map<UUID, Integer>>> TIMES_TARGET_SCARED = MEMORY_MODULE_TYPES.register("times_target_scared",
             () -> new MemoryModuleType<>(Optional.empty()));
 }

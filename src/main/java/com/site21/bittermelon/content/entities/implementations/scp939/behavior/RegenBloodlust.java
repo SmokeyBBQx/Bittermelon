@@ -1,9 +1,9 @@
-package com.site21.bittermelon.content.entities.implementations.SCP939.behavior;
+package com.site21.bittermelon.content.entities.implementations.scp939.behavior;
 
 import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
-import com.site21.bittermelon.content.entities.implementations.SCP939.SCP939;
+import com.site21.bittermelon.content.entities.implementations.scp939.SCP939;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;

@@ -1,7 +1,7 @@
-package com.site21.bittermelon.content.entities.implementations.SCP939.client;
+package com.site21.bittermelon.content.entities.implementations.scp939.client;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.entities.implementations.SCP939.SCP939;
+import com.site21.bittermelon.content.entities.implementations.scp939.SCP939;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;

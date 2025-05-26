@@ -1,9 +1,10 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.content.entities.implementations.scp650.SCP650;
 import com.site21.bittermelon.content.entities.miscellaneous.ThrownItemProjectile;
 import com.site21.bittermelon.content.entities.implementations.chicken.Chicken;
-import com.site21.bittermelon.content.entities.implementations.SCP939.SCP939;
+import com.site21.bittermelon.content.entities.implementations.scp939.SCP939;
 import com.site21.bittermelon.content.items.scps.SCP2398Projectile;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
@@ -37,6 +38,11 @@ public class BitterEntities {
                     .sized(0.3f, 0.3f)
                     .build("chicken"));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<SCP650>> SCP_650 = ENTITY_TYPES.register("scp650",
+            () -> EntityType.Builder.of(SCP650::new, MobCategory.MONSTER)
+                    .sized(0.9f, 1.6f)
+                    .build("scp650"));
+
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
         eventBus.addListener(BitterEntities::registerAttributes);
@@ -45,5 +51,6 @@ public class BitterEntities {
     private static void registerAttributes(@NotNull EntityAttributeCreationEvent event) {
         event.put(SCP_939.get(), SCP939.createAttributes().build());
         event.put(CHICKEN.get(), Chicken.createAttributes().build());
+        event.put(SCP_650.get(), SCP650.createAttributes().build());
     }
 }

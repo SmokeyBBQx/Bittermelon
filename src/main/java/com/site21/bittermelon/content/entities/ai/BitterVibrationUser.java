@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.entities.ai;
 
 import com.site21.bittermelon.content.entities.BitterVibrationSystem;
-import com.site21.bittermelon.content.entities.implementations.SCP939.SCP939;
+import com.site21.bittermelon.content.entities.implementations.scp939.SCP939;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;

@@ -1,7 +1,7 @@
-package com.site21.bittermelon.content.entities.implementations.SCP843.behavior;
+package com.site21.bittermelon.content.entities.implementations.scp843.behavior;
 
 import com.mojang.datafixers.util.Pair;
-import com.site21.bittermelon.content.entities.implementations.SCP843.SCP843;
+import com.site21.bittermelon.content.entities.implementations.scp843.SCP843;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
