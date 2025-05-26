@@ -7,6 +7,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -29,8 +30,8 @@ public class BitterMemoryTypes {
             () -> new MemoryModuleType<>(Optional.empty()));
     public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<List<FluidBlockEntity>>> NEARBY_DRINKABLE_FLUIDS = MEMORY_MODULE_TYPES.register("nearby_drinkable_fluids",
             () -> new MemoryModuleType<>(Optional.empty()));
-    public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<Boolean>> FOUND_TARGET = MEMORY_MODULE_TYPES.register("found_target",
-            () -> new MemoryModuleType<>(Optional.of(Codec.BOOL)));
+    public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<Player>> SCARE_TARGET = MEMORY_MODULE_TYPES.register("scare_target",
+            () -> new MemoryModuleType<>(Optional.empty()));
     public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<List<LivingEntity>>> OBSERVERS = MEMORY_MODULE_TYPES.register("observers",
             () -> new MemoryModuleType<>(Optional.empty()));
     public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<Map<UUID, Integer>>> TIMES_TARGET_SCARED = MEMORY_MODULE_TYPES.register("times_target_scared",

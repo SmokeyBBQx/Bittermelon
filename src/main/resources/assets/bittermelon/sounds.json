@@ -137,6 +137,30 @@
       "bittermelon:misc/bat_impact"
     ]
   },
+  "horror.scare_1": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:horror/scare_1"
+    ]
+  },
+  "horror.scare_2": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:horror/scare_2"
+    ]
+  },
+  "horror.scare_3": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:horror/scare_3"
+    ]
+  },
+  "horror.scare_4": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:horror/scare_4"
+    ]
+  },
   "container.toolbox_open": {
     "category": "neutral",
     "sounds": [

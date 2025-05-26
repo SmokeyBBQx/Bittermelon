@@ -58,4 +58,12 @@ public class BitterSounds {
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "machine.large_sliding_door_open")));
     public static final DeferredHolder<SoundEvent, SoundEvent> LARGE_SLIDING_DOOR_STUCK = SOUND_EVENTS.register("machine.large_sliding_door_stuck",
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "machine.large_sliding_door_stuck")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> SCARE_1 = SOUND_EVENTS.register("horror.scare_1",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "horror.scare_1")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> SCARE_2 = SOUND_EVENTS.register("horror.scare_2",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "horror.scare_2")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> SCARE_3 = SOUND_EVENTS.register("horror.scare_3",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "horror.scare_3")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> SCARE_4 = SOUND_EVENTS.register("horror.scare_4",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "horror.scare_4")));
 }

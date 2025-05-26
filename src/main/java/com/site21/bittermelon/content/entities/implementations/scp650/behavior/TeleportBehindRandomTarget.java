@@ -17,7 +17,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
-import net.tslat.smartbrainlib.object.FreePositionTracker;
 import net.tslat.smartbrainlib.util.BrainUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +29,7 @@ import static com.site21.bittermelon.init.neoforge.BitterMemoryTypes.*;
 
 public class TeleportBehindRandomTarget<E extends SCP650> extends ExtendedBehaviour<E> {
     private static final List<Pair<MemoryModuleType<?>, MemoryStatus>> MEMORY_REQUIREMENTS = ObjectArrayList.of(
-            Pair.of(FOUND_TARGET.get(), MemoryStatus.VALUE_ABSENT),
+            Pair.of(SCARE_TARGET.get(), MemoryStatus.VALUE_ABSENT),
             Pair.of(OBSERVERS.get(), MemoryStatus.VALUE_ABSENT)
     );
 
@@ -66,7 +65,7 @@ public class TeleportBehindRandomTarget<E extends SCP650> extends ExtendedBehavi
         entity.setPos(teleportPos);
         entity.setYRot(yaw);
 
-        BrainUtils.setForgettableMemory(entity, FOUND_TARGET.get(), true, 2400);
+        BrainUtils.setForgettableMemory(entity, SCARE_TARGET.get(), randomPlayer, 2400);
 
         // REPEAT TORMENTING LOGIC
         Map<UUID, Integer> timesScared = BrainUtils.memoryOrDefault(entity, TIMES_TARGET_SCARED.get(), HashMap::new);
