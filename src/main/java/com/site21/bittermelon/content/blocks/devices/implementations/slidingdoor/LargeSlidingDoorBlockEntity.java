@@ -50,6 +50,8 @@ public class LargeSlidingDoorBlockEntity extends ElectronicBlockEntity {
     }
 
     private void handleStuckAnimation() {
+        // TODO: Weird stuck animation spam glitch - possibly due to data not being saved server-side?
+
         if (!reverseStuckAnimation) {
             this.doorProgress = Math.min(1f, this.doorProgress + ANIMATION_SPEED);
             PacketDistributor.sendToServer(new UpdateSlidingDoorProgress(doorProgress, worldPosition));

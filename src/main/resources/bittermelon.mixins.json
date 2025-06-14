@@ -10,7 +10,9 @@
     "ServerPlayerDropMixin"
   ],
   "client": [
-    "GuiMixin"
+    "CrosshairMixin",
+    "GuiMixin",
+    "LivingEntityRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

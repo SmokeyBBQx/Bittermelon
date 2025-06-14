@@ -36,4 +36,8 @@ public class BitterAttachmentTypes {
     public static final Supplier<AttachmentType<Integer>> ACTIVE_CHANNEL = ATTACHMENT_TYPES.register(
             "active_channel", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).build()
     );
+
+    public static final Supplier<AttachmentType<Integer>> SHAKE_TICKS = ATTACHMENT_TYPES.register(
+            "shake_ticks", () -> AttachmentType.builder(() -> 0).build()
+    );
 }

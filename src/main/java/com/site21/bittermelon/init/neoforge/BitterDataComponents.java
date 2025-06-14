@@ -113,4 +113,9 @@ public class BitterDataComponents {
             "lit",
             builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL)
     );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> LOADED = DATA_COMPONENTS.registerComponentType(
+            "loaded",
+            builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL)
+    );
 }

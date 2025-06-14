@@ -6,9 +6,11 @@ import com.site21.bittermelon.content.blocks.devices.implementations.intercom.cl
 import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.client.LargeSlidingDoorRenderer;
 import com.site21.bittermelon.content.blocks.devices.implementations.thermometer.client.ThermometerRenderer;
 import com.site21.bittermelon.content.entities.implementations.chicken.client.ChickenRenderer;
+import com.site21.bittermelon.content.entities.implementations.scp131.client.SCP131Renderer;
 import com.site21.bittermelon.content.entities.implementations.scp650.SCP650;
 import com.site21.bittermelon.content.entities.implementations.scp650.client.SCP650Renderer;
 import com.site21.bittermelon.content.entities.implementations.scp939.client.SCP939Renderer;
+import com.site21.bittermelon.content.items.taser.TaserProjectileRenderer;
 import com.site21.bittermelon.init.neoforge.BitterBlockEntities;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -45,6 +47,8 @@ public class ClientSetup {
         event.registerEntityRenderer(THROWN_ITEM_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(SCP_2398_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(SCP_650.get(), SCP650Renderer::new);
+        event.registerEntityRenderer(SCP_131.get(), SCP131Renderer::new);
+        event.registerEntityRenderer(TASER_PROJECTILE.get(), TaserProjectileRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.STRUCTURAL_BLOCK_ENTITY.get(), StructuralBlockRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.THERMOMETER_BLOCK_ENTITY.get(), ThermometerRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.INTERCOM_BLOCK_ENTITY.get(), PhoneCordRenderer::new);

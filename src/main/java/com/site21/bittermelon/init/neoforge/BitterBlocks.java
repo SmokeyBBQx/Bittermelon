@@ -15,6 +15,7 @@ import com.site21.bittermelon.content.blocks.container.smallbox.SmallBox;
 import com.site21.bittermelon.content.blocks.devices.implementations.ATMBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.ContainmentPanelBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.thermometer.ThermometerBlock;
+import com.site21.bittermelon.content.blocks.poster.SmallPosterBlock;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -92,4 +93,7 @@ public class BitterBlocks {
 
     public static final DeferredBlock<LargeSlidingDoorBlock> LARGE_SLIDING_DOOR = BLOCKS.register("large_sliding_door",
             () -> new LargeSlidingDoorBlock(BlockBehaviour.Properties.of()));
+
+    public static final DeferredBlock<SmallPosterBlock> YELLOW_INSPECTION_POSTER = BLOCKS.register("yellow_inspection_poster",
+            () -> new SmallPosterBlock(BlockBehaviour.Properties.of()));
 }

@@ -39,6 +39,8 @@ public class LargeSlidingDoorRenderer implements BlockEntityRenderer<LargeSlidin
             frameModel = Minecraft.getInstance().getModelManager().getModel(FRAME_MODEL);
         }
 
+        // TODO: Lighting is unnatural - find fix
+
         float smoothProgress = blockEntity.getDoorOpenAmount(partialTick);
         VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.solid());
         boolean zAxis = blockEntity.getBlockState().getValue(LargeSlidingDoorBlock.Z_AXIS);

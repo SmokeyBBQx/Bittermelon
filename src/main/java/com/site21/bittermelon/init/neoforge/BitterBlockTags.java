@@ -11,4 +11,9 @@ public class BitterBlockTags {
             Registries.BLOCK,
             ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "passes_atmos")
     );
+
+    public static final TagKey<Block> INSPECTABLE = TagKey.create(
+            Registries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "inspectable")
+    );
 }

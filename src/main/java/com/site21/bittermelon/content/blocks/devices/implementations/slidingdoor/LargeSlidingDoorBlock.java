@@ -12,6 +12,7 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -178,7 +179,7 @@ public class LargeSlidingDoorBlock extends Block implements EntityBlock {
         AABB twoHighBox = new AABB(middle2.getX(), middle2.getY(), middle2.getZ(),
                 middle2.getX() + 1, middle2.getY() + 2, middle2.getZ() + 1);
 
-        return level.getEntities(null, twoHighBox).isEmpty();
+        return level.getEntitiesOfClass(LivingEntity.class, twoHighBox).isEmpty();
     }
 
     @Override
