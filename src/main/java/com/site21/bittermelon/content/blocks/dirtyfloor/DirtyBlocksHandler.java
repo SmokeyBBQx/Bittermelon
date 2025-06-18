@@ -1,9 +1,11 @@
 package com.site21.bittermelon.content.blocks.dirtyfloor;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.init.neoforge.BitterGameRules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -25,7 +27,11 @@ public class DirtyBlocksHandler {
     public static void onEntityTick(@NotNull EntityTickEvent.Post event) {
         if (!(event.getEntity() instanceof LivingEntity entity)) return;
         Level level = entity.level();
+        if (!level.getGameRules().getBoolean(BitterGameRules.ENTITIES_MAKE_FLOORS_DIRTY_RULE)) return;
         if (level.isClientSide) return;
+        if (entity instanceof Player player) {
+            if (player.isCreative() || player.isSpectator()) return;
+        }
         BlockPos entityPos = entity.blockPosition();
         BlockState blockState = level.getBlockState(entityPos);
 
