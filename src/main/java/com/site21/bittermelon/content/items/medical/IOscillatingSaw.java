@@ -9,11 +9,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 
-public interface AbstractCautery extends MedicalItem {
+import static com.site21.bittermelon.init.custom.Compartments.INJURY;
+
+public interface IOscillatingSaw extends MedicalItem {
     @Override
     default String getActionDescription() {
         return "Cauterize";
@@ -22,18 +23,20 @@ public interface AbstractCautery extends MedicalItem {
     @Override
     default EnumSet<CompartmentTag> getAllowedCompartments() {
         return EnumSet.of(
-                CompartmentTag.CAPILLARY_BLEED
+                CompartmentTag.HARD_TISSUE
         );
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
+    @OnlyIn(Dist.CLIENT)
     default void use(CompartmentInstance compartment, MedicalStats medicalStats, Character character, ItemStack item) {
         Minecraft.getInstance().setScreen(new CauteryMinigame(item, compartment, medicalStats, character));
     }
 
     @Override
-    default void finishAction(CompartmentInstance compartment, @NotNull MedicalStats medicalStats, float quality, ItemStack item) {
-        medicalStats.removeCompartment(compartment);
+    default void finishAction(CompartmentInstance compartment, MedicalStats medicalStats, float quality, ItemStack item) {
+        CompartmentInstance sawCut = new CompartmentInstance(INJURY.get(), quality, "Saw Cut", false);
+        sawCut.initializeWithParent(compartment);
+        medicalStats.addCompartment(sawCut);
     }
 }

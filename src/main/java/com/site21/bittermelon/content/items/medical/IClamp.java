@@ -12,9 +12,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.EnumSet;
 
-import static com.site21.bittermelon.init.custom.Compartments.TOOL;
-
-public interface AbstractClamp extends MedicalItem {
+public interface IClamp extends MedicalItem {
     @Override
     default EnumSet<CompartmentTag> getAllowedCompartments() {
         return EnumSet.of(
@@ -31,12 +29,12 @@ public interface AbstractClamp extends MedicalItem {
 
     @Override
     default void finishAction(CompartmentInstance compartment, MedicalStats medicalStats, float quality, ItemStack item) {
-        if (compartment.hasTag(CompartmentTag.BLEED)) {
-            CompartmentInstance clamp = new CompartmentInstance(TOOL.get(), 20, "Clamp", false);
-            clamp.setItem(item);
-            clamp.initializeWithParent(compartment);
-            medicalStats.addCompartment(clamp);
-        }
+//        if (compartment.hasTag(CompartmentTag.BLEED)) {
+//            CompartmentInstance clamp = new CompartmentInstance(TOOL.get(), 20, "Clamp", false);
+//            clamp.setItem(item);
+//            clamp.initializeWithParent(compartment);
+//            medicalStats.addCompartment(clamp);
+//        }
     }
 
     @Override

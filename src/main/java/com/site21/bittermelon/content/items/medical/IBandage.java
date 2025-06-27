@@ -1,42 +1,46 @@
 package com.site21.bittermelon.content.items.medical;
 
 import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.medical.client.screen.minigame.CauteryMinigame;
 import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 
-import static com.site21.bittermelon.init.custom.Compartments.INJURY;
-
-public interface AbstractOscillatingSaw extends MedicalItem {
+public interface IBandage extends MedicalItem {
     @Override
     default String getActionDescription() {
-        return "Cauterize";
+        return "Apply Bandage";
     }
 
     @Override
     default EnumSet<CompartmentTag> getAllowedCompartments() {
         return EnumSet.of(
-                CompartmentTag.HARD_TISSUE
+                CompartmentTag.CUT,
+                CompartmentTag.BITE,
+                CompartmentTag.STAB
         );
     }
 
-    @Override
     @OnlyIn(Dist.CLIENT)
-    default void use(CompartmentInstance compartment, MedicalStats medicalStats, Character character, ItemStack item) {
-        Minecraft.getInstance().setScreen(new CauteryMinigame(item, compartment, medicalStats, character));
+    @Override
+    default void use(@NotNull CompartmentInstance compartment, @NotNull MedicalStats medicalStats, Character character, ItemStack item) {
+//        CompartmentInstance bandage = new CompartmentInstance(Compartments.BANDAGE.get(), 10, "Bandage", false);
+//        bandage.setItem(item);
+//        bandage.initializeWithParent(compartment);
+//        medicalStats.addCompartment(bandage);
+    }
+
+    @Override
+    default boolean shouldConsumeItem() {
+        return true;
     }
 
     @Override
     default void finishAction(CompartmentInstance compartment, MedicalStats medicalStats, float quality, ItemStack item) {
-        CompartmentInstance sawCut = new CompartmentInstance(INJURY.get(), quality, "Saw Cut", false);
-        sawCut.initializeWithParent(compartment);
-        medicalStats.addCompartment(sawCut);
     }
 }

@@ -261,6 +261,13 @@ public class BitterItems {
             new Item.Properties()
     ));
 
+    public static final DeferredItem<BodyPart> COLON = ITEMS.register("colon", () -> new BodyPart(
+            new Item.Properties().stacksTo(1),
+            1,
+            1,
+            ItemWeight.MEDIUM
+    ));
+
     public static final DeferredItem<BaseItem> HELLO_KITTY_CELLPHONE = ITEMS.register("hello_kitty_cellphone", () -> new BaseItem(
             new Item.Properties(),
             1,

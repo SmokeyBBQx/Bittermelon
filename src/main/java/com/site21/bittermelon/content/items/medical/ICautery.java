@@ -13,35 +13,27 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 
-public interface AbstractSponge extends MedicalItem {
+public interface ICautery extends MedicalItem {
+    @Override
+    default String getActionDescription() {
+        return "Cauterize";
+    }
+
     @Override
     default EnumSet<CompartmentTag> getAllowedCompartments() {
-        return null;
+        return EnumSet.of(
+                CompartmentTag.CAPILLARY_BLEED
+        );
     }
 
-    @Override
-    default boolean canInteract(@NotNull CompartmentInstance compartment, MedicalStats medicalStats) {
-        return compartment.isObscured();
-    }
-
-    @Override
     @OnlyIn(Dist.CLIENT)
+    @Override
     default void use(CompartmentInstance compartment, MedicalStats medicalStats, Character character, ItemStack item) {
         Minecraft.getInstance().setScreen(new CauteryMinigame(item, compartment, medicalStats, character));
     }
 
     @Override
-    default void finishAction(@NotNull CompartmentInstance compartment, MedicalStats medicalStats, float quality, ItemStack item) {
-        compartment.setObscured(false);
-    }
-
-    @Override
-    default boolean shouldConsumeItem() {
-        return true;
-    }
-
-    @Override
-    default String getActionDescription() {
-        return "Absorb Blood";
+    default void finishAction(CompartmentInstance compartment, @NotNull MedicalStats medicalStats, float quality, ItemStack item) {
+        medicalStats.removeCompartment(compartment);
     }
 }

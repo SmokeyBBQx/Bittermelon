@@ -12,12 +12,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
-import java.util.UUID;
 
-import static com.site21.bittermelon.init.custom.Compartments.RETRACTOR;
-import static com.site21.bittermelon.init.custom.Compartments.TOOL;
-
-public interface AbstractRetractor extends MedicalItem {
+public interface IRetractor extends MedicalItem {
     @Override
     default EnumSet<CompartmentTag> getAllowedCompartments() {
         return EnumSet.of(
@@ -28,9 +24,9 @@ public interface AbstractRetractor extends MedicalItem {
 
     @Override
     default boolean canInteract(@NotNull CompartmentInstance compartment, MedicalStats medicalStats) {
-        if (compartment.getChildren().stream().anyMatch(compartment1 -> medicalStats.getCompartment(compartment1).hasTag(CompartmentTag.CUT))) {
-            return MedicalItem.super.canInteract(compartment, medicalStats);
-        }
+//        if (compartment.getChildren().stream().anyMatch(compartment1 -> medicalStats.getCompartment(compartment1).hasTag(CompartmentTag.CUT))) {
+//            return MedicalItem.super.canInteract(compartment, medicalStats);
+//        }
         return false;
     }
 
@@ -42,16 +38,16 @@ public interface AbstractRetractor extends MedicalItem {
 
     @Override
     default void finishAction(CompartmentInstance compartment, @NotNull MedicalStats medicalStats, float quality, ItemStack item) {
-        CompartmentInstance retractor = new CompartmentInstance(RETRACTOR.get(), 20, "Retractor", false);
-        retractor.setItem(item);
-        retractor.initializeWithParent(compartment);
-        for (UUID childID : compartment.getChildren()) {
-            CompartmentInstance child = medicalStats.getCompartment(childID);
-            if (child != null) {
-                child.setHidden(false);
-            }
-        }
-        medicalStats.addCompartment(retractor);
+//        CompartmentInstance retractor = new CompartmentInstance(RETRACTOR.get(), 20, "Retractor", false);
+//        retractor.setItem(item);
+//        retractor.initializeWithParent(compartment);
+//        for (UUID childID : compartment.getChildren()) {
+//            CompartmentInstance child = medicalStats.getCompartment(childID);
+//            if (child != null) {
+//                child.setHidden(false);
+//            }
+//        }
+//        medicalStats.addCompartment(retractor);
     }
 
     @Override
