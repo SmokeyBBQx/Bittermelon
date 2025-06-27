@@ -1,9 +1,11 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.intercom;
 
-import com.site21.bittermelon.content.blocks.devices.IElectronic;
+import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
+import com.site21.bittermelon.content.blocks.devices.ElectronicBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.Signal;
+import com.site21.bittermelon.content.blocks.powergrid.distributionboard.DistributionBoardBlockEntity;
 import com.site21.bittermelon.content.syncsound.ISyncSoundListener;
 import com.site21.bittermelon.content.syncsound.SyncSoundEvent;
 import com.site21.bittermelon.content.syncsound.SyncSoundType;
@@ -15,7 +17,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +26,7 @@ import java.util.Map;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.INTERCOM_BLOCK_ENTITY;
 
-public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListener, IElectronic {
+public class IntercomBlockEntity extends ElectronicBlockEntity implements ISyncSoundListener, ElectronicDevice {
     private static final int LISTENING_RADIUS = 8;
     private int speakerRadius = 8;
     private String intercomID = "";
@@ -32,7 +34,11 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
     private boolean speakerOn = true;
     private boolean micOn = true;
     private boolean phonePickedUp = false;
+    private Player phoneUser;
     private final Map<String, OutputPort> outputPorts;
+    private final Map<String, InputPort> inputPorts;
+    private float draw = 255;
+    private float supply = 0;
 
     public IntercomBlockEntity(BlockPos pos, BlockState blockState) {
         super(INTERCOM_BLOCK_ENTITY.get(), pos, blockState);
@@ -40,11 +46,32 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
         outputPorts = Map.of(
                 "SOUND", new OutputPort("SOUND", null, worldPosition)
         );
+
+        inputPorts = Map.of(
+                "POWER_SUPPLY", new InputPort("POWER_SUPPLY", this::receivePower, worldPosition)
+        );
+    }
+
+    private void receivePower(Signal signal) {
+        updatePowerConsumption();
+    }
+
+    private void updatePowerConsumption() {
+        OutputPort connectedPort = inputPorts.get("POWER_SUPPLY").connectedPort;
+        if (connectedPort == null) return;
+        if (level == null) return;
+        if (level.getBlockEntity(connectedPort.pos) instanceof DistributionBoardBlockEntity DB) {
+            supply = DB.drawPower(connectedPort.id, draw);
+        }
+    }
+
+    private boolean isOn() {
+        return supply >= draw;
     }
 
     @Override
     public void onSyncSound(@NotNull SyncSoundEvent event) {
-        if (!micOn || event.getSoundType() == SyncSoundType.SPEAKER) return;
+        if (!isOn() || !micOn || event.getSoundType() == SyncSoundType.SPEAKER) return;
 
         if (level == null || level.isClientSide) return;
 
@@ -54,7 +81,7 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
     }
 
     public void transmitMessage(SyncSoundEvent event) {
-        if (!speakerOn || level == null || level.isClientSide) return;
+        if (!isOn() || !speakerOn || level == null || level.isClientSide) return;
 
         Component intercomMessage = Component.literal("[INTERCOM]: ").append(event.getSoundDescription());
 
@@ -117,6 +144,15 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
         setChanged();
     }
 
+    public Player getPhoneUser() {
+        return phoneUser;
+    }
+
+    public void setPhoneUser(Player player) {
+        this.phoneUser = player;
+        setChanged();
+    }
+
     @Override
     public Map<String, OutputPort> getOutputPorts() {
         return outputPorts;
@@ -136,6 +172,7 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
         if (level != null && !level.isClientSide()) {
             IntercomManager.get(level).removeIntercom(worldPosition);
             NeoForge.EVENT_BUS.unregister(this);
+            clearElectronicData(level);
         }
     }
 
@@ -149,7 +186,11 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
         tag.putBoolean("micOn", micOn);
         tag.putBoolean("phonePickedUp", phonePickedUp);
         tag.putInt("speakerRadius", speakerRadius);
+        if (phoneUser != null) {
+            tag.putUUID("phoneUser", phoneUser.getUUID());
+        }
         saveOutputPorts(tag);
+        saveInputPorts(tag);
     }
 
     @Override
@@ -162,31 +203,18 @@ public class IntercomBlockEntity extends BlockEntity implements ISyncSoundListen
         micOn = tag.getBoolean("micOn");
         phonePickedUp = tag.getBoolean("phonePickedUp");
         speakerRadius = tag.getInt("speakerRadius");
+        if (level == null) return;
+        if (tag.hasUUID("phoneUser")) {
+            Player loadedPhoneUser = level.getPlayerByUUID(tag.getUUID("phoneUser"));
+            if (loadedPhoneUser != null) {
+                phoneUser = loadedPhoneUser;
+            }
+        }
         loadOutputPorts(tag, level);
+        loadInputPorts(tag, level);
     }
 
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
-        return this.saveCustomOnly(registries);
-    }
-
-    @Override
-    public void setChanged() {
-        super.setChanged();
-        syncToClient();
-    }
-
-    public void syncToClient() {
-        if (level != null && !level.isClientSide) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-        }
-    }
-
-    @Override
-    public String getAddress() {
-        return "";
     }
 }

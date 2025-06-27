@@ -5,6 +5,9 @@ import com.site21.bittermelon.content.blocks.devices.implementations.containment
 import com.site21.bittermelon.content.blocks.devices.implementations.detonator.DetonatorBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.environmentsensor.EnvironmentSensor;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlock;
+import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.KeycardReaderSecureDoorBlock;
+import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.SecureDoorBlock;
+import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.LargeSlidingDoorBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.speaker.SpeakerBlock;
 import com.site21.bittermelon.content.blocks.dirtyfloor.DirtyFloorBlock;
 import com.site21.bittermelon.content.blocks.base.structuralblock.StructuralBlock;
@@ -12,9 +15,13 @@ import com.site21.bittermelon.content.blocks.container.smallbox.SmallBox;
 import com.site21.bittermelon.content.blocks.devices.implementations.ATMBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.ContainmentPanelBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.thermometer.ThermometerBlock;
+import com.site21.bittermelon.content.blocks.poster.SmallPosterBlock;
+import com.site21.bittermelon.content.blocks.powergrid.distributionboard.DistributionBoardBlock;
+import com.site21.bittermelon.content.blocks.scp.scp151.SCP151Block;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -79,4 +86,23 @@ public class BitterBlocks {
     public static final DeferredBlock<SpeakerBlock> SPEAKER = BLOCKS.register("speaker",
             () -> new SpeakerBlock(BlockBehaviour.Properties.of().noOcclusion()
             ));
+
+    public static final DeferredBlock<SecureDoorBlock> SECURE_DOOR = BLOCKS.register("secure_door",
+            () -> new SecureDoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.of()));
+
+    public static final DeferredBlock<KeycardReaderSecureDoorBlock> KEYCARD_READER_SECURE_DOOR = BLOCKS.register("keycard_reader_secure_door",
+            () -> new KeycardReaderSecureDoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.of()));
+
+    public static final DeferredBlock<LargeSlidingDoorBlock> LARGE_SLIDING_DOOR = BLOCKS.register("large_sliding_door",
+            () -> new LargeSlidingDoorBlock(BlockBehaviour.Properties.of()));
+
+    public static final DeferredBlock<SmallPosterBlock> YELLOW_INSPECTION_POSTER = BLOCKS.register("yellow_inspection_poster",
+            () -> new SmallPosterBlock(BlockBehaviour.Properties.of()));
+
+    public static final DeferredBlock<DistributionBoardBlock> DISTRIBUTION_BOARD = BLOCKS.register("distribution_board",
+            () -> new DistributionBoardBlock(BlockBehaviour.Properties.of()));
+
+    public static final DeferredBlock<SCP151Block> SCP151 = BLOCKS.register("scp151",
+            () -> new SCP151Block(BlockBehaviour.Properties.of()));
+
 }

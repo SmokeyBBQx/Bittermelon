@@ -33,6 +33,7 @@ public class IntercomPhoneItem extends BaseItem {
             if (!isSelected) {
                 stack.setCount(0);
                 intercom.setPhonePickedUp(false);
+                intercom.setPhoneUser(null);
                 level.playSound(null, intercomPos, SoundEvents.HEAVY_CORE_HIT, SoundSource.PLAYERS);
                 entity.sendSystemMessage(Component.literal("You must hold the phone.").withStyle(ChatFormatting.RED));
             }
@@ -40,6 +41,7 @@ public class IntercomPhoneItem extends BaseItem {
             if (entity.distanceToSqr(intercomPos.getX(), intercomPos.getY(), intercomPos.getZ()) > 2 * 2) {
                 stack.setCount(0);
                 intercom.setPhonePickedUp(false);
+                intercom.setPhoneUser(null);
                 level.playSound(null, intercomPos, SoundEvents.HEAVY_CORE_HIT, SoundSource.PLAYERS);
                 entity.sendSystemMessage(Component.literal("You must stay within range.").withStyle(ChatFormatting.RED));
             }

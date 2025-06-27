@@ -50,4 +50,32 @@ public class BitterSounds {
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "machine.terminal_hum")));
     public static final DeferredHolder<SoundEvent, SoundEvent> CONTAINMENT_ALERT = SOUND_EVENTS.register("machine.containment_alert",
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "machine.containment_alert")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> BAT_IMPACT = SOUND_EVENTS.register("misc.bat_impact",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "misc.bat_impact")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> LARGE_SLIDING_DOOR_CLOSE = SOUND_EVENTS.register("machine.large_sliding_door_close",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "machine.large_sliding_door_close")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> LARGE_SLIDING_DOOR_OPEN = SOUND_EVENTS.register("machine.large_sliding_door_open",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "machine.large_sliding_door_open")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> LARGE_SLIDING_DOOR_STUCK = SOUND_EVENTS.register("machine.large_sliding_door_stuck",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "machine.large_sliding_door_stuck")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> SCARE_1 = SOUND_EVENTS.register("horror.scare_1",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "horror.scare_1")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> SCARE_2 = SOUND_EVENTS.register("horror.scare_2",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "horror.scare_2")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> SCARE_3 = SOUND_EVENTS.register("horror.scare_3",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "horror.scare_3")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> SCARE_4 = SOUND_EVENTS.register("horror.scare_4",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "horror.scare_4")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> SPARKS = SOUND_EVENTS.register("misc.sparks",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "misc.sparks")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> MALE_COUGH = SOUND_EVENTS.register("entity.cough.male_cough",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "entity.cough.male_cough")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> FEMALE_COUGH = SOUND_EVENTS.register("entity.cough.female_cough",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "entity.cough.female_cough")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> SPLAT = SOUND_EVENTS.register("misc.splat",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "misc.splat")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> HEART_BEAT = SOUND_EVENTS.register("misc.heart_beat",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "misc.heart_beat")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> BELL_SCARE = SOUND_EVENTS.register("horror.bell_scare",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "horror.bell_scare")));
 }

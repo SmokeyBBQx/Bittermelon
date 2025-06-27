@@ -5,12 +5,18 @@ import com.site21.bittermelon.client.visualeffects.screenshake.StartScreenshake;
 import com.site21.bittermelon.content.atmosphere.networking.*;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.OpenContainmentPanelScreen;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.networking.*;
+import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.networking.PlaySlidingDoorStuckSound;
+import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.networking.UpdateSlidingDoorProgress;
+import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.networking.UpdateSlidingDoorState;
 import com.site21.bittermelon.content.character.networking.SyncCharacters;
 import com.site21.bittermelon.content.economy.networking.OpenATMScreen;
+import com.site21.bittermelon.content.entities.implementations.scp650.networking.SetEntityPos;
+import com.site21.bittermelon.content.items.taser.SetShakeTicks;
 import com.site21.bittermelon.content.items.wires.wire.networking.MakeWireConnection;
 import com.site21.bittermelon.content.items.wires.wire.networking.OpenWiringScreen;
 import com.site21.bittermelon.content.items.wires.wire.networking.RemoveWiringData;
 import com.site21.bittermelon.content.items.wires.wire.networking.WiringDataUpdate;
+import com.site21.bittermelon.content.items.writablepaper.client.OpenPaperEditScreen;
 import com.site21.bittermelon.content.medical.client.screen.networking.*;
 import com.site21.bittermelon.content.stumble.networking.AttemptToRise;
 import com.site21.bittermelon.content.stumble.networking.ClearStumbleTimer;
@@ -271,6 +277,42 @@ public class PayloadRegistration {
                 RemoveWiringData.TYPE,
                 RemoveWiringData.STREAM_CODEC,
                 RemoveWiringData::handle
+        );
+
+        registrar.playToServer(
+                UpdateSlidingDoorState.TYPE,
+                UpdateSlidingDoorState.STREAM_CODEC,
+                UpdateSlidingDoorState::handle
+        );
+
+        registrar.playToServer(
+                PlaySlidingDoorStuckSound.TYPE,
+                PlaySlidingDoorStuckSound.STREAM_CODEC,
+                PlaySlidingDoorStuckSound::handle
+        );
+
+        registrar.playToServer(
+                UpdateSlidingDoorProgress.TYPE,
+                UpdateSlidingDoorProgress.STREAM_CODEC,
+                UpdateSlidingDoorProgress::handle
+        );
+
+        registrar.playToClient(
+                SetEntityPos.TYPE,
+                SetEntityPos.STREAM_CODEC,
+                SetEntityPos::handle
+        );
+
+        registrar.playToClient(
+                OpenPaperEditScreen.TYPE,
+                OpenPaperEditScreen.STREAM_CODEC,
+                OpenPaperEditScreen::handle
+        );
+
+        registrar.playToClient(
+                SetShakeTicks.TYPE,
+                SetShakeTicks.STREAM_CODEC,
+                SetShakeTicks::handle
         );
     }
 }

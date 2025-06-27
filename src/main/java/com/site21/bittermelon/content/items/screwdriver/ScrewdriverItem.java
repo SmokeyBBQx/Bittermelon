@@ -1,6 +1,6 @@
 package com.site21.bittermelon.content.items.screwdriver;
 
-import com.site21.bittermelon.content.blocks.devices.IElectronic;
+import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.wires.wire.client.WiringScreen;
@@ -27,7 +27,7 @@ public class ScrewdriverItem extends BaseItem {
 
         if (player == null) return InteractionResult.FAIL;
 
-        if (level.getBlockEntity(pos) instanceof IElectronic electronic) {
+        if (level.getBlockEntity(pos) instanceof ElectronicDevice electronic) {
             if (level.isClientSide) {
                 Minecraft.getInstance().setScreen(new WiringScreen(electronic, context.getHand()));
             }

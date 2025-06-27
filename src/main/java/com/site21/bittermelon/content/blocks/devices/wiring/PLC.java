@@ -1,6 +1,6 @@
 package com.site21.bittermelon.content.blocks.devices.wiring;
 
-import com.site21.bittermelon.content.blocks.devices.IElectronic;
+import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class PLC implements IElectronic {
+public class PLC implements ElectronicDevice {
     private final BlockPos worldPosition;
     private final List<Instruction> instructions = new ArrayList<>();
     private final Map<String, InputPort> inputPorts;
@@ -45,11 +45,6 @@ public class PLC implements IElectronic {
 
     public void addInstruction(Instruction instruction) {
         instructions.add(instruction);
-    }
-
-    @Override
-    public String getAddress() {
-        return "";
     }
 
     @Override

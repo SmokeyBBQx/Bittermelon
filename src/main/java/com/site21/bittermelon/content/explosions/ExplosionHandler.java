@@ -2,6 +2,7 @@ package com.site21.bittermelon.content.explosions;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.base.structuralblock.StructuralBlockEntity;
+import com.site21.bittermelon.content.items.scps.SCP2398;
 import com.site21.bittermelon.content.syncsound.SyncSoundEvent;
 import com.site21.bittermelon.content.syncsound.SyncSoundType;
 import net.minecraft.ChatFormatting;
@@ -10,6 +11,9 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -34,10 +38,18 @@ public class ExplosionHandler {
         for (BlockPos pos : affectedBlocks) {
             if (level.getBlockEntity(pos) instanceof StructuralBlockEntity structuralBlock) {
                 double breakProgress = calculateBreakProgress(explosion.center(), pos, explosion.radius());
-
                 structuralBlock.setBreakProgress((float) breakProgress + structuralBlock.getBreakProgress());
             }
         }
+
+        List<Entity> affectedEntities = event.getAffectedEntities();
+        affectedEntities.removeIf(entity -> {
+            if (entity instanceof ItemEntity itemEntity) {
+                ItemStack stack = itemEntity.getItem();
+                return stack.getItem() instanceof SCP2398;
+            }
+            return false;
+        });
 
         if (!event.getLevel().isClientSide) {
             NeoForge.EVENT_BUS.post(new SyncSoundEvent(level,

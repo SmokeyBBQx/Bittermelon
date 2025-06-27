@@ -25,7 +25,7 @@ public class PersonnelEntry {
     private String department;
     private String description;
     private String picture;
-//    private final UUID fingerprint;
+//    private final int fingerprint;
     private List<String> privileges;
 
     public PersonnelEntry(int id, String name, String occupation, String department, String description, String picture, List<String> privileges) {

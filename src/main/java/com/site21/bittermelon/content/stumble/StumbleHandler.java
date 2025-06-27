@@ -8,6 +8,7 @@ import com.site21.bittermelon.content.stumble.networking.ClearStumbleTimer;
 import com.site21.bittermelon.content.stumble.networking.UpdateStumbleTimer;
 import com.site21.bittermelon.networking.client.ClearForcedPose;
 import com.site21.bittermelon.networking.client.SetForcedPose;
+import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -39,12 +40,22 @@ import static net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class StumbleHandler {
-    private static final Map<UUID, Integer> effectDelays = new HashMap<>();
+    private static final Map<UUID, EffectData> effectDelays = new HashMap<>();
     private static final ResourceLocation JUMP_STUN_ID = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "jump_stun");
     private static final ResourceLocation MOVEMENT_STUN_ID = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "movement_stun");
     private static final Random RANDOM = new Random();
 
-    public static void stumble(@NotNull LivingEntity entity, int length, Vec3 pushDirection) {
+    /**
+     * Makes a living entity stumble with customizable duration and push direction.
+     * Entities that are sleeping or swimming are ignored. Movement stats from character
+     * data alter stumble duration, with less movement ability extending stumble duration.
+     *
+     * @param entity        the living entity to make stumble
+     * @param length        base stumble duration in ticks
+     * @param pushDirection direction to push the entity during stumble
+     * @param shakeEffect   whether the player's screen should shake
+     */
+    public static void stumble(@NotNull LivingEntity entity, int length, Vec3 pushDirection, boolean shakeEffect) {
         Pose pose = entity.getPose();
         if (pose == Pose.SLEEPING || pose == Pose.SWIMMING) return;
 
@@ -61,7 +72,7 @@ public class StumbleHandler {
         }
 
         entity.setData(STUMBLE_TICKS.get(), length);
-        effectDelays.put(entity.getUUID(), 5);
+        effectDelays.put(entity.getUUID(), new EffectData(5, shakeEffect));
         motion(entity, length, pushDirection);
         addStun(entity);
         announceFall(entity);
@@ -72,16 +83,31 @@ public class StumbleHandler {
         }
     }
 
+    /**
+     * Makes a living entity stumble with default duration based on entity type.
+     * Players stumble for 40 ticks, other entities for 100 ticks.
+     * Push direction is set to the entity's current look direction.
+     *
+     * @param entity the living entity to make stumble
+     */
     public static void stumble(LivingEntity entity) {
-        stumble(entity, entity instanceof Player ? 40 : 100, entity.getLookAngle());
+        stumble(entity, entity instanceof Player ? 40 : 100, entity.getLookAngle(), true);
     }
 
+    /**
+     * Makes a living entity stumble with default duration and custom push direction.
+     * Players stumble for 40 ticks, other entities for 100 ticks.
+     *
+     * @param entity        the living entity to make stumble
+     * @param pushDirection direction to push the entity during stumble
+     */
     public static void stumble(LivingEntity entity, Vec3 pushDirection) {
-        stumble(entity, entity instanceof Player ? 40 : 100, pushDirection);
+        stumble(entity, entity instanceof Player ? 40 : 100, pushDirection, true);
     }
 
     private static void motion(@NotNull LivingEntity entity, int length, @NotNull Vec3 pushDirection) {
         Vec3 normalizedPush = pushDirection.normalize();
+        pushDirection.multiply(1, 0, 1);
         Vec3 lookVector = entity.getLookAngle();
 
         double dotProduct = normalizedPush.dot(lookVector);
@@ -174,9 +200,9 @@ public class StumbleHandler {
         }
 
         if (effectDelays.containsKey(uuid)) {
-            Integer delay = effectDelays.compute(uuid, (k, v) -> (v == null) ? 0 : v - 1);
-            if (delay <= 0) {
-                if (entity instanceof ServerPlayer player) {
+            EffectData effectData = effectDelays.compute(uuid, (k, v) -> v == null ? new EffectData(0, false) : v.delay(-1));
+            if (effectData.delay <= 0) {
+                if (entity instanceof ServerPlayer player && effectData.shake) {
                     PacketDistributor.sendToPlayer(player, new StartScreenshake(70, 10));
                 }
                 entity.level().playSound(null, entity.getOnPos(), FALL.get(), SoundSource.PLAYERS);
@@ -215,5 +241,20 @@ public class StumbleHandler {
 
     public static boolean isStumbled(@NotNull Entity entity) {
         return entity.hasData(STUMBLE_TICKS);
+    }
+
+    static class EffectData {
+        int delay;
+        boolean shake;
+
+        public EffectData(int delay, boolean shake) {
+            this.delay = delay;
+            this.shake = shake;
+        }
+
+        public EffectData delay(int delay) {
+            this.delay = this.delay - delay;
+            return this;
+        }
     }
 }

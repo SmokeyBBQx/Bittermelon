@@ -8,8 +8,13 @@ import com.site21.bittermelon.content.blocks.devices.implementations.containment
 import com.site21.bittermelon.content.blocks.devices.implementations.detonator.DetonatorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.environmentsensor.EnvironmentSensorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.KeycardReaderSecureDoorBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.SecureDoorBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.LargeSlidingDoorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.speaker.SpeakerBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.thermometer.ThermometerBlockEntity;
+import com.site21.bittermelon.content.blocks.powergrid.distributionboard.DistributionBoardBlockEntity;
+import com.site21.bittermelon.content.blocks.scp.scp151.SCP151BlockEntity;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -50,4 +55,19 @@ public class BitterBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SpeakerBlockEntity>> SPEAKER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("speaker_block_entity",
             () -> BlockEntityType.Builder.of(SpeakerBlockEntity::new, SPEAKER.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SecureDoorBlockEntity>> SECURE_DOOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("secure_door_block_entity",
+            () -> BlockEntityType.Builder.of(SecureDoorBlockEntity::new, SECURE_DOOR.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KeycardReaderSecureDoorBlockEntity>> KEYCARD_READER_SECURE_DOOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("keycard_reader_secure_door_block_entity",
+            () -> BlockEntityType.Builder.of(KeycardReaderSecureDoorBlockEntity::new, KEYCARD_READER_SECURE_DOOR.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LargeSlidingDoorBlockEntity>> LARGE_SLIDING_DOOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("large_sliding_door_block_entity",
+            () -> BlockEntityType.Builder.of(LargeSlidingDoorBlockEntity::new, LARGE_SLIDING_DOOR.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DistributionBoardBlockEntity>> DISTRIBUTION_BOARD_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("distribution_board_block_entity",
+            () -> BlockEntityType.Builder.of(DistributionBoardBlockEntity::new, DISTRIBUTION_BOARD.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SCP151BlockEntity>> SCP151_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("scp151_block_entity",
+            () -> BlockEntityType.Builder.of(SCP151BlockEntity::new, SCP151.get()).build(null));
 }

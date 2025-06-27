@@ -1,0 +1,14 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "bittermelon:item/cigarette_unlit"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "bittermelon:lit": 1.0
+      },
+      "model": "bittermelon:item/cigarette_lit"
+    }
+  ]
+}

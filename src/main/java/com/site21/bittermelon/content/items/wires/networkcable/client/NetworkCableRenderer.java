@@ -2,13 +2,15 @@ package com.site21.bittermelon.content.items.wires.networkcable.client;
 
 import com.mojang.blaze3d.platform.Window;
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.devices.IElectronic;
+import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
 import com.site21.bittermelon.content.items.wires.networkcable.NetworkCable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -24,20 +26,19 @@ public class NetworkCableRenderer {
         if (minecraft.player != null) {
             ItemStack heldItem = minecraft.player.getMainHandItem();
             if (heldItem.getItem() instanceof NetworkCable) {
-                BlockPos device = heldItem.get(CORD_CONNECTION.get());
+                BlockPos devicePos = heldItem.get(CORD_CONNECTION.get());
 
-                if (device == null) return;
+                if (devicePos == null) return;
+                MutableComponent deviceName = minecraft.player.level().getBlockState(devicePos).getBlock().getName();
 
-                if (minecraft.player.level().getBlockEntity(device) instanceof IElectronic deviceEntity) {
-                    Component text = Component.literal("Linking from " + deviceEntity.getAddress());
-                    GuiGraphics guiGraphics = event.getGuiGraphics();
-                    Window window = minecraft.getWindow();
-                    int width = window.getGuiScaledWidth();
-                    int height = window.getGuiScaledHeight();
-                    int x = (width - minecraft.font.width(text)) / 2;
-                    int y = height - 35;
-                    guiGraphics.drawString(minecraft.font, text, x, y, 0xFFFFFF);
-                }
+                Component text = Component.literal("Linking from " + deviceName);
+                GuiGraphics guiGraphics = event.getGuiGraphics();
+                Window window = minecraft.getWindow();
+                int width = window.getGuiScaledWidth();
+                int height = window.getGuiScaledHeight();
+                int x = (width - minecraft.font.width(text)) / 2;
+                int y = height - 35;
+                guiGraphics.drawString(minecraft.font, text, x, y, 0xFFFFFF);
             }
         }
     }

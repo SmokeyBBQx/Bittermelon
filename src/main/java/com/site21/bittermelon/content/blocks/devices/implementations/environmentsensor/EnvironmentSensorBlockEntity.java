@@ -2,14 +2,14 @@ package com.site21.bittermelon.content.blocks.devices.implementations.environmen
 
 import com.site21.bittermelon.content.atmosphere.AtmosHandler;
 import com.site21.bittermelon.content.atmosphere.AtmosInstance;
-import com.site21.bittermelon.content.blocks.devices.IElectronic;
+import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
+import com.site21.bittermelon.content.blocks.devices.ElectronicBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.wiring.*;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,18 +17,16 @@ import java.util.*;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.ENVIRONMENT_SENSOR_BLOCK_ENTITY;
 
-public class EnvironmentSensorBlockEntity extends BlockEntity implements IElectronic {
+public class EnvironmentSensorBlockEntity extends ElectronicBlockEntity implements ElectronicDevice {
     private static final float FALLBACK_TEMPERATURE = 22;
     private static final float FALLBACK_PRESSURE = 101.325f;
     private final Map<String, OutputPort> outputPorts = new HashMap<>();
-    private String address;
     private float temperature = 0; // Kelvin
     private float pressure = 0; // kPa
     private final Set<SubstanceStack> gases = new HashSet<>();
 
     public EnvironmentSensorBlockEntity(BlockPos pos, BlockState blockState) {
         super(ENVIRONMENT_SENSOR_BLOCK_ENTITY.get(), pos, blockState);
-        address = generateAddress("ENV");
         initializePorts();
     }
 
@@ -83,10 +81,6 @@ public class EnvironmentSensorBlockEntity extends BlockEntity implements IElectr
         return outputPorts;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
     public float getTemperature() {
         return temperature;
     }
@@ -98,7 +92,6 @@ public class EnvironmentSensorBlockEntity extends BlockEntity implements IElectr
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.putString("address", address);
         tag.putFloat("temperature", temperature);
         tag.putFloat("pressure", pressure);
 
@@ -108,7 +101,6 @@ public class EnvironmentSensorBlockEntity extends BlockEntity implements IElectr
     @Override
     public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.loadAdditional(tag, registries);
-        address = tag.getString("address");
         temperature = tag.getFloat("temperature");
         pressure = tag.getFloat("pressure");
 
@@ -118,22 +110,5 @@ public class EnvironmentSensorBlockEntity extends BlockEntity implements IElectr
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    @Override
-    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
-        return this.saveCustomOnly(registries);
-    }
-
-    @Override
-    public void setChanged() {
-        super.setChanged();
-        syncToClient();
-    }
-
-    public void syncToClient() {
-        if (level != null && !level.isClientSide) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-        }
     }
 }

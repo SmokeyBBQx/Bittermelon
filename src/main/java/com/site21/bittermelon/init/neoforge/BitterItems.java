@@ -3,10 +3,14 @@ package com.site21.bittermelon.init.neoforge;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.items.GermTest;
 import com.site21.bittermelon.content.items.IntercomPhoneItem;
-import com.site21.bittermelon.content.items.SCP109;
+import com.site21.bittermelon.content.items.KeycardItem;
+import com.site21.bittermelon.content.items.scps.SCP109;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.handheldprogrammer.HandheldProgrammerItem;
+import com.site21.bittermelon.content.items.scps.SCP2398;
+import com.site21.bittermelon.content.items.smokable.SmokableItem;
+import com.site21.bittermelon.content.items.taser.TaserItem;
 import com.site21.bittermelon.content.items.wires.networkcable.NetworkCable;
 import com.site21.bittermelon.content.items.cardboardbox.CardboardBoxItem;
 import com.site21.bittermelon.content.items.cardboardbox.CollapsedCardboardBoxItem;
@@ -18,6 +22,7 @@ import com.site21.bittermelon.content.items.medical.organic.BodyPart;
 import com.site21.bittermelon.content.items.medical.tools.*;
 import com.site21.bittermelon.content.items.toolbox.ToolBoxItem;
 import com.site21.bittermelon.content.items.wires.wire.Wire;
+import com.site21.bittermelon.content.items.writablepaper.WritablePaper;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -184,13 +189,6 @@ public class BitterItems {
             1200
     ));
 
-    public static final DeferredItem<BaseItem> KEYCARD = ITEMS.register("keycard", () -> new BaseItem(
-            new Item.Properties(),
-            1,
-            1,
-            ItemWeight.VERY_LIGHT
-    ));
-
     public static final DeferredItem<BaseItem> WHISKEY_BOTTLE = ITEMS.register("whiskey_bottle", () -> new FluidContainerItem(
             new Item.Properties(),
             3,
@@ -268,5 +266,100 @@ public class BitterItems {
             1,
             1,
             ItemWeight.MEDIUM
+    ));
+
+    public static final DeferredItem<BaseItem> HELLO_KITTY_CELLPHONE = ITEMS.register("hello_kitty_cellphone", () -> new BaseItem(
+            new Item.Properties(),
+            1,
+            2,
+            ItemWeight.LIGHT
+    ));
+
+    public static final DeferredItem<SCP2398> SCP_2398 = ITEMS.register("scp2398", () -> new SCP2398(
+            new Item.Properties().stacksTo(1),
+            1,
+            3,
+            ItemWeight.MEDIUM
+    ));
+
+    public static final DeferredItem<BaseItem> BASEBALL = ITEMS.register("baseball", () -> new BaseItem(
+            new Item.Properties(),
+            1,
+            1,
+            ItemWeight.LIGHT
+    ));
+
+    public static final DeferredItem<BaseItem> CIGARETTE_BUTT = ITEMS.register("cigarette_butt", () -> new BaseItem(
+            new Item.Properties(),
+            1,
+            1,
+            ItemWeight.VERY_LIGHT
+    ));
+
+    public static final DeferredItem<BaseItem> CIGARETTE = ITEMS.register("cigarette", () -> new SmokableItem(
+            new Item.Properties(),
+            1,
+            1,
+            ItemWeight.VERY_LIGHT,
+            20,
+            CIGARETTE_BUTT.get()
+    ));
+
+    public static final DeferredItem<KeycardItem> KEYCARD = ITEMS.register("keycard", () -> new KeycardItem(
+            new Item.Properties(),
+            1,
+            1,
+            ItemWeight.VERY_LIGHT
+    ));
+
+    public static final DeferredItem<BlockItem> SECURE_DOOR = ITEMS.register("secure_door", () -> new BlockItem(
+            BitterBlocks.SECURE_DOOR.get(),
+            new Item.Properties()
+    ));
+
+    public static final DeferredItem<BlockItem> KEYCARD_READER_SECURE_DOOR = ITEMS.register("keycard_reader_secure_door", () -> new BlockItem(
+            BitterBlocks.KEYCARD_READER_SECURE_DOOR.get(),
+            new Item.Properties()
+    ));
+
+    public static final DeferredItem<BlockItem> LARGE_SLIDING_DOOR = ITEMS.register("large_sliding_door", () -> new BlockItem(
+            BitterBlocks.LARGE_SLIDING_DOOR.get(),
+            new Item.Properties()
+    ));
+
+    public static final DeferredItem<WritablePaper> WRITABLE_PAPER = ITEMS.register("paper", () -> new WritablePaper(
+            new Item.Properties(),
+            1,
+            2,
+            ItemWeight.VERY_LIGHT
+    ));
+
+    public static final DeferredItem<BaseItem> TASER_CARTRIDGE = ITEMS.register("taser_cartridge", () -> new BaseItem(
+            new Item.Properties(),
+            1,
+            1,
+            ItemWeight.LIGHT
+    ));
+
+    public static final DeferredItem<TaserItem> TASER = ITEMS.register("taser", () -> new TaserItem(
+            new Item.Properties(),
+            1,
+            1,
+            ItemWeight.LIGHT
+    ));
+
+    public static final DeferredItem<BlockItem> YELLOW_INSPECTION_POSTER = ITEMS.register("yellow_inspection_poster", () -> new BlockItem(
+            BitterBlocks.YELLOW_INSPECTION_POSTER.get(),
+            new Item.Properties()
+    ));
+
+    public static final DeferredItem<BlockItem> DISTRIBUTION_BOARD = ITEMS.register("distribution_board", () -> new BlockItem(
+            BitterBlocks.DISTRIBUTION_BOARD.get(),
+            new Item.Properties()
+    ));
+
+    public static final DeferredItem<BlockItem> SCP151 = ITEMS.register("scp151", () -> new BlockItem(
+            BitterBlocks.SCP151.get(),
+            new Item.Properties()
     ));
 }

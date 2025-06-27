@@ -4,13 +4,10 @@
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
   "mixins": [
-    "InventoryMixin",
-    "KeyHandlerMixin",
-    "LocalPlayerDropMixin",
-    "ServerPlayerDropMixin"
   ],
   "client": [
-    "GuiMixin"
+    "CrosshairMixin",
+    "LivingEntityRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

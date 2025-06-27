@@ -1,8 +1,11 @@
 package com.site21.bittermelon.content.blocks.dirtyfloor;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.init.neoforge.BitterGameRules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -22,25 +25,30 @@ public class DirtyBlocksHandler {
 
     @SubscribeEvent
     public static void onEntityTick(@NotNull EntityTickEvent.Post event) {
-        if (!event.getEntity().level().isClientSide) {
-            Level level = event.getEntity().level();
-            BlockPos entityPos = event.getEntity().blockPosition();
-            BlockPos belowPos = entityPos.below();
-            if (random.nextFloat() < SPAWN_CHANCE) {
-                BlockState blockState = level.getBlockState(entityPos);
+        if (!(event.getEntity() instanceof LivingEntity entity)) return;
+        Level level = entity.level();
+        if (!level.getGameRules().getBoolean(BitterGameRules.ENTITIES_MAKE_FLOORS_DIRTY_RULE)) return;
+        if (level.isClientSide) return;
+        if (entity instanceof Player player) {
+            if (player.isCreative() || player.isSpectator()) return;
+        }
+        BlockPos entityPos = entity.blockPosition();
+        BlockState blockState = level.getBlockState(entityPos);
 
-                if (!level.getBlockState(belowPos).isAir()) {
-                    if (blockState.isAir()) {
-                        BlockState dirtyState = DIRTY_FLOOR.get().defaultBlockState()
-                                .setValue(DirtyFloorBlock.DIRTINESS, 0)
-                                .setValue(DirtyFloorBlock.FACING, Direction.Plane.HORIZONTAL.getRandomDirection(level.random));
-                        level.setBlock(entityPos, dirtyState, 3);
-                    } else if (blockState.getBlock() instanceof DirtyFloorBlock) {
-                        IntegerProperty LEVEL = DirtyFloorBlock.DIRTINESS;
-                        int dirtyLevel = blockState.getValue(LEVEL);
-                        if (dirtyLevel < 2) {
-                            level.setBlock(entityPos, blockState.setValue(LEVEL, dirtyLevel + 1), 3);
-                        }
+        if (random.nextFloat() < SPAWN_CHANCE) {
+
+            BlockState stateBelow = level.getBlockState(entityPos.below());
+            if (!stateBelow.canBeReplaced() && stateBelow.isCollisionShapeFullBlock(level, entityPos.below())) {
+                if (blockState.isAir()) {
+                    BlockState dirtyState = DIRTY_FLOOR.get().defaultBlockState()
+                            .setValue(DirtyFloorBlock.DIRTINESS, 0)
+                            .setValue(DirtyFloorBlock.FACING, Direction.Plane.HORIZONTAL.getRandomDirection(level.random));
+                    level.setBlock(entityPos, dirtyState, 3);
+                } else if (blockState.getBlock() instanceof DirtyFloorBlock) {
+                    IntegerProperty LEVEL = DirtyFloorBlock.DIRTINESS;
+                    int dirtyLevel = blockState.getValue(LEVEL);
+                    if (dirtyLevel < 2) {
+                        level.setBlock(entityPos, blockState.setValue(LEVEL, dirtyLevel + 1), 3);
                     }
                 }
             }

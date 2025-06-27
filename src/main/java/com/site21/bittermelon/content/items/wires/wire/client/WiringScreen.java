@@ -1,6 +1,6 @@
 package com.site21.bittermelon.content.items.wires.wire.client;
 
-import com.site21.bittermelon.content.blocks.devices.IElectronic;
+import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
 import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
 import com.site21.bittermelon.content.items.wires.wire.networking.MakeWireConnection;
@@ -27,7 +27,7 @@ import static com.site21.bittermelon.init.neoforge.BitterDataComponents.PORT_ID;
 @OnlyIn(Dist.CLIENT)
 public class WiringScreen extends Screen {
     private static final Logger log = LoggerFactory.getLogger(WiringScreen.class);
-    private final IElectronic electronic;
+    private final ElectronicDevice electronic;
     private final InteractionHand hand;
 
     private static final int PORT_BUTTON_WIDTH = 100;
@@ -37,7 +37,7 @@ public class WiringScreen extends Screen {
     private static final int RIGHT_MARGIN = 50;
     private static final int TOP_MARGIN = 40;
 
-    public WiringScreen(@NotNull IElectronic electronic, InteractionHand hand) {
+    public WiringScreen(@NotNull ElectronicDevice electronic, InteractionHand hand) {
         super(Component.literal("Wiring"));
         this.electronic = electronic;
         this.hand = hand;

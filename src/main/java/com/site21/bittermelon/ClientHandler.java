@@ -1,6 +1,6 @@
 package com.site21.bittermelon;
 
-import com.site21.bittermelon.content.blocks.devices.IElectronic;
+import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.ContainmentPanelBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.client.IntercomScreen;
@@ -9,6 +9,8 @@ import com.site21.bittermelon.content.containment.client.ContainmentPanelScreen;
 import com.site21.bittermelon.content.economy.client.ATMScreen;
 import com.site21.bittermelon.content.items.wires.wire.client.WiringScreen;
 import com.site21.bittermelon.content.medical.client.screen.HealthScreenV2;
+import com.site21.bittermelon.content.items.writablepaper.client.PaperEditScreen;
+import com.site21.bittermelon.content.items.writablepaper.client.PaperEditScreenOld;
 import com.site21.bittermelon.content.medical.client.screen.deprecated.HealthScreen;
 import com.site21.bittermelon.content.personnel.PersonnelEntry;
 import net.minecraft.client.Minecraft;
@@ -32,11 +34,15 @@ public class ClientHandler {
         Minecraft.getInstance().setScreen(new IntercomScreen(blockEntity, canEdit));
     }
 
-    public static void displayWiringScreen(IElectronic electronic, InteractionHand hand) {
+    public static void displayWiringScreen(ElectronicDevice electronic, InteractionHand hand) {
         Minecraft.getInstance().setScreen(new WiringScreen(electronic, hand));
     }
 
     public static void displayHealthScreen(Character character, Player player, ItemStack heldItem) {
         Minecraft.getInstance().setScreen(new HealthScreenV2(character));
+    }
+
+    public static void displayPaperEditScreen(ItemStack paper) {
+        Minecraft.getInstance().setScreen(new PaperEditScreen(paper));
     }
 }

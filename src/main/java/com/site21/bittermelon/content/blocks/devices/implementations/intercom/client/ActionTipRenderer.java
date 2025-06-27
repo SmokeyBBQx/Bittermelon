@@ -24,33 +24,27 @@ public class ActionTipRenderer {
     @SubscribeEvent
     public static void onRenderGUILayer(RenderGuiLayerEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
-        Player player = mc.player;
-
-        if (player == null) return;
 
         HitResult hit = mc.hitResult;
         if (hit != null && hit.getType() == HitResult.Type.BLOCK) {
-            BlockHitResult blockHit = (BlockHitResult) hit;
-            BlockPos pos = blockHit.getBlockPos();
+            BlockPos pos = ((BlockHitResult) hit).getBlockPos();
             Level level = mc.level;
 
-            if (level != null) {
-                BlockState state = level.getBlockState(pos);
-                if (state.getBlock() instanceof IntercomBlock) {
-                    Window window = mc.getWindow();
-                    int width = window.getGuiScaledWidth();
-                    int height = window.getGuiScaledHeight();
+            if (level == null) return;
+            if (!(level.getBlockState(pos).getBlock() instanceof IntercomBlock)) return;
 
-                    Font font = mc.font;
-                    Component text = Component.literal("Shift + Right Click To Pick Up Phone");
+            Window window = mc.getWindow();
+            int width = window.getGuiScaledWidth();
+            int height = window.getGuiScaledHeight();
 
-                    int x = width - 120 - font.width(text) / 2;
-                    int y = height - 15;
+            Font font = mc.font;
+            Component text = Component.literal("Shift + Right Click To Pick Up Phone");
 
-                    GuiGraphics guiGraphics = event.getGuiGraphics();
-                    guiGraphics.drawString(font, text, x, y, 0xFFFFFF);
-                }
-            }
+            int x = width - 120 - font.width(text) / 2;
+            int y = height - 15;
+
+            GuiGraphics guiGraphics = event.getGuiGraphics();
+            guiGraphics.drawString(font, text, x, y, 0xFFFFFF);
         }
     }
 }
