@@ -66,4 +66,16 @@ public class BitterSounds {
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "horror.scare_3")));
     public static final DeferredHolder<SoundEvent, SoundEvent> SCARE_4 = SOUND_EVENTS.register("horror.scare_4",
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "horror.scare_4")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> SPARKS = SOUND_EVENTS.register("misc.sparks",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "misc.sparks")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> MALE_COUGH = SOUND_EVENTS.register("entity.cough.male_cough",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "entity.cough.male_cough")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> FEMALE_COUGH = SOUND_EVENTS.register("entity.cough.female_cough",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "entity.cough.female_cough")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> SPLAT = SOUND_EVENTS.register("misc.splat",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "misc.splat")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> HEART_BEAT = SOUND_EVENTS.register("misc.heart_beat",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "misc.heart_beat")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> BELL_SCARE = SOUND_EVENTS.register("horror.bell_scare",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "horror.bell_scare")));
 }

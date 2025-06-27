@@ -345,4 +345,14 @@ public class BitterItems {
             BitterBlocks.YELLOW_INSPECTION_POSTER.get(),
             new Item.Properties()
     ));
+
+    public static final DeferredItem<BlockItem> DISTRIBUTION_BOARD = ITEMS.register("distribution_board", () -> new BlockItem(
+            BitterBlocks.DISTRIBUTION_BOARD.get(),
+            new Item.Properties()
+    ));
+
+    public static final DeferredItem<BlockItem> SCP151 = ITEMS.register("scp151", () -> new BlockItem(
+            BitterBlocks.SCP151.get(),
+            new Item.Properties()
+    ));
 }

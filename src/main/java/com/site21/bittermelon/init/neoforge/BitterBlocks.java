@@ -16,6 +16,8 @@ import com.site21.bittermelon.content.blocks.devices.implementations.ATMBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.ContainmentPanelBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.thermometer.ThermometerBlock;
 import com.site21.bittermelon.content.blocks.poster.SmallPosterBlock;
+import com.site21.bittermelon.content.blocks.powergrid.distributionboard.DistributionBoardBlock;
+import com.site21.bittermelon.content.blocks.scp.scp151.SCP151Block;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -96,4 +98,11 @@ public class BitterBlocks {
 
     public static final DeferredBlock<SmallPosterBlock> YELLOW_INSPECTION_POSTER = BLOCKS.register("yellow_inspection_poster",
             () -> new SmallPosterBlock(BlockBehaviour.Properties.of()));
+
+    public static final DeferredBlock<DistributionBoardBlock> DISTRIBUTION_BOARD = BLOCKS.register("distribution_board",
+            () -> new DistributionBoardBlock(BlockBehaviour.Properties.of()));
+
+    public static final DeferredBlock<SCP151Block> SCP151 = BLOCKS.register("scp151",
+            () -> new SCP151Block(BlockBehaviour.Properties.of()));
+
 }

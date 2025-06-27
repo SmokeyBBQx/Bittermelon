@@ -2,7 +2,11 @@ package com.site21.bittermelon.content.entities.implementations.scp650.behavior;
 
 import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.content.entities.implementations.scp650.SCP650;
+import com.site21.bittermelon.init.neoforge.BitterSounds;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.core.Holder;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -22,7 +26,7 @@ import static com.site21.bittermelon.init.neoforge.BitterMemoryTypes.OBSERVERS;
 import static com.site21.bittermelon.init.neoforge.BitterSounds.*;
 
 public class InvalidateFoundTarget<E extends SCP650> extends ExtendedBehaviour<E> {
-    public static final SoundEvent[] SCARE_SOUNDS = {SCARE_1.get(), SCARE_2.get(), SCARE_3.get(), SCARE_4.get()};
+    private static final List<Holder<SoundEvent>> SCARE_SOUNDS = List.of(SCARE_1, SCARE_2, SCARE_3, SCARE_4);
 
     private static final List<Pair<MemoryModuleType<?>, MemoryStatus>> MEMORY_REQUIREMENTS = ObjectArrayList.of(
             Pair.of(SCARE_TARGET.get(), MemoryStatus.VALUE_PRESENT),
@@ -45,15 +49,17 @@ public class InvalidateFoundTarget<E extends SCP650> extends ExtendedBehaviour<E
             if (player == null) return;
             RandomSource random = player.getRandom();
 
-            // TODO: Playsound won't work for the individual player
-            entity.level().playSound(
-                    null,
-                    player.getOnPos(),
-                    SCARE_SOUNDS[random.nextInt(SCARE_SOUNDS.length)],
-                    SoundSource.HOSTILE,
-                    0.8f,
-                    Mth.randomBetween(random, 0.95f, 1f)
-            );
+            if (player instanceof ServerPlayer serverPlayer) {
+                serverPlayer.connection.send(new ClientboundSoundPacket(
+                        SCARE_SOUNDS.get(random.nextInt(SCARE_SOUNDS.size())),
+                        SoundSource.HOSTILE,
+                        player.getX(),
+                        player.getY(),
+                        player.getZ(),
+                        0.3f,
+                        1,
+                        player.level().getRandom().nextLong()));
+            }
         }
 
         // If the entity has been observed after it has teleported to its target, clear the target to let it find a new one.

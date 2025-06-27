@@ -157,4 +157,13 @@ public class Substances {
             1.10f,
             2.619f
     ));
+
+    public static final Supplier<Substance> LIQUID_VOMIT = SUBSTANCES.register("liquid_vomit", () -> new Substance(
+            new Substance.Properties(),
+            "Liquid Vomit",
+            0xFFCFBD8B,
+            32,
+            1.10f,
+            2.619f
+    ));
 }

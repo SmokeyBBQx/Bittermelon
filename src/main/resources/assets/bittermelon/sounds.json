@@ -161,6 +161,52 @@
       "bittermelon:horror/scare_4"
     ]
   },
+  "misc.sparks": {
+    "category": "blocks",
+    "sounds": [
+      "bittermelon:misc/sparks"
+    ]
+  },
+  "entity.cough.male_cough": {
+    "category": "player",
+    "sounds": [
+      "bittermelon:entity/cough/male_cough1",
+      "bittermelon:entity/cough/male_cough2",
+      "bittermelon:entity/cough/male_cough3",
+      "bittermelon:entity/cough/male_cough4",
+      "bittermelon:entity/cough/male_cough5",
+      "bittermelon:entity/cough/male_cough6"
+    ]
+  },
+  "entity.cough.female_cough": {
+    "category": "player",
+    "sounds": [
+      "bittermelon:entity/cough/female_cough1",
+      "bittermelon:entity/cough/female_cough2",
+      "bittermelon:entity/cough/female_cough3",
+      "bittermelon:entity/cough/female_cough4",
+      "bittermelon:entity/cough/female_cough5",
+      "bittermelon:entity/cough/female_cough6"
+    ]
+  },
+  "misc.splat": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:misc/splat"
+    ]
+  },
+  "misc.heart_beat": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:misc/heart_beat"
+    ]
+  },
+  "horror.bell_scare": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:horror/bell_scare"
+    ]
+  },
   "container.toolbox_open": {
     "category": "neutral",
     "sounds": [
