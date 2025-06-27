@@ -3,20 +3,16 @@ package com.site21.bittermelon.content.blocks.scp.scp151.client;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.init.neoforge.BitterMobEffects;
+import com.site21.bittermelon.client.shaders.BlurShader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.PostChain;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import net.neoforged.neoforge.client.event.ViewportEvent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -24,14 +20,12 @@ import javax.annotation.Nullable;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.DROWNING;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
-public class SCP151VisualEffectsRenderer {
+public class SCP151EffectRenderer {
     private static final ResourceLocation VIGNETTE_LOCATION = ResourceLocation.withDefaultNamespace("textures/misc/vignette.png");
-    private static PostChain blurShader;
-    private static final ResourceLocation BLUR_SHADER = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "shaders/post/blur.json");
 
     @SubscribeEvent
     public static void onRenderLevelStage(@NotNull RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS) return;
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_LEVEL) return;
 
         Player player = Minecraft.getInstance().player;
         if (player == null || !player.hasEffect(DROWNING)) return;
@@ -42,23 +36,19 @@ public class SCP151VisualEffectsRenderer {
 
         if (amplifier < 4) return;
 
-        if (blurShader == null) {
-            try {
-                blurShader = new PostChain(mc.getTextureManager(), mc.getResourceManager(), mc.getMainRenderTarget(), BLUR_SHADER);
-                blurShader.resize(mc.getWindow().getWidth(), mc.getWindow().getHeight());
-            } catch (Exception e) {
-                return;
-            }
-        }
+        BlurShader.resize(mc.getWindow().getWidth(), mc.getWindow().getHeight());
 
         float wavePhase = (float) Math.sin(gameTime * 0.02 + amplifier * 0.3);
         float consciousnessWave = Math.max(0, wavePhase);
         consciousnessWave = consciousnessWave * consciousnessWave;
         float blurIntensity = consciousnessWave * Math.min(amplifier * 2.0f, 8.0f);
 
+        RenderSystem.disableBlend();
+        RenderSystem.disableDepthTest();
+        RenderSystem.resetTextureMatrix();
+
         if (blurIntensity > 0.1f) {
-            blurShader.setUniform("Radius", blurIntensity);
-            blurShader.process(event.getPartialTick().getGameTimeDeltaTicks());
+            BlurShader.processBlurShader(event.getPartialTick().getGameTimeDeltaTicks(), blurIntensity);
         }
     }
 
