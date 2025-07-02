@@ -4,7 +4,7 @@ import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.medical.compartments.deprecated.CompartmentOld;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
 import com.site21.bittermelon.content.medical.compartments.deprecated.InjuryOld;
-import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
+import com.site21.bittermelon.content.medical.medicalstats.deprecated.MedicalStatsOld;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 

@@ -2,11 +2,11 @@ package com.site21.bittermelon.content.medical.factory;
 
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.medical.blood.BloodType;
+import com.site21.bittermelon.content.medical.compartments.MedicalAttribute;
 import com.site21.bittermelon.content.medical.compartments.deprecated.CompartmentOld;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
-import com.site21.bittermelon.content.medical.compartments.FunctionType;
 import com.site21.bittermelon.content.medical.compartments.deprecated.bodyparts.BodyPart;
-import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
+import com.site21.bittermelon.content.medical.medicalstats.deprecated.MedicalStatsOld;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,13 +48,13 @@ public class HumanFactoryOld implements AnatomyFactoryOld {
 
         // Brain regions
         BodyPart frontalLobe = createBodyPart("Frontal Lobe", meninges, 5, EnumSet.of(CompartmentTag.SOFT_TISSUE));
-        frontalLobe.setAttribute(FunctionType.BRAIN_MOTOR_ABILITY, 1f);
+        frontalLobe.setAttribute(MedicalAttribute.BRAIN_MOTOR_ABILITY, 1f);
         BodyPart parietalLobe = createBodyPart("Parietal Lobe", meninges, 5, EnumSet.of(CompartmentTag.SOFT_TISSUE));
         BodyPart temporalLobe = createBodyPart("Temporal Lobe", meninges, 4, EnumSet.of(CompartmentTag.SOFT_TISSUE));
         BodyPart occipitalLobe = createBodyPart("Occipital Lobe", meninges, 3, EnumSet.of(CompartmentTag.SOFT_TISSUE));
         BodyPart cerebellum = createBodyPart("Cerebellum", meninges, 4, EnumSet.of(CompartmentTag.SOFT_TISSUE));
         BodyPart brainstem = createBodyPart("Brainstem", meninges, 2, EnumSet.of(CompartmentTag.SOFT_TISSUE));
-        brainstem.setAttribute(FunctionType.BRAIN_VITALS, 1f);
+        brainstem.setAttribute(MedicalAttribute.BRAIN_VITALS, 1f);
 
         // Face components
         BodyPart leftEye = createRevealedBodyPart("Left Eye", head, 2, EnumSet.of(CompartmentTag.SOFT_TISSUE));
@@ -63,10 +63,10 @@ public class HumanFactoryOld implements AnatomyFactoryOld {
         BodyPart rightEar = createRevealedBodyPart("Right Ear", head, 1, EnumSet.of(CompartmentTag.SOFT_TISSUE));
         BodyPart nose = createRevealedBodyPart("Nose", head, 2, EnumSet.of(CompartmentTag.SOFT_TISSUE));
         BodyPart mouth = createRevealedBodyPart("Mouth", head, 2, EnumSet.of(CompartmentTag.SOFT_TISSUE));
-        mouth.setAttribute(FunctionType.BITE, 1f);
+        mouth.setAttribute(MedicalAttribute.BITE, 1f);
         BodyPart tongue = createRevealedBodyPart("Tongue", mouth, 2, EnumSet.of(CompartmentTag.SOFT_TISSUE));
         BodyPart teeth = createRevealedBodyPart("Teeth", mouth, 2, EnumSet.of(CompartmentTag.HARD_TISSUE));
-        teeth.setAttribute(FunctionType.BITE, 1f);
+        teeth.setAttribute(MedicalAttribute.BITE, 1f);
 
         compartments.addAll(Arrays.asList(headSkin, headFat, skull, brain, meninges,
                 frontalLobe, parietalLobe, temporalLobe, occipitalLobe, cerebellum, brainstem, leftEye, rightEye, leftEar, rightEar, nose, mouth, tongue, teeth));
@@ -90,12 +90,12 @@ public class HumanFactoryOld implements AnatomyFactoryOld {
 
         // Cardiopulmonary system
         BodyPart heart = createBodyPart("Heart", pleuralMembrane, 30, EnumSet.of(CompartmentTag.SOFT_TISSUE));
-        heart.setAttribute(FunctionType.CIRCULATION, 1f);
+        heart.setAttribute(MedicalAttribute.CIRCULATION, 1f);
         BodyPart pericardium = createBodyPart("Pericardium", heart, 2, EnumSet.of(CompartmentTag.SOFT_TISSUE));
         BodyPart leftLung = createBodyPart("Left Lung", pleuralMembrane, 40, EnumSet.of(CompartmentTag.SOFT_TISSUE));
-        leftLung.setAttribute(FunctionType.RESPIRATORY, 1f);
+        leftLung.setAttribute(MedicalAttribute.RESPIRATION, 1f);
         BodyPart rightLung = createBodyPart("Right Lung", pleuralMembrane, 40, EnumSet.of(CompartmentTag.SOFT_TISSUE));
-        rightLung.setAttribute(FunctionType.RESPIRATORY, 1f);
+        rightLung.setAttribute(MedicalAttribute.RESPIRATION, 1f);
 
         // Other organs
         BodyPart thymus = createBodyPart("Thymus", pleuralMembrane, 5, EnumSet.of(CompartmentTag.SOFT_TISSUE));
@@ -182,32 +182,32 @@ public class HumanFactoryOld implements AnatomyFactoryOld {
         BodyPart tendons = createBodyPart(String.format("Tendons", side, limbType), muscles, isArm ? 10 : 20, EnumSet.of(CompartmentTag.SOFT_TISSUE));
 
         if (isArm) {
-            skin.setAttribute(FunctionType.MANIPULATION, 1f);
-            fat.setAttribute(FunctionType.MANIPULATION, 1f);
-            muscles.setAttribute(FunctionType.MANIPULATION, 1f);
-            tendons.setAttribute(FunctionType.MANIPULATION, 1f);
+            skin.setAttribute(MedicalAttribute.MANIPULATION, 1f);
+            fat.setAttribute(MedicalAttribute.MANIPULATION, 1f);
+            muscles.setAttribute(MedicalAttribute.MANIPULATION, 1f);
+            tendons.setAttribute(MedicalAttribute.MANIPULATION, 1f);
             BodyPart humerus = createBodyPart(side + " Humerus", muscles, 30, EnumSet.of(CompartmentTag.HARD_TISSUE));
-            humerus.setAttribute(FunctionType.MANIPULATION, 1f);
+            humerus.setAttribute(MedicalAttribute.MANIPULATION, 1f);
             BodyPart radiusUlna = createBodyPart(side + " Radius Ulna", muscles, 20, EnumSet.of(CompartmentTag.HARD_TISSUE));
-            radiusUlna.setAttribute(FunctionType.MANIPULATION, 1f);
+            radiusUlna.setAttribute(MedicalAttribute.MANIPULATION, 1f);
             BodyPart hand = createRevealedBodyPart(side + " Hand", limb, 20, EnumSet.of(CompartmentTag.SOFT_TISSUE));
-            hand.setAttribute(FunctionType.MANIPULATION, 1f);
+            hand.setAttribute(MedicalAttribute.MANIPULATION, 1f);
             BodyPart wrist = createRevealedBodyPart(side + " Wrist", limb, 10, EnumSet.of(CompartmentTag.SOFT_TISSUE));
-            wrist.setAttribute(FunctionType.MANIPULATION, 1f);
+            wrist.setAttribute(MedicalAttribute.MANIPULATION, 1f);
             compartments.addAll(Arrays.asList(humerus, radiusUlna, hand, wrist));
         } else {
-            skin.setAttribute(FunctionType.MOVEMENT, 1f);
-            fat.setAttribute(FunctionType.MOVEMENT, 1f);
-            muscles.setAttribute(FunctionType.MOVEMENT, 1f);
-            tendons.setAttribute(FunctionType.MOVEMENT, 1f);
+            skin.setAttribute(MedicalAttribute.MOVEMENT, 1f);
+            fat.setAttribute(MedicalAttribute.MOVEMENT, 1f);
+            muscles.setAttribute(MedicalAttribute.MOVEMENT, 1f);
+            tendons.setAttribute(MedicalAttribute.MOVEMENT, 1f);
             BodyPart femur = createBodyPart(side + " Femur", muscles, 50, EnumSet.of(CompartmentTag.HARD_TISSUE));
-            femur.setAttribute(FunctionType.MOVEMENT, 1f);
+            femur.setAttribute(MedicalAttribute.MOVEMENT, 1f);
             BodyPart tibiaFibula = createBodyPart(side + " Tibia Fibula", muscles, 40, EnumSet.of(CompartmentTag.HARD_TISSUE));
-            tibiaFibula.setAttribute(FunctionType.MOVEMENT, 1f);
+            tibiaFibula.setAttribute(MedicalAttribute.MOVEMENT, 1f);
             BodyPart foot = createRevealedBodyPart(side + " Foot", limb, 30, EnumSet.of(CompartmentTag.SOFT_TISSUE));
-            foot.setAttribute(FunctionType.MOVEMENT, 1f);
+            foot.setAttribute(MedicalAttribute.MOVEMENT, 1f);
             BodyPart ankle = createRevealedBodyPart(side + " Ankle", limb, 10, EnumSet.of(CompartmentTag.SOFT_TISSUE));
-            ankle.setAttribute(FunctionType.MOVEMENT, 1f);
+            ankle.setAttribute(MedicalAttribute.MOVEMENT, 1f);
             compartments.addAll(Arrays.asList(femur, tibiaFibula, foot, ankle));
         }
 

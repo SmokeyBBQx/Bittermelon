@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.medical.client.screen;
+package com.site21.bittermelon.content.medical.client.screen.widget;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.narration.NarrationElementOutput;

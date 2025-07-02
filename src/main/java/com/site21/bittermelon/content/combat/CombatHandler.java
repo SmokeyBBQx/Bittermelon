@@ -150,18 +150,20 @@ public class CombatHandler {
     }
 
     private static @NotNull String formatMultipleInjuries(@NotNull List<InjuryResult> injuryResults, float performance, MedicalStats medicalStats) {
-        InjuryResult deepestResult = injuryResults.stream()
-                .max(Comparator.comparingInt(a -> getCompartmentDepth(a.injury().getParent(medicalStats), medicalStats)))
-                .orElse(injuryResults.getLast());
+//        InjuryResult deepestResult = injuryResults.stream()
+//                .max(Comparator.comparingInt(a -> getCompartmentDepth(a.injury().getParent(medicalStats), medicalStats)))
+//                .orElse(injuryResults.getLast());
+//
+//        String targetName = deepestResult.injury().getName().toLowerCase();
+//        if (deepestResult.injury().getParent(medicalStats) != null) {
+//            targetName = deepestResult.injury().getParent(medicalStats).getName().toLowerCase();
+//        }
+//        String action = deepestResult.message().split(" ")[0];
+//
+//        return String.format("the injury reaching through and %s %s the %s",
+//                getSeverityDescription(performance), action, targetName);
 
-        String targetName = deepestResult.injury().getName().toLowerCase();
-        if (deepestResult.injury().getParent(medicalStats) != null) {
-            targetName = deepestResult.injury().getParent(medicalStats).getName().toLowerCase();
-        }
-        String action = deepestResult.message().split(" ")[0];
-
-        return String.format("the injury reaching through and %s %s the %s",
-                getSeverityDescription(performance), action, targetName);
+        return null;
     }
 
     private static @NotNull String formatTwoInjuries(@NotNull List<InjuryResult> injuryResults, float performance) {
@@ -177,15 +179,17 @@ public class CombatHandler {
     }
 
     private static int getCompartmentDepth(CompartmentInstance compartment, MedicalStats medicalStats) {
-        int depth = 0;
-        CompartmentInstance current = compartment;
-        if (current == null) return 0;
+//        int depth = 0;
+//        CompartmentInstance current = compartment;
+//        if (current == null) return 0;
+//
+//        while (current.getParent(medicalStats) != null) {
+//            depth++;
+//            current = current.getParent(medicalStats);
+//        }
+//        return depth;
 
-        while (current.getParent(medicalStats) != null) {
-            depth++;
-            current = current.getParent(medicalStats);
-        }
-        return depth;
+        return 0;
     }
 
     @Contract(pure = true)

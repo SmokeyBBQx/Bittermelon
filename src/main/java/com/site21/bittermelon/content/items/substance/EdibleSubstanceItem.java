@@ -4,6 +4,7 @@ import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.substance.data.SubstanceContents;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -51,7 +52,7 @@ public class EdibleSubstanceItem extends SubstanceContainerItem {
 
         playBurpSound(level, entity.getOnPos());
 
-        return consumeSubstances(stack, CONSUME_RATE);
+        return consumeSubstances(stack, CONSUME_RATE, entity);
     }
 
     private void playBurpSound(@NotNull Level level, BlockPos pos) {

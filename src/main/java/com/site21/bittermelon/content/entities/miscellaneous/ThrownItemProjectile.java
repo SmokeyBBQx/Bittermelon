@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.entities.miscellaneous;
 
 import com.site21.bittermelon.content.items.base.BaseItem;
-import com.site21.bittermelon.content.items.scps.SCP2398;
+import com.site21.bittermelon.content.items.scps.scp2398.SCP2398;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -13,7 +13,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BellBlock;
 import net.minecraft.world.level.block.ButtonBlock;
@@ -22,7 +21,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static com.site21.bittermelon.init.neoforge.BitterEntities.THROWN_ITEM_PROJECTILE;
 import static com.site21.bittermelon.init.neoforge.BitterItems.SCP_2398;

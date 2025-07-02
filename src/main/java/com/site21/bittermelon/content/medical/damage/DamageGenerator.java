@@ -45,49 +45,50 @@ public abstract class DamageGenerator {
     public @Nullable DamageResult generateDamage(MedicalStats medicalStats, int area, int minDepth, int maxDepth, float damage, Character character, @NotNull LivingEntity entity) {
         if (entity.level().isClientSide) return null;
 
-        List<CompartmentInstance> initialCompartments = getInitialCompartments(medicalStats);
-        if (initialCompartments.isEmpty()) return null;
-
-        CompartmentInstance targetBodyPart = initialCompartments.get(random.nextInt(initialCompartments.size()));
-        List<UUID> validChildren = filterCompartments(targetBodyPart.getChildren(), medicalStats);
+//        List<CompartmentInstance> initialCompartments = getInitialCompartments(medicalStats);
+//        if (initialCompartments.isEmpty()) return null;
+//
+//        CompartmentInstance targetBodyPart = initialCompartments.get(random.nextInt(initialCompartments.size()));
+//        List<UUID> validChildren = filterCompartments(targetBodyPart.getChildren(), medicalStats);
         List<InjuryResult> injuryResults = new ArrayList<>();
 
-        for (int i = 0; i < area; i++) {
-            InjuryResult injuryResult = inflictInjury(validChildren, damage, medicalStats, entity);
-            if (injuryResult == null) return null;
-
-            injuryResults.add(injuryResult);
-
-            CompartmentInstance injury = injuryResult.injury();
-            medicalStats.addCompartment(injury);
-
-            int depth = minDepth + (int) (Math.pow(random.nextFloat(), 2) * (maxDepth - minDepth));
-            for (int j = 0; j < depth; j++) {
-                if (injury.getParent(medicalStats) == null) break;
-
-                injuryResult = inflictInjury(filterCompartments(injury.getParent(medicalStats).getChildren(), medicalStats),
-                        injury.getMaxHealth() / 2, medicalStats, entity);
-                if (injuryResult == null) break;
-
-                if (injuryResult.injury().getParent(medicalStats) == null) break;
-
-                if (injuryResult.injury().getHealth(medicalStats) > injuryResult.injury().getParent(medicalStats).getHealth(medicalStats)) {
-                    depth++;
-                }
-
-                injuryResults.add(injuryResult);
-
-                injury = injuryResult.injury();
-                medicalStats.addCompartment(injury);
-            }
-        }
+//        for (int i = 0; i < area; i++) {
+//            InjuryResult injuryResult = inflictInjury(validChildren, damage, medicalStats, entity);
+//            if (injuryResult == null) return null;
+//
+//            injuryResults.add(injuryResult);
+//
+//            CompartmentInstance injury = injuryResult.injury();
+//            medicalStats.addCompartment(injury);
+//
+//            int depth = minDepth + (int) (Math.pow(random.nextFloat(), 2) * (maxDepth - minDepth));
+//            for (int j = 0; j < depth; j++) {
+//                if (injury.getParent(medicalStats) == null) break;
+//
+//                injuryResult = inflictInjury(filterCompartments(injury.getParent(medicalStats).getChildren(), medicalStats),
+//                        injury.getMaxHealth() / 2, medicalStats, entity);
+//                if (injuryResult == null) break;
+//
+//                if (injuryResult.injury().getParent(medicalStats) == null) break;
+//
+//                if (injuryResult.injury().getHealth(medicalStats) > injuryResult.injury().getParent(medicalStats).getHealth(medicalStats)) {
+//                    depth++;
+//                }
+//
+//                injuryResults.add(injuryResult);
+//
+//                injury = injuryResult.injury();
+//                medicalStats.addCompartment(injury);
+//            }
+//        }
 
         if (injuryResults.isEmpty()) {
-            Bittermelon.LOGGER.error("No injuries for damage inflicted upon {} with area: {} minDepth: {} maxDepth: {} damage: {} for character: {} ({})", targetBodyPart, area, minDepth, maxDepth, damage, character.getName(), character.getUUID());
+//            Bittermelon.LOGGER.error("No injuries for damage inflicted upon {} with area: {} minDepth: {} maxDepth: {} damage: {} for character: {} ({})", targetBodyPart, area, minDepth, maxDepth, damage, character.getName(), character.getUUID());
             return null;
         }
 
-        return new DamageResult(targetBodyPart, injuryResults);
+//        return new DamageResult(targetBodyPart, injuryResults);
+        return null;
     }
 
     public @Nullable DamageResult generateDamage(@NotNull MedicalStats medicalStats, int maxArea, int minDepth, int maxDepth, float damage, float performance, Character character, LivingEntity entity) {
@@ -110,14 +111,14 @@ public abstract class DamageGenerator {
         }
 
         if (target.hasTag(CompartmentTag.MAJOR_BODY_PART)) {
-            return inflictInjury(new ArrayList<>(target.getChildren()), damage, medicalStats, entity);
+//            return inflictInjury(new ArrayList<>(target.getChildren()), damage, medicalStats, entity);
         }
 
         float injuryDamage = 1 + random.nextFloat() * damage;
 
-        if (shouldDismember && injuryDamage > target.getHealth(medicalStats) && random.nextFloat() > 0.5f) {
-            return handleDismemberment(target, medicalStats, entity);
-        }
+//        if (shouldDismember && injuryDamage > target.getHealth(medicalStats) && random.nextFloat() > 0.5f) {
+//            return handleDismemberment(target, medicalStats, entity);
+//        }
 
         return createInjury(injuryDamage, target, medicalStats);
     }
@@ -126,45 +127,48 @@ public abstract class DamageGenerator {
 
     @Contract("_, _, _ -> new")
     private @NotNull InjuryResult handleDismemberment(@NotNull CompartmentInstance target, @NotNull MedicalStats medicalStats, LivingEntity entity) {
-        CompartmentInstance amputation = new CompartmentInstance(Compartments.TRAUMATIC_AMPUTATION.get(), target.getMaxHealth(), "Traumatic Amputation" + " (" + target.getName() + ")", false);
-        amputation.setParent(target.getParentID());
-        medicalStats.addCompartment(amputation);
-
-        medicalStats.removeCompartment(target);
-        String message = target.getName().toLowerCase() + " was dismembered.";
-
-        if (target.getItem() != null) {
-            Entity itemEntity = target.getItem().getEntityRepresentation();
-            if (itemEntity != null) {
-                entity.level().addFreshEntity(itemEntity);
-            }
-        }
-
-        return new InjuryResult(amputation, message);
-    }
-
-    private List<UUID> filterCompartments(@NotNull HashSet<UUID> compartments, MedicalStats medicalStats) {
-        return compartments.stream()
-                .filter(id -> isValidCompartment(id, medicalStats))
-                .toList();
-    }
-
-    protected List<CompartmentInstance> getInitialCompartments(@NotNull MedicalStats medicalStats) {
-        return medicalStats.getCompartments().values().stream()
-                .filter(compartment -> isValidInitialCompartment(compartment, medicalStats))
-                .toList();
-    }
-
-    private boolean isValidInitialCompartment(@NotNull CompartmentInstance compartment, MedicalStats medicalStats) {
-        return compartment.hasTag(CompartmentTag.MAJOR_BODY_PART)
-                && !compartment.isHidden()
-                && compartment.getParent(medicalStats) != null
-                && compartment.getParent(medicalStats).hasTag(CompartmentTag.MAJOR_BODY_PART);
-    }
-
-    protected boolean isValidCompartment(@NotNull UUID compartmentID, @NotNull MedicalStats medicalStats) {
-        if (medicalStats.getCompartment(compartmentID) == null) return false;
-        return medicalStats.getCompartment(compartmentID).getTags().stream().anyMatch(allowedCompartments::contains);
+//        CompartmentInstance amputation = new CompartmentInstance(Compartments.TRAUMATIC_AMPUTATION.get(), target.getMaxHealth(), "Traumatic Amputation" + " (" + target.getName() + ")", false);
+//        amputation.setParent(target.getParentID());
+//        medicalStats.addCompartment(amputation);
+//
+//        medicalStats.removeCompartment(target);
+//        String message = target.getName().toLowerCase() + " was dismembered.";
+//
+//        if (target.getItemHolder() != null) {
+//            Entity itemEntity = target.getItemHolder().getEntityRepresentation();
+//            if (itemEntity != null) {
+//                entity.level().addFreshEntity(itemEntity);
+//            }
+//        }
+//
+//        return new InjuryResult(amputation, message);
+//    }
+//
+//    private List<UUID> filterCompartments(@NotNull HashSet<UUID> compartments, MedicalStats medicalStats) {
+//        return compartments.stream()
+//                .filter(id -> isValidCompartment(id, medicalStats))
+//                .toList();
+//    }
+//
+//    protected List<CompartmentInstance> getInitialCompartments(@NotNull MedicalStats medicalStats) {
+//        return medicalStats.getCompartments().values().stream()
+//                .filter(compartment -> isValidInitialCompartment(compartment, medicalStats))
+//                .toList();
+//    }
+//
+//    private boolean isValidInitialCompartment(@NotNull CompartmentInstance compartment, MedicalStats medicalStats) {
+//        return compartment.hasTag(CompartmentTag.MAJOR_BODY_PART)
+//                && !compartment.isHidden()
+//                && compartment.getParent(medicalStats) != null
+//                && compartment.getParent(medicalStats).hasTag(CompartmentTag.MAJOR_BODY_PART);
+//    }
+//
+//    protected boolean isValidCompartment(@NotNull UUID compartmentID, @NotNull MedicalStats medicalStats) {
+//        if (medicalStats.getCompartment(compartmentID) == null) return false;
+//        return medicalStats.getCompartment(compartmentID).getTags().stream().anyMatch(allowedCompartments::contains);
+//    }
+        return null;
     }
 }
+
 

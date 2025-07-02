@@ -10,9 +10,9 @@ public class Reactions {
     private static final List<Reaction> ALL_REACTIONS = new ArrayList<>();
 
     public static final Reaction HYDROGEN_PEROXIDE_DECOMPOSITION = new  Reaction.ReactionBuilder()
-            .addReactant(LIQUID_HYDROGEN_PEROXIDE.get(), 2, 1)
-            .addProduct(LIQUID_WATER.get(), 2)
-            .addProduct(GASEOUS_OXYGEN.get(), 1)
+            .addReactant(HYDROGEN_PEROXIDE.get(), 2, 1)
+            .addProduct(WATER.get(), 2)
+            .addProduct(OXYGEN.get(), 1)
             .activationEnergy(75.3f)
             .preExponentialFactor(2.9e10f)
             .enthalpyChange(-98.2f)

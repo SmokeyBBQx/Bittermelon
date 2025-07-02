@@ -78,4 +78,6 @@ public class BitterSounds {
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "misc.heart_beat")));
     public static final DeferredHolder<SoundEvent, SoundEvent> BELL_SCARE = SOUND_EVENTS.register("horror.bell_scare",
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "horror.bell_scare")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> SPLATTER = SOUND_EVENTS.register("misc.splatter",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "misc.splatter")));
 }

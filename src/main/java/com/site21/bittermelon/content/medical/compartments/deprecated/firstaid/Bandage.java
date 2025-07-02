@@ -1,10 +1,10 @@
 package com.site21.bittermelon.content.medical.compartments.deprecated.firstaid;
 
+import com.site21.bittermelon.content.medical.compartments.MedicalAttribute;
 import com.site21.bittermelon.content.medical.compartments.deprecated.CompartmentOld;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
-import com.site21.bittermelon.content.medical.compartments.FunctionType;
 import com.site21.bittermelon.content.medical.compartments.deprecated.conditionsold.Bleed;
-import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
+import com.site21.bittermelon.content.medical.medicalstats.deprecated.MedicalStatsOld;
 
 import java.util.EnumSet;
 
@@ -19,7 +19,7 @@ public class Bandage extends FirstAid {
         modifyHealth(-0.0001f);
 
         if (getHealth() <= 0) {
-            setAttribute(FunctionType.BLEED, 0f);
+            setAttribute(MedicalAttribute.BLEED, 0f);
             return;
         }
 
@@ -27,10 +27,10 @@ public class Bandage extends FirstAid {
         float totalBleed = 0;
         for (CompartmentOld compartment : owner.getChildren()) {
             if (compartment instanceof Bleed bleed) {
-                totalBleed += bleed.getAttribute(FunctionType.BLEED);
+                totalBleed += bleed.getAttribute(MedicalAttribute.BLEED);
             }
         }
-        setAttribute(FunctionType.BLEED, -totalBleed * healthPercentage * 0.9f);
+        setAttribute(MedicalAttribute.BLEED, -totalBleed * healthPercentage * 0.9f);
     }
 
     @Override

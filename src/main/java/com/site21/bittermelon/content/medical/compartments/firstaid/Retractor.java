@@ -17,15 +17,15 @@ public class Retractor extends Compartment {
     public void onExtract(MedicalStats medicalStats, CompartmentInstance instance) {
         super.onExtract(medicalStats, instance);
 
-        if (instance.getChildren().stream().anyMatch(childID ->
-                medicalStats.getCompartment(childID).getCompartment() instanceof Retractor)) return;
-
-        for (UUID childID : instance.getParent(medicalStats).getChildren()) {
-            CompartmentInstance child = medicalStats.getCompartment(childID);
-            if (child != null) {
-                child.setHidden(true);
-            }
-        }
+//        if (instance.getChildren().stream().anyMatch(childID ->
+//                medicalStats.getCompartment(childID).getCompartment() instanceof Retractor)) return;
+//
+//        for (UUID childID : instance.getParent(medicalStats).getChildren()) {
+//            CompartmentInstance child = medicalStats.getCompartment(childID);
+//            if (child != null) {
+//                child.setHidden(true);
+//            }
+//        }
     }
 
     @Override

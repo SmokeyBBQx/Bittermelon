@@ -2,8 +2,11 @@ package com.site21.bittermelon.content.medical.compartments;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.init.neoforge.BitterDataComponents;
+import com.site21.bittermelon.init.neoforge.BitterItems;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -27,12 +30,6 @@ public class Compartment {
     }
 
     public void tick(MedicalStats medicalStats, @NotNull CompartmentInstance instance) {
-        float functionMultiplier = 1;
-//        for (UUID childID : instance.getChildren()) {
-//            CompartmentInstance child = medicalStats.getCompartment(childID);
-//            functionMultiplier *= child.getAttribute(FunctionType.FUNCTION);
-//        }
-        instance.updateFunction(functionMultiplier, medicalStats);
     }
 
     public void onExtract(MedicalStats medicalStats, CompartmentInstance instance) {
@@ -49,5 +46,11 @@ public class Compartment {
 
     public Holder<Compartment> builtInRegistryHolder() {
         return COMPARTMENT_REGISTRY.getHolder(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, id)).get();
+    }
+
+    public ItemStack createItemStack(@NotNull CompartmentInstance instance) {
+        ItemStack stack = new ItemStack(BitterItems.BODY_PART.get());
+        stack.set(BitterDataComponents.COMPARTMENT, instance.toData());
+        return stack;
     }
 }

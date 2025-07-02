@@ -314,5 +314,11 @@ public class PayloadRegistration {
                 SetShakeTicks.STREAM_CODEC,
                 SetShakeTicks::handle
         );
+
+        registrar.playToServer(
+                MoveCompartment.TYPE,
+                MoveCompartment.STREAM_CODEC,
+                MoveCompartment::handle
+        );
     }
 }

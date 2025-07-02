@@ -1,6 +1,5 @@
 package com.site21.bittermelon.content.blocks.substance.fluid;
 
-import com.site21.bittermelon.content.substance.Substance;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import com.site21.bittermelon.content.substance.reactions.ReactionContainer;
 import com.site21.bittermelon.content.substance.reactions.ReactionHandler;
@@ -231,9 +230,10 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
     }
 
     public float getHeatCapacity() {
-        return substances.stream()
-                .map(stack -> stack.getSubstance().getHeatCapacity() * stack.getAmount())
-                .reduce(0f, Float::sum);
+//        return substances.stream()
+//                .map(stack -> stack.getSubstance().getHeatCapacity() * stack.getAmount())
+//                .reduce(0f, Float::sum);
+        return 0f;
     }
 
     public float getSlipperiness() {
@@ -241,7 +241,7 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
 
         return substances.isEmpty() ? 0f :
                 substances.stream()
-                        .map(stack -> stack.getSubstance().getProperties().getSlipperiness())
+                        .map(stack -> stack.getSubstance().getSlipperiness())
                         .reduce(0f, Float::sum) / substances.size();
     }
 

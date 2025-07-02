@@ -1,8 +1,8 @@
 package com.site21.bittermelon.content.medical.compartments.deprecated.bodyparts;
 
+import com.site21.bittermelon.content.medical.compartments.MedicalAttribute;
 import com.site21.bittermelon.content.medical.compartments.deprecated.CompartmentOld;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
-import com.site21.bittermelon.content.medical.compartments.FunctionType;
 import com.site21.bittermelon.content.medical.compartments.deprecated.conditionsold.Cut;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ public class BodyPart extends CompartmentOld {
     public BodyPart(EnumSet<CompartmentTag> types, String name, CompartmentOld owner, float maxHealth) {
         super(types, name, owner, maxHealth);
         connective.add(this);
-        setAttribute(FunctionType.NERVOUS, 1f);
+        setAttribute(MedicalAttribute.NERVOUS, 1f);
     }
 
     public BodyPart(EnumSet<CompartmentTag> types, String name, CompartmentOld owner, float maxHealth, boolean hidden) {

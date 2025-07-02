@@ -1,104 +1,94 @@
 package com.site21.bittermelon.content.substance;
 
-import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.content.medical.drugs.Drug;
+import com.site21.bittermelon.content.medical.drugs.DrugHelper;
+import com.site21.bittermelon.content.medical.drugs.DrugInstance;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.resources.ResourceLocation;
-
-import java.util.Map;
+import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.SUBSTANCE_REGISTRY;
 
 public class Substance {
-    private final Properties properties;
-    private float absorptionRate;
-    private final int color;
     private final String name;
-    private final float molarMass;
-    private final float density;
-    private final float heatCapacity;
+    private final Substance.Properties properties;
 
-    public Substance(Properties properties, String name, int color, float molarMass, float density, float heatCapacity) {
-        this.properties = properties;
+    public Substance(String name, Properties properties) {
         this.name = name;
-        this.color = color;
-        this.molarMass = molarMass;
-        this.density = density;
-        this.heatCapacity = heatCapacity;
+        this.properties = properties;
     }
 
-    public Properties getProperties() {
-        return properties;
+    public void onTouch(SubstanceStack stack, LivingEntity entity) {
+
     }
 
-    public float getAbsorptionRate() {
-        return absorptionRate;
+    public void onConsume(SubstanceStack stack, LivingEntity entity) {
+        if (properties.drug != null) {
+            DrugHelper.ingestDrug(entity, new DrugInstance(properties.drug, stack.getVolume()));
+        }
     }
 
     public String getName() {
         return name;
     }
 
-    public Integer getColor() {
-        return color;
-    }
-
-    public float getMolarMass() {
-        return molarMass;
-    }
-
-    public float getDensity() {
-        return density;
-    }
-
-    public float getSpecificVolume() {
-        return molarMass / density;
-    }
-
-    public float getHeatCapacity() {
-        return heatCapacity;
-    }
-
-    public Map<Substance, Integer> getFormula() {
-        return null;
-    }
-
     public DataComponentMap components() {
         return DataComponentMap.EMPTY;
     }
 
-    public Holder<Substance> builtInRegistryHolder() {
-        // TODO: Add an actual way to get the holder
-        String name = getName().toLowerCase().replace(" ", "_");
+    public float getMolarVolume() {
+        return properties.molarMass / properties.density;
+    }
 
-        return SUBSTANCE_REGISTRY.getHolder(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, name)).get();
-//        return this.holder;
+    public float getSlipperiness() {
+        return properties.slipperiness;
+    }
+
+    public String getFlavor() {
+        return properties.flavor;
+    }
+
+    public Integer getColor() {
+        return properties.color;
+    }
+
+    public @NotNull Holder<Substance> builtInRegistryHolder() {
+        return SUBSTANCE_REGISTRY.getHolder(SUBSTANCE_REGISTRY.getId(this)).orElseThrow();
     }
 
     public static class Properties {
-        private float transparency = 1;
-        private float slipperiness = 0.1f;
-        private String flavor;
-        private String smell;
+        float molarMass = 18.02f;
+        float density = 1;
+        float transparency = 1;
+        float slipperiness = 0.1f;
+        int color = 0xFFAAD5DB;
+        String flavor = "";
+        String smell = "";
+        Holder<Drug> drug;
 
-        public float getTransparency() {
-            return transparency;
+        public Properties molarMass(float molarMass) {
+            this.molarMass = molarMass;
+            return this;
         }
 
-        public float getSlipperiness() {
-            return slipperiness;
+        public Properties density(float density) {
+            this.density = density;
+            return this;
         }
 
-        public String getFlavor() {
-            return flavor;
-        }
-
-        public String getSmell() {
-            return smell;
+        public Properties transparency(float transparency) {
+            this.transparency = transparency;
+            return this;
         }
 
         public Properties slipperiness(float slipperiness) {
             this.slipperiness = slipperiness;
+            return this;
+        }
+
+        public Properties color(int color) {
+            this.color = color;
             return this;
         }
 
@@ -112,8 +102,8 @@ public class Substance {
             return this;
         }
 
-        public Properties transparency(float transparency) {
-            this.transparency = transparency;
+        public Properties drug(Holder<Drug> drug) {
+            this.drug = drug;
             return this;
         }
     }

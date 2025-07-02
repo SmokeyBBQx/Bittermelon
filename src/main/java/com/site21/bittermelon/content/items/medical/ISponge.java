@@ -21,7 +21,8 @@ public interface ISponge extends MedicalItem {
 
     @Override
     default boolean canInteract(@NotNull CompartmentInstance compartment, MedicalStats medicalStats) {
-        return compartment.isObscured();
+//        return compartment.isObscured();
+        return false;
     }
 
     @Override
@@ -32,7 +33,7 @@ public interface ISponge extends MedicalItem {
 
     @Override
     default void finishAction(@NotNull CompartmentInstance compartment, MedicalStats medicalStats, float quality, ItemStack item) {
-        compartment.setObscured(false);
+//        compartment.setObscured(false);
     }
 
     @Override

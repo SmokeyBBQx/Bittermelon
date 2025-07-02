@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.medical.medicalstats;
+package com.site21.bittermelon.content.medical.medicalstats.deprecated;
 
 import com.site21.bittermelon.client.visualeffects.screenshake.StartScreenshake;
 import com.site21.bittermelon.content.atmosphere.AtmosHandler;
@@ -17,7 +17,6 @@ import com.site21.bittermelon.content.medical.compartments.deprecated.conditions
 import com.site21.bittermelon.content.medical.compartments.deprecated.conditionsold.ForeignSubstance;
 import com.site21.bittermelon.content.medical.compartments.deprecated.conditionsold.Infection;
 import com.site21.bittermelon.content.medical.compartments.deprecated.organs.HeartRhythm;
-import com.site21.bittermelon.content.medical.simulations.Simulation;
 import com.site21.bittermelon.content.stumble.StumbleHandler;
 import com.site21.bittermelon.networking.client.SetForcedPose;
 import com.site21.bittermelon.content.substance.SubstanceStack;
@@ -45,10 +44,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
-import static com.site21.bittermelon.init.custom.Substances.LIQUID_BLOOD;
-import static com.site21.bittermelon.init.custom.Substances.LIQUID_WATER;
+import static com.site21.bittermelon.init.custom.Substances.BLOOD;
+import static com.site21.bittermelon.init.custom.Substances.WATER;
 import static net.minecraft.world.level.block.Block.UPDATE_ALL_IMMEDIATE;
 
+@Deprecated
 public class MedicalStatsOld {
     private static final int GASP_INTERVAL = 200;
     private static final int STUMBLE_INTERVAL = 100;
@@ -59,10 +59,9 @@ public class MedicalStatsOld {
     private static final float LOW_BLOOD_VOLUME_THRESHOLD = 60f;
 
     private final List<CompartmentOld> compartments;
-    private final Map<FunctionType, Float> stats;
+    private final Map<MedicalAttribute, Float> stats;
     private final Map<UUID, Float> immunity;
     private final List<SubstanceStack> substances;
-    private final List<Simulation> simulations;
     private final BloodType bloodType;
     private final Character character;
     private final VitalSigns vitalSigns;
@@ -79,11 +78,10 @@ public class MedicalStatsOld {
         this.bloodType = bloodType;
         this.compartments = new CopyOnWriteArrayList<>(compartments);
         this.character = character;
-        this.stats = new EnumMap<>(FunctionType.class);
+        this.stats = new EnumMap<>(MedicalAttribute.class);
         this.immunity = new ConcurrentHashMap<>();
         this.vitalSigns = new VitalSigns();
         this.substances = new ArrayList<>();
-        this.simulations = new ArrayList<>();
         this.defaultAttributeValues = new HashMap<>();
 
         initializeStats();
@@ -91,7 +89,7 @@ public class MedicalStatsOld {
     }
 
     private void initializeStats() {
-        for (FunctionType type : FunctionType.values()) {
+        for (MedicalAttribute type : MedicalAttribute.values()) {
             stats.put(type, 0f);
         }
     }
@@ -119,7 +117,6 @@ public class MedicalStatsOld {
         updateEntityAttributes();
         updateCardiopulmonary();
         updateSubstances();
-        updateSimulations();
         handlePain();
         handleTremor();
         bloodPuddle();
@@ -130,10 +127,10 @@ public class MedicalStatsOld {
     }
 
     private void updateCompartments() {
-        EnumMap<FunctionType, Float> statsCopy = new EnumMap<>(FunctionType.class);
-        EnumMap<FunctionType, Integer> countMap = new EnumMap<>(FunctionType.class);
+        EnumMap<MedicalAttribute, Float> statsCopy = new EnumMap<>(MedicalAttribute.class);
+        EnumMap<MedicalAttribute, Integer> countMap = new EnumMap<>(MedicalAttribute.class);
 
-        for (FunctionType type : FunctionType.values()) {
+        for (MedicalAttribute type : MedicalAttribute.values()) {
             statsCopy.put(type, 0f);
             countMap.put(type, 0);
         }
@@ -145,7 +142,7 @@ public class MedicalStatsOld {
                 processCondition(compartment);
             }
 
-            for (FunctionType stat : FunctionType.values()) {
+            for (MedicalAttribute stat : MedicalAttribute.values()) {
                 float attribute = compartment.getAttribute(stat);
                 if (attribute != 0) {
                     statsCopy.compute(stat, (k, currentValue) -> currentValue + attribute);
@@ -154,7 +151,7 @@ public class MedicalStatsOld {
             }
         }
 
-        for (FunctionType type : FunctionType.values()) {
+        for (MedicalAttribute type : MedicalAttribute.values()) {
             int count = countMap.get(type);
             if (count > 0) {
                 float average = statsCopy.get(type) / count;
@@ -178,7 +175,7 @@ public class MedicalStatsOld {
     }
 
     private void handleInfection(@NotNull Infection infection) {
-        float immunityRate = stats.get(FunctionType.IMMUNITY);
+        float immunityRate = stats.get(MedicalAttribute.IMMUNITY);
         float memory = immunity.getOrDefault(infection.getOrganism(), 0f);
 
         infection.modifyHealth(-immunityRate * memory / 10);
@@ -188,13 +185,13 @@ public class MedicalStatsOld {
     }
 
     private void handleForeignSubstance(@NotNull ForeignSubstance substance) {
-        substance.modifyHealth(-stats.get(FunctionType.ELIMINATION) / 10);
+        substance.modifyHealth(-stats.get(MedicalAttribute.ELIMINATION) / 10);
 
         // TODO: Separate metabolism and elimination?
     }
 
     private void handleInjury(@NotNull InjuryOld injury) {
-        injury.modifyHealth(-stats.get(FunctionType.HEALING));
+        injury.modifyHealth(-stats.get(MedicalAttribute.HEALING));
     }
 
     private void handleCoagulation(@NotNull Bleed bleed) {
@@ -236,11 +233,11 @@ public class MedicalStatsOld {
     }
 
     private void updateCardiopulmonary() {
-        vitalSigns.modifyBloodVolume(getCirculation() / 100 - stats.get(FunctionType.BLEED) / 20);
-        vitalSigns.modifyOxygenSaturation((stats.get(FunctionType.RESPIRATORY) / 100) * stats.get(FunctionType.BRAIN_VITALS) * getAirQuality() - 0.01f);
+        vitalSigns.modifyBloodVolume(getCirculation() / 100 - stats.get(MedicalAttribute.BLEED) / 20);
+        vitalSigns.modifyOxygenSaturation((stats.get(MedicalAttribute.RESPIRATION) / 100) * stats.get(MedicalAttribute.BRAIN_VITALS) * getAirQuality() - 0.01f);
 
         if (!entity.level().isClientSide) {
-            AtmosHandler.releaseGas(entity.level(), entity.getOnPos(), new SubstanceStack(LIQUID_WATER.get(), 0.001f));
+            AtmosHandler.releaseGas(entity.level(), entity.getOnPos(), new SubstanceStack(WATER.get(), 0.001f));
         }
         handleGasping();
 
@@ -292,7 +289,7 @@ public class MedicalStatsOld {
         if (vitalSigns.oxygenSaturation < 80) {
             gaspTickCounter++;
             if (gaspTickCounter >= GASP_INTERVAL) {
-                if (entity != null && stats.get(FunctionType.BRAIN_VITALS) > 0.1f) {
+                if (entity != null && stats.get(MedicalAttribute.BRAIN_VITALS) > 0.1f) {
                     Component message = Component.literal(character.getName() + " gasps for air.")
                             .withColor(character.getEmoteColor());
                     LocalMessageHelper.sendLocalMessage(entity, 10, message);
@@ -333,23 +330,12 @@ public class MedicalStatsOld {
             }
         }
 
-        vitalSigns.consciousness = stats.get(FunctionType.BRAIN_VITALS) * stats.get(FunctionType.CIRCULATION);
+        vitalSigns.consciousness = stats.get(MedicalAttribute.BRAIN_VITALS) * stats.get(MedicalAttribute.CIRCULATION);
     }
 
     private void updateSubstances() {
         for (SubstanceStack stack : substances) {
 
-        }
-    }
-
-    private void updateSimulations() {
-        Iterator<Simulation> iterator = simulations.iterator();
-        while (iterator.hasNext()) {
-            Simulation simulation = iterator.next();
-            simulation.update();
-            if (simulation.finished) {
-                iterator.remove();
-            }
         }
     }
 
@@ -440,19 +426,19 @@ public class MedicalStatsOld {
     }
 
     protected void sight() {
-        if (stats.get(FunctionType.BRAIN_SIGHT) <= 10) {
+        if (stats.get(MedicalAttribute.BRAIN_SIGHT) <= 10) {
 
         }
 
-        if (stats.get(FunctionType.SIGHT) <= 10) {
+        if (stats.get(MedicalAttribute.SIGHT) <= 10) {
 
         }
     }
 
     private void bloodPuddle() {
-        float bleedValue = stats.get(FunctionType.BLEED);
+        float bleedValue = stats.get(MedicalAttribute.BLEED);
         if (Float.isNaN(bleedValue) || bleedValue <= 0) {
-            stats.put(FunctionType.BLEED, 0f);
+            stats.put(MedicalAttribute.BLEED, 0f);
             return;
         }
 
@@ -472,7 +458,7 @@ public class MedicalStatsOld {
             if (Float.isNaN(bloodAmount)) {
                 return;
             }
-            SubstanceStack stack = new SubstanceStack(LIQUID_BLOOD.get(), 0);
+            SubstanceStack stack = new SubstanceStack(BLOOD.get(), 0);
             stack.setVolume(bloodAmount);
 
             if (!(existingState.getBlock() instanceof FluidBlock) && existingState.canBeReplaced()) {
@@ -492,19 +478,19 @@ public class MedicalStatsOld {
     }
 
     public float getTasteAbility() {
-        return stats.get(FunctionType.BRAIN_TASTE) * stats.get(FunctionType.TASTE);
+        return stats.get(MedicalAttribute.BRAIN_TASTE) * stats.get(MedicalAttribute.TASTE);
     }
 
     public float getHearingAbility() {
-        return stats.get(FunctionType.BRAIN_HEARING) * stats.get(FunctionType.HEARING);
+        return stats.get(MedicalAttribute.BRAIN_HEARING) * stats.get(MedicalAttribute.HEARING);
     }
 
     public float getLanguageComprehension() {
-        return stats.get(FunctionType.BRAIN_LANGUAGE);
+        return stats.get(MedicalAttribute.BRAIN_LANGUAGE);
     }
 
     public float getTremor() {
-        return stats.get(FunctionType.TREMOR);
+        return stats.get(MedicalAttribute.TREMOR);
     }
 
     public BloodType getBloodType() {
@@ -543,33 +529,33 @@ public class MedicalStatsOld {
         return vitalSigns.heartRhythm;
     }
 
-    public float getStat(FunctionType functionType) {
-        return stats.getOrDefault(functionType, 0.0f);
+    public float getStat(MedicalAttribute medicalAttribute) {
+        return stats.getOrDefault(medicalAttribute, 0.0f);
     }
 
     public float getManipulation() {
-        return stats.get(FunctionType.BRAIN_MOTOR_ABILITY) * stats.get(FunctionType.MANIPULATION) * getConsciousness();
+        return stats.get(MedicalAttribute.BRAIN_MOTOR_ABILITY) * stats.get(MedicalAttribute.MANIPULATION) * getConsciousness();
     }
 
     public float getMovement() {
-        return stats.get(FunctionType.BRAIN_MOTOR_ABILITY) * stats.get(FunctionType.MOVEMENT) * getConsciousness();
+        return stats.get(MedicalAttribute.BRAIN_MOTOR_ABILITY) * stats.get(MedicalAttribute.MOVEMENT) * getConsciousness();
     }
 
     public float getSight() {
-        return stats.get(FunctionType.SIGHT) * stats.get(FunctionType.BRAIN_SIGHT) * getConsciousness();
+        return stats.get(MedicalAttribute.SIGHT) * stats.get(MedicalAttribute.BRAIN_SIGHT) * getConsciousness();
     }
 
     public float getBite() {
-        return stats.get(FunctionType.BRAIN_MOTOR_ABILITY) * stats.get(FunctionType.BITE) * getConsciousness();
+        return stats.get(MedicalAttribute.BRAIN_MOTOR_ABILITY) * stats.get(MedicalAttribute.BITE) * getConsciousness();
     }
 
     public float getPain() {
-        return stats.get(FunctionType.NERVOUS) * stats.get(FunctionType.PAIN) * getConsciousness();
+        return stats.get(MedicalAttribute.NERVOUS) * stats.get(MedicalAttribute.PAIN) * getConsciousness();
         // TODO: Better way to get pain?
     }
 
     public float getCirculation() {
-        return stats.get(FunctionType.CIRCULATION) + heartLifeSupport;
+        return stats.get(MedicalAttribute.CIRCULATION) + heartLifeSupport;
     }
 
     public void setHeartLifeSupport(float value) {

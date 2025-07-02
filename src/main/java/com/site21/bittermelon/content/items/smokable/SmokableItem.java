@@ -25,7 +25,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.init.custom.Substances.LIQUID_BLOOD;
+import static com.site21.bittermelon.init.custom.Substances.BLOOD;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.LIT;
 import static com.site21.bittermelon.init.neoforge.BitterItemTags.LIGHTER;
 import static com.site21.bittermelon.util.LocalMessageHelper.sendLocalMessage;
@@ -52,7 +52,7 @@ public class SmokableItem extends SubstanceContainerItem {
             // TODO: Tag still doesn't work
             if (otherItem.is(LIGHTER) || otherItem.is(Items.FLINT_AND_STEEL)) {
                 // TODO: Replace this with actual substance handling
-                updateSubstance(smokableItem, new SubstanceStack(LIQUID_BLOOD.get(), 0.8f));
+                updateSubstance(smokableItem, new SubstanceStack(BLOOD.get(), 0.8f));
                 level.playSound(
                         null,
                         player.getOnPos(),
@@ -112,7 +112,7 @@ public class SmokableItem extends SubstanceContainerItem {
         if (!level.isClientSide && Boolean.TRUE.equals(stack.get(LIT))) {
             playSmokeSound(level, entity);
             addSmokeParticles(level, entity);
-            consumeSubstances(stack, 1);
+            consumeSubstances(stack, 1, entity);
 
             if (getTotalAmount(stack) < 0.1f) {
                 return buttItem.getDefaultInstance();
@@ -128,7 +128,7 @@ public class SmokableItem extends SubstanceContainerItem {
         if (!level.isClientSide && Boolean.TRUE.equals(stack.get(LIT))) {
             playSmokeSound(level, entity);
             addSmokeParticles(level, entity);
-            consumeSubstances(stack, 1 * ((float) (getUseDuration(stack, entity) - timeLeft) / getUseDuration(stack, entity)));
+            consumeSubstances(stack, 1 * ((float) (getUseDuration(stack, entity) - timeLeft) / getUseDuration(stack, entity)), entity);
 
             if (getTotalAmount(stack) < 0.1f && entity instanceof ServerPlayer player) {
                 int slot = player.getInventory().findSlotMatchingItem(stack);

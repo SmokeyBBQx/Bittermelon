@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
-import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -84,7 +83,7 @@ public class CPRScreen extends Screen {
 
     private void updateCharacter() {
         MedicalStats medicalStats = character.getMedicalStats();
-        medicalStats.setHeartLifeSupport(BPM / 200);
+//        medicalStats.setHeartLifeSupport(BPM / 200);
     }
 
     @Override

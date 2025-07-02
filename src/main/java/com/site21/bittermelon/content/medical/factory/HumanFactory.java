@@ -3,15 +3,11 @@ package com.site21.bittermelon.content.medical.factory;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.medical.blood.BloodType;
-import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
-import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
-import com.site21.bittermelon.content.medical.compartments.FunctionType;
-import com.site21.bittermelon.content.medical.compartments.VisualData;
+import com.site21.bittermelon.content.medical.compartments.*;
+import com.site21.bittermelon.content.medical.medicalstats.AnimalMedicalStats;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
-import com.site21.bittermelon.init.custom.Compartments;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -30,63 +26,62 @@ public class HumanFactory implements AnatomyFactory {
         CompartmentInstance wholeBody = createMajorBodyPart("Whole Body", new VisualData(0, 0), null, 0);
         compartments.add(wholeBody);
 
+        LayerData bodyLayer = new LayerData(ResourceLocation.withDefaultNamespace("textures/block/white_terracotta.png"), "Body");
+        wholeBody.addLayer(bodyLayer);
+
         buildHead(wholeBody, compartments);
         buildChest(wholeBody, compartments);
         buildAbdomen(wholeBody, compartments);
-        buildArms(wholeBody, compartments);
-        buildLegs(wholeBody, compartments);
-        buildBack(wholeBody, compartments);
+//        buildArms(wholeBody, compartments);
+//        buildLegs(wholeBody, compartments);
+//        buildBack(wholeBody, compartments);
 
-        return new MedicalStats(compartments, wholeBody.getUUID(), bloodType, character.getUUID());
+        return new AnimalMedicalStats(compartments, wholeBody.getUUID(), character.getUUID());
     }
 
     private static void buildHead(CompartmentInstance wholeBody, @NotNull List<CompartmentInstance> compartments) {
         CompartmentInstance head = createMajorBodyPart("Head", new VisualData(0, -20), wholeBody, 0);
         compartments.add(head);
 
+        LayerData faceLayer = new LayerData(ResourceLocation.withDefaultNamespace("textures/block/white_terracotta.png"), "Face");
+        LayerData skinLayer = new LayerData(ResourceLocation.withDefaultNamespace("textures/block/white_terracotta.png"), "Skin");
+        LayerData fatLayer = new LayerData(ResourceLocation.withDefaultNamespace("textures/block/horn_coral_block.png"), "Fat");
+        LayerData skullLayer = new LayerData(ResourceLocation.withDefaultNamespace("textures/block/bone_block_side.png"), "Skull");
+        LayerData cranialCavity = new LayerData(ResourceLocation.withDefaultNamespace("textures/block/bone_block_side.png"), "Cranial Cavity");
+        LayerData meningesLayer = new LayerData(ResourceLocation.withDefaultNamespace("textures/block/dead_brain_coral_block.png"), "Meninges");
+        LayerData brainLayer = new LayerData(ResourceLocation.withDefaultNamespace("textures/block/brain_coral_block.png"), "Brain");
+
+        head.addLayer(faceLayer);
+        head.addLayer(skinLayer);
+        head.addLayer(fatLayer);
+        head.addLayer(skullLayer);
+        head.addLayer(cranialCavity);
+
         // Head layers
         CompartmentInstance headSkin = createSoftTissue("Skin", new VisualData(0, 0), head, 1, 10);
-        headSkin.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/white_terracotta.png"));
         CompartmentInstance headFat = createSoftTissue("Fat", new VisualData(0, 0), head, 2, 15);
-        headFat.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/horn_coral_block.png"));
-
-        CompartmentInstance laceration = new CompartmentInstance(INJURY.get(), new VisualData(5, 6, 0.5f), headSkin, 0, 10, "Laceration", false);
-        laceration.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/medical/lacerations.png"));
-
-        CompartmentInstance cut1 = new CompartmentInstance(INJURY.get(), new VisualData(2, -5, 1.2f), headSkin, 0, 10, "Cut", false);
-        cut1.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/medical/cut_visual.png"));
-
-        headFat.getCompartmentSpace().addToLayer(1, cut1.getUUID());
-
-        CompartmentInstance cut2 = new CompartmentInstance(INJURY.get(), new VisualData(0, 0, 2.3f), headFat, 0, 15, "Cut", false);
-        cut2.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/medical/cut_visual.png"));
-
 
         CompartmentInstance skull = createHardTissue("Skull", new VisualData(0, 0), head, 3, 150);
-        skull.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/bone_block_side.png"));
-
         // Brain and components
-        CompartmentInstance meninges = createSoftTissue("Meninges", new VisualData(0, 0), head, 4, 2);
-        meninges.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/dead_brain_coral_block.png"));
-        CompartmentInstance brain = createMajorBodyPart("Brain", new VisualData(0, 0), head, 5);
-        brain.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/brain_coral_block.png"));
+        CompartmentInstance brain = createMajorBodyPart("Brain", new VisualData(0, 0), head, 4);
+
+        brain.addLayer(meningesLayer);
+        brain.addLayer(brainLayer);
+
+        CompartmentInstance meninges = createSoftTissue("Meninges", new VisualData(0, 0), brain, 0, 2);
+
+
 
         // Brain regions
-        CompartmentInstance frontalLobe = createSoftTissue("Frontal Lobe", new VisualData(-5, -4), brain, 0, 5);
-        frontalLobe.setAttribute(FunctionType.BRAIN_MOTOR_ABILITY, 1f);
-        frontalLobe.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/brain_coral_block.png"));
-        CompartmentInstance parietalLobe = createSoftTissue("Parietal Lobe", new VisualData(5, -4), brain, 0, 5);
-        parietalLobe.setAttribute(FunctionType.NERVOUS, 1f);
-        parietalLobe.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/brain_coral_block.png"));
-        CompartmentInstance temporalLobe = createSoftTissue("Temporal Lobe", new VisualData(-5, 4), brain, 0, 4);
-        temporalLobe.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/brain_coral_block.png"));
-        CompartmentInstance occipitalLobe = createSoftTissue("Occipital Lobe", new VisualData(5, 4), brain, 0, 3);
-        occipitalLobe.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/brain_coral_block.png"));
-        CompartmentInstance cerebellum = createSoftTissue("Cerebellum", new VisualData(0, 8), brain, 0, 4);
-        cerebellum.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/brain_coral_block.png"));
-        CompartmentInstance brainstem = createSoftTissue("Brainstem", new VisualData(0, 12), brain, 0, 2);
-        brainstem.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/brain_coral_block.png"));
-        brainstem.setAttribute(FunctionType.BRAIN_VITALS, 1f);
+        CompartmentInstance frontalLobe = createSoftTissue("Frontal Lobe", new VisualData(-5, -4), brain, 1, 5);
+        frontalLobe.setAttribute(MedicalAttribute.BRAIN_MOTOR_ABILITY, 1f);
+        CompartmentInstance parietalLobe = createSoftTissue("Parietal Lobe", new VisualData(5, -4), brain, 1, 5);
+        parietalLobe.setAttribute(MedicalAttribute.NERVOUS, 1f);
+        CompartmentInstance temporalLobe = createSoftTissue("Temporal Lobe", new VisualData(-5, 4), brain, 1, 4);
+        CompartmentInstance occipitalLobe = createSoftTissue("Occipital Lobe", new VisualData(5, 4), brain, 1, 3);
+        CompartmentInstance cerebellum = createSoftTissue("Cerebellum", new VisualData(0, 8), brain, 1, 4);
+        CompartmentInstance brainstem = createSoftTissue("Brainstem", new VisualData(0, 12), brain, 1, 2);
+        brainstem.setAttribute(MedicalAttribute.BRAIN_VITALS, 1f);
 
         // Face components
         CompartmentInstance leftEye = createSoftTissue("Left Eye", new VisualData(-3, -6), head, 0, 2);
@@ -95,54 +90,58 @@ public class HumanFactory implements AnatomyFactory {
         CompartmentInstance rightEar = createSoftTissue("Right Ear", new VisualData(8, 0), head, 0, 1);
         CompartmentInstance nose = createSoftTissue("Nose", new VisualData(0, -2), head, 0, 2);
         CompartmentInstance mouth = createSoftTissue("Mouth", new VisualData(0, 4), head, 0, 2);
-        mouth.setAttribute(FunctionType.BITE, 1f);
+        mouth.setAttribute(MedicalAttribute.BITE, 1f);
+
+        LayerData insideMouthLayer = new LayerData(ResourceLocation.withDefaultNamespace("textures/block/brain_coral_block.png"), "Inside Mouth");
+        mouth.addLayer(insideMouthLayer);
+
         CompartmentInstance tongue = createSoftTissue("Tongue", new VisualData(0, 0), mouth, 0, 2);
         CompartmentInstance teeth = createHardTissue("Teeth", new VisualData(0, -2), mouth, 0, 2);
 
-        compartments.addAll(Arrays.asList(headSkin, headFat, laceration, cut1, cut2, skull, brain, meninges,
+        compartments.addAll(Arrays.asList(headSkin, headFat, skull, brain, meninges,
                 frontalLobe, parietalLobe, temporalLobe, occipitalLobe, cerebellum, brainstem,
                 leftEye, rightEye, leftEar, rightEar, nose, mouth, tongue, teeth));
     }
 
     private static void buildChest(CompartmentInstance wholeBody, @NotNull List<CompartmentInstance> compartments) {
-        CompartmentInstance chest = createMajorBodyPart("Chest", new VisualData(30, -15), wholeBody, 0);
-        chest.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/netherrack.png"));
-        chest.setItem(Items.BLUE_WOOL);
-        compartments.add(chest);
-
-        // Chest layers
-        CompartmentInstance chestSkin = createSoftTissue("Skin", new VisualData(0, 0), chest, 0, 30);
-        CompartmentInstance chestFat = createSoftTissue("Fat", new VisualData(0, 0), chest, 1, 40);
-        CompartmentInstance chestMuscles = createSoftTissue("Muscles", new VisualData(0, 0), chest, 2, 100);
-
-        // Skeletal components
-        CompartmentInstance ribs = createHardTissue("Ribs", new VisualData(0 * 5, 1 * 5, 3, 5, 27, 20), chest, 4, 60);
-        ribs.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_ribs.png"));
-//        CompartmentInstance sternum = createHardTissue("Sternum", new VisualData(0, -4), chest, 3, 20);
-
-        // Membrane layer
-        CompartmentInstance pleuralMembrane = createSoftTissue("Pleural Membrane", new VisualData(0, 0), chest, 3, 5);
-
-        // Cardiopulmonary system
-        CompartmentInstance heart = createSoftTissue("Heart", new VisualData(10 * 5, 9 * 5, 0, 5, 10, 9), chest, 4, 30);
-        heart.setAttribute(FunctionType.CIRCULATION, 1f);
-        heart.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_heart.png"));
-        CompartmentInstance pericardium = createSoftTissue("Pericardium", new VisualData(0, 0), heart, 0, 2);
-        CompartmentInstance leftLung = createSoftTissue("Left Lung", new VisualData(14 * 5, 2 * 5, 1, 5, 13, 18), chest, 4, 40);
-        leftLung.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_left_lung.png"));
-        leftLung.setAttribute(FunctionType.RESPIRATORY, 1f);
-        CompartmentInstance rightLung = createSoftTissue("Right Lung", new VisualData(0 * 5, 2 * 5, 1, 5, 13, 18), chest, 4, 40);
-        rightLung.setAttribute(FunctionType.RESPIRATORY, 1f);
-        rightLung.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_right_lung.png"));
-
-        // Other organs
-        CompartmentInstance thymus = createSoftTissue("Thymus", new VisualData(0, -8), chest, 4, 5);
-        CompartmentInstance esophagus = createSoftTissue("Esophagus", new VisualData(0, -10), chest, 4, 10);
-        CompartmentInstance trachea = createSoftTissue("Trachea", new VisualData(12 * 5, 0 * 5, 2, 5, 3, 9), chest, 4, 10);
-        trachea.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_trachea.png"));
-
-        compartments.addAll(Arrays.asList(chestSkin, chestFat, chestMuscles, ribs,
-                pleuralMembrane, heart, pericardium, leftLung, rightLung, thymus, esophagus, trachea));
+//        CompartmentInstance chest = createMajorBodyPart("Chest", new VisualData(30, -15), wholeBody, 0);
+////        chest.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/netherrack.png"));
+//        chest.setItem(Items.BLUE_WOOL);
+//        compartments.add(chest);
+//
+//        // Chest layers
+//        CompartmentInstance chestSkin = createSoftTissue("Skin", new VisualData(0, 0), chest, 0, 30);
+//        CompartmentInstance chestFat = createSoftTissue("Fat", new VisualData(0, 0), chest, 1, 40);
+//        CompartmentInstance chestMuscles = createSoftTissue("Muscles", new VisualData(0, 0), chest, 2, 100);
+//
+//        // Skeletal components
+//        CompartmentInstance ribs = createHardTissue("Ribs", new VisualData(0 * 5, 1 * 5, 3, 5, 27, 20), chest, 4, 60);
+//        ribs.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_ribs.png"));
+////        CompartmentInstance sternum = createHardTissue("Sternum", new VisualData(0, -4), chest, 3, 20);
+//
+//        // Membrane layer
+//        CompartmentInstance pleuralMembrane = createSoftTissue("Pleural Membrane", new VisualData(0, 0), chest, 3, 5);
+//
+//        // Cardiopulmonary system
+//        CompartmentInstance heart = createSoftTissue("Heart", new VisualData(10 * 5, 9 * 5, 0, 5, 10, 9), chest, 4, 30);
+//        heart.setAttribute(MedicalAttribute.CIRCULATION, 1f);
+//        heart.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_heart.png"));
+//        CompartmentInstance pericardium = createSoftTissue("Pericardium", new VisualData(0, 0), heart, 0, 2);
+//        CompartmentInstance leftLung = createSoftTissue("Left Lung", new VisualData(14 * 5, 2 * 5, 1, 5, 13, 18), chest, 4, 40);
+//        leftLung.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_left_lung.png"));
+//        leftLung.setAttribute(MedicalAttribute.RESPIRATION, 1f);
+//        CompartmentInstance rightLung = createSoftTissue("Right Lung", new VisualData(0 * 5, 2 * 5, 1, 5, 13, 18), chest, 4, 40);
+//        rightLung.setAttribute(MedicalAttribute.RESPIRATION, 1f);
+//        rightLung.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_right_lung.png"));
+//
+//        // Other organs
+//        CompartmentInstance thymus = createSoftTissue("Thymus", new VisualData(0, -8), chest, 4, 5);
+//        CompartmentInstance esophagus = createSoftTissue("Esophagus", new VisualData(0, -10), chest, 4, 10);
+//        CompartmentInstance trachea = createSoftTissue("Trachea", new VisualData(12 * 5, 0 * 5, 2, 5, 3, 9), chest, 4, 10);
+//        trachea.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_trachea.png"));
+//
+//        compartments.addAll(Arrays.asList(chestSkin, chestFat, chestMuscles, ribs,
+//                pleuralMembrane, heart, pericardium, leftLung, rightLung, thymus, esophagus, trachea));
     }
 
     private static void buildAbdomen(CompartmentInstance wholeBody, @NotNull List<CompartmentInstance> compartments) {
@@ -150,45 +149,43 @@ public class HumanFactory implements AnatomyFactory {
         abdomen.setItem(Items.RED_WOOL);
         compartments.add(abdomen);
 
+        LayerData skinLayer = new LayerData(ResourceLocation.withDefaultNamespace("textures/block/white_terracotta.png"), "Skin");
+        LayerData fatLayer = new LayerData(ResourceLocation.withDefaultNamespace("textures/block/horn_coral_block.png"), "Fat");
+        LayerData muscleLayer = new LayerData(ResourceLocation.withDefaultNamespace("textures/block/netherrack.png"), "Muscle");
+        LayerData peritoneumLayer = new LayerData(ResourceLocation.withDefaultNamespace("textures/block/dead_brain_coral_block.png"), "Peritoneum");
+        LayerData abdominalCavity = new LayerData(ResourceLocation.withDefaultNamespace("textures/block/netherrack.png"), "Abdominal Cavity");
+        LayerData retroperitonealSpace = new LayerData(ResourceLocation.withDefaultNamespace("textures/block/netherrack.png"), "Retroperitoneal Space");
+
+        abdomen.addLayer(skinLayer);
+        abdomen.addLayer(fatLayer);
+        abdomen.addLayer(muscleLayer);
+        abdomen.addLayer(peritoneumLayer);
+        abdomen.addLayer(abdominalCavity);
+        abdomen.addLayer(retroperitonealSpace);
+
         // Abdominal layers
         CompartmentInstance abdomenSkin = createSoftTissue("Skin", new VisualData(0, 0), abdomen, 0, 40);
-        abdomenSkin.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/white_terracotta.png"));
-
         CompartmentInstance abdomenFat = createSoftTissue("Fat", new VisualData(0, 0), abdomen, 1, 60);
-        abdomenFat.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/horn_coral_block.png"));
-
         CompartmentInstance abdominalMuscles = createSoftTissue("Abdominal Muscles", new VisualData(0, 0), abdomen, 2, 100);
         CompartmentInstance peritoneum = createSoftTissue("Peritoneum", new VisualData(0, 0), abdomen, 3, 5);
-        peritoneum.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/dead_brain_coral_block.png"));
-        CompartmentInstance cut = new CompartmentInstance(INJURY.get(), new VisualData(20, 40, 5, 2.3f, 16, 16), abdomen, 0, 15, "Cut", false);
-        cut.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/medical/cut_visual.png"));
-        cut.addTag(CompartmentTag.CUT);
-
-        abdomen.getCompartmentSpace().addToLayer(1, cut.getUUID());
-        abdomen.getCompartmentSpace().addToLayer(2, cut.getUUID());
-        abdomen.getCompartmentSpace().addToLayer(3, cut.getUUID());
-        abdomen.getCompartmentSpace().addToLayer(4, cut.getUUID());
-//
-//        CompartmentInstance cut2 = new CompartmentInstance(INJURY.get(), new VisualData(40, 40, 0, 2.3f, 20, 20), abdomen, 3, 15, "Cut", false);
-//        cut2.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/medical/cut_visual.png"));
-//        cut2.addTag(CompartmentTag.CUT);
 
         // Digestive organs
         CompartmentInstance stomach = createSoftTissue("Stomach", new VisualData(4 * 5, 0, 2, 5, 15, 14), abdomen, 4, 30);
         stomach.setItem(STOMACH.get());
+        stomach.setAttribute(MedicalAttribute.DIGESTION, 1);
         stomach.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_stomach.png"));
-        stomach.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/stripped_cherry_log_side.png"));
         CompartmentInstance smallIntestine = createSoftTissue("Small Intestine", new VisualData(1 * 5, 8 * 5, 0, 5, 17, 19), abdomen, 4, 40);
+      // TODO: TEMPORARY ATTRIBUTE
+       smallIntestine.setAttribute(MedicalAttribute.CIRCULATION, 1);
         smallIntestine.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_small_intestine.png"));
         CompartmentInstance colon = createSoftTissue("Colon", new VisualData(-1 * 5, 9 * 5, 1, 5, 22, 19), abdomen, 4, 40);
         colon.setItem(COLON.get());
-        colon.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/brain_coral_block.png"));
         colon.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_colon.png"));
 
         // Accessory organs
         CompartmentInstance liver = createSoftTissue("Liver", new VisualData(0, 0, 4, 5, 19, 14), abdomen, 4, 45);
         liver.setItem(LIVER.get());
-        liver.getCompartmentSpace().setBackgroundTexture(ResourceLocation.withDefaultNamespace("textures/block/red_terracotta.png"));
+        liver.setAttribute(MedicalAttribute.ELIMINATION, 1);
         liver.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_liver.png"));
 
         CompartmentInstance gallbladder = createSoftTissue("Gallbladder", new VisualData(5 * 5, 10 * 5, 3, 5, 3, 3), abdomen, 4, 5);
@@ -206,13 +203,11 @@ public class HumanFactory implements AnatomyFactory {
         CompartmentInstance bladder = createSoftTissue("Bladder", new VisualData(0, 150, 1.5f), abdomen, 4, 20);
         bladder.setItem(BLADDER.get());
 
-        abdomen.getCompartmentSpace().addToLayer(5, bladder.getUUID());
-
         // Skeletal component
         CompartmentInstance pelvis = createHardTissue("Pelvis", new VisualData(0, 12, 6.2f), abdomen, 3, 80);
         pelvis.setItem(PELVIS.get());
 
-        compartments.addAll(Arrays.asList(abdomenSkin, abdomenFat, abdominalMuscles, peritoneum, cut,
+        compartments.addAll(Arrays.asList(abdomenSkin, abdomenFat, abdominalMuscles, peritoneum,
                 stomach, smallIntestine, colon, liver, gallbladder, pancreas, spleen,
                 leftKidney, rightKidney, bladder, pelvis));
     }
@@ -251,32 +246,32 @@ public class HumanFactory implements AnatomyFactory {
         CompartmentInstance tendons = createSoftTissue("Tendons", new VisualData(xOffset, 0), limb, 3, isArm ? 10 : 20);
 
         if (isArm) {
-            skin.setAttribute(FunctionType.MANIPULATION, 1f);
-            fat.setAttribute(FunctionType.MANIPULATION, 1f);
-            muscles.setAttribute(FunctionType.MANIPULATION, 1f);
-            tendons.setAttribute(FunctionType.MANIPULATION, 1f);
+            skin.setAttribute(MedicalAttribute.MANIPULATION, 1f);
+            fat.setAttribute(MedicalAttribute.MANIPULATION, 1f);
+            muscles.setAttribute(MedicalAttribute.MANIPULATION, 1f);
+            tendons.setAttribute(MedicalAttribute.MANIPULATION, 1f);
             CompartmentInstance humerus = createHardTissue(side + " Humerus", new VisualData(0, -5), limb, 3, 30);
-            humerus.setAttribute(FunctionType.MANIPULATION, 1f);
+            humerus.setAttribute(MedicalAttribute.MANIPULATION, 1f);
             CompartmentInstance radiusUlna = createHardTissue(side + " Radius Ulna", new VisualData(0, 5), limb, 3, 20);
-            radiusUlna.setAttribute(FunctionType.MANIPULATION, 1f);
+            radiusUlna.setAttribute(MedicalAttribute.MANIPULATION, 1f);
             CompartmentInstance hand = createSoftTissue(side + " Hand", new VisualData(0, 12), limb, 0, 20);
-            hand.setAttribute(FunctionType.MANIPULATION, 1f);
+            hand.setAttribute(MedicalAttribute.MANIPULATION, 1f);
             CompartmentInstance wrist = createSoftTissue(side + " Wrist", new VisualData(0, 8), limb, 0, 10);
-            wrist.setAttribute(FunctionType.MANIPULATION, 1f);
+            wrist.setAttribute(MedicalAttribute.MANIPULATION, 1f);
             compartments.addAll(Arrays.asList(humerus, radiusUlna, hand, wrist));
         } else {
-            skin.setAttribute(FunctionType.MOVEMENT, 1f);
-            fat.setAttribute(FunctionType.MOVEMENT, 1f);
-            muscles.setAttribute(FunctionType.MOVEMENT, 1f);
-            tendons.setAttribute(FunctionType.MOVEMENT, 1f);
+            skin.setAttribute(MedicalAttribute.MOVEMENT, 1f);
+            fat.setAttribute(MedicalAttribute.MOVEMENT, 1f);
+            muscles.setAttribute(MedicalAttribute.MOVEMENT, 1f);
+            tendons.setAttribute(MedicalAttribute.MOVEMENT, 1f);
             CompartmentInstance femur = createHardTissue(side + " Femur", new VisualData(0, -5), limb, 3, 50);
-            femur.setAttribute(FunctionType.MOVEMENT, 1f);
+            femur.setAttribute(MedicalAttribute.MOVEMENT, 1f);
             CompartmentInstance tibiaFibula = createHardTissue(side + " Tibia Fibula", new VisualData(0, 10), limb, 3, 40);
-            tibiaFibula.setAttribute(FunctionType.MOVEMENT, 1f);
+            tibiaFibula.setAttribute(MedicalAttribute.MOVEMENT, 1f);
             CompartmentInstance foot = createSoftTissue(side + " Foot", new VisualData(0, 20), limb, 0, 30);
-            foot.setAttribute(FunctionType.MOVEMENT, 1f);
+            foot.setAttribute(MedicalAttribute.MOVEMENT, 1f);
             CompartmentInstance ankle = createSoftTissue(side + " Ankle", new VisualData(0, 15), limb, 0, 10);
-            ankle.setAttribute(FunctionType.MOVEMENT, 1f);
+            ankle.setAttribute(MedicalAttribute.MOVEMENT, 1f);
             compartments.addAll(Arrays.asList(femur, tibiaFibula, foot, ankle));
         }
 
@@ -300,22 +295,27 @@ public class HumanFactory implements AnatomyFactory {
     }
 
     private static @NotNull CompartmentInstance createMajorBodyPart(String name, VisualData visualData, CompartmentInstance parent, int layer) {
-        CompartmentInstance bodyPart = new CompartmentInstance(MAJOR_BODY_PART.get(), visualData, parent, layer, 20, name, false);
-        bodyPart.setAttribute(FunctionType.FUNCTION, 1);
-        return bodyPart;
+        CompartmentInstance tissue = new CompartmentInstance(SOFT_TISSUE.get(), -1, name, visualData);
+
+        if (parent != null) {
+            parent.addCompartment(layer, tissue);
+        }
+        return tissue;
     }
 
     private static @NotNull CompartmentInstance createSoftTissue(String name, VisualData visualData, CompartmentInstance parent, int layer, float maxHealth) {
-        CompartmentInstance tissue = new CompartmentInstance(SOFT_TISSUE.get(), visualData, parent, layer, maxHealth, name, false);
-        tissue.setAttribute(FunctionType.FUNCTION, 1);
-        tissue.addTag(CompartmentTag.DOES_BLEED);
+        CompartmentInstance tissue = new CompartmentInstance(SOFT_TISSUE.get(), maxHealth, name, visualData);
+
+        tissue.setAttribute(MedicalAttribute.FUNCTION, 1);
+        parent.addCompartment(layer, tissue);
         return tissue;
     }
 
     private static @NotNull CompartmentInstance createHardTissue(String name, VisualData visualData, CompartmentInstance parent, int layer, float maxHealth) {
-        CompartmentInstance tissue = new CompartmentInstance(HARD_TISSUE.get(), visualData, parent, layer, maxHealth, name, false);
-        tissue.setAttribute(FunctionType.FUNCTION, 1);
-        tissue.addTag(CompartmentTag.DOES_BLEED);
+        CompartmentInstance tissue = new CompartmentInstance(HARD_TISSUE.get(), maxHealth, name, visualData);
+
+        tissue.setAttribute(MedicalAttribute.FUNCTION, 1);
+        parent.addCompartment(layer, tissue);
         return tissue;
     }
 }

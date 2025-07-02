@@ -1,11 +1,10 @@
-package com.site21.bittermelon.content.items.scps;
+package com.site21.bittermelon.content.items.scps.scp2398;
 
 import com.site21.bittermelon.content.blocks.base.structuralblock.StructuralBlockEntity;
 import com.site21.bittermelon.content.entities.miscellaneous.ThrownItemProjectile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;

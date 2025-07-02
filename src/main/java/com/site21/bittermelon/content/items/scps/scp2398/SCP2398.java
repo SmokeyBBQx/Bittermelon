@@ -1,11 +1,10 @@
-package com.site21.bittermelon.content.items.scps;
+package com.site21.bittermelon.content.items.scps.scp2398;
 
 import com.site21.bittermelon.content.entities.miscellaneous.ThrownItemProjectile;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.init.neoforge.BitterItemTags;
 import com.site21.bittermelon.init.neoforge.BitterItems;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
@@ -20,7 +19,6 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static com.site21.bittermelon.init.neoforge.BitterSounds.BAT_IMPACT;
 

@@ -1,6 +1,7 @@
 package com.site21.bittermelon.content.substance.reactions;
 
 import com.site21.bittermelon.content.substance.Substance;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +14,7 @@ public class Reaction {
     private final float preExponentialFactor;
     private final float enthalpyChange;
 
-    private Reaction(ReactionBuilder builder) {
+    private Reaction(@NotNull ReactionBuilder builder) {
         this.reactants = new HashMap<>(builder.reactants);
         this.products = new HashMap<>(builder.products);
         this.orders = new HashMap<>(builder.orders);

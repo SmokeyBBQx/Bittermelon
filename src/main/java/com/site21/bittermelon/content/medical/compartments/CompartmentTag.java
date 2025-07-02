@@ -1,5 +1,10 @@
 package com.site21.bittermelon.content.medical.compartments;
 
+import com.mojang.serialization.Codec;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+
 public enum CompartmentTag {
     // CONDITIONS
     CONDITION,
@@ -48,5 +53,18 @@ public enum CompartmentTag {
     BODY_PART, JOINT,
 
     // MISC
-    DOES_BLEED
+    DOES_BLEED;
+
+    public static final Codec<CompartmentTag> CODEC = Codec.stringResolver(CompartmentTag::name, name -> {
+        try {
+            return CompartmentTag.valueOf(name.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    });
+
+    public static final StreamCodec<ByteBuf, CompartmentTag> STREAM_CODEC = ByteBufCodecs.idMapper(
+            i -> CompartmentTag.values()[i],
+            CompartmentTag::ordinal
+    );
 }

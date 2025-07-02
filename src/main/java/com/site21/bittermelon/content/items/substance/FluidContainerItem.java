@@ -270,25 +270,7 @@ public class FluidContainerItem extends SubstanceContainerItem {
             }
         }
 
-        float totalAmount = getTotalVolume(stack);
-        float transferRate = getLimitedTransferRate(stack);
-        SubstanceContents.Mutable mutableData = getMutableSubstanceData(stack);
-
-        Iterator<SubstanceStack> iterator = mutableData.substances.iterator();
-
-        while (iterator.hasNext()) {
-            SubstanceStack substance = iterator.next();
-            float proportion = totalAmount > 0 ? substance.getVolume() / totalAmount : 0;
-            float consumeAmount = Math.min(transferRate * proportion, substance.getVolume());
-
-            substance.modifyVolume(-consumeAmount);
-
-            if (substance.getVolume() <= consumeAmount) {
-                iterator.remove();
-            }
-        }
-
-        setSubstanceDataFromMutable(stack, mutableData);
+        stack = consumeSubstances(stack, getLimitedTransferRate(stack), entity);
 
         playBurpSound(level, entity.getOnPos());
 

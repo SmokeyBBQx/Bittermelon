@@ -13,11 +13,12 @@ public class BitterCommands {
     @SubscribeEvent
     public static void onRegisterCommands(@NotNull RegisterCommandsEvent event) {
         CharacterCommand.register(event.getDispatcher());
-        SubstanceCommand.register(event.getDispatcher());
+        SubstanceCommand.register(event.getDispatcher(), event.getBuildContext());
         StumbleCommand.register(event.getDispatcher());
         CPRCommand.register(event.getDispatcher());
         SetLoreOpeningCommand.register(event.getDispatcher());
         ChatCommands.register(event.getDispatcher());
         MedicalStatsCommand.register(event.getDispatcher());
+        DrugCommand.register(event.getDispatcher(), event.getBuildContext());
     }
 }

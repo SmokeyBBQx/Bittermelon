@@ -7,4 +7,6 @@ public class BodyPart extends BaseItem {
     public BodyPart(Properties properties, int width, int height, ItemWeight itemWeight) {
         super(properties, width, height, itemWeight);
     }
+
+
 }

@@ -2,7 +2,7 @@ package com.site21.bittermelon.content.medical.compartments.deprecated.firstaid;
 
 import com.site21.bittermelon.content.medical.compartments.deprecated.CompartmentOld;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
-import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
+import com.site21.bittermelon.content.medical.medicalstats.deprecated.MedicalStatsOld;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.EnumSet;

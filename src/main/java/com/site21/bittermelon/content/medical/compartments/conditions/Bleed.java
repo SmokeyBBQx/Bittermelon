@@ -24,36 +24,36 @@ public class Bleed extends Compartment {
         super(id, defaultTags);
     }
 
-    @Override
-    public void tick(MedicalStats medicalStats, @NotNull CompartmentInstance instance) {
-        super.tick(medicalStats, instance);
-        instance.modifyHealth(-0.001f);
-    }
+//    @Override
+//    public void tick(MedicalStats medicalStats, @NotNull CompartmentInstance instance) {
+//        super.tick(medicalStats, instance);
+//        instance.modifyHealth(-0.001f);
+//    }
 
     public static void generateBleed(@NotNull CompartmentInstance target, MedicalStats medicalStats, float damage) {
-        CompartmentInstance parent = target.getParent(medicalStats);
-
-        if (parent == null) return;
-
-        if (parent.hasTag(BODY_PART) && parent.hasTag(DOES_BLEED)) {
-            if (parent.hasTag(BLOOD_VESSEL)) {
-                generateVesselBleed(parent, damage, medicalStats);
-            } else {
-                randomBleeds(target, damage, medicalStats);
-            }
-        }
+//        CompartmentInstance parent = target.getParent(medicalStats);
+//
+//        if (parent == null) return;
+//
+//        if (parent.hasTag(BODY_PART) && parent.hasTag(DOES_BLEED)) {
+//            if (parent.hasTag(BLOOD_VESSEL)) {
+//                generateVesselBleed(parent, damage, medicalStats);
+//            } else {
+//                randomBleeds(target, damage, medicalStats);
+//            }
+//        }
     }
 
     private static void generateVesselBleed(CompartmentInstance vessel, float damage, MedicalStats medicalStats) {
         float bleedRate = getBleedRateForVessel(vessel);
         CompartmentTag bleedType = getBleedTypeForVessel(vessel);
-        if (bleedRate > 0) {
-            CompartmentInstance bleed = new CompartmentInstance(Compartments.BLEED.get(), damage, "Bleed", false);
-            bleed.addTag(bleedType);
-            bleed.setAttribute(FunctionType.BLEED, bleedRate);
-            setBleedIcon(bleed);
-            medicalStats.addCompartment(bleed);
-        }
+//        if (bleedRate > 0) {
+//            CompartmentInstance bleed = new CompartmentInstance(Compartments.BLEED.get(), damage, "Bleed", false);
+//            bleed.addTag(bleedType);
+//            bleed.setAttribute(MedicalAttribute.BLEED, bleedRate);
+//            setBleedIcon(bleed);
+//            medicalStats.addCompartment(bleed);
+//        }
     }
 
     private static float getBleedRateForVessel(@NotNull CompartmentInstance vessel) {
@@ -90,34 +90,34 @@ public class Bleed extends Compartment {
 
         int numBleeds = Math.max(MIN_BLEED, Math.min(MAX_BLEED, 1 + (int)(damage / 4)));
 
-        for (int i = 0; i < numBleeds; i++) {
-            float severityRoll = random.nextFloat();
-            float damageImpact = damage / 100;
-            float bleedSeverity = 1 + damage * random.nextFloat();
-
-            CompartmentInstance bleed;
-            if (severityRoll > 0.8 - damageImpact) {
-                bleed = new CompartmentInstance(Compartments.BLEED.get(), bleedSeverity, "Arterial Bleed", true);
-                bleed.addTag(ARTERIAL_BLEED);
-                bleed.setAttribute(FunctionType.BLEED, BASE_ARTERIAL_BLEED_RATE);
-            } else if (severityRoll > 0.6 - damageImpact) {
-                bleed = new CompartmentInstance(Compartments.BLEED.get(), bleedSeverity, "Venous Bleed", true);
-                bleed.addTag(VENOUS_BLEED);
-                bleed.setAttribute(FunctionType.BLEED, BASE_VENOUS_BLEED_RATE);
-            } else {
-                bleed = new CompartmentInstance(Compartments.BLEED.get(), bleedSeverity, "Capillary Bleed", true);
-                bleed.addTag(CAPILLARY_BLEED);
-                bleed.setAttribute(FunctionType.BLEED, BASE_CAPILLARY_BLEED_RATE);
-            }
-
-            bleed.initializeWithParent(parent);
-            setBleedIcon(bleed);
-
-            medicalStats.addCompartment(bleed);
-            if (!parent.isHidden()) {
-                // TODO: if statement is acting weird
-                bleed.setHidden(false);
-            }
-        }
+//        for (int i = 0; i < numBleeds; i++) {
+//            float severityRoll = random.nextFloat();
+//            float damageImpact = damage / 100;
+//            float bleedSeverity = 1 + damage * random.nextFloat();
+//
+//            CompartmentInstance bleed;
+//            if (severityRoll > 0.8 - damageImpact) {
+//                bleed = new CompartmentInstance(Compartments.BLEED.get(), bleedSeverity, "Arterial Bleed", true);
+//                bleed.addTag(ARTERIAL_BLEED);
+//                bleed.setAttribute(MedicalAttribute.BLEED, BASE_ARTERIAL_BLEED_RATE);
+//            } else if (severityRoll > 0.6 - damageImpact) {
+//                bleed = new CompartmentInstance(Compartments.BLEED.get(), bleedSeverity, "Venous Bleed", true);
+//                bleed.addTag(VENOUS_BLEED);
+//                bleed.setAttribute(MedicalAttribute.BLEED, BASE_VENOUS_BLEED_RATE);
+//            } else {
+//                bleed = new CompartmentInstance(Compartments.BLEED.get(), bleedSeverity, "Capillary Bleed", true);
+//                bleed.addTag(CAPILLARY_BLEED);
+//                bleed.setAttribute(MedicalAttribute.BLEED, BASE_CAPILLARY_BLEED_RATE);
+//            }
+//
+//            bleed.initializeWithParent(parent);
+//            setBleedIcon(bleed);
+//
+//            medicalStats.addCompartment(bleed);
+//            if (!parent.isHidden()) {
+//                // TODO: if statement is acting weird
+//                bleed.setHidden(false);
+//            }
+//        }
     }
 }

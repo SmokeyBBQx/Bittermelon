@@ -8,7 +8,7 @@ import com.site21.bittermelon.content.items.scps.SCP109;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.handheldprogrammer.HandheldProgrammerItem;
-import com.site21.bittermelon.content.items.scps.SCP2398;
+import com.site21.bittermelon.content.items.scps.scp2398.SCP2398;
 import com.site21.bittermelon.content.items.smokable.SmokableItem;
 import com.site21.bittermelon.content.items.taser.TaserItem;
 import com.site21.bittermelon.content.items.wires.networkcable.NetworkCable;
@@ -361,5 +361,12 @@ public class BitterItems {
     public static final DeferredItem<BlockItem> SCP151 = ITEMS.register("scp151", () -> new BlockItem(
             BitterBlocks.SCP151.get(),
             new Item.Properties()
+    ));
+
+    public static final DeferredItem<BaseItem> BODY_PART = ITEMS.register("body_part", () -> new BaseItem(
+            new Item.Properties(),
+            1,
+            1,
+            ItemWeight.LIGHT
     ));
 }

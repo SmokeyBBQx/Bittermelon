@@ -1,8 +1,8 @@
 package com.site21.bittermelon.content.medical.compartments.deprecated;
 
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
-import com.site21.bittermelon.content.medical.compartments.FunctionType;
-import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
+import com.site21.bittermelon.content.medical.compartments.MedicalAttribute;
+import com.site21.bittermelon.content.medical.medicalstats.deprecated.MedicalStatsOld;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -15,7 +15,7 @@ public class CompartmentOld {
     protected final EnumSet<CompartmentTag> types;
     protected String name;
     protected transient CopyOnWriteArrayList<CompartmentOld> children;
-    protected EnumMap<FunctionType, Float> attributes;
+    protected EnumMap<MedicalAttribute, Float> attributes;
 
     protected transient CompartmentOld owner;
     protected float maxHealth;
@@ -33,7 +33,7 @@ public class CompartmentOld {
         this.trueMaxHealth = maxHealth;
         this.health = maxHealth;
         this.children = new CopyOnWriteArrayList<>();
-        this.attributes = new EnumMap<>(FunctionType.class);
+        this.attributes = new EnumMap<>(MedicalAttribute.class);
         this.hidden = true;
     }
 
@@ -56,7 +56,7 @@ public class CompartmentOld {
 
     protected void initializeAttributes() {
         if (attributes == null) {
-            attributes = new EnumMap<>(FunctionType.class);
+            attributes = new EnumMap<>(MedicalAttribute.class);
         }
     }
 
@@ -80,7 +80,7 @@ public class CompartmentOld {
     public float getHealth() {
         float totalHealth = this.health;
         for (CompartmentOld child : children) {
-            totalHealth *= child.getAttribute(FunctionType.FUNCTION);
+            totalHealth *= child.getAttribute(MedicalAttribute.FUNCTION);
         }
         return totalHealth;
     }
@@ -97,24 +97,24 @@ public class CompartmentOld {
 
     }
 
-    public void setAttribute(FunctionType functionType, Float value) {
+    public void setAttribute(MedicalAttribute medicalAttribute, Float value) {
         initializeAttributes();
-        attributes.put(functionType, value);
+        attributes.put(medicalAttribute, value);
     }
 
-    public void setAttributes(Map<FunctionType, Float> newAttributes) {
+    public void setAttributes(Map<MedicalAttribute, Float> newAttributes) {
         initializeAttributes();
         attributes.clear();
         attributes.putAll(newAttributes);
     }
 
-    public float getAttribute(FunctionType type) {
+    public float getAttribute(MedicalAttribute type) {
         if (attributes == null) return 0f;
         float healthPercentage = getHealth() / maxHealth;
         return attributes.getOrDefault(type, 0f) * healthPercentage;
     }
 
-    public EnumMap<FunctionType, Float> getAttributes() {
+    public EnumMap<MedicalAttribute, Float> getAttributes() {
         initializeAttributes();
         return attributes;
     }

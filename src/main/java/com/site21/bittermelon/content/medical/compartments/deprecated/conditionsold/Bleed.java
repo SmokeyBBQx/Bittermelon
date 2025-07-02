@@ -5,9 +5,9 @@ import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.medical.compartments.deprecated.CompartmentOld;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
 import com.site21.bittermelon.content.medical.compartments.deprecated.ConditionOld;
-import com.site21.bittermelon.content.medical.compartments.FunctionType;
+import com.site21.bittermelon.content.medical.compartments.MedicalAttribute;
 import com.site21.bittermelon.content.medical.compartments.deprecated.bodyparts.BodyPart;
-import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
+import com.site21.bittermelon.content.medical.medicalstats.deprecated.MedicalStatsOld;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +29,7 @@ public class Bleed extends ConditionOld {
                  LivingEntity entity, float bleedRate) {
         super(EnumSet.of(BLEED, bleedType), name, owner, maxHealth, character, entity);
         this.bleedRate = bleedRate;
-        setAttribute(FunctionType.BLEED, bleedRate);
+        setAttribute(MedicalAttribute.BLEED, bleedRate);
     }
 
     @Override

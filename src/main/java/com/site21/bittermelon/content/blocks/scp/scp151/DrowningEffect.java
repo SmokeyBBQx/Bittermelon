@@ -138,9 +138,9 @@ public class DrowningEffect extends MobEffect {
 
         sendVomitParticles(player);
 
-        SubstanceStack vomit = new SubstanceStack(Substances.LIQUID_VOMIT.get(), 1);
+        SubstanceStack vomit = new SubstanceStack(Substances.VOMIT.get(), 1);
         vomit.setVolume(3);
-        SubstanceStack water = new SubstanceStack(Substances.LIQUID_WATER.get(), 1);
+        SubstanceStack water = new SubstanceStack(Substances.WATER.get(), 1);
         water.setVolume(1);
 
         BlockPos pos = player.getOnPos().above();

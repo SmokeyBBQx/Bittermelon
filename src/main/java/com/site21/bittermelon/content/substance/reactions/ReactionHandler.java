@@ -2,6 +2,7 @@ package com.site21.bittermelon.content.substance.reactions;
 
 import com.site21.bittermelon.content.substance.Substance;
 import com.site21.bittermelon.content.substance.SubstanceStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -41,7 +42,7 @@ public class ReactionHandler {
     }
 
 
-    private Set<Reaction> getPotentialReactions(List<SubstanceStack> mixture) {
+    private @NotNull Set<Reaction> getPotentialReactions(@NotNull List<SubstanceStack> mixture) {
         Set<Reaction> potentialReactions = new HashSet<>();
 
         for (SubstanceStack stack : mixture) {
@@ -54,7 +55,7 @@ public class ReactionHandler {
         return potentialReactions;
     }
 
-    private void executeReaction(Reaction reaction, List<SubstanceStack> mixture, ReactionContainer container) {
+    private void executeReaction(Reaction reaction, @NotNull List<SubstanceStack> mixture, ReactionContainer container) {
         List<SubstanceStack> relatedStacks = mixture.stream()
                 .filter(stack -> reaction.getReactants().containsKey(stack.getSubstance()))
                 .toList();
@@ -62,7 +63,7 @@ public class ReactionHandler {
         handleReaction(reaction, relatedStacks, getConcentrations(relatedStacks), container);
     }
 
-    private Map<Substance, Float> getConcentrations(List<SubstanceStack> mixture) {
+    private @NotNull Map<Substance, Float> getConcentrations(@NotNull List<SubstanceStack> mixture) {
         Map<Substance, Float> concentrations = new HashMap<>();
         for (SubstanceStack stack : mixture) {
             concentrations.put(stack.getSubstance(), stack.getAmount());
@@ -70,7 +71,7 @@ public class ReactionHandler {
         return concentrations;
     }
 
-    public void handleReaction(Reaction reaction, List<SubstanceStack> mixture, Map<Substance, Float> concentrations, ReactionContainer container) {
+    public void handleReaction(@NotNull Reaction reaction, @NotNull List<SubstanceStack> mixture, Map<Substance, Float> concentrations, @NotNull ReactionContainer container) {
         double reactionRate = reaction.calculateReactionRate(concentrations, container.getTemperature());
 
         // Calculate the limiting factor based on available reactants
@@ -106,10 +107,10 @@ public class ReactionHandler {
         updateContainerTemperature(reaction, container);
     }
 
-    private void updateContainerTemperature(Reaction reaction, ReactionContainer container) {
-        float enthalpyChange = reaction.getEnthalpyChange();
-        float containerHeatCapacity = container.getHeatCapacity();
-        float temperatureChange = enthalpyChange / containerHeatCapacity;
-        container.modifyTemperature(temperatureChange);
+    private void updateContainerTemperature(@NotNull Reaction reaction, @NotNull ReactionContainer container) {
+//        float enthalpyChange = reaction.getEnthalpyChange();
+//        float containerHeatCapacity = container.getHeatCapacity();
+//        float temperatureChange = enthalpyChange / containerHeatCapacity;
+//        container.modifyTemperature(temperatureChange);
     }
 }

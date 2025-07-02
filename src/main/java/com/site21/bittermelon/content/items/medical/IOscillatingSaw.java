@@ -12,8 +12,6 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.EnumSet;
 
-import static com.site21.bittermelon.init.custom.Compartments.INJURY;
-
 public interface IOscillatingSaw extends MedicalItem {
     @Override
     default String getActionDescription() {
@@ -35,8 +33,8 @@ public interface IOscillatingSaw extends MedicalItem {
 
     @Override
     default void finishAction(CompartmentInstance compartment, MedicalStats medicalStats, float quality, ItemStack item) {
-        CompartmentInstance sawCut = new CompartmentInstance(INJURY.get(), quality, "Saw Cut", false);
-        sawCut.initializeWithParent(compartment);
-        medicalStats.addCompartment(sawCut);
+//        CompartmentInstance sawCut = new CompartmentInstance(INJURY.get(), quality, "Saw Cut", false);
+//        sawCut.initializeWithParent(compartment);
+//        medicalStats.addCompartment(sawCut);
     }
 }

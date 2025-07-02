@@ -3,10 +3,16 @@ package com.site21.bittermelon.content.items.substance;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.substance.data.SubstanceContents;
+import com.site21.bittermelon.content.substance.Substance;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import com.site21.bittermelon.content.substance.reactions.ReactionContainer;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.LAST_UPDATED;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.SUBSTANCE_CONTENTS;
@@ -42,22 +50,22 @@ public class SubstanceContainerItem extends BaseItem implements ReactionContaine
         this.initialSubstances = initialSubstances;
     }
 
-    public SubstanceContents getSubstanceData(ItemStack stack) {
+    public SubstanceContents getSubstanceData(@NotNull ItemStack stack) {
         return stack.getOrDefault(SUBSTANCE_CONTENTS.get(), SubstanceContents.EMPTY);
     }
 
-    public void setSubstanceDataFromMutable(ItemStack stack, SubstanceContents.Mutable mutableData) {
+    public void setSubstanceDataFromMutable(@NotNull ItemStack stack, SubstanceContents.@NotNull Mutable mutableData) {
         stack.set(SUBSTANCE_CONTENTS.get(), mutableData.toImmutable());
         updateVisuals(stack);
     }
 
-    public SubstanceContents.Mutable getMutableSubstanceData(ItemStack stack) {
+    public SubstanceContents.Mutable getMutableSubstanceData(@NotNull ItemStack stack) {
         SubstanceContents substanceContents = stack.getOrDefault(SUBSTANCE_CONTENTS.get(), SubstanceContents.EMPTY);
         return substanceContents.toMutable();
     }
 
     public List<SubstanceStack> getContents(ItemStack stack) {
-        return getSubstanceData(stack).substances;
+        return getSubstanceData(stack).substances();
     }
 
     public float getTotalAmount(ItemStack stack) {
@@ -92,7 +100,7 @@ public class SubstanceContainerItem extends BaseItem implements ReactionContaine
         return getContents(stack).isEmpty();
     }
 
-    public ItemStack consumeSubstances(ItemStack stack, float consumeRate) {
+    public ItemStack consumeSubstances(ItemStack stack, float consumeRate, LivingEntity entity) {
         float totalAmount = getTotalVolume(stack);
         SubstanceContents.Mutable mutableData = getMutableSubstanceData(stack);
         Iterator<SubstanceStack> iterator = mutableData.substances.iterator();
@@ -102,6 +110,10 @@ public class SubstanceContainerItem extends BaseItem implements ReactionContaine
 
             float proportion = totalAmount > 0 ? substance.getVolume() / totalAmount : 0;
             float consumeAmount = Math.min(consumeRate * proportion, substance.getVolume());
+
+            SubstanceStack consumedSubstance = substance.copy();
+            consumedSubstance.setVolume(consumeAmount);
+            consumedSubstance.getSubstance().onConsume(consumedSubstance, entity);
 
             substance.modifyVolume(-consumeAmount);
 
@@ -136,21 +148,48 @@ public class SubstanceContainerItem extends BaseItem implements ReactionContaine
 
     protected Component getFlavorMessageComponent(ItemStack stack) {
         List<SubstanceStack> substances = getContents(stack);
-        float totalAmount = getSubstanceData(stack).getTotalVolume();
+        float totalVolume = getSubstanceData(stack).getTotalVolume();
 
-        if (totalAmount == 0 || substances.isEmpty()) {
-            return Component.literal("No discernible flavor.");
+        if (totalVolume == 0 || substances.isEmpty()) {
+            return Component.empty();
         }
 
         if (substances.size() == 1) {
-//            Map.Entry<ResourceLocation, Integer> entry = substances.entrySet().iterator().next();
-//            ResourceLocation substance = (ResourceLocation) entry.getKey();
-//
-//            String flavorDescription = "Tastes " + substance.getFlavor() + ".";
-//
-//            return Component.literal(flavorDescription).withStyle(ChatFormatting.GREEN);
+            String flavor = substances.getFirst().getSubstance().getFlavor();
+            if (flavor.isEmpty()) return Component.empty();
+
+            String flavorDescription = "Tastes " + flavor + ".";
+
+            return Component.literal(flavorDescription).withStyle(ChatFormatting.GREEN);
         }
-        return null;
+
+        MutableComponent mainComponent = Component.literal("Tastes like...").withStyle(ChatFormatting.GREEN);
+
+        String hoverText = substances.stream()
+                .filter(substance -> {
+                    String flavor = substance.getSubstance().getFlavor();
+                    return flavor != null && !flavor.trim().isEmpty();
+                })
+                .map(substance -> {
+                    float volume = substance.getVolume();
+                    float percentageAmount = volume / totalVolume * 100;
+                    String flavor = substance.getSubstance().getFlavor();
+                    String flavorDescription;
+
+                    if (percentageAmount <= 35) {
+                        flavorDescription = "Has a faint hint of " + flavor + " tones.";
+                    } else if (percentageAmount <= 65) {
+                        flavorDescription = "Tastes like a noticeable blend of " + flavor + " notes.";
+                    } else {
+                        flavorDescription = "Tastes strongly " + flavor + ".";
+                    }
+
+                    return flavorDescription;
+                })
+                .collect(Collectors.joining("\n"));
+
+        return mainComponent.setStyle(mainComponent.getStyle().withHoverEvent(
+                new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(hoverText))));
     }
 
     private void updateVisuals(@NotNull ItemStack stack) {

@@ -5,17 +5,18 @@ import com.site21.bittermelon.content.substance.SubstanceStack;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class SubstanceContents {
+public record SubstanceContents(List<SubstanceStack> substances) {
     public static final SubstanceContents EMPTY = new SubstanceContents(List.of());
     public static final Codec<SubstanceContents> CODEC = SubstanceStack.CODEC.listOf().xmap(SubstanceContents::new, container -> container.substances);
     public static final StreamCodec<RegistryFriendlyByteBuf, SubstanceContents> STREAM_CODEC = SubstanceStack.STREAM_CODEC
             .apply(ByteBufCodecs.list())
             .map(SubstanceContents::new, container -> container.substances);
-    public final List<SubstanceStack> substances;
 
     public SubstanceContents(List<SubstanceStack> substances) {
         this.substances = new ArrayList<>(substances);
@@ -38,7 +39,9 @@ public final class SubstanceContents {
         if (this == other) {
             return true;
         } else {
-            return other instanceof SubstanceContents substanceContents && SubstanceStack.listMatches(this.substances, substanceContents.substances);
+            return other instanceof SubstanceContents(
+                    List<SubstanceStack> substances1
+            ) && SubstanceStack.listMatches(this.substances, substances1);
         }
     }
 
@@ -47,19 +50,22 @@ public final class SubstanceContents {
         return SubstanceStack.hashStackList(this.substances);
     }
 
+    @Contract(pure = true)
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return "SubstanceContainerContents" + this.substances;
     }
 
-    public Mutable toMutable() {
+    @Contract(value = " -> new", pure = true)
+    public @NotNull Mutable toMutable() {
         return new Mutable(this);
     }
 
     public static class Mutable {
         public final List<SubstanceStack> substances;
 
-        public Mutable(SubstanceContents substanceContents) {
+        @Contract(pure = true)
+        public Mutable(@NotNull SubstanceContents substanceContents) {
             this.substances = new ArrayList<>(substanceContents.substances);
         }
 
@@ -73,7 +79,7 @@ public final class SubstanceContents {
             this.substances.add(stack.copy());
         }
 
-        public void setSubstances(List<SubstanceStack> substances) {
+        public void setSubstances(@NotNull List<SubstanceStack> substances) {
             this.substances.clear();
             substances.stream()
                     .filter(s -> s.getAmount() > 0)

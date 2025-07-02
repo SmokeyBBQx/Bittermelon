@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.medical.compartments.deprecated.firstaid;
 
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
-import com.site21.bittermelon.content.medical.compartments.FunctionType;
+import com.site21.bittermelon.content.medical.compartments.MedicalAttribute;
 import com.site21.bittermelon.content.medical.compartments.deprecated.conditionsold.Bleed;
 import net.minecraft.world.item.ItemStack;
 
@@ -12,7 +12,7 @@ public class Clamp extends FirstAid {
         super(EnumSet.of(CompartmentTag.CLAMP), name, owner, maxHealth, quality);
         this.item = item;
 
-        attributes.put(FunctionType.FUNCTION, -owner.getMaxHealth());
+        attributes.put(MedicalAttribute.FUNCTION, -owner.getMaxHealth());
     }
 
 

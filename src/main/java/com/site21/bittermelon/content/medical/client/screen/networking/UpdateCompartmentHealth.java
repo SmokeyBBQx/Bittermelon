@@ -36,10 +36,10 @@ public record UpdateCompartmentHealth(UUID characterID, UUID compartmentID, floa
 
     public void handle(@NotNull IPayloadContext ctx) {
         if (Minecraft.getInstance().screen instanceof HealthScreen healthScreen) {
-            if (healthScreen.getCharacter().getUUID() == characterID) {
-                healthScreen.getMedicalStats().getCompartment(compartmentID).modifyHealth(healthDamage);
-                healthScreen.getMedicalStats().getCompartment(compartmentID).modifyMaxHealth(maxHealthDamage);
-            }
+//            if (healthScreen.getCharacter().getUUID() == characterID) {
+//                healthScreen.getMedicalStats().getCompartment(compartmentID).modifyHealth(healthDamage);
+//                healthScreen.getMedicalStats().getCompartment(compartmentID).modifyMaxHealth(maxHealthDamage);
+//            }
         }
     }
 }

@@ -1,17 +1,22 @@
-package com.site21.bittermelon.content.medical.client.screen;
+package com.site21.bittermelon.content.medical.client.screen.widget;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.content.medical.client.screen.HealthScreenV2;
 import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
 import com.site21.bittermelon.content.medical.compartments.VisualData;
+import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -19,11 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CompartmentNodeWidget extends AbstractWidget {
-//    private static final ResourceLocation TITLE_BOX_SPRITE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/title_box");
-//    private static final ResourceLocation BOX_HEALTHY = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/box_healthy");
-//    private static final ResourceLocation BOX_DAMAGED = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/box_damaged");
-//    private static final ResourceLocation BOX_CRITICAL = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/box_critical");
-
     private static final ResourceLocation TITLE_BOX_SPRITE = ResourceLocation.withDefaultNamespace("advancements/title_box");
     private static final ResourceLocation BOX_OBTAINED = ResourceLocation.withDefaultNamespace("advancements/box_obtained");
     private static final ResourceLocation BOX_UNOBTAINED = ResourceLocation.withDefaultNamespace("advancements/box_unobtained");
@@ -31,8 +31,8 @@ public class CompartmentNodeWidget extends AbstractWidget {
     private static final ResourceLocation FRAME_CHALLENGE = ResourceLocation.withDefaultNamespace("advancements/challenge_frame_unobtained");
     private static final ResourceLocation FRAME_GOAL = ResourceLocation.withDefaultNamespace("advancements/goal_frame_unobtained");
 
-    private HealthScreenV2 healthScreen;
-    private CompartmentInstance compartment;
+    private final HealthScreenV2 healthScreen;
+    private final CompartmentInstance compartment;
 
     private int relativeX;
     private int relativeY;
@@ -63,11 +63,12 @@ public class CompartmentNodeWidget extends AbstractWidget {
 
     @Override
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
-        if (!compartment.isHidden() || (compartment.getHealthRaw() <= 0)) {
+        VisualData visualData = compartment.getVisualData();
+
+        if (!visualData.isHidden) {
 //            ResourceLocation frameSprite = getFrameSpriteForHealth();
 //            guiGraphics.blitSprite(frameSprite, this.getX() + 3, this.getY(), 26, 26);
 
-            VisualData visualData = compartment.getVisualData();
             float scaleFactor = visualData.scale;
 
             guiGraphics.pose().pushPose();
@@ -76,30 +77,18 @@ public class CompartmentNodeWidget extends AbstractWidget {
 
             guiGraphics.pose().scale(scaleFactor, scaleFactor, 0);
 
-            if (compartment.getIcon() != null) {
+            if (visualData.icon != null) {
                 int width = visualData.width;
                 int height = visualData.height;
                 RenderSystem.enableBlend();
-                guiGraphics.blit(compartment.getIcon(), 0, 0, 0, 0, width, height, width, height);
+                guiGraphics.blit(visualData.icon, 0, 0, 0, 0, width, height, width, height);
                 RenderSystem.disableBlend();
             } else {
-                guiGraphics.renderFakeItem(compartment.getItem(), 0, 0);
+                guiGraphics.renderFakeItem(new ItemStack(compartment.getItem()), 0, 0);
             }
 
             guiGraphics.pose().popPose();
-
         }
-    }
-
-    private float getScaleFactor() {
-        float minScale = 0.5f;
-        float maxScale = 7.5f;
-        float minHealth = 1.0f;
-        float maxHealth = 40.0f;
-
-        float healthValue = Math.max(minHealth, Math.min(maxHealth, compartment.getTrueMaxHealth()));
-
-        return minScale + (healthValue - minHealth) * (maxScale - minScale) / (maxHealth - minHealth);
     }
 
     public void drawHover(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float fade, int screenWidth, int screenHeight) {
@@ -114,7 +103,7 @@ public class CompartmentNodeWidget extends AbstractWidget {
         boolean isRightSide = screenWidth + mouseX + this.getX() + 200 >= healthScreen.width;
 
         List<Component> tooltipLines = new ArrayList<>();
-        tooltipLines.add(Component.literal(compartment.getHealthRaw() + "/" + compartment.getMaxHealth()));
+        tooltipLines.add(Component.literal(compartment.getHealth() + "/" + compartment.getMaxHealth()));
         tooltipLines.add(Component.literal("\uE002 Inspect").withStyle(style -> style.withFont(
                 ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "default"))));
 
@@ -148,7 +137,7 @@ public class CompartmentNodeWidget extends AbstractWidget {
         int boxHeight = 32 + tooltipLines.size() * 9;
         guiGraphics.blitSprite(TITLE_BOX_SPRITE, x1, tooltipY, tooltipWidth, boxHeight);
 
-        float healthRatio = compartment.getHealthRaw() / compartment.getMaxHealth();
+        float healthRatio = compartment.getHealth() / compartment.getMaxHealth();
         int progressWidth = Mth.floor(healthRatio * tooltipWidth);
         int remainingWidth = tooltipWidth - progressWidth;
 
@@ -166,10 +155,10 @@ public class CompartmentNodeWidget extends AbstractWidget {
             guiGraphics.drawString(Minecraft.getInstance().font, tooltipLines.get(i), tooltipX + 5, tooltipY + 20 + (i * 12), -1);
         }
 
-        if (compartment.getIcon() != null && compartment.getItem().isEmpty()) {
-            guiGraphics.blitSprite(compartment.getIcon(), this.getX() + 8, this.getY() + 5, 16, 16);
+        if (compartment.getVisualData().icon != null && compartment.getItem() != null) {
+            guiGraphics.blitSprite(compartment.getVisualData().icon, this.getX() + 8, this.getY() + 5, 16, 16);
         } else {
-            guiGraphics.renderFakeItem(compartment.getItem(), this.getX() + 8, this.getY() + 5);
+            guiGraphics.renderFakeItem(new ItemStack(compartment.getItemHolder()), this.getX() + 8, this.getY() + 5);
         }
 
         guiGraphics.pose().popPose();
@@ -177,7 +166,7 @@ public class CompartmentNodeWidget extends AbstractWidget {
 
 
     private ResourceLocation getFrameSpriteForHealth() {
-        float healthPercent = compartment.getHealthRaw() / compartment.getMaxHealth();
+        float healthPercent = compartment.getHealth() / compartment.getMaxHealth();
         if (healthPercent > 0.66f) {
             return FRAME_TASK;
         } else if (healthPercent > 0.33f) {
@@ -188,7 +177,7 @@ public class CompartmentNodeWidget extends AbstractWidget {
     }
 
     private ResourceLocation getBoxSpriteForHealth() {
-        float healthPercent = compartment.getHealthRaw() / compartment.getMaxHealth();
+        float healthPercent = compartment.getHealth() / compartment.getMaxHealth();
         if (healthPercent > 0.5f) {
             return BOX_OBTAINED;
         } else {
@@ -199,37 +188,48 @@ public class CompartmentNodeWidget extends AbstractWidget {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 1) {
-            healthScreen.addCompartmentSpace(Component.literal(compartment.getName()), compartment.getCompartmentSpace());
+            healthScreen.addCompartmentSpace(Component.literal(compartment.getName()), compartment);
             return true;
+        } else if (healthScreen.getHeldItem() == null) {
+            playDownSound(Minecraft.getInstance().getSoundManager());
+            compartment.getVisualData().isHidden = true;
+            visible = false;
+            healthScreen.setHeldItem(compartment.getCompartment().createItemStack(compartment));
         }
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
-    public boolean isMouseOver(int mouseX, int mouseY) {
-        if (!compartment.isHidden() || (compartment.getHealthRaw() <= 0)) {
+    @Override
+    public void playDownSound(@NotNull SoundManager soundManager) {
+        soundManager.play(SimpleSoundInstance.forUI(BitterSounds.SPLATTER, 1.0F));
+    }
+
+    @Override
+    public boolean isMouseOver(double mouseX, double mouseY) {
+        if (!compartment.getVisualData().isHidden || (compartment.getHealth() <= 0)) {
             VisualData visualData = compartment.getVisualData();
             float scaleFactor = visualData.scale;
 
             int centerX = this.getX() + 8;
             int centerY = this.getY() + 8;
 
-            int relX = mouseX - centerX;
-            int relY = mouseY - centerY;
+            double relX = mouseX - centerX;
+            double relY = mouseY - centerY;
 
-            if (compartment.getIcon() == null) {
+            if (compartment.getVisualData().icon == null) {
                 float distance = (float) Math.sqrt(relX * relX + relY * relY);
                 float hitboxRadius = 8 + (2 * (float) Math.sqrt(scaleFactor));
                 return distance <= hitboxRadius;
             }
 
-            float unscaledRelX = relX / scaleFactor;
-            float unscaledRelY = relY / scaleFactor;
+            double unscaledRelX = relX / scaleFactor;
+            double unscaledRelY = relY / scaleFactor;
 
-            int texX = Math.round(unscaledRelX);
-            int texY = Math.round(unscaledRelY);
+            int texX = (int) Math.round(unscaledRelX);
+            int texY = (int) Math.round(unscaledRelY);
 
             if (texX >= 0 && texX < visualData.width && texY >= 0 && texY < visualData.height) {
-                return getAlphaAtPixel(compartment.getIcon(), texX, texY) >= 1;
+                return getAlphaAtPixel(compartment.getVisualData().icon, texX, texY) >= 1;
             }
         }
         return false;

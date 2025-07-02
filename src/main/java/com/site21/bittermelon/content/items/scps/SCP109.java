@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.site21.bittermelon.init.custom.Substances.LIQUID_WATER;
+import static com.site21.bittermelon.init.custom.Substances.WATER;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 
 public class SCP109 extends FluidContainerItem {
@@ -30,7 +30,7 @@ public class SCP109 extends FluidContainerItem {
 
     @Override
     public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
-        updateSubstance(player.getItemInHand(usedHand), new SubstanceStack(LIQUID_WATER.get(), 1000));
+        updateSubstance(player.getItemInHand(usedHand), new SubstanceStack(WATER.get(), 1000));
         return super.use(level, player, usedHand);
     }
 

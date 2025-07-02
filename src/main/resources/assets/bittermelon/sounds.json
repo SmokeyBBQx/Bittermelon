@@ -207,6 +207,12 @@
       "bittermelon:horror/bell_scare"
     ]
   },
+  "misc.splatter": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:misc/splatter"
+    ]
+  },
   "container.toolbox_open": {
     "category": "neutral",
     "sounds": [

@@ -6,7 +6,7 @@ import com.site21.bittermelon.content.entities.implementations.scp650.SCP650;
 import com.site21.bittermelon.content.entities.implementations.scp939.SCP939;
 import com.site21.bittermelon.content.entities.miscellaneous.ThrownItemProjectile;
 import com.site21.bittermelon.content.entities.implementations.chicken.Chicken;
-import com.site21.bittermelon.content.items.scps.SCP2398Projectile;
+import com.site21.bittermelon.content.items.scps.scp2398.SCP2398Projectile;
 import com.site21.bittermelon.content.items.taser.TaserProjectile;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;

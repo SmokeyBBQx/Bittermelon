@@ -2,7 +2,6 @@ package com.site21.bittermelon.content.items.taser;
 
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
-import com.site21.bittermelon.content.items.scps.SCP2398Projectile;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;

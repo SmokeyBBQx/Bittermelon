@@ -2,11 +2,11 @@ package com.site21.bittermelon.content.medical.factory;
 
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.medical.blood.BloodType;
+import com.site21.bittermelon.content.medical.compartments.MedicalAttribute;
 import com.site21.bittermelon.content.medical.compartments.deprecated.CompartmentOld;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
-import com.site21.bittermelon.content.medical.compartments.FunctionType;
 import com.site21.bittermelon.content.medical.compartments.deprecated.bodyparts.BodyPart;
-import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
+import com.site21.bittermelon.content.medical.medicalstats.deprecated.MedicalStatsOld;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,14 +44,14 @@ public class ChickenFactory implements AnatomyFactoryOld {
         BodyPart brain = createMajorBodyPart("Brain", skull);
         BodyPart opticTectum = createBodyPart("Optic Tectum", brain, 1f, EnumSet.of(CompartmentTag.SOFT_TISSUE));
         BodyPart cerebellum = createBodyPart("Cerebellum", brain, 1f, EnumSet.of(CompartmentTag.SOFT_TISSUE));
-        cerebellum.setAttribute(FunctionType.BRAIN_MOTOR_ABILITY, 1f);
+        cerebellum.setAttribute(MedicalAttribute.BRAIN_MOTOR_ABILITY, 1f);
         BodyPart medulla = createBodyPart("Medulla Oblongata", brain, 1f, EnumSet.of(CompartmentTag.SOFT_TISSUE));
-        medulla.setAttribute(FunctionType.BRAIN_VITALS, 1f);
+        medulla.setAttribute(MedicalAttribute.BRAIN_VITALS, 1f);
 
 
         // Face components
         BodyPart beak = createRevealedBodyPart("Beak", head, 7.5f, EnumSet.of(CompartmentTag.HARD_TISSUE));
-        beak.setAttribute(FunctionType.BITE, 1f);
+        beak.setAttribute(MedicalAttribute.BITE, 1f);
         BodyPart comb = createRevealedBodyPart("Comb", head, 2.5f, EnumSet.of(CompartmentTag.SOFT_TISSUE));
         BodyPart wattles = createRevealedBodyPart("Wattles", head, 2.5f, EnumSet.of(CompartmentTag.SOFT_TISSUE));
         BodyPart leftEye = createRevealedBodyPart("Left Eye", head, 1, EnumSet.of(CompartmentTag.SOFT_TISSUE));
@@ -76,13 +76,13 @@ public class ChickenFactory implements AnatomyFactoryOld {
 
         // Internal organs
         BodyPart heart = createBodyPart("Heart", muscles, 7.5f, EnumSet.of(CompartmentTag.SOFT_TISSUE));
-        heart.setAttribute(FunctionType.CIRCULATION, 1f);
+        heart.setAttribute(MedicalAttribute.CIRCULATION, 1f);
         BodyPart leftLung = createBodyPart("Left Lung", muscles, 5, EnumSet.of(CompartmentTag.SOFT_TISSUE));
-        leftLung.setAttribute(FunctionType.RESPIRATORY, 1f);
+        leftLung.setAttribute(MedicalAttribute.RESPIRATION, 1f);
         BodyPart rightLung = createBodyPart("Right Lung", muscles, 5, EnumSet.of(CompartmentTag.SOFT_TISSUE));
-        rightLung.setAttribute(FunctionType.RESPIRATORY, 1f);
+        rightLung.setAttribute(MedicalAttribute.RESPIRATION, 1f);
         BodyPart airSacs = createBodyPart("Air Sacs", muscles, 10, EnumSet.of(CompartmentTag.SOFT_TISSUE));
-        airSacs.setAttribute(FunctionType.RESPIRATORY, 1f);
+        airSacs.setAttribute(MedicalAttribute.RESPIRATION, 1f);
 
         // Digestive system
         BodyPart crop = createBodyPart("Crop", muscles, 7.5f, EnumSet.of(CompartmentTag.SOFT_TISSUE));
@@ -119,12 +119,12 @@ public class ChickenFactory implements AnatomyFactoryOld {
         BodyPart radius = createBodyPart(side + " Radius", muscles, 6, EnumSet.of(CompartmentTag.HARD_TISSUE));
         BodyPart ulna = createBodyPart(side + " Ulna", muscles, 6, EnumSet.of(CompartmentTag.HARD_TISSUE));
 
-        skin.setAttribute(FunctionType.FLIGHT, 1f);
-        feathers.setAttribute(FunctionType.FLIGHT, 1f);
-        muscles.setAttribute(FunctionType.FLIGHT, 1f);
-        humerus.setAttribute(FunctionType.FLIGHT, 1f);
-        radius.setAttribute(FunctionType.FLIGHT, 1f);
-        ulna.setAttribute(FunctionType.FLIGHT, 1f);
+        skin.setAttribute(MedicalAttribute.FLIGHT, 1f);
+        feathers.setAttribute(MedicalAttribute.FLIGHT, 1f);
+        muscles.setAttribute(MedicalAttribute.FLIGHT, 1f);
+        humerus.setAttribute(MedicalAttribute.FLIGHT, 1f);
+        radius.setAttribute(MedicalAttribute.FLIGHT, 1f);
+        ulna.setAttribute(MedicalAttribute.FLIGHT, 1f);
 
         compartments.addAll(Arrays.asList(skin, feathers, muscles, humerus, radius, ulna));
     }
@@ -151,13 +151,13 @@ public class ChickenFactory implements AnatomyFactoryOld {
         BodyPart tarsometatarsus = createBodyPart(side + " Tarsometatarsus", muscles, 7.5f, EnumSet.of(CompartmentTag.HARD_TISSUE));
         BodyPart foot = createRevealedBodyPart(side + " Foot", leg, 5, EnumSet.of(CompartmentTag.SOFT_TISSUE));
 
-        skin.setAttribute(FunctionType.MOVEMENT, 1f);
-        scales.setAttribute(FunctionType.MOVEMENT, 1f);
-        muscles.setAttribute(FunctionType.MOVEMENT, 1f);
-        femur.setAttribute(FunctionType.MOVEMENT, 1f);
-        tibiotarsus.setAttribute(FunctionType.MOVEMENT, 1f);
-        tarsometatarsus.setAttribute(FunctionType.MOVEMENT, 1f);
-        foot.setAttribute(FunctionType.MOVEMENT, 1f);
+        skin.setAttribute(MedicalAttribute.MOVEMENT, 1f);
+        scales.setAttribute(MedicalAttribute.MOVEMENT, 1f);
+        muscles.setAttribute(MedicalAttribute.MOVEMENT, 1f);
+        femur.setAttribute(MedicalAttribute.MOVEMENT, 1f);
+        tibiotarsus.setAttribute(MedicalAttribute.MOVEMENT, 1f);
+        tarsometatarsus.setAttribute(MedicalAttribute.MOVEMENT, 1f);
+        foot.setAttribute(MedicalAttribute.MOVEMENT, 1f);
 
         // Spurs (if present)
         BodyPart spur = createRevealedBodyPart(side + " Spur", tarsometatarsus, 4, EnumSet.of(CompartmentTag.HARD_TISSUE));

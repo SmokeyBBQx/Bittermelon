@@ -2,14 +2,12 @@ package com.site21.bittermelon.content.explosions;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.base.structuralblock.StructuralBlockEntity;
-import com.site21.bittermelon.content.items.scps.SCP2398;
+import com.site21.bittermelon.content.items.scps.scp2398.SCP2398;
 import com.site21.bittermelon.content.syncsound.SyncSoundEvent;
 import com.site21.bittermelon.content.syncsound.SyncSoundType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;

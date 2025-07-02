@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.RELEASE_PRESSURE;
-import static com.site21.bittermelon.init.custom.Substances.GASEOUS_OXYGEN;
+import static com.site21.bittermelon.init.custom.Substances.OXYGEN;
 
 public class GasContainerItem extends SubstanceContainerItem {
     private final int maxPressure;
@@ -55,7 +55,7 @@ public class GasContainerItem extends SubstanceContainerItem {
     }
 
     public float getPressure(ItemStack stack) {
-        return SubstanceUtils.getPressure(getSubstanceData(stack).substances, capacity, getTemperature());
+        return SubstanceUtils.getPressure(getSubstanceData(stack).substances(), capacity, getTemperature());
     }
 
     @Override
@@ -105,7 +105,7 @@ public class GasContainerItem extends SubstanceContainerItem {
 
         AtmosInstance atmosInstance = AtmosHandler.getAtmosInstanceAt(level, entity.getOnPos());
         if (atmosInstance == null) {
-            AtmosHandler.addAtmosphere(level, entity.getOnPos(), 293.15f, List.of(new SubstanceStack(GASEOUS_OXYGEN.get(), 1)));
+            AtmosHandler.addAtmosphere(level, entity.getOnPos(), 293.15f, List.of(new SubstanceStack(OXYGEN.get(), 1)));
             atmosInstance = AtmosHandler.getAtmosInstanceAt(level, entity.getOnPos());
         }
 

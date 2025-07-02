@@ -2,8 +2,8 @@ package com.site21.bittermelon.content.medical.compartments.deprecated;
 
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
-import com.site21.bittermelon.content.medical.compartments.FunctionType;
-import com.site21.bittermelon.content.medical.medicalstats.MedicalStatsOld;
+import com.site21.bittermelon.content.medical.compartments.MedicalAttribute;
+import com.site21.bittermelon.content.medical.medicalstats.deprecated.MedicalStatsOld;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +29,7 @@ public abstract class ConditionOld extends CompartmentOld {
         float totalHealth = this.health;
         for (CompartmentOld child : children) {
             if (!(child instanceof ConditionOld)) {
-                totalHealth += child.getAttribute(FunctionType.FUNCTION);
+                totalHealth += child.getAttribute(MedicalAttribute.FUNCTION);
             }
         }
         return totalHealth;

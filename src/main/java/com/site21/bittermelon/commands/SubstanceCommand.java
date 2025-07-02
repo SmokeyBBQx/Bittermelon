@@ -11,10 +11,14 @@ import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.content.items.substance.SubstanceContainerItem;
 import com.site21.bittermelon.content.substance.Substance;
 import com.site21.bittermelon.content.substance.SubstanceStack;
+import com.site21.bittermelon.init.custom.Substances;
 import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.ResourceArgument;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -24,20 +28,19 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
-import static com.site21.bittermelon.init.neoforge.BitterRegistries.SUBSTANCE_REGISTRY;
-import static com.site21.bittermelon.init.custom.Substances.*;
+import static com.site21.bittermelon.init.neoforge.BitterRegistries.*;
 
 public class SubstanceCommand {
-    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext) {
         dispatcher.register(Commands.literal("substance")
                 .requires(source -> source.hasPermission(2))
                 .then(Commands.literal("fluid")
                         .then(Commands.literal("add")
-                                .then(Commands.argument("substance", StringArgumentType.word())
+                                .then(Commands.argument("substance", ResourceArgument.resource(buildContext, SUBSTANCE_REGISTRY_KEY))
                                         .then(Commands.argument("amount", IntegerArgumentType.integer())
                                                 .executes(context -> addSubstanceFluid(
                                                                 context.getSource(),
-                                                                StringArgumentType.getString(context, "substance"),
+                                                                ResourceArgument.getResource(context, "substance", SUBSTANCE_REGISTRY_KEY),
                                                                 IntegerArgumentType.getInteger(context, "amount")
                                                         )
                                                 )
@@ -61,12 +64,12 @@ public class SubstanceCommand {
                 )
                 .then(Commands.literal("container")
                         .then(Commands.literal("add")
-                                .then(Commands.argument("substance", StringArgumentType.word())
+                                .then(Commands.argument("substance", ResourceArgument.resource(buildContext, SUBSTANCE_REGISTRY_KEY))
                                         .then(Commands.literal("volume")
                                                 .then(Commands.argument("amount", IntegerArgumentType.integer())
                                                         .executes(context -> addSubstanceContainerVolume(
                                                                 context.getSource(),
-                                                                StringArgumentType.getString(context, "substance"),
+                                                                ResourceArgument.getResource(context, "substance", SUBSTANCE_REGISTRY_KEY),
                                                                 IntegerArgumentType.getInteger(context, "amount")
                                                         ))
                                                 )
@@ -75,7 +78,7 @@ public class SubstanceCommand {
                                                 .then(Commands.argument("amount", IntegerArgumentType.integer())
                                                         .executes(context -> addSubstanceContainerAmount(
                                                                 context.getSource(),
-                                                                StringArgumentType.getString(context, "substance"),
+                                                                ResourceArgument.getResource(context, "substance", SUBSTANCE_REGISTRY_KEY),
                                                                 IntegerArgumentType.getInteger(context, "amount")
                                                         ))
                                                 )
@@ -88,11 +91,11 @@ public class SubstanceCommand {
                 )
                 .then(Commands.literal("atmos")
                         .then(Commands.literal("add")
-                                .then(Commands.argument("substance", StringArgumentType.word())
+                                .then(Commands.argument("substance", ResourceArgument.resource(buildContext, SUBSTANCE_REGISTRY_KEY))
                                         .then(Commands.argument("amount", IntegerArgumentType.integer())
                                                 .executes(context -> addSubstanceAtmos(
                                                                 context.getSource(),
-                                                                StringArgumentType.getString(context, "substance"),
+                                                        ResourceArgument.getResource(context, "substance", SUBSTANCE_REGISTRY_KEY),
                                                                 IntegerArgumentType.getInteger(context, "amount")
                                                         )
                                                 )
@@ -153,18 +156,9 @@ public class SubstanceCommand {
         return 1;
     }
 
-    private static int addSubstanceAtmos(@NotNull CommandSourceStack source, String substanceName, int amount) {
+    private static int addSubstanceAtmos(@NotNull CommandSourceStack source, Holder<Substance> substance, int amount) {
         BlockPos pos = BlockPos.containing(source.getPosition());
-        Optional<Substance> optionalSubstance = SUBSTANCE_REGISTRY.getOptional(
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, substanceName)
-        );
 
-        if (optionalSubstance.isEmpty()) {
-            source.sendFailure(Component.literal("Substance not found in registry: " + substanceName));
-            return 0;
-        }
-
-        Substance substance = optionalSubstance.get();
         SubstanceStack stack = new SubstanceStack(substance, amount);
 
         AtmosHandler.releaseGas(source.getLevel(), pos, stack);
@@ -192,38 +186,24 @@ public class SubstanceCommand {
         return 0;
     }
 
-    private static int addSubstanceContainerAmount(@NotNull CommandSourceStack source, String substanceName, int amount) {
+    private static int addSubstanceContainerAmount(@NotNull CommandSourceStack source, Holder<Substance> substance, int amount) {
         ItemStack stack = source.getPlayer().getMainHandItem();
         if (stack.getItem() instanceof SubstanceContainerItem item) {
-            Optional<Substance> optionalSubstance = SUBSTANCE_REGISTRY.getOptional(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, substanceName));
-
-            if (optionalSubstance.isPresent()) {
-                Substance substance = optionalSubstance.get();
-                SubstanceStack substanceStack = new SubstanceStack(substance, amount);
-                item.updateSubstance(stack, substanceStack);
-                return 1;
-            } else {
-                source.sendFailure(Component.literal("That substance is not valid.").withStyle(ChatFormatting.RED));
-            }
+            SubstanceStack substanceStack = new SubstanceStack(substance, amount);
+            item.updateSubstance(stack, substanceStack);
+            return 1;
         }
 
         return 0;
     }
 
-    private static int addSubstanceContainerVolume(CommandSourceStack source, String substanceName, int amount) {
+    private static int addSubstanceContainerVolume(@NotNull CommandSourceStack source, Holder<Substance> substance, int amount) {
         ItemStack stack = source.getPlayer().getMainHandItem();
         if (stack.getItem() instanceof SubstanceContainerItem item) {
-            Optional<Substance> optionalSubstance = SUBSTANCE_REGISTRY.getOptional(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, substanceName));
-
-            if (optionalSubstance.isPresent()) {
-                Substance substance = optionalSubstance.get();
-                SubstanceStack substanceStack = new SubstanceStack(substance, 0);
-                substanceStack.setVolume(amount);
-                item.updateSubstance(stack, substanceStack);
-                return 1;
-            } else {
-                source.sendFailure(Component.literal("That substance is not valid.").withStyle(ChatFormatting.RED));
-            }
+            SubstanceStack substanceStack = new SubstanceStack(substance, 0);
+            substanceStack.setVolume(amount);
+            item.updateSubstance(stack, substanceStack);
+            return 1;
         }
 
         return 0;
@@ -244,7 +224,7 @@ public class SubstanceCommand {
         return 1;
     }
 
-    private static int addSubstanceFluid(CommandSourceStack source, String substanceName, int amount) {
+    private static int addSubstanceFluid(@NotNull CommandSourceStack source, Holder<Substance> substance, int amount) {
         BlockPos pos = BlockPos.containing(source.getPosition());
         BlockEntity blockEntity = source.getLevel().getBlockEntity(pos);
 
@@ -253,20 +233,13 @@ public class SubstanceCommand {
             return 0;
         }
 
-        Optional<Substance> optionalSubstance = SUBSTANCE_REGISTRY.getOptional(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, substanceName));
+        SubstanceStack stack = new SubstanceStack(substance, amount);
 
-        if (optionalSubstance.isPresent()) {
-            Substance substance = optionalSubstance.get();
-            SubstanceStack stack = new SubstanceStack(substance, amount);
+        fluidBlockEntity.updateSubstance(stack);
+        source.sendSuccess(() -> Component.literal(String.format("Added %d %s to the puddle", amount, stack.getSubstance().getName())), true);
+        source.sendSuccess(() -> Component.literal(fluidBlockEntity.getContentsDescription()), true);
+        return 1;
 
-            fluidBlockEntity.updateSubstance(stack);
-            source.sendSuccess(() -> Component.literal(String.format("Added %d %s to the puddle", amount, stack.getSubstance().getName())), true);
-            source.sendSuccess(() -> Component.literal(fluidBlockEntity.getContentsDescription()), true);
-            return 1;
-        } else {
-            source.sendFailure(Component.literal("Substance not found in registry: " + substanceName));
-            return 0;
-        }
     }
 
     private static int spawnFluidBlock(@NotNull CommandSourceStack source) {
@@ -275,7 +248,7 @@ public class SubstanceCommand {
         source.getLevel().setBlock(pos, FLUID.get().defaultBlockState(), 3);
 
         if (source.getLevel().getBlockEntity(pos) instanceof FluidBlockEntity fluidBlockEntity) {
-            fluidBlockEntity.updateSubstance(new SubstanceStack(GASEOUS_WATER.get(), 1));
+            fluidBlockEntity.updateSubstance(new SubstanceStack(Substances.WATER.get(), 1));
         }
 
         return 1;

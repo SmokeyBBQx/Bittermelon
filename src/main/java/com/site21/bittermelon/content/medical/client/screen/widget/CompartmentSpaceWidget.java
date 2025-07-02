@@ -1,11 +1,15 @@
-package com.site21.bittermelon.content.medical.client.screen;
+package com.site21.bittermelon.content.medical.client.screen.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.content.character.CharacterManager;
+import com.site21.bittermelon.content.medical.client.screen.HealthScreenV2;
+import com.site21.bittermelon.content.medical.client.screen.networking.MoveCompartment;
 import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
-import com.site21.bittermelon.content.medical.compartments.CompartmentSpace;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
+import com.site21.bittermelon.content.medical.compartments.LayerData;
 import com.site21.bittermelon.content.medical.compartments.VisualData;
+import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -13,6 +17,8 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
@@ -31,20 +37,6 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
 
     private static final int HEADER_HEIGHT = 15;
 
-    private double scrollX = 0;
-    private double scrollY = 0;
-    private boolean isContentDragging = false;
-
-    private float zoomLevel = 1.0f;
-    private static final float MIN_ZOOM = 0.5f;
-    private static final float MAX_ZOOM = 2.0f;
-    private static final float ZOOM_STEP = 0.25f;
-
-    private final CompartmentSpace compartmentSpace;
-    private final HealthScreenV2 healthScreen;
-    private final List<CompartmentNodeWidget> compartmentWidgets;
-    private int layer = 0;
-
     private Button closeWidgetButton;
     private Button collapseWidgetButton;
     private Button increaseLayerButton;
@@ -60,157 +52,131 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     private final int INCREASE_TOP_MARGIN = 20;
     private final int DECREASE_TOP_MARGIN = 32;
 
-    private int getCloseButtonRelX() {
-        return width - CLOSE_RIGHT_MARGIN;
-    }
+    private double scrollX = 0;
+    private double scrollY = 0;
+    private boolean isContentDragging = false;
 
-    private int getCollapseButtonRelX() {
-        return width - COLLAPSE_RIGHT_MARGIN;
-    }
+    private float zoomLevel = 1.0f;
+    private static final float MIN_ZOOM = 0.5f;
+    private static final float MAX_ZOOM = 2.0f;
+    private static final float ZOOM_STEP = 0.25f;
 
-    private int getIncreaseLayerButtonRelX() {
-        return width - LAYER_RIGHT_MARGIN;
-    }
-
-    private int getDecreaseLayerButtonRelX() {
-        return width - LAYER_RIGHT_MARGIN;
-    }
-
-    private int getCloseButtonRelY() {
-        return TOP_MARGIN;
-    }
-
-    private int getCollapseButtonRelY() {
-        return TOP_MARGIN;
-    }
-
-    private int getIncreaseLayerButtonRelY() {
-        return INCREASE_TOP_MARGIN;
-    }
-
-    private int getDecreaseLayerButtonRelY() {
-        return DECREASE_TOP_MARGIN;
-    }
+    private final CompartmentInstance compartment;
+    private final HealthScreenV2 healthScreen;
+    private final List<CompartmentNodeWidget> compartmentWidgets;
+    private int layerIndex = 0;
+    private List<LayerData> layers;
 
     private final Button[] buttons;
     private ResourceLocation backgroundTexture;
     private final Component name;
 
-    public CompartmentSpaceWidget(int x, int y, int width, int height, Component title, @NotNull CompartmentSpace compartmentSpace, HealthScreenV2 healthScreen) {
+    public CompartmentSpaceWidget(int x, int y, int width, int height, Component title, @NotNull CompartmentInstance compartment, HealthScreenV2 healthScreen) {
         super(x, y, width, height, title);
-        this.compartmentSpace = compartmentSpace;
+        this.compartment = compartment;
         this.healthScreen = healthScreen;
         this.compartmentWidgets = new ArrayList<>();
+        this.layers = compartment.getLayers();
         this.name = title;
-        updateButtons();
+        initializeButtons();
         buttons = new Button[]{closeWidgetButton, collapseWidgetButton, increaseLayerButton, decreaseLayerButton,
                 recenterButton, zoomInButton, zoomOutButton};
         refreshCompartmentNodes();
-        backgroundTexture = compartmentSpace.getBackgroundTexture();
+        backgroundTexture = layers.getFirst().getBackgroundTexture();
+    }
+
+    private void initializeButtons() {
+        closeWidgetButton = Button.builder(
+                        Component.literal("X"),
+                        (button) -> healthScreen.removeCompartmentSpace(this))
+                .pos(x + width - CLOSE_RIGHT_MARGIN, y + TOP_MARGIN)
+                .size(10, 10)
+                .build();
+
+        collapseWidgetButton = Button.builder(
+                        Component.literal(isOpen ? "-" : "+"),
+                        (button) -> toggleOpen())
+                .pos(x + width - COLLAPSE_RIGHT_MARGIN, y + TOP_MARGIN)
+                .size(10, 10)
+                .build();
+
+        increaseLayerButton = Button.builder(
+                        Component.literal("↑"),
+                        (button) -> increaseLayer())
+                .pos(x + width - LAYER_RIGHT_MARGIN, y + INCREASE_TOP_MARGIN)
+                .size(10, 10)
+                .build();
+
+        decreaseLayerButton = Button.builder(
+                        Component.literal("↓"),
+                        (button) -> decreaseLayer())
+                .pos(x + width - LAYER_RIGHT_MARGIN, y + DECREASE_TOP_MARGIN)
+                .size(10, 10)
+                .build();
+
+        recenterButton = Button.builder(
+                        Component.literal("⊕"),
+                        (button) -> recenterView())
+                .pos(x + 12, y + INCREASE_TOP_MARGIN)
+                .size(10, 10)
+                .build();
+
+        zoomInButton = Button.builder(
+                        Component.literal("+"),
+                        (button) -> zoomIn())
+                .pos(x + width - LAYER_RIGHT_MARGIN - 12, y + height - 30)
+                .size(10, 10)
+                .build();
+
+        zoomOutButton = Button.builder(
+                        Component.literal("-"),
+                        (button) -> zoomOut())
+                .pos(x + width - LAYER_RIGHT_MARGIN, y + height - 30)
+                .size(10, 10)
+                .build();
     }
 
     private void updateButtons() {
-        if (closeWidgetButton == null) {
-            closeWidgetButton = Button.builder(
-                            Component.literal("X"),
-                            (button) -> healthScreen.removeCompartmentSpace(this))
-                    .pos(x + getCloseButtonRelX(), y + getCloseButtonRelY())
-                    .size(10, 10)
-                    .build();
-        } else {
-            closeWidgetButton.setX(x + getCloseButtonRelX());
-            closeWidgetButton.setY(y + getCloseButtonRelY());
-        }
+        closeWidgetButton.setX(x + width - CLOSE_RIGHT_MARGIN);
+        closeWidgetButton.setY(y + TOP_MARGIN);
 
-        if (collapseWidgetButton == null) {
-            collapseWidgetButton = Button.builder(
-                            Component.literal(isOpen ? "-" : "+"),
-                            (button) -> toggleOpen())
-                    .pos(x + getCollapseButtonRelX(), y + getCollapseButtonRelY())
-                    .size(10, 10)
-                    .build();
-        } else {
-            collapseWidgetButton.setX(x + getCollapseButtonRelX());
-            collapseWidgetButton.setY(y + getCollapseButtonRelY());
-            collapseWidgetButton.setMessage(Component.literal(isOpen ? "-" : "+"));
-        }
+        collapseWidgetButton.setX(x + width - COLLAPSE_RIGHT_MARGIN);
+        collapseWidgetButton.setY(y + TOP_MARGIN);
+        collapseWidgetButton.setMessage(Component.literal(isOpen ? "-" : "+"));
 
-        if (increaseLayerButton == null) {
-            increaseLayerButton = Button.builder(
-                            Component.literal("↑"),
-                            (button) -> increaseLayer())
-                    .pos(x + getIncreaseLayerButtonRelX(), y + getIncreaseLayerButtonRelY())
-                    .size(10, 10)
-                    .build();
-        } else {
-            increaseLayerButton.setX(x + getIncreaseLayerButtonRelX());
-            increaseLayerButton.setY(y + getIncreaseLayerButtonRelY());
-        }
+        increaseLayerButton.setX(x + width - LAYER_RIGHT_MARGIN);
+        increaseLayerButton.setY(y + INCREASE_TOP_MARGIN);
 
-        if (decreaseLayerButton == null) {
-            decreaseLayerButton = Button.builder(
-                            Component.literal("↓"),
-                            (button) -> decreaseLayer())
-                    .pos(x + getDecreaseLayerButtonRelX(), y + getDecreaseLayerButtonRelY())
-                    .size(10, 10)
-                    .build();
-        } else {
-            decreaseLayerButton.setX(x + getDecreaseLayerButtonRelX());
-            decreaseLayerButton.setY(y + getDecreaseLayerButtonRelY());
-        }
-        if (recenterButton == null) {
-            recenterButton = Button.builder(
-                            Component.literal("⊕"),
-                            (button) -> recenterView())
-                    .pos(x + 12, y + getIncreaseLayerButtonRelY())
-                    .size(10, 10)
-                    .build();
-        } else {
-            recenterButton.setX(x + 12);
-            recenterButton.setY(y + getIncreaseLayerButtonRelY());
-        }
-        if (zoomInButton == null) {
-            zoomInButton = Button.builder(
-                            Component.literal("+"),
-                            (button) -> zoomIn())
-                    .pos(x + getIncreaseLayerButtonRelX() - 12, y + height - 30)
-                    .size(10, 10)
-                    .build();
-        } else {
-            zoomInButton.setX(x + getIncreaseLayerButtonRelX() - 12);
-            zoomInButton.setY(y + height - 30);
-        }
+        decreaseLayerButton.setX(x + width - LAYER_RIGHT_MARGIN);
+        decreaseLayerButton.setY(y + DECREASE_TOP_MARGIN);
 
-        if (zoomOutButton == null) {
-            zoomOutButton = Button.builder(
-                            Component.literal("-"),
-                            (button) -> zoomOut())
-                    .pos(x + getDecreaseLayerButtonRelX(), y + height - 30)
-                    .size(10, 10)
-                    .build();
-        } else {
-            zoomOutButton.setX(x + getDecreaseLayerButtonRelX());
-            zoomOutButton.setY(y + height - 30);
-        }
+        recenterButton.setX(x + 12);
+        recenterButton.setY(y + INCREASE_TOP_MARGIN);
+
+        zoomInButton.setX(x + width - LAYER_RIGHT_MARGIN - 12);
+        zoomInButton.setY(y + height - 30);
+
+        zoomOutButton.setX(x + width - LAYER_RIGHT_MARGIN);
+        zoomOutButton.setY(y + height - 30);
     }
 
     private void increaseLayer() {
-        if (layer == 0) {
-            layer = compartmentSpace.getLayers().size() - 1;
+        if (layerIndex == 0) {
+            layerIndex = layers.size() - 1;
             refreshCompartmentNodes();
             return;
         }
-        layer--;
+        layerIndex--;
         refreshCompartmentNodes();
     }
 
     private void decreaseLayer() {
-        if (layer >= compartmentSpace.getLayers().size() - 1) {
-            layer = 0;
+        if (layerIndex >= layers.size() - 1) {
+            layerIndex = 0;
             refreshCompartmentNodes();
             return;
         }
-        layer++;
+        layerIndex++;
         refreshCompartmentNodes();
     }
 
@@ -234,31 +200,15 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         }
     }
 
-    protected void refreshCompartmentNodes() {
-        recenterView();
+    public void refreshCompartmentNodes() {
         compartmentWidgets.clear();
-        List<UUID> list = new ArrayList<>(compartmentSpace.getLayers().get(layer));
 
-        if (isSingleBodyPart(list)) {
-            CompartmentInstance firstCompartment = healthScreen.getMedicalStats().getCompartment(list.getFirst());
-            backgroundTexture = firstCompartment.getCompartmentSpace().getBackgroundTexture();
-            setMessage(Component.literal(name.getString() + " (" + firstCompartment.getName() + ")"));
-            list = new ArrayList<>(firstCompartment.getCompartmentSpace().getCompartments());
-        } else {
-            backgroundTexture = compartmentSpace.getBackgroundTexture();
-            setMessage(name);
-        }
+        LayerData layerData = compartment.getLayer(layerIndex);
+        List<UUID> list = new ArrayList<>(layerData.getCompartments());
+        backgroundTexture = layerData.getBackgroundTexture();
+        setMessage(Component.literal(layerData.getName()));
 
         createCompartmentWidgets(list);
-    }
-
-    private boolean isSingleBodyPart(@NotNull List<UUID> list) {
-        if (list.size() != 1) {
-            return false;
-        }
-        CompartmentInstance compartment = healthScreen.getMedicalStats().getCompartment(list.getFirst());
-        return compartment.hasTag(CompartmentTag.BODY_PART) ||
-                compartment.hasTag(CompartmentTag.MAJOR_BODY_PART);
     }
 
     private void createCompartmentWidgets(@NotNull List<UUID> compartmentList) {
@@ -298,14 +248,21 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         Minecraft.getInstance().getMainRenderTarget().enableStencil();
 
         int contentX = x + 8;
-        int contentY = y + 26 - 11;
+        int contentY = y + 15 - 11;
         int contentWidth = width - 17;
-        int contentHeight = height - 26 - 8;
+        int contentHeight = height - 18;
 
+        List<VisualData> revealingCompartments = findRevealingCompartments();
+
+        drawContents(guiGraphics, contentX, contentY, contentWidth, contentHeight, mouseX, mouseY, partialTick, revealingCompartments);
+        drawHoveredWidget(guiGraphics, contentX, contentY, contentWidth, contentHeight, mouseX, mouseY, partialTick, revealingCompartments);
+    }
+
+    private @NotNull List<VisualData> findRevealingCompartments() {
         List<VisualData> revealingCompartments = new ArrayList<>();
 
-        if (layer > 0) {
-            for (UUID uuid : compartmentSpace.getLayers().get(layer - 1)) {
+        if (layerIndex > 0) {
+            for (UUID uuid : compartment.getLayer(layerIndex - 1).getCompartments()) {
                 CompartmentInstance instance = healthScreen.getMedicalStats().getCompartment(uuid);
                 if (instance.hasTag(CompartmentTag.CUT)) {
                     revealingCompartments.add(instance.getVisualData());
@@ -313,6 +270,11 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
             }
         }
 
+        return revealingCompartments;
+    }
+
+    private void drawContents(@NotNull GuiGraphics guiGraphics, int contentX, int contentY, int contentWidth,
+                              int contentHeight, int mouseX, int mouseY, float partialTick, List<VisualData> revealingCompartments) {
         if (isOpen) {
             guiGraphics.enableScissor(contentX, contentY, contentX + contentWidth, contentY + contentHeight);
             RenderSystem.enableBlend();
@@ -320,17 +282,8 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
             drawTiledBackground(guiGraphics, contentX, contentY, contentWidth, contentHeight);
-
-            compartmentWidgets.sort((a, b) -> Float.compare(a.getCompartment().getVisualData().z, b.getCompartment().getVisualData().z));
-
-            for (CompartmentNodeWidget widget : compartmentWidgets) {
-                CompartmentNodeWidget hoveredWidget = getHoveredWidget(mouseX, mouseY);
-                if (hoveredWidget != null && hoveredWidget.equals(widget) && isWithinRevealedArea(revealingCompartments, mouseX, mouseY, contentX, contentY))
-                    continue;
-                widget.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
-            }
-
-            renderFog(guiGraphics, contentX, contentY, contentWidth, contentHeight, revealingCompartments);
+            renderWidgets(guiGraphics, contentX, contentY, mouseX, mouseY, partialTick, revealingCompartments);
+//            renderFog(guiGraphics, contentX, contentY, contentWidth, contentHeight, revealingCompartments);
 
             RenderSystem.disableBlend();
 
@@ -341,23 +294,8 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
             guiGraphics.pose().translate(0, 0, 100);
 
             renderLayerIndicators(guiGraphics);
-
-            increaseLayerButton.render(guiGraphics, mouseX, mouseY, partialTick);
-            decreaseLayerButton.render(guiGraphics, mouseX, mouseY, partialTick);
-            recenterButton.render(guiGraphics, mouseX, mouseY, partialTick);
-            zoomInButton.render(guiGraphics, mouseX, mouseY, partialTick);
-            zoomOutButton.render(guiGraphics, mouseX, mouseY, partialTick);
-
-            String zoomPercentage = String.format("%.0f%%", zoomLevel * 100);
-            int zoomTextLength = Minecraft.getInstance().font.width(zoomPercentage);
-
-            guiGraphics.drawString(
-                    Minecraft.getInstance().font,
-                    Component.literal(zoomPercentage),
-                    x + getIncreaseLayerButtonRelX() - zoomTextLength - 15,
-                    y + height - 29,
-                    0xFFFFFF
-            );
+            renderButtons(guiGraphics, mouseX, mouseY, partialTick);
+            drawZoomComponents(guiGraphics);
 
             guiGraphics.disableScissor();
         }
@@ -366,6 +304,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         closeWidgetButton.render(guiGraphics, mouseX, mouseY, partialTick);
         collapseWidgetButton.render(guiGraphics, mouseX, mouseY, partialTick);
 
+        // Draw title
         guiGraphics.drawString(
                 Minecraft.getInstance().font,
                 getMessage(),
@@ -375,45 +314,86 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         );
 
         guiGraphics.pose().popPose();
+    }
 
-        if (isOpen) {
-            if (isMouseInContentArea(mouseX, mouseY, contentX, contentY, contentWidth, contentHeight)) {
-                boolean isMouseOverButton = false;
-                for (Button button : buttons) {
-                    if (button.isMouseOver(mouseX, mouseY)) {
-                        isMouseOverButton = true;
-                    }
-                }
-                CompartmentNodeWidget hoveredWidget = getHoveredWidget(mouseX, mouseY);
-                if (hoveredWidget != null && !isMouseOverButton && isWithinRevealedArea(revealingCompartments, mouseX, mouseY, contentX, contentY)) {
-                    guiGraphics.enableScissor(contentX, contentY, contentX + contentWidth, contentY + contentHeight);
+    private void renderButtons(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        increaseLayerButton.render(guiGraphics, mouseX, mouseY, partialTick);
+        decreaseLayerButton.render(guiGraphics, mouseX, mouseY, partialTick);
+        recenterButton.render(guiGraphics, mouseX, mouseY, partialTick);
+        zoomInButton.render(guiGraphics, mouseX, mouseY, partialTick);
+        zoomOutButton.render(guiGraphics, mouseX, mouseY, partialTick);
+    }
 
-                    guiGraphics.pose().pushPose();
-                    guiGraphics.pose().translate(0, 0, 50);
+    private void renderWidgets(GuiGraphics guiGraphics, int contentX, int contentY, int mouseX, int mouseY,
+                               float partialTick, List<VisualData> revealingCompartments) {
+        compartmentWidgets.sort((a, b) ->
+                Float.compare(a.getCompartment().getVisualData().z, b.getCompartment().getVisualData().z));
 
-                    float pulse = (float) (Math.sin(System.currentTimeMillis() / 500.0) * 0.4f + 0.95f);
-                    RenderSystem.enableBlend();
-                    RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, pulse);
+        for (CompartmentNodeWidget widget : compartmentWidgets) {
+            CompartmentNodeWidget hoveredWidget = getHoveredWidget(mouseX, mouseY);
+            if (hoveredWidget != null && hoveredWidget.equals(widget)
+                    && isWithinRevealedArea(revealingCompartments, mouseX, mouseY, contentX, contentY))
+                continue;
+            widget.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+        }
+    }
 
-                    hoveredWidget.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+    private void drawZoomComponents(@NotNull GuiGraphics guiGraphics) {
+        String zoomPercentage = String.format("%.0f%%", zoomLevel * 100);
+        int zoomTextLength = Minecraft.getInstance().font.width(zoomPercentage);
 
-                    RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-                    RenderSystem.disableBlend();
-                    guiGraphics.disableScissor();
-                    guiGraphics.pose().popPose();
+        guiGraphics.drawString(
+                Minecraft.getInstance().font,
+                Component.literal(zoomPercentage),
+                x + width - LAYER_RIGHT_MARGIN - zoomTextLength - 15,
+                y + height - 29,
+                0xFFFFFF
+        );
 
-                    hoveredWidget.drawHover(guiGraphics, mouseX, mouseY, partialTick, width, height);
-                }
+    }
+
+    private void drawHoveredWidget(@NotNull GuiGraphics guiGraphics, int contentX, int contentY, int contentWidth,
+                                   int contentHeight, int mouseX, int mouseY, float partialTick, List<VisualData> revealingCompartments) {
+        if (!isOpen || !isMouseInContentArea(mouseX, mouseY, contentX, contentY, contentWidth, contentHeight)) return;
+
+        boolean isMouseOverButton = false;
+        for (Button button : buttons) {
+            if (button.isMouseOver(mouseX, mouseY)) {
+                isMouseOverButton = true;
             }
+        }
+
+        CompartmentNodeWidget hoveredWidget = getHoveredWidget(mouseX, mouseY);
+        if (hoveredWidget == null || isMouseOverButton ||
+                !isWithinRevealedArea(revealingCompartments, mouseX, mouseY, contentX, contentY)) return;
+
+        guiGraphics.enableScissor(contentX, contentY, contentX + contentWidth, contentY + contentHeight);
+
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0, 0, 50);
+
+        float pulse = (float) (Math.sin(System.currentTimeMillis() / 500.0) * 0.4f + 0.95f);
+        RenderSystem.enableBlend();
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, pulse);
+
+        hoveredWidget.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.disableBlend();
+        guiGraphics.disableScissor();
+        guiGraphics.pose().popPose();
+
+        if (hoveredWidget.visible) {
+            hoveredWidget.drawHover(guiGraphics, mouseX, mouseY, partialTick, width, height);
         }
     }
 
     private void renderLayerIndicators(GuiGraphics guiGraphics) {
-        for (int i = 0; i < compartmentSpace.getLayers().size(); i++) {
+        for (int i = 0; i < layers.size(); i++) {
             int indicatorX = x + width - 24;
             int indicatorY = y + 50 + i * 6;
 
-            if (layer == i) {
+            if (layerIndex == i) {
                 if (isLayerInjured(i)) {
                     guiGraphics.blit(
                             INJURED_SELECTED_LAYER_TEXTURE, indicatorX, indicatorY, 0, 0, 11, 5, 11, 5);
@@ -510,18 +490,18 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     }
 
     private boolean isLayerInjured(int layerIndex) {
-        List<UUID> instances = new ArrayList<>(compartmentSpace.getLayers().get(layerIndex));
+        List<UUID> instances = new ArrayList<>(layers.get(layerIndex).getCompartments());
 
-        if (compartmentSpace.getLayers().get(layerIndex).stream()
-                .anyMatch(uuid -> healthScreen.getMedicalStats().getCompartment(uuid).hasTag(CompartmentTag.CONDITION))) {
-            return true;
-        }
+//        if (layers.stream()
+//                .anyMatch(uuid -> healthScreen.getMedicalStats().getCompartment(uuid).hasTag(CompartmentTag.CONDITION))) {
+//            return true;
+//        }
 
-        if (instances.size() == 1) {
-            CompartmentInstance instance = healthScreen.getMedicalStats().getCompartment(instances.getFirst());
-            return instance.getCompartmentSpace().getCompartments().stream()
-                    .anyMatch(uuid -> healthScreen.getMedicalStats().getCompartment(uuid).hasTag(CompartmentTag.CONDITION));
-        }
+//        if (instances.size() == 1) {
+//            CompartmentInstance instance = healthScreen.getMedicalStats().getCompartment(instances.getFirst());
+//            return instance.getCompartmentSpace().getCompartments().stream()
+//                    .anyMatch(uuid -> healthScreen.getMedicalStats().getCompartment(uuid).hasTag(CompartmentTag.CONDITION));
+//        }
 
         return false;
     }
@@ -618,6 +598,29 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         return false;
     }
 
+    public void handleCompartmentPlacement(double mouseX, double mouseY, int button) {
+        CompartmentInstance instance = healthScreen.getHeldItem().get(BitterDataComponents.COMPARTMENT).toInstance();
+
+        VisualData visualData = instance.getVisualData();
+        int newX = (int) (mouseX - x + scrollX);
+        int newY = (int) (mouseY - y + scrollY);
+        visualData.x = newX;
+        visualData.y = newY;
+        visualData.isHidden = false;
+
+        PacketDistributor.sendToServer(new MoveCompartment(
+                instance.getUUID(),
+                layerIndex,
+                compartment.getUUID(),
+                healthScreen.getMedicalStats().getCharacterID(),
+                newX,
+                newY
+        ));
+
+        healthScreen.getMedicalStats().getParent(instance).removeCompartment(instance);
+        compartment.addCompartment(layerIndex, instance);
+        healthScreen.setHeldItem(null);
+    }
 
     @Override
     protected boolean isInResizeArea(double mouseX, double mouseY) {
@@ -689,6 +692,10 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         }
 
         return false;
+    }
+
+    public void clearCompartmentNodes() {
+        compartmentWidgets.clear();
     }
 
     @Override
