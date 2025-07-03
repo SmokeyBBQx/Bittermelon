@@ -75,7 +75,6 @@ public class Bittermelon
 
         NeoForge.EVENT_BUS.register(this);
 
-
         BLOCKS.register(modEventBus);
         ACTIVITY.register(modEventBus);
         ITEMS.register(modEventBus);
@@ -98,22 +97,12 @@ public class Bittermelon
         modEventBus.addListener(this::commonSetup);
     }
 
-    private void commonSetup(final FMLCommonSetupEvent event)
-    {
-        LOGGER.info("HELLO FROM COMMON SETUP");
-
-        if (Config.logDirtBlock)
-            LOGGER.info("DIRT BLOCK >> {}", BuiltInRegistries.BLOCK.getKey(Blocks.DIRT));
-
-        LOGGER.info(Config.magicNumberIntroduction + Config.magicNumber);
-
-        Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
+    private void commonSetup(final @NotNull FMLCommonSetupEvent event) {
         event.enqueueWork(Reactions::initReactions);
     }
 
     @SubscribeEvent
-    public void onServerStarting(@NotNull ServerStartingEvent event)
-    {
+    public void onServerStarting(@NotNull ServerStartingEvent event) {
     }
 
     @SubscribeEvent
@@ -150,11 +139,9 @@ public class Bittermelon
     }
 
     @EventBusSubscriber(modid = MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientModEvents
-    {
+    public static class ClientModEvents {
         @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event)
-        {
+        public static void onClientSetup(FMLClientSetupEvent event) {
         }
 
         @SubscribeEvent

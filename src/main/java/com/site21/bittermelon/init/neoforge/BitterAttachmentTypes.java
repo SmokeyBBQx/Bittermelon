@@ -22,7 +22,8 @@ public class BitterAttachmentTypes {
     );
 
     public static final Supplier<AttachmentType<UUID>> ACTIVE_CHARACTER = ATTACHMENT_TYPES.register(
-            "active_character", () -> AttachmentType.builder(() -> new UUID(0, 0)).serialize(UUIDUtil.CODEC).build()
+            "active_character", () -> AttachmentType.builder(() ->
+                    new UUID(0, 0)).serialize(UUIDUtil.CODEC).copyOnDeath().build()
     );
 
     public static final Supplier<AttachmentType<Integer>> STUMBLE_TICKS = ATTACHMENT_TYPES.register(
@@ -34,7 +35,7 @@ public class BitterAttachmentTypes {
     );
 
     public static final Supplier<AttachmentType<Integer>> ACTIVE_CHANNEL = ATTACHMENT_TYPES.register(
-            "active_channel", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).build()
+            "active_channel", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).copyOnDeath().build()
     );
 
     public static final Supplier<AttachmentType<Integer>> SHAKE_TICKS = ATTACHMENT_TYPES.register(

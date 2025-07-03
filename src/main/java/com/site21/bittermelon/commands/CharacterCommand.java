@@ -17,6 +17,7 @@ import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class CharacterCommand {
@@ -71,7 +72,17 @@ public class CharacterCommand {
         }
 
         CharacterManager manager = CharacterManager.get(source.getServer());
+        List<Character> playerCharacters = manager.getCharactersByEntityUUID(player.getUUID());
+
+        for (Character character : playerCharacters) {
+            if (character.getName().equalsIgnoreCase(name)) {
+                source.sendFailure(Component.literal("Character by that name already exists"));
+                return 0;
+            }
+        }
+
         Character character = new Character(player.getUUID(), name, Anatomy.HUMAN);
+
         manager.addCharacter(character);
         manager.setActiveCharacter(player, character.getUUID());
 
@@ -103,7 +114,7 @@ public class CharacterCommand {
         return 1;
     }
 
-    private static int setCharacterColor(@NotNull CommandSourceStack source, String colorString) {
+    private static int setCharacterColor(@NotNull CommandSourceStack source, @NotNull String colorString) {
         if (colorString.startsWith("#")) {
             colorString = colorString.substring(1);
         }
