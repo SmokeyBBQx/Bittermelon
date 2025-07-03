@@ -26,10 +26,6 @@ public class BitterAttachmentTypes {
                     new UUID(0, 0)).serialize(UUIDUtil.CODEC).copyOnDeath().build()
     );
 
-    public static final Supplier<AttachmentType<Integer>> STUMBLE_TICKS = ATTACHMENT_TYPES.register(
-            "stumble_ticks", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).build()
-    );
-
     public static final Supplier<AttachmentType<AtmosBlockData>> ATMOSPHERE = ATTACHMENT_TYPES.register(
             "atmosphere", () -> AttachmentType.serializable(AtmosBlockData::new).build()
     );

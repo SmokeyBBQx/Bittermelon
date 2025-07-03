@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.TREMOR;
 
-public class Tremor extends InstantenousMobEffect {
-    public Tremor() {
+public class TremorEffect extends InstantenousMobEffect {
+    public TremorEffect() {
         super(MobEffectCategory.HARMFUL, 0);
     }
 

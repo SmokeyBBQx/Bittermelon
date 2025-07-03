@@ -1,0 +1,35 @@
+package com.site21.bittermelon.datagen;
+
+import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.init.neoforge.BitterItems;
+import net.minecraft.data.PackOutput;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.registries.DeferredHolder;
+
+public class BitterItemModelProvider extends ItemModelProvider {
+    public BitterItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
+        super(output, Bittermelon.MOD_ID, existingFileHelper);
+    }
+
+    @Override
+    protected void registerModels() {
+        basicItem(BitterItems.BITTERMELON.get());
+        generateBlockItemModels();
+    }
+
+    private void generateBlockItemModels() {
+        for (DeferredHolder<Item, ? extends Item> itemHolder : BitterItems.ITEMS.getEntries()) {
+            Item item = itemHolder.get();
+            if (item instanceof BlockItem) {
+                String blockName = itemHolder.getId().getPath();
+
+                if (existingFileHelper.exists(modLoc("block/" + blockName), net.minecraft.server.packs.PackType.CLIENT_RESOURCES, ".json", "models")) {
+                    withExistingParent(blockName, modLoc("block/" + blockName));
+                }
+            }
+        }
+    }
+}

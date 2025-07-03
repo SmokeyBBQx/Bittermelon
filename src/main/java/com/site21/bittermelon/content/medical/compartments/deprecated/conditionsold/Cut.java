@@ -17,7 +17,7 @@ public class Cut extends InjuryOld {
         super(EnumSet.of(CompartmentTag.CUT), name, owner, maxHealth, character, entity);
 
         generateBleed(this, character, entity, maxHealth);
-//        character.getMedicalStats().addCompartment(new Pain("Pain", this, maxHealth, character, entity));
+//        character.getMedicalStats().addCompartment(new PainEffect("PainEffect", this, maxHealth, character, entity));
         // TODO: Figure out a way to refresh health screen
     }
 

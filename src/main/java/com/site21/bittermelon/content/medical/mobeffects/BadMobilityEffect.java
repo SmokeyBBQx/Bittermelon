@@ -6,8 +6,8 @@ import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
-public class BadMobility extends MobEffect {
-    public BadMobility() {
+public class BadMobilityEffect extends MobEffect {
+    public BadMobilityEffect() {
         super(MobEffectCategory.HARMFUL, 0);
     }
 

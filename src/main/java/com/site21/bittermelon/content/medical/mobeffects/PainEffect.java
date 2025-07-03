@@ -3,7 +3,6 @@ package com.site21.bittermelon.content.medical.mobeffects;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.entities.ai.behavior.misc.FeelsPain;
-import com.site21.bittermelon.content.stumble.StumbleHandler;
 import com.site21.bittermelon.util.LocalMessageHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
@@ -14,8 +13,8 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
-public class Pain extends MobEffect {
-    public Pain() {
+public class PainEffect extends MobEffect {
+    public PainEffect() {
         super(MobEffectCategory.HARMFUL, 0);
     }
 

@@ -369,4 +369,11 @@ public class BitterItems {
             1,
             ItemWeight.LIGHT
     ));
+
+    public static final DeferredItem<BaseItem> BITTERMELON = ITEMS.register("bittermelon", () -> new BaseItem(
+            new Item.Properties(),
+            1,
+            1,
+            ItemWeight.LIGHT
+    ));
 }

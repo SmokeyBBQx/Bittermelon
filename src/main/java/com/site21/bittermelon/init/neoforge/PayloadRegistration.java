@@ -19,8 +19,6 @@ import com.site21.bittermelon.content.items.wires.wire.networking.WiringDataUpda
 import com.site21.bittermelon.content.items.writablepaper.client.OpenPaperEditScreen;
 import com.site21.bittermelon.content.medical.client.screen.networking.*;
 import com.site21.bittermelon.content.stumble.networking.AttemptToRise;
-import com.site21.bittermelon.content.stumble.networking.ClearStumbleTimer;
-import com.site21.bittermelon.content.stumble.networking.UpdateStumbleTimer;
 import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
 import com.site21.bittermelon.networking.client.*;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.ContainmentNameUpdate;
@@ -223,18 +221,6 @@ public class PayloadRegistration {
                 AttemptToRise.TYPE,
                 AttemptToRise.STREAM_CODEC,
                 AttemptToRise::handle
-        );
-
-        registrar.playToClient(
-                UpdateStumbleTimer.TYPE,
-                UpdateStumbleTimer.STREAM_CODEC,
-                UpdateStumbleTimer::handle
-        );
-
-        registrar.playToClient(
-                ClearStumbleTimer.TYPE,
-                ClearStumbleTimer.STREAM_CODEC,
-                ClearStumbleTimer::handle
         );
 
         registrar.playToClient(

@@ -20,5 +20,9 @@ public class DataGenerators {
 
         generator.addProvider(event.includeClient(),
                 new BitterBlockStateProvider(packOutput, existingFileHelper));
+        generator.addProvider(event.includeClient(),
+                new BitterItemModelProvider(packOutput, existingFileHelper));
+        generator.addProvider(event.includeClient(),
+                new BitterLanguageProvider(packOutput));
     }
 }

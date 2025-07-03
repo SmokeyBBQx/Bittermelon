@@ -11,6 +11,6 @@ public class InjuryOld extends ConditionOld {
     public InjuryOld(EnumSet<CompartmentTag> types, String name, CompartmentOld owner, float maxHealth, Character character, LivingEntity entity) {
         super(types, name, owner, maxHealth, character, entity);
         attributes.put(MedicalAttribute.FUNCTION, -maxHealth);
-//        character.getMedicalStats().addCompartment(new Pain("Pain", this, maxHealth, character, entity));
+//        character.getMedicalStats().addCompartment(new PainEffect("PainEffect", this, maxHealth, character, entity));
     }
 }

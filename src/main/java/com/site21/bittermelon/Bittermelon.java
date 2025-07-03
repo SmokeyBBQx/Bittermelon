@@ -49,6 +49,7 @@ import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.SHAKE_T
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.BLOCK_ENTITY_TYPES;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.BLOCKS;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
+import static com.site21.bittermelon.init.neoforge.BitterCreativeTabs.CREATIVE_MODE_TABS;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.DATA_COMPONENTS;
 import static com.site21.bittermelon.init.neoforge.BitterMemoryTypes.MEMORY_MODULE_TYPES;
 import static com.site21.bittermelon.init.neoforge.BitterItems.ITEMS;
@@ -92,6 +93,7 @@ public class Bittermelon
         MOB_EFFECTS.register(modEventBus);
         COMPARTMENTS.register(modEventBus);
         DRUGS.register(modEventBus);
+        CREATIVE_MODE_TABS.register(modEventBus);
 
         modEventBus.addListener(BitterRegistries::registerRegistries);
         modEventBus.addListener(this::commonSetup);

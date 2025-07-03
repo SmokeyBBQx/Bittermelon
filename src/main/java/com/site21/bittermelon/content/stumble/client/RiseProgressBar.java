@@ -3,9 +3,11 @@ package com.site21.bittermelon.content.stumble.client;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.stumble.StumbleHandler;
+import com.site21.bittermelon.init.neoforge.BitterMobEffects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -14,7 +16,6 @@ import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.content.stumble.client.RiseKeyHandler.TICKS_REQUIRED;
-import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.STUMBLE_TICKS;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class RiseProgressBar {
@@ -53,7 +54,11 @@ public class RiseProgressBar {
     }
 
     private static void renderStunBar(@NotNull GuiGraphics guiGraphics, int x, int y, @NotNull Player player) {
-        int stunTime = player.getData(STUMBLE_TICKS);
+        MobEffectInstance stumbleEffect = player.getEffect(BitterMobEffects.STUN);
+        if (stumbleEffect == null) return;
+
+        int stunTime = stumbleEffect.getDuration();
+        int maxStunTime = player instanceof Player ? 40 : 100;
 
         guiGraphics.blit(PROGRESS_BAR_BACKGROUND,
                 x, y,
@@ -62,7 +67,7 @@ public class RiseProgressBar {
                 182, 5);
 
         RenderSystem.setShaderTexture(0, STUN_BAR_BACKGROUND);
-        int progressWidth = (int) ((stunTime / 40.0f) * 182);
+        int progressWidth = (int) ((stunTime / (float) maxStunTime) * 182);
         progressWidth = Math.min(progressWidth, 182);
 
         guiGraphics.blit(STUN_BAR_PROGRESS,

@@ -2,21 +2,38 @@ package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.scp.scp151.DrowningEffect;
-import com.site21.bittermelon.content.medical.mobeffects.Asphyxiation;
-import com.site21.bittermelon.content.medical.mobeffects.BadMobility;
-import com.site21.bittermelon.content.medical.mobeffects.Pain;
-import com.site21.bittermelon.content.medical.mobeffects.Tremor;
+import com.site21.bittermelon.content.effects.BitterEffect;
+import com.site21.bittermelon.content.medical.mobeffects.AsphyxiationEffect;
+import com.site21.bittermelon.content.medical.mobeffects.BadMobilityEffect;
+import com.site21.bittermelon.content.medical.mobeffects.PainEffect;
+import com.site21.bittermelon.content.medical.mobeffects.TremorEffect;
+import com.site21.bittermelon.content.stumble.FallenEffect;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class BitterMobEffects {
     public static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(BuiltInRegistries.MOB_EFFECT, Bittermelon.MOD_ID);
 
     public static final Holder<MobEffect> DROWNING = MOB_EFFECTS.register("drowning", DrowningEffect::new);
-    public static final Holder<MobEffect> TREMOR = MOB_EFFECTS.register("tremor", Tremor::new);
-    public static final Holder<MobEffect> BAD_MOBILITY = MOB_EFFECTS.register("bad_mobility", BadMobility::new);
-    public static final Holder<MobEffect> ASPHYXIATION = MOB_EFFECTS.register("asphyxiation", Asphyxiation::new);
-    public static final Holder<MobEffect> PAIN = MOB_EFFECTS.register("pain", Pain::new);
+    public static final Holder<MobEffect> TREMOR = MOB_EFFECTS.register("tremor", TremorEffect::new);
+    public static final Holder<MobEffect> BAD_MOBILITY = MOB_EFFECTS.register("bad_mobility", BadMobilityEffect::new);
+    public static final Holder<MobEffect> ASPHYXIATION = MOB_EFFECTS.register("asphyxiation", AsphyxiationEffect::new);
+    public static final Holder<MobEffect> PAIN = MOB_EFFECTS.register("pain", PainEffect::new);
+    public static final Holder<MobEffect> STUN = MOB_EFFECTS.register("stun", () ->
+            new BitterEffect(MobEffectCategory.HARMFUL, 0)
+                    .addAttributeModifier(Attributes.MOVEMENT_SPEED,
+                            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "effect.movement_stun"),
+                            -1,
+                            AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
+                    .addAttributeModifier(Attributes.JUMP_STRENGTH,
+                            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "effect.jump_stun"),
+                            -1,
+                            AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+    public static final Holder<MobEffect> FALLEN = MOB_EFFECTS.register("fallen", FallenEffect::new);
 }
