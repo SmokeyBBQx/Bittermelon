@@ -79,7 +79,7 @@ public class DrowningEffect extends MobEffect {
            playHeartBeatSound(player);
         } else if (level == 8) {
             message = "Your vision fades to black as consciousness slips away.";
-            StumbleHandler.stumble(player, 10000, player.getLookAngle(), true);
+            StumbleHandler.stumble(player, -1, player.getLookAngle());
         } else if (level == 9) {
             message = "The struggle leaves your body. You feel strangely peaceful.";
         }

@@ -213,6 +213,24 @@
       "bittermelon:misc/splatter"
     ]
   },
+  "item.taser": {
+    "category": "players",
+    "sounds": [
+      "bittermelon:item/taser"
+    ]
+  },
+  "item.taser_reload": {
+    "category": "players",
+    "sounds": [
+      "bittermelon:item/taser_reload"
+    ]
+  },
+  "item.taser_shoot": {
+    "category": "players",
+    "sounds": [
+      "bittermelon:item/taser_shoot"
+    ]
+  },
   "container.toolbox_open": {
     "category": "neutral",
     "sounds": [

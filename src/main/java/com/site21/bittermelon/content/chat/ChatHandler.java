@@ -9,16 +9,20 @@ import com.site21.bittermelon.init.custom.VerbSets;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.ServerChatEvent;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ACTIVE_CHANNEL;
+import static com.site21.bittermelon.init.neoforge.BitterMobEffects.ELECTROCUTED;
+import static com.site21.bittermelon.init.neoforge.BitterMobEffects.TASERED;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class ChatHandler {
@@ -34,6 +38,10 @@ public class ChatHandler {
         ServerPlayer player = event.getPlayer();
         Character character = CharacterManager.get(player.level()).getActiveCharacter(player);
         String message = event.getMessage().getString();
+
+        if (player.hasEffect(ELECTROCUTED) || player.hasEffect(TASERED)) {
+            message = formatElectrocuted(message, player.getRandom());
+        }
 
         event.setCanceled(true);
 
@@ -107,6 +115,43 @@ public class ChatHandler {
     public static void sendMessage(Component message, @NotNull ServerPlayer player) {
         for (ServerPlayer serverPlayer : player.server.getPlayerList().getPlayers()) {
             serverPlayer.sendSystemMessage(message);
+        }
+    }
+
+    private static @NotNull String formatElectrocuted(@NotNull String text, RandomSource random) {
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+
+            if (java.lang.Character.isLetter(c)) {
+                if (random.nextFloat() > 0.5f) {
+                    result.append(applyElectrocutedEffect(c, random));
+                } else {
+                    result.append(c);
+                }
+            } else {
+                result.append(c);
+            }
+        }
+
+        return result.toString();
+    }
+
+    @Contract(pure = true)
+    private static @NotNull String applyElectrocutedEffect(char c, @NotNull RandomSource random) {
+        int effect = random.nextIntBetweenInclusive(0, 2);
+
+        switch (effect) {
+            case 0 -> {
+                return String.valueOf(c).repeat(random.nextIntBetweenInclusive(1, 4));
+            }
+            case 1 -> {
+                return c + "-";
+            }
+            default -> {
+                return c + "--";
+            }
         }
     }
 }

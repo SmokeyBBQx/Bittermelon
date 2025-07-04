@@ -10,8 +10,8 @@ import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor
 import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.networking.UpdateSlidingDoorState;
 import com.site21.bittermelon.content.character.networking.SyncCharacters;
 import com.site21.bittermelon.content.economy.networking.OpenATMScreen;
+import com.site21.bittermelon.content.effects.electrocuted.networking.CutOffChat;
 import com.site21.bittermelon.content.entities.implementations.scp650.networking.SetEntityPos;
-import com.site21.bittermelon.content.items.taser.SetShakeTicks;
 import com.site21.bittermelon.content.items.wires.wire.networking.MakeWireConnection;
 import com.site21.bittermelon.content.items.wires.wire.networking.OpenWiringScreen;
 import com.site21.bittermelon.content.items.wires.wire.networking.RemoveWiringData;
@@ -25,6 +25,7 @@ import com.site21.bittermelon.content.blocks.devices.implementations.containment
 import com.site21.bittermelon.content.items.substance.networking.ReleasePressureUpdate;
 import com.site21.bittermelon.content.throwing.ThrowItem;
 import com.site21.bittermelon.content.items.substance.networking.TransferRateUpdate;
+import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -295,16 +296,16 @@ public class PayloadRegistration {
                 OpenPaperEditScreen::handle
         );
 
-        registrar.playToClient(
-                SetShakeTicks.TYPE,
-                SetShakeTicks.STREAM_CODEC,
-                SetShakeTicks::handle
-        );
-
         registrar.playToServer(
                 MoveCompartment.TYPE,
                 MoveCompartment.STREAM_CODEC,
                 MoveCompartment::handle
+        );
+
+        registrar.playToClient(
+                CutOffChat.TYPE,
+                CutOffChat.STREAM_CODEC,
+                CutOffChat::handle
         );
     }
 }

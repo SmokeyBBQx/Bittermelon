@@ -177,6 +177,7 @@ public class HumanFactory implements AnatomyFactory {
         CompartmentInstance smallIntestine = createSoftTissue("Small Intestine", new VisualData(1 * 5, 8 * 5, 0, 5, 17, 19), abdomen, 4, 40);
       // TODO: TEMPORARY ATTRIBUTE
        smallIntestine.setAttribute(MedicalAttribute.CIRCULATION, 1);
+       smallIntestine.setAttribute(MedicalAttribute.MOVEMENT, 1);
         smallIntestine.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_small_intestine.png"));
         CompartmentInstance colon = createSoftTissue("Colon", new VisualData(-1 * 5, 9 * 5, 1, 5, 22, 19), abdomen, 4, 40);
         colon.setItem(COLON.get());

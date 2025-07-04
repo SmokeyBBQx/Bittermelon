@@ -40,37 +40,37 @@ public class BitterItems {
             ItemWeight.MEDIUM,
             75,
             10,
-            true)
-    );
+            true
+            ));
 
     public static final DeferredItem<ToolBoxItem> BLUE_TOOLBOX = ITEMS.register("blue_toolbox", () -> new ToolBoxItem(
             new Item.Properties(),
             5,
             4,
-            ItemWeight.MEDIUM)
-    );
+            ItemWeight.MEDIUM
+            ));
 
     public static final DeferredItem<CardboardBoxItem> CARDBOARD_BOX = ITEMS.register("cardboard_box", () -> new CardboardBoxItem(
             new Item.Properties(),
             3,
             3,
-            ItemWeight.VERY_LIGHT)
-    );
+            ItemWeight.VERY_LIGHT
+    ));
 
     public static final DeferredItem<CollapsedCardboardBoxItem> COLLAPSED_CARDBOARD_BOX = ITEMS.register("collapsed_cardboard_box", () -> new CollapsedCardboardBoxItem(
             new Item.Properties(),
             4,
             1,
-            ItemWeight.VERY_LIGHT)
-    );
+            ItemWeight.VERY_LIGHT
+            ));
 
-    public static final DeferredItem<BlockItem> SMALL_CARDBOARD_BOX_ITEM = ITEMS.register("small_cardboard_box_item", () -> new BlockItem(
-            SMALL_CARDBOARD_BOX.get(),
+    public static final DeferredItem<BlockItem> SMALL_CARDBOARD_BOX = ITEMS.register("small_cardboard_box", () -> new BlockItem(
+            BitterBlocks.SMALL_CARDBOARD_BOX.get(),
             new Item.Properties()
     ));
 
-    public static final DeferredItem<BlockItem> ATM_ITEM = ITEMS.register("atm_item", () -> new BlockItem(
-            ATM.get(),
+    public static final DeferredItem<BlockItem> ATM = ITEMS.register("atm", () -> new BlockItem(
+            BitterBlocks.ATM.get(),
             new Item.Properties()
     ));
 
@@ -169,12 +169,12 @@ public class BitterItems {
     public static final DeferredItem<LaserDesignatorItem> LASER_DESIGNATOR = ITEMS.register("laser_designator", () -> new LaserDesignatorItem(
             new Item.Properties().stacksTo(1), 1, 2, ItemWeight.MEDIUM));
 
-    public static final DeferredItem<BlockItem> CONTAINMENT_PANEL_ITEM = ITEMS.register("containment_panel_item", () -> new BlockItem(
-            CONTAINMENT_PANEL.get(),
+    public static final DeferredItem<BlockItem> CONTAINMENT_PANEL = ITEMS.register("containment_panel", () -> new BlockItem(
+            BitterBlocks.CONTAINMENT_PANEL.get(),
             new Item.Properties()
     ));
 
-    public static final DeferredItem<BlockItem> WALL_THERMOMETER_ITEM = ITEMS.register("wall_thermometer_item", () -> new BlockItem(
+    public static final DeferredItem<BlockItem> WALL_THERMOMETER = ITEMS.register("wall_thermometer", () -> new BlockItem(
             THERMOMETER.get(),
             new Item.Properties()
     ));
@@ -342,7 +342,7 @@ public class BitterItems {
     ));
 
     public static final DeferredItem<TaserItem> TASER = ITEMS.register("taser", () -> new TaserItem(
-            new Item.Properties(),
+            new Item.Properties().stacksTo(1),
             1,
             1,
             ItemWeight.LIGHT

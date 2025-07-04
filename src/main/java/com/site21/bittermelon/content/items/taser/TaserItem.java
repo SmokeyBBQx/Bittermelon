@@ -2,26 +2,39 @@ package com.site21.bittermelon.content.items.taser;
 
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
+import com.site21.bittermelon.content.items.gun.AbstractGunItem;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.LOADED;
-import static com.site21.bittermelon.init.neoforge.BitterItems.TASER_CARTRIDGE;
+import java.util.UUID;
 
-public class TaserItem extends BaseItem {
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
+import static com.site21.bittermelon.init.neoforge.BitterItems.TASER_CARTRIDGE;
+import static com.site21.bittermelon.init.neoforge.BitterMobEffects.ELECTROCUTED;
+import static com.site21.bittermelon.init.neoforge.BitterSounds.TASER_RELOAD;
+import static com.site21.bittermelon.init.neoforge.BitterSounds.TASER_SHOOT;
+
+public class TaserItem extends BaseItem implements AbstractGunItem {
     public TaserItem(Properties properties, int width, int height, ItemWeight itemWeight) {
         super(properties, width, height, itemWeight);
     }
 
     @Override
     public int getUseDuration(@NotNull ItemStack stack, @NotNull LivingEntity livingEntity) {
-        return 20;
+        return 30;
     }
 
     @Override
@@ -34,31 +47,79 @@ public class TaserItem extends BaseItem {
         ItemStack stack = player.getItemInHand(usedHand);
         if (level.isClientSide) return InteractionResultHolder.fail(stack);
 
-        if (stack.getOrDefault(LOADED, false)) {
-            player.startUsingItem(usedHand);
-            return InteractionResultHolder.success(stack);
-        } else if (player.getInventory().contains(new ItemStack(TASER_CARTRIDGE.get()))) {
-            for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
-                ItemStack slot = player.getInventory().getItem(i);
-                if (slot.is(TASER_CARTRIDGE)) {
-                    slot.shrink(1);
-                    stack.set(LOADED, true);
-                    return InteractionResultHolder.success(stack);
+        int taseProbe = stack.getOrDefault(TASE_PROBE, -1);
+        if (taseProbe != -1) {
+            if (player.isShiftKeyDown()) {
+                if (level.getEntity(taseProbe) instanceof TaserProjectile projectile) {
+                    projectile.remove(Entity.RemovalReason.DISCARDED);
                 }
+
+                stack.remove(TASE_PROBE);
+                level.playSound(null, player.getOnPos(), SoundEvents.CROSSBOW_LOADING_START.value(), SoundSource.PLAYERS, 1, 2);
+                return InteractionResultHolder.success(stack);
+            } else {
+                player.displayClientMessage(Component.literal("Prongs are still attached to the target. Shift + Right Click to remove.").withStyle(ChatFormatting.RED), true);
+                return InteractionResultHolder.fail(stack);
             }
+        }
+
+        if (stack.getOrDefault(AMMO, 0) > 0) {
+            if (stack.getOrDefault(RELOAD_TIMER, 0) > 0) {
+                return InteractionResultHolder.fail(stack);
+            }
+            player.startUsingItem(usedHand);
+
+            shootProjectile(player, stack);
+
+            stack.set(AMMO, 0);
+            level.playSound(null, player.getOnPos(), TASER_SHOOT.get(), SoundSource.PLAYERS);
+            return InteractionResultHolder.consume(stack);
+        } else if (player.getInventory().contains(new ItemStack(TASER_CARTRIDGE.get()))) {
+            return ItemUtils.startUsingInstantly(level, player, usedHand);
         }
         return InteractionResultHolder.fail(stack);
     }
 
+    private void shootProjectile(@NotNull Player player, @NotNull ItemStack stack) {
+        TaserProjectile projectile = new TaserProjectile(player.level());
+
+        projectile.setPos(player.getX(), player.getEyeY() - 0.1, player.getZ());
+        projectile.setOwner(player);
+        projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5f, 2.0f);
+//            projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 0.5f, 0f);
+        player.level().addFreshEntity(projectile);
+
+        stack.set(TASE_PROBE, projectile.getId());
+    }
+
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity livingEntity) {
-        if (!(livingEntity instanceof Player player)) return stack;
-
-        TaserProjectile projectile = new TaserProjectile(level);
-        projectile.setPos(player.getX(), player.getEyeY() - 0.1, player.getZ());
-        projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 0.8f, 2.0F);
-        player.level().addFreshEntity(projectile);
-        stack.set(LOADED, false);
+        if (livingEntity instanceof Player player) {
+            for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+                ItemStack slot = player.getInventory().getItem(i);
+                if (slot.is(TASER_CARTRIDGE)) {
+                    slot.shrink(1);
+                    stack.set(AMMO, 1);
+                    stack.set(RELOAD_TIMER, 10);
+                    level.playSound(null, player.getOnPos(), TASER_RELOAD.get(), SoundSource.PLAYERS);
+                    return stack;
+                }
+            }
+        }
         return stack;
+    }
+
+    @Override
+    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
+        if (isSelected) {
+            if (stack.getOrDefault(RELOAD_TIMER, 0) > 0) {
+                stack.set(RELOAD_TIMER, stack.get(RELOAD_TIMER) - 1);
+            }
+        }
+    }
+
+    @Override
+    public int getMaxAmmo() {
+        return 1;
     }
 }

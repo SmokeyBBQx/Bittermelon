@@ -5,7 +5,6 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.items.itemcontainers.client.ItemContainerContents;
 import com.site21.bittermelon.content.items.substance.data.SubstanceContents;
 import com.site21.bittermelon.content.medical.compartments.CompartmentData;
-import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentType;
@@ -116,9 +115,19 @@ public class BitterDataComponents {
             builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL)
     );
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> LOADED = DATA_COMPONENTS.registerComponentType(
-            "loaded",
-            builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL)
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> TASE_PROBE = DATA_COMPONENTS.registerComponentType(
+            "tase_probe",
+            builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> RELOAD_TIMER = DATA_COMPONENTS.registerComponentType(
+            "reload_timer",
+            builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> AMMO = DATA_COMPONENTS.registerComponentType(
+            "ammo",
+            builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
     );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompartmentData>> COMPARTMENT = DATA_COMPONENTS.registerComponentType(

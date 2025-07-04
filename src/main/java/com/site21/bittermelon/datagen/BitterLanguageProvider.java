@@ -1,7 +1,9 @@
 package com.site21.bittermelon.datagen;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.content.effects.BitterEffect;
 import com.site21.bittermelon.init.neoforge.BitterItems;
+import com.site21.bittermelon.init.neoforge.BitterMobEffects;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.common.data.LanguageProvider;
@@ -27,6 +29,8 @@ public class BitterLanguageProvider extends LanguageProvider {
         addCustomItem(SCP_109, "SCP-109");
         addCustomItem(SCP_2398, "SCP-2398");
         BitterItems.ITEMS.getEntries().forEach(this::addItemTranslation);
+        BitterMobEffects.MOB_EFFECTS.getEntries().forEach(effect ->
+                addEffect(effect, formatName(effect.getKey().location().getPath())));
     }
 
     private void addCustomItem(@NotNull Supplier<? extends Item> key, String name) {

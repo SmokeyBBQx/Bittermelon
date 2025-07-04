@@ -6,7 +6,6 @@ import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.blocks.substance.fluid.client.FluidBlockColor;
 import com.site21.bittermelon.client.gui.loreopening.LoreOpeningOverlay;
 import com.site21.bittermelon.content.character.networking.SyncCharacters;
-import com.site21.bittermelon.content.items.taser.SetShakeTicks;
 import com.site21.bittermelon.content.telecomms.intercom.IntercomManager;
 import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
 import com.site21.bittermelon.content.substance.reactions.Reactions;
@@ -15,7 +14,6 @@ import com.site21.bittermelon.init.neoforge.BitterRegistries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -26,8 +24,6 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -45,7 +41,6 @@ import static com.site21.bittermelon.init.custom.Drugs.DRUGS;
 import static com.site21.bittermelon.init.custom.LogicalOperators.LOGICAL_OPERATORS;
 import static com.site21.bittermelon.init.neoforge.BitterActivity.ACTIVITY;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ATTACHMENT_TYPES;
-import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.SHAKE_TICKS;
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.BLOCK_ENTITY_TYPES;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.BLOCKS;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
@@ -113,19 +108,6 @@ public class Bittermelon
         if (level.isClientSide) return;
        Character character = CharacterManager.get(level).getActiveCharacter(event.getEntity());
        if (character != null) character.update(level);
-
-       if (event.getEntity() instanceof LivingEntity entity) {
-           if (entity.getData(SHAKE_TICKS) > 0) {
-               int newAmount = entity.getData(SHAKE_TICKS) - 1;
-               entity.setData(SHAKE_TICKS, newAmount);
-               if (newAmount <= 0) {
-                   PacketDistributor.sendToPlayersTrackingEntity(entity, new SetShakeTicks(entity.getId(), 0));
-                   if (entity instanceof ServerPlayer player) {
-                       PacketDistributor.sendToPlayer(player, new SetShakeTicks(player.getId(), 0));
-                   }
-               }
-           }
-       }
     }
 
     @SubscribeEvent

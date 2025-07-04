@@ -17,7 +17,9 @@ public class BitterItemModelProvider extends ItemModelProvider {
     @Override
     protected void registerModels() {
         basicItem(BitterItems.BITTERMELON.get());
+        basicItem(BitterItems.TASER_CARTRIDGE.get());
         generateBlockItemModels();
+        basicItem(BitterItems.LARGE_SLIDING_DOOR.get());
     }
 
     private void generateBlockItemModels() {

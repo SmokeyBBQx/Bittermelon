@@ -8,14 +8,15 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.SHAKE_TICKS;
+import static com.site21.bittermelon.init.neoforge.BitterMobEffects.ELECTROCUTED;
+import static com.site21.bittermelon.init.neoforge.BitterMobEffects.TASERED;
 
 @Mixin(LivingEntityRenderer.class)
 public class LivingEntityRendererMixin {
 
     @Inject(method = "isShaking", at = @At("HEAD"), cancellable = true)
     private void onIsShaking(@NotNull LivingEntity entity, CallbackInfoReturnable<Boolean> cir) {
-        if (entity.getData(SHAKE_TICKS) > 0) {
+        if (entity.hasEffect(ELECTROCUTED) || entity.hasEffect(TASERED)) {
             cir.setReturnValue(true);
         }
     }

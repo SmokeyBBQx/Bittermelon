@@ -34,9 +34,8 @@ public class StumbleHandler {
      * @param entity        the living entity to make stumble
      * @param length        base stumble duration in ticks
      * @param pushDirection direction to push the entity during stumble
-     * @param shakeEffect   whether the player's screen should shake
      */
-    public static void stumble(@NotNull LivingEntity entity, int length, Vec3 pushDirection, boolean shakeEffect) {
+    public static void stumble(@NotNull LivingEntity entity, int length, Vec3 pushDirection) {
         Pose pose = entity.getPose();
         if (pose == Pose.SLEEPING || pose == Pose.SWIMMING) return;
 
@@ -66,7 +65,7 @@ public class StumbleHandler {
      * @param entity the living entity to make stumble
      */
     public static void stumble(LivingEntity entity) {
-        stumble(entity, entity instanceof Player ? 40 : 100, entity.getLookAngle(), true);
+        stumble(entity, entity instanceof Player ? 40 : 100, entity.getLookAngle());
     }
 
     /**
@@ -77,7 +76,7 @@ public class StumbleHandler {
      * @param pushDirection direction to push the entity during stumble
      */
     public static void stumble(LivingEntity entity, Vec3 pushDirection) {
-        stumble(entity, entity instanceof Player ? 40 : 100, pushDirection, true);
+        stumble(entity, entity instanceof Player ? 40 : 100, pushDirection);
     }
 
     private static void motion(@NotNull LivingEntity entity, @NotNull Vec3 pushDirection) {
@@ -86,7 +85,8 @@ public class StumbleHandler {
         Vec3 lookVector = entity.getLookAngle();
 
         double dotProduct = normalizedPush.dot(lookVector);
-        entity.addDeltaMovement(pushDirection.scale(1.2d * entity.getEyeHeight()));
+        double multiplier = 1.2d * entity.getEyeHeight();
+        entity.addDeltaMovement(pushDirection.multiply(multiplier, 0, multiplier));
         entity.hurtMarked = true;
 
         if (entity instanceof ServerPlayer player) {

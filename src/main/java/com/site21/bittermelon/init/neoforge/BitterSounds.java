@@ -80,4 +80,10 @@ public class BitterSounds {
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "horror.bell_scare")));
     public static final DeferredHolder<SoundEvent, SoundEvent> SPLATTER = SOUND_EVENTS.register("misc.splatter",
             () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "misc.splatter")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> TASER = SOUND_EVENTS.register("item.taser",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "item.taser")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> TASER_RELOAD = SOUND_EVENTS.register("item.taser_reload",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "item.taser_reload")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> TASER_SHOOT = SOUND_EVENTS.register("item.taser_shoot",
+            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "item.taser_shoot")));
 }

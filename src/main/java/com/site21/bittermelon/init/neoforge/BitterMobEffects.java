@@ -3,6 +3,8 @@ package com.site21.bittermelon.init.neoforge;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.scp.scp151.DrowningEffect;
 import com.site21.bittermelon.content.effects.BitterEffect;
+import com.site21.bittermelon.content.effects.electrocuted.ElectrocutedEffect;
+import com.site21.bittermelon.content.items.taser.TaserEffect;
 import com.site21.bittermelon.content.medical.mobeffects.AsphyxiationEffect;
 import com.site21.bittermelon.content.medical.mobeffects.BadMobilityEffect;
 import com.site21.bittermelon.content.medical.mobeffects.PainEffect;
@@ -36,4 +38,7 @@ public class BitterMobEffects {
                             -1,
                             AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
     public static final Holder<MobEffect> FALLEN = MOB_EFFECTS.register("fallen", FallenEffect::new);
+    public static final Holder<MobEffect> ELECTROCUTED = MOB_EFFECTS.register("electrocuted", ElectrocutedEffect::new);
+    public static final Holder<MobEffect> TASERED = MOB_EFFECTS.register("tasered", TaserEffect::new);
+    public static final Holder<MobEffect> EYE_IRRITATION = MOB_EFFECTS.register("eye_irritation", () -> new BitterEffect(MobEffectCategory.HARMFUL, 0));
 }
