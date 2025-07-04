@@ -47,7 +47,7 @@ public class TaserProjectileRenderer extends EntityRenderer<TaserProjectile> {
 
     private static void stringVertex(float x, float y, float z, @NotNull VertexConsumer consumer, PoseStack.Pose pose, float stringFraction, float nextStringFraction) {
         float f = x * stringFraction;
-        float f1 = y * (stringFraction * stringFraction + stringFraction) * 0.5F + 0.25F;
+        float f1 = y * (stringFraction * stringFraction + stringFraction) * 0.5F;
         float f2 = z * stringFraction;
         float f3 = x * nextStringFraction - f;
         float f4 = y * (nextStringFraction * nextStringFraction + nextStringFraction) * 0.5F + 0.25F - f1;
