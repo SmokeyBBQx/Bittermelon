@@ -21,13 +21,17 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Random;
+
 import static com.site21.bittermelon.init.neoforge.BitterEntities.TASER_PROJECTILE;
 import static com.site21.bittermelon.init.neoforge.BitterItems.TASER;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.TASERED;
 
 public class TaserProjectile extends Projectile {
     private static final EntityDataAccessor<Integer> DATA_HOOKED_ENTITY = SynchedEntityData.defineId(TaserProjectile.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Float> DATA_RANDOM_OFFSET = SynchedEntityData.defineId(TaserProjectile.class, EntityDataSerializers.FLOAT);
     private Entity hookedIn;
+    private float randomOffset = 0;
 
     public TaserProjectile(EntityType<? extends TaserProjectile> entityType, Level level) {
         super(entityType, level);
@@ -39,12 +43,15 @@ public class TaserProjectile extends Projectile {
 
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         builder.define(DATA_HOOKED_ENTITY, 0);
+        builder.define(DATA_RANDOM_OFFSET, 0f);
     }
 
     public void onSyncedDataUpdated(@NotNull EntityDataAccessor<?> key) {
         if (DATA_HOOKED_ENTITY.equals(key)) {
-            int i = this.getEntityData().get(DATA_HOOKED_ENTITY);
-            this.hookedIn = i > 0 ? this.level().getEntity(i - 1) : null;
+            int i = getEntityData().get(DATA_HOOKED_ENTITY);
+            hookedIn = i > 0 ? level().getEntity(i - 1) : null;
+        } else if (DATA_RANDOM_OFFSET.equals(key)) {
+            randomOffset = getEntityData().get(DATA_RANDOM_OFFSET);
         }
     }
 
@@ -53,7 +60,7 @@ public class TaserProjectile extends Projectile {
         super.tick();
 
         if (hookedIn != null && !hookedIn.isRemoved()) {
-            setPos(hookedIn.getX(), hookedIn.getY(), hookedIn.getZ());
+            setPos(hookedIn.getX() + randomOffset, hookedIn.getY() + hookedIn.getEyeHeight() / 2, hookedIn.getZ() + randomOffset);
             return;
         }
 
@@ -78,11 +85,13 @@ public class TaserProjectile extends Projectile {
 
     @Override
     protected void onHitEntity(@NotNull EntityHitResult result) {
+        Random random1 = new Random();
         if (!(result.getEntity() instanceof LivingEntity entity)) return;
         if (!(getOwner() instanceof Player player)) return;
         ItemStack taser = player.getMainHandItem();
         if (!taser.is(TASER)) return;
         setHookedIn(entity);
+        setRandomOffset(random1.nextFloat(0, 0.5f));
 
         entity.addEffect(new MobEffectInstance(TASERED, 300, 1, false, false));
         this.level().broadcastEntityEvent(this, (byte) 3);
@@ -113,6 +122,11 @@ public class TaserProjectile extends Projectile {
     public void setHookedIn(Entity entity) {
         this.hookedIn = entity;
         this.getEntityData().set(DATA_HOOKED_ENTITY, entity == null ? 0 : entity.getId() + 1);
+    }
+
+    public void setRandomOffset(float randomOffset) {
+        this.randomOffset = randomOffset;
+        this.getEntityData().set(DATA_RANDOM_OFFSET, randomOffset);
     }
 
     protected double getDefaultGravity() {

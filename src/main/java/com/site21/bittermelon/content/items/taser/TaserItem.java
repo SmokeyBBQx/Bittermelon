@@ -5,7 +5,6 @@ import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.gun.AbstractGunItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -19,11 +18,11 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 import static com.site21.bittermelon.init.neoforge.BitterItems.TASER_CARTRIDGE;
-import static com.site21.bittermelon.init.neoforge.BitterMobEffects.ELECTROCUTED;
 import static com.site21.bittermelon.init.neoforge.BitterSounds.TASER_RELOAD;
 import static com.site21.bittermelon.init.neoforge.BitterSounds.TASER_SHOOT;
 
@@ -47,14 +46,16 @@ public class TaserItem extends BaseItem implements AbstractGunItem {
         ItemStack stack = player.getItemInHand(usedHand);
         if (level.isClientSide) return InteractionResultHolder.fail(stack);
 
-        int taseProbe = stack.getOrDefault(TASE_PROBE, -1);
-        if (taseProbe != -1) {
+        List<Integer> taseProbes = stack.getOrDefault(TASE_PROBES, List.of());
+        if (!taseProbes.isEmpty()) {
             if (player.isShiftKeyDown()) {
-                if (level.getEntity(taseProbe) instanceof TaserProjectile projectile) {
-                    projectile.remove(Entity.RemovalReason.DISCARDED);
+                for (Integer i : taseProbes) {
+                    if (level.getEntity(i) instanceof TaserProjectile projectile) {
+                        projectile.remove(Entity.RemovalReason.DISCARDED);
+                    }
                 }
 
-                stack.remove(TASE_PROBE);
+                stack.remove(TASE_PROBES);
                 level.playSound(null, player.getOnPos(), SoundEvents.CROSSBOW_LOADING_START.value(), SoundSource.PLAYERS, 1, 2);
                 return InteractionResultHolder.success(stack);
             } else {
@@ -82,14 +83,20 @@ public class TaserItem extends BaseItem implements AbstractGunItem {
 
     private void shootProjectile(@NotNull Player player, @NotNull ItemStack stack) {
         TaserProjectile projectile = new TaserProjectile(player.level());
+        TaserProjectile projectile1 = new TaserProjectile(player.level());
 
         projectile.setPos(player.getX(), player.getEyeY() - 0.1, player.getZ());
         projectile.setOwner(player);
         projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5f, 2.0f);
-//            projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 0.5f, 0f);
-        player.level().addFreshEntity(projectile);
 
-        stack.set(TASE_PROBE, projectile.getId());
+        projectile1.setPos(player.getX(), player.getEyeY() - 0.1, player.getZ());
+        projectile1.setOwner(player);
+        projectile1.shootFromRotation(player, player.getXRot() + 0.5f, player.getYRot(), 0.0F, 1.5f, 4.0f);
+
+        player.level().addFreshEntity(projectile);
+        player.level().addFreshEntity(projectile1);
+
+        stack.set(TASE_PROBES, List.of(projectile.getId(), projectile1.getId()));
     }
 
     @Override

@@ -115,9 +115,9 @@ public class BitterDataComponents {
             builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL)
     );
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> TASE_PROBE = DATA_COMPONENTS.registerComponentType(
-            "tase_probe",
-            builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<Integer>>> TASE_PROBES = DATA_COMPONENTS.registerComponentType(
+            "tase_probes",
+            builder -> builder.persistent(Codec.list(Codec.INT)).networkSynchronized(ByteBufCodecs.collection(ArrayList::new, ByteBufCodecs.INT))
     );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> RELOAD_TIMER = DATA_COMPONENTS.registerComponentType(

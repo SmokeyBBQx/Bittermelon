@@ -30,33 +30,34 @@ public class TaserProjectileRenderer extends EntityRenderer<TaserProjectile> {
         Vec3 shooterPos = shooter.getRopeHoldPosition(partialTick);
         Vec3 projectilePos = entity.getPosition(partialTick);
 
-        float deltaX = (float)(shooterPos.x - projectilePos.x);
-        float deltaY = (float)(shooterPos.y - projectilePos.y);
-        float deltaZ = (float)(shooterPos.z - projectilePos.z);
+        float deltaX = (float) (shooterPos.x - projectilePos.x);
+        float deltaY = (float) (shooterPos.y - projectilePos.y);
+        float deltaZ = (float) (shooterPos.z - projectilePos.z);
 
         VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.lineStrip());
         PoseStack.Pose pose = poseStack.last();
 
-        int segments = 16;
+        int segments = 32;
         for (int i = 0; i <= segments; i++) {
             stringVertex(deltaX, deltaY, deltaZ, vertexConsumer, pose, (float) i / segments, (float) (i + 1) / segments);
+            stringVertex(deltaX + 0.1f, deltaY , deltaZ + 0.1f, vertexConsumer, pose, (float) i / segments, (float) (i + 1) / segments);
         }
 
         poseStack.popPose();
     }
 
     private static void stringVertex(float x, float y, float z, @NotNull VertexConsumer consumer, PoseStack.Pose pose, float stringFraction, float nextStringFraction) {
-        float f = x * stringFraction;
-        float f1 = y * (stringFraction * stringFraction + stringFraction) * 0.5F;
-        float f2 = z * stringFraction;
-        float f3 = x * nextStringFraction - f;
-        float f4 = y * (nextStringFraction * nextStringFraction + nextStringFraction) * 0.5F + 0.25F - f1;
-        float f5 = z * nextStringFraction - f2;
-        float f6 = Mth.sqrt(f3 * f3 + f4 * f4 + f5 * f5);
-        f3 /= f6;
-        f4 /= f6;
-        f5 /= f6;
-        consumer.addVertex(pose, f, f1, f2).setColor(0xFF444444).setNormal(pose, f3, f4, f5);
+        float currentX = x * stringFraction;
+        float currentY = y * (stringFraction * stringFraction + stringFraction) * 0.5F;
+        float currentZ = z * stringFraction;
+        float deltaX = x * nextStringFraction + currentX;
+        float deltaY = y * (nextStringFraction * nextStringFraction + nextStringFraction) * 0.5F + 0.25F - currentY;
+        float deltaZ = z * nextStringFraction + currentZ;
+        float normalLength = Mth.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+        deltaX /= normalLength;
+        deltaY /= normalLength;
+        deltaZ /= normalLength;
+        consumer.addVertex(pose, currentX, currentY, currentZ).setColor(0xFF444444).setNormal(pose, deltaX, deltaY, deltaZ);
     }
 
     @Override
