@@ -3,6 +3,8 @@ package com.site21.bittermelon.content.entities.implementations.scp131;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.entities.ai.behavior.needs.Need;
 import com.site21.bittermelon.content.entities.base.BitterMob;
+import com.site21.bittermelon.content.entities.base.NeedsStat;
+import com.site21.bittermelon.content.entities.base.StatConfig;
 import com.site21.bittermelon.content.medical.factory.Anatomy;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.entity.EntityType;
@@ -25,8 +27,14 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 
 public class SCP131 extends BitterMob<SCP131> {
+    @Override
+    protected Map<NeedsStat, StatConfig> initializeStats() {
+        return Map.of();
+    }
+
     public SCP131(EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level, 1);
     }
@@ -84,21 +92,6 @@ public class SCP131 extends BitterMob<SCP131> {
     @Override
     public List<Need<SCP131>> getNeeds() {
         return List.of();
-    }
-
-    @Override
-    public float getStress() {
-        return 0;
-    }
-
-    @Override
-    public void modifyStress(float amount) {
-
-    }
-
-    @Override
-    public void setStress(float amount) {
-
     }
 
     @Override

@@ -24,6 +24,8 @@ import com.site21.bittermelon.content.entities.ai.behavior.social.Socializable;
 import com.site21.bittermelon.content.entities.ai.behavior.social.interactions.GenericInteraction;
 import com.site21.bittermelon.content.entities.ai.behavior.target.InvalidateAttackTarget;
 import com.site21.bittermelon.content.entities.ai.BitterVibrationUser;
+import com.site21.bittermelon.content.entities.base.NeedsStat;
+import com.site21.bittermelon.content.entities.base.StatConfig;
 import com.site21.bittermelon.content.entities.implementations.scp939.behavior.*;
 import com.site21.bittermelon.content.medical.damage.generators.*;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
@@ -86,18 +88,7 @@ import static com.site21.bittermelon.init.neoforge.BitterSounds.*;
 
 @SuppressWarnings("unchecked")
 public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVibrationSystem {
-    private static final EntityDataAccessor<Float> BLOODLUST = SynchedEntityData.defineId(SCP939.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> SOCIALIZATION = SynchedEntityData.defineId(SCP939.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> PROCREATION = SynchedEntityData.defineId(SCP939.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> REST = SynchedEntityData.defineId(SCP939.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> STRESS = SynchedEntityData.defineId(SCP939.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> ANGER = SynchedEntityData.defineId(SCP939.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Integer> CLIENT_ANGER_LEVEL = SynchedEntityData.defineId(SCP939.class, EntityDataSerializers.INT);
-
-    private static final float BLOODLUST_DECAY = 0.001f;
-    private static final float SOCIALIZATION_DECAY = 0.001f;
-    private static final float PROCREATION_DECAY = 0.0001f;
-    private static final float STRESS_REGEN = -0.0005f;
 
     private final List<UUID> victims = new ArrayList<>();
 
@@ -144,10 +135,34 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
         this.vibrationData = new BitterVibrationSystem.Data();
         this.dynamicGameEventListener = new DynamicGameEventListener<>(new BitterVibrationSystem.Listener(this));
         this.angerManagement = new BitterAngerManagement(this::canTargetEntity, Collections.emptyList());
-        this.xpReward = 5;
         remainingLureLines = new ArrayList<>(LURE_LINES);
 
         initializePathfinding();
+    }
+
+    @Override
+    protected Character initializeCharacter() {
+        return new Character(this.uuid, "SCP-939-" + getRandom().nextInt(1, 24), Anatomy.HUMAN);
+    }
+
+    @Override
+    protected Map<NeedsStat, StatConfig> initializeStats() {
+        return Map.of(
+                NeedsStat.BLOODLUST, createStatConfig(0.001f),
+                NeedsStat.SOCIALIZATION, createStatConfig(0.001f),
+                NeedsStat.PROCREATION, createStatConfig(0.0001f),
+                NeedsStat.REST, createStatConfig(0f),
+                NeedsStat.ANGER, createStatConfig(0f),
+                NeedsStat.STRESS, createStatConfig(-0.0005f)
+        );
+    }
+
+    public static AttributeSupplier.@NotNull Builder createAttributes() {
+        return Monster.createMonsterAttributes()
+                .add(Attributes.MOVEMENT_SPEED, 0.3)
+                .add(Attributes.MAX_HEALTH, 150.0)
+                .add(Attributes.ATTACK_KNOCKBACK, 1.5)
+                .add(Attributes.ATTACK_DAMAGE, 30.0);
     }
 
     private void initializePathfinding() {
@@ -160,45 +175,16 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
         this.setPathfindingMalus(PathType.DANGER_FIRE, 0.0F);
     }
 
-    protected Character initializeCharacter() {
-        return new Character(this.uuid, "SCP-939-" + getRandom().nextInt(1, 24), Anatomy.HUMAN);
-    }
-
-    public static AttributeSupplier.@NotNull Builder createAttributes() {
-        return Monster.createMonsterAttributes()
-                .add(Attributes.MOVEMENT_SPEED, 0.3)
-                .add(Attributes.MAX_HEALTH, 150.0)
-                .add(Attributes.ATTACK_KNOCKBACK, 1.5)
-                .add(Attributes.ATTACK_DAMAGE, 30.0);
-    }
-
     @Override
     public void updateDynamicGameEventListener(@NotNull BiConsumer<DynamicGameEventListener<?>, ServerLevel> listenerConsumer) {
-        if (this.level() instanceof ServerLevel serverlevel) {
+        if (level() instanceof ServerLevel serverlevel) {
             listenerConsumer.accept(this.dynamicGameEventListener, serverlevel);
         }
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
-        super.defineSynchedData(builder);
-        builder.define(BLOODLUST, 0f);
-        builder.define(SOCIALIZATION, 0f);
-        builder.define(PROCREATION, 0f);
-        builder.define(REST, 0f);
-        builder.define(STRESS, 0f);
-        builder.define(ANGER, 0f);
-        builder.define(CLIENT_ANGER_LEVEL, 0);
-    }
-
-    @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putFloat("bloodlust", getBloodlust());
-        compound.putFloat("socialization", getSocialization());
-        compound.putFloat("procreation", getProcreation());
-        compound.putFloat("rest", getRest());
-        compound.putFloat("stress", getStress());
 
         ListTag list = new ListTag();
         for (UUID uuid : victims) {
@@ -217,11 +203,6 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.setBloodlust(compound.getFloat("bloodlust"));
-        this.setSocialization(compound.getFloat("socialization"));
-        this.setProcreation(compound.getFloat("procreation"));
-        this.setRest(compound.getFloat("rest"));
-        this.setStress(compound.getFloat("stress"));
 
         ListTag list = compound.getList("Victims", CompoundTag.TAG_COMPOUND);
         victims.clear();
@@ -244,66 +225,6 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
     @Override
     public Map<Character, Relationship> getRelationships() {
         return relationships;
-    }
-
-    public void modifyBloodlust(float amount) {
-        this.entityData.set(BLOODLUST, Math.min(100, Math.max(0, getBloodlust() + amount)));
-    }
-
-    public void modifySocialization(float amount) {
-        this.entityData.set(SOCIALIZATION, Math.min(100, Math.max(0, getSocialization() + amount)));
-    }
-
-    public void modifyProcreation(float amount) {
-        this.entityData.set(PROCREATION, Math.min(100, Math.max(0, getProcreation() + amount)));
-    }
-
-    public void modifyRest(float amount) {
-        this.entityData.set(REST, Math.min(100, Math.max(0, getRest() + amount)));
-    }
-
-    public void modifyStress(float amount) {
-        this.entityData.set(STRESS, Math.min(100, Math.max(0, getRest() + amount)));
-    }
-
-    public void setBloodlust(float amount) {
-        this.entityData.set(BLOODLUST, amount);
-    }
-
-    public void setSocialization(float amount) {
-        this.entityData.set(SOCIALIZATION, amount);
-    }
-
-    public void setProcreation(float amount) {
-        this.entityData.set(PROCREATION, amount);
-    }
-
-    public void setRest(float amount) {
-        this.entityData.set(REST, amount);
-    }
-
-    public void setStress(float amount) {
-        this.entityData.set(STRESS, amount);
-    }
-
-    public float getBloodlust() {
-        return this.entityData.get(BLOODLUST);
-    }
-
-    public float getSocialization() {
-        return this.entityData.get(SOCIALIZATION);
-    }
-
-    public float getProcreation() {
-        return this.entityData.get(PROCREATION);
-    }
-
-    public float getRest() {
-        return this.entityData.get(REST);
-    }
-
-    public float getStress() {
-        return this.entityData.get(STRESS);
     }
 
     public List<UUID> getVictims() {
@@ -431,13 +352,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
             BitterVibrationSystem.Ticker.tick(serverlevel, this.vibrationData, this.vibrationUser);
         }
 
-        modifyBloodlust(BLOODLUST_DECAY);
-        modifySocialization(SOCIALIZATION_DECAY);
-        modifyProcreation(PROCREATION_DECAY);
-        modifyStress(STRESS_REGEN);
-        updateStress();
-
-        this.entityData.set(ANGER, Math.min(100, Math.max(0, (float) getActiveAnger())));
+        setStat(NeedsStat.ANGER, getActiveAnger());
     }
 
     @Override
@@ -460,7 +375,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
 
     private void syncClientAngerLevel() {
         this.entityData.set(CLIENT_ANGER_LEVEL, this.getActiveAnger());
-        this.entityData.set(ANGER, 100.0f - this.getActiveAnger());
+        setStat(NeedsStat.ANGER, 100 - getActiveAnger());
     }
 
     @Override
@@ -623,7 +538,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
 
     public BrainActivityGroup<? extends SCP939> getSocializeTasks() {
         return new BrainActivityGroup<SCP939>(BitterActivity.SOCIALIZE.get()).behaviours(
-                new GenericInteraction<>()
+                new GenericInteraction<SCP939>()
                         .closeEnoughDist((entity, partner) -> 8)
                         .messages(List.of(
                                         " flickers its bioluminescent spine lights at ",
@@ -655,37 +570,37 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
     public List<Need<SCP939>> getNeeds() {
         return ImmutableList.of(
                 new Need<>(
-                        BLOODLUST,
+                        getDataAccessor(NeedsStat.BLOODLUST),
                         BitterActivity.HUNT.get(),
                         value -> (float) 200,
                         entity -> true
                 ),
                 new Need<>(
-                        SOCIALIZATION,
+                        getDataAccessor(NeedsStat.SOCIALIZATION),
                         BitterActivity.SOCIALIZE.get(),
                         value -> (float) Math.pow(value, 1.5),
                         entity -> !entity.level().getNearbyEntities(SCP939.class, TargetingConditions.DEFAULT, entity, entity.getBoundingBox().inflate(16)).isEmpty()
                 ),
                 new Need<>(
-                        PROCREATION,
+                        getDataAccessor(NeedsStat.PROCREATION),
                         BitterActivity.PROCREATE.get(),
                         value -> value,
                         entity -> !entity.level().getNearbyEntities(SCP939.class, TargetingConditions.DEFAULT, entity, entity.getBoundingBox().inflate(16)).isEmpty()
                 ),
                 new Need<>(
-                        REST,
+                        getDataAccessor(NeedsStat.REST),
                         Activity.REST,
                         value -> (float) Math.pow(value, 0.2),
                         entity -> true
                 ),
                 new Need<>(
-                        STRESS,
+                        getDataAccessor(NeedsStat.STRESS),
                         BitterActivity.MENTAL_BREAK.get(),
                         value -> -13 * value + 500,
                         entity -> false
                 ),
                 new Need<>(
-                        ANGER,
+                        getDataAccessor(NeedsStat.ANGER),
                         Activity.FIGHT,
                         value -> (float) Math.pow(value, 1.8),
                         entity -> true

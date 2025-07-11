@@ -5,8 +5,10 @@ import com.site21.bittermelon.content.blocks.base.structuralblock.client.Structu
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.client.PhoneCordRenderer;
 import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.client.LargeSlidingDoorRenderer;
 import com.site21.bittermelon.content.blocks.devices.implementations.thermometer.client.ThermometerRenderer;
+import com.site21.bittermelon.content.blocks.substance.fluid.client.FluidBlockColor;
 import com.site21.bittermelon.content.entities.implementations.chicken.client.ChickenRenderer;
 import com.site21.bittermelon.content.entities.implementations.scp131.client.SCP131Renderer;
+import com.site21.bittermelon.content.entities.implementations.scp1507.client.SCP1507Renderer;
 import com.site21.bittermelon.content.entities.implementations.scp650.SCP650;
 import com.site21.bittermelon.content.entities.implementations.scp650.client.SCP650Renderer;
 import com.site21.bittermelon.content.entities.implementations.scp939.client.SCP939Renderer;
@@ -21,9 +23,11 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.client.LargeSlidingDoorRenderer.*;
+import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.LIT;
 import static com.site21.bittermelon.init.neoforge.BitterEntities.*;
 import static com.site21.bittermelon.init.neoforge.BitterItems.CIGARETTE;
@@ -48,6 +52,7 @@ public class ClientSetup {
         event.registerEntityRenderer(SCP_2398_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(SCP_650.get(), SCP650Renderer::new);
         event.registerEntityRenderer(SCP_131.get(), SCP131Renderer::new);
+        event.registerEntityRenderer(SCP_1507.get(), SCP1507Renderer::new);
         event.registerEntityRenderer(TASER_PROJECTILE.get(), TaserProjectileRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.STRUCTURAL_BLOCK_ENTITY.get(), StructuralBlockRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.THERMOMETER_BLOCK_ENTITY.get(), ThermometerRenderer::new);
@@ -60,5 +65,10 @@ public class ClientSetup {
         event.register(LEFT_DOOR_MODEL);
         event.register(RIGHT_DOOR_MODEL);
         event.register(FRAME_MODEL);
+    }
+
+    @SubscribeEvent
+    public static void registerColorHandlers(RegisterColorHandlersEvent.@NotNull Block event) {
+        event.register(new FluidBlockColor(), FLUID.get());
     }
 }

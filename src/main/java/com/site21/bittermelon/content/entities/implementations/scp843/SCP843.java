@@ -5,6 +5,7 @@ import com.site21.bittermelon.content.entities.ai.behavior.needs.Need;
 import com.site21.bittermelon.content.entities.ai.behavior.needs.NeedsUser;
 import com.site21.bittermelon.content.entities.ai.behavior.social.Relationship;
 import com.site21.bittermelon.content.entities.ai.behavior.social.Socializable;
+import com.site21.bittermelon.content.entities.base.NeedsStat;
 import com.site21.bittermelon.content.entities.implementations.scp843.behavior.Photosynthesize;
 import com.site21.bittermelon.init.neoforge.BitterActivity;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -19,6 +20,7 @@ import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.NearbyBlocksSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.NearbyItemsSensor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -98,12 +100,12 @@ public class SCP843 extends PathfinderMob implements NeedsUser<SCP843>, Socializ
     }
 
     @Override
-    public float getStress() {
+    public float getStat(@NotNull NeedsStat stat) {
         return 0;
     }
 
     @Override
-    public void modifyStress(float amount) {
+    public void setStat(@NotNull NeedsStat stat, float value) {
 
     }
 
@@ -111,23 +113,10 @@ public class SCP843 extends PathfinderMob implements NeedsUser<SCP843>, Socializ
 
     }
 
-    @Override
-    public void setStress(float amount) {
-
-    }
 
     @Override
     public Map<Character, Relationship> getRelationships() {
         return null;
     }
 
-    @Override
-    public void modifySocialization(float amount) {
-
-    }
-
-    @Override
-    public void setSocialization(float amount) {
-
-    }
 }

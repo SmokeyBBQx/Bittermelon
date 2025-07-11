@@ -3,6 +3,8 @@ package com.site21.bittermelon.content.entities.ai.behavior.basicneeds;
 import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
+import com.site21.bittermelon.content.entities.ai.behavior.needs.NeedsUser;
+import com.site21.bittermelon.content.entities.base.NeedsStat;
 import com.site21.bittermelon.util.LocalMessageHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Mob;
@@ -14,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Random;
 
-public class Groom<E extends Mob & HasBasicNeeds> extends DelayedBehaviour<E> {
+public class Groom<E extends Mob & NeedsUser<E>> extends DelayedBehaviour<E> {
     protected List<String> messages;
 
     public Groom(int delayTicks) {
@@ -34,7 +36,7 @@ public class Groom<E extends Mob & HasBasicNeeds> extends DelayedBehaviour<E> {
 
     @Override
     protected void doDelayedAction(@NotNull E entity) {
-        entity.modifyHygiene(-30);
+        entity.modifyStat(NeedsStat.HYGIENE, -30);
 
         if (messages != null && !messages.isEmpty()) {
             CharacterManager characterManager = CharacterManager.get(entity.level());

@@ -3,8 +3,10 @@ package com.site21.bittermelon.content.entities.ai.behavior.social.interactions;
 import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
+import com.site21.bittermelon.content.entities.ai.behavior.needs.NeedsUser;
 import com.site21.bittermelon.content.entities.ai.behavior.social.Relationship;
 import com.site21.bittermelon.content.entities.ai.behavior.social.Socializable;
+import com.site21.bittermelon.content.entities.base.NeedsStat;
 import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
 import com.site21.bittermelon.util.LocalMessageHelper;
 import net.minecraft.network.chat.Component;
@@ -25,7 +27,7 @@ import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.ToIntBiFunction;
 
-public class GenericInteraction<E extends LivingEntity & Socializable> extends ExtendedBehaviour<E> {
+public class GenericInteraction<E extends LivingEntity & Socializable & NeedsUser<E>> extends ExtendedBehaviour<E> {
     private static final MemoryTest MEMORY_REQUIREMENTS = MemoryTest.builder(4).hasMemory(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES).noMemory(BitterMemoryTypes.SOCIALIZE_TARGET.get()).usesMemories(MemoryModuleType.LOOK_TARGET, MemoryModuleType.WALK_TARGET);
 
     protected BiFunction<E, LivingEntity, Float> speedMod = (entity, partner) -> 1f;
@@ -91,7 +93,7 @@ public class GenericInteraction<E extends LivingEntity & Socializable> extends E
         BehaviorUtils.lockGazeAndWalkToEachOther(entity, this.partner, this.speedMod.apply(entity, this.partner), this.closeEnoughDist.applyAsInt(entity, this.partner));
 
         if (entity.closerThan(this.partner, closeEnoughDist.applyAsInt(entity, partner)) && entity.tickCount == this.socializeTick) {
-            entity.modifySocialization(-5);
+            entity.modifyStat(NeedsStat.SOCIALIZATION, -5);
             CharacterManager characterManager = CharacterManager.get(entity.level());
             Character partnerCharacter = characterManager.getActiveCharacter(partner);
 
@@ -102,10 +104,10 @@ public class GenericInteraction<E extends LivingEntity & Socializable> extends E
                 }
             }
 
-            if (partner instanceof Socializable socializable) {
-                socializable.modifySocialization(-5);
+            if (partner instanceof NeedsUser<?> needsUser) {
+                needsUser.modifyStat(NeedsStat.SOCIALIZATION, -5);
                 Character entityCharacter = characterManager.getActiveCharacter(entity);
-                if (entityCharacter != null) {
+                if (entityCharacter != null && partner instanceof Socializable socializable) {
                     Relationship partnerEntityRelationship = socializable.getRelationship(entityCharacter);
                     if (partnerEntityRelationship != null) {
                         partnerEntityRelationship.modifyOpinion(2);

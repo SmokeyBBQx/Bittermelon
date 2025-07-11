@@ -2,6 +2,7 @@ package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.entities.implementations.scp131.SCP131;
+import com.site21.bittermelon.content.entities.implementations.scp1507.SCP1507;
 import com.site21.bittermelon.content.entities.implementations.scp650.SCP650;
 import com.site21.bittermelon.content.entities.implementations.scp939.SCP939;
 import com.site21.bittermelon.content.entities.miscellaneous.ThrownItemProjectile;
@@ -55,6 +56,11 @@ public class BitterEntities {
                     .sized(0.5f, 0.5f)
                     .build("taser_projectile"));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<SCP1507>> SCP_1507 = ENTITY_TYPES.register("scp1507",
+            () -> EntityType.Builder.of(SCP1507::new, MobCategory.MONSTER)
+                    .sized(0.5f, 0.5f)
+                    .build("scp1507"));
+
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
         eventBus.addListener(BitterEntities::registerAttributes);
@@ -65,5 +71,6 @@ public class BitterEntities {
         event.put(CHICKEN.get(), Chicken.createAttributes().build());
         event.put(SCP_650.get(), SCP650.createAttributes().build());
         event.put(SCP_131.get(), SCP131.createAttributes().build());
+        event.put(SCP_1507.get(), SCP1507.createAttributes().build());
     }
 }

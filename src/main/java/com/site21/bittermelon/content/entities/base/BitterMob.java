@@ -5,26 +5,34 @@ import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.entities.ai.behavior.needs.Need;
 import com.site21.bittermelon.content.entities.ai.behavior.needs.NeedsUser;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.DebugPackets;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
 public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob implements SmartBrainOwner<T>, NeedsUser<T> {
+    private final Map<NeedsStat, StatConfig> stats;
     private final int behaviorRandomness;
 
     protected BitterMob(EntityType<? extends PathfinderMob> entityType, Level level, int behaviorRandomness) {
         super(entityType, level);
+        this.stats = initializeStats();
+
         this.behaviorRandomness = behaviorRandomness;
 
         if (!level.isClientSide) {
@@ -39,6 +47,13 @@ public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob im
     }
 
     protected abstract Character initializeCharacter();
+
+    protected abstract Map<NeedsStat, StatConfig> initializeStats();
+
+    @Contract("_ -> new")
+    protected @NotNull StatConfig createStatConfig(float decayRate) {
+        return StatConfig.of(decayRate, this);
+    }
 
     @Override
     public List<Activity> getActivityPriorities() {
@@ -77,6 +92,59 @@ public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob im
         }
 
         return mood / getNeeds().size();
+    }
+
+    @Override
+    public float getStat(@NotNull NeedsStat stat) {
+        StatConfig config = stats.get(stat);
+        return this.entityData.get(config.accessor());
+    }
+
+    @Override
+    public void setStat(@NotNull NeedsStat stat, float value) {
+        StatConfig config = stats.get(stat);
+        this.entityData.set(config.accessor(), Math.min(100, Math.max(0, value)));
+    }
+
+    public EntityDataAccessor<Float> getDataAccessor(NeedsStat stat) {
+        return stats.get(stat).accessor();
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        for (Map.Entry<NeedsStat, StatConfig> entry : stats.entrySet()) {
+            StatConfig config = entry.getValue();
+            if (config.decayRate() != 0) {
+                modifyStat(entry.getKey(), config.decayRate());
+            }
+        }
+        updateStress();
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
+        super.defineSynchedData(builder);
+        for (StatConfig stat : stats.values()) {
+            builder.define(stat.accessor(), 0f);
+        }
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        for (NeedsStat stat : stats.keySet()) {
+            compound.putFloat(stat.saveKey(), getStat(stat));
+        }
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
+        for (NeedsStat stat : stats.keySet()) {
+            setStat(stat, compound.getFloat(stat.saveKey()));
+        }
     }
 
     @Override

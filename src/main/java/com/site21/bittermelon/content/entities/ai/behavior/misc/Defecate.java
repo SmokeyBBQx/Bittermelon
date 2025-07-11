@@ -4,6 +4,8 @@ import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.entities.ai.behavior.basicneeds.HasBasicNeeds;
+import com.site21.bittermelon.content.entities.ai.behavior.needs.NeedsUser;
+import com.site21.bittermelon.content.entities.base.NeedsStat;
 import com.site21.bittermelon.util.LocalMessageHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Mob;
@@ -14,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class Defecate<E extends Mob & HasBasicNeeds> extends ExtendedBehaviour<E> {
+public class Defecate<E extends Mob & NeedsUser<E>> extends ExtendedBehaviour<E> {
     @Override
     protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
         return List.of();
@@ -31,6 +33,6 @@ public class Defecate<E extends Mob & HasBasicNeeds> extends ExtendedBehaviour<E
                     entityCharacter.getName() + " poops.").withColor(textColor));
         }
 
-        entity.modifyDefecation(-100);
+        entity.modifyStat(NeedsStat.DEFECATION, -100);
     }
 }

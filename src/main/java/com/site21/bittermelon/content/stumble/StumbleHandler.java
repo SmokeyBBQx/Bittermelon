@@ -36,8 +36,7 @@ public class StumbleHandler {
      * @param pushDirection direction to push the entity during stumble
      */
     public static void stumble(@NotNull LivingEntity entity, int length, Vec3 pushDirection) {
-        Pose pose = entity.getPose();
-        if (pose == Pose.SLEEPING || pose == Pose.SWIMMING) return;
+        if (entity.hasEffect(FALLEN)) return;
 
         if (entity.level().isClientSide) return;
 

@@ -27,7 +27,9 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public static void onRenderOverlay(RenderGuiLayerEvent.@NotNull Pre event) {
-        if (event.getName() == VanillaGuiLayers.EXPERIENCE_BAR || event.getName() == VanillaGuiLayers.PLAYER_HEALTH) {
+        if (event.getName() == VanillaGuiLayers.EXPERIENCE_BAR
+                || event.getName() == VanillaGuiLayers.PLAYER_HEALTH
+                || event.getName() == VanillaGuiLayers.FOOD_LEVEL) {
             event.setCanceled(true);
         }
     }

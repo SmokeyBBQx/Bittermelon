@@ -21,15 +21,13 @@ import com.site21.bittermelon.content.entities.ai.behavior.social.Relationship;
 import com.site21.bittermelon.content.entities.ai.behavior.social.Socializable;
 import com.site21.bittermelon.content.entities.ai.behavior.social.interactions.GenericInteraction;
 import com.site21.bittermelon.content.entities.ai.behavior.target.InvalidateAttackTarget;
+import com.site21.bittermelon.content.entities.base.NeedsStat;
+import com.site21.bittermelon.content.entities.base.StatConfig;
 import com.site21.bittermelon.content.entities.implementations.chicken.behavior.PluckAtRandomItem;
 import com.site21.bittermelon.init.neoforge.BitterActivity;
 import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
 import com.site21.bittermelon.content.medical.factory.Anatomy;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.ItemTags;
@@ -66,36 +64,15 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.registry.SBLMemoryTypes;
 import net.tslat.smartbrainlib.util.BrainUtils;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static com.site21.bittermelon.content.entities.base.NeedsStat.*;
+
 @SuppressWarnings("unchecked")
 public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPain, HasBasicNeeds {
-    private static final EntityDataAccessor<Float> HUNGER = SynchedEntityData.defineId(Chicken.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> THIRST = SynchedEntityData.defineId(Chicken.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> PROCREATION = SynchedEntityData.defineId(Chicken.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> SOCIALIZATION = SynchedEntityData.defineId(Chicken.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> REST = SynchedEntityData.defineId(Chicken.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> DEFECATION = SynchedEntityData.defineId(Chicken.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> MOVEMENT = SynchedEntityData.defineId(Chicken.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> HYGIENE = SynchedEntityData.defineId(Chicken.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> RELAXATION = SynchedEntityData.defineId(Chicken.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> RECREATION = SynchedEntityData.defineId(Chicken.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> STRESS = SynchedEntityData.defineId(Chicken.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> ANGER = SynchedEntityData.defineId(Chicken.class, EntityDataSerializers.FLOAT);
-
-    private static final float SOCIALIZATION_DECAY = 0.001f;
-    private static final float PROCREATION_DECAY = 0.0001f;
-    private static final float STRESS_REGEN = -0.0005f;
-    private static final float HUNGER_DECAY = 0.002f;
-    private static final float THIRST_DECAY = 0.003f;
-    private static final float DEFECATION_DECAY = 0.001f;
-    private static final float MOVEMENT_DECAY = 0.001f;
-    private static final float HYGIENE_DECAY = 0.001f;
-    private static final float RELAXATION_DECAY = 0.001f;
-    private static final float RECREATION_DECAY = 0.001f;
-
     public float flap;
     public float flapSpeed;
     public float oFlapSpeed;
@@ -103,16 +80,35 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
     public float flapping = 1.0F;
     private float nextFlap = 1.0F;
 
-    private Map<Character, Relationship> relationships = new HashMap<>();
+    private final Map<Character, Relationship> relationships;
 
     public Chicken(EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level, 3);
+        relationships = new HashMap<>();
     }
 
     @Override
     protected Character initializeCharacter() {
         // TODO: Procgen descriptions
         return new Character(this.uuid, "Chicken", Anatomy.HUMAN);
+    }
+
+    @Override
+    protected Map<NeedsStat, StatConfig> initializeStats() {
+        HashMap<NeedsStat, StatConfig> statConfigs = new HashMap<>();
+        statConfigs.put(NeedsStat.SOCIALIZATION, createStatConfig(0.001f));
+        statConfigs.put(NeedsStat.PROCREATION, createStatConfig(0.0001f));
+        statConfigs.put(NeedsStat.REST, createStatConfig(0f));
+        statConfigs.put(NeedsStat.STRESS, createStatConfig(-0.0005f));
+        statConfigs.put(NeedsStat.HUNGER, createStatConfig(0.002f));
+        statConfigs.put(NeedsStat.THIRST, createStatConfig(0.003f));
+        statConfigs.put(NeedsStat.DEFECATION, createStatConfig(0.001f));
+        statConfigs.put(NeedsStat.MOVEMENT, createStatConfig(0.001f));
+        statConfigs.put(NeedsStat.HYGIENE, createStatConfig(0.001f));
+        statConfigs.put(NeedsStat.RELAXATION, createStatConfig(0.001f));
+        statConfigs.put(NeedsStat.RECREATION, createStatConfig(0.001f));
+        statConfigs.put(NeedsStat.ANGER, createStatConfig(0f));
+        return statConfigs;
     }
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {
@@ -174,7 +170,7 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
 
     public BrainActivityGroup<? extends Chicken> getSocializeTasks() {
         return new BrainActivityGroup<Chicken>(BitterActivity.SOCIALIZE.get()).behaviours(
-                new GenericInteraction<>()
+                new GenericInteraction<Chicken>()
                         .closeEnoughDist((entity, partner) -> 8)
                         .messages(List.of(" clucks at ")
                         )
@@ -227,7 +223,7 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
                         new Idle<>().runFor(entity -> 30)
                 ).whenStarting(entity -> {
                     if (entity instanceof Chicken chicken) {
-                        chicken.modifyMovement(-10.0f);
+                        chicken.modifyStat(MOVEMENT, -10.0f);
                     }
                 })
         );
@@ -235,7 +231,7 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
 
     public BrainActivityGroup<? extends Chicken> getGroomTasks() {
         return new BrainActivityGroup<Chicken>(BitterActivity.GROOM.get()).behaviours(
-                new Preen<>(10)
+                new Preen<Chicken>(10)
                         .messages(List.of(
                                         " grooms itself.",
                                         " tidies itself.",
@@ -271,12 +267,11 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
         ).requireAndWipeMemoriesOnUse(MemoryModuleType.HURT_BY);
     }
 
-
     @Override
     public List<Need<Chicken>> getNeeds() {
         return ImmutableList.of(
                 new Need<>(
-                        SOCIALIZATION,
+                        getDataAccessor(SOCIALIZATION),
                         BitterActivity.SOCIALIZE.get(),
                         value -> (float) Math.pow(value, 1.5),
                         entity -> {
@@ -285,31 +280,31 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
                         }
                 ),
                 new Need<>(
-                        PROCREATION,
+                        getDataAccessor(PROCREATION),
                         BitterActivity.PROCREATE.get(),
                         value -> value,
                         entity -> !entity.level().getNearbyEntities(Chicken.class, TargetingConditions.DEFAULT, entity, entity.getBoundingBox().inflate(16)).isEmpty()
                 ),
                 new Need<>(
-                        REST,
+                        getDataAccessor(REST),
                         Activity.REST,
                         value -> (float) Math.pow(value, 0.2),
                         entity -> false
                 ),
                 new Need<>(
-                        STRESS,
+                        getDataAccessor(STRESS),
                         BitterActivity.MENTAL_BREAK.get(),
                         value -> value,
                         entity -> true
                 ),
                 new Need<>(
-                        ANGER,
+                        getDataAccessor(ANGER),
                         Activity.FIGHT,
                         value -> (float) Math.pow(value, 1.8),
                         entity -> true
                 ),
                 new Need<>(
-                        HUNGER,
+                        getDataAccessor(HUNGER),
                         BitterActivity.EAT.get(),
                         value -> (float) Math.pow(value, 2),
                         entity -> {
@@ -318,7 +313,7 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
                         }
                 ),
                 new Need<>(
-                        THIRST,
+                        getDataAccessor(THIRST),
                         BitterActivity.DRINK.get(),
                         value -> (float) Math.pow(value, 2),
                         entity -> {
@@ -327,31 +322,31 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
                         }
                 ),
                 new Need<>(
-                        DEFECATION,
+                        getDataAccessor(DEFECATION),
                         BitterActivity.DEFECATE.get(),
                         value -> value,
                         entity -> true
                 ),
                 new Need<>(
-                        MOVEMENT,
+                        getDataAccessor(MOVEMENT),
                         BitterActivity.EXPLORE.get(),
                         value -> (float) Math.pow(value, 1.2),
                         entity -> false
                 ),
                 new Need<>(
-                        HYGIENE,
+                        getDataAccessor(HYGIENE),
                         BitterActivity.GROOM.get(),
                         value -> (float) Math.pow(value, 1.3),
                         entity -> true
                 ),
                 new Need<>(
-                        RELAXATION,
+                        getDataAccessor(RELAXATION),
                         BitterActivity.RELAX.get(),
                         value -> (float) Math.pow(value, 1.3),
                         entity -> false
                 ),
                 new Need<>(
-                        RECREATION,
+                        getDataAccessor(RECREATION),
                         BitterActivity.PLAY.get(),
                         value -> (float) Math.pow(getMood(), 1.3),
                         entity -> {
@@ -360,23 +355,6 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
                         }
                 )
         );
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-
-        modifySocialization(SOCIALIZATION_DECAY);
-        modifyProcreation(PROCREATION_DECAY);
-        modifyStress(STRESS_REGEN);
-        modifyHunger(HUNGER_DECAY);
-        modifyThirst(THIRST_DECAY);
-        modifyDefecation(DEFECATION_DECAY);
-        modifyMovement(MOVEMENT_DECAY);
-        modifyHygiene(HYGIENE_DECAY);
-        modifyRelaxation(RELAXATION_DECAY);
-        modifyRecreation(RECREATION_DECAY);
-        updateStress();
     }
 
     public void aiStep() {
@@ -436,187 +414,6 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
                 new NearbyFoodSensor<>(),
                 new NearbyDrinkableFluidsSensor<>()
         );
-    }
-
-    @Override
-    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
-        super.defineSynchedData(builder);
-        builder.define(SOCIALIZATION, 0f);
-        builder.define(PROCREATION, 0f);
-        builder.define(REST, 0f);
-        builder.define(STRESS, 0f);
-        builder.define(ANGER, 0f);
-        builder.define(HUNGER, 0f);
-        builder.define(THIRST, 0f);
-        builder.define(DEFECATION, 0f);
-        builder.define(MOVEMENT, 0f);
-        builder.define(HYGIENE, 0f);
-        builder.define(RELAXATION, 0f);
-        builder.define(RECREATION, 0f);
-    }
-
-    @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        compound.putFloat("socialization", getSocialization());
-        compound.putFloat("procreation", getProcreation());
-        compound.putFloat("rest", getRest());
-        compound.putFloat("stress", getStress());
-        compound.putFloat("hunger", getHunger());
-        compound.putFloat("thirst", getThirst());
-        compound.putFloat("defecation", getDefecation());
-        compound.putFloat("movement", getMovement());
-        compound.putFloat("hygiene", getHygiene());
-        compound.putFloat("relaxation", getRelaxation());
-        compound.putFloat("recreation", getRecreation());
-    }
-
-    @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        this.setSocialization(compound.getFloat("socialization"));
-        this.setProcreation(compound.getFloat("procreation"));
-        this.setRest(compound.getFloat("rest"));
-        this.setStress(compound.getFloat("stress"));
-        this.setHunger(compound.getFloat("hunger"));
-        this.setThirst(compound.getFloat("thirst"));
-        this.setDefecation(compound.getFloat("defecation"));
-        this.setMovement(compound.getFloat("movement"));
-        this.setHygiene(compound.getFloat("hygiene"));
-        this.setRelaxation(compound.getFloat("relaxation"));
-        this.setRecreation(compound.getFloat("recreation"));
-    }
-
-    public void modifySocialization(float amount) {
-        this.entityData.set(SOCIALIZATION, Math.min(100, Math.max(0, getSocialization() + amount)));
-    }
-
-    public void modifyProcreation(float amount) {
-        this.entityData.set(PROCREATION, Math.min(100, Math.max(0, getProcreation() + amount)));
-    }
-
-    public void modifyRest(float amount) {
-        this.entityData.set(REST, Math.min(100, Math.max(0, getRest() + amount)));
-    }
-
-    public void modifyStress(float amount) {
-        this.entityData.set(STRESS, Math.min(100, Math.max(0, getRest() + amount)));
-    }
-
-    public void modifyHunger(float amount) {
-        this.entityData.set(HUNGER, Math.min(100, Math.max(0, getHunger() + amount)));
-    }
-
-    public void modifyThirst(float amount) {
-        this.entityData.set(THIRST, Math.min(100, Math.max(0, getThirst() + amount)));
-    }
-
-    public void modifyDefecation(float amount) {
-        this.entityData.set(DEFECATION, Math.min(100, Math.max(0, getDefecation() + amount)));
-    }
-
-    public void modifyMovement(float amount) {
-        this.entityData.set(MOVEMENT, Math.min(100, Math.max(0, getMovement() + amount)));
-    }
-
-    public void modifyHygiene(float amount) {
-        this.entityData.set(HYGIENE, Math.min(100, Math.max(0, getHygiene() + amount)));
-    }
-
-    public void modifyRelaxation(float amount) {
-        this.entityData.set(RELAXATION, Math.min(100, Math.max(0, getRelaxation() + amount)));
-    }
-
-    public void modifyRecreation(float amount) {
-        this.entityData.set(RECREATION, Math.min(100, Math.max(0, getRecreation() + amount)));
-    }
-
-    public void setSocialization(float amount) {
-        this.entityData.set(SOCIALIZATION, amount);
-    }
-
-    public void setProcreation(float amount) {
-        this.entityData.set(PROCREATION, amount);
-    }
-
-    public void setRest(float amount) {
-        this.entityData.set(REST, amount);
-    }
-
-    public void setStress(float amount) {
-        this.entityData.set(STRESS, amount);
-    }
-
-    public void setHunger(float amount) {
-        this.entityData.set(HUNGER, amount);
-    }
-
-    public void setThirst(float amount) {
-        this.entityData.set(THIRST, amount);
-    }
-
-    public void setDefecation(float amount) {
-        this.entityData.set(DEFECATION, amount);
-    }
-
-    public void setMovement(float amount) {
-        this.entityData.set(MOVEMENT, amount);
-    }
-
-    public void setHygiene(float amount) {
-        this.entityData.set(HYGIENE, amount);
-    }
-
-    public void setRelaxation(float amount) {
-        this.entityData.set(RELAXATION, amount);
-    }
-
-    public void setRecreation(float amount) {
-        this.entityData.set(RECREATION, amount);
-    }
-
-    public float getSocialization() {
-        return this.entityData.get(SOCIALIZATION);
-    }
-
-    public float getProcreation() {
-        return this.entityData.get(PROCREATION);
-    }
-
-    public float getRest() {
-        return this.entityData.get(REST);
-    }
-
-    public float getStress() {
-        return this.entityData.get(STRESS);
-    }
-
-    public float getHunger() {
-        return this.entityData.get(HUNGER);
-    }
-
-    public float getThirst() {
-        return this.entityData.get(THIRST);
-    }
-
-    public float getDefecation() {
-        return this.entityData.get(DEFECATION);
-    }
-
-    public float getMovement() {
-        return this.entityData.get(MOVEMENT);
-    }
-
-    public float getHygiene() {
-        return this.entityData.get(HYGIENE);
-    }
-
-    public float getRelaxation() {
-        return this.entityData.get(RELAXATION);
-    }
-
-    public float getRecreation() {
-        return this.entityData.get(RECREATION);
     }
 
     @Override

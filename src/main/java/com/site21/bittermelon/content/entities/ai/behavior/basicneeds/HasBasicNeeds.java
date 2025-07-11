@@ -18,8 +18,6 @@ public interface HasBasicNeeds {
         return unsortedItems;
     }
 
-    void modifyHunger(float hunger);
-
     default boolean wantsToDrink(@NotNull FluidBlockEntity fluid) {
         return fluid.getSubstances().stream().anyMatch(substanceStack ->
                 substanceStack.getSubstanceHolder().is(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "liquid_water")));
@@ -28,10 +26,4 @@ public interface HasBasicNeeds {
     default List<FluidBlockEntity> sortFluids(List<FluidBlockEntity> unsortedFluids) {
         return unsortedFluids;
     }
-
-    void modifyThirst(float thirst);
-
-    void modifyDefecation(float defecation);
-
-    void modifyHygiene(float hygiene);
 }

@@ -3,6 +3,7 @@ package com.site21.bittermelon.content.entities.implementations.chicken.behavior
 import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.character.Character;
+import com.site21.bittermelon.content.entities.base.NeedsStat;
 import com.site21.bittermelon.content.entities.implementations.chicken.Chicken;
 import com.site21.bittermelon.util.LocalMessageHelper;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -49,7 +50,7 @@ public class PluckAtRandomItem<E extends Chicken> extends ExtendedBehaviour<E> {
                 );
             }
 
-            entity.modifyRecreation(-20);
+            entity.modifyStat(NeedsStat.RECREATION, -20);
         } else {
             BrainUtils.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(itemEntity.blockPosition(), 1, 0));
         }

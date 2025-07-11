@@ -1,6 +1,7 @@
 package com.site21.bittermelon.content.entities.implementations.scp939.behavior;
 
 import com.mojang.datafixers.util.Pair;
+import com.site21.bittermelon.content.entities.base.NeedsStat;
 import com.site21.bittermelon.content.entities.implementations.scp939.SCP939;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -31,6 +32,6 @@ public class Amnesticize<E extends SCP939> extends DelayedBehaviour<E> {
 
     @Override
     protected void doDelayedAction(@NotNull E entity) {
-        entity.modifyRest(2.5f);
+        entity.modifyStat(NeedsStat.REST, 2.5f);
     }
 }

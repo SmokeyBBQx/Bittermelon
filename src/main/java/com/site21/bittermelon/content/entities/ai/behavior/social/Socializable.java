@@ -22,7 +22,4 @@ public interface Socializable {
     default void addRelationship(Character character, Relationship relationship) {
         getRelationships().put(character, relationship);
     }
-
-    void modifySocialization(float amount);
-    void setSocialization(float amount);
 }

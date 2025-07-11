@@ -1,6 +1,8 @@
 package com.site21.bittermelon.content.entities.ai.behavior.basicneeds;
 
 import com.mojang.datafixers.util.Pair;
+import com.site21.bittermelon.content.entities.ai.behavior.needs.NeedsUser;
+import com.site21.bittermelon.content.entities.base.NeedsStat;
 import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.entity.Mob;
@@ -15,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class EatFood<E extends Mob & HasBasicNeeds> extends ExtendedBehaviour<E> {
+public class EatFood<E extends Mob & HasBasicNeeds & NeedsUser<E>> extends ExtendedBehaviour<E> {
     private static final List<Pair<MemoryModuleType<?>, MemoryStatus>> MEMORY_REQUIREMENTS = ObjectArrayList.of(
             Pair.of(BitterMemoryTypes.NEARBY_EDIBLE_ITEMS.get(), MemoryStatus.VALUE_PRESENT)
       );
@@ -40,7 +42,7 @@ public class EatFood<E extends Mob & HasBasicNeeds> extends ExtendedBehaviour<E>
             stack.shrink(1);
             stack.finishUsingItem(entity.level(), entity);
             // TODO: Figure out how to get nutritional value of food
-            entity.modifyHunger(-5);
+            entity.modifyStat(NeedsStat.HUNGER, -5);
         } else {
             BrainUtils.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(itemEntity.blockPosition(), 1.25f, 0));
         }

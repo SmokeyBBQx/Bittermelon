@@ -1,12 +1,13 @@
 package com.site21.bittermelon.content.entities.ai.behavior.basicneeds;
 
+import com.site21.bittermelon.content.entities.ai.behavior.needs.NeedsUser;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
-public class Preen<E extends Mob & HasBasicNeeds> extends Groom<E> {
+public class Preen<E extends Mob & NeedsUser<E>> extends Groom<E> {
 
     public Preen(int delayTicks) {
         super(delayTicks);
