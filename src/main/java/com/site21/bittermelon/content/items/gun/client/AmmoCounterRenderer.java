@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.items.gun.client;
 
 import com.mojang.blaze3d.platform.Window;
-import com.site21.bittermelon.content.items.gun.AbstractGunItem;
+import com.site21.bittermelon.content.items.gun.IGunItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.Item;
@@ -23,7 +23,7 @@ public class AmmoCounterRenderer {
         ItemStack heldItem = minecraft.player.getMainHandItem();
         Item item = heldItem.getItem();
 
-        if (item instanceof AbstractGunItem gun) {
+        if (item instanceof IGunItem gun) {
             int maxAmmo = gun.getMaxAmmo();
             int ammo = heldItem.getOrDefault(AMMO, 0);
             String text = ammo + "/" + maxAmmo;

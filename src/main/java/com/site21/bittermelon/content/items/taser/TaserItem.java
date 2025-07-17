@@ -2,7 +2,7 @@ package com.site21.bittermelon.content.items.taser;
 
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
-import com.site21.bittermelon.content.items.gun.AbstractGunItem;
+import com.site21.bittermelon.content.items.gun.IGunItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -18,7 +18,6 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
@@ -26,7 +25,7 @@ import static com.site21.bittermelon.init.neoforge.BitterItems.TASER_CARTRIDGE;
 import static com.site21.bittermelon.init.neoforge.BitterSounds.TASER_RELOAD;
 import static com.site21.bittermelon.init.neoforge.BitterSounds.TASER_SHOOT;
 
-public class TaserItem extends BaseItem implements AbstractGunItem {
+public class TaserItem extends BaseItem implements IGunItem {
     public TaserItem(Properties properties, int width, int height, ItemWeight itemWeight) {
         super(properties, width, height, itemWeight);
     }

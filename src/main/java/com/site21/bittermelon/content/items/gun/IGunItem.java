@@ -1,5 +1,5 @@
 package com.site21.bittermelon.content.items.gun;
 
-public interface AbstractGunItem {
+public interface IGunItem {
     int getMaxAmmo();
 }
