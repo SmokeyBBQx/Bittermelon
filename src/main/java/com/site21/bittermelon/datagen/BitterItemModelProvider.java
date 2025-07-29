@@ -5,7 +5,9 @@ import com.site21.bittermelon.init.neoforge.BitterItems;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
@@ -31,6 +33,8 @@ public class BitterItemModelProvider extends ItemModelProvider {
                 if (existingFileHelper.exists(modLoc("block/" + blockName), net.minecraft.server.packs.PackType.CLIENT_RESOURCES, ".json", "models")) {
                     withExistingParent(blockName, modLoc("block/" + blockName));
                 }
+            } else if (item instanceof SpawnEggItem) {
+                spawnEggItem(item);
             }
         }
     }

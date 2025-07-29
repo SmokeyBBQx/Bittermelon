@@ -73,7 +73,7 @@ public class CompartmentInstance {
     public void tick(MedicalStats medicalStats) {
         compartment.tick(medicalStats, this);
 
-        function = 1;
+        function = health / maxHealth;
 
 //        if (dirty) {
 //            updateFunction(medicalStats);
@@ -198,6 +198,10 @@ public class CompartmentInstance {
 
     public void setHealth(float health) {
         this.health = health;
+    }
+
+    public void addTag(CompartmentTag tag) {
+        tags.add(tag);
     }
 
     public CompartmentData toData() {

@@ -16,9 +16,9 @@ public enum Skill implements StringRepresentable {
     BRAVERY("bravery", 2);
 
     private final String name;
-    private final int maxLevel;
+    private final float maxLevel;
 
-    Skill(String name, int maxLevel) {
+    Skill(String name, float maxLevel) {
         this.name = name;
         this.maxLevel = maxLevel;
     }
@@ -28,7 +28,7 @@ public enum Skill implements StringRepresentable {
         return name;
     }
 
-    public int getMaxLevel() {
+    public float getMaxLevel() {
         return maxLevel;
     }
 

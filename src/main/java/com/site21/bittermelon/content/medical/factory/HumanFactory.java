@@ -309,6 +309,7 @@ public class HumanFactory implements AnatomyFactory {
         CompartmentInstance tissue = new CompartmentInstance(SOFT_TISSUE.get(), maxHealth, name, visualData);
 
         tissue.setAttribute(MedicalAttribute.FUNCTION, 1);
+        tissue.addTag(CompartmentTag.BODY_PART);
         parent.addCompartment(layer, tissue);
         return tissue;
     }
@@ -317,6 +318,7 @@ public class HumanFactory implements AnatomyFactory {
         CompartmentInstance tissue = new CompartmentInstance(HARD_TISSUE.get(), maxHealth, name, visualData);
 
         tissue.setAttribute(MedicalAttribute.FUNCTION, 1);
+        tissue.addTag(CompartmentTag.BODY_PART);
         parent.addCompartment(layer, tissue);
         return tissue;
     }

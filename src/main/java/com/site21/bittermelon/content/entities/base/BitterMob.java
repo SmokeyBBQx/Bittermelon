@@ -126,8 +126,12 @@ public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob im
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        for (StatConfig stat : stats.values()) {
-            builder.define(stat.accessor(), 0f);
+        if (stats == null) {
+            initializeStats();
+        } else {
+            for (StatConfig stat : stats.values()) {
+                builder.define(stat.accessor(), 0f);
+            }
         }
     }
 

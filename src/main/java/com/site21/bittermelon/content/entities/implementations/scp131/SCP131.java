@@ -109,7 +109,7 @@ public class SCP131 extends BitterMob<SCP131> {
     @Nullable
     public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, @NotNull DifficultyInstance difficulty,
                                         @NotNull MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
-        setVariant(level.getRandom().nextInt(MAX_VARIANTS - 1));
+        setVariant(level.getRandom().nextInt(MAX_VARIANTS));
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
 

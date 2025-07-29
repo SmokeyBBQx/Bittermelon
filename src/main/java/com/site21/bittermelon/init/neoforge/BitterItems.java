@@ -25,6 +25,9 @@ import com.site21.bittermelon.content.items.wires.wire.Wire;
 import com.site21.bittermelon.content.items.writablepaper.WritablePaper;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.SpawnEggItem;
+import net.neoforged.neoforge.common.DeferredSpawnEggItem;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -376,4 +379,16 @@ public class BitterItems {
             1,
             ItemWeight.LIGHT
     ));
+
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> SCP131_SPAWN_EGG = ITEMS.register("scp131_spawn_egg",
+            () -> new DeferredSpawnEggItem(BitterEntities.SCP_131, 0xE36124, 0xF5CB42, new Item.Properties()));
+
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> SCP650_SPAWN_EGG = ITEMS.register("scp650_spawn_egg",
+            () -> new DeferredSpawnEggItem(BitterEntities.SCP_650, 0x242221, 0x403E3D, new Item.Properties()));
+
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> SCP939_SPAWN_EGG = ITEMS.register("scp939_spawn_egg",
+            () -> new DeferredSpawnEggItem(BitterEntities.SCP_939, 0xA33434, 0xDE2C2C, new Item.Properties()));
+
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> SCP1507_SPAWN_EGG = ITEMS.register("scp1507_spawn_egg",
+            () -> new DeferredSpawnEggItem(BitterEntities.SCP_1507, 0xC967A4, 0xE687DB, new Item.Properties()));
 }

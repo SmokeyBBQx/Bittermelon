@@ -1,6 +1,7 @@
 package com.site21.bittermelon.content.medical.medicalstats;
 
 import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
+import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
 import com.site21.bittermelon.content.medical.compartments.MedicalAttribute;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.Level;
@@ -14,6 +15,8 @@ import static com.site21.bittermelon.init.neoforge.BitterMobEffects.*;
 public class AnimalMedicalStats extends MedicalStats {
     private float bloodVolume = 100;
     private float oxygenSaturation = 100;
+
+    private static final int HYPOXIA_THRESHOLD = 80;
 
     public AnimalMedicalStats(List<CompartmentInstance> compartments, UUID mainCompartmentID, UUID characterID) {
         super(compartments, mainCompartmentID, characterID);
@@ -36,6 +39,15 @@ public class AnimalMedicalStats extends MedicalStats {
 //        oxygenSaturation = (float) entity.getAirSupply() / entity.getMaxAirSupply();
         // TODO: Random heart state depending on heart health
 
+        if (oxygenSaturation < HYPOXIA_THRESHOLD) {
+            for (CompartmentInstance instance : compartments.values()) {
+                if (instance.hasTag(CompartmentTag.BODY_PART)) {
+                    instance.setHealth(instance.getHealth() - 0.01f);
+                }
+            }
+        }
+
+        System.out.println(oxygenSaturation);
     }
 
     private void handleMobEffects() {
