@@ -2,9 +2,8 @@ package com.site21.bittermelon.content.character;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.site21.bittermelon.content.character.skills.Skill;
 import com.site21.bittermelon.content.medical.blood.BloodType;
-import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
-import com.site21.bittermelon.content.medical.compartments.MedicalAttribute;
 import com.site21.bittermelon.content.medical.factory.Anatomy;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import net.minecraft.core.UUIDUtil;
@@ -13,12 +12,10 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -120,11 +117,11 @@ public class Character {
     }
 
     public float getSkill(Skill skill) {
-        return skills.getOrDefault(skill, 0f);
+        return skills.getOrDefault(skill, 1f);
     }
 
-    public float modifySkill(Skill skill, float amount) {
-        return skills.merge(skill, amount, Float::sum);
+    public void modifySkill(Skill skill, float amount) {
+        skills.compute(skill, (k, v) -> Math.min(v == null ? 1 + amount : v + amount, skill.getMaxLevel()));
     }
 
     static {

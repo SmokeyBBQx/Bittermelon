@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
+import com.site21.bittermelon.content.character.skills.Skill;
 import com.site21.bittermelon.content.medical.client.screen.networking.UpdateHealthScreen;
 import com.site21.bittermelon.content.medical.compartments.*;
 import com.site21.bittermelon.content.medical.drugs.DrugInstance;
@@ -100,9 +101,8 @@ public class MedicalStats {
             if (entity == null) return;
 
             EntityType<? extends LivingEntity> entityType = (EntityType<? extends LivingEntity>) entity.getType();
-            AttributeMap attributeMap = new AttributeMap(DefaultAttributes.getSupplier(entityType));
 
-            for (AttributeInstance instance : attributeMap.attributes.values()) {
+            for (AttributeInstance instance : DefaultAttributes.getSupplier(entityType).instances.values()) {
                 defaultEntityAttributes.put(instance.getAttribute(), instance.getBaseValue());
             }
         }
@@ -111,7 +111,7 @@ public class MedicalStats {
     public void update(@NotNull Level level) {
         if (level.isClientSide) return;
 
-        if (entity == null) {
+        if (entity == null || defaultEntityAttributes.isEmpty()) {
             initializeEntity(level);
             return;
         }
@@ -171,7 +171,7 @@ public class MedicalStats {
     }
 
     private void updateMovementAttributes() {
-        float capability = getMovement();
+        float capability = getMovement() * character.getSkill(Skill.AGILITY);
 
         if (capability < 1) {
             entity.addEffect(new MobEffectInstance(BAD_MOBILITY, MobEffectInstance.INFINITE_DURATION,

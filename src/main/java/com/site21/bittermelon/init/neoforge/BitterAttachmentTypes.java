@@ -33,4 +33,12 @@ public class BitterAttachmentTypes {
     public static final Supplier<AttachmentType<Integer>> ACTIVE_CHANNEL = ATTACHMENT_TYPES.register(
             "active_channel", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).copyOnDeath().build()
     );
+
+    public static final Supplier<AttachmentType<Integer>> TIME_SINCE_LAST_EXERCISE = ATTACHMENT_TYPES.register(
+            "time_since_last_exercise", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).build()
+    );
+
+    public static final Supplier<AttachmentType<Integer>> STEP_COUNTER = ATTACHMENT_TYPES.register(
+            "step_counter", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).build()
+    );
 }

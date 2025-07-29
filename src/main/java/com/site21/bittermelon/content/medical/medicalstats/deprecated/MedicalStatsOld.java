@@ -101,9 +101,9 @@ public class MedicalStatsOld {
         EntityType<? extends LivingEntity> entityType = (EntityType<? extends LivingEntity>) entity.getType();
         AttributeMap attributeMap = new AttributeMap(DefaultAttributes.getSupplier(entityType));
 
-        for (AttributeInstance instance : attributeMap.attributes.values()) {
-            defaultAttributeValues.put(instance.getAttribute(), instance.getBaseValue());
-        }
+//        for (AttributeInstance instance : attributeMap.attributes.values()) {
+//            defaultAttributeValues.put(instance.getAttribute(), instance.getBaseValue());
+//        }
     }
 
 
