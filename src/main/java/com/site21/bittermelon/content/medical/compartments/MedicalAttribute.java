@@ -1,9 +1,6 @@
 package com.site21.bittermelon.content.medical.compartments;
 
 import com.mojang.serialization.Codec;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 
 public enum MedicalAttribute {
     HEALTH,
@@ -47,10 +44,4 @@ public enum MedicalAttribute {
             return null;
         }
     });
-
-    public static final StreamCodec<ByteBuf, MedicalAttribute> STREAM_CODEC = ByteBufCodecs.idMapper(
-            i -> MedicalAttribute.values()[i],
-            MedicalAttribute::ordinal
-    );
-
 }

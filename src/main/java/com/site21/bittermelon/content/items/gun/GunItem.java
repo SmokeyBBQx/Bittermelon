@@ -30,15 +30,15 @@ public class GunItem extends BaseItem implements GeoItem {
         return InteractionResultHolder.success(stack);
     }
 
-    @Override
-    public boolean onEntitySwing(@NotNull ItemStack stack, @NotNull LivingEntity entity, @NotNull InteractionHand hand) {
-        if (entity.level().isClientSide) return true;
-
-        if (canShoot(stack, entity, hand)) {
-            
-        }
-
-    }
+//    @Override
+//    public boolean onEntitySwing(@NotNull ItemStack stack, @NotNull LivingEntity entity, @NotNull InteractionHand hand) {
+//        if (entity.level().isClientSide) return true;
+//
+//        if (canShoot(stack, entity, hand)) {
+//
+//        }
+//
+//    }
 
     private boolean canShoot(@NotNull ItemStack stack, LivingEntity shooter, InteractionHand hand) {
         return (stack.getOrDefault(AMMO, 0) > 0);
