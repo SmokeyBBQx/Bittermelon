@@ -230,7 +230,7 @@ public class CompartmentInstance {
                            visualData) -> {
             EnumMap<MedicalAttribute, Float> attrMap = new EnumMap<>(MedicalAttribute.class);
             attrMap.putAll(attributes);
-            EnumSet<CompartmentTag> tagSet = EnumSet.copyOf(tagsList);
+            EnumSet<CompartmentTag> tagSet = tagsList.isEmpty() ? EnumSet.noneOf(CompartmentTag.class) : EnumSet.copyOf(tagsList);
 
             return new CompartmentInstance(compartment, uuid, layers, health, maxHealth, attrMap, tagSet, item, name, visualData);
         }));

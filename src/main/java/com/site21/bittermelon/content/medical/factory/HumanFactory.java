@@ -73,8 +73,9 @@ public class HumanFactory implements AnatomyFactory {
 
 
         // Brain regions
-        CompartmentInstance frontalLobe = createSoftTissue("Frontal Lobe", new VisualData(-5, -4), brain, 1, 5);
+        CompartmentInstance frontalLobe = createSoftTissue("Frontal Lobe", new VisualData(-5, -4), brain, 1, 30);
         frontalLobe.setAttribute(MedicalAttribute.BRAIN_MOTOR_ABILITY, 1f);
+        frontalLobe.setAttribute(MedicalAttribute.BRAIN_CONSCIOUSNESS, 1f);
         CompartmentInstance parietalLobe = createSoftTissue("Parietal Lobe", new VisualData(5, -4), brain, 1, 5);
         parietalLobe.setAttribute(MedicalAttribute.NERVOUS, 1f);
         CompartmentInstance temporalLobe = createSoftTissue("Temporal Lobe", new VisualData(-5, 4), brain, 1, 4);

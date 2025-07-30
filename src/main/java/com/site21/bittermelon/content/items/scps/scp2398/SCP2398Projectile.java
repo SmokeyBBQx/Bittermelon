@@ -31,11 +31,11 @@ public class SCP2398Projectile extends ThrownItemProjectile {
     }
 
     public SCP2398Projectile(Level level, LivingEntity player, ItemStack stack) {
-        super(level, player, stack);
+        super(level, player, stack, 0.7f, 50);
     }
 
     public SCP2398Projectile(Level pLevel, double pX, double pY, double pZ, ItemStack stack) {
-        super(pLevel, pX, pY, pZ, stack);
+        super(pLevel, pX, pY, pZ, stack, 0.7f, 50);
     }
 
     @Override

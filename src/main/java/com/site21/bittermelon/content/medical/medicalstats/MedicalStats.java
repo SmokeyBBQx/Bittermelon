@@ -324,7 +324,7 @@ public class MedicalStats {
     }
 
     public float getConsciousness() {
-        return 1;
+        return medicalAttributes.get(MedicalAttribute.BRAIN_CONSCIOUSNESS);
     }
 
     public UUID getMainCompartmentID() {

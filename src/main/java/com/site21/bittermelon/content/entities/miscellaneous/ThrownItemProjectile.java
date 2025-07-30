@@ -13,12 +13,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BellBlock;
 import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,29 +29,67 @@ import static com.site21.bittermelon.init.neoforge.BitterItems.SCP_2398;
 import static net.minecraft.world.item.Items.SNOWBALL;
 
 public class ThrownItemProjectile extends ThrowableItemProjectile {
-    private static final float BASE_GRAVITY = 0.03F;
     private int bounceCount = 0;
-    private static final int MAX_BOUNCES = 50;
-    private static final float ENERGY_LOSS_ON_BOUNCE = 0.7f;
+    private final int maxBounces;
+    private final float energyLossOnBounce;
+    private static final float BASE_GRAVITY = 0.03F;
     private static final float MIN_BOUNCE_VELOCITY = 0.1f;
 
     public ThrownItemProjectile(EntityType<? extends ThrownItemProjectile> entityType, Level level) {
         super(entityType, level);
+        energyLossOnBounce = 0.7f;
+        maxBounces = 50;
     }
 
-    public ThrownItemProjectile(Level level, LivingEntity player, ItemStack stack) {
+    public ThrownItemProjectile(Level level, LivingEntity player, ItemStack stack, float energyLossOnBounce, int maxBounces) {
         super(THROWN_ITEM_PROJECTILE.get(), player, level);
         this.setItem(stack);
+        this.energyLossOnBounce = energyLossOnBounce;
+        this.maxBounces = maxBounces;
     }
 
-    public ThrownItemProjectile(Level pLevel, double pX, double pY, double pZ, ItemStack stack) {
+    public ThrownItemProjectile(Level pLevel, double pX, double pY, double pZ, ItemStack stack, float energyLossOnBounce, int maxBounces) {
         super(THROWN_ITEM_PROJECTILE.get(), pX, pY, pZ, pLevel);
         this.setItem(stack);
+        this.energyLossOnBounce = energyLossOnBounce;
+        this.maxBounces = maxBounces;
     }
 
     @Override
     protected @NotNull Item getDefaultItem() {
         return SNOWBALL;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (level().isClientSide) return;
+
+        Vec3 currentPos = position();
+        Vec3 velocity = getDeltaMovement();
+        Vec3 nextPos = currentPos.add(velocity);
+
+        // Ray trace from current position to next position
+        BlockHitResult hitResult = level().clip(
+                new ClipContext(
+                        currentPos,
+                        nextPos,
+                        ClipContext.Block.COLLIDER,
+                        ClipContext.Fluid.NONE,
+                        this
+                )
+        );
+
+        // If we would hit a block, trigger the collision early
+        if (hitResult.getType() != HitResult.Type.MISS) {
+            // Move to just before the collision point
+            Vec3 hitPos = hitResult.getLocation();
+            Vec3 direction = nextPos.subtract(currentPos).normalize();
+            Vec3 safePos = hitPos.subtract(direction.scale(0.1)); // Back up slightly
+
+            setPos(safePos);
+            onHitBlock(hitResult);
+        }
     }
 
     @Override
@@ -70,12 +110,11 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
             // Bounce sound
             level().playSound(null, pos, SoundEvents.STONE_FALL, SoundSource.PLAYERS, 2, 1);
 
-            if (bounceCount < 50) {
+            if (bounceCount < maxBounces) {
                 Vec3 newVelocity = getNewVelocity(result);
 
                 // Ensure above minimum velocity threshold
                 if (newVelocity.length() > 0.25f) {
-                    System.out.println(newVelocity.length());
                     this.setDeltaMovement(newVelocity);
                     this.bounceCount++;
                     return; // Continue bouncing
@@ -96,7 +135,7 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
         // Reflection Formula {w = v - 2 * (v∙n) * n}
 
         // v
-        Vec3 velocity = new Vec3(this.getDeltaMovement().toVector3f()).scale(0.5f);
+        Vec3 velocity = new Vec3(this.getDeltaMovement().toVector3f());
         // n
         Vec3 normal = new Vec3(result.getDirection().getStepX(), result.getDirection().getStepY(), result.getDirection().getStepZ());
         // v∙n
@@ -109,7 +148,12 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
         );
 
         // Energy loss
-        newVelocity.scale(ENERGY_LOSS_ON_BOUNCE);
+        newVelocity = newVelocity.scale(energyLossOnBounce);
+
+        double maxVelocity = 3.0;
+        if (newVelocity.length() > maxVelocity) {
+            newVelocity = newVelocity.normalize().scale(maxVelocity);
+        }
 
         // Ensure minimum y velocity
         // Check if vertical bounce is too small and what face of the block we're hitting
@@ -128,7 +172,7 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
 
         if (!this.level().isClientSide) {
             // v
-            Vec3 velocity = new Vec3(this.getDeltaMovement().toVector3f()).scale(0.5f);
+            Vec3 velocity = new Vec3(this.getDeltaMovement().toVector3f());
             // n
             Vec3 normal = new Vec3(getDirection().getStepX(), getDirection().getStepY(), getDirection().getStepZ());
             // v∙n
@@ -141,7 +185,7 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
             );
 
             // Energy loss
-            newVelocity.scale(ENERGY_LOSS_ON_BOUNCE);
+            newVelocity.scale(energyLossOnBounce);
 
             // Ensure minimum y velocity
             // Check if vertical bounce is too small and what face of the block we're hitting
@@ -152,7 +196,7 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
 
             this.setDeltaMovement(newVelocity);
             if (this.getItem().getItem() instanceof BaseItem item) {
-                item.projectileHitEntity(this.getItem(), entity, this.damageSources(), this, this.getOwner());
+                item.projectileHitEntity(this.getItem(), entity, this.damageSources(), this, this.getOwner(), velocity);
             } else {
                 float dmg = 1;
                 dmg *= this.getItem().getCount();

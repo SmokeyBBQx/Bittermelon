@@ -12,6 +12,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -53,13 +54,13 @@ public class BaseItem extends Item {
         level.addFreshEntity(itemEntity);
     }
 
-    public void projectileHitEntity(ItemStack stack, @NotNull Entity entity, @NotNull DamageSources damageSources, ThrownItemProjectile thrownItemProjectile, Entity owner) {
+    public void projectileHitEntity(ItemStack stack, @NotNull Entity entity, @NotNull DamageSources damageSources, ThrownItemProjectile thrownItemProjectile, Entity owner, @NotNull Vec3 velocity) {
         float dmg = 0;
 //        dmg += (float) item.getAttributeModifiers().modifiers().get(EquipmentSlot.MAINHAND.getIndex()).attribute(). TODO: Figure out how to get damage of item
-        dmg += itemWeight.value - 1;
+        dmg += itemWeight.value;
 //        dmg *= item.getCount();
 //        dmg /= item.getMaxStackSize() / 4f;
-        entity.hurt(damageSources.thrown(thrownItemProjectile, owner), dmg);
+        entity.hurt(damageSources.thrown(thrownItemProjectile, owner), (float) (Math.pow(dmg, velocity.length() * 2)));
     }
 
     @Override

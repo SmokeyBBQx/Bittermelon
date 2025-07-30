@@ -14,8 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static com.site21.bittermelon.init.neoforge.BitterItems.SCP_109;
-import static com.site21.bittermelon.init.neoforge.BitterItems.SCP_2398;
+import static com.site21.bittermelon.init.neoforge.BitterItems.*;
 
 public class BitterLanguageProvider extends LanguageProvider {
     List<Item> customItemTranslations = new ArrayList<>();
@@ -28,6 +27,7 @@ public class BitterLanguageProvider extends LanguageProvider {
     protected void addTranslations() {
         addCustomItem(SCP_109, "SCP-109");
         addCustomItem(SCP_2398, "SCP-2398");
+        addCustomItem(SCP_018, "SCP-018");
         BitterItems.ITEMS.getEntries().forEach(this::addItemTranslation);
         BitterMobEffects.MOB_EFFECTS.getEntries().forEach(effect ->
                 addEffect(effect, formatName(effect.getKey().location().getPath())));

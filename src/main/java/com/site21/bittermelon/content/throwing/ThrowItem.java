@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.ENERGY_LOSS_ON_BOUNCE;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.MAX_BOUNCES;
 import static com.site21.bittermelon.util.LocalMessageHelper.sendLocalMessage;
 
 public record ThrowItem(UUID playerUUID) implements CustomPacketPayload {
@@ -47,9 +49,13 @@ public record ThrowItem(UUID playerUUID) implements CustomPacketPayload {
                 SoundSource.NEUTRAL, 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
 
         if (!heldItem.isEmpty()) {
-            ThrownItemProjectile projectile = new ThrownItemProjectile(level, player, heldItem.copy());
+            ThrownItemProjectile projectile = new ThrownItemProjectile(level, player, heldItem.copy(),
+                    heldItem.getOrDefault(ENERGY_LOSS_ON_BOUNCE, 0.7f),
+                    heldItem.getOrDefault(MAX_BOUNCES, 50));
+
+
             projectile.setPos(player.getX(), player.getEyeY() - 0.1, player.getZ());
-            projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 1.0F);
+            projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1F, 1.0F);
             player.level().addFreshEntity(projectile);
 
             Character character = CharacterManager.get(level).getActiveCharacter(player);

@@ -134,4 +134,14 @@ public class BitterDataComponents {
             "compartment",
             builder -> builder.persistent(CompartmentData.CODEC).networkSynchronized(CompartmentData.STREAM_CODEC)
     );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> ENERGY_LOSS_ON_BOUNCE = DATA_COMPONENTS.registerComponentType(
+            "energy_loss_on_bounce",
+            builder -> builder.persistent(Codec.FLOAT).networkSynchronized(ByteBufCodecs.FLOAT)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> MAX_BOUNCES = DATA_COMPONENTS.registerComponentType(
+            "max_bounces",
+            builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
+    );
 }

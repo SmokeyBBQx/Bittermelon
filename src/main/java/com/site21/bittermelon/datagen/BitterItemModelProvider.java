@@ -20,6 +20,7 @@ public class BitterItemModelProvider extends ItemModelProvider {
     protected void registerModels() {
         basicItem(BitterItems.BITTERMELON.get());
         basicItem(BitterItems.TASER_CARTRIDGE.get());
+        basicItem(BitterItems.SCP_018.get());
         generateBlockItemModels();
         basicItem(BitterItems.LARGE_SLIDING_DOOR.get());
     }

@@ -115,7 +115,7 @@ public class SCP2398 extends BaseItem {
     }
 
     @Override
-    public void projectileHitEntity(ItemStack stack, @NotNull Entity entity, @NotNull DamageSources damageSources, ThrownItemProjectile thrownItemProjectile, Entity owner) {
+    public void projectileHitEntity(ItemStack stack, @NotNull Entity entity, @NotNull DamageSources damageSources, ThrownItemProjectile thrownItemProjectile, Entity owner, Vec3 velocity) {
         if (entity instanceof LivingEntity livingEntity) {
             explodeEntity(stack, livingEntity, owner);
             shootExplosiveProjectile(stack, livingEntity);
@@ -159,7 +159,9 @@ public class SCP2398 extends BaseItem {
                     target.getX(),
                     target.getY(),
                     target.getZ(),
-                    stack
+                    stack,
+                    0.7f,
+                    50
             );
 
             double angle = level.random.nextDouble() * Math.PI * 2;

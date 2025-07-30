@@ -41,4 +41,5 @@ public class BitterMobEffects {
     public static final Holder<MobEffect> ELECTROCUTED = MOB_EFFECTS.register("electrocuted", ElectrocutedEffect::new);
     public static final Holder<MobEffect> TASERED = MOB_EFFECTS.register("tasered", TaserEffect::new);
     public static final Holder<MobEffect> EYE_IRRITATION = MOB_EFFECTS.register("eye_irritation", () -> new BitterEffect(MobEffectCategory.HARMFUL, 0));
+    public static final Holder<MobEffect> FAINTING = MOB_EFFECTS.register("fainting", () -> new BitterEffect(MobEffectCategory.HARMFUL, 0));
 }

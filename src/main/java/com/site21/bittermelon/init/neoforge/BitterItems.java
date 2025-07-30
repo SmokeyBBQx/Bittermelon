@@ -32,6 +32,8 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.*;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.ENERGY_LOSS_ON_BOUNCE;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.MAX_BOUNCES;
 
 public class BitterItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Bittermelon.MOD_ID);
@@ -391,4 +393,11 @@ public class BitterItems {
 
     public static final DeferredHolder<Item, DeferredSpawnEggItem> SCP1507_SPAWN_EGG = ITEMS.register("scp1507_spawn_egg",
             () -> new DeferredSpawnEggItem(BitterEntities.SCP_1507, 0xC967A4, 0xE687DB, new Item.Properties()));
+
+    public static final DeferredItem<BaseItem> SCP_018 = ITEMS.register("scp018", () -> new BaseItem(
+            new Item.Properties().component(ENERGY_LOSS_ON_BOUNCE, 1.5f).component(MAX_BOUNCES, 10000),
+            1,
+            1,
+            ItemWeight.LIGHT
+    ));
 }

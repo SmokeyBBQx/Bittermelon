@@ -17,6 +17,8 @@ public class AnimalMedicalStats extends MedicalStats {
     private float oxygenSaturation = 100;
 
     private static final int HYPOXIA_THRESHOLD = 80;
+    private static final int BLOOD_LOSS_THRESHOLD = 60;
+    private static final float HYPOXIA_DAMAGE = 0.01f;
 
     public AnimalMedicalStats(List<CompartmentInstance> compartments, UUID mainCompartmentID, UUID characterID) {
         super(compartments, mainCompartmentID, characterID);
@@ -42,21 +44,25 @@ public class AnimalMedicalStats extends MedicalStats {
         if (oxygenSaturation < HYPOXIA_THRESHOLD) {
             for (CompartmentInstance instance : compartments.values()) {
                 if (instance.hasTag(CompartmentTag.BODY_PART)) {
-                    instance.setHealth(instance.getHealth() - 0.01f);
+                    instance.setHealth(instance.getHealth() - HYPOXIA_DAMAGE);
                 }
             }
         }
-
-        System.out.println(oxygenSaturation);
     }
 
     private void handleMobEffects() {
-        if (bloodVolume < 60 || oxygenSaturation < 80) {
+        if (bloodVolume < BLOOD_LOSS_THRESHOLD || oxygenSaturation < HYPOXIA_THRESHOLD) {
             entity.addEffect(new MobEffectInstance(ASPHYXIATION, 10, 0, false, false, false));
         }
 
         if (getPain() > 0) {
             entity.addEffect(new MobEffectInstance(PAIN, 10, (int) getPain(), false, false, false));
+        }
+
+        if (getConsciousness() < 1) {
+            // Amplifier goes from 0 to 100 depending on consciousness. In the effect renderer, the screen will go
+            // fully black when the amplifier is above 100.
+            entity.addEffect(new MobEffectInstance(FAINTING, 2, (int) ((1 - getConsciousness()) * 100)));
         }
     }
 
