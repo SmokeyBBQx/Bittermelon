@@ -53,9 +53,8 @@ public record ThrowItem(UUID playerUUID) implements CustomPacketPayload {
                     heldItem.getOrDefault(ENERGY_LOSS_ON_BOUNCE, 0.7f),
                     heldItem.getOrDefault(MAX_BOUNCES, 50));
 
-
             projectile.setPos(player.getX(), player.getEyeY() - 0.1, player.getZ());
-            projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1F, 1.0F);
+            projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0f, 1f, 1.0f);
             player.level().addFreshEntity(projectile);
 
             Character character = CharacterManager.get(level).getActiveCharacter(player);

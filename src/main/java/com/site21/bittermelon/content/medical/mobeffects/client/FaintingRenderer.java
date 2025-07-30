@@ -1,39 +1,37 @@
-package com.site21.bittermelon.content.blocks.scp.scp151.client;
+package com.site21.bittermelon.content.medical.mobeffects.client;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.client.shaders.BlurShader;
+import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.ViewportEvent;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
-
 import static com.site21.bittermelon.client.visualeffects.VignetteRenderer.renderVignette;
-import static com.site21.bittermelon.init.neoforge.BitterMobEffects.DROWNING;
+import static com.site21.bittermelon.init.neoforge.BitterMobEffects.*;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
-public class SCP151EffectRenderer {
+public class FaintingRenderer {
     @SubscribeEvent
     public static void onRenderLevelStage(@NotNull RenderLevelStageEvent event) {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_LEVEL) return;
 
         Player player = Minecraft.getInstance().player;
-        if (player == null || !player.hasEffect(DROWNING)) return;
+        if (player == null || !player.hasEffect(FAINTING)) return;
 
         Minecraft mc = Minecraft.getInstance();
-        int amplifier = player.getEffect(DROWNING).getAmplifier();
+        int amplifier = player.getEffect(FAINTING).getAmplifier();
         long gameTime = mc.level.getGameTime();
-
-        if (amplifier < 4) return;
 
         BlurShader.resize(mc.getWindow().getWidth(), mc.getWindow().getHeight());
 
@@ -53,12 +51,30 @@ public class SCP151EffectRenderer {
 
     @SubscribeEvent
     public static void onRenderOverlay(RenderGuiEvent.@NotNull Pre event) {
+        Minecraft mc = Minecraft.getInstance();
+        Player player = mc.player;
+        if (player == null) return;
+
+
+        if (player.hasEffect(FAINTING)) {
+            int amplifier = player.getEffect(FAINTING).getAmplifier();
+            float vignetteAmplifier = amplifier > 0 ? (float) amplifier / 10 : 0;
+
+            renderVignette(event.getGuiGraphics(), vignetteAmplifier);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onComputeCameraAngles(ViewportEvent.ComputeCameraAngles event) {
         Player player = Minecraft.getInstance().player;
         if (player == null) return;
 
-        if (player.hasEffect(DROWNING)) {
-            float effectAmplifier = (player.getMaxAirSupply() - player.getAirSupply());
-            renderVignette(event.getGuiGraphics(), effectAmplifier > 0 ? effectAmplifier / 30 : 0);
+        if (player.hasEffect(FAINTING)) {
+            float time = (float) (player.level().getGameTime() * 0.005);
+            float intensity = 5;
+            float roll = (float) (Math.sin(time * intensity) * intensity);
+
+            event.setRoll(roll);
         }
     }
 }

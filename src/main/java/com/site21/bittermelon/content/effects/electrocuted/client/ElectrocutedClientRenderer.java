@@ -18,12 +18,11 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
+import static com.site21.bittermelon.client.visualeffects.VignetteRenderer.renderVignette;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.*;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class ElectrocutedClientRenderer {
-    private static final ResourceLocation VIGNETTE_LOCATION = ResourceLocation.withDefaultNamespace("textures/misc/vignette.png");
-
     @SubscribeEvent
     public static void onComputeCameraAngles(ViewportEvent.ComputeCameraAngles event) {
         Minecraft mc = Minecraft.getInstance();
@@ -55,30 +54,13 @@ public class ElectrocutedClientRenderer {
         if (player == null) return;
 
         if (player.hasEffect(TASERED) || player.hasEffect(ELECTROCUTED)) {
-            renderVignette(event.getGuiGraphics(), player);
+            MobEffectInstance instance = player.getEffect(ELECTROCUTED);
+            if (instance == null) {
+                instance = player.getEffect(TASERED);
+            }
+
+            float amplifier = instance.getAmplifier();
+            renderVignette(event.getGuiGraphics(), 0, amplifier, amplifier);
         }
-    }
-
-    private static void renderVignette(@NotNull GuiGraphics guiGraphics, @Nullable Player player) {
-        RenderSystem.disableDepthTest();
-        RenderSystem.depthMask(false);
-        RenderSystem.enableBlend();
-        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE_MINUS_SRC_COLOR, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-
-        MobEffectInstance instance = player.getEffect(ELECTROCUTED);
-        if (instance == null) {
-            instance = player.getEffect(TASERED);
-        }
-
-        float effectAmplifier = instance.getAmplifier();
-//            effectAmplifier = effectAmplifier > 0 ? effectAmplifier / 30 : 0;
-        guiGraphics.setColor(0, effectAmplifier, effectAmplifier, 1.0f);
-
-        guiGraphics.blit(VIGNETTE_LOCATION, 0, 0, -90, 0.0f, 0.0f, guiGraphics.guiWidth(), guiGraphics.guiHeight(), guiGraphics.guiWidth(), guiGraphics.guiHeight());
-        RenderSystem.depthMask(true);
-        RenderSystem.enableDepthTest();
-        guiGraphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.disableBlend();
     }
 }

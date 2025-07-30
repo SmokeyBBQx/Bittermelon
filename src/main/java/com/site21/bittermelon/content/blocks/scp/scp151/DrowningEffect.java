@@ -53,7 +53,7 @@ public class DrowningEffect extends MobEffect {
 
                 Objects.requireNonNull(entity.getEffect(DROWNING)).update(
                         new MobEffectInstance(DROWNING, ticksRemaining, newAmplifier, true, false, false));
-                System.out.println("Progressing amplifier to: " + newAmplifier + " with " + ticksRemaining + " ticks remaining");
+//                System.out.println("Progressing amplifier to: " + newAmplifier + " with " + ticksRemaining + " ticks remaining");
         }
 
         handlePhysicalEffects(player, amplifier);
