@@ -73,7 +73,7 @@ public class HumanFactory implements AnatomyFactory {
 
 
         // Brain regions
-        CompartmentInstance frontalLobe = createSoftTissue("Frontal Lobe", new VisualData(-5, -4), brain, 1, 30);
+        CompartmentInstance frontalLobe = createSoftTissue("Frontal Lobe", new VisualData(-5, -4), brain, 1, 10);
         frontalLobe.setAttribute(MedicalAttribute.BRAIN_MOTOR_ABILITY, 1f);
         frontalLobe.setAttribute(MedicalAttribute.BRAIN_CONSCIOUSNESS, 1f);
         CompartmentInstance parietalLobe = createSoftTissue("Parietal Lobe", new VisualData(5, -4), brain, 1, 5);
@@ -180,6 +180,7 @@ public class HumanFactory implements AnatomyFactory {
        smallIntestine.setAttribute(MedicalAttribute.CIRCULATION, 1);
        smallIntestine.setAttribute(MedicalAttribute.MOVEMENT, 1);
        smallIntestine.setAttribute(MedicalAttribute.MANIPULATION, 1);
+       smallIntestine.setAttribute(MedicalAttribute.RESPIRATION, 1);
         smallIntestine.setIcon(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/anatomical_small_intestine.png"));
         CompartmentInstance colon = createSoftTissue("Colon", new VisualData(-1 * 5, 9 * 5, 1, 5, 22, 19), abdomen, 4, 40);
         colon.setItem(COLON.get());

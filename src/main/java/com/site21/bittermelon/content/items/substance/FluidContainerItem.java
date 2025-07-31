@@ -230,23 +230,23 @@ public class FluidContainerItem extends SubstanceContainerItem {
         }
     }
 
-    private void playEmptySound(@NotNull Level level, BlockPos pos) {
+    protected void playEmptySound(@NotNull Level level, BlockPos pos) {
         level.playSound(null, pos,
                 SoundEvents.BOTTLE_EMPTY, SoundSource.PLAYERS, 0.5F, 1.5F);
     }
 
-    private void playFillSound(@NotNull Level level, BlockPos pos) {
+    protected void playFillSound(@NotNull Level level, BlockPos pos) {
         level.playSound(null, pos,
                 SoundEvents.BOTTLE_FILL, SoundSource.PLAYERS, 0.5F, 1.0F);
     }
 
-    private void playDrinkSound(@NotNull Level level, BlockPos pos) {
+    protected void playDrinkSound(@NotNull Level level, BlockPos pos) {
         level.playSound(null, pos,
                 SoundEvents.GENERIC_DRINK, SoundSource.PLAYERS, 0.5F,
                 level.getRandom().nextFloat() * 0.1F + 0.9F);
     }
 
-    private void playBurpSound(@NotNull Level level, BlockPos pos) {
+    protected void playBurpSound(@NotNull Level level, BlockPos pos) {
         level.playSound(null, pos,
                 SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.5F,
                 level.getRandom().nextFloat() * 0.1F + 0.9F);

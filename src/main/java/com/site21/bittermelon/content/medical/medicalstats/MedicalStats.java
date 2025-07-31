@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.site21.bittermelon.init.neoforge.BitterMobEffects.BAD_MOBILITY;
+import static com.site21.bittermelon.init.neoforge.BitterMobEffects.*;
 
 public class MedicalStats {
     public static final Codec<MedicalStats> CODEC = RecordCodecBuilder.create(
@@ -119,6 +119,7 @@ public class MedicalStats {
         updateCompartments();
         updateEntityAttributes();
         tickDrugs();
+        handleMobEffects();
     }
 
     private void updateCompartments() {
@@ -204,6 +205,14 @@ public class MedicalStats {
         attribute.setBaseValue(value * baseValue);
     }
 
+    protected void handleMobEffects() {
+        if (getConsciousness() <= 0) {
+            entity.addEffect(new MobEffectInstance(UNCONSCIOUS, 2, 0, true, false, false));
+        } else if (getConsciousness() < 1) {
+            entity.addEffect(new MobEffectInstance(FAINTING, 2, (int) ((1 - getConsciousness()) * 100), true, false, false));
+        }
+    }
+
     public CompartmentInstance getCompartment(UUID uuid) {
         if (uuid == null) return null;
 
@@ -282,9 +291,8 @@ public class MedicalStats {
     }
 
     public float getTremor() {
-        return medicalAttributes.get(MedicalAttribute.TREMOR) + getPain();
+        return medicalAttributes.get(MedicalAttribute.TREMOR);
     }
-
 
     public float getStat(MedicalAttribute medicalAttribute) {
         return medicalAttributes.getOrDefault(medicalAttribute, 0.0f);
@@ -304,11 +312,6 @@ public class MedicalStats {
 
     public float getBite() {
         return medicalAttributes.get(MedicalAttribute.BRAIN_MOTOR_ABILITY) * medicalAttributes.get(MedicalAttribute.BITE) * getConsciousness();
-    }
-
-    public float getPain() {
-        return medicalAttributes.get(MedicalAttribute.NERVOUS) * medicalAttributes.get(MedicalAttribute.PAIN) * getConsciousness();
-        // TODO: Better way to get pain?
     }
 
     public float getElimination() {

@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.items.itemcontainers.client.ItemContainerContents;
 import com.site21.bittermelon.content.items.substance.data.SubstanceContents;
+import com.site21.bittermelon.content.medical.blood.BloodData;
 import com.site21.bittermelon.content.medical.compartments.CompartmentData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
@@ -143,5 +144,10 @@ public class BitterDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> MAX_BOUNCES = DATA_COMPONENTS.registerComponentType(
             "max_bounces",
             builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<BloodData>> BLOOD_DATA = DATA_COMPONENTS.registerComponentType(
+            "blood_data",
+            builder -> builder.persistent(BloodData.CODEC).networkSynchronized(BloodData.STREAM_CODEC)
     );
 }

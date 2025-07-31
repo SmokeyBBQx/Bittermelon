@@ -16,14 +16,9 @@ public class Drug {
         return true;
     }
 
-    public void tickDrug(@NotNull MedicalStats medicalStats, float amount) {
+    public void tickDrug(@NotNull MedicalStats medicalStats, float amount) {}
 
-
-    }
-
-    public void onRemoval(MedicalStats medicalStats) {
-
-    }
+    public void onRemoval(MedicalStats medicalStats) {}
 
     public float getEliminationRate() {
         return eliminationRate;

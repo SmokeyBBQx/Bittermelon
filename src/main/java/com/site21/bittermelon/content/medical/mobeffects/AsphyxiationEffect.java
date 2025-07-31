@@ -22,8 +22,6 @@ public class AsphyxiationEffect extends MobEffect {
     @Override
     public boolean applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
         if (entity.level().isClientSide) return true;
-        entity.setAirSupply(entity.getAirSupply() - 2);
-
         Character character = CharacterManager.get(entity.level()).getActiveCharacter(entity);
 
         if (character != null) {

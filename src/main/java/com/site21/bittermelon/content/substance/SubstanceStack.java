@@ -7,10 +7,7 @@ import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.EncoderException;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponentType;
-import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.core.component.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -30,7 +27,7 @@ import static com.site21.bittermelon.Bittermelon.LOGGER;
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.SUBSTANCE_REGISTRY;
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.SUBSTANCE_REGISTRY_KEY;
 
-public class SubstanceStack implements MutableDataComponentHolder {
+public class SubstanceStack implements DataComponentHolder, MutableDataComponentHolder {
     public static final Codec<Holder<Substance>> SUBSTANCE_NON_EMPTY_CODEC = SUBSTANCE_REGISTRY.holderByNameCodec().validate(DataResult::success);
 
     public static final Codec<SubstanceStack> CODEC = Codec.lazyInitialized(

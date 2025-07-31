@@ -5,11 +5,13 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.site21.bittermelon.content.atmosphere.networking.UpdateAtmosBlocks;
 import com.site21.bittermelon.content.atmosphere.networking.UpdateAtmosGas;
 import com.site21.bittermelon.content.atmosphere.networking.UpdateAtmosTemperature;
+import com.site21.bittermelon.content.substance.Substance;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import com.site21.bittermelon.util.SubstanceUtils;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
+import net.minecraft.core.Holder;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -142,5 +144,9 @@ public class AtmosInstance {
         if (!level.isClientSide) {
             PacketDistributor.sendToAllPlayers(new UpdateAtmosGas(uuid, gas));
         }
+    }
+
+    public boolean containsGas(Substance gas) {
+        return gases.stream().anyMatch(stack -> stack.getSubstance().equals(gas));
     }
 }

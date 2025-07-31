@@ -4,6 +4,7 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.items.GermTest;
 import com.site21.bittermelon.content.items.IntercomPhoneItem;
 import com.site21.bittermelon.content.items.KeycardItem;
+import com.site21.bittermelon.content.items.medical.tools.SyringeItem;
 import com.site21.bittermelon.content.items.scps.SCP109;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
@@ -25,7 +26,6 @@ import com.site21.bittermelon.content.items.wires.wire.Wire;
 import com.site21.bittermelon.content.items.writablepaper.WritablePaper;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -399,5 +399,14 @@ public class BitterItems {
             1,
             1,
             ItemWeight.LIGHT
+    ));
+
+    public static final DeferredItem<SyringeItem> SYRINGE = ITEMS.register("syringe", () -> new SyringeItem(
+            new Item.Properties(),
+            1,
+            2,
+            ItemWeight.VERY_LIGHT,
+            10,
+            10
     ));
 }

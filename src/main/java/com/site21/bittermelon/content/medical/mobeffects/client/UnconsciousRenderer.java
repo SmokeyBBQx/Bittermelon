@@ -10,6 +10,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import org.jetbrains.annotations.NotNull;
 
+import static com.site21.bittermelon.client.visualeffects.VignetteRenderer.renderVignette;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.UNCONSCIOUS;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
@@ -20,7 +21,11 @@ public class UnconsciousRenderer {
         Player player = mc.player;
         if (player == null) return;
 
+        // TODO: Gray shader
+
         if (player.hasEffect(UNCONSCIOUS)) {
+            renderVignette(event.getGuiGraphics(), 10);
+
             if (mc.options.getCameraType().isFirstPerson()) {
                 GuiGraphics guiGraphics = event.getGuiGraphics();
 

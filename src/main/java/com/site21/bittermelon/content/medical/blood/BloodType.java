@@ -1,47 +1,49 @@
 package com.site21.bittermelon.content.medical.blood;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.util.ByIdMap;
+import net.minecraft.util.StringRepresentable;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.function.IntFunction;
+import java.util.Arrays;
 
-public enum BloodType {
-    A_PLUS(0),
-    A_MINUS(1),
-    B_PLUS(2),
-    B_MINUS(3),
-    O_PLUS(4),
-    O_MINUS(5),
-    AB_PLUS(6),
-    AB_MINUS(7);
+public enum BloodType implements StringRepresentable {
+    O_MINUS(new BloodType[]{}),
+    O_PLUS(new BloodType[]{O_MINUS}),
+    A_MINUS(new BloodType[]{O_MINUS}),
+    A_PLUS(new BloodType[]{A_MINUS, O_PLUS, O_MINUS}),
+    B_MINUS(new BloodType[]{O_MINUS}),
+    B_PLUS(new BloodType[]{B_MINUS, O_PLUS, O_MINUS}),
+    AB_MINUS(new BloodType[]{A_MINUS, B_MINUS, O_MINUS}),
+    AB_PLUS(new BloodType[]{O_PLUS, O_PLUS, A_MINUS, A_PLUS, B_MINUS, B_PLUS, AB_MINUS});
 
-    public static final IntFunction<BloodType> BY_ID = ByIdMap.continuous(
-            BloodType::getId,
-            BloodType.values(),
-            ByIdMap.OutOfBoundsStrategy.ZERO
-    );
 
-    public static final Codec<BloodType> CODEC = Codec.INT.flatXmap(
-            id -> DataResult.success(BY_ID.apply(id)),
-            bloodType -> DataResult.success(bloodType.getId())
-    );
+    private final BloodType[] compatibleBloodTypes;
 
-    public static final StreamCodec<ByteBuf, BloodType> STREAM_CODEC = ByteBufCodecs.idMapper(
-            BY_ID,
-            BloodType::getId
-    );
-
-    private final int id;
-
-    BloodType(int id) {
-        this.id = id;
+    BloodType(BloodType[] compatibleBloodTypes) {
+        this.compatibleBloodTypes = compatibleBloodTypes;
     }
 
-    public int getId() {
-        return this.id;
+    public BloodType[] getCompatibleBloodTypes() {
+        return compatibleBloodTypes;
+    }
+
+    public boolean isBloodTypeCompatible(BloodType bloodType) {
+        return Arrays.asList(compatibleBloodTypes).contains(bloodType);
+    }
+
+    public static final EnumCodec<BloodType> CODEC = StringRepresentable.fromEnum(BloodType::values);
+
+    public static final StreamCodec<ByteBuf, BloodType> STREAM_CODEC = ByteBufCodecs.idMapper(
+            i -> BloodType.values()[i],
+            BloodType::ordinal
+    );
+
+    @Contract(pure = true)
+    @Override
+    public @NotNull String getSerializedName() {
+        return name();
     }
 }
