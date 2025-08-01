@@ -1,15 +1,20 @@
 package com.site21.bittermelon.content.medical.drugs;
 
+import com.site21.bittermelon.content.medical.compartments.MedicalAttribute;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.EnumMap;
+
 public class Drug {
-    private final float eliminationRate;
-    private final float absorptionRate;
+    protected final float eliminationRate;
+    protected final float absorptionRate;
+    protected final EnumMap<MedicalAttribute, Float> attributes;
 
     public Drug(float eliminationRate, float absorptionRate) {
         this.eliminationRate = eliminationRate;
         this.absorptionRate = absorptionRate;
+        attributes = new EnumMap<>(MedicalAttribute.class);
     }
 
     public boolean shouldApplyTick(int duration) {
@@ -17,6 +22,8 @@ public class Drug {
     }
 
     public void tickDrug(@NotNull MedicalStats medicalStats, float amount) {}
+
+    public void onAdded(MedicalStats medicalStats) {}
 
     public void onRemoval(MedicalStats medicalStats) {}
 
@@ -26,5 +33,13 @@ public class Drug {
 
     public float getAbsorptionRate() {
         return absorptionRate;
+    }
+
+    public EnumMap<MedicalAttribute, Float> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttribute(MedicalAttribute attribute, float value) {
+        attributes.put(attribute, value);
     }
 }

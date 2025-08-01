@@ -1,8 +1,13 @@
 package com.site21.bittermelon.content.medical.compartments;
 
-import com.mojang.serialization.Codec;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.StringRepresentable;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
-public enum MedicalAttribute {
+public enum MedicalAttribute implements StringRepresentable {
     HEALTH,
     FUNCTION,
     TREMOR,
@@ -37,11 +42,16 @@ public enum MedicalAttribute {
     BRAIN_LOCATION,
     BRAIN_VITALS;
 
-    public static final Codec<MedicalAttribute> CODEC = Codec.stringResolver(MedicalAttribute::name, name -> {
-        try {
-            return MedicalAttribute.valueOf(name.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
-    });
+    @Contract(pure = true)
+    @Override
+    public @NotNull String getSerializedName() {
+        return name();
+    }
+
+    public static final EnumCodec<MedicalAttribute> CODEC = StringRepresentable.fromEnum(MedicalAttribute::values);
+
+    public static final StreamCodec<ByteBuf, MedicalAttribute> STREAM_CODEC = ByteBufCodecs.idMapper(
+            i -> MedicalAttribute.values()[i],
+            MedicalAttribute::ordinal
+    );
 }

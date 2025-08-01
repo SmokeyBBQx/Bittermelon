@@ -5,6 +5,7 @@ import com.site21.bittermelon.content.items.scps.scp2398.SCP2398;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -17,38 +18,44 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BellBlock;
 import net.minecraft.world.level.block.ButtonBlock;
+import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.neoforge.BitterEntities.THROWN_ITEM_PROJECTILE;
 import static com.site21.bittermelon.init.neoforge.BitterItems.SCP_2398;
+import static net.minecraft.world.item.Items.GLASS;
 import static net.minecraft.world.item.Items.SNOWBALL;
 
 public class ThrownItemProjectile extends ThrowableItemProjectile {
     private int bounceCount = 0;
     private final int maxBounces;
-    private final float energyLossOnBounce;
-    private static final float BASE_GRAVITY = 0.03F;
-    private static final float MIN_BOUNCE_VELOCITY = 0.1f;
+    private final double energyLossOnBounce;
+
+    private static final double BASE_GRAVITY = 0.03;
+    private static final double MAX_VELOCITY = 3;
+    private static final double BREAK_GLASS_VELOCITY = 1.5;
+    private static final double BREAK_DOOR_VELOCITY = 3;
 
     public ThrownItemProjectile(EntityType<? extends ThrownItemProjectile> entityType, Level level) {
         super(entityType, level);
-        energyLossOnBounce = 0.7f;
+        energyLossOnBounce = 0.7;
         maxBounces = 50;
     }
 
-    public ThrownItemProjectile(Level level, LivingEntity player, ItemStack stack, float energyLossOnBounce, int maxBounces) {
+    public ThrownItemProjectile(Level level, LivingEntity player, ItemStack stack, double energyLossOnBounce, int maxBounces) {
         super(THROWN_ITEM_PROJECTILE.get(), player, level);
         this.setItem(stack);
         this.energyLossOnBounce = energyLossOnBounce;
         this.maxBounces = maxBounces;
     }
 
-    public ThrownItemProjectile(Level pLevel, double pX, double pY, double pZ, ItemStack stack, float energyLossOnBounce, int maxBounces) {
+    public ThrownItemProjectile(Level pLevel, double pX, double pY, double pZ, ItemStack stack, double energyLossOnBounce, int maxBounces) {
         super(THROWN_ITEM_PROJECTILE.get(), pX, pY, pZ, pLevel);
         this.setItem(stack);
         this.energyLossOnBounce = energyLossOnBounce;
@@ -97,24 +104,16 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
         super.onHitBlock(result);
 
         if (!this.level().isClientSide) {
-            BlockPos pos = result.getBlockPos();
-            BlockState state = level().getBlockState(pos);
-
-            // Block interactions
-            if (state.getBlock() instanceof BellBlock block) {
-                block.attemptToRing(level(), pos, result.getDirection());
-            } else if (state.getBlock() instanceof ButtonBlock block) {
-                block.press(state, level(), pos, null);
-            }
+            handleBlockInteraction(result);
 
             // Bounce sound
-            level().playSound(null, pos, SoundEvents.STONE_FALL, SoundSource.PLAYERS, 2, 1);
+            level().playSound(null, result.getBlockPos(), SoundEvents.STONE_FALL, SoundSource.PLAYERS, 2, 1);
 
             if (bounceCount < maxBounces) {
                 Vec3 newVelocity = getNewVelocity(result);
 
                 // Ensure above minimum velocity threshold
-                if (newVelocity.length() > 0.25f) {
+                if (newVelocity.length() > 0.25) {
                     this.setDeltaMovement(newVelocity);
                     this.bounceCount++;
                     return; // Continue bouncing
@@ -150,9 +149,8 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
         // Energy loss
         newVelocity = newVelocity.scale(energyLossOnBounce);
 
-        double maxVelocity = 3.0;
-        if (newVelocity.length() > maxVelocity) {
-            newVelocity = newVelocity.normalize().scale(maxVelocity);
+        if (newVelocity.length() > MAX_VELOCITY) {
+            newVelocity = newVelocity.normalize().scale(MAX_VELOCITY);
         }
 
         // Ensure minimum y velocity
@@ -163,6 +161,21 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
         }
 
         return newVelocity;
+    }
+
+    private void handleBlockInteraction(@NotNull BlockHitResult result) {
+        BlockPos pos = result.getBlockPos();
+        BlockState state = level().getBlockState(pos);
+
+        if ((state.is(Tags.Blocks.GLASS_BLOCKS) || state.is(Tags.Blocks.GLASS_PANES)) && getDeltaMovement().length() >= BREAK_GLASS_VELOCITY) {
+            level().destroyBlock(pos, false, this);
+        } else if (state.getBlock() instanceof DoorBlock && getDeltaMovement().length() >= BREAK_DOOR_VELOCITY) {
+            level().destroyBlock(pos, true, this);
+        } else if (state.getBlock() instanceof BellBlock block) {
+            block.attemptToRing(level(), pos, result.getDirection());
+        } else if (state.getBlock() instanceof ButtonBlock block) {
+            block.press(state, level(), pos, null);
+        }
     }
 
     @Override
@@ -214,7 +227,7 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
     @Override
     protected double getDefaultGravity() {
         if (this.getItem().getItem() instanceof BaseItem item) {
-            return BASE_GRAVITY + (float) item.getItemWeight().value / 100;
+            return BASE_GRAVITY + (double) item.getItemWeight().value / 100;
         }
         return BASE_GRAVITY;
     }

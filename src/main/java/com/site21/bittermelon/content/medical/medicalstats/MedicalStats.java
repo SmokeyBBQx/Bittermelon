@@ -35,6 +35,7 @@ public class MedicalStats {
                     ),
                     UUIDUtil.CODEC.fieldOf("mainCompartmentID").forGetter(MedicalStats::getMainCompartmentID),
                     UUIDUtil.CODEC.fieldOf("characterID").forGetter(MedicalStats::getCharacterID),
+                    Codec.unboundedMap(MedicalAttribute.CODEC, MedicalAttributeInstance.CODEC).fieldOf("attributes").forGetter(MedicalStats::getAttributes),
                     Codec.list(DrugInstance.CODEC).fieldOf("activeDrugs").forGetter(MedicalStats::getActiveDrugs)
             ).apply(instance, MedicalStats::new)
     );
@@ -48,6 +49,12 @@ public class MedicalStats {
             MedicalStats::getMainCompartmentID,
             UUIDUtil.STREAM_CODEC,
             MedicalStats::getCharacterID,
+            ByteBufCodecs.map(
+                    HashMap::new,
+                    MedicalAttribute.STREAM_CODEC,
+                    MedicalAttributeInstance.STREAM_CODEC
+            ),
+            MedicalStats::getAttributes,
             DrugInstance.STREAM_CODEC.apply(ByteBufCodecs.list()),
             MedicalStats::getActiveDrugs,
             MedicalStats::new
@@ -55,8 +62,8 @@ public class MedicalStats {
 
     protected final Map<UUID, CompartmentInstance> compartments;
     protected final UUID mainCompartmentID;
-    protected final Map<MedicalAttribute, Float> medicalAttributes;
     protected final UUID characterID;
+    private final EnumMap<MedicalAttribute, MedicalAttributeInstance> medicalAttributes;
     protected final Map<Holder<Attribute>, Double> defaultEntityAttributes;
     protected final List<DrugInstance> activeDrugs;
     protected final Map<CompartmentInstance, CompartmentInstance> compartmentRelations;
@@ -64,7 +71,7 @@ public class MedicalStats {
     protected LivingEntity entity;
     protected Character character;
 
-    public MedicalStats(@NotNull Collection<CompartmentInstance> compartments, UUID mainCompartmentID, UUID characterID, List<DrugInstance> activeDrugs) {
+    public MedicalStats(@NotNull Collection<CompartmentInstance> compartments, UUID mainCompartmentID, UUID characterID, Map<MedicalAttribute, MedicalAttributeInstance> attributes, List<DrugInstance> activeDrugs) {
         this.mainCompartmentID = mainCompartmentID;
         this.compartments = new ConcurrentHashMap<>();
         for (CompartmentInstance instance : compartments) {
@@ -72,21 +79,14 @@ public class MedicalStats {
         }
         this.characterID = characterID;
         this.activeDrugs = activeDrugs;
-        this.medicalAttributes = new EnumMap<>(MedicalAttribute.class);
+        medicalAttributes = new EnumMap<>(MedicalAttribute.class);
+        medicalAttributes.putAll(attributes);
         this.defaultEntityAttributes = new HashMap<>();
         this.compartmentRelations = new HashMap<>();
-
-        initializeStats();
     }
 
     public MedicalStats(@NotNull List<CompartmentInstance> compartments, UUID mainCompartmentID, UUID characterID) {
-        this(compartments, mainCompartmentID, characterID, new ArrayList<>());
-    }
-
-    private void initializeStats() {
-        for (MedicalAttribute type : MedicalAttribute.values()) {
-            medicalAttributes.put(type, 0f);
-        }
+        this(compartments, mainCompartmentID, characterID, new EnumMap<>(MedicalAttribute.class), new ArrayList<>());
     }
 
     @SuppressWarnings("unchecked")
@@ -123,35 +123,18 @@ public class MedicalStats {
     }
 
     private void updateCompartments() {
-        EnumMap<MedicalAttribute, Float> statsCopy = new EnumMap<>(MedicalAttribute.class);
-        EnumMap<MedicalAttribute, Integer> countMap = new EnumMap<>(MedicalAttribute.class);
-
-        for (MedicalAttribute type : MedicalAttribute.values()) {
-            statsCopy.put(type, 0f);
-            countMap.put(type, 0);
-        }
-
         for (CompartmentInstance compartment : compartments.values()) {
             compartment.tick(this);
 
-            for (MedicalAttribute stat : MedicalAttribute.values()) {
-                float attribute = compartment.getAttribute(stat);
-                if (attribute != 0) {
-                    statsCopy.compute(stat, (k, currentValue) -> currentValue + attribute);
-                    countMap.compute(stat, (k, count) -> count + 1);
+            if (compartment.isDirty()) {
+                for (Map.Entry<MedicalAttribute, Float> entry : compartment.getAttributes().entrySet()) {
+                    MedicalAttributeInstance instance = medicalAttributes.computeIfAbsent(entry.getKey(),
+                            (k) -> new MedicalAttributeInstance());
+                    instance.updateModifier(compartment.getUUID(), entry.getValue());
                 }
+                compartment.setDirty(false);
             }
         }
-
-        for (MedicalAttribute type : MedicalAttribute.values()) {
-            int count = countMap.get(type);
-            if (count > 0) {
-                float average = statsCopy.get(type) / count;
-                statsCopy.put(type, average);
-            }
-        }
-
-        medicalAttributes.putAll(statsCopy);
     }
 
     private void updateEntityAttributes() {
@@ -274,44 +257,52 @@ public class MedicalStats {
         return activeDrugs;
     }
 
+    public void removeModifiers(UUID uuid, @NotNull Collection<MedicalAttribute> attributes) {
+        for (MedicalAttribute attribute : attributes) {
+            medicalAttributes.get(attribute).removeModifier(uuid);
+        }
+    }
+
+    public void updateModifiers(UUID uuid, @NotNull Map<MedicalAttribute, Float> attributes) {
+        for (Map.Entry<MedicalAttribute, Float> entry : attributes.entrySet()) {
+            medicalAttributes.get(entry.getKey()).updateModifier(uuid, entry.getValue());
+        }
+    }
+
+    public void updateModifier(UUID uuid, MedicalAttribute attribute, float value) {
+        medicalAttributes.get(attribute).updateModifier(uuid, value);
+    }
+
+    public EnumMap<MedicalAttribute, MedicalAttributeInstance> getAttributes() {
+        return medicalAttributes;
+    }
+
     public float getAttribute(MedicalAttribute attribute) {
-        return medicalAttributes.get(attribute);
+        return medicalAttributes.computeIfAbsent(attribute, (k) -> new MedicalAttributeInstance()).getValue();
     }
 
     public float getTasteAbility() {
-        return medicalAttributes.get(MedicalAttribute.BRAIN_TASTE) * medicalAttributes.get(MedicalAttribute.TASTE);
+        return getAttribute(MedicalAttribute.BRAIN_TASTE) * getAttribute(MedicalAttribute.TASTE);
     }
 
     public float getHearingAbility() {
-        return medicalAttributes.get(MedicalAttribute.BRAIN_HEARING) * medicalAttributes.get(MedicalAttribute.HEARING);
-    }
-
-    public float getLanguageComprehension() {
-        return medicalAttributes.get(MedicalAttribute.BRAIN_LANGUAGE);
-    }
-
-    public float getTremor() {
-        return medicalAttributes.get(MedicalAttribute.TREMOR);
-    }
-
-    public float getStat(MedicalAttribute medicalAttribute) {
-        return medicalAttributes.getOrDefault(medicalAttribute, 0.0f);
+        return getAttribute(MedicalAttribute.BRAIN_HEARING) * getAttribute(MedicalAttribute.HEARING);
     }
 
     public float getManipulation() {
-        return medicalAttributes.get(MedicalAttribute.BRAIN_MOTOR_ABILITY) * medicalAttributes.get(MedicalAttribute.MANIPULATION) * getConsciousness();
+        return getAttribute(MedicalAttribute.BRAIN_MOTOR_ABILITY) * getAttribute(MedicalAttribute.MANIPULATION) * getConsciousness();
     }
 
     public float getMovement() {
-        return medicalAttributes.get(MedicalAttribute.BRAIN_MOTOR_ABILITY) * medicalAttributes.get(MedicalAttribute.MOVEMENT) * getConsciousness();
+        return getAttribute(MedicalAttribute.BRAIN_MOTOR_ABILITY) * getAttribute(MedicalAttribute.MOVEMENT) * getConsciousness();
     }
 
     public float getSight() {
-        return medicalAttributes.get(MedicalAttribute.SIGHT) * medicalAttributes.get(MedicalAttribute.BRAIN_SIGHT) * getConsciousness();
+        return getAttribute(MedicalAttribute.BRAIN_SIGHT) * getAttribute(MedicalAttribute.SIGHT) * getConsciousness();
     }
 
     public float getBite() {
-        return medicalAttributes.get(MedicalAttribute.BRAIN_MOTOR_ABILITY) * medicalAttributes.get(MedicalAttribute.BITE) * getConsciousness();
+        return getAttribute(MedicalAttribute.BRAIN_MOTOR_ABILITY) * getAttribute(MedicalAttribute.BITE) * getConsciousness();
     }
 
     public float getElimination() {
@@ -323,11 +314,11 @@ public class MedicalStats {
     }
 
     public float getCirculation() {
-        return medicalAttributes.get(MedicalAttribute.CIRCULATION);
+        return getAttribute(MedicalAttribute.CIRCULATION);
     }
 
     public float getConsciousness() {
-        return medicalAttributes.get(MedicalAttribute.BRAIN_CONSCIOUSNESS);
+        return getAttribute(MedicalAttribute.BRAIN_CONSCIOUSNESS);
     }
 
     public UUID getMainCompartmentID() {
@@ -345,5 +336,9 @@ public class MedicalStats {
     public UUID getEntityID() {
         if (entity == null) return null;
         return entity.getUUID();
+    }
+
+    public LivingEntity getEntity() {
+        return entity;
     }
 }

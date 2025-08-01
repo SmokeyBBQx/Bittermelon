@@ -164,6 +164,10 @@ public class CompartmentInstance {
         return visualData;
     }
 
+    public boolean isDirty() {
+        return dirty;
+    }
+
     public void setItem(Item item) {
         this.item = item;
     }
@@ -202,6 +206,10 @@ public class CompartmentInstance {
 
     public void addTag(CompartmentTag tag) {
         tags.add(tag);
+    }
+
+    public void setDirty(boolean dirty) {
+        this.dirty = dirty;
     }
 
     public CompartmentData toData() {

@@ -3,12 +3,17 @@ package com.site21.bittermelon.content.medical.drugs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.site21.bittermelon.content.medical.compartments.MedicalAttribute;
+import com.site21.bittermelon.content.medical.medicalstats.MedicalAttributeModifier;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import net.minecraft.core.Holder;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
+import java.util.UUID;
 
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.DRUG_REGISTRY;
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.DRUG_REGISTRY_KEY;
@@ -21,16 +26,18 @@ public class DrugInstance {
     private float amount;
     private float absorbedAmount;
     private int duration;
+    private final UUID id;
 
-    public DrugInstance(Holder<Drug> drug, float amount, float absorbedAmount, int duration) {
+    public DrugInstance(Holder<Drug> drug, float amount, float absorbedAmount, int duration, UUID id) {
         this.drug = drug;
         this.amount = amount;
         this.absorbedAmount = absorbedAmount;
         this.duration = duration;
+        this.id = id;
     }
 
     public DrugInstance(Holder<Drug> drug, float amount) {
-        this(drug, amount, 0, 0);
+        this(drug, amount, 0, 0, UUID.randomUUID());
     }
 
     public void tickInstance(@NotNull MedicalStats medicalStats) {
@@ -50,10 +57,21 @@ public class DrugInstance {
         drugValue.tickDrug(medicalStats, absorbedAmount);
 
         absorbedAmount -= elimination;
+
+        updateAttributes(medicalStats);
+    }
+
+    public void updateAttributes(MedicalStats medicalStats) {
+        for (Map.Entry<MedicalAttribute, Float> entry : drug.value().getAttributes().entrySet()) {
+            medicalStats.getAttributes().get(entry.getKey()).addModifier(id,
+                    new MedicalAttributeModifier(MedicalAttributeModifier.Operation.MULTIPLIER,
+                            entry.getValue() * absorbedAmount / 10));
+        }
     }
 
     public void remove(MedicalStats medicalStats) {
         drug.value().onRemoval(medicalStats);
+        medicalStats.removeModifiers(id, drug.value().getAttributes().keySet());
     }
 
     public Holder<Drug> getDrug() {
@@ -72,12 +90,17 @@ public class DrugInstance {
         return duration;
     }
 
+    public UUID getId() {
+        return id;
+    }
+
     static {
         CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 DRUG_REGISTRY.holderByNameCodec().fieldOf("drug").forGetter(DrugInstance::getDrug),
                 Codec.FLOAT.fieldOf("amount").forGetter(DrugInstance::getAmount),
                 Codec.FLOAT.fieldOf("absorbedAmount").forGetter(DrugInstance::getAbsorbedAmount),
-                Codec.INT.fieldOf("duration").forGetter(DrugInstance::getDuration)
+                Codec.INT.fieldOf("duration").forGetter(DrugInstance::getDuration),
+                UUIDUtil.CODEC.fieldOf("id").forGetter(DrugInstance::getId)
                 ).apply(instance, DrugInstance::new)
         );
 
@@ -90,6 +113,8 @@ public class DrugInstance {
                 DrugInstance::getAbsorbedAmount,
                 ByteBufCodecs.INT,
                 DrugInstance::getDuration,
+                UUIDUtil.STREAM_CODEC,
+                DrugInstance::getId,
                 DrugInstance::new
         );
     }

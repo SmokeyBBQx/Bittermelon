@@ -45,7 +45,7 @@ public class AnimalMedicalStats extends MedicalStats {
     }
 
     private void updateCardiopulmonary() {
-        bloodVolume = Math.min(100, bloodVolume + medicalAttributes.get(MedicalAttribute.BLOOD_REGENERATION) * getCirculation());
+        bloodVolume = Math.min(100, bloodVolume + getAttribute(MedicalAttribute.BLOOD_REGENERATION) * getCirculation());
         oxygenSaturation = Mth.clamp(oxygenSaturation + getRespirationAmount(), 0, 100);
 
         if (oxygenSaturation < HYPOXIA_THRESHOLD) {
@@ -88,7 +88,7 @@ public class AnimalMedicalStats extends MedicalStats {
         instance.data().drugs().forEach(this::addDrug);
         modifyBloodVolume(instance.volume());
         if (!bloodType.isBloodTypeCompatible(instance.data().bloodType())) {
-            float immuneResponse = medicalAttributes.get(MedicalAttribute.IMMUNITY) * getCirculation();
+            float immuneResponse = getAttribute(MedicalAttribute.IMMUNITY) * getCirculation();
 
         }
     }
@@ -109,11 +109,11 @@ public class AnimalMedicalStats extends MedicalStats {
     }
 
     public float getPain() {
-        return medicalAttributes.get(MedicalAttribute.NERVOUS) * medicalAttributes.get(MedicalAttribute.PAIN) * getConsciousness();
+        return getAttribute(MedicalAttribute.NERVOUS) * getAttribute(MedicalAttribute.PAIN) * getConsciousness();
     }
 
     public float getRespiration() {
-        return medicalAttributes.get(MedicalAttribute.RESPIRATION) * medicalAttributes.get(MedicalAttribute.BRAIN_VITALS);
+        return getAttribute(MedicalAttribute.RESPIRATION) * getAttribute(MedicalAttribute.BRAIN_VITALS);
     }
 
     public BloodType getBloodType() {

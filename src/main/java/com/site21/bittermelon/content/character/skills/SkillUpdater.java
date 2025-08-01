@@ -19,6 +19,8 @@ import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.STEP_CO
 @EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class SkillUpdater {
     private static final int EXERCISE_STEP_THRESHOLD = 400;
+    private static final float AGILITY_GAIN = 0.001f;
+    private static final float AGILITY_LOSS = -0.001f;
 
     @SubscribeEvent
     public static void onPlayerTick(@NotNull PlayerTickEvent.Post event) {
@@ -37,7 +39,7 @@ public class SkillUpdater {
             int updatedStepCounter = player.getData(STEP_COUNTER) + 1;
 
             if (updatedStepCounter > EXERCISE_STEP_THRESHOLD) {
-                character.modifySkill(Skill.AGILITY, 0.001f);
+                character.modifySkill(Skill.AGILITY, AGILITY_GAIN);
                 player.setData(STEP_COUNTER, 0);
 
                 LOGGER.info("{} gains agility. Their agility is now: {}", character.getName(), character.getSkill(Skill.AGILITY));
@@ -47,7 +49,7 @@ public class SkillUpdater {
         }
 
         if (player.isSleeping()) {
-            character.modifySkill(Skill.AGILITY, -0.001f);
+            character.modifySkill(Skill.AGILITY, AGILITY_LOSS);
             logAgilityLoss(character);
         }
     }
