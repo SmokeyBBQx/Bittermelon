@@ -39,7 +39,7 @@ public class CompartmentInstance {
     private float health;
     private float function;
     private Item item;
-    private boolean dirty = false;
+    private boolean dirty;
     private Set<CompartmentInstance> cachedCompartments;
     private boolean compartmentsCacheDirty = true;
 
@@ -73,12 +73,11 @@ public class CompartmentInstance {
     public void tick(MedicalStats medicalStats) {
         compartment.tick(medicalStats, this);
 
-        function = health / maxHealth;
-
-//        if (dirty) {
-//            updateFunction(medicalStats);
-//            dirty = false;
-//        }
+        float newFunction = health / maxHealth;
+        if (function != newFunction) {
+            function = newFunction;
+            dirty = true;
+        }
     }
 
     public float getAttribute(MedicalAttribute attribute) {

@@ -127,10 +127,10 @@ public class MedicalStats {
             compartment.tick(this);
 
             if (compartment.isDirty()) {
-                for (Map.Entry<MedicalAttribute, Float> entry : compartment.getAttributes().entrySet()) {
-                    MedicalAttributeInstance instance = medicalAttributes.computeIfAbsent(entry.getKey(),
+                for (MedicalAttribute attribute : compartment.getAttributes().keySet()) {
+                    MedicalAttributeInstance instance = medicalAttributes.computeIfAbsent(attribute,
                             (k) -> new MedicalAttributeInstance());
-                    instance.updateModifier(compartment.getUUID(), entry.getValue());
+                    instance.updateModifier(compartment.getUUID(), compartment.getAttribute(attribute));
                 }
                 compartment.setDirty(false);
             }
