@@ -2,8 +2,10 @@ package com.site21.bittermelon.content.blocks.substance.fluid;
 
 import com.google.common.collect.ImmutableMap;
 import com.site21.bittermelon.content.stumble.StumbleHandler;
+import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -126,6 +128,7 @@ public class FluidBlock extends Block implements EntityBlock {
                 if (entity.getDeltaMovement().length() > 0) {
                     if (entity.getRandom().nextFloat() > (entity.isSprinting() ? 1 - slipperiness : 1 - slipperiness / 10)) {
                         StumbleHandler.stumble(livingEntity);
+                        level.playSound(null, pos, BitterSounds.SLIP.get(), SoundSource.AMBIENT);
                     }
                 }
             }
@@ -141,8 +144,9 @@ public class FluidBlock extends Block implements EntityBlock {
         if (entity == null) return friction;
 
         if (entity.level().getBlockEntity(pos) instanceof FluidBlockEntity fluidBlockEntity) {
-            return friction + fluidBlockEntity.getSlipperiness();
+            return fluidBlockEntity.getSlipperiness();
         }
+
         return friction;
     }
 }

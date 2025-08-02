@@ -5,10 +5,7 @@ import com.site21.bittermelon.content.blocks.scp.scp151.DrowningEffect;
 import com.site21.bittermelon.content.effects.BitterEffect;
 import com.site21.bittermelon.content.effects.electrocuted.ElectrocutedEffect;
 import com.site21.bittermelon.content.items.taser.TaserEffect;
-import com.site21.bittermelon.content.medical.mobeffects.AsphyxiationEffect;
-import com.site21.bittermelon.content.medical.mobeffects.BadMobilityEffect;
-import com.site21.bittermelon.content.medical.mobeffects.PainEffect;
-import com.site21.bittermelon.content.medical.mobeffects.TremorEffect;
+import com.site21.bittermelon.content.medical.mobeffects.*;
 import com.site21.bittermelon.content.stumble.FallenEffect;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -44,4 +41,5 @@ public class BitterMobEffects {
     public static final Holder<MobEffect> FAINTING = MOB_EFFECTS.register("fainting", () -> new BitterEffect(MobEffectCategory.HARMFUL, 0));
     public static final Holder<MobEffect> UNCONSCIOUS = MOB_EFFECTS.register("unconscious", () -> new BitterEffect(MobEffectCategory.HARMFUL, 0));
     public static final Holder<MobEffect> HALLUCINATION = MOB_EFFECTS.register("hallucination", () -> new BitterEffect(MobEffectCategory.NEUTRAL, 0));
+    public static final Holder<MobEffect> BLEEDING = MOB_EFFECTS.register("bleeding", BleedingEffect::new);
 }

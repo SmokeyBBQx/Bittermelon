@@ -5,9 +5,9 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.combat.AttackTemplate;
-import com.site21.bittermelon.content.entities.vibration.BitterAngerManagement;
-import com.site21.bittermelon.content.entities.vibration.BitterVibrationSystem;
-import com.site21.bittermelon.content.entities.ai.BitterVibrationUser;
+import com.site21.bittermelon.content.entities.ai.vibration.BitterAngerManagement;
+import com.site21.bittermelon.content.entities.ai.vibration.BitterVibrationSystem;
+import com.site21.bittermelon.content.entities.ai.vibration.BitterVibrationUser;
 import com.site21.bittermelon.content.entities.ai.behavior.attack.Attack;
 import com.site21.bittermelon.content.entities.ai.behavior.attack.Pull;
 import com.site21.bittermelon.content.entities.ai.behavior.attack.Push;
@@ -363,8 +363,6 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
     public static void setDisturbanceLocation(BlockPos pos, SCP939 entity) {
         BrainUtils.setForgettableMemory(entity, MemoryModuleType.DISTURBANCE_LOCATION, pos, 600);
         BrainUtils.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(pos, 1.2f, 1));
-
-        System.out.println("Disturbance location set");
     }
 
     public Component getRandomLureLine() {

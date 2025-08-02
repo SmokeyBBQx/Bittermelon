@@ -99,6 +99,8 @@ public class StumbleHandler {
             } else {
                 dropItem(player, 0.3);
             }
+        } else {
+            entity.setPose(Pose.SLEEPING);
         }
     }
 

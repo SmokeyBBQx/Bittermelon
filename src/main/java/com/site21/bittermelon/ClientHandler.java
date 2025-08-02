@@ -8,11 +8,11 @@ import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.containment.client.ContainmentPanelScreen;
 import com.site21.bittermelon.content.economy.client.ATMScreen;
 import com.site21.bittermelon.content.items.wires.wire.client.WiringScreen;
-import com.site21.bittermelon.content.medical.client.screen.HealthScreenV2;
 import com.site21.bittermelon.content.items.writablepaper.client.PaperEditScreen;
-import com.site21.bittermelon.content.items.writablepaper.client.PaperEditScreenOld;
-import com.site21.bittermelon.content.medical.client.screen.deprecated.HealthScreen;
+import com.site21.bittermelon.content.medical.client.screen.HealthScreenV2;
 import com.site21.bittermelon.content.personnel.PersonnelEntry;
+import com.site21.bittermelon.content.personnel.PersonnelRegistry;
+import com.site21.bittermelon.content.personnel.client.PersonnelScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -44,5 +44,9 @@ public class ClientHandler {
 
     public static void displayPaperEditScreen(ItemStack paper) {
         Minecraft.getInstance().setScreen(new PaperEditScreen(paper));
+    }
+
+    public static void displayPersonnelScreen(PersonnelRegistry registry) {
+        Minecraft.getInstance().setScreen(new PersonnelScreen(registry));
     }
 }

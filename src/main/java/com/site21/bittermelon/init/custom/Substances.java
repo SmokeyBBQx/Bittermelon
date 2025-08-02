@@ -52,8 +52,8 @@ public class Substances {
             new Substance.Properties()
                     .color(0xFFFFFFFF)
                     .drug(CYANIDE)
-                    .smell("almonds")
-                    .flavor("almonds")
+                    .smell("almondy")
+                    .flavor("almondy")
     ));
 
     public static final Supplier<Substance> HYDROGEN_CYANIDE = SUBSTANCES.register("hydrogen_cyanide", () -> new Substance(
@@ -63,5 +63,15 @@ public class Substances {
                     .drug(CYANIDE)
                     .smell("almondy")
                     .flavor("bitter")
+    ));
+
+    public static final Supplier<Substance> MOTOR_OIL = SUBSTANCES.register("motor_oil", () -> new Substance(
+            "Motor Oil",
+            new Substance.Properties()
+                    .density(0.93f)
+                    .molarMass(880)
+                    .color(0xFFE3B324)
+                    .slipperiness(0.5f)
+                    .flavor("oily")
     ));
 }

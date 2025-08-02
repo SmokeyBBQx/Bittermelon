@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.entities.vibration;
+package com.site21.bittermelon.content.entities.ai.vibration;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;

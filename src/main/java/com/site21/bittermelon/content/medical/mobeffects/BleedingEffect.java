@@ -22,8 +22,8 @@ import static com.site21.bittermelon.init.neoforge.BitterDataComponents.BLOOD_DA
 import static net.minecraft.world.level.block.Block.UPDATE_ALL_IMMEDIATE;
 
 public class BleedingEffect extends MobEffect {
-    protected BleedingEffect(MobEffectCategory category, int color) {
-        super(category, color);
+    public BleedingEffect() {
+        super(MobEffectCategory.HARMFUL, 0);
     }
 
     @Override

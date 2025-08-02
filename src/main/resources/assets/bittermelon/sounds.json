@@ -231,6 +231,18 @@
       "bittermelon:item/taser_shoot"
     ]
   },
+  "misc.slip": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:misc/slip"
+    ]
+  },
+  "misc.soggy": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:misc/soggy"
+    ]
+  },
   "container.toolbox_open": {
     "category": "neutral",
     "sounds": [

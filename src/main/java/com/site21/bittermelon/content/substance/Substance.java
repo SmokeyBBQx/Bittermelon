@@ -58,8 +58,8 @@ public class Substance {
     }
 
     public static class Properties {
-        float molarMass = 18.02f;
-        float density = 1;
+        float molarMass = 18.02f; // g/mol
+        float density = 1; // g/cm^3
         float transparency = 1;
         float slipperiness = 0.1f;
         int color = 0xFFAAD5DB;

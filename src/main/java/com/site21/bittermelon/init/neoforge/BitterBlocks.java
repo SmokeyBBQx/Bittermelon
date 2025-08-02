@@ -34,7 +34,17 @@ public class BitterBlocks {
             .mapColor(MapColor.WATER)
             .noOcclusion()
             .destroyTime(-1)
-            .sound(SoundType.SLIME_BLOCK)
+            .sound(
+                    new SoundType(
+                         1.0f,
+                            1.0f,
+                            BitterSounds.SPLATTER.get(),
+                            BitterSounds.SOGGY.get(),
+                            BitterSounds.SPLAT.get(),
+                            BitterSounds.SOGGY.get(),
+                            BitterSounds.SPLATTER.get()
+                    )
+            )
             .pushReaction(PushReaction.NORMAL)
     ));
 

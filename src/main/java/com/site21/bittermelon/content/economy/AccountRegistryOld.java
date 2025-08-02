@@ -1,7 +1,7 @@
 //package com.site21.bittermelon.economy;
 //
 //
-//import com.site21.bittermelon.database.PersonnelEntry;
+//import com.site21.bittermelon.database.ListEntry;
 //import com.site21.bittermelon.util.DataManager;
 //import net.neoforged.fml.loading.FMLPaths;
 //import org.jetbrains.annotations.NotNull;
@@ -46,7 +46,7 @@
 //        return false;
 //    }
 //
-//    public List<Account> getPermittedAccounts(@NotNull PersonnelEntry entry) {
+//    public List<Account> getPermittedAccounts(@NotNull ListEntry entry) {
 //        List<String> privileges = entry.getPrivileges();
 //        List<Account> permittedAccounts = new ArrayList<>();
 //
