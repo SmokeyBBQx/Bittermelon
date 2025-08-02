@@ -1,7 +1,6 @@
 package com.site21.bittermelon.content.items.base;
 
-import com.site21.bittermelon.content.atmosphere.AtmosHandler;
-import com.site21.bittermelon.content.entities.miscellaneous.ThrownItemProjectile;
+import com.site21.bittermelon.content.entities.implementations.ThrownItemProjectile;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -18,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.ROTATION;
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.TEMPERATURE;
 
 public class BaseItem extends Item {
     protected final ItemWeight itemWeight;

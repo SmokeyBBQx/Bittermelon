@@ -1,32 +1,29 @@
 package com.site21.bittermelon.content.entities.implementations.chicken;
 
-import com.google.common.collect.ImmutableList;
 import com.site21.bittermelon.content.character.Character;
+import com.site21.bittermelon.content.combat.AttackTemplate;
+import com.site21.bittermelon.content.entities.ai.behavior.attack.Attack;
+import com.site21.bittermelon.content.entities.ai.behavior.attack.LeapAtTarget;
 import com.site21.bittermelon.content.entities.ai.behavior.basicneeds.Drink;
 import com.site21.bittermelon.content.entities.ai.behavior.basicneeds.EatFood;
 import com.site21.bittermelon.content.entities.ai.behavior.basicneeds.HasBasicNeeds;
 import com.site21.bittermelon.content.entities.ai.behavior.basicneeds.Preen;
 import com.site21.bittermelon.content.entities.ai.behavior.misc.Defecate;
-import com.site21.bittermelon.content.entities.ai.sensors.NearbyDrinkableFluidsSensor;
-import com.site21.bittermelon.content.entities.ai.sensors.NearbyFoodSensor;
-import com.site21.bittermelon.content.entities.base.BitterMob;
-import com.site21.bittermelon.content.entities.ai.behavior.attack.Attack;
-import com.site21.bittermelon.content.combat.AttackTemplate;
-import com.site21.bittermelon.content.entities.ai.behavior.attack.LeapAtTarget;
 import com.site21.bittermelon.content.entities.ai.behavior.misc.FeelsPain;
 import com.site21.bittermelon.content.entities.ai.behavior.mood.mentalbreak.MurderousRage;
 import com.site21.bittermelon.content.entities.ai.behavior.mood.mentalbreak.WarnHighStress;
-import com.site21.bittermelon.content.entities.ai.behavior.needs.Need;
 import com.site21.bittermelon.content.entities.ai.behavior.social.Relationship;
 import com.site21.bittermelon.content.entities.ai.behavior.social.Socializable;
 import com.site21.bittermelon.content.entities.ai.behavior.social.interactions.GenericInteraction;
 import com.site21.bittermelon.content.entities.ai.behavior.target.InvalidateAttackTarget;
-import com.site21.bittermelon.content.entities.base.NeedsStat;
-import com.site21.bittermelon.content.entities.base.StatConfig;
+import com.site21.bittermelon.content.entities.ai.sensors.NearbyDrinkableFluidsSensor;
+import com.site21.bittermelon.content.entities.ai.sensors.NearbyFoodSensor;
+import com.site21.bittermelon.content.entities.base.BitterMob;
+import com.site21.bittermelon.content.entities.base.Need;
+import com.site21.bittermelon.content.entities.base.NeedInstance;
 import com.site21.bittermelon.content.entities.implementations.chicken.behavior.PluckAtRandomItem;
-import com.site21.bittermelon.init.neoforge.BitterActivity;
-import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
 import com.site21.bittermelon.content.medical.factory.Anatomy;
+import com.site21.bittermelon.init.neoforge.BitterActivity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -39,10 +36,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.memory.NearestVisibleLivingEntities;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -52,7 +46,6 @@ import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Panic;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
@@ -62,14 +55,14 @@ import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.NearbyItemsSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
-import net.tslat.smartbrainlib.registry.SBLMemoryTypes;
-import net.tslat.smartbrainlib.util.BrainUtils;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static com.site21.bittermelon.content.entities.base.NeedsStat.*;
+import static com.site21.bittermelon.content.entities.base.Need.MOVEMENT;
 
 @SuppressWarnings("unchecked")
 public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPain, HasBasicNeeds {
@@ -94,25 +87,36 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
     }
 
     @Override
-    protected Map<NeedsStat, StatConfig> initializeStats() {
-        HashMap<NeedsStat, StatConfig> statConfigs = new HashMap<>();
-        statConfigs.put(NeedsStat.SOCIALIZATION, createStatConfig(0.001f));
-        statConfigs.put(NeedsStat.PROCREATION, createStatConfig(0.0001f));
-        statConfigs.put(NeedsStat.REST, createStatConfig(0f));
-        statConfigs.put(NeedsStat.STRESS, createStatConfig(-0.0005f));
-        statConfigs.put(NeedsStat.HUNGER, createStatConfig(0.002f));
-        statConfigs.put(NeedsStat.THIRST, createStatConfig(0.003f));
-        statConfigs.put(NeedsStat.DEFECATION, createStatConfig(0.001f));
-        statConfigs.put(NeedsStat.MOVEMENT, createStatConfig(0.001f));
-        statConfigs.put(NeedsStat.HYGIENE, createStatConfig(0.001f));
-        statConfigs.put(NeedsStat.RELAXATION, createStatConfig(0.001f));
-        statConfigs.put(NeedsStat.RECREATION, createStatConfig(0.001f));
-        statConfigs.put(NeedsStat.ANGER, createStatConfig(0f));
+    protected Map<Need, NeedInstance> initializeNeeds() {
+        HashMap<Need, NeedInstance> statConfigs = new HashMap<>();
+        statConfigs.put(Need.SOCIALIZATION, new NeedInstance(0.001f, value -> Math.pow(value, 1.5), BitterActivity.SOCIALIZE.get()));
+        statConfigs.put(Need.PROCREATION, new NeedInstance(0.0001f, value -> (double) value, BitterActivity.PROCREATE.get()));
+        statConfigs.put(Need.REST, new NeedInstance(0f, value -> Math.pow(value, 0.2), Activity.REST));
+        statConfigs.put(Need.STRESS, new NeedInstance(-0.0005f, value -> (double) value, BitterActivity.MENTAL_BREAK.get()));
+        statConfigs.put(Need.HUNGER, new NeedInstance(0.002f, value -> Math.pow(value, 2), BitterActivity.EAT.get()));
+        statConfigs.put(Need.THIRST, new NeedInstance(0.003f, value -> Math.pow(value, 2), BitterActivity.DRINK.get()));
+        statConfigs.put(Need.DEFECATION, new NeedInstance(0.001f, value -> (double) value, BitterActivity.DEFECATE.get()));
+        statConfigs.put(Need.MOVEMENT, new NeedInstance(0.001f, value -> Math.pow(value, 1.2), BitterActivity.EXPLORE.get()));
+        statConfigs.put(Need.HYGIENE, new NeedInstance(0.001f, value -> Math.pow(value, 1.3), BitterActivity.GROOM.get()));
+        statConfigs.put(Need.RELAXATION, new NeedInstance(0.001f, value -> Math.pow(value, 1.3), BitterActivity.RELAX.get()));
+        statConfigs.put(Need.RECREATION, new NeedInstance(0.001f, value -> Math.pow(getMood(), 1.3), BitterActivity.PLAY.get()));
+        statConfigs.put(Need.ANGER, new NeedInstance(0f, value -> Math.pow(value, 1.8), Activity.FIGHT));
         return statConfigs;
     }
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 4.0).add(Attributes.MOVEMENT_SPEED, 0.25);
+    }
+
+    @Override
+    public List<? extends ExtendedSensor<? extends Chicken>> getSensors() {
+        return List.of(
+                new NearbyLivingEntitySensor<>(),
+                new NearbyItemsSensor<>(),
+                new HurtBySensor<>(),
+                new NearbyFoodSensor<>(),
+                new NearbyDrinkableFluidsSensor<>()
+        );
     }
 
     public Map<Activity, BrainActivityGroup<? extends Chicken>> getAdditionalTasks() {
@@ -223,7 +227,7 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
                         new Idle<>().runFor(entity -> 30)
                 ).whenStarting(entity -> {
                     if (entity instanceof Chicken chicken) {
-                        chicken.modifyStat(MOVEMENT, -10.0f);
+                        chicken.modifyNeed(MOVEMENT, -10.0f);
                     }
                 })
         );
@@ -259,102 +263,6 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
                         // TODO: Plucking at mobs
                         new PluckAtRandomItem<>().cooldownFor(entity -> 120)
                 );
-    }
-
-    public BrainActivityGroup<? extends Chicken> getPanicTasks() {
-        return new BrainActivityGroup<Chicken>(Activity.PANIC).behaviours(
-                new Panic<>()
-        ).requireAndWipeMemoriesOnUse(MemoryModuleType.HURT_BY);
-    }
-
-    @Override
-    public List<Need<Chicken>> getNeeds() {
-        return ImmutableList.of(
-                new Need<>(
-                        getDataAccessor(SOCIALIZATION),
-                        BitterActivity.SOCIALIZE.get(),
-                        value -> (float) Math.pow(value, 1.5),
-                        entity -> {
-                            NearestVisibleLivingEntities nearestEntities = BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES);
-                            return nearestEntities != null && nearestEntities.contains(entityNear -> entityNear instanceof Chicken);
-                        }
-                ),
-                new Need<>(
-                        getDataAccessor(PROCREATION),
-                        BitterActivity.PROCREATE.get(),
-                        value -> value,
-                        entity -> !entity.level().getNearbyEntities(Chicken.class, TargetingConditions.DEFAULT, entity, entity.getBoundingBox().inflate(16)).isEmpty()
-                ),
-                new Need<>(
-                        getDataAccessor(REST),
-                        Activity.REST,
-                        value -> (float) Math.pow(value, 0.2),
-                        entity -> false
-                ),
-                new Need<>(
-                        getDataAccessor(STRESS),
-                        BitterActivity.MENTAL_BREAK.get(),
-                        value -> value,
-                        entity -> true
-                ),
-                new Need<>(
-                        getDataAccessor(ANGER),
-                        Activity.FIGHT,
-                        value -> (float) Math.pow(value, 1.8),
-                        entity -> true
-                ),
-                new Need<>(
-                        getDataAccessor(HUNGER),
-                        BitterActivity.EAT.get(),
-                        value -> (float) Math.pow(value, 2),
-                        entity -> {
-                            List<?> edibleItems = BrainUtils.getMemory(entity, BitterMemoryTypes.NEARBY_EDIBLE_ITEMS.get());
-                            return edibleItems != null && !edibleItems.isEmpty();
-                        }
-                ),
-                new Need<>(
-                        getDataAccessor(THIRST),
-                        BitterActivity.DRINK.get(),
-                        value -> (float) Math.pow(value, 2),
-                        entity -> {
-                            List<?> edibleItems = BrainUtils.getMemory(entity, BitterMemoryTypes.NEARBY_DRINKABLE_FLUIDS.get());
-                            return edibleItems != null && !edibleItems.isEmpty();
-                        }
-                ),
-                new Need<>(
-                        getDataAccessor(DEFECATION),
-                        BitterActivity.DEFECATE.get(),
-                        value -> value,
-                        entity -> true
-                ),
-                new Need<>(
-                        getDataAccessor(MOVEMENT),
-                        BitterActivity.EXPLORE.get(),
-                        value -> (float) Math.pow(value, 1.2),
-                        entity -> false
-                ),
-                new Need<>(
-                        getDataAccessor(HYGIENE),
-                        BitterActivity.GROOM.get(),
-                        value -> (float) Math.pow(value, 1.3),
-                        entity -> true
-                ),
-                new Need<>(
-                        getDataAccessor(RELAXATION),
-                        BitterActivity.RELAX.get(),
-                        value -> (float) Math.pow(value, 1.3),
-                        entity -> false
-                ),
-                new Need<>(
-                        getDataAccessor(RECREATION),
-                        BitterActivity.PLAY.get(),
-                        value -> (float) Math.pow(getMood(), 1.3),
-                        entity -> {
-                            List<?> edibleItems = BrainUtils.getMemory(entity, SBLMemoryTypes.NEARBY_ITEMS.get());
-                            return edibleItems != null && !edibleItems.isEmpty();
-                        }
-                )
-        );
     }
 
     public void aiStep() {
@@ -406,17 +314,6 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
     }
 
     @Override
-    public List<? extends ExtendedSensor<? extends Chicken>> getSensors() {
-        return List.of(
-                new NearbyLivingEntitySensor<>(),
-                new NearbyItemsSensor<>(),
-                new HurtBySensor<>(),
-                new NearbyFoodSensor<>(),
-                new NearbyDrinkableFluidsSensor<>()
-        );
-    }
-
-    @Override
     public Map<Character, Relationship> getRelationships() {
         return relationships;
     }
@@ -450,8 +347,6 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
     }
 
     public @NotNull List<AttackTemplate> getAttackTemplates() {
-        List<AttackTemplate> attackTemplates = new ArrayList<>();
-
-        return attackTemplates;
+        return new ArrayList<>();
     }
 }

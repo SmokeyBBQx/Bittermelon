@@ -1,27 +1,20 @@
 package com.site21.bittermelon.content.entities.implementations.scp131;
 
 import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.entities.ai.behavior.needs.Need;
 import com.site21.bittermelon.content.entities.base.BitterMob;
-import com.site21.bittermelon.content.entities.base.NeedsStat;
-import com.site21.bittermelon.content.entities.base.StatConfig;
+import com.site21.bittermelon.content.entities.base.Need;
+import com.site21.bittermelon.content.entities.base.NeedInstance;
 import com.site21.bittermelon.content.medical.factory.Anatomy;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.CatVariantTags;
-import net.minecraft.tags.StructureTags;
-import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.CatVariant;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
@@ -50,7 +43,7 @@ public class SCP131 extends BitterMob<SCP131> {
     }
 
     @Override
-    protected Map<NeedsStat, StatConfig> initializeStats() {
+    protected Map<Need, NeedInstance> initializeNeeds() {
         return Map.of();
     }
 
@@ -134,12 +127,6 @@ public class SCP131 extends BitterMob<SCP131> {
                         new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))
                 )
         );
-    }
-
-
-    @Override
-    public List<Need<SCP131>> getNeeds() {
-        return List.of();
     }
 
     @Override

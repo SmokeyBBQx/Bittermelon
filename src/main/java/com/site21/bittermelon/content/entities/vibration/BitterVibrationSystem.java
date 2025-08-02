@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.entities;
+package com.site21.bittermelon.content.entities.vibration;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

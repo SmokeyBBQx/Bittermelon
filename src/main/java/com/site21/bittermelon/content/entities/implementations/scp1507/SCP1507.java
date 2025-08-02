@@ -1,27 +1,21 @@
 package com.site21.bittermelon.content.entities.implementations.scp1507;
 
 import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.entities.ai.behavior.needs.Need;
 import com.site21.bittermelon.content.entities.base.BitterMob;
-import com.site21.bittermelon.content.entities.base.NeedsStat;
-import com.site21.bittermelon.content.entities.base.StatConfig;
-import com.site21.bittermelon.content.entities.implementations.chicken.Chicken;
+import com.site21.bittermelon.content.entities.base.Need;
+import com.site21.bittermelon.content.entities.base.NeedInstance;
 import com.site21.bittermelon.content.medical.factory.Anatomy;
 import com.site21.bittermelon.init.neoforge.BitterActivity;
-import net.minecraft.network.protocol.game.DebugPackets;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
-import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
@@ -32,6 +26,7 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,12 +44,12 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     }
 
     @Override
-    protected Map<NeedsStat, StatConfig> initializeStats() {
+    protected Map<Need, NeedInstance> initializeNeeds() {
         return Map.of(
-                NeedsStat.SOCIALIZATION, createStatConfig(0.001f),
-                NeedsStat.MOVEMENT, createStatConfig(0.001f),
-                NeedsStat.STRESS, createStatConfig(-0.0005f),
-                NeedsStat.ANGER, createStatConfig(0f)
+                Need.SOCIALIZATION, new NeedInstance(0.001f, value -> Math.pow(value, 1.2), BitterActivity.SOCIALIZE.get()),
+                Need.MOVEMENT, new NeedInstance(0.001f, value -> Math.pow(value, 1.5), BitterActivity.EXPLORE.get()),
+                Need.STRESS, new NeedInstance(-0.0005f, value -> Math.pow(value, 0.8), BitterActivity.MENTAL_BREAK.get()),
+                Need.ANGER, new NeedInstance(0f, value -> Math.pow(value, 2.0), Activity.FIGHT)
         );
     }
 
@@ -68,6 +63,12 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
                 new NearbyLivingEntitySensor<>(),
                 new HurtBySensor<>()
         );
+    }
+
+    public Map<Activity, BrainActivityGroup<? extends SCP1507>> getAdditionalTasks() {
+        Map<Activity, BrainActivityGroup<? extends SCP1507>> tasks = new HashMap<>();
+        tasks.put(BitterActivity.EXPLORE.get(), getExploreTasks());
+        return tasks;
     }
 
     @Override
@@ -96,17 +97,10 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
                         new Idle<>().runFor(entity -> 30)
                 ).whenStarting(entity -> {
                     if (entity instanceof SCP1507 scp1507) {
-                        scp1507.modifyStat(NeedsStat.MOVEMENT, -10.0f);
+                        scp1507.modifyNeed(Need.MOVEMENT, -10.0f);
                     }
                 })
         );
-    }
-
-
-
-    @Override
-    protected void customServerAiStep() {
-        tickBrain(this);
     }
 
     @Override
@@ -117,20 +111,4 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
             attackAnimationState.animateWhen(true, tickCount);
         }
      }
-
-    @Override
-    protected void sendDebugPackets() {
-        super.sendDebugPackets();
-        DebugPackets.sendEntityBrain(this);
-    }
-
-    @Override
-    protected @NotNull SmartBrainProvider<SCP1507> brainProvider() {
-        return new SmartBrainProvider<>(this);
-    }
-
-    @Override
-    public List<Need<SCP1507>> getNeeds() {
-        return List.of();
-    }
 }

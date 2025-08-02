@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.entities.implementations.scp939.behavior;
 
 import com.mojang.datafixers.util.Pair;
-import com.site21.bittermelon.content.entities.base.NeedsStat;
+import com.site21.bittermelon.content.entities.base.Need;
 import com.site21.bittermelon.content.entities.implementations.scp939.SCP939;
 import com.site21.bittermelon.util.LocalMessageHelper;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -29,6 +29,6 @@ public class Procreate<E extends SCP939> extends DelayedBehaviour<E> {
     @Override
     protected void doDelayedAction(E entity) {
         LocalMessageHelper.sendLocalMessage(entity, 32, Component.literal("Procreating"));
-        entity.setStat(NeedsStat.PROCREATION, -100);
+        entity.setNeed(Need.PROCREATION, -100);
     }
 }

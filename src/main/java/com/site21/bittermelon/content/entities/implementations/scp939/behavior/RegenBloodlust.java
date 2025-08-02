@@ -3,7 +3,7 @@ package com.site21.bittermelon.content.entities.implementations.scp939.behavior;
 import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
-import com.site21.bittermelon.content.entities.base.NeedsStat;
+import com.site21.bittermelon.content.entities.base.Need;
 import com.site21.bittermelon.content.entities.implementations.scp939.SCP939;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.entity.LivingEntity;
@@ -36,7 +36,7 @@ public class RegenBloodlust<E extends SCP939> extends ExtendedBehaviour<E> {
         if (targetCharacter == null) return;
 
         if (targetCharacter.getMedicalStats().getConsciousness() < 0.1f) {
-            entity.modifyStat(NeedsStat.BLOODLUST, -30);
+            entity.modifyNeed(Need.BLOODLUST, -30);
         }
 
         if (target instanceof Player) {

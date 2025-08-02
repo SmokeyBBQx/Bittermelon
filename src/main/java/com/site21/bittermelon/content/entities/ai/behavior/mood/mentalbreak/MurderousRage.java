@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.entities.ai.behavior.mood.mentalbreak;
 
 import com.mojang.datafixers.util.Pair;
-import com.site21.bittermelon.content.entities.ai.behavior.needs.NeedsUser;
+import com.site21.bittermelon.content.entities.base.NeedsUser;
 import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.entity.Entity;
@@ -14,7 +14,7 @@ import net.tslat.smartbrainlib.util.BrainUtils;
 import java.util.List;
 import java.util.Optional;
 
-public class MurderousRage<E extends LivingEntity & NeedsUser<E>> extends MentalBreak<E> {
+public class MurderousRage<E extends LivingEntity & NeedsUser> extends MentalBreak<E> {
     private static final List<Pair<MemoryModuleType<?>, MemoryStatus>> MEMORY_REQUIREMENTS = ObjectArrayList.of(
             Pair.of(BitterMemoryTypes.HAS_MENTAL_BREAK.get(), MemoryStatus.VALUE_ABSENT),
             Pair.of(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES, MemoryStatus.VALUE_PRESENT),

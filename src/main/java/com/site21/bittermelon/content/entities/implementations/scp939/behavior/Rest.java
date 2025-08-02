@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.site21.bittermelon.content.entities.base.NeedsStat.REST;
+import static com.site21.bittermelon.content.entities.base.Need.REST;
 
 public class Rest<E extends SCP939> extends ExtendedBehaviour<E> {
     private static final List<Pair<MemoryModuleType<?>, MemoryStatus>> MEMORY_REQUIREMENTS = ObjectArrayList.of(
@@ -31,11 +31,11 @@ public class Rest<E extends SCP939> extends ExtendedBehaviour<E> {
 
     @Override
     protected void tick(@NotNull E entity) {
-        entity.modifyStat(REST, restAmount);
+        entity.modifyNeed(REST, restAmount);
     }
 
     @Override
     protected boolean shouldKeepRunning(@NotNull E entity) {
-        return entity.getStat(REST) < 100;
+        return entity.getNeed(REST) < 100;
     }
 }

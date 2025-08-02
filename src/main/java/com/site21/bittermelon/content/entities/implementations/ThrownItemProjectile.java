@@ -1,11 +1,10 @@
-package com.site21.bittermelon.content.entities.miscellaneous;
+package com.site21.bittermelon.content.entities.implementations;
 
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.scps.scp2398.SCP2398;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -29,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.neoforge.BitterEntities.THROWN_ITEM_PROJECTILE;
 import static com.site21.bittermelon.init.neoforge.BitterItems.SCP_2398;
-import static net.minecraft.world.item.Items.GLASS;
 import static net.minecraft.world.item.Items.SNOWBALL;
 
 public class ThrownItemProjectile extends ThrowableItemProjectile {
@@ -40,7 +38,7 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
     private static final double BASE_GRAVITY = 0.03;
     private static final double MAX_VELOCITY = 3;
     private static final double BREAK_GLASS_VELOCITY = 1.5;
-    private static final double BREAK_DOOR_VELOCITY = 3;
+    private static final double BREAK_DOOR_VELOCITY = 2.5;
 
     public ThrownItemProjectile(EntityType<? extends ThrownItemProjectile> entityType, Level level) {
         super(entityType, level);
@@ -104,12 +102,12 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
         super.onHitBlock(result);
 
         if (!this.level().isClientSide) {
-            handleBlockInteraction(result);
+            boolean shouldBounceBack = handleBlockInteraction(result);
 
             // Bounce sound
             level().playSound(null, result.getBlockPos(), SoundEvents.STONE_FALL, SoundSource.PLAYERS, 2, 1);
 
-            if (bounceCount < maxBounces) {
+            if (bounceCount < maxBounces && shouldBounceBack) {
                 Vec3 newVelocity = getNewVelocity(result);
 
                 // Ensure above minimum velocity threshold
@@ -163,19 +161,24 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
         return newVelocity;
     }
 
-    private void handleBlockInteraction(@NotNull BlockHitResult result) {
+    private boolean handleBlockInteraction(@NotNull BlockHitResult result) {
+        // Returns if the projectile should bounce back
         BlockPos pos = result.getBlockPos();
         BlockState state = level().getBlockState(pos);
 
         if ((state.is(Tags.Blocks.GLASS_BLOCKS) || state.is(Tags.Blocks.GLASS_PANES)) && getDeltaMovement().length() >= BREAK_GLASS_VELOCITY) {
             level().destroyBlock(pos, false, this);
+            return false;
         } else if (state.getBlock() instanceof DoorBlock && getDeltaMovement().length() >= BREAK_DOOR_VELOCITY) {
             level().destroyBlock(pos, true, this);
+            return false;
         } else if (state.getBlock() instanceof BellBlock block) {
             block.attemptToRing(level(), pos, result.getDirection());
         } else if (state.getBlock() instanceof ButtonBlock block) {
             block.press(state, level(), pos, null);
         }
+
+        return true;
     }
 
     @Override

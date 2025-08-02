@@ -3,7 +3,7 @@ package com.site21.bittermelon.content.throwing;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
-import com.site21.bittermelon.content.entities.miscellaneous.ThrownItemProjectile;
+import com.site21.bittermelon.content.entities.implementations.ThrownItemProjectile;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.chat.Component;

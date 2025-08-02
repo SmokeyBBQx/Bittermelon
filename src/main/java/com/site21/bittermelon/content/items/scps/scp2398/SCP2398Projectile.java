@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.items.scps.scp2398;
 
 import com.site21.bittermelon.content.blocks.base.structuralblock.StructuralBlockEntity;
-import com.site21.bittermelon.content.entities.miscellaneous.ThrownItemProjectile;
+import com.site21.bittermelon.content.entities.implementations.ThrownItemProjectile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;

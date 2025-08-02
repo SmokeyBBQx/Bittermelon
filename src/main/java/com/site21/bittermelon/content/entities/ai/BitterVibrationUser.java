@@ -1,6 +1,6 @@
 package com.site21.bittermelon.content.entities.ai;
 
-import com.site21.bittermelon.content.entities.BitterVibrationSystem;
+import com.site21.bittermelon.content.entities.vibration.BitterVibrationSystem;
 import com.site21.bittermelon.content.entities.implementations.scp939.SCP939;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;

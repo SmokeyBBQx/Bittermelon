@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.entities;
+package com.site21.bittermelon.content.entities.vibration;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Streams;

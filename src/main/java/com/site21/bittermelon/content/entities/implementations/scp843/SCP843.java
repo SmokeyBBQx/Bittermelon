@@ -1,11 +1,11 @@
 package com.site21.bittermelon.content.entities.implementations.scp843;
 
 import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.entities.ai.behavior.needs.Need;
-import com.site21.bittermelon.content.entities.ai.behavior.needs.NeedsUser;
 import com.site21.bittermelon.content.entities.ai.behavior.social.Relationship;
 import com.site21.bittermelon.content.entities.ai.behavior.social.Socializable;
-import com.site21.bittermelon.content.entities.base.NeedsStat;
+import com.site21.bittermelon.content.entities.base.BitterMob;
+import com.site21.bittermelon.content.entities.base.Need;
+import com.site21.bittermelon.content.entities.base.NeedInstance;
 import com.site21.bittermelon.content.entities.implementations.scp843.behavior.Photosynthesize;
 import com.site21.bittermelon.init.neoforge.BitterActivity;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -14,19 +14,20 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.NearbyBlocksSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.NearbyItemsSensor;
-import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unchecked")
-public class SCP843 extends PathfinderMob implements NeedsUser<SCP843>, Socializable, SmartBrainOwner<SCP843> {
+public class SCP843 extends BitterMob<SCP843> implements Socializable, SmartBrainOwner<SCP843> {
     private static final EntityDataAccessor<Float> SUNLIGHT = SynchedEntityData.defineId(SCP843.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> NUTRIENTS = SynchedEntityData.defineId(SCP843.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> THIRST = SynchedEntityData.defineId(SCP843.class, EntityDataSerializers.FLOAT);
@@ -39,9 +40,30 @@ public class SCP843 extends PathfinderMob implements NeedsUser<SCP843>, Socializ
     private static final EntityDataAccessor<Float> HYGIENE = SynchedEntityData.defineId(SCP843.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> RECREATION = SynchedEntityData.defineId(SCP843.class, EntityDataSerializers.FLOAT);
 
-
     protected SCP843(EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level);
+    }
+
+    @Override
+    protected Character initializeCharacter() {
+        return null;
+    }
+
+    @Override
+    protected Map<Need, NeedInstance> initializeNeeds() {
+        HashMap<Need, NeedInstance> statConfigs = new HashMap<>();
+        statConfigs.put(Need.SUNLIGHT, new NeedInstance(-0.001f, value -> Math.pow(100 - value, 1.5), BitterActivity.PHOTOSYNTHESIZE.get()));
+        statConfigs.put(Need.NUTRIENTS, new NeedInstance(0.002f, value -> Math.pow(100 - value, 1.5), BitterActivity.EAT.get()));
+        statConfigs.put(Need.THIRST, new NeedInstance(0.003f, value -> Math.pow(100 - value, 1.5), BitterActivity.DRINK.get()));
+        statConfigs.put(Need.PROCREATION, new NeedInstance(0.0001f, value -> (double) value, BitterActivity.PROCREATE.get()));
+        statConfigs.put(Need.SOCIALIZATION, new NeedInstance(0.001f, value -> Math.pow(value, 1.5), BitterActivity.SOCIALIZE.get()));
+        statConfigs.put(Need.REST, new NeedInstance(0f, value -> Math.pow(value, 0.2), Activity.REST));
+        statConfigs.put(Need.BLADDER, new NeedInstance(0.0015f, value -> (double) value, BitterActivity.URINATE.get()));
+        statConfigs.put(Need.DEFECATION, new NeedInstance(0.001f, value -> (double) value, BitterActivity.DEFECATE.get()));
+        statConfigs.put(Need.MOVEMENT, new NeedInstance(0.001f, value -> Math.pow(value, 1.2), BitterActivity.EXPLORE.get()));
+        statConfigs.put(Need.HYGIENE, new NeedInstance(0.001f, value -> Math.pow(value, 1.3), BitterActivity.GROOM.get()));
+        statConfigs.put(Need.RECREATION, new NeedInstance(0.001f, value -> Math.pow(value, 1.3), BitterActivity.PLAY.get()));
+        return statConfigs;
     }
 
     @Override
@@ -49,30 +71,6 @@ public class SCP843 extends PathfinderMob implements NeedsUser<SCP843>, Socializ
         return ObjectArrayList.of(
                 new NearbyBlocksSensor<>(),
                 new NearbyItemsSensor<>()
-        );
-    }
-
-    @Override
-    public List<Need<SCP843>> getNeeds() {
-        return List.of(
-                new Need<>(
-                        SUNLIGHT,
-                        BitterActivity.PHOTOSYNTHESIZE.get(),
-                        value -> (float) Math.pow(100 - value, 1.5),
-                        value -> true
-                ),
-                new Need<>(
-                        NUTRIENTS,
-                        BitterActivity.EAT.get(),
-                        value -> (float) Math.pow(100 - value, 1.5),
-                        value -> true
-                ),
-                new Need<>(
-                        THIRST,
-                        BitterActivity.DRINK.get(),
-                        value -> (float) Math.pow(100 - value, 1.5),
-                        value -> true
-                )
         );
     }
 
@@ -93,26 +91,6 @@ public class SCP843 extends PathfinderMob implements NeedsUser<SCP843>, Socializ
 
         );
     }
-
-    @Override
-    public float getMood() {
-        return 0;
-    }
-
-    @Override
-    public float getStat(@NotNull NeedsStat stat) {
-        return 0;
-    }
-
-    @Override
-    public void setStat(@NotNull NeedsStat stat, float value) {
-
-    }
-
-    public void modifySunlight(float amount) {
-
-    }
-
 
     @Override
     public Map<Character, Relationship> getRelationships() {
