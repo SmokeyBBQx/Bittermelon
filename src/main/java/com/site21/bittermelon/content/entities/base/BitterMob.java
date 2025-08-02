@@ -26,12 +26,11 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
 public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob implements SmartBrainOwner<T>, NeedsUser<T> {
-    private final Map<NeedsStat, StatConfig> stats;
+    private Map<NeedsStat, StatConfig> stats;
     private final int behaviorRandomness;
 
     protected BitterMob(EntityType<? extends PathfinderMob> entityType, Level level, int behaviorRandomness) {
         super(entityType, level);
-        this.stats = initializeStats();
 
         this.behaviorRandomness = behaviorRandomness;
 
@@ -94,27 +93,34 @@ public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob im
         return mood / getNeeds().size();
     }
 
+    protected Map<NeedsStat, StatConfig> getStats() {
+        if (stats == null) {
+            stats = initializeStats();
+        }
+        return stats;
+    }
+
     @Override
     public float getStat(@NotNull NeedsStat stat) {
-        StatConfig config = stats.get(stat);
+        StatConfig config = getStats().get(stat);
         return this.entityData.get(config.accessor());
     }
 
     @Override
     public void setStat(@NotNull NeedsStat stat, float value) {
-        StatConfig config = stats.get(stat);
+        StatConfig config = getStats().get(stat);
         this.entityData.set(config.accessor(), Math.min(100, Math.max(0, value)));
     }
 
     public EntityDataAccessor<Float> getDataAccessor(NeedsStat stat) {
-        return stats.get(stat).accessor();
+        return getStats().get(stat).accessor();
     }
 
     @Override
     public void tick() {
         super.tick();
 
-        for (Map.Entry<NeedsStat, StatConfig> entry : stats.entrySet()) {
+        for (Map.Entry<NeedsStat, StatConfig> entry : getStats().entrySet()) {
             StatConfig config = entry.getValue();
             if (config.decayRate() != 0) {
                 modifyStat(entry.getKey(), config.decayRate());
@@ -124,21 +130,9 @@ public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob im
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
-        super.defineSynchedData(builder);
-        if (stats == null) {
-            initializeStats();
-        } else {
-            for (StatConfig stat : stats.values()) {
-                builder.define(stat.accessor(), 0f);
-            }
-        }
-    }
-
-    @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        for (NeedsStat stat : stats.keySet()) {
+        for (NeedsStat stat : getStats().keySet()) {
             compound.putFloat(stat.saveKey(), getStat(stat));
         }
     }
@@ -146,8 +140,20 @@ public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob im
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        for (NeedsStat stat : stats.keySet()) {
+        for (NeedsStat stat : getStats().keySet()) {
             setStat(stat, compound.getFloat(stat.saveKey()));
+        }
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
+        super.defineSynchedData(builder);
+        if (stats == null) {
+            stats = initializeStats();
+        }
+
+        for (StatConfig stat : stats.values()) {
+            builder.define(stat.accessor(), 0f);
         }
     }
 

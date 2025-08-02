@@ -43,4 +43,5 @@ public class BitterMobEffects {
     public static final Holder<MobEffect> EYE_IRRITATION = MOB_EFFECTS.register("eye_irritation", () -> new BitterEffect(MobEffectCategory.HARMFUL, 0));
     public static final Holder<MobEffect> FAINTING = MOB_EFFECTS.register("fainting", () -> new BitterEffect(MobEffectCategory.HARMFUL, 0));
     public static final Holder<MobEffect> UNCONSCIOUS = MOB_EFFECTS.register("unconscious", () -> new BitterEffect(MobEffectCategory.HARMFUL, 0));
+    public static final Holder<MobEffect> HALLUCINATION = MOB_EFFECTS.register("hallucination", () -> new BitterEffect(MobEffectCategory.NEUTRAL, 0));
 }

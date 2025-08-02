@@ -56,7 +56,7 @@ public class AnimalMedicalStats extends MedicalStats {
             }
         }
 
-        System.out.println(oxygenSaturation);
+        System.out.println(getRespiration());
     }
 
     private float getRespirationAmount() {

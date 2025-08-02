@@ -1,13 +1,12 @@
 package com.site21.bittermelon.init.custom;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.content.medical.compartments.MedicalAttribute;
 import com.site21.bittermelon.content.medical.drugs.Drug;
 import com.site21.bittermelon.content.medical.drugs.implementations.CyanideDrug;
-import net.minecraft.core.Holder;
+import com.site21.bittermelon.content.medical.drugs.implementations.SpaceMirageDrug;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-
-import java.util.function.Supplier;
 
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.DRUG_REGISTRY_KEY;
 
@@ -15,4 +14,6 @@ public class Drugs {
     public static final DeferredRegister<Drug> DRUGS = DeferredRegister.create(DRUG_REGISTRY_KEY, Bittermelon.MOD_ID);
 
     public static final DeferredHolder<Drug, CyanideDrug> CYANIDE = DRUGS.register("cyanide", CyanideDrug::new);
+    public static final DeferredHolder<Drug, Drug> SPACE_MIRAGE = DRUGS.register("space_mirage",
+            () -> new SpaceMirageDrug(2, 5).setAttribute(MedicalAttribute.RESPIRATION, 0.9f));
 }

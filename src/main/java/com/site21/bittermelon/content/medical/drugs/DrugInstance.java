@@ -65,7 +65,7 @@ public class DrugInstance {
         for (Map.Entry<MedicalAttribute, Float> entry : drug.value().getAttributes().entrySet()) {
             medicalStats.getAttributes().get(entry.getKey()).addModifier(id,
                     new MedicalAttributeModifier(MedicalAttributeModifier.Operation.MULTIPLIER,
-                            entry.getValue() * absorbedAmount / 10));
+                            entry.getValue() * absorbedAmount));
         }
     }
 

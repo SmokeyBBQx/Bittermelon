@@ -39,7 +39,8 @@ public class Drug {
         return attributes;
     }
 
-    public void setAttribute(MedicalAttribute attribute, float value) {
+    public Drug setAttribute(MedicalAttribute attribute, float value) {
         attributes.put(attribute, value);
+        return this;
     }
 }

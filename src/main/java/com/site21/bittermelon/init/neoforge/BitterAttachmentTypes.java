@@ -41,4 +41,12 @@ public class BitterAttachmentTypes {
     public static final Supplier<AttachmentType<Integer>> STEP_COUNTER = ATTACHMENT_TYPES.register(
             "step_counter", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).build()
     );
+
+    public static final Supplier<AttachmentType<Integer>> STRESS = ATTACHMENT_TYPES.register(
+            "stress", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).build()
+    );
+
+    public static final Supplier<AttachmentType<Integer>> FEAR = ATTACHMENT_TYPES.register(
+            "fear", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).build()
+    );
 }

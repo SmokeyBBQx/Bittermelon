@@ -44,7 +44,7 @@ public class MedicalAttributeInstance {
     }
 
     public void addModifier(UUID uuid, MedicalAttributeModifier modifier) {
-        if (getModifiers().get(uuid).equals(modifier)) return;
+        if (getModifier(uuid).equals(modifier)) return;
         modifiers.put(uuid, modifier);
         updateValue();
     }
@@ -61,7 +61,7 @@ public class MedicalAttributeInstance {
     }
 
     public float getValue() {
-        if (value.isNaN()) return updateValue();
+        if (value == null) return updateValue();
         return value;
     }
 
