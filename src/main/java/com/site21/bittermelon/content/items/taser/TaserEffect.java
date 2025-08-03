@@ -21,7 +21,7 @@ public class TaserEffect extends ElectrocutedEffect {
 
     @Override
     public boolean applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
-        if (entity.tickCount % 98 == 0) {
+        if (entity.tickCount % 19 == 0) {
             entity.level().playSound(null, entity.getOnPos(), BitterSounds.TASER.get(), SoundSource.PLAYERS, 0.05f, 1);
         }
         return true;

@@ -5,6 +5,7 @@ import com.site21.bittermelon.content.items.GermTest;
 import com.site21.bittermelon.content.items.IntercomPhoneItem;
 import com.site21.bittermelon.content.items.KeycardItem;
 import com.site21.bittermelon.content.items.medical.tools.SyringeItem;
+import com.site21.bittermelon.content.items.mop.MopItem;
 import com.site21.bittermelon.content.items.scps.SCP109;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
@@ -408,5 +409,12 @@ public class BitterItems {
             ItemWeight.VERY_LIGHT,
             10,
             10
+    ));
+
+    public static final DeferredItem<MopItem> MOP = ITEMS.register("mop", () -> new MopItem(
+            new Item.Properties(),
+            1,
+            2,
+            ItemWeight.VERY_LIGHT
     ));
 }

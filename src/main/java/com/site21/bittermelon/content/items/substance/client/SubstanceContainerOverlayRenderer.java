@@ -21,6 +21,7 @@ public class SubstanceContainerOverlayRenderer {
         if (minecraft.player != null) {
             ItemStack heldItem = minecraft.player.getMainHandItem();
             Item item = heldItem.getItem();
+
             if (item instanceof FluidContainerItem) {
                 int transferRate = FluidContainerItem.getTransferRate(heldItem);
                 Component text = Component.literal("Transfer Rate: " + transferRate);

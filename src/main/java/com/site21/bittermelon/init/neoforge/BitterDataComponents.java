@@ -150,4 +150,6 @@ public class BitterDataComponents {
             "blood_data",
             builder -> builder.persistent(BloodData.CODEC).networkSynchronized(BloodData.STREAM_CODEC)
     );
+
+
 }

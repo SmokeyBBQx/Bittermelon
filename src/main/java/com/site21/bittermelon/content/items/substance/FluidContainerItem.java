@@ -125,7 +125,10 @@ public class FluidContainerItem extends SubstanceContainerItem {
         BlockState existingState = level.getBlockState(spillPos);
         BlockState clickedOnState = level.getBlockState(clickedOnPos);
 
-        if (clickedOnState.getBlock() instanceof FluidBlock) {
+       if (clickedOnState.canBeReplaced()) {
+           if (!(clickedOnState.getBlock() instanceof FluidBlock)) {
+               level.setBlock(clickedOnPos, FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
+           }
             transferSubstancesToBlock(clickedOnPos, level, stack, getLimitedTransferRate(stack));
         } else if (existingState.canBeReplaced()) {
             level.setBlock(spillPos, FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
