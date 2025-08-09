@@ -14,6 +14,7 @@ import com.site21.bittermelon.content.entities.implementations.scp650.client.SCP
 import com.site21.bittermelon.content.entities.implementations.scp939.client.SCP939Renderer;
 import com.site21.bittermelon.content.items.substance.PowderedSubstanceItem;
 import com.site21.bittermelon.content.items.substance.SubstanceContainerItem;
+import com.site21.bittermelon.content.items.substance.pill.PillShape;
 import com.site21.bittermelon.content.items.taser.TaserProjectileRenderer;
 import com.site21.bittermelon.init.neoforge.BitterBlockEntities;
 import net.minecraft.client.Minecraft;
@@ -33,10 +34,9 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.client.LargeSlidingDoorRenderer.*;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.LIT;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 import static com.site21.bittermelon.init.neoforge.BitterEntities.*;
-import static com.site21.bittermelon.init.neoforge.BitterItems.CIGARETTE;
-import static com.site21.bittermelon.init.neoforge.BitterItems.POWDER;
+import static com.site21.bittermelon.init.neoforge.BitterItems.*;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientSetup {
@@ -61,6 +61,12 @@ public class ClientSetup {
                 (stack, level, entity, seed) -> PowderedSubstanceItem.getTextureLevel(stack)
         );
 
+        ItemProperties.register(
+                PILL.get(),
+                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "pill_shape"),
+                (stack, level, entity, seed) -> stack.getOrDefault(PILL_SHAPE, PillShape.ROUND).ordinal()
+        );
+
         ItemColors itemColors = Minecraft.getInstance().getItemColors();
 
         itemColors.register((stack, tintIndex) -> {
@@ -69,6 +75,14 @@ public class ClientSetup {
                     }
                     return 0xFFFFFF;
                 }, POWDER.get()
+        );
+
+        itemColors.register((stack, tintIndex) -> {
+                    if (tintIndex == 0) {
+                        return stack.getOrDefault(COLOR, 0xFFFFFFFF);
+                    }
+                    return 0xFFFFFFFF;
+                }, PILL.get()
         );
     }
 

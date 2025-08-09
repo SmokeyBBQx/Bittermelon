@@ -129,7 +129,6 @@ public class SubstanceContainerItem extends BaseItem implements ReactionContaine
         if (color != -1) return color;
 
         return updateColor(stack);
-
     }
 
     public int updateColor(ItemStack stack) {

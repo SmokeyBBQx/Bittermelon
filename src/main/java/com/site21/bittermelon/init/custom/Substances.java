@@ -74,4 +74,15 @@ public class Substances {
                     .slipperiness(0.5f)
                     .flavor("oily")
     ));
+
+    public static final Supplier<Substance> SPACE_MIRAGE = SUBSTANCES.register("space_mirage", () -> new Substance(
+            "Space Mirage",
+            new Substance.Properties()
+                    .density(0.93f)
+                    .molarMass(880)
+                    .color(0xFFB1A5C2)
+                    .slipperiness(0.5f)
+                    .drug(Drugs.SPACE_MIRAGE)
+                    .flavor("oily")
+    ));
 }

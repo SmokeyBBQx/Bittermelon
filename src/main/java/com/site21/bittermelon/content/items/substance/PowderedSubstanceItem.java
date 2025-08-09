@@ -54,7 +54,7 @@ public class PowderedSubstanceItem extends SubstanceContainerItem {
 
         stack = consumeSubstances(stack, 2, entity);
         if (getTotalVolume(stack) <= 0) {
-            return Items.AIR.getDefaultInstance();
+            return ItemStack.EMPTY;
         }
 
         return stack;

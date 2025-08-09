@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.items.itemcontainers.client.ItemContainerContents;
 import com.site21.bittermelon.content.items.substance.data.SubstanceContents;
+import com.site21.bittermelon.content.items.substance.pill.PillShape;
 import com.site21.bittermelon.content.medical.blood.BloodData;
 import com.site21.bittermelon.content.medical.compartments.CompartmentData;
 import net.minecraft.core.BlockPos;
@@ -154,5 +155,10 @@ public class BitterDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> COLOR = DATA_COMPONENTS.registerComponentType(
             "color",
             builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<PillShape>> PILL_SHAPE = DATA_COMPONENTS.registerComponentType(
+            "pill_shape",
+            builder -> builder.persistent(PillShape.CODEC).networkSynchronized(PillShape.STREAM_CODEC)
     );
 }

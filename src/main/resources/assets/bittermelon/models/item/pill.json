@@ -1,0 +1,23 @@
+{
+  "parent": "item/generated",
+  "overrides": [
+    {
+      "predicate": {
+        "bittermelon:pill_shape": 0
+      },
+      "model": "bittermelon:item/pill_round"
+    },
+    {
+      "predicate": {
+        "bittermelon:pill_shape": 1
+      },
+      "model": "bittermelon:item/pill_oval"
+    },
+    {
+      "predicate": {
+        "bittermelon:pill_shape": 2
+      },
+      "model": "bittermelon:item/pill_capsule"
+    }
+  ]
+}
