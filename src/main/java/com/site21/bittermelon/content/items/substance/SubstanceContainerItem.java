@@ -6,6 +6,7 @@ import com.site21.bittermelon.content.items.substance.data.SubstanceContents;
 import com.site21.bittermelon.content.substance.Substance;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import com.site21.bittermelon.content.substance.reactions.ReactionContainer;
+import com.site21.bittermelon.util.ColorUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -17,14 +18,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.LAST_UPDATED;
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.SUBSTANCE_CONTENTS;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 
 public class SubstanceContainerItem extends BaseItem implements ReactionContainer {
     protected final int capacity;
@@ -126,6 +123,29 @@ public class SubstanceContainerItem extends BaseItem implements ReactionContaine
         return stack;
     }
 
+    public int getColor(@NotNull ItemStack stack) {
+        int color = stack.getOrDefault(COLOR, -1);
+
+        if (color != -1) return color;
+
+        return updateColor(stack);
+
+    }
+
+    public int updateColor(ItemStack stack) {
+        int color;
+
+        Map<Integer, Float> colors = new HashMap<>();
+        for (SubstanceStack substance : getContents(stack)) {
+            colors.put(substance.getSubstance().getColor(), substance.getAmount());
+        }
+
+        color = colors.isEmpty() ? 0xFFFFFFFF : ColorUtil.mixColors(colors);
+        stack.set(COLOR, color);
+
+        return color;
+    }
+
     @Override
     public boolean isBarVisible(@NotNull ItemStack stack) {
         return true;
@@ -147,6 +167,26 @@ public class SubstanceContainerItem extends BaseItem implements ReactionContaine
     }
 
     protected Component getFlavorMessageComponent(ItemStack stack) {
+        return getSensoryMessageComponent(
+                stack,
+                "Tastes",
+                "Tastes like...",
+                "Tastes like a noticeable blend of",
+                "notes.",
+                "Tastes strongly");
+    }
+
+    protected Component getSmellMessageComponent(ItemStack stack) {
+        return getSensoryMessageComponent(
+                stack,
+                "Smells",
+                "Smells...",
+                "Smells noticeably",
+                "",
+                "Smells strongly");
+    }
+
+    private Component getSensoryMessageComponent(ItemStack stack, String singleVerb, String multipleMain, String mediumPrefix, String mediumSuffix, String strongPrefix) {
         List<SubstanceStack> substances = getContents(stack);
         float totalVolume = getSubstanceData(stack).getTotalVolume();
 
@@ -158,12 +198,11 @@ public class SubstanceContainerItem extends BaseItem implements ReactionContaine
             String flavor = substances.getFirst().getSubstance().getFlavor();
             if (flavor.isEmpty()) return Component.empty();
 
-            String flavorDescription = "Tastes " + flavor + ".";
-
-            return Component.literal(flavorDescription).withStyle(ChatFormatting.GREEN);
+            String description = singleVerb + " " + flavor + ".";
+            return Component.literal(description).withStyle(ChatFormatting.GREEN);
         }
 
-        MutableComponent mainComponent = Component.literal("Tastes like...").withStyle(ChatFormatting.GREEN);
+        MutableComponent mainComponent = Component.literal(multipleMain).withStyle(ChatFormatting.GREEN);
 
         String hoverText = substances.stream()
                 .filter(substance -> {
@@ -174,17 +213,14 @@ public class SubstanceContainerItem extends BaseItem implements ReactionContaine
                     float volume = substance.getVolume();
                     float percentageAmount = volume / totalVolume * 100;
                     String flavor = substance.getSubstance().getFlavor();
-                    String flavorDescription;
 
                     if (percentageAmount <= 35) {
-                        flavorDescription = "Has a faint hint of " + flavor + " tones.";
+                        return "Has a faint hint of " + flavor + " tones.";
                     } else if (percentageAmount <= 65) {
-                        flavorDescription = "Tastes like a noticeable blend of " + flavor + " notes.";
+                        return mediumPrefix + " " + flavor + " " + mediumSuffix;
                     } else {
-                        flavorDescription = "Tastes strongly " + flavor + ".";
+                        return strongPrefix + " " + flavor + ".";
                     }
-
-                    return flavorDescription;
                 })
                 .collect(Collectors.joining("\n"));
 
@@ -193,6 +229,7 @@ public class SubstanceContainerItem extends BaseItem implements ReactionContaine
     }
 
     private void updateVisuals(@NotNull ItemStack stack) {
+        updateColor(stack);
         stack.set(LAST_UPDATED.get(), System.currentTimeMillis());
     }
 

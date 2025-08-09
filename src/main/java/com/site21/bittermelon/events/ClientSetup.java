@@ -12,11 +12,16 @@ import com.site21.bittermelon.content.entities.implementations.scp1507.client.SC
 import com.site21.bittermelon.content.entities.implementations.scp650.SCP650;
 import com.site21.bittermelon.content.entities.implementations.scp650.client.SCP650Renderer;
 import com.site21.bittermelon.content.entities.implementations.scp939.client.SCP939Renderer;
+import com.site21.bittermelon.content.items.substance.PowderedSubstanceItem;
+import com.site21.bittermelon.content.items.substance.SubstanceContainerItem;
 import com.site21.bittermelon.content.items.taser.TaserProjectileRenderer;
 import com.site21.bittermelon.init.neoforge.BitterBlockEntities;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -31,6 +36,7 @@ import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.LIT;
 import static com.site21.bittermelon.init.neoforge.BitterEntities.*;
 import static com.site21.bittermelon.init.neoforge.BitterItems.CIGARETTE;
+import static com.site21.bittermelon.init.neoforge.BitterItems.POWDER;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientSetup {
@@ -41,6 +47,28 @@ public class ClientSetup {
                 CIGARETTE.get(),
                 ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "lit"),
                 (stack, level, entity, seed) -> Boolean.TRUE.equals(stack.get(LIT)) ? 1f : 0f
+        );
+
+        ItemProperties.register(
+                CIGARETTE.get(),
+                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "smoking"),
+                (stack, level, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1f : 0f
+        );
+
+        ItemProperties.register(
+                POWDER.get(),
+                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "level"),
+                (stack, level, entity, seed) -> PowderedSubstanceItem.getTextureLevel(stack)
+        );
+
+        ItemColors itemColors = Minecraft.getInstance().getItemColors();
+
+        itemColors.register((stack, tintIndex) -> {
+                    if (stack.getItem() instanceof SubstanceContainerItem item) {
+                        return item.getColor(stack);
+                    }
+                    return 0xFFFFFF;
+                }, POWDER.get()
         );
     }
 

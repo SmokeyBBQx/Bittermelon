@@ -51,6 +51,7 @@ public class BitterSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> TASER_SHOOT = register("item.taser_shoot");
     public static final DeferredHolder<SoundEvent, SoundEvent> SLIP = register("misc.slip");
     public static final DeferredHolder<SoundEvent, SoundEvent> SOGGY = register("misc.soggy");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SNORT = register("misc.snort");
 
     private static @NotNull DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return SOUND_EVENTS.register(name, () ->

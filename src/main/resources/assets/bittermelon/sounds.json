@@ -237,10 +237,10 @@
       "bittermelon:misc/slip"
     ]
   },
-  "misc.soggy": {
-    "category": "ambient",
+  "misc.snort": {
+    "category": "players",
     "sounds": [
-      "bittermelon:misc/soggy"
+      "bittermelon:misc/snort"
     ]
   },
   "container.toolbox_open": {

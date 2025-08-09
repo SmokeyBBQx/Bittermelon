@@ -151,5 +151,8 @@ public class BitterDataComponents {
             builder -> builder.persistent(BloodData.CODEC).networkSynchronized(BloodData.STREAM_CODEC)
     );
 
-
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> COLOR = DATA_COMPONENTS.registerComponentType(
+            "color",
+            builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
+    );
 }

@@ -12,6 +12,7 @@ import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.handheldprogrammer.HandheldProgrammerItem;
 import com.site21.bittermelon.content.items.scps.scp2398.SCP2398;
 import com.site21.bittermelon.content.items.smokable.SmokableItem;
+import com.site21.bittermelon.content.items.substance.PowderedSubstanceItem;
 import com.site21.bittermelon.content.items.taser.TaserItem;
 import com.site21.bittermelon.content.items.wires.networkcable.NetworkCable;
 import com.site21.bittermelon.content.items.cardboardbox.CardboardBoxItem;
@@ -416,5 +417,13 @@ public class BitterItems {
             1,
             2,
             ItemWeight.VERY_LIGHT
+    ));
+
+    public static final DeferredItem<PowderedSubstanceItem> POWDER = ITEMS.register("powder", () -> new PowderedSubstanceItem(
+            new Item.Properties(),
+            1,
+            1,
+            ItemWeight.VERY_LIGHT,
+            20
     ));
 }

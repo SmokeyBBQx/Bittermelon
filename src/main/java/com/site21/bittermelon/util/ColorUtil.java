@@ -24,7 +24,7 @@ public final class ColorUtil {
         int green = Math.round(greenSum / totalAmount);
         int blue = Math.round(blueSum / totalAmount);
 
-        return (red << 16) | (green << 8) | blue;
+        return 0xFF000000 | (red << 16) | (green << 8) | blue;
     }
 
     @Contract("_ -> new")
