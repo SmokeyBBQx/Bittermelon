@@ -5,6 +5,8 @@ import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.substance.FluidContainerItem;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -25,7 +27,7 @@ import static com.site21.bittermelon.init.neoforge.BitterDataComponents.TRANSFER
 
 public class MopItem extends FluidContainerItem {
     public MopItem(Properties properties, int width, int height, ItemWeight itemWeight) {
-        super(properties, width, height, itemWeight, 30, 15, false);
+        super(properties, width, height, itemWeight, 50, 20, false);
     }
 
     @Override
@@ -116,5 +118,25 @@ public class MopItem extends FluidContainerItem {
             return ((BlockHitResult) hitResult).getBlockPos();
         }
         return null;
+    }
+
+    @Override
+    public void onUseTick(@NotNull Level level, @NotNull LivingEntity entity, ItemStack stack, int remainingUseDuration) {
+        if (remainingUseDuration % 8 == 0) {
+            entity.level().playSound(null, entity.getOnPos(), SoundEvents.SPONGE_ABSORB, SoundSource.BLOCKS,
+                    0.3F, 1.0F + (entity.getRandom().nextFloat() * 0.4F));
+        }
+    }
+
+    @Override
+    protected void playEmptySound(@NotNull Level level, BlockPos pos) {
+        level.playSound(null, pos,
+                SoundEvents.SPONGE_ABSORB, SoundSource.PLAYERS, 0.5F, 1.5F);
+    }
+
+    @Override
+    protected void playFillSound(@NotNull Level level, BlockPos pos) {
+        level.playSound(null, pos,
+                SoundEvents.SPONGE_ABSORB, SoundSource.PLAYERS, 0.5F, 1.0F);
     }
 }

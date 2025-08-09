@@ -182,8 +182,7 @@ public class FluidContainerItem extends SubstanceContainerItem {
             playFillSound(level, player.getOnPos());
         }
     }
-
-
+    
     protected void transferSubstances(ItemStack sourceStack, float totalVolume, float transferRate, SubstanceTransferHandler handler) {
         if (totalVolume <= 0) return;
 

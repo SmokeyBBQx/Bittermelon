@@ -3,12 +3,71 @@
   "textures": {
     "layer0": "bittermelon:item/cigarette_unlit"
   },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        0,
+        -90,
+        -37
+      ],
+      "translation": [
+        -0.75,
+        0,
+        -0.5
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        0,
+        90,
+        37
+      ],
+      "translation": [
+        -0.75,
+        0,
+        -0.5
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "head": {
+      "rotation": [
+        0,
+        -90,
+        -45
+      ],
+      "translation": [
+        -0.25,
+        -4.5,
+        -9.25
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    }
+  },
   "overrides": [
     {
       "predicate": {
         "bittermelon:lit": 1.0
       },
       "model": "bittermelon:item/cigarette_lit"
+    },
+    {
+      "predicate": {
+        "bittermelon:smoking": 1.0
+      },
+      "model": "bittermelon:item/cigarette_smoking"
     }
   ]
 }

@@ -17,6 +17,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -28,10 +29,14 @@ import org.jetbrains.annotations.NotNull;
 import static com.site21.bittermelon.init.custom.Substances.BLOOD;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.LIT;
 import static com.site21.bittermelon.init.neoforge.BitterItemTags.LIGHTER;
+import static com.site21.bittermelon.init.neoforge.BitterItems.CIGARETTE_BUTT;
 import static com.site21.bittermelon.util.LocalMessageHelper.sendLocalMessage;
 
-public class SmokableItem extends SubstanceContainerItem {
+public class SmokableItem extends SubstanceContainerItem implements Equipable {
     private final Item buttItem;
+    private static final int SMOKE_TICK_INTERVAL = 200;
+    private static final double PARTICLE_OFFSET_DISTANCE = 0.3;
+    private static final double PARTICLE_OFFSET_HEIGHT = 1.6;
 
     public SmokableItem(Properties properties, int width, int height, ItemWeight itemWeight, int capacity, Item buttItem) {
         super(properties, width, height, itemWeight, capacity);
@@ -48,43 +53,41 @@ public class SmokableItem extends SubstanceContainerItem {
         ItemStack smokableItem = player.getItemInHand(hand);
         ItemStack otherItem = player.getItemInHand(otherHand);
 
-        if (Boolean.FALSE.equals(smokableItem.get(LIT)) || smokableItem.get(LIT) == null) {
-            // TODO: Tag still doesn't work
-            if (otherItem.is(LIGHTER) || otherItem.is(Items.FLINT_AND_STEEL)) {
-                // TODO: Replace this with actual substance handling
-                updateSubstance(smokableItem, new SubstanceStack(BLOOD.get(), 0.8f));
-                level.playSound(
-                        null,
-                        player.getOnPos(),
-                        SoundEvents.FLINTANDSTEEL_USE,
-                        SoundSource.PLAYERS,
-                        0.5F,
-                        level.getRandom().nextFloat() * 0.1F + 0.9F
-                );
-                smokableItem.set(LIT, true);
-                if (otherItem.isStackable()) {
-                    otherItem.consume(1, player);
-                } else {
-                    otherItem.hurtAndBreak(1, player, player.getEquipmentSlotForItem(otherItem));
-                }
-                return InteractionResultHolder.consume(smokableItem);
-            } else {
-                level.playSound(null, player.getOnPos(),
-                        SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.5F,
-                        level.getRandom().nextFloat() * 0.1F + 0.9F);
-
-                Character character = CharacterManager.get(level).getActiveCharacter(player);
-                if (character != null) {
-                    Component component = Component.literal(character.getName() + " swallows " + smokableItem.getHoverName().getString() + ".")
-                            .setStyle(Style.EMPTY.withColor(character.getEmoteColor()));
-                    sendLocalMessage(player, 5, component);
-                }
-                smokableItem.consume(1, player);
-                return InteractionResultHolder.consume(smokableItem);
-            }
+        if (!Boolean.TRUE.equals(smokableItem.get(LIT))) {
+            return handleLightingOrSwallowing(level, player, smokableItem, otherItem);
         }
 
         return ItemUtils.startUsingInstantly(level, player, hand);
+    }
+
+    private @NotNull InteractionResultHolder<ItemStack> handleLightingOrSwallowing(Level level, Player player,
+                                                                                   ItemStack smokableItem, @NotNull ItemStack otherItem) {
+        if (otherItem.is(LIGHTER) || otherItem.is(Items.FLINT_AND_STEEL)) {
+            SubstanceStack substance = new SubstanceStack(BLOOD.get(), 0);
+            substance.setVolume(capacity);
+            updateSubstance(smokableItem, substance);
+
+            playLightingSound(level, player);
+            smokableItem.set(LIT, true);
+
+            if (otherItem.isStackable()) {
+                otherItem.consume(1, player);
+            } else {
+                otherItem.hurtAndBreak(1, player, player.getEquipmentSlotForItem(otherItem));
+            }
+        } else {
+            Character character = CharacterManager.get(level).getActiveCharacter(player);
+            if (character != null) {
+                Component message = Component.literal(
+                                character.getName() + " swallows " + smokableItem.getHoverName().getString() + ".")
+                        .setStyle(Style.EMPTY.withColor(character.getEmoteColor()));
+                sendLocalMessage(player, 5, message);
+            }
+
+            playSwallowSound(level, player);
+            smokableItem.consume(1, player);
+        }
+        return InteractionResultHolder.consume(smokableItem);
     }
 
     @Override
@@ -149,11 +152,6 @@ public class SmokableItem extends SubstanceContainerItem {
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
-        // TODO: Simulate with reaction handler
-    }
-
-    @Override
     public boolean onEntityItemUpdate(@NotNull ItemStack stack, @NotNull ItemEntity entity) {
         if (entity.isUnderWater() && !entity.level().isClientSide) {
             entity.setItem(buttItem.getDefaultInstance());
@@ -161,6 +159,42 @@ public class SmokableItem extends SubstanceContainerItem {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public @NotNull EquipmentSlot getEquipmentSlot() {
+        return EquipmentSlot.HEAD;
+    }
+
+    @Override
+    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
+        if (!level.isClientSide && Boolean.TRUE.equals(stack.get(LIT))) {
+            if (slotId == 39 && entity instanceof LivingEntity livingEntity) {
+                if (level.getGameTime() % SMOKE_TICK_INTERVAL == 0) {
+                    playSmokeSound(level, entity);
+                    addSmokeParticles(level, entity);
+                    consumeSubstances(stack, 1, livingEntity);
+
+                    if (getTotalAmount(stack) < 0.1f) {
+                        ((LivingEntity) entity).setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
+
+                        if (entity instanceof Player player) {
+                            player.addItem(CIGARETTE_BUTT.toStack());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void playLightingSound(@NotNull Level level, @NotNull Player player) {
+        level.playSound(null, player.getOnPos(), SoundEvents.FLINTANDSTEEL_USE,
+                SoundSource.PLAYERS, 0.5F, level.getRandom().nextFloat() * 0.1F + 0.9F);
+    }
+
+    private void playSwallowSound(@NotNull Level level, @NotNull Player player) {
+        level.playSound(null, player.getOnPos(), SoundEvents.PLAYER_BURP,
+                SoundSource.PLAYERS, 0.5F, level.getRandom().nextFloat() * 0.1F + 0.9F);
     }
 
     public void playExtinguishSound(@NotNull Level level, @NotNull Entity entity) {
@@ -185,49 +219,28 @@ public class SmokableItem extends SubstanceContainerItem {
         );
     }
 
-    public void addSmokeParticles(@NotNull Level level, @NotNull Entity entity) {
-        if (level instanceof ServerLevel serverLevel) {
-            if (entity instanceof Player player) {
-                float yRot = player.getYRot();
+    private void addSmokeParticles(@NotNull Level level, @NotNull Entity entity) {
+        if (level instanceof ServerLevel serverLevel && entity instanceof Player player) {
+            float yRot = player.getYRot();
+            double offsetX = -Math.sin(Math.toRadians(yRot)) * PARTICLE_OFFSET_DISTANCE;
+            double offsetZ = Math.cos(Math.toRadians(yRot)) * PARTICLE_OFFSET_DISTANCE;
 
-                double offsetX = -Math.sin(Math.toRadians(yRot)) * 0.3;
-                double offsetY = 1.6;
-                double offsetZ = Math.cos(Math.toRadians(yRot)) * 0.3;
-
-                serverLevel.sendParticles(
-                        ParticleTypes.CAMPFIRE_COSY_SMOKE,
-                        entity.getX() + offsetX,
-                        entity.getY() + offsetY,
-                        entity.getZ() + offsetZ,
-                        1,
-                        0.1, 0.1, 0.1,
-                        0.01
-                );
-            }
+            serverLevel.sendParticles(
+                    ParticleTypes.CAMPFIRE_COSY_SMOKE,
+                    entity.getX() + offsetX,
+                    entity.getY() + PARTICLE_OFFSET_HEIGHT,
+                    entity.getZ() + offsetZ,
+                    1, 0.1, 0.1, 0.1, 0.01
+            );
         }
     }
 
-    public void addExtinguishParticles(Level level, BlockPos pos) {
+    private void addExtinguishParticles(Level level, BlockPos pos) {
         if (level instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(
-                    ParticleTypes.FLAME,
-                    pos.getX(),
-                    pos.getY(),
-                    pos.getZ(),
-                    1,
-                    0, 0, 0,
-                    0.01
-            );
-
-            serverLevel.sendParticles(
-                    ParticleTypes.SMOKE,
-                    pos.getX(),
-                    pos.getY(),
-                    pos.getZ(),
-                    1,
-                    0, 0, 0,
-                    0.01
-            );
+            serverLevel.sendParticles(ParticleTypes.FLAME,
+                    pos.getX(), pos.getY(), pos.getZ(), 1, 0, 0, 0, 0.01);
+            serverLevel.sendParticles(ParticleTypes.SMOKE,
+                    pos.getX(), pos.getY(), pos.getZ(), 1, 0, 0, 0, 0.01);
         }
     }
 }

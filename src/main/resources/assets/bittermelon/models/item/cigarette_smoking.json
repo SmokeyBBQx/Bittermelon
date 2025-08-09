@@ -1,0 +1,35 @@
+{
+  "format_version": "1.21.1",
+  "credit": "Made with Blockbench",
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "bittermelon:item/cigarette_lit"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [0, -90, -37],
+      "translation": [-0.75, 0, -0.5],
+      "scale": [0.4, 0.4, 0.4]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [0, 90, 37],
+      "translation": [-0.75, 0, -0.5],
+      "scale": [0.4, 0.4, 0.4]
+    },
+    "firstperson_righthand": {
+      "rotation": [0, -80, -35],
+      "translation": [-1, -4, -10],
+      "scale": [0.75, 0.75, 0.75]
+    },
+    "firstperson_lefthand": {
+      "rotation": [0, 80, 35],
+      "translation": [-1, -4, -10],
+      "scale": [0.75, 0.75, 0.75]
+    },
+    "head": {
+      "rotation": [0, -90, -45],
+      "translation": [-0.25, -4.5, -9.25],
+      "scale": [0.4, 0.4, 0.4]
+    }
+  }
+}
