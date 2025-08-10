@@ -1,6 +1,5 @@
 package com.site21.bittermelon.content.character;
 
-import com.site21.bittermelon.content.character.networking.SyncCharacters;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -15,7 +14,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -123,6 +121,16 @@ public class CharacterManager extends SavedData {
     }
 
     @OnlyIn(Dist.CLIENT)
+    public void addCharacterFromServer(Character character) {
+        characters.put(character.getUUID(), character);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void removeCharacterFromServer(UUID uuid) {
+        characters.remove(uuid);
+    }
+
+    @OnlyIn(Dist.CLIENT)
     public void updateCharacterFromServer(Character character) {
         characters.put(character.getUUID(), character);
     }
@@ -134,13 +142,9 @@ public class CharacterManager extends SavedData {
         characterList.forEach(characterTag -> {
             RegistryOps<Tag> ops = RegistryOps.create(NbtOps.INSTANCE, lookupProvider);
             Character.CODEC.parse(ops, characterTag)
-                    .resultOrPartial(error -> {
-                        System.err.println("Failed to parse character: " + error);
-                        new Exception("Debug Stack Trace").printStackTrace();
-                    })
+                    .resultOrPartial(error -> System.err.println("Failed to parse character: " + error))
                     .ifPresent(character -> manager.characters.put(character.getUUID(), character));
         });
-
 
         return manager;
     }
@@ -151,26 +155,11 @@ public class CharacterManager extends SavedData {
         characters.values().forEach(character -> {
             RegistryOps<Tag> ops = RegistryOps.create(NbtOps.INSTANCE, provider);
             Character.CODEC.encodeStart(ops, character)
-                    .resultOrPartial(error -> {
-                        System.err.println("Failed to encode character: " + error);
-                        new Exception("Debug Stack Trace").printStackTrace();
-                    })
+                    .resultOrPartial(error -> System.err.println("Failed to encode character: " + error))
                     .ifPresent(characterList::add);
         });
         tag.put("characters", characterList);
 
         return tag;
-    }
-
-    private void syncToClient() {
-        PacketDistributor.sendToAllPlayers(new SyncCharacters(characters));
-
-        // TODO: Add syncing for individual characters
-    }
-
-    @Override
-    public void setDirty() {
-        super.setDirty();
-        syncToClient();
     }
 }
