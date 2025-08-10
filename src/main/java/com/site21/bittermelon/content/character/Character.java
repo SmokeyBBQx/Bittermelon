@@ -7,14 +7,23 @@ import com.site21.bittermelon.content.medical.blood.BloodType;
 import com.site21.bittermelon.content.medical.factory.Anatomy;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import net.minecraft.core.UUIDUtil;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
+import net.minecraft.nbt.NbtIo;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.LevelResource;
+import net.neoforged.fml.loading.FMLPaths;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
@@ -122,6 +131,34 @@ public class Character {
 
     public void modifySkill(Skill skill, float amount) {
         skills.compute(skill, (k, v) -> Math.min(v == null ? 1 + amount : v + amount, skill.getMaxLevel()));
+    }
+
+    public void savePlayerData(CompoundTag data, @NotNull ServerLevel level) {
+        try {
+            Path dataDir = level.getServer().getWorldPath(LevelResource.ROOT).resolve("characterdata");
+            Files.createDirectories(dataDir);
+
+            Path playerDataFile = dataDir.resolve(uuid + ".dat");
+            NbtIo.writeCompressed(data, playerDataFile);
+        } catch (IOException e) {
+            System.err.println("Failed to save player data for " + getName() + ": " + e.getMessage());
+        }
+    }
+
+    public CompoundTag getPlayerData(@NotNull ServerLevel level) {
+        try {
+            Path worldPath = level.getServer().getWorldPath(LevelResource.ROOT);
+            Path playerDataFile = worldPath.resolve("characterdata").resolve(uuid + ".dat");
+
+            if (!Files.exists(playerDataFile)) {
+                return new CompoundTag();
+            }
+
+            return NbtIo.readCompressed(playerDataFile, NbtAccounter.unlimitedHeap());
+        } catch (IOException e) {
+            System.err.println("Failed to load player data for " + this.getName() + ": " + e.getMessage());
+            return new CompoundTag();
+        }
     }
 
     static {

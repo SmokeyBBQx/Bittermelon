@@ -36,8 +36,6 @@ public record SyncIntercomList(Map<BlockPos, String> intercomList) implements Cu
     }
 
     public void handle(@NotNull IPayloadContext ctx) {
-        IntercomManager manager = IntercomManager.get(ctx.player().level());
-        manager.getIntercomIDs().clear();
-        manager.getIntercomIDs().putAll(intercomList);
+       IntercomManager.get(ctx.player().level()).updateAllFromServer(intercomList);
     }
 }

@@ -60,7 +60,7 @@ public class CharacterCommand {
             return 0;
         }
 
-        manager.setActiveCharacter(player, targetCharacter.get().getUUID());
+        manager.switchCharacter(player, manager.getActiveCharacter(player), targetCharacter.get());
         source.sendSuccess(() -> Component.literal("Switched to character: " + name), true);
         return 1;
     }

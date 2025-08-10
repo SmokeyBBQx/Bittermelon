@@ -10,6 +10,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.neoforged.api.distmarker.Dist;
@@ -19,7 +20,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ACTIVE_CHARACTER;
 
@@ -78,7 +78,6 @@ public class CharacterManager extends SavedData {
 
     public @Nullable Character getActiveCharacter(@NotNull Entity entity) {
         UUID characterUUID = entity.getData(ACTIVE_CHARACTER.get());
-
         return characters.get(characterUUID);
     }
 
@@ -100,14 +99,6 @@ public class CharacterManager extends SavedData {
         setDirty();
     }
 
-    public void updateCharacter(UUID uuid, Consumer<Character> updater) {
-        Character character = characters.get(uuid);
-        if (character != null) {
-            updater.accept(character);
-            setDirty();
-        }
-    }
-
     public List<Character> getCharactersByEntityUUID(UUID entityUUID) {
         List<Character> characterList = new ArrayList<>();
 
@@ -118,6 +109,21 @@ public class CharacterManager extends SavedData {
         }
 
         return characterList;
+    }
+
+    public void switchCharacter(@NotNull Player player, @Nullable Character previousCharacter, @NotNull Character switchedTo) {
+        if (previousCharacter != null) {
+            CompoundTag playerData = player.saveWithoutId(new CompoundTag());
+            previousCharacter.savePlayerData(playerData, (ServerLevel) player.level());
+        }
+
+        CompoundTag newPlayerData = switchedTo.getPlayerData((ServerLevel) player.level());
+        if (newPlayerData != null) {
+            player.load(newPlayerData);
+            player.teleportTo(player.getX(), player.getY(), player.getZ());
+            player.getInventory().setChanged();
+            setActiveCharacter(player, switchedTo.getUUID());
+        }
     }
 
     @OnlyIn(Dist.CLIENT)

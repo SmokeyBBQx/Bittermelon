@@ -23,6 +23,8 @@ import com.site21.bittermelon.content.items.writablepaper.client.OpenPaperEditSc
 import com.site21.bittermelon.content.medical.client.screen.networking.*;
 import com.site21.bittermelon.content.personnel.networking.OpenPersonnelScreen;
 import com.site21.bittermelon.content.stumble.networking.AttemptToRise;
+import com.site21.bittermelon.content.telecomms.intercom.networking.AddIntercomToClient;
+import com.site21.bittermelon.content.telecomms.intercom.networking.RemoveIntercomFromClient;
 import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
 import com.site21.bittermelon.content.throwing.ThrowItem;
 import com.site21.bittermelon.networking.client.ClearForcedPose;
@@ -315,6 +317,18 @@ public class PayloadRegistration {
                 OpenPersonnelScreen.TYPE,
                 OpenPersonnelScreen.STREAM_CODEC,
                 OpenPersonnelScreen::handle
+        );
+
+        registrar.playToClient(
+                AddIntercomToClient.TYPE,
+                AddIntercomToClient.STREAM_CODEC,
+                AddIntercomToClient::handle
+        );
+
+        registrar.playToClient(
+                RemoveIntercomFromClient.TYPE,
+                RemoveIntercomFromClient.STREAM_CODEC,
+                RemoveIntercomFromClient::handle
         );
     }
 }
