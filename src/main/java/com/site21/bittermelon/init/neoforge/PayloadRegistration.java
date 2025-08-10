@@ -3,6 +3,7 @@ package com.site21.bittermelon.init.neoforge;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.client.visualeffects.screenshake.StartScreenshake;
 import com.site21.bittermelon.content.atmosphere.networking.*;
+import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.ContainmentNameUpdate;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.OpenContainmentPanelScreen;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.networking.*;
 import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.networking.PlaySlidingDoorStuckSound;
@@ -12,20 +13,22 @@ import com.site21.bittermelon.content.character.networking.SyncCharacters;
 import com.site21.bittermelon.content.economy.networking.OpenATMScreen;
 import com.site21.bittermelon.content.effects.electrocuted.networking.CutOffChat;
 import com.site21.bittermelon.content.entities.implementations.scp650.networking.SetEntityPos;
+import com.site21.bittermelon.content.items.substance.networking.ReleasePressureUpdate;
+import com.site21.bittermelon.content.items.substance.networking.TransferRateUpdate;
 import com.site21.bittermelon.content.items.wires.wire.networking.MakeWireConnection;
 import com.site21.bittermelon.content.items.wires.wire.networking.OpenWiringScreen;
 import com.site21.bittermelon.content.items.wires.wire.networking.RemoveWiringData;
 import com.site21.bittermelon.content.items.wires.wire.networking.WiringDataUpdate;
 import com.site21.bittermelon.content.items.writablepaper.client.OpenPaperEditScreen;
 import com.site21.bittermelon.content.medical.client.screen.networking.*;
+import com.site21.bittermelon.content.personnel.networking.OpenPersonnelScreen;
 import com.site21.bittermelon.content.stumble.networking.AttemptToRise;
 import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
-import com.site21.bittermelon.networking.client.*;
-import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.ContainmentNameUpdate;
-import com.site21.bittermelon.content.items.substance.networking.ReleasePressureUpdate;
 import com.site21.bittermelon.content.throwing.ThrowItem;
-import com.site21.bittermelon.content.items.substance.networking.TransferRateUpdate;
-import net.minecraft.network.codec.StreamCodec;
+import com.site21.bittermelon.networking.client.ClearForcedPose;
+import com.site21.bittermelon.networking.client.ContainerDataUpdate;
+import com.site21.bittermelon.networking.client.OpenCPRScreen;
+import com.site21.bittermelon.networking.client.SetForcedPose;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -306,6 +309,12 @@ public class PayloadRegistration {
                 CutOffChat.TYPE,
                 CutOffChat.STREAM_CODEC,
                 CutOffChat::handle
+        );
+
+        registrar.playToClient(
+                OpenPersonnelScreen.TYPE,
+                OpenPersonnelScreen.STREAM_CODEC,
+                OpenPersonnelScreen::handle
         );
     }
 }

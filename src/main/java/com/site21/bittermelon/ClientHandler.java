@@ -47,6 +47,6 @@ public class ClientHandler {
     }
 
     public static void displayPersonnelScreen(PersonnelRegistry registry) {
-        Minecraft.getInstance().setScreen(new PersonnelScreen(registry));
+        Minecraft.getInstance().setScreen(new PersonnelScreen());
     }
 }

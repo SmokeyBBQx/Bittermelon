@@ -49,6 +49,10 @@ public class Substance {
         return properties.flavor;
     }
 
+    public String getSmell() {
+        return properties.smell;
+    }
+
     public Integer getColor() {
         return properties.color;
     }

@@ -15,5 +15,5 @@ public class Drugs {
 
     public static final DeferredHolder<Drug, CyanideDrug> CYANIDE = DRUGS.register("cyanide", CyanideDrug::new);
     public static final DeferredHolder<Drug, Drug> SPACE_MIRAGE = DRUGS.register("space_mirage",
-            () -> new SpaceMirageDrug(0.02f, 0.05f).setAttribute(MedicalAttribute.RESPIRATION, 0.9f));
+            () -> new SpaceMirageDrug(0.002f, 0.005f).setAttribute(MedicalAttribute.RESPIRATION, 0.9f));
 }

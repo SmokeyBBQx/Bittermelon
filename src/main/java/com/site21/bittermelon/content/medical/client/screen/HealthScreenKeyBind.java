@@ -1,9 +1,9 @@
 package com.site21.bittermelon.content.medical.client.screen;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.character.CharacterManager;
+import com.site21.bittermelon.ClientHandler;
 import com.site21.bittermelon.content.medical.client.screen.networking.OpenHealthScreenC2S;
+import com.site21.bittermelon.content.personnel.PersonnelRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.EntityHitResult;
@@ -32,6 +32,8 @@ public class HealthScreenKeyBind {
         Minecraft mc = Minecraft.getInstance();
         Player player = Minecraft.getInstance().player;
         if (player == null) return;
+
+//        ClientHandler.displayPersonnelScreen(PersonnelRegistry.get(player.level()));
 
         HitResult hitResult = mc.hitResult;
         if (hitResult != null && hitResult.getType() == HitResult.Type.ENTITY) {

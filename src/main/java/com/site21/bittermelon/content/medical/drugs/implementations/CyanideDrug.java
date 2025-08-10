@@ -7,12 +7,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class CyanideDrug extends Drug {
     public CyanideDrug() {
-        super(2, 5);
+        super(0.0002f, 0.05f);
     }
 
     public void tickDrug(@NotNull MedicalStats medicalStats, float amount) {
         if (medicalStats instanceof AnimalMedicalStats stats) {
-            stats.modifyOxygenSaturation(-0.01f * amount);
+            stats.modifyOxygenSaturation(-0.1f * amount);
         }
     }
 }

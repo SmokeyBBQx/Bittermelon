@@ -19,6 +19,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
@@ -172,7 +173,8 @@ public class SubstanceContainerItem extends BaseItem implements ReactionContaine
                 "Tastes like...",
                 "Tastes like a noticeable blend of",
                 "notes.",
-                "Tastes strongly");
+                "Tastes strongly",
+                Substance::getFlavor);
     }
 
     protected Component getSmellMessageComponent(ItemStack stack) {
@@ -182,10 +184,11 @@ public class SubstanceContainerItem extends BaseItem implements ReactionContaine
                 "Smells...",
                 "Smells noticeably",
                 "",
-                "Smells strongly");
+                "Smells strongly",
+                Substance::getSmell);
     }
 
-    private Component getSensoryMessageComponent(ItemStack stack, String singleVerb, String multipleMain, String mediumPrefix, String mediumSuffix, String strongPrefix) {
+    private Component getSensoryMessageComponent(ItemStack stack, String singleVerb, String multipleMain, String mediumPrefix, String mediumSuffix, String strongPrefix, Function<Substance, String> propertyGetter) {
         List<SubstanceStack> substances = getContents(stack);
         float totalVolume = getSubstanceData(stack).getTotalVolume();
 
@@ -194,10 +197,10 @@ public class SubstanceContainerItem extends BaseItem implements ReactionContaine
         }
 
         if (substances.size() == 1) {
-            String flavor = substances.getFirst().getSubstance().getFlavor();
-            if (flavor.isEmpty()) return Component.empty();
+            String property = propertyGetter.apply(substances.getFirst().getSubstance());
+            if (property.isEmpty()) return Component.empty();
 
-            String description = singleVerb + " " + flavor + ".";
+            String description = singleVerb + " " + property + ".";
             return Component.literal(description).withStyle(ChatFormatting.GREEN);
         }
 
@@ -205,20 +208,20 @@ public class SubstanceContainerItem extends BaseItem implements ReactionContaine
 
         String hoverText = substances.stream()
                 .filter(substance -> {
-                    String flavor = substance.getSubstance().getFlavor();
-                    return flavor != null && !flavor.trim().isEmpty();
+                    String property = propertyGetter.apply(substance.getSubstance());
+                    return property != null && !property.trim().isEmpty();
                 })
                 .map(substance -> {
                     float volume = substance.getVolume();
                     float percentageAmount = volume / totalVolume * 100;
-                    String flavor = substance.getSubstance().getFlavor();
+                    String property = propertyGetter.apply(substance.getSubstance());
 
                     if (percentageAmount <= 35) {
-                        return "Has a faint hint of " + flavor + " tones.";
+                        return "Has a faint hint of " + property + " tones.";
                     } else if (percentageAmount <= 65) {
-                        return mediumPrefix + " " + flavor + " " + mediumSuffix;
+                        return mediumPrefix + " " + property + " " + mediumSuffix;
                     } else {
-                        return strongPrefix + " " + flavor + ".";
+                        return strongPrefix + " " + property + ".";
                     }
                 })
                 .collect(Collectors.joining("\n"));

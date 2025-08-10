@@ -83,6 +83,10 @@ public class PersonnelRegistry extends SavedData {
         return personnelEntries.get(id);
     }
 
+    public Map<Integer, PersonnelEntry> getPersonnelEntries() {
+        return personnelEntries;
+    }
+
     public static @NotNull PersonnelRegistry load(@NotNull CompoundTag tag, HolderLookup.Provider lookupProvider) {
         PersonnelRegistry data = new PersonnelRegistry();
         ListTag entryList = tag.getList("personnel_entries", ListTag.TAG_COMPOUND);
