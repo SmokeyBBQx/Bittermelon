@@ -6,6 +6,7 @@ import com.site21.bittermelon.content.atmosphere.networking.*;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.ContainmentNameUpdate;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.OpenContainmentPanelScreen;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.networking.*;
+import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.networking.AddPersonnelEntry;
 import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.networking.PlaySlidingDoorStuckSound;
 import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.networking.UpdateSlidingDoorProgress;
 import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.networking.UpdateSlidingDoorState;
@@ -21,7 +22,8 @@ import com.site21.bittermelon.content.items.wires.wire.networking.RemoveWiringDa
 import com.site21.bittermelon.content.items.wires.wire.networking.WiringDataUpdate;
 import com.site21.bittermelon.content.items.writablepaper.client.OpenPaperEditScreen;
 import com.site21.bittermelon.content.medical.client.screen.networking.*;
-import com.site21.bittermelon.content.personnel.networking.OpenPersonnelScreen;
+import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.networking.OpenPersonnelScreen;
+import com.site21.bittermelon.content.personnel.networking.SyncPersonnelRegistry;
 import com.site21.bittermelon.content.stumble.networking.AttemptToRise;
 import com.site21.bittermelon.content.telecomms.intercom.networking.AddIntercomToClient;
 import com.site21.bittermelon.content.telecomms.intercom.networking.RemoveIntercomFromClient;
@@ -329,6 +331,18 @@ public class PayloadRegistration {
                 RemoveIntercomFromClient.TYPE,
                 RemoveIntercomFromClient.STREAM_CODEC,
                 RemoveIntercomFromClient::handle
+        );
+
+        registrar.commonBidirectional(
+                AddPersonnelEntry.TYPE,
+                AddPersonnelEntry.STREAM_CODEC,
+                AddPersonnelEntry::handle
+        );
+
+        registrar.playToClient(
+                SyncPersonnelRegistry.TYPE,
+                SyncPersonnelRegistry.STREAM_CODEC,
+                SyncPersonnelRegistry::handle
         );
     }
 }

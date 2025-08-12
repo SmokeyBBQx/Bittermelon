@@ -8,6 +8,7 @@ import com.site21.bittermelon.content.blocks.devices.implementations.containment
 import com.site21.bittermelon.content.blocks.devices.implementations.detonator.DetonatorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.environmentsensor.EnvironmentSensorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.PersonnelTerminalBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.KeycardReaderSecureDoorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.SecureDoorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.LargeSlidingDoorBlockEntity;
@@ -70,4 +71,7 @@ public class BitterBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SCP151BlockEntity>> SCP151_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("scp151_block_entity",
             () -> BlockEntityType.Builder.of(SCP151BlockEntity::new, SCP151.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PersonnelTerminalBlockEntity>> PERSONNEL_TERMINAL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("personnel_terminal_block_entity",
+            () -> BlockEntityType.Builder.of(PersonnelTerminalBlockEntity::new, PERSONNEL_TERMINAL.get()).build(null));
 }

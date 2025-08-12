@@ -1,5 +1,6 @@
 package com.site21.bittermelon.content.personnel;
 
+import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.networking.AddPersonnelEntry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -11,12 +12,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 public class PersonnelRegistry extends SavedData {
     private static PersonnelRegistry clientInstance;
@@ -66,25 +67,37 @@ public class PersonnelRegistry extends SavedData {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public void updateEntryFromServer(int id, PersonnelEntry entry) {
-        personnelEntries.put(id, entry);
-    }
-
-    public void updateEntry(int id, Consumer<PersonnelEntry> updater) {
-        PersonnelEntry entry = personnelEntries.get(id);
-        if (entry != null) {
-            updater.accept(entry);
-            this.setDirty();
-        }
-    }
-
     public PersonnelEntry getEntry(int id) {
         return personnelEntries.get(id);
     }
 
     public Map<Integer, PersonnelEntry> getPersonnelEntries() {
         return personnelEntries;
+    }
+
+    public void addEntry(PersonnelEntry entry) {
+        personnelEntries.put(entry.getId(), entry);
+        setDirty();
+        PacketDistributor.sendToAllPlayers(new AddPersonnelEntry(entry));
+    }
+
+    public void removeEntry(int id) {
+        personnelEntries.remove(id);
+        setDirty();
+    }
+
+    public boolean containsId(int id) {
+        return personnelEntries.containsKey(id);
+    }
+
+    public boolean hasPermission(PersonnelEntry entry, Level level) {
+        PrivilegeManager.get(level);
+        return true;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void addEntryFromServer(PersonnelEntry entry) {
+        personnelEntries.put(entry.getId(), entry);
     }
 
     public static @NotNull PersonnelRegistry load(@NotNull CompoundTag tag, HolderLookup.Provider lookupProvider) {

@@ -5,6 +5,7 @@ import com.site21.bittermelon.content.blocks.devices.implementations.containment
 import com.site21.bittermelon.content.blocks.devices.implementations.detonator.DetonatorBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.environmentsensor.EnvironmentSensor;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlock;
+import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.PersonnelTerminalBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.KeycardReaderSecureDoorBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.SecureDoorBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.LargeSlidingDoorBlock;
@@ -115,4 +116,7 @@ public class BitterBlocks {
     public static final DeferredBlock<SCP151Block> SCP151 = BLOCKS.register("scp151",
             () -> new SCP151Block(BlockBehaviour.Properties.of()));
 
+
+    public static final DeferredBlock<PersonnelTerminalBlock> PERSONNEL_TERMINAL = BLOCKS.register("personnel_terminal_block",
+            () -> new PersonnelTerminalBlock(BlockBehaviour.Properties.of()));
 }

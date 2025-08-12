@@ -435,4 +435,9 @@ public class BitterItems {
             ItemWeight.VERY_LIGHT,
             20
     ));
+
+    public static final DeferredItem<BlockItem> PERSONNEL_TERMINAL = ITEMS.register("personnel_terminal", () -> new BlockItem(
+            BitterBlocks.PERSONNEL_TERMINAL.get(),
+            new Item.Properties()
+    ));
 }

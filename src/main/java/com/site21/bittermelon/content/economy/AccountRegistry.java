@@ -151,16 +151,16 @@ public class AccountRegistry extends SavedData {
     }
 
     public List<Account> getPermittedAccounts(@NotNull PersonnelEntry entry) {
-        List<String> privileges = entry.getPrivileges();
+//        List<String> privileges = entry.getPrivileges();
         List<Account> permittedAccounts = new ArrayList<>();
 
-        for (Account account : accounts.values()) {
-            if (account.canAccess(privileges)) {
-                permittedAccounts.add(account);
-            }
-        }
-
-        permittedAccounts.sort(Comparator.comparing(Account::getId));
+//        for (Account account : accounts.values()) {
+//            if (account.canAccess(privileges)) {
+//                permittedAccounts.add(account);
+//            }
+//        }
+//
+//        permittedAccounts.sort(Comparator.comparing(Account::getId));
 
         return permittedAccounts;
     }

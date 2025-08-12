@@ -20,5 +20,6 @@ public class BitterCommands {
         ChatCommands.register(event.getDispatcher());
         MedicalStatsCommand.register(event.getDispatcher());
         DrugCommand.register(event.getDispatcher(), event.getBuildContext());
+        PersonnelCommand.register(event.getDispatcher());
     }
 }

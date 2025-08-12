@@ -1,21 +1,25 @@
-package com.site21.bittermelon.content.personnel.networking;
+package com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.networking;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.ClientHandler;
+import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.PersonnelTerminalBlockEntity;
 import com.site21.bittermelon.content.personnel.PersonnelRegistry;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-public record OpenPersonnelScreen() implements CustomPacketPayload {
+public record OpenPersonnelScreen(BlockPos pos) implements CustomPacketPayload {
     public static final Type<OpenPersonnelScreen> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "open_personnel_screen"));
 
-    public static final StreamCodec<ByteBuf, OpenPersonnelScreen> STREAM_CODEC =
-            StreamCodec.of((buf, packet) -> {
-            }, buf -> new OpenPersonnelScreen());
+    public static final StreamCodec<ByteBuf, OpenPersonnelScreen> STREAM_CODEC = StreamCodec.composite(
+            BlockPos.STREAM_CODEC,
+            OpenPersonnelScreen::pos,
+            OpenPersonnelScreen::new
+    );
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {
@@ -23,6 +27,8 @@ public record OpenPersonnelScreen() implements CustomPacketPayload {
     }
 
     public void handle(@NotNull IPayloadContext ctx) {
-        ClientHandler.displayPersonnelScreen(PersonnelRegistry.get(ctx.player().level()));
+        if (ctx.player().level().getBlockEntity(pos) instanceof PersonnelTerminalBlockEntity terminalBlockEntity) {
+            ClientHandler.displayPersonnelScreen(terminalBlockEntity);
+        }
     }
 }

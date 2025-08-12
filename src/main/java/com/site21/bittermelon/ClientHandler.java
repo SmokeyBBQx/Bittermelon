@@ -4,6 +4,8 @@ import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.ContainmentPanelBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.client.IntercomScreen;
+import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.PersonnelTerminalBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client.PersonnelTerminalScreen;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.containment.client.ContainmentPanelScreen;
 import com.site21.bittermelon.content.economy.client.ATMScreen;
@@ -11,8 +13,6 @@ import com.site21.bittermelon.content.items.wires.wire.client.WiringScreen;
 import com.site21.bittermelon.content.items.writablepaper.client.PaperEditScreen;
 import com.site21.bittermelon.content.medical.client.screen.HealthScreenV2;
 import com.site21.bittermelon.content.personnel.PersonnelEntry;
-import com.site21.bittermelon.content.personnel.PersonnelRegistry;
-import com.site21.bittermelon.content.personnel.client.PersonnelScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -46,7 +46,7 @@ public class ClientHandler {
         Minecraft.getInstance().setScreen(new PaperEditScreen(paper));
     }
 
-    public static void displayPersonnelScreen(PersonnelRegistry registry) {
-        Minecraft.getInstance().setScreen(new PersonnelScreen());
+    public static void displayPersonnelScreen(PersonnelTerminalBlockEntity terminalBlockEntity) {
+        Minecraft.getInstance().setScreen(new PersonnelTerminalScreen(terminalBlockEntity));
     }
 }

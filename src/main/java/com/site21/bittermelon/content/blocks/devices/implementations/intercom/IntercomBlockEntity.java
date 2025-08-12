@@ -66,7 +66,8 @@ public class IntercomBlockEntity extends ElectronicBlockEntity implements ISyncS
     }
 
     private boolean isOn() {
-        return supply >= draw;
+//        return supply >= draw;
+        return true;
     }
 
     @Override
