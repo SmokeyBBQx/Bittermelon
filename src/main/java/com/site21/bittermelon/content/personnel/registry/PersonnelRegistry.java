@@ -1,6 +1,7 @@
-package com.site21.bittermelon.content.personnel;
+package com.site21.bittermelon.content.personnel.registry;
 
-import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.networking.AddPersonnelEntry;
+import com.site21.bittermelon.content.personnel.registry.networking.AddPersonnelEntry;
+import com.site21.bittermelon.content.personnel.privilege.PrivilegeManager;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;

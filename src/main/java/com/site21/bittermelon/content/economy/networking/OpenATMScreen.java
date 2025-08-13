@@ -2,11 +2,9 @@ package com.site21.bittermelon.content.economy.networking;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.ClientHandler;
-import com.site21.bittermelon.content.personnel.PersonnelEntry;
-import com.site21.bittermelon.content.personnel.PersonnelRegistry;
-import com.site21.bittermelon.content.economy.client.ATMScreen;
+import com.site21.bittermelon.content.personnel.registry.PersonnelEntry;
+import com.site21.bittermelon.content.personnel.registry.PersonnelRegistry;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;

@@ -6,7 +6,8 @@ import com.site21.bittermelon.content.atmosphere.networking.*;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.ContainmentNameUpdate;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.OpenContainmentPanelScreen;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.networking.*;
-import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.networking.AddPersonnelEntry;
+import com.site21.bittermelon.content.personnel.privilege.networking.*;
+import com.site21.bittermelon.content.personnel.registry.networking.AddPersonnelEntry;
 import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.networking.PlaySlidingDoorStuckSound;
 import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.networking.UpdateSlidingDoorProgress;
 import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.networking.UpdateSlidingDoorState;
@@ -23,7 +24,7 @@ import com.site21.bittermelon.content.items.wires.wire.networking.WiringDataUpda
 import com.site21.bittermelon.content.items.writablepaper.client.OpenPaperEditScreen;
 import com.site21.bittermelon.content.medical.client.screen.networking.*;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.networking.OpenPersonnelScreen;
-import com.site21.bittermelon.content.personnel.networking.SyncPersonnelRegistry;
+import com.site21.bittermelon.content.personnel.registry.networking.SyncPersonnelRegistry;
 import com.site21.bittermelon.content.stumble.networking.AttemptToRise;
 import com.site21.bittermelon.content.telecomms.intercom.networking.AddIntercomToClient;
 import com.site21.bittermelon.content.telecomms.intercom.networking.RemoveIntercomFromClient;
@@ -343,6 +344,48 @@ public class PayloadRegistration {
                 SyncPersonnelRegistry.TYPE,
                 SyncPersonnelRegistry.STREAM_CODEC,
                 SyncPersonnelRegistry::handle
+        );
+
+        registrar.playToClient(
+                SyncPrivileges.TYPE,
+                SyncPrivileges.STREAM_CODEC,
+                SyncPrivileges::handle
+        );
+
+        registrar.commonBidirectional(
+                AddPrivilege.TYPE,
+                AddPrivilege.STREAM_CODEC,
+                AddPrivilege::handle
+        );
+
+        registrar.commonBidirectional(
+                SetPrivilegeForGroup.TYPE,
+                SetPrivilegeForGroup.STREAM_CODEC,
+                SetPrivilegeForGroup::handle
+        );
+
+        registrar.commonBidirectional(
+                RemovePrivilegeForGroup.TYPE,
+                RemovePrivilegeForGroup.STREAM_CODEC,
+                RemovePrivilegeForGroup::handle
+        );
+
+        registrar.commonBidirectional(
+                SetPrivilegeForEntry.TYPE,
+                SetPrivilegeForEntry.STREAM_CODEC,
+                SetPrivilegeForEntry::handle
+        );
+
+        registrar.commonBidirectional(
+                RemovePrivilegeForEntry.TYPE,
+                RemovePrivilegeForEntry.STREAM_CODEC,
+                RemovePrivilegeForEntry::handle
+        );
+
+        registrar.commonBidirectional(
+                RemovePrivilege.TYPE,
+                RemovePrivilege.STREAM_CODEC,
+                RemovePrivilege::handle
         );
     }
 }

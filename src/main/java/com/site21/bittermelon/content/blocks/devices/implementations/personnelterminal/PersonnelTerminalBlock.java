@@ -2,8 +2,10 @@ package com.site21.bittermelon.content.blocks.devices.implementations.personnelt
 
 import com.site21.bittermelon.content.blocks.base.IndentedSmallBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.networking.OpenPersonnelScreen;
-import com.site21.bittermelon.content.personnel.PersonnelRegistry;
-import com.site21.bittermelon.content.personnel.networking.SyncPersonnelRegistry;
+import com.site21.bittermelon.content.personnel.registry.PersonnelRegistry;
+import com.site21.bittermelon.content.personnel.privilege.PrivilegeManager;
+import com.site21.bittermelon.content.personnel.registry.networking.SyncPersonnelRegistry;
+import com.site21.bittermelon.content.personnel.privilege.networking.SyncPrivileges;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,6 +34,8 @@ public class PersonnelTerminalBlock extends IndentedSmallBlock implements Entity
             if (player instanceof ServerPlayer serverPlayer) {
                 PacketDistributor.sendToPlayer(serverPlayer,
                         new SyncPersonnelRegistry(PersonnelRegistry.get(level).getPersonnelEntries()));
+                PacketDistributor.sendToPlayer(serverPlayer,
+                        new SyncPrivileges(PrivilegeManager.get(level).getPrivilegeGroups(), PrivilegeManager.get(level).getPrivileges()));
                 PacketDistributor.sendToPlayer(serverPlayer, new OpenPersonnelScreen(pos));
             }
         }

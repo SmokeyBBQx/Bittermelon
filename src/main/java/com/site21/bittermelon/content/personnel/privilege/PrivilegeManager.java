@@ -1,5 +1,6 @@
-package com.site21.bittermelon.content.personnel;
+package com.site21.bittermelon.content.personnel.privilege;
 
+import com.site21.bittermelon.content.personnel.privilege.networking.AddPrivilege;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.*;
 import net.minecraft.server.MinecraftServer;
@@ -9,6 +10,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -79,6 +81,7 @@ public class PrivilegeManager extends SavedData {
     }
 
     public void removePrivilegeGroup(String name) {
+        name = name.toLowerCase();
         privilegeGroups.remove(name);
         setDirty();
     }
@@ -88,14 +91,17 @@ public class PrivilegeManager extends SavedData {
     }
 
     public boolean addPrivilege(String privilege) {
+        privilege = privilege.toLowerCase();
         if (privileges.contains(privilege) || privilegeGroups.containsKey(privilege)) return false;
 
         privileges.add(privilege);
         setDirty();
+        PacketDistributor.sendToAllPlayers(new AddPrivilege(privilege));
         return true;
     }
 
     public boolean removePrivilege(String privilege) {
+        privilege = privilege.toLowerCase();
         if (!privileges.contains(privilege)) return false;
 
         privileges.remove(privilege);
@@ -104,7 +110,13 @@ public class PrivilegeManager extends SavedData {
     }
 
     public boolean privilegeExists(String privilege) {
+        privilege = privilege.toLowerCase();
         return privileges.contains(privilege) || privilegeGroups.containsKey(privilege);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void addPrivilegeFromServer(String privilege) {
+        privileges.add(privilege);
     }
 
     public static @NotNull PrivilegeManager load(@NotNull CompoundTag tag, HolderLookup.Provider lookupProvider) {

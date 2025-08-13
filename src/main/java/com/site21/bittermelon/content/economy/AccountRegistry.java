@@ -1,6 +1,6 @@
 package com.site21.bittermelon.content.economy;
 
-import com.site21.bittermelon.content.personnel.PersonnelEntry;
+import com.site21.bittermelon.content.personnel.registry.PersonnelEntry;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;

@@ -1,8 +1,10 @@
-package com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client;
+package com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client.entry;
 
 import com.mojang.authlib.GameProfile;
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.personnel.PersonnelEntry;
+import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client.BitterButton;
+import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client.PersonnelTerminalScreen;
+import com.site21.bittermelon.content.personnel.registry.PersonnelEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -26,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 public class PersonnelEntryInfoWidget extends AbstractWidget {
     private final PersonnelEntry entry;
     private final PersonnelTerminalScreen screen;
+
     private boolean editMode = false;
     private boolean canEdit = false;
 
@@ -33,6 +36,7 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
     private EditBox occupationField;
     private EditBox departmentField;
     private EditBox notesField;
+
     private BitterButton editButton;
     private BitterButton saveButton;
     private BitterButton cancelButton;
@@ -141,8 +145,8 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
     }
 
     private void viewPrivileges(Button button) {
-        PrivilegeEditorWidget privilegeWidget = new PrivilegeEditorWidget(getX(), getY(), getWidth(),
-                getHeight(), Component.literal(entry.getName() + "'s privileges"), this);
+        EntryPrivilegeEditorWidget privilegeWidget = new EntryPrivilegeEditorWidget(getX(), getY(), getWidth(),
+                getHeight(), entry);
         screen.setActiveWidget(privilegeWidget);
     }
 
@@ -150,9 +154,14 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
 
     }
 
+    public PersonnelEntry getEntry() {
+        return entry;
+    }
+
     @Override
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        guiGraphics.blitSprite(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/generic_background"), getX(), getY(), getWidth() + 5, getBottom() + 80);
+        guiGraphics.blitSprite(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/generic_background"),
+                getX(), getY(), getWidth(), getHeight());
 
         Font font = Minecraft.getInstance().font;
 

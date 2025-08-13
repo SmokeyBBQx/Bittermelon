@@ -12,7 +12,7 @@ import com.site21.bittermelon.content.economy.client.ATMScreen;
 import com.site21.bittermelon.content.items.wires.wire.client.WiringScreen;
 import com.site21.bittermelon.content.items.writablepaper.client.PaperEditScreen;
 import com.site21.bittermelon.content.medical.client.screen.HealthScreenV2;
-import com.site21.bittermelon.content.personnel.PersonnelEntry;
+import com.site21.bittermelon.content.personnel.registry.PersonnelEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;

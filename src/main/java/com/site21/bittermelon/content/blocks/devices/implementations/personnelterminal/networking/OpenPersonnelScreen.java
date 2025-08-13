@@ -3,7 +3,6 @@ package com.site21.bittermelon.content.blocks.devices.implementations.personnelt
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.ClientHandler;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.PersonnelTerminalBlockEntity;
-import com.site21.bittermelon.content.personnel.PersonnelRegistry;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.StreamCodec;

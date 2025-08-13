@@ -1,17 +1,17 @@
-package com.site21.bittermelon.content.personnel;
+package com.site21.bittermelon.content.personnel.registry;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.site21.bittermelon.content.personnel.privilege.PrivilegeUser;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.util.ExtraCodecs;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class PersonnelEntry {
+public class PersonnelEntry implements PrivilegeUser {
     public static final Codec<PersonnelEntry> CODEC;
     public static final StreamCodec<ByteBuf, PersonnelEntry> STREAM_CODEC;
 
@@ -31,7 +31,7 @@ public class PersonnelEntry {
         this.occupation = occupation;
         this.department = department;
         this.notes = notes;
-        this.privileges = privileges;
+        this.privileges = new HashMap<>(privileges);
     }
 
     public PersonnelEntry(UUID playerUUID, String name, String occupation, String notes) {

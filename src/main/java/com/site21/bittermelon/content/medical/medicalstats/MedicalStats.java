@@ -78,7 +78,7 @@ public class MedicalStats {
             this.compartments.put(instance.getUUID(), instance);
         }
         this.characterID = characterID;
-        this.activeDrugs = activeDrugs;
+        this.activeDrugs = new ArrayList<>(activeDrugs);
         medicalAttributes = new EnumMap<>(MedicalAttribute.class);
         medicalAttributes.putAll(attributes);
         this.defaultEntityAttributes = new HashMap<>();

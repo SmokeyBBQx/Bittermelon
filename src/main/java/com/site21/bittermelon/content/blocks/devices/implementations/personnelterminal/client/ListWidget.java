@@ -1,36 +1,25 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.site21.bittermelon.content.personnel.PrivilegeGroup;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
-import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.Objects;
 
 @OnlyIn(Dist.CLIENT)
-public class PrivilegeGroupListWidget extends ObjectSelectionList<PrivilegeGroupListWidget.Entry> {
-
-    public PrivilegeGroupListWidget(Minecraft minecraft, int width, int height, int y, int itemHeight) {
+public class ListWidget<T extends ObjectSelectionList.Entry<T>> extends ObjectSelectionList<T> {
+    public ListWidget(Minecraft minecraft, int width, int height, int y, int itemHeight) {
         super(minecraft, width, height, y, itemHeight);
-    }
-
-    void refreshList(@NotNull Collection<PrivilegeGroup> groups) {
-        clearEntries();
-        for (PrivilegeGroup group : groups) {
-            addEntry(new PrivilegeGroupListWidget.Entry(group));
-        }
     }
 
     @Override
     protected int getScrollbarPosition() {
-        return getX() + width;
+        return getX() + width - 12;
     }
 
     @Override
@@ -60,7 +49,7 @@ public class PrivilegeGroupListWidget extends ObjectSelectionList<PrivilegeGroup
 
     @Override
     protected void renderItem(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, int index, int left, int top, int width, int height) {
-        PrivilegeGroupListWidget.Entry e = this.getEntry(index);
+        T e = this.getEntry(index);
         e.renderBack(guiGraphics, index, top, left, width, height, mouseX, mouseY, Objects.equals(this.getHovered(), e), partialTick);
         if (this.isSelectedItem(index)) {
             int borderColor = e.isMouseOver(mouseX, mouseY) ? 0xFF938DD7 : 0xFF000000;
@@ -69,32 +58,5 @@ public class PrivilegeGroupListWidget extends ObjectSelectionList<PrivilegeGroup
         }
 
         e.render(guiGraphics, index, top, left, width, height, mouseX, mouseY, Objects.equals(this.getHovered(), e), partialTick);
-
-    }
-
-    public static class Entry extends ObjectSelectionList.Entry<PrivilegeGroupListWidget.Entry> {
-        private final PrivilegeGroup user;
-
-        public Entry(PrivilegeGroup user) {
-            this.user = user;
-        }
-
-        @Override
-        public @NotNull Component getNarration() {
-            return Component.literal(user.getName());
-        }
-
-        @Override
-        public void render(@NotNull GuiGraphics guiGraphics, int entryIdx, int top, int left, int entryWidth, int entryHeight,
-                           int mouseX, int mouseY, boolean isMouseOver, float partialTick) {
-            if (isMouseOver && !isFocused()) {
-                guiGraphics.fill(left, top - 2, entryWidth, top + entryHeight + 2, 0xFFD3E3FD);
-            }
-
-            String name = user.getName();
-            int nameColor = isFocused() ? 0xFFFFFFFF : 0xFF000000 ;
-
-            guiGraphics.drawString(Minecraft.getInstance().font, name, left, top + 2, nameColor, false);
-        }
     }
 }

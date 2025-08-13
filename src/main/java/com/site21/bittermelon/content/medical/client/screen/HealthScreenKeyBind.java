@@ -1,9 +1,7 @@
 package com.site21.bittermelon.content.medical.client.screen;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.ClientHandler;
 import com.site21.bittermelon.content.medical.client.screen.networking.OpenHealthScreenC2S;
-import com.site21.bittermelon.content.personnel.PersonnelRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.EntityHitResult;

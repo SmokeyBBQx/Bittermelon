@@ -1,6 +1,6 @@
 package com.site21.bittermelon.content.economy.client;
 
-import com.site21.bittermelon.content.personnel.PersonnelEntry;
+import com.site21.bittermelon.content.personnel.registry.PersonnelEntry;
 import com.site21.bittermelon.content.economy.Account;
 import com.site21.bittermelon.content.economy.AccountRegistry;
 import com.site21.bittermelon.content.economy.client.list.AccountListWidget;

@@ -1,9 +1,8 @@
-package com.site21.bittermelon.content.personnel.networking;
+package com.site21.bittermelon.content.personnel.privilege.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.personnel.PersonnelRegistry;
-import com.site21.bittermelon.content.personnel.PrivilegeGroup;
-import com.site21.bittermelon.content.personnel.PrivilegeManager;
+import com.site21.bittermelon.content.personnel.privilege.PrivilegeGroup;
+import com.site21.bittermelon.content.personnel.privilege.PrivilegeManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
