@@ -3,15 +3,10 @@ package com.site21.bittermelon.content.blocks.devices.implementations.personnelt
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client.BaseTerminalScreen;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client.BitterButton;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client.PersonnelTerminalScreen;
-import com.site21.bittermelon.content.personnel.registry.PersonnelRegistry;
 import com.site21.bittermelon.content.personnel.privilege.PrivilegeGroup;
 import com.site21.bittermelon.content.personnel.privilege.PrivilegeManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
@@ -26,18 +21,13 @@ import java.util.stream.Collectors;
 public class PrivilegeEditorScreen extends BaseTerminalScreen {
     private final Screen previousScreen;
     private final PrivilegeManager privilegeManager;
-    private final PersonnelRegistry personnelRegistry;
 
     private PrivilegeGroupListWidget groupList;
-    private BitterButton backButton;
-    private BitterButton editPrivilegesButton;
-    private BitterButton addPrivilegeGroupButton;
 
     public PrivilegeEditorScreen(Screen previousScreen) {
         super(Component.literal("Privilege Editor"));
         this.previousScreen = previousScreen;
         privilegeManager = PrivilegeManager.get(Minecraft.getInstance().player.level());
-        personnelRegistry = PersonnelRegistry.get(Minecraft.getInstance().player.level());
     }
 
     @Override
@@ -59,21 +49,21 @@ public class PrivilegeEditorScreen extends BaseTerminalScreen {
         addRenderableWidget(groupList);
 
         int backButtonWidth = 40;
-        backButton = BitterButton.builder(Component.literal("Back"), this::onBackButtonPressed, PersonnelTerminalScreen.BUTTON_SPRITES)
+        BitterButton backButton = BitterButton.builder(Component.literal("Back"), this::onBackButtonPressed, PersonnelTerminalScreen.BUTTON_SPRITES)
                 .bounds(leftX, bottomY, backButtonWidth, COMPONENT_HEIGHT)
                 .build();
         addRenderableWidget(backButton);
 
         int addGroupButtonX = leftX + backButtonWidth + COMPONENT_SPACE;
         int addGroupButtonWidth = 65;
-        addPrivilegeGroupButton = BitterButton.builder(Component.literal("Add Group"), this::onAddPrivilegeGroupButton, PersonnelTerminalScreen.BUTTON_SPRITES)
+        BitterButton addPrivilegeGroupButton = BitterButton.builder(Component.literal("Add Group"), this::onAddPrivilegeGroupButton, PersonnelTerminalScreen.BUTTON_SPRITES)
                 .bounds(addGroupButtonX, bottomY, addGroupButtonWidth, COMPONENT_HEIGHT)
                 .build();
         addRenderableWidget(addPrivilegeGroupButton);
 
         int editPrivilegesX = addGroupButtonX + addGroupButtonWidth + COMPONENT_SPACE;
         int editPrivilegesWidth = 100;
-        editPrivilegesButton = BitterButton.builder(Component.literal("Manage Privileges"), this::onEditPrivilegesButtonPressed, PersonnelTerminalScreen.BUTTON_SPRITES)
+        BitterButton editPrivilegesButton = BitterButton.builder(Component.literal("Manage Privileges"), this::onEditPrivilegesButtonPressed, PersonnelTerminalScreen.BUTTON_SPRITES)
                 .bounds(editPrivilegesX, bottomY, editPrivilegesWidth, COMPONENT_HEIGHT)
                 .build();
         addRenderableWidget(editPrivilegesButton);
@@ -110,7 +100,19 @@ public class PrivilegeEditorScreen extends BaseTerminalScreen {
     }
 
     public void onAddPrivilegeGroupButton(Button button) {
+        if (!(activeWidget instanceof AddPrivilegeGroupWidget)) {
+            AddPrivilegeGroupWidget widget = new AddPrivilegeGroupWidget(widgetX, widgetY, width / 3, 40, this);
+            setActiveWidget(widget);
+        } else {
+            setActiveWidget(null);
+        }
+    }
 
+    public void addPrivilegeGroup(String name) {
+        PrivilegeGroup group = new PrivilegeGroup(name);
+        privilegeManager.addPrivilegeGroup(group);
+
+        refreshContent();
     }
 
     private boolean matchesSearchTerm(@NotNull PrivilegeGroup entry) {

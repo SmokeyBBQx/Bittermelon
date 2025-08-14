@@ -52,6 +52,11 @@ public class BitterSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> SLIP = register("misc.slip");
     public static final DeferredHolder<SoundEvent, SoundEvent> SOGGY = register("misc.soggy");
     public static final DeferredHolder<SoundEvent, SoundEvent> SNORT = register("misc.snort");
+    public static final DeferredHolder<SoundEvent, SoundEvent> COMPUTER_END = register("machine.computer_end");
+    public static final DeferredHolder<SoundEvent, SoundEvent> COMPUTER_MID1 = register("machine.computer_mid1");
+    public static final DeferredHolder<SoundEvent, SoundEvent> COMPUTER_MID2 = register("machine.computer_mid2");
+    public static final DeferredHolder<SoundEvent, SoundEvent> COMPUTER_START = register("machine.computer_start");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOUSE_CLICK = register("machine.mouse_click");
 
     private static @NotNull DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return SOUND_EVENTS.register(name, () ->

@@ -243,6 +243,36 @@
       "bittermelon:misc/snort"
     ]
   },
+  "machine.computer_end": {
+    "category": "blocks",
+    "sounds": [
+      "bittermelon:machine/computer_end"
+    ]
+  },
+  "machine.computer_mid1": {
+    "category": "blocks",
+    "sounds": [
+      "bittermelon:machine/computer_mid1"
+    ]
+  },
+  "machine.computer_mid2": {
+    "category": "blocks",
+    "sounds": [
+      "bittermelon:machine/computer_mid2"
+    ]
+  },
+  "machine.computer_start": {
+    "category": "blocks",
+    "sounds": [
+      "bittermelon:machine/computer_start"
+    ]
+  },
+  "machine.mouse_click": {
+    "category": "blocks",
+    "sounds": [
+      "bittermelon:machine/mouse_click"
+    ]
+  },
   "container.toolbox_open": {
     "category": "neutral",
     "sounds": [

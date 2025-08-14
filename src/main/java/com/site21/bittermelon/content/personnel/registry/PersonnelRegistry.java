@@ -1,5 +1,6 @@
 package com.site21.bittermelon.content.personnel.registry;
 
+import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.personnel.registry.networking.AddPersonnelEntry;
 import com.site21.bittermelon.content.personnel.privilege.PrivilegeManager;
 import net.minecraft.core.HolderLookup;
@@ -19,10 +20,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 public class PersonnelRegistry extends SavedData {
     private static PersonnelRegistry clientInstance;
     private final Map<Integer, PersonnelEntry> personnelEntries = new HashMap<>();
+    private final Map<UUID, Integer> characterToEntry = new HashMap<>();
 
     public static PersonnelRegistry get(@NotNull Level level) {
         if (level.isClientSide()) {
@@ -72,6 +75,8 @@ public class PersonnelRegistry extends SavedData {
         return personnelEntries.get(id);
     }
 
+    public PersonnelEntry getEntry(Character character) {return getEntry(characterToEntry.get(character.getUUID()));}
+
     public Map<Integer, PersonnelEntry> getPersonnelEntries() {
         return personnelEntries;
     }
@@ -109,7 +114,10 @@ public class PersonnelRegistry extends SavedData {
             int id = compound.getInt("id");
             PersonnelEntry.CODEC.parse(NbtOps.INSTANCE, compound.get("entry"))
                     .result()
-                    .ifPresent(entry -> data.personnelEntries.put(id, entry));
+                    .ifPresent(entry -> {
+                        data.personnelEntries.put(id, entry);
+                        data.characterToEntry.put(entry.getCharacterUUID(), id);
+                    });
         });
         return data;
     }

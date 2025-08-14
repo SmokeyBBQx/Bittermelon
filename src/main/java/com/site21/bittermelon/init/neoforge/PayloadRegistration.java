@@ -24,7 +24,9 @@ import com.site21.bittermelon.content.items.wires.wire.networking.WiringDataUpda
 import com.site21.bittermelon.content.items.writablepaper.client.OpenPaperEditScreen;
 import com.site21.bittermelon.content.medical.client.screen.networking.*;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.networking.OpenPersonnelScreen;
+import com.site21.bittermelon.content.personnel.registry.networking.RemovePersonnelEntry;
 import com.site21.bittermelon.content.personnel.registry.networking.SyncPersonnelRegistry;
+import com.site21.bittermelon.content.personnel.registry.networking.UpdatePersonnelEntry;
 import com.site21.bittermelon.content.stumble.networking.AttemptToRise;
 import com.site21.bittermelon.content.telecomms.intercom.networking.AddIntercomToClient;
 import com.site21.bittermelon.content.telecomms.intercom.networking.RemoveIntercomFromClient;
@@ -34,6 +36,7 @@ import com.site21.bittermelon.networking.client.ClearForcedPose;
 import com.site21.bittermelon.networking.client.ContainerDataUpdate;
 import com.site21.bittermelon.networking.client.OpenCPRScreen;
 import com.site21.bittermelon.networking.client.SetForcedPose;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -386,6 +389,30 @@ public class PayloadRegistration {
                 RemovePrivilege.TYPE,
                 RemovePrivilege.STREAM_CODEC,
                 RemovePrivilege::handle
+        );
+
+        registrar.commonBidirectional(
+                AddPrivilegeGroup.TYPE,
+                AddPrivilegeGroup.STREAM_CODEC,
+                AddPrivilegeGroup::handle
+        );
+
+        registrar.commonBidirectional(
+                RemovePrivilegeGroup.TYPE,
+                RemovePrivilegeGroup.STREAM_CODEC,
+                RemovePrivilegeGroup::handle
+        );
+
+        registrar.commonBidirectional(
+                RemovePersonnelEntry.TYPE,
+                RemovePersonnelEntry.STREAM_CODEC,
+                RemovePersonnelEntry::handle
+        );
+
+        registrar.commonBidirectional(
+                UpdatePersonnelEntry.TYPE,
+                UpdatePersonnelEntry.STREAM_CODEC,
+                UpdatePersonnelEntry::handle
         );
     }
 }

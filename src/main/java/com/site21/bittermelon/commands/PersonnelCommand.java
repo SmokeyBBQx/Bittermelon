@@ -4,6 +4,8 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.site21.bittermelon.content.character.Character;
+import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.personnel.registry.PersonnelEntry;
 import com.site21.bittermelon.content.personnel.registry.PersonnelRegistry;
 import net.minecraft.commands.CommandSourceStack;
@@ -63,7 +65,14 @@ public class PersonnelCommand {
         String finalDepartment = department != null ? department : "";
         String finalNotes = notes != null ? notes : "No notes provided";
 
-        PersonnelEntry entry = new PersonnelEntry(playerUUID, name, finalOccupation, finalNotes);
+        Character character = CharacterManager.get(player.level()).getActiveCharacter(player);
+
+        if (character == null) {
+            context.getSource().sendFailure(Component.literal("Player has no active character"));
+            return 0;
+        }
+
+        PersonnelEntry entry = new PersonnelEntry(playerUUID, character.getUUID(), name, finalOccupation, finalNotes);
         entry.setDepartment(finalDepartment);
 
         PersonnelRegistry registry = PersonnelRegistry.get(context.getSource().getServer());

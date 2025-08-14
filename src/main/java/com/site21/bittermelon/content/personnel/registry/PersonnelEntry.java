@@ -17,6 +17,7 @@ public class PersonnelEntry implements PrivilegeUser {
 
     private final int id;
     private final UUID playerUUID;
+    private final UUID characterUUID;
     private String name;
     private String occupation;
     private String department;
@@ -24,9 +25,10 @@ public class PersonnelEntry implements PrivilegeUser {
     //    private final int fingerprint;
     private Map<String, Boolean> privileges;
 
-    public PersonnelEntry(int id, UUID playerUUID, String name, String occupation, String department, String notes, Map<String, Boolean> privileges) {
+    public PersonnelEntry(int id, UUID playerUUID, UUID characterUUID, String name, String occupation, String department, String notes, Map<String, Boolean> privileges) {
         this.id = id;
         this.playerUUID = playerUUID;
+        this.characterUUID = characterUUID;
         this.name = name;
         this.occupation = occupation;
         this.department = department;
@@ -34,10 +36,11 @@ public class PersonnelEntry implements PrivilegeUser {
         this.privileges = new HashMap<>(privileges);
     }
 
-    public PersonnelEntry(UUID playerUUID, String name, String occupation, String notes) {
+    public PersonnelEntry(UUID playerUUID, UUID characterUUID, String name, String occupation, String notes) {
         Random random = new Random();
         this.id = random.nextInt((int) Math.pow(10, 6));
         this.playerUUID = playerUUID;
+        this.characterUUID = characterUUID;
         this.name = name;
         this.occupation = occupation;
         this.notes = notes;
@@ -51,6 +54,10 @@ public class PersonnelEntry implements PrivilegeUser {
 
     public UUID getPlayerUUID() {
         return playerUUID;
+    }
+
+    public UUID getCharacterUUID() {
+        return characterUUID;
     }
 
     public String getName() {
@@ -109,6 +116,7 @@ public class PersonnelEntry implements PrivilegeUser {
         CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.INT.fieldOf("id").forGetter(PersonnelEntry::getId),
                 UUIDUtil.CODEC.fieldOf("playerUUID").forGetter(PersonnelEntry::getPlayerUUID),
+                UUIDUtil.CODEC.fieldOf("characterUUID").forGetter(PersonnelEntry::getCharacterUUID),
                 Codec.STRING.fieldOf("name").forGetter(PersonnelEntry::getName),
                 Codec.STRING.fieldOf("occupation").forGetter(PersonnelEntry::getOccupation),
                 Codec.STRING.optionalFieldOf("department", "").forGetter(PersonnelEntry::getDepartment),
@@ -121,6 +129,7 @@ public class PersonnelEntry implements PrivilegeUser {
             public @NotNull PersonnelEntry decode(@NotNull ByteBuf byteBuf) {
                 int id = byteBuf.readInt();
                 UUID playerUUID = UUIDUtil.STREAM_CODEC.decode(byteBuf);
+                UUID characterUUID = UUIDUtil.STREAM_CODEC.decode(byteBuf);
                 String name = ByteBufCodecs.STRING_UTF8.decode(byteBuf);
                 String occupation = ByteBufCodecs.STRING_UTF8.decode(byteBuf);
                 String department = ByteBufCodecs.STRING_UTF8.decode(byteBuf);
@@ -130,13 +139,14 @@ public class PersonnelEntry implements PrivilegeUser {
                                 ByteBufCodecs.STRING_UTF8,
                                 ByteBufCodecs.BOOL)
                         .decode(byteBuf);
-                return new PersonnelEntry(id, playerUUID, name, occupation, department, notes, privileges);
+                return new PersonnelEntry(id, playerUUID, characterUUID, name, occupation, department, notes, privileges);
             }
 
             @Override
             public void encode(@NotNull ByteBuf byteBuf, @NotNull PersonnelEntry entry) {
                 byteBuf.writeInt(entry.getId());
                 UUIDUtil.STREAM_CODEC.encode(byteBuf, entry.getPlayerUUID());
+                UUIDUtil.STREAM_CODEC.encode(byteBuf, entry.getCharacterUUID());
                 ByteBufCodecs.STRING_UTF8.encode(byteBuf, entry.getName());
                 ByteBufCodecs.STRING_UTF8.encode(byteBuf, entry.getOccupation());
                 ByteBufCodecs.STRING_UTF8.encode(byteBuf, entry.getDepartment());

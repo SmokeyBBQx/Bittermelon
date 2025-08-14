@@ -440,4 +440,9 @@ public class BitterItems {
             BitterBlocks.PERSONNEL_TERMINAL.get(),
             new Item.Properties()
     ));
+
+    public static final DeferredItem<BlockItem> KEYCARD_PRINTER = ITEMS.register("keycard_printer", () -> new BlockItem(
+            BitterBlocks.KEYCARD_PRINTER.get(),
+            new Item.Properties()
+    ));
 }

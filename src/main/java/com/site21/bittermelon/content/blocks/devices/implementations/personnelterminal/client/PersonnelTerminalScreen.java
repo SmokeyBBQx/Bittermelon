@@ -6,10 +6,14 @@ import com.site21.bittermelon.content.blocks.devices.implementations.personnelte
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client.privilegeeditor.PrivilegeEditorScreen;
 import com.site21.bittermelon.content.personnel.registry.PersonnelEntry;
 import com.site21.bittermelon.content.personnel.registry.PersonnelRegistry;
+import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.*;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +40,7 @@ public class PersonnelTerminalScreen extends BaseTerminalScreen {
 
     public PersonnelTerminalScreen(PersonnelTerminalBlockEntity terminal) {
         super(Component.literal("Personnel Terminal"));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(BitterSounds.COMPUTER_START, 1f));
         assert Minecraft.getInstance().player != null;
         registry = PersonnelRegistry.get(Minecraft.getInstance().player.level());
         this.terminal = terminal;
@@ -71,7 +76,7 @@ public class PersonnelTerminalScreen extends BaseTerminalScreen {
     }
 
     @Override
-    protected void refreshContent() {
+    public void refreshContent() {
         Map<Integer, PersonnelEntry> entries = registry.getPersonnelEntries();
 
         Collection<PersonnelEntry> filteredEntries;
@@ -132,5 +137,11 @@ public class PersonnelTerminalScreen extends BaseTerminalScreen {
         } else {
             setActiveWidget(null);
         }
+    }
+
+    @Override
+    public void onClose() {
+        minecraft.getSoundManager().play(SimpleSoundInstance.forUI(BitterSounds.COMPUTER_END, 1f));
+        super.onClose();
     }
 }

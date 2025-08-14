@@ -32,7 +32,7 @@ public class PrivilegeWidget extends AbstractWidget {
 
     public PrivilegeWidget(int x, int y, int width, int height) {
         super(x, y, width, height, Component.literal("Privileges"));
-        this.manager = PrivilegeManager.get(Minecraft.getInstance().level);
+        manager = PrivilegeManager.get(Minecraft.getInstance().level);
         initializeComponents(x, y, width, height);
     }
 
@@ -114,21 +114,19 @@ public class PrivilegeWidget extends AbstractWidget {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (privilegeList.mouseClicked(mouseX, mouseY, button)) {
+        if (privilegeList.mouseClicked(mouseX, mouseY, button)
+                || addPrivilegeButton.mouseClicked(mouseX, mouseY, button)) {
             searchField.setFocused(false);
             inputField.setFocused(false);
             return true;
-        };
+        }
+
         if (searchField.mouseClicked(mouseX, mouseY, button))  {
             searchField.setFocused(true);
             inputField.setFocused(false);
             return true;
-        };
-        if (addPrivilegeButton.mouseClicked(mouseX, mouseY, button)) {
-            searchField.setFocused(false);
-            inputField.setFocused(false);
-            return true;
-        };
+        }
+
         if (inputField.mouseClicked(mouseX, mouseY, button)) {
             inputField.setFocused(true);
             searchField.setFocused(false);

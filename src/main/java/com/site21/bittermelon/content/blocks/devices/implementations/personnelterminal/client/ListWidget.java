@@ -15,11 +15,21 @@ import java.util.Objects;
 public class ListWidget<T extends ObjectSelectionList.Entry<T>> extends ObjectSelectionList<T> {
     public ListWidget(Minecraft minecraft, int width, int height, int y, int itemHeight) {
         super(minecraft, width, height, y, itemHeight);
+        centerListVertically = false;
     }
 
     @Override
     protected int getScrollbarPosition() {
         return getX() + width - 12;
+    }
+
+    @Override
+    public int getRowLeft() {
+        return x;
+    }
+
+    public int getRowWidth() {
+        return width - 12;
     }
 
     @Override
@@ -58,5 +68,13 @@ public class ListWidget<T extends ObjectSelectionList.Entry<T>> extends ObjectSe
         }
 
         e.render(guiGraphics, index, top, left, width, height, mouseX, mouseY, Objects.equals(this.getHovered(), e), partialTick);
+    }
+
+    @Override
+    protected void renderSelection(@NotNull GuiGraphics guiGraphics, int top, int width, int height, int outerColor, int innerColor) {
+        int minX = getRowLeft();
+        int maxX = x + getRowWidth();
+        guiGraphics.fill(minX, top - 2, maxX, top + height + 2, outerColor);
+        guiGraphics.fill(minX + 1, top - 1, maxX - 1, top + height + 1, innerColor);
     }
 }

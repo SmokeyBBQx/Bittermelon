@@ -52,16 +52,16 @@ public class PrivilegeSearchList extends ListWidget<PrivilegeSearchList.Entry> {
         public void render(@NotNull GuiGraphics guiGraphics, int entryIdx, int top, int left, int entryWidth, int entryHeight,
                            int mouseX, int mouseY, boolean isMouseOver, float partialTick) {
             if (isMouseOver && !isFocused()) {
-                guiGraphics.fill(left - 20, top - 2, left + entryWidth, top + entryHeight + 2, 0xFFD3E3FD);
+                guiGraphics.fill(left, top - 2, left + entryWidth, top + entryHeight + 2, 0xFFD3E3FD);
             }
 
             ResourceLocation icon = group ? ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/users")
                     : ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/keys");
 
-            guiGraphics.blitSprite(icon, left - 18, top, 16, 16);
+            guiGraphics.blitSprite(icon, left + 4, top, 16, 16);
 
             int textColor = isFocused() ? 0xFFFFFFFF : 0xFF000000;
-            guiGraphics.drawString(Minecraft.getInstance().font, privilege, left, top + 2, textColor, false);
+            guiGraphics.drawString(Minecraft.getInstance().font, privilege, left + 22, top + 2, textColor, false);
         }
     }
 }

@@ -1,11 +1,14 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
@@ -50,6 +53,11 @@ public class BitterButton extends Button {
 
     public void setSprites(WidgetSprites sprites) {
         this.sprites = sprites;
+    }
+
+    @Override
+    public void playDownSound(@NotNull SoundManager soundManager) {
+        soundManager.play(SimpleSoundInstance.forUI(BitterSounds.MOUSE_CLICK, 1f));
     }
 
     @OnlyIn(Dist.CLIENT)

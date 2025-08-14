@@ -1,11 +1,14 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.site21.bittermelon.Bittermelon;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -82,6 +85,11 @@ public abstract class BaseTerminalScreen extends Screen {
 
         guiGraphics.fill(x, y, screenWidth, screenHeight, 0xFFF9FDFF);
         guiGraphics.fill(x + 1, y + 1, screenWidth - 1, screenHeight - 1, 0xFFD6D6CE);
+
+        RenderSystem.enableBlend();
+        guiGraphics.blitSprite(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/scp_logo"),
+                widgetX + widgetX / 6, screenHeight / 4, 200, 200);
+        RenderSystem.disableBlend();
 
         for (Renderable renderable : this.renderables) {
             renderable.render(guiGraphics, mouseX, mouseY, partialTick);

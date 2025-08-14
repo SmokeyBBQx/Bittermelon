@@ -92,7 +92,7 @@ public class OwnedPrivilegeListWidget extends ListWidget<OwnedPrivilegeListWidge
                 guiGraphics.fill(left, top - 2, left + entryWidth, top + entryHeight + 2, 0xFFD3E3FD);
             }
 
-            guiGraphics.blitSprite(getIcon(), left - 18, top, 16, 16);
+            guiGraphics.blitSprite(getIcon(), left + 4, top, 16, 16);
 
             int toggleButtonX = getToggleButtonX();
             int deleteButtonX = getDeleteButtonX();
@@ -102,7 +102,7 @@ public class OwnedPrivilegeListWidget extends ListWidget<OwnedPrivilegeListWidge
             guiGraphics.blitSprite(getDeleteButtonIcon(mouseX, mouseY), deleteButtonX, buttonY, BUTTON_SIZE, BUTTON_SIZE);
 
             int textColor = isFocused() ? 0xFFFFFFFF : 0xFF000000;
-            guiGraphics.drawString(Minecraft.getInstance().font, privilege, left, top + 3, textColor, false);
+            guiGraphics.drawString(Minecraft.getInstance().font, privilege, left + 22, top + 3, textColor, false);
         }
 
         public ResourceLocation getIcon() {

@@ -1,10 +1,14 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client.entry;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client.BitterButton;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client.PersonnelTerminalScreen;
 import com.site21.bittermelon.content.personnel.registry.PersonnelEntry;
+import com.site21.bittermelon.content.personnel.registry.networking.RemovePersonnelEntry;
+import com.site21.bittermelon.content.personnel.registry.networking.UpdatePersonnelEntry;
+import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -17,12 +21,19 @@ import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.PlayerSkin;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 public class PersonnelEntryInfoWidget extends AbstractWidget {
@@ -43,10 +54,15 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
     private BitterButton privilegesButton;
     private BitterButton deleteButton;
 
+    private final List<EditBox> fields;
+    private final List<Button> buttons;
+
     public PersonnelEntryInfoWidget(int x, int y, int width, int height, @NotNull PersonnelEntry entry, PersonnelTerminalScreen screen) {
         super(x, y, width, height, Component.literal(entry.getName()));
         this.entry = entry;
         this.screen = screen;
+        fields = new ArrayList<>();
+        buttons = new ArrayList<>();
         init();
     }
 
@@ -60,6 +76,10 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
         occupationField = new EditBox(Minecraft.getInstance().font, fieldX, fieldY + fieldHeight, fieldWidth, fieldHeight, Component.literal("Occupation"));
         departmentField = new EditBox(Minecraft.getInstance().font, fieldX, fieldY + fieldHeight * 2, fieldWidth, fieldHeight, Component.literal("Department"));
         notesField = new EditBox(Minecraft.getInstance().font, fieldX, fieldY + fieldHeight * 3, fieldWidth, fieldHeight * 2, Component.literal("Notes"));
+        fields.add(nameField);
+        fields.add(occupationField);
+        fields.add(departmentField);
+        fields.add(notesField);
 
         editButton = BitterButton.builder(Component.literal(""), this::toggleEditMode, new WidgetSprites(
                         ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/write_button"),
@@ -70,14 +90,17 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
                 .bounds(getX() + getWidth() - 30, getY() + getHeight() - 25, 20, 20)
                 .tooltip(Tooltip.create(Component.literal("Edit")))
                 .build();
+        buttons.add(editButton);
 
         saveButton = BitterButton.builder(Component.literal("Save"), this::saveChanges, PersonnelTerminalScreen.BUTTON_SPRITES)
                 .bounds(getX() + getWidth() - 110, getY() + getHeight() - 25, 45, 20)
                 .build();
+        buttons.add(saveButton);
 
         cancelButton = BitterButton.builder(Component.literal("Cancel"), this::cancelEdit, PersonnelTerminalScreen.BUTTON_SPRITES)
                 .bounds(getX() + getWidth() - 60, getY() + getHeight() - 25, 50, 20)
                 .build();
+        buttons.add(cancelButton);
 
         privilegesButton = BitterButton.builder(Component.literal(""), this::viewPrivileges, new WidgetSprites(
                         ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/keys_button"),
@@ -87,6 +110,7 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
                 .bounds(getX() + 10, getY() + getHeight() - 25, 20, 20)
                 .tooltip(Tooltip.create(Component.literal("View Privileges")))
                 .build();
+        buttons.add(privilegesButton);
 
         deleteButton = BitterButton.builder(Component.literal(""), this::deleteEntry, new WidgetSprites(
                         ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/trash_button"),
@@ -96,7 +120,7 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
                 .bounds(getX() + getWidth() - 135, getY() + getHeight() - 25, 20, 20)
                 .tooltip(Tooltip.create(Component.literal("Delete Entry")))
                 .build();
-
+        buttons.add(deleteButton);
 
         updateFieldValues();
         updateFieldStates();
@@ -111,10 +135,7 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
 
     private void updateFieldStates() {
         boolean editable = editMode && canEdit;
-        nameField.setEditable(editable);
-        occupationField.setEditable(editable);
-        departmentField.setEditable(editable);
-        notesField.setEditable(editable);
+        fields.forEach(field -> field.setEditable(editable));
     }
 
     public void setCanEdit(boolean canEdit) {
@@ -136,6 +157,8 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
 
         editMode = false;
         updateFieldStates();
+
+        PacketDistributor.sendToServer(new UpdatePersonnelEntry(entry));
     }
 
     private void cancelEdit(Button button) {
@@ -151,7 +174,9 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
     }
 
     private void deleteEntry(Button button) {
-
+        PacketDistributor.sendToServer(new RemovePersonnelEntry(entry.getId()));
+        screen.setActiveWidget(null);
+        screen.refreshContent();
     }
 
     public PersonnelEntry getEntry() {
@@ -162,6 +187,11 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         guiGraphics.blitSprite(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/generic_background"),
                 getX(), getY(), getWidth(), getHeight());
+
+        RenderSystem.enableBlend();
+        guiGraphics.blitSprite(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/scp_logo"),
+                    x + width - 100, y, 100, 100);
+        RenderSystem.disableBlend();
 
         Font font = Minecraft.getInstance().font;
 
@@ -216,13 +246,9 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
         privilegesButton.render(guiGraphics, mouseX, mouseY, partialTick);
 
         if (editMode && canEdit) {
-            nameField.render(guiGraphics, mouseX, mouseY, partialTick);
-            occupationField.render(guiGraphics, mouseX, mouseY, partialTick);
-            departmentField.render(guiGraphics, mouseX, mouseY, partialTick);
-            notesField.render(guiGraphics, mouseX, mouseY, partialTick);
+            fields.forEach(field -> field.render(guiGraphics, mouseX, mouseY, partialTick));
 
             deleteButton.render(guiGraphics, mouseX, mouseY, partialTick);
-
             saveButton.render(guiGraphics, mouseX, mouseY, partialTick);
             cancelButton.render(guiGraphics, mouseX, mouseY, partialTick);
         } else {
@@ -247,31 +273,6 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
             PlayerInfo playerInfo = connection.getPlayerInfo(entry.getPlayerUUID());
             if (playerInfo != null) {
                 skinLocation = playerInfo.getSkin();
-
-                AbstractClientPlayer fakePlayer = new AbstractClientPlayer(Minecraft.getInstance().level, playerInfo.getProfile()) {
-                    @Override
-                    public boolean isSpectator() {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean isCreative() {
-                        return false;
-                    }
-                };
-
-                InventoryScreen.renderEntityInInventoryFollowsAngle(
-                        guiGraphics,
-                        getX() + getWidth() - 60,
-                        getY() + 20,
-                        getX() + getWidth() - 10,
-                        getY() + 90,
-                        30,
-                        0.0f,
-                        0.0f,
-                        0.0f,
-                        fakePlayer
-                );
             }
         }
         ResourceLocation texture = skinLocation.texture();
@@ -330,49 +331,52 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (privilegesButton.mouseClicked(mouseX, mouseY, button)) {
-            return true;
+        for (Button buttonWidget : buttons) {
+            if (buttonWidget.mouseClicked(mouseX, mouseY, button)) return true;
         }
 
-        if (editMode && canEdit) {
-            if (nameField.mouseClicked(mouseX, mouseY, button) ||
-                    occupationField.mouseClicked(mouseX, mouseY, button) ||
-                    departmentField.mouseClicked(mouseX, mouseY, button) ||
-                    notesField.mouseClicked(mouseX, mouseY, button) ||
-                    saveButton.mouseClicked(mouseX, mouseY, button) ||
-                    cancelButton.mouseClicked(mouseX, mouseY, button)) {
+        for (EditBox field : fields) {
+            if (field.mouseClicked(mouseX, mouseY, button)) {
+                for (EditBox field1 : fields) {
+                    field1.setFocused(false);
+                }
+                field.setFocused(true);
                 return true;
             }
-        } else if (canEdit && editButton.mouseClicked(mouseX, mouseY, button)) {
-            return true;
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+
+        for (EditBox field : fields) {
+            field.setFocused(false);
+        }
+
+        return false;
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (editMode && canEdit) {
-            return nameField.keyPressed(keyCode, scanCode, modifiers) ||
-                    occupationField.keyPressed(keyCode, scanCode, modifiers) ||
-                    departmentField.keyPressed(keyCode, scanCode, modifiers) ||
-                    notesField.keyPressed(keyCode, scanCode, modifiers);
+        for (EditBox field : fields) {
+            if (field.keyPressed(keyCode, scanCode, modifiers)) return true;
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+
+        return false;
     }
 
     @Override
     public boolean charTyped(char codePoint, int modifiers) {
-        if (editMode && canEdit) {
-            return nameField.charTyped(codePoint, modifiers) ||
-                    occupationField.charTyped(codePoint, modifiers) ||
-                    departmentField.charTyped(codePoint, modifiers) ||
-                    notesField.charTyped(codePoint, modifiers);
+        for (EditBox field : fields) {
+            if (field.charTyped(codePoint, modifiers)) return true;
         }
-        return super.charTyped(codePoint, modifiers);
+
+        return false;
     }
 
     @Override
     protected void updateWidgetNarration(@NotNull NarrationElementOutput narrationElementOutput) {
         narrationElementOutput.add(NarratedElementType.TITLE, getMessage());
+    }
+
+    @Override
+    public void playDownSound(@NotNull SoundManager soundManager) {
+        soundManager.play(SimpleSoundInstance.forUI(BitterSounds.MOUSE_CLICK, 1f));
     }
 }
