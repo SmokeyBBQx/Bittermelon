@@ -57,6 +57,11 @@ public class BitterSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> COMPUTER_MID2 = register("machine.computer_mid2");
     public static final DeferredHolder<SoundEvent, SoundEvent> COMPUTER_START = register("machine.computer_start");
     public static final DeferredHolder<SoundEvent, SoundEvent> MOUSE_CLICK = register("machine.mouse_click");
+    public static final DeferredHolder<SoundEvent, SoundEvent> AMBIENT_NOISES = register("ambient.ambient_noises");
+    public static final DeferredHolder<SoundEvent, SoundEvent> FACILITY_AMBIENCE = register("ambient.facility_ambience");
+    public static final DeferredHolder<SoundEvent, SoundEvent> PULSING = register("ambient.pulsing");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BANJO = register("music.banjo");
+
 
     private static @NotNull DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return SOUND_EVENTS.register(name, () ->

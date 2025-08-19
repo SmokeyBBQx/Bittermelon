@@ -1,0 +1,20 @@
+{
+  "temperature": 0.8,
+  "downfall": 0.0,
+  "has_precipitation": false,
+  "effects": {
+    "sky_color": 7907327,
+    "fog_color": 12638975,
+    "water_color": 4159204,
+    "water_fog_color": 329011,
+    "ambient_sound": "bittermelon:ambient.pulsing",
+    "additions_sound": {
+      "sound": "bittermelon:ambient.ambient_noises",
+      "tick_chance": 0.001
+    }
+  },
+  "spawners": {},
+  "spawn_costs": {},
+  "carvers": {},
+  "features": []
+}

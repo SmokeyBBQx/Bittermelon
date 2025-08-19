@@ -68,6 +68,7 @@ public class PersonnelRegistry extends SavedData {
     public static void clearClientData() {
         if (clientInstance != null) {
             clientInstance.personnelEntries.clear();
+            clientInstance.characterToEntry.clear();
         }
     }
 
@@ -75,7 +76,13 @@ public class PersonnelRegistry extends SavedData {
         return personnelEntries.get(id);
     }
 
-    public PersonnelEntry getEntry(Character character) {return getEntry(characterToEntry.get(character.getUUID()));}
+    public PersonnelEntry getEntry(@NotNull Character character) {
+        Integer entryId = characterToEntry.get(character.getUUID());
+        if (entryId == null) {
+            return null;
+        }
+        return getEntry(entryId);
+    }
 
     public Map<Integer, PersonnelEntry> getPersonnelEntries() {
         return personnelEntries;
@@ -83,11 +90,13 @@ public class PersonnelRegistry extends SavedData {
 
     public void addEntry(PersonnelEntry entry) {
         personnelEntries.put(entry.getId(), entry);
+        characterToEntry.put(entry.getCharacterUUID(), entry.getId());
         setDirty();
         PacketDistributor.sendToAllPlayers(new AddPersonnelEntry(entry));
     }
 
     public void removeEntry(int id) {
+        characterToEntry.remove(getEntry(id).getCharacterUUID());
         personnelEntries.remove(id);
         setDirty();
     }

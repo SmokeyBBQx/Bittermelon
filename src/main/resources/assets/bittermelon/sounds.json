@@ -273,6 +273,47 @@
       "bittermelon:machine/mouse_click"
     ]
   },
+  "ambient.ambient_noises": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:ambient/distant_noise",
+      "bittermelon:ambient/movement_vents",
+      "bittermelon:ambient/long_groaning",
+      "bittermelon:ambient/groan",
+      "bittermelon:ambient/distant_thud",
+      "bittermelon:ambient/distant_noise",
+      "bittermelon:ambient/distant_machinery",
+      "bittermelon:ambient/creepy_thud",
+      "bittermelon:ambient/computer_noises",
+      "bittermelon:ambient/strange_noises",
+      "bittermelon:ambient/low_hum",
+      "minecraft:animal1",
+      "minecraft:bass_whale1",
+      "minecraft:bass_whale2",
+      "minecraft:dark4"
+    ]
+  },
+  "ambient.facility_ambience": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:ambient/facility_ambience"
+    ]
+  },
+  "ambient.pulsing": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:ambient/pulsing"
+    ]
+  },
+  "music.banjo": {
+    "category": "music",
+    "sounds": [
+      {
+        "name": "bittermelon:music/banjo",
+        "stream": true
+      }
+    ]
+  },
   "container.toolbox_open": {
     "category": "neutral",
     "sounds": [

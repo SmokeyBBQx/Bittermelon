@@ -100,10 +100,10 @@ public class BitterBlocks {
             ));
 
     public static final DeferredBlock<SecureDoorBlock> SECURE_DOOR = BLOCKS.register("secure_door",
-            () -> new SecureDoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.of()));
+            () -> new SecureDoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.of().noOcclusion()));
 
     public static final DeferredBlock<KeycardReaderSecureDoorBlock> KEYCARD_READER_SECURE_DOOR = BLOCKS.register("keycard_reader_secure_door",
-            () -> new KeycardReaderSecureDoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.of()));
+            () -> new KeycardReaderSecureDoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.of().noOcclusion()));
 
     public static final DeferredBlock<LargeSlidingDoorBlock> LARGE_SLIDING_DOOR = BLOCKS.register("large_sliding_door",
             () -> new LargeSlidingDoorBlock(BlockBehaviour.Properties.of()));
