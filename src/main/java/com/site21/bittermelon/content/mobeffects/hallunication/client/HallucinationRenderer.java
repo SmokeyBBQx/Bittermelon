@@ -1,9 +1,8 @@
-package com.site21.bittermelon.content.effects.hallunication.client;
+package com.site21.bittermelon.content.mobeffects.hallunication.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.client.shaders.ColorBleedShader;
-import com.site21.bittermelon.client.shaders.PsychedelicsShader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;

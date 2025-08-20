@@ -1,7 +1,6 @@
 package com.site21.bittermelon.datagen;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.effects.BitterEffect;
 import com.site21.bittermelon.init.neoforge.BitterItems;
 import com.site21.bittermelon.init.neoforge.BitterMobEffects;
 import net.minecraft.data.PackOutput;

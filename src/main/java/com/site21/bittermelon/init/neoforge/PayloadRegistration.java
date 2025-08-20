@@ -6,6 +6,7 @@ import com.site21.bittermelon.content.atmosphere.networking.*;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.ContainmentNameUpdate;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.OpenContainmentPanelScreen;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.networking.*;
+import com.site21.bittermelon.content.character.networking.SwitchCharacter;
 import com.site21.bittermelon.content.personnel.privilege.networking.*;
 import com.site21.bittermelon.content.personnel.registry.networking.AddPersonnelEntry;
 import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.networking.PlaySlidingDoorStuckSound;
@@ -13,7 +14,7 @@ import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor
 import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.networking.UpdateSlidingDoorState;
 import com.site21.bittermelon.content.character.networking.SyncCharacters;
 import com.site21.bittermelon.content.economy.networking.OpenATMScreen;
-import com.site21.bittermelon.content.effects.electrocuted.networking.CutOffChat;
+import com.site21.bittermelon.content.mobeffects.electrocuted.networking.CutOffChat;
 import com.site21.bittermelon.content.entities.implementations.scp650.networking.SetEntityPos;
 import com.site21.bittermelon.content.items.substance.networking.ReleasePressureUpdate;
 import com.site21.bittermelon.content.items.substance.networking.TransferRateUpdate;
@@ -36,7 +37,7 @@ import com.site21.bittermelon.networking.client.ClearForcedPose;
 import com.site21.bittermelon.networking.client.ContainerDataUpdate;
 import com.site21.bittermelon.networking.client.OpenCPRScreen;
 import com.site21.bittermelon.networking.client.SetForcedPose;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.site21.bittermelon.networking.server.AddEffect;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -413,6 +414,18 @@ public class PayloadRegistration {
                 UpdatePersonnelEntry.TYPE,
                 UpdatePersonnelEntry.STREAM_CODEC,
                 UpdatePersonnelEntry::handle
+        );
+
+        registrar.playToServer(
+                SwitchCharacter.TYPE,
+                SwitchCharacter.STREAM_CODEC,
+                SwitchCharacter::handle
+        );
+
+        registrar.playToServer(
+                AddEffect.TYPE,
+                AddEffect.STREAM_CODEC,
+                AddEffect::handle
         );
     }
 }

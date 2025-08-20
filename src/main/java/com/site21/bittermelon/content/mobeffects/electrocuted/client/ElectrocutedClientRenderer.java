@@ -1,11 +1,7 @@
-package com.site21.bittermelon.content.effects.electrocuted.client;
+package com.site21.bittermelon.content.mobeffects.electrocuted.client;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
@@ -15,8 +11,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
 
 import static com.site21.bittermelon.client.visualeffects.VignetteRenderer.renderVignette;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.*;

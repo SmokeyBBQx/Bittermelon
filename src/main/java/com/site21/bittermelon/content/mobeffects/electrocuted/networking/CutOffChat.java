@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.effects.electrocuted.networking;
+package com.site21.bittermelon.content.mobeffects.electrocuted.networking;
 
 import com.site21.bittermelon.Bittermelon;
 import io.netty.buffer.ByteBuf;

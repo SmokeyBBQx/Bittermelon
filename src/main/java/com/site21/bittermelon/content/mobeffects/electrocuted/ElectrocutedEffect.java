@@ -1,6 +1,6 @@
-package com.site21.bittermelon.content.effects.electrocuted;
+package com.site21.bittermelon.content.mobeffects.electrocuted;
 
-import com.site21.bittermelon.content.effects.electrocuted.networking.CutOffChat;
+import com.site21.bittermelon.content.mobeffects.electrocuted.networking.CutOffChat;
 import com.site21.bittermelon.content.entities.ai.behavior.misc.FeelsPain;
 import com.site21.bittermelon.content.stumble.StumbleHandler;
 import net.minecraft.server.level.ServerPlayer;

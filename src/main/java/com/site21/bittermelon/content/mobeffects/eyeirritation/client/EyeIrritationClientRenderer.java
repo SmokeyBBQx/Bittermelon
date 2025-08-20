@@ -1,12 +1,9 @@
-package com.site21.bittermelon.content.effects.eyeirritation.client;
+package com.site21.bittermelon.content.mobeffects.eyeirritation.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.client.shaders.BlurShader;
-import com.site21.bittermelon.client.visualeffects.VignetteRenderer;
-import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
@@ -18,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.client.visualeffects.VignetteRenderer.renderVignette;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.*;
-import static com.site21.bittermelon.init.neoforge.BitterMobEffects.FAINTING;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class EyeIrritationClientRenderer {

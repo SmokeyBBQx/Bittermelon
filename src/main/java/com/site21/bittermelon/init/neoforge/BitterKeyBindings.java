@@ -18,7 +18,7 @@ public class BitterKeyBindings {
 
     public static final Lazy<KeyMapping> HEALTH_SCREEN_KEY = Lazy.of(() ->
             new KeyMapping(
-                    "key.bittermelon.health_screen",
+                    "Health Screen",
                     InputConstants.Type.KEYSYM,
                     GLFW.GLFW_KEY_H,
                     "key.category.bittermelon"
@@ -27,7 +27,7 @@ public class BitterKeyBindings {
 
     public static final Lazy<KeyMapping> THROW_ITEM_KEY = Lazy.of(() ->
             new KeyMapping(
-                    "key.bittermelon.throw_item",
+                    "Throw Item",
                     KeyConflictContext.IN_GAME,
                     KeyModifier.ALT,
                     InputConstants.Type.KEYSYM,
@@ -36,9 +36,19 @@ public class BitterKeyBindings {
             )
     );
 
+    public static final Lazy<KeyMapping> CHARACTER_KEY = Lazy.of(() ->
+            new KeyMapping(
+                    "Character",
+                    InputConstants.Type.KEYSYM,
+                    GLFW.GLFW_KEY_C,
+                    "key.category.bittermelon"
+            )
+    );
+
     @SubscribeEvent
     public static void register(@NotNull RegisterKeyMappingsEvent event) {
         event.register(HEALTH_SCREEN_KEY.get());
         event.register(THROW_ITEM_KEY.get());
+        event.register(CHARACTER_KEY.get());
     }
 }

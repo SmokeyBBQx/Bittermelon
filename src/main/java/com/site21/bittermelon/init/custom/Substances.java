@@ -12,7 +12,6 @@ import static com.site21.bittermelon.init.neoforge.BitterRegistries.SUBSTANCE_RE
 public class Substances {
     public static final DeferredRegister<Substance> SUBSTANCES = DeferredRegister.create(SUBSTANCE_REGISTRY_KEY, Bittermelon.MOD_ID);
 
-    // --- ATOMS ---
     public static final Supplier<Substance> OXYGEN = SUBSTANCES.register("oxygen", () -> new Substance(
             "Oxygen",
             new Substance.Properties()
