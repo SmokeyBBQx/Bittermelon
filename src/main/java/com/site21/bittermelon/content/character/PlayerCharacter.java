@@ -19,7 +19,7 @@ public class PlayerCharacter extends Character {
 
     public PlayerCharacter(UUID uuid, UUID entityUUID, String name, String description, int emoteColor,
                            MedicalStats medicalStats, EnumMap<Skill, Float> skills) {
-        super(uuid, entityUUID, name, description, emoteColor, medicalStats, skills);
+        super(uuid, entityUUID, name, description, emoteColor, medicalStats, skills, 0);
     }
 
 

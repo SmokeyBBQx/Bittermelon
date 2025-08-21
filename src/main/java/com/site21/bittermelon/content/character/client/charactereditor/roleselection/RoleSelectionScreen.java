@@ -1,0 +1,10 @@
+package com.site21.bittermelon.content.character.client.charactereditor.roleselection;
+
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+
+public class RoleSelectionScreen extends Screen {
+    public RoleSelectionScreen() {
+        super(Component.literal("Role Selection"));
+    }
+}

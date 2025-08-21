@@ -39,8 +39,9 @@ public class Character {
     private int emoteColor;
     private MedicalStats medicalStats;
     private final EnumMap<Skill, Float> skills;
+    private int willpower;
 
-    public Character(UUID uuid, UUID entityUUID, String name, String description, int emoteColor, MedicalStats medicalStats, EnumMap<Skill, Float> skills) {
+    public Character(UUID uuid, UUID entityUUID, String name, String description, int emoteColor, MedicalStats medicalStats, EnumMap<Skill, Float> skills, int willpower) {
         this.uuid = uuid;
         this.entityUUID = entityUUID;
         this.name = name;
@@ -48,6 +49,7 @@ public class Character {
         this.emoteColor = emoteColor;
         this.medicalStats = medicalStats;
         this.skills = skills;
+        this.willpower = willpower;
     }
 
     public Character(UUID entityUUID, String name, @NotNull Anatomy anatomy) {
@@ -58,12 +60,19 @@ public class Character {
         emoteColor = (int) (Math.random() * 0xFFFFFF);
         medicalStats = anatomy.getFactory().build(BloodType.O_MINUS, this);
         skills = new EnumMap<>(Skill.class);
+        willpower = 6;
     }
 
     public Character(UUID entityUUID, String name, String description, String emoteColor) {
         this(entityUUID, name, Anatomy.HUMAN);
         this.description = description;
         this.emoteColor = TextColor.parseColor("#" + emoteColor).getOrThrow().getValue();
+    }
+
+    public Character(UUID entityUUID, String name, String description, int emoteColor) {
+        this(entityUUID, name, Anatomy.HUMAN);
+        this.description = description;
+        this.emoteColor = emoteColor;
     }
 
     public UUID getUUID() {
@@ -133,6 +142,14 @@ public class Character {
         skills.compute(skill, (k, v) -> Math.min(v == null ? 1 + amount : v + amount, skill.getMaxLevel()));
     }
 
+    public int getWillpower() {
+        return willpower;
+    }
+
+    public void setWillpower(int willpower) {
+        this.willpower = willpower;
+    }
+
     public void savePlayerData(CompoundTag data, @NotNull ServerLevel level) {
         try {
             Path dataDir = level.getServer().getWorldPath(LevelResource.ROOT).resolve("characterdata");
@@ -169,11 +186,12 @@ public class Character {
                 Codec.STRING.fieldOf("description").forGetter(Character::getDescription),
                 Codec.INT.fieldOf("emoteColor").forGetter(Character::getEmoteColor),
                 MedicalStats.CODEC.fieldOf("medicalStats").forGetter(Character::getMedicalStats),
-                Codec.unboundedMap(Skill.CODEC, Codec.FLOAT).fieldOf("skills").forGetter(Character::getSkills)
+                Codec.unboundedMap(Skill.CODEC, Codec.FLOAT).fieldOf("skills").forGetter(Character::getSkills),
+                Codec.INT.fieldOf("willpower").forGetter(Character::getWillpower)
         ).apply(instance, (uuid, entityUUID, name, description, emoteColor,
-                           medicalStats, skills) -> {
+                           medicalStats, skills, willpower) -> {
             EnumMap<Skill, Float> skillMap = new EnumMap<>(Skill.class);
-            return new Character(uuid, entityUUID, name, description, emoteColor, medicalStats, skillMap);
+            return new Character(uuid, entityUUID, name, description, emoteColor, medicalStats, skillMap, willpower);
         }));
 
         STREAM_CODEC = StreamCodec.of(
@@ -188,6 +206,7 @@ public class Character {
                             FriendlyByteBuf::writeEnum,
                             FriendlyByteBuf::writeFloat
                     );
+                    ByteBufCodecs.INT.encode(buf, character.getWillpower());
                 },
                 (buf) -> {
                     UUID uuid = UUIDUtil.STREAM_CODEC.decode(buf);
@@ -203,8 +222,9 @@ public class Character {
                             FriendlyByteBuf::readFloat
                     );
                     skills.putAll(tempMap);
+                    int willpower = ByteBufCodecs.INT.decode(buf);
 
-                    return new Character(uuid, entityUUID, name, description, emoteColor, medicalStats, skills);
+                    return new Character(uuid, entityUUID, name, description, emoteColor, medicalStats, skills, willpower);
                 }
         );
     }

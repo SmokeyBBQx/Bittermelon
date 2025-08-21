@@ -6,13 +6,12 @@ import com.site21.bittermelon.content.atmosphere.networking.*;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.ContainmentNameUpdate;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.OpenContainmentPanelScreen;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.networking.*;
-import com.site21.bittermelon.content.character.networking.SwitchCharacter;
+import com.site21.bittermelon.content.character.networking.*;
 import com.site21.bittermelon.content.personnel.privilege.networking.*;
 import com.site21.bittermelon.content.personnel.registry.networking.AddPersonnelEntry;
 import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.networking.PlaySlidingDoorStuckSound;
 import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.networking.UpdateSlidingDoorProgress;
 import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.networking.UpdateSlidingDoorState;
-import com.site21.bittermelon.content.character.networking.SyncCharacters;
 import com.site21.bittermelon.content.economy.networking.OpenATMScreen;
 import com.site21.bittermelon.content.mobeffects.electrocuted.networking.CutOffChat;
 import com.site21.bittermelon.content.entities.implementations.scp650.networking.SetEntityPos;
@@ -426,6 +425,24 @@ public class PayloadRegistration {
                 AddEffect.TYPE,
                 AddEffect.STREAM_CODEC,
                 AddEffect::handle
+        );
+
+        registrar.playToServer(
+                UpdateCharacter.TYPE,
+                UpdateCharacter.STREAM_CODEC,
+                UpdateCharacter::handle
+        );
+
+        registrar.playToServer(
+                OpenCharacterScreenC2S.TYPE,
+                OpenCharacterScreenC2S.STREAM_CODEC,
+                OpenCharacterScreenC2S::handle
+        );
+
+        registrar.playToClient(
+                OpenCharacterScreenS2C.TYPE,
+                OpenCharacterScreenS2C.STREAM_CODEC,
+                OpenCharacterScreenS2C::handle
         );
     }
 }

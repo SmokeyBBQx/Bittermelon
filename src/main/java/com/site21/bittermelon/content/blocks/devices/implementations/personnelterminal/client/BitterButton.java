@@ -9,7 +9,9 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -21,6 +23,7 @@ import java.util.function.Function;
 @OnlyIn(Dist.CLIENT)
 public class BitterButton extends Button {
     protected WidgetSprites sprites;
+    private Holder<SoundEvent> clickSound = BitterSounds.MOUSE_CLICK;
 
     protected BitterButton(int x, int y, int width, int height, Component message, OnPress onPress, CreateNarration createNarration, WidgetSprites sprites) {
         super(x, y, width, height, message, onPress, createNarration);
@@ -55,9 +58,13 @@ public class BitterButton extends Button {
         this.sprites = sprites;
     }
 
+    public void setClickSound(Holder<SoundEvent> clickSound) {
+        this.clickSound = clickSound;
+    }
+
     @Override
     public void playDownSound(@NotNull SoundManager soundManager) {
-        soundManager.play(SimpleSoundInstance.forUI(BitterSounds.MOUSE_CLICK, 1f));
+        soundManager.play(SimpleSoundInstance.forUI(clickSound, 1f));
     }
 
     @OnlyIn(Dist.CLIENT)
