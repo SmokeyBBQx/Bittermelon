@@ -1,11 +1,14 @@
 package com.site21.bittermelon.content.character.client.charactereditor.roleselection;
 
 import com.site21.bittermelon.content.character.Character;
+import com.site21.bittermelon.content.character.client.characterselection.CharacterSelectionScreen;
+import com.site21.bittermelon.content.roles.FoundationRole;
 import com.site21.bittermelon.content.roles.Role;
 import com.site21.bittermelon.content.roles.networking.AddRole;
 import com.site21.bittermelon.init.custom.Roles;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -24,6 +27,8 @@ public class RoleSelectionScreen extends Screen {
     private RoleListWidget listWidget;
     private RoleListWidget.Entry selectedRole;
     private Button confirmButton;
+    private EditBox searchField;
+    private String currentSearchTerm = "";
 
     public RoleSelectionScreen(Screen previousScreen, Character character) {
         super(Component.literal("Role Selection"));
@@ -33,27 +38,61 @@ public class RoleSelectionScreen extends Screen {
 
     @Override
     protected void init() {
-        int listWidth = width / 3;
         int margin = 20;
+        int listWidth = width / 3;
+        int listHeight = height - margin - 40;
+        int listX = width / 2 - listWidth * 2 / 2;
 
-        listWidget = new RoleListWidget(minecraft, listWidth, height - margin * 2, margin, 40, this);
-        listWidget.setX(width / 2 - listWidth * 2 / 2);
-
-        Collection<DeferredHolder<Role, ? extends Role>> roles = ROLES.getEntries();
-        listWidget.refreshList(roles);
+        listWidget = new RoleListWidget(minecraft, listWidth, listHeight, margin, 40, this);
+        listWidget.setX(listX);
 
         confirmButton = Button.builder(Component.literal("Confirm"), this::onConfirm)
                 .bounds(listWidget.getRight() + 5, 0, 50, 20)
                 .build();
         confirmButton.visible = false;
 
+        searchField = new EditBox(font, listX, margin + listHeight, listWidth, 20, Component.literal("Search"));
+        searchField.setResponder(this::onSearchChanged);
+        searchField.setHint(Component.literal("Search..."));
+
         addRenderableWidget(listWidget);
         addRenderableWidget(confirmButton);
+        addRenderableWidget(searchField);
+
+        refreshRoles();
     }
 
-    public void onConfirm(Button button) {
+    private void onConfirm(Button button) {
         PacketDistributor.sendToServer(new AddRole(character.getUUID(), selectedRole.getRoleHolder()));
-        minecraft.setScreen(previousScreen);
+        if (previousScreen instanceof CharacterSelectionScreen screen) {
+            screen.switchCharacter(character);
+            onClose();
+        }
+    }
+
+    private void onSearchChanged(@NotNull String search) {
+        currentSearchTerm = search.toLowerCase();
+        refreshRoles();
+    }
+
+    private void refreshRoles() {
+        Collection<DeferredHolder<Role, ? extends Role>> roles = ROLES.getEntries();
+
+        if (!currentSearchTerm.isEmpty()) {
+            roles = roles.stream().filter(holder -> matchesSearchTerm(holder.value())).toList();
+        }
+
+        listWidget.refreshList(roles);
+    }
+
+    private boolean matchesSearchTerm(Role role) {
+        if (role instanceof FoundationRole foundationRole) {
+            return role.name.toLowerCase().contains(currentSearchTerm)
+                    || foundationRole.department.toLowerCase().contains(currentSearchTerm)
+                    || foundationRole.position.toLowerCase().contains(currentSearchTerm);
+        }
+
+        return role.name.toLowerCase().contains(currentSearchTerm);
     }
 
     public void setSelectedRole(RoleListWidget.@NotNull Entry role) {
@@ -78,7 +117,7 @@ public class RoleSelectionScreen extends Screen {
         Role role = selectedRole.getRole();
         int descriptionHeight = minecraft.font.wordWrapHeight(role.description, listWidget.getWidth());
 
-        guiGraphics.fill(x- 2, y - 2, x + listWidget.getWidth(), y + descriptionHeight + font.lineHeight + 12, 0x44000000);
+        guiGraphics.fill(x - 2, y - 2, x + listWidget.getWidth(), y + descriptionHeight + font.lineHeight + 12, 0x44000000);
 
         guiGraphics.drawString(font, role.name, x, y, 0xFFFFFF);
         guiGraphics.drawWordWrap(font, Component.literal(role.description), x, y + 15, listWidget.getWidth(), 0xFFFFFF);

@@ -37,6 +37,7 @@ public class CharacterKeyBind {
     }
 
     public static void openCharacterScreen() {
+//        Minecraft.getInstance().setScreen(new RoleSelectionScreen(null, null));
         PacketDistributor.sendToServer(new OpenCharacterScreenC2S(Minecraft.getInstance().player.getUUID()));
 
 //        HitResult hitResult = mc.hitResult;
