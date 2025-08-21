@@ -5,6 +5,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client.BitterButton;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client.PersonnelTerminalScreen;
+import com.site21.bittermelon.content.character.Character;
+import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.personnel.registry.PersonnelEntry;
 import com.site21.bittermelon.content.personnel.registry.networking.RemovePersonnelEntry;
 import com.site21.bittermelon.content.personnel.registry.networking.UpdatePersonnelEntry;
@@ -34,6 +36,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.site21.bittermelon.content.character.skin.SkinUtil.getAbstractClientPlayer;
 
 @OnlyIn(Dist.CLIENT)
 public class PersonnelEntryInfoWidget extends AbstractWidget {
@@ -190,7 +194,7 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
 
         RenderSystem.enableBlend();
         guiGraphics.blitSprite(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/scp_logo"),
-                    x + width - 100, y, 100, 100);
+                x + width - 100, y, 100, 100);
         RenderSystem.disableBlend();
 
         Font font = Minecraft.getInstance().font;
@@ -266,16 +270,13 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
     }
 
     private void renderPlayer(@NotNull GuiGraphics guiGraphics, int startX, int startY) {
-        PlayerSkin skinLocation = DefaultPlayerSkin.get(entry.getPlayerUUID());
-        ;
-        ClientPacketListener connection = Minecraft.getInstance().getConnection();
-        if (connection != null) {
-            PlayerInfo playerInfo = connection.getPlayerInfo(entry.getPlayerUUID());
-            if (playerInfo != null) {
-                skinLocation = playerInfo.getSkin();
-            }
+        ResourceLocation texture = DefaultPlayerSkin.get(entry.getPlayerUUID()).texture();
+
+        Character character = CharacterManager.get(Minecraft.getInstance().level).getCharacter(entry.getCharacterUUID());
+        if (character != null && character.getPlayerInfo().isPresent()) {
+             texture = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + character.getUUID());
         }
-        ResourceLocation texture = skinLocation.texture();
+
         int textureSize = 64;
         int lowerBodyStartY = startY + 8;
 

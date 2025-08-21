@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 public class Character {
@@ -40,6 +41,7 @@ public class Character {
     private MedicalStats medicalStats;
     private final EnumMap<Skill, Float> skills;
     private int willpower;
+    private PlayerInfo playerInfo;
 
     public Character(UUID uuid, UUID entityUUID, String name, String description, int emoteColor, MedicalStats medicalStats, EnumMap<Skill, Float> skills, int willpower) {
         this.uuid = uuid;
@@ -95,6 +97,10 @@ public class Character {
         return emoteColor;
     }
 
+    public Optional<PlayerInfo> getPlayerInfo() {
+        return Optional.ofNullable(playerInfo);
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -113,6 +119,10 @@ public class Character {
 
     public void setMedicalStats(MedicalStats medicalStats) {
         this.medicalStats = medicalStats;
+    }
+
+    public void setPlayerInfo(PlayerInfo playerInfo) {
+        this.playerInfo = playerInfo;
     }
 
     public MedicalStats getMedicalStats() {
@@ -187,11 +197,14 @@ public class Character {
                 Codec.INT.fieldOf("emoteColor").forGetter(Character::getEmoteColor),
                 MedicalStats.CODEC.fieldOf("medicalStats").forGetter(Character::getMedicalStats),
                 Codec.unboundedMap(Skill.CODEC, Codec.FLOAT).fieldOf("skills").forGetter(Character::getSkills),
-                Codec.INT.fieldOf("willpower").forGetter(Character::getWillpower)
+                Codec.INT.fieldOf("willpower").forGetter(Character::getWillpower),
+                PlayerInfo.CODEC.optionalFieldOf("playerInfo").forGetter(Character::getPlayerInfo)
         ).apply(instance, (uuid, entityUUID, name, description, emoteColor,
-                           medicalStats, skills, willpower) -> {
+                           medicalStats, skills, willpower, playerInfo) -> {
             EnumMap<Skill, Float> skillMap = new EnumMap<>(Skill.class);
-            return new Character(uuid, entityUUID, name, description, emoteColor, medicalStats, skillMap, willpower);
+            Character character = new Character(uuid, entityUUID, name, description, emoteColor, medicalStats, skillMap, willpower);
+            playerInfo.ifPresent(character::setPlayerInfo);
+            return character;
         }));
 
         STREAM_CODEC = StreamCodec.of(
@@ -207,6 +220,7 @@ public class Character {
                             FriendlyByteBuf::writeFloat
                     );
                     ByteBufCodecs.INT.encode(buf, character.getWillpower());
+                    PlayerInfo.STREAM_CODEC.apply(ByteBufCodecs::optional).encode(buf, character.getPlayerInfo());
                 },
                 (buf) -> {
                     UUID uuid = UUIDUtil.STREAM_CODEC.decode(buf);
@@ -223,8 +237,11 @@ public class Character {
                     );
                     skills.putAll(tempMap);
                     int willpower = ByteBufCodecs.INT.decode(buf);
+                    Optional<PlayerInfo> playerInfo = PlayerInfo.STREAM_CODEC.apply(ByteBufCodecs::optional).decode(buf);
 
-                    return new Character(uuid, entityUUID, name, description, emoteColor, medicalStats, skills, willpower);
+                    Character character = new Character(uuid, entityUUID, name, description, emoteColor, medicalStats, skills, willpower);
+                    playerInfo.ifPresent(character::setPlayerInfo);
+                    return character;
                 }
         );
     }

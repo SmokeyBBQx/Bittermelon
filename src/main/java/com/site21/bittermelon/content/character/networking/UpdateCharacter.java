@@ -3,6 +3,7 @@ package com.site21.bittermelon.content.character.networking;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
+import com.site21.bittermelon.content.character.PlayerInfo;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -32,6 +33,8 @@ public record UpdateCharacter(Character character) implements CustomPacketPayloa
             existingCharacter.setName(character.getName());
             existingCharacter.setEmoteColor(character.getEmoteColor());
             existingCharacter.setDescription(character.getDescription());
+            character.getPlayerInfo().ifPresent(info ->
+                    existingCharacter.setPlayerInfo(new PlayerInfo(info.getSkinURL(), info.getModel())));
         } else {
             manager.getCharacters().put(character.getUUID(), character);
         }

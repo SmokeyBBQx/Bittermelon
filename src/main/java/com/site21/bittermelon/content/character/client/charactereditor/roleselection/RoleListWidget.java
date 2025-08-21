@@ -1,6 +1,9 @@
 package com.site21.bittermelon.content.character.client.charactereditor.roleselection;
 
+import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client.PersonnelListWidget;
+import com.site21.bittermelon.content.character.Character;
+import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.personnel.registry.PersonnelEntry;
 import com.site21.bittermelon.content.roles.Role;
 import com.site21.bittermelon.util.ColorUtil;
@@ -95,16 +98,13 @@ public class RoleListWidget extends ObjectSelectionList<RoleListWidget.Entry> {
         }
 
         private void renderPlayer(@NotNull GuiGraphics guiGraphics, int startX, int startY) {
-            PlayerSkin skinLocation = DefaultPlayerSkin.get(minecraft.player.getUUID());;
-            ClientPacketListener connection = Minecraft.getInstance().getConnection();
-            if (connection != null) {
-                PlayerInfo playerInfo = connection.getPlayerInfo(minecraft.player.getUUID());
-                if (playerInfo != null) {
-                    skinLocation = playerInfo.getSkin();
-                }
+            ResourceLocation playerTexture = DefaultPlayerSkin.get(minecraft.player.getUUID()).texture();
+
+            Character character = screen.getCharacter();
+            if (character != null && character.getPlayerInfo().isPresent()) {
+                playerTexture = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + character.getUUID());
             }
 
-            ResourceLocation playerTexture = skinLocation.texture();
             ResourceLocation texture = role.skinLocation;
             if (texture == null) return;
 

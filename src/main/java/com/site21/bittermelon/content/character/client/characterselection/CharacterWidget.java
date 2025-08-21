@@ -1,9 +1,12 @@
 package com.site21.bittermelon.content.character.client.characterselection;
 
+import com.mojang.authlib.GameProfile;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client.BitterButton;
 import com.site21.bittermelon.content.character.Character;
+import com.site21.bittermelon.content.character.PlayerInfo;
 import com.site21.bittermelon.content.character.client.charactereditor.CharacterEditorScreen;
+import com.site21.bittermelon.content.character.skin.SkinManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -14,12 +17,18 @@ import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import static com.site21.bittermelon.content.character.skin.SkinUtil.getAbstractClientPlayer;
 
 @OnlyIn(Dist.CLIENT)
 public class CharacterWidget extends AbstractWidget {
@@ -55,6 +64,11 @@ public class CharacterWidget extends AbstractWidget {
         if (character == null) {
             editButton.visible = false;
         }
+
+        if (character != null) {
+            character.getPlayerInfo().ifPresent(
+                    info -> SkinManager.loadSkin(info.getSkinURL(), String.valueOf(character.getUUID())));
+        }
     }
 
     private void onEdit(Button button) {
@@ -89,6 +103,8 @@ public class CharacterWidget extends AbstractWidget {
 
         guiGraphics.drawCenteredString(font, displayName, x + width / 2, y + 5, 0xFFFFFF);
 
+        AbstractClientPlayer fakePlayer = getAbstractClientPlayer(character);
+
         InventoryScreen.renderEntityInInventoryFollowsAngle(
                 guiGraphics,
                 getX(),
@@ -99,7 +115,7 @@ public class CharacterWidget extends AbstractWidget {
                 0.0f,
                 0.0f,
                 0.0f,
-                Minecraft.getInstance().player
+                fakePlayer == null ? Minecraft.getInstance().player : fakePlayer
         );
     }
 

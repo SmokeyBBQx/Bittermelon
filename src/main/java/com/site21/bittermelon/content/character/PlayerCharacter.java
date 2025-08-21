@@ -3,6 +3,7 @@ package com.site21.bittermelon.content.character;
 import com.site21.bittermelon.content.character.skills.Skill;
 import com.site21.bittermelon.content.medical.factory.Anatomy;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
+import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
@@ -16,11 +17,11 @@ import java.util.EnumMap;
 import java.util.UUID;
 
 public class PlayerCharacter extends Character {
+    private String skinURL;
+    private PlayerSkin.Model model;
 
     public PlayerCharacter(UUID uuid, UUID entityUUID, String name, String description, int emoteColor,
                            MedicalStats medicalStats, EnumMap<Skill, Float> skills) {
         super(uuid, entityUUID, name, description, emoteColor, medicalStats, skills, 0);
     }
-
-
 }

@@ -4,15 +4,19 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
+import com.site21.bittermelon.content.character.PlayerInfo;
 import com.site21.bittermelon.content.character.client.charactereditor.roleselection.RoleSelectionScreen;
 import com.site21.bittermelon.content.character.networking.SwitchCharacter;
 import com.site21.bittermelon.content.character.networking.UpdateCharacter;
+import com.site21.bittermelon.content.character.skin.SkinManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.MultiLineEditBox;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -24,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import static com.site21.bittermelon.content.character.skin.SkinUtil.getAbstractClientPlayer;
 import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventory;
 
 @OnlyIn(Dist.CLIENT)
@@ -83,7 +88,7 @@ public class CharacterEditorScreen extends Screen {
         if (character != null) {
             nameField.setValue(character.getName());
             emoteColorField.setValue(String.format("#%06X", character.getEmoteColor()));
-            urlField.setValue("");
+            character.getPlayerInfo().ifPresent(info -> urlField.setValue(info.getSkinURL()));
             descriptionField.setValue(character.getDescription());
         }
 
@@ -119,6 +124,7 @@ public class CharacterEditorScreen extends Screen {
 
     private void onConfirm(Button button) {
         String name = nameField.getValue();
+        String skinURL = urlField.getValue();
         String description = descriptionField.getValue();
         int emoteColor;
 
@@ -141,6 +147,12 @@ public class CharacterEditorScreen extends Screen {
             character.setEmoteColor(emoteColor);
             character.setDescription(description);
         }
+
+        SkinManager.loadSkin(skinURL, String.valueOf(character.getUUID()));
+        character.getPlayerInfo().ifPresentOrElse(
+                info -> info.setSkinURL(skinURL),
+                () -> character.setPlayerInfo(new PlayerInfo(skinURL, PlayerSkin.Model.WIDE))
+        );
 
         PacketDistributor.sendToServer(new UpdateCharacter(character));
         assert minecraft != null;
@@ -191,6 +203,8 @@ public class CharacterEditorScreen extends Screen {
         int playerWidth = 90;
         int playerHeight = 160;
 
+        AbstractClientPlayer fakePlayer = character == null ? null : getAbstractClientPlayer(character);
+
         assert Minecraft.getInstance().player != null;
         renderEntityInInventoryFollowsAngle(
                 guiGraphics,
@@ -200,7 +214,7 @@ public class CharacterEditorScreen extends Screen {
                 playerY + playerHeight,
                 80,
                 0f, rotationX, 0f,
-                Minecraft.getInstance().player
+                fakePlayer == null ? Minecraft.getInstance().player : fakePlayer
         );
     }
 

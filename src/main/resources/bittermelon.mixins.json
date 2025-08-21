@@ -8,7 +8,8 @@
   "client": [
     "ChatComponentMixin",
     "CrosshairMixin",
-    "LivingEntityRendererMixin"
+    "LivingEntityRendererMixin",
+    "PlayerInfoMixin"
   ],
   "injectors": {
     "defaultRequire": 1

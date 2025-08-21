@@ -1,5 +1,6 @@
 package com.site21.bittermelon.content.character;
 
+import com.site21.bittermelon.content.character.skin.SkinOverrideSystem;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -124,6 +125,8 @@ public class CharacterManager extends SavedData {
             player.getInventory().setChanged();
             setActiveCharacter(player, switchedTo.getUUID());
         }
+
+        switchedTo.getPlayerInfo().ifPresent(info -> SkinOverrideSystem.setSkinOverride(player.getUUID(), switchedTo.getUUID(), info.getSkinURL()));
     }
 
     @OnlyIn(Dist.CLIENT)
