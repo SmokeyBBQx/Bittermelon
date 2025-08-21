@@ -27,6 +27,7 @@ import com.site21.bittermelon.content.blocks.devices.implementations.personnelte
 import com.site21.bittermelon.content.personnel.registry.networking.RemovePersonnelEntry;
 import com.site21.bittermelon.content.personnel.registry.networking.SyncPersonnelRegistry;
 import com.site21.bittermelon.content.personnel.registry.networking.UpdatePersonnelEntry;
+import com.site21.bittermelon.content.roles.networking.AddRole;
 import com.site21.bittermelon.content.stumble.networking.AttemptToRise;
 import com.site21.bittermelon.content.telecomms.intercom.networking.AddIntercomToClient;
 import com.site21.bittermelon.content.telecomms.intercom.networking.RemoveIntercomFromClient;
@@ -443,6 +444,12 @@ public class PayloadRegistration {
                 OpenCharacterScreenS2C.TYPE,
                 OpenCharacterScreenS2C.STREAM_CODEC,
                 OpenCharacterScreenS2C::handle
+        );
+
+        registrar.playToServer(
+                AddRole.TYPE,
+                AddRole.STREAM_CODEC,
+                AddRole::handle
         );
     }
 }

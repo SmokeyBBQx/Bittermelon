@@ -1,17 +1,25 @@
 package com.site21.bittermelon.content.roles;
 
 import com.site21.bittermelon.content.character.Character;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 
 public class Role {
     public final String name;
     public final int color;
+    public final String quote;
+    public final String description;
+    public ResourceLocation skinLocation;
     private boolean whitelisted = false;
     private boolean defaultRole = false;
+    private Component addMessage;
 
-    public Role(String name, int color) {
+    public Role(String name, int color, String quote, String description) {
         this.name = name;
         this.color = color;
+        this.quote = quote;
+        this.description = description;
     }
 
     public Role whitelisted() {
@@ -24,6 +32,16 @@ public class Role {
         return this;
     }
 
+    public Role addMessage(Component addMessage) {
+        this.addMessage = addMessage;
+        return this;
+    }
+
+    public Role skinLocation(ResourceLocation skinLocation) {
+        this.skinLocation = skinLocation;
+        return this;
+    }
+
     public boolean isWhitelisted() {
         return whitelisted;
     }
@@ -32,7 +50,9 @@ public class Role {
         return defaultRole;
     }
 
-    public void onRoleAdded(LivingEntity entity, Character character) {
-
+    public void onRoleAdded(Player player, Character character) {
+        if (addMessage != null) {
+            player.sendSystemMessage(addMessage);
+        }
     }
 }

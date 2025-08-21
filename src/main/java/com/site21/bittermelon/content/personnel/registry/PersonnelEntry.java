@@ -2,11 +2,13 @@ package com.site21.bittermelon.content.personnel.registry;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.personnel.privilege.PrivilegeUser;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -46,6 +48,11 @@ public class PersonnelEntry implements PrivilegeUser {
         this.notes = notes;
         this.department = "";
         this.privileges = new HashMap<>();
+    }
+
+    public PersonnelEntry(@NotNull Player player, @NotNull Character character, String department, String occupation) {
+        this(player.getUUID(), character.getUUID(), character.getName(), occupation, "");
+        this.department = department;
     }
 
     public int getId() {

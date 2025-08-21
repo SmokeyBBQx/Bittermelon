@@ -2,6 +2,7 @@ package com.site21.bittermelon.content.character.client;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.ClientHandler;
+import com.site21.bittermelon.content.character.client.charactereditor.roleselection.RoleSelectionScreen;
 import com.site21.bittermelon.content.character.client.characterselection.CharacterSelectionScreen;
 import com.site21.bittermelon.content.character.networking.OpenCharacterScreenC2S;
 import com.site21.bittermelon.content.character.networking.OpenCharacterScreenS2C;

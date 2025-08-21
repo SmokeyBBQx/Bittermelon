@@ -33,6 +33,7 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import static com.site21.bittermelon.init.custom.Compartments.COMPARTMENTS;
 import static com.site21.bittermelon.init.custom.Drugs.DRUGS;
 import static com.site21.bittermelon.init.custom.LogicalOperators.LOGICAL_OPERATORS;
+import static com.site21.bittermelon.init.custom.Roles.ROLES;
 import static com.site21.bittermelon.init.neoforge.BitterActivity.ACTIVITY;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ATTACHMENT_TYPES;
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.BLOCK_ENTITY_TYPES;
@@ -78,6 +79,7 @@ public class Bittermelon {
         COMPARTMENTS.register(modEventBus);
         DRUGS.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
+        ROLES.register(modEventBus);
 
         modEventBus.addListener(BitterRegistries::registerRegistries);
         modEventBus.addListener(this::commonSetup);

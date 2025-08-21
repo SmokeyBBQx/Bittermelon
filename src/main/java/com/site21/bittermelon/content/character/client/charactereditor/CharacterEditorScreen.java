@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
+import com.site21.bittermelon.content.character.client.charactereditor.roleselection.RoleSelectionScreen;
 import com.site21.bittermelon.content.character.networking.SwitchCharacter;
 import com.site21.bittermelon.content.character.networking.UpdateCharacter;
 import net.minecraft.client.Minecraft;
@@ -129,9 +130,12 @@ public class CharacterEditorScreen extends Screen {
 
         if (name.isEmpty()) return;
 
+        boolean goToRoleSelection = false;
+
         if (character == null) {
             character = new Character(minecraft.player.getUUID(), name, description, emoteColor);
             CharacterManager.get(minecraft.level).addCharacter(character);
+            goToRoleSelection = true;
         } else {
             character.setName(name);
             character.setEmoteColor(emoteColor);
@@ -140,7 +144,11 @@ public class CharacterEditorScreen extends Screen {
 
         PacketDistributor.sendToServer(new UpdateCharacter(character));
         assert minecraft != null;
-        minecraft.setScreen(previousScreen);
+        if (goToRoleSelection) {
+            minecraft.setScreen(new RoleSelectionScreen(previousScreen, character));
+        } else {
+            minecraft.setScreen(previousScreen);
+        }
     }
 
     private void onCancel(Button button) {
