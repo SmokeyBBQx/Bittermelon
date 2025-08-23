@@ -67,6 +67,7 @@ public class CharacterEditorScreen extends Screen {
         super(Component.literal("Character Editor"));
         this.character = character;
         this.previousScreen = previousScreen;
+        isWideModel = true;
     }
 
     @Override
