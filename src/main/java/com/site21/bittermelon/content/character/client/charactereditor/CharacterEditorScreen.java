@@ -99,7 +99,7 @@ public class CharacterEditorScreen extends Screen {
         startY += fieldSpacing;
         urlField = new EditBox(font, startX, startY, fieldWidth, fieldHeight,
                 Component.literal("Skin URL"));
-        urlField.setResponder(url -> skin = SkinManager.loadSkin(url, "temp_" + url.hashCode()));
+        urlField.setResponder(url -> skin = SkinManager.loadSkin(url, "temp" + url.hashCode()));
 
         startY += fieldSpacing;
         descriptionField = new MultiLineEditBox(font, startX, startY, fieldWidth,

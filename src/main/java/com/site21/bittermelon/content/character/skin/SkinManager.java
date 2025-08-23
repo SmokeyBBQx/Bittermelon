@@ -64,6 +64,7 @@ public class SkinManager {
 
         checkFileCount();
         checkCacheSize();
+        clearTempFiles();
     }
 
     private static void checkFileCount() {
@@ -87,6 +88,17 @@ public class SkinManager {
             LOGGER.info("Cache size ({} MB) exceeds limit ({} MB), clearing cache",
                     totalSize / (1024 * 1024), MAX_CACHE_SIZE_MB);
             clearCache();
+        }
+    }
+
+    private static void clearTempFiles() {
+        if (!CACHE_DIR.exists()) return;
+
+        File[] files = CACHE_DIR.listFiles();
+        if (files == null) return;
+
+        for (File file : files) {
+            if (file.getName().contains("temp")) file.delete();
         }
     }
 }
