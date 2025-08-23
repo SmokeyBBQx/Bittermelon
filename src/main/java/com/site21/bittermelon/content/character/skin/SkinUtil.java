@@ -40,7 +40,7 @@ public class SkinUtil {
         return null;
     }
 
-    public static @Nullable AbstractClientPlayer getAbstractClientPlayer(UUID playerUUID, String name, ResourceLocation skin, PlayerSkin.Model model) {
+    public static AbstractClientPlayer getAbstractClientPlayer(UUID playerUUID, String name, ResourceLocation skin, PlayerSkin.Model model) {
         AbstractClientPlayer fakePlayer;
 
         GameProfile profile = new GameProfile(playerUUID, name);

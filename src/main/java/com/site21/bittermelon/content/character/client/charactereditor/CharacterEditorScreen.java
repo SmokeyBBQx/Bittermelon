@@ -17,6 +17,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.MultiLineEditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -60,6 +61,7 @@ public class CharacterEditorScreen extends Screen {
 
     private float rotationX = 0;
     private boolean isWideModel;
+    private ResourceLocation skin;
 
     public CharacterEditorScreen(Character character, Screen previousScreen) {
         super(Component.literal("Character Editor"));
@@ -71,6 +73,7 @@ public class CharacterEditorScreen extends Screen {
     protected void init() {
         screenX = (width - SCREEN_WIDTH) / 2;
         screenY = (height - SCREEN_HEIGHT / 2) / 2;
+        skin = DefaultPlayerSkin.get(minecraft.player.getUUID()).texture();
 
         initializeFields();
         addConfirmAndCancelButtons();
@@ -96,6 +99,7 @@ public class CharacterEditorScreen extends Screen {
         startY += fieldSpacing;
         urlField = new EditBox(font, startX, startY, fieldWidth, fieldHeight,
                 Component.literal("Skin URL"));
+        urlField.setResponder(url -> skin = SkinManager.loadSkin(url, "temp_" + url.hashCode()));
 
         startY += fieldSpacing;
         descriptionField = new MultiLineEditBox(font, startX, startY, fieldWidth,
@@ -121,6 +125,7 @@ public class CharacterEditorScreen extends Screen {
         descriptionField.setValue(character.getDescription());
 
         character.getPlayerInfo().ifPresent(info -> {
+            skin = SkinManager.loadSkin(info.getSkinURL(), character.getUUID().toString());
             urlField.setValue(info.getSkinURL());
             boolean isWide = info.getModel().equals(PlayerInfo.SkinModel.WIDE);
             modelButton.setWide(isWide);
@@ -186,7 +191,7 @@ public class CharacterEditorScreen extends Screen {
             character.setDescription(description);
         }
 
-        SkinManager.loadSkin(skinURL, String.valueOf(character.getUUID()));
+        SkinManager.loadSkin(skinURL, character.getUUID().toString());
 
         character.getPlayerInfo().ifPresentOrElse(
                 info -> {
@@ -250,23 +255,19 @@ public class CharacterEditorScreen extends Screen {
         int playerX = screenX + MARGIN + 6;
         int playerY = screenY + MARGIN;
 
-        AbstractClientPlayer fakePlayer = (character == null) ? null :
-                getAbstractClientPlayer(character, isWideModel ? PlayerSkin.Model.WIDE : PlayerSkin.Model.SLIM);
+        AbstractClientPlayer fakePlayer = getAbstractClientPlayer(minecraft.player.getUUID(), nameField.getValue(),
+                skin, isWideModel ? PlayerSkin.Model.WIDE : PlayerSkin.Model.SLIM);
 
-        LivingEntity entityToRender = (fakePlayer != null) ? fakePlayer : minecraft.player;
-
-        if (entityToRender != null) {
-            renderEntityInInventoryFollowsAngle(
-                    guiGraphics,
-                    playerX,
-                    playerY,
-                    playerX + PLAYER_RENDER_WIDTH,
-                    playerY + PLAYER_RENDER_HEIGHT,
-                    RENDER_SCALE,
-                    0f, rotationX, 0f,
-                    entityToRender
-            );
-        }
+        renderEntityInInventoryFollowsAngle(
+                guiGraphics,
+                playerX,
+                playerY,
+                playerX + PLAYER_RENDER_WIDTH,
+                playerY + PLAYER_RENDER_HEIGHT,
+                RENDER_SCALE,
+                0f, rotationX, 0f,
+                fakePlayer
+        );
     }
 
     public static void renderEntityInInventoryFollowsAngle(@NotNull GuiGraphics graphics, int leftX, int topY, int rightX, int bottomY, int scale, float yOffset, float horizontalRotation, float verticalRotation, @NotNull LivingEntity entity) {
