@@ -82,7 +82,6 @@ public class CharacterSelectionScreen extends Screen {
 
     public void switchCharacter(@NotNull Character character) {
         if (minecraft == null || minecraft.player == null) return;
-        if (character == characterManager.getActiveCharacter(minecraft.player)) return;
 
         minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.PORTAL_TRAVEL, 1));
         PacketDistributor.sendToServer(new AddEffect(new MobEffectInstance(CONFUSION, 160, 255), minecraft.player.getId()));

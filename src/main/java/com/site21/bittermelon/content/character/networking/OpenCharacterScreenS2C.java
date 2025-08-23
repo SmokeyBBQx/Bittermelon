@@ -1,6 +1,9 @@
 package com.site21.bittermelon.content.character.networking;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.ClientHandler;
+import com.site21.bittermelon.content.character.Character;
+import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.character.client.characterselection.CharacterSelectionScreen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -8,6 +11,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,6 +30,6 @@ public record OpenCharacterScreenS2C(int maxCharacters) implements CustomPacketP
     );
 
     public void handle(IPayloadContext ctx) {
-        Minecraft.getInstance().setScreen(new CharacterSelectionScreen(maxCharacters));
+        ClientHandler.displayCharacterScreen(maxCharacters);
     }
 }

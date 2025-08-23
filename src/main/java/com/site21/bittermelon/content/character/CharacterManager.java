@@ -126,7 +126,7 @@ public class CharacterManager extends SavedData {
             setActiveCharacter(player, switchedTo.getUUID());
         }
 
-        switchedTo.getPlayerInfo().ifPresent(info -> SkinOverrideSystem.setSkinOverride(player.getUUID(), switchedTo.getUUID(), info.getSkinURL()));
+        switchedTo.getPlayerInfo().ifPresent(info -> SkinOverrideSystem.setSkinOverride(player.getUUID(), switchedTo.getUUID(), info.getSkinURL(), info.getModel().toMinecraftModel()));
     }
 
     @OnlyIn(Dist.CLIENT)

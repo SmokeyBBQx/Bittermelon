@@ -8,17 +8,22 @@ import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.StringRepresentable;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PlayerInfo {
-    public static final Codec<PlayerSkin.Model> MODEL_CODEC;
-    public static final StreamCodec<ByteBuf, PlayerSkin.Model> MODEL_STREAM_CODEC;
+    public static final Codec<SkinModel> MODEL_CODEC;
+    public static final StreamCodec<ByteBuf, SkinModel> MODEL_STREAM_CODEC;
     public static final Codec<PlayerInfo> CODEC;
     public static final StreamCodec<ByteBuf, PlayerInfo> STREAM_CODEC;
 
     private String skinURL;
-    private PlayerSkin.Model model;
+    private SkinModel model;
 
-    public PlayerInfo(String skinURL, PlayerSkin.Model model) {
+    public PlayerInfo(String skinURL, SkinModel model) {
         this.skinURL = skinURL;
         this.model = model;
     }
@@ -27,7 +32,7 @@ public class PlayerInfo {
         return skinURL;
     }
 
-    public PlayerSkin.Model getModel() {
+    public SkinModel getModel() {
         return model;
     }
 
@@ -35,19 +40,55 @@ public class PlayerInfo {
         this.skinURL = skinURL;
     }
 
-    public void setModel(PlayerSkin.Model model) {
+    public void setModel(SkinModel model) {
         this.model = model;
     }
 
+    public enum SkinModel implements StringRepresentable {
+        SLIM("slim"),
+        WIDE("default");
+
+        private final String id;
+
+        SkinModel(String id) {
+            this.id = id;
+        }
+
+        public static SkinModel byName(@Nullable String name) {
+            if (name == null || name.equals("default")) {
+                return WIDE;
+            } else {
+                return SLIM;
+            }
+        }
+
+        public String id() {
+            return this.id;
+        }
+
+        @Override
+        public @NotNull String getSerializedName() {
+            return this.id;
+        }
+
+        @Contract(pure = true)
+        @OnlyIn(Dist.CLIENT)
+        public PlayerSkin.@NotNull Model toMinecraftModel() {
+            return PlayerSkin.Model.byName(this.id);
+        }
+
+        @OnlyIn(Dist.CLIENT)
+        public static SkinModel fromMinecraftModel(PlayerSkin.@NotNull Model minecraftModel) {
+            return byName(minecraftModel.id());
+        }
+    }
+
     static {
-        MODEL_CODEC = Codec.STRING.xmap(
-                PlayerSkin.Model::byName,
-                PlayerSkin.Model::id
-        );
+        MODEL_CODEC = StringRepresentable.fromEnum(SkinModel::values);
 
         MODEL_STREAM_CODEC = ByteBufCodecs.idMapper(
-                i -> PlayerSkin.Model.values()[i],
-                PlayerSkin.Model::ordinal
+                i -> SkinModel.values()[i],
+                SkinModel::ordinal
         );
 
         CODEC = RecordCodecBuilder.create(instance -> instance.group(

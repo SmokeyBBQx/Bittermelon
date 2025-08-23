@@ -11,6 +11,8 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.RegistryManager;
@@ -20,6 +22,7 @@ import java.util.Collection;
 
 import static com.site21.bittermelon.init.custom.Roles.ROLES;
 
+@OnlyIn(Dist.CLIENT)
 public class RoleSelectionScreen extends Screen {
     private final Screen previousScreen;
     private final Character character;

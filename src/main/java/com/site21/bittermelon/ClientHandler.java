@@ -7,6 +7,7 @@ import com.site21.bittermelon.content.blocks.devices.implementations.intercom.cl
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.PersonnelTerminalBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client.PersonnelTerminalScreen;
 import com.site21.bittermelon.content.character.Character;
+import com.site21.bittermelon.content.character.client.characterselection.CharacterSelectionScreen;
 import com.site21.bittermelon.content.containment.client.ContainmentPanelScreen;
 import com.site21.bittermelon.content.economy.client.ATMScreen;
 import com.site21.bittermelon.content.items.wires.wire.client.WiringScreen;
@@ -48,5 +49,9 @@ public class ClientHandler {
 
     public static void displayPersonnelScreen(PersonnelTerminalBlockEntity terminalBlockEntity) {
         Minecraft.getInstance().setScreen(new PersonnelTerminalScreen(terminalBlockEntity));
+    }
+
+    public static void displayCharacterScreen(int maxCharacters) {
+        Minecraft.getInstance().setScreen(new CharacterSelectionScreen(maxCharacters));
     }
 }

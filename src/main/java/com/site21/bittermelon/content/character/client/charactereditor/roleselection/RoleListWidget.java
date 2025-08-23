@@ -19,11 +19,14 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
+@OnlyIn(Dist.CLIENT)
 public class RoleListWidget extends ObjectSelectionList<RoleListWidget.Entry> {
     private final RoleSelectionScreen screen;
 

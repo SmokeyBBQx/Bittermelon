@@ -451,5 +451,11 @@ public class PayloadRegistration {
                 AddRole.STREAM_CODEC,
                 AddRole::handle
         );
+
+        registrar.playToClient(
+                SyncActiveCharacter.TYPE,
+                SyncActiveCharacter.STREAM_CODEC,
+                SyncActiveCharacter::handle
+        );
     }
 }

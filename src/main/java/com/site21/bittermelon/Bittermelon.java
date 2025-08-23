@@ -4,6 +4,7 @@ import com.site21.bittermelon.content.atmosphere.data.AtmosLevelData;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.client.gui.loreopening.LoreOpeningOverlay;
+import com.site21.bittermelon.content.character.networking.SyncActiveCharacter;
 import com.site21.bittermelon.content.character.networking.SyncCharacters;
 import com.site21.bittermelon.content.telecomms.intercom.IntercomManager;
 import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
@@ -107,9 +108,18 @@ public class Bittermelon {
         LoreOpeningOverlay.displayStartTime = System.currentTimeMillis();
         event.getEntity().playNotifySound(LOW_IMPACT.get(), SoundSource.MASTER, 1, 1);
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            AtmosLevelData.get(serverPlayer.level()).syncToClient();
-            PacketDistributor.sendToPlayer(serverPlayer, new SyncIntercomList(IntercomManager.get(serverPlayer.level()).getIntercomIDs()));
-            PacketDistributor.sendToPlayer(serverPlayer, new SyncCharacters(CharacterManager.get(serverPlayer.level()).getCharacters()));
+            Level level = serverPlayer.level();
+
+            AtmosLevelData.get(level).syncToClient();
+            PacketDistributor.sendToPlayer(serverPlayer, new SyncIntercomList(IntercomManager.get(level).getIntercomIDs()));
+
+            CharacterManager characterManager = CharacterManager.get(level);
+            PacketDistributor.sendToPlayer(serverPlayer, new SyncCharacters(characterManager.getCharacters()));
+
+            Character activeCharacter = characterManager.getActiveCharacter(serverPlayer);
+            if (activeCharacter != null) {
+                PacketDistributor.sendToPlayer(serverPlayer, new SyncActiveCharacter(activeCharacter.getUUID()));
+            }
         }
     }
 }

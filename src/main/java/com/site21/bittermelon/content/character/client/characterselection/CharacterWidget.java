@@ -1,10 +1,9 @@
 package com.site21.bittermelon.content.character.client.characterselection;
 
-import com.mojang.authlib.GameProfile;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client.BitterButton;
 import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.character.PlayerInfo;
+import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.character.client.charactereditor.CharacterEditorScreen;
 import com.site21.bittermelon.content.character.skin.SkinManager;
 import net.minecraft.client.Minecraft;
@@ -18,15 +17,13 @@ import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.resources.PlayerSkin;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static com.site21.bittermelon.content.character.skin.SkinUtil.getAbstractClientPlayer;
 
@@ -134,8 +131,15 @@ public class CharacterWidget extends AbstractWidget {
                 return true;
             }
 
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1f));
+
             if (character != null) {
-                screen.switchCharacter(character);
+                CharacterManager characterManager = CharacterManager.get(Minecraft.getInstance().level);
+                Character activeCharacter = characterManager.getActiveCharacter(Minecraft.getInstance().player);
+
+                if (activeCharacter == null || !activeCharacter.getUUID().equals(character.getUUID())) {
+                    screen.switchCharacter(character);
+                }
             } else {
                 Minecraft.getInstance().setScreen(new CharacterEditorScreen(null, screen));
             }

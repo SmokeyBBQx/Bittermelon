@@ -15,8 +15,9 @@ public class PlayerInfoMixin {
     private void overrideSkin(CallbackInfoReturnable<PlayerSkin> cir) {
         PlayerInfo playerInfo = (PlayerInfo)(Object)this;
         ResourceLocation override = SkinOverrideSystem.getOverriddenSkin(playerInfo.getProfile().getId());
+        PlayerSkin.Model model = SkinOverrideSystem.getOverriddenModel(playerInfo.getProfile().getId());
         if (override != null) {
-            PlayerSkin customSkin = new PlayerSkin(override, null, null, null, PlayerSkin.Model.WIDE, true);
+            PlayerSkin customSkin = new PlayerSkin(override, null, null, null, model, true);
             cir.setReturnValue(customSkin);
         }
     }

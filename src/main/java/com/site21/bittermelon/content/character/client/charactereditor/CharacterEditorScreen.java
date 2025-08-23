@@ -6,6 +6,7 @@ import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.character.PlayerInfo;
 import com.site21.bittermelon.content.character.client.charactereditor.roleselection.RoleSelectionScreen;
+import com.site21.bittermelon.content.character.client.characterselection.CharacterSelectionScreen;
 import com.site21.bittermelon.content.character.networking.SwitchCharacter;
 import com.site21.bittermelon.content.character.networking.UpdateCharacter;
 import com.site21.bittermelon.content.character.skin.SkinManager;
@@ -34,25 +35,31 @@ import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderE
 @OnlyIn(Dist.CLIENT)
 public class CharacterEditorScreen extends Screen {
     private static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/character_background");
-    private static final ResourceLocation BUTTON = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/button");
-    private static final ResourceLocation BUTTON_HIGHLIGHTED = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/button_highlighted");
     private static final int MARGIN = 15;
-    private static final int TOP_MARGIN = 20;
+    private static final int SCREEN_WIDTH = 384;
+    private static final int SCREEN_HEIGHT = 384;
+    private static final int TEXT_COLOR = 0xFFFFFF;
+    private static final int BUTTON_WIDTH = 60;
+    private static final int BUTTON_HEIGHT = 20;
+    private static final int PLAYER_RENDER_WIDTH = 90;
+    private static final int PLAYER_RENDER_HEIGHT = 160;
+    private static final int RENDER_SCALE = 80;
+    private static final float ROTATION_SENSITIVITY = 0.5f;
 
     private Character character;
     private final Screen previousScreen;
 
-    private int x;
-    private int y;
-    private int screenWidth;
-    private int screenHeight;
+    private int screenX;
+    private int screenY;
 
     private EditBox nameField;
     private EditBox emoteColorField;
     private EditBox urlField;
     private MultiLineEditBox descriptionField;
+    private ModelButton modelButton;
 
     private float rotationX = 0;
+    private boolean isWideModel;
 
     public CharacterEditorScreen(Character character, Screen previousScreen) {
         super(Component.literal("Character Editor"));
@@ -62,51 +69,76 @@ public class CharacterEditorScreen extends Screen {
 
     @Override
     protected void init() {
-        screenWidth = 384;
-        screenHeight = 384;
-        x = width / 2 - screenWidth / 2;
-        y = height / 2 - screenHeight / 4;
+        screenX = (width - SCREEN_WIDTH) / 2;
+        screenY = (height - SCREEN_HEIGHT / 2) / 2;
 
+        initializeFields();
+        addConfirmAndCancelButtons();
+    }
+
+    private void initializeFields() {
         int labelLength = font.width("Emote Color");
-        int startX = x + MARGIN * 2 + labelLength + 120;
-        int startY = y + MARGIN;
-        int fieldWidth = (int) (screenWidth / 2.5);
+        int startX = screenX + MARGIN * 2 + labelLength + 120;
+        int startY = screenY + MARGIN;
+        int fieldWidth = (int) (SCREEN_WIDTH / 2.5);
         int fieldHeight = font.lineHeight * 2;
         int fieldSpacing = fieldHeight + 5;
 
-        nameField = new EditBox(font, startX, startY, fieldWidth, fieldHeight, Component.literal("Name"));
+        nameField = new EditBox(font, startX, startY, fieldWidth, fieldHeight,
+                Component.literal("Name"));
+
         startY += fieldSpacing;
-        emoteColorField = new EditBox(font, startX, startY, fieldWidth, fieldHeight, Component.literal("Emote Color"));
+        emoteColorField = new EditBox(font, startX, startY, fieldWidth, fieldHeight,
+                Component.literal("Emote Color"));
         emoteColorField.setMaxLength(7);
         emoteColorField.setFilter(this::isValidHexInput);
 
         startY += fieldSpacing;
-        urlField = new EditBox(font, startX, startY, fieldWidth, fieldHeight, Component.literal("Skin URL"));
-        startY += fieldSpacing;
-        descriptionField = new MultiLineEditBox(font, startX, startY, fieldWidth, (int) (fieldHeight * 4.5), Component.literal(""), Component.literal("Description"));
+        urlField = new EditBox(font, startX, startY, fieldWidth, fieldHeight,
+                Component.literal("Skin URL"));
 
-        if (character != null) {
-            nameField.setValue(character.getName());
-            emoteColorField.setValue(String.format("#%06X", character.getEmoteColor()));
-            character.getPlayerInfo().ifPresent(info -> urlField.setValue(info.getSkinURL()));
-            descriptionField.setValue(character.getDescription());
-        }
+        startY += fieldSpacing;
+        descriptionField = new MultiLineEditBox(font, startX, startY, fieldWidth,
+                (int) (fieldHeight * 4.5), Component.literal(""), Component.literal("Description"));
+
+        modelButton = new ModelButton(screenX + MARGIN + 43, screenY + SCREEN_HEIGHT / 2 - MARGIN,
+                16, 16, button -> isWideModel = button.isWide());
+
+        populateFieldsFromCharacter();
 
         addRenderableWidget(nameField);
         addRenderableWidget(emoteColorField);
         addRenderableWidget(urlField);
         addRenderableWidget(descriptionField);
+        addRenderableWidget(modelButton);
+    }
 
-        int buttonWidth = 60;
-        int buttonHeight = 20;
-        int buttonY = y + screenHeight / 2 - MARGIN;
+    private void populateFieldsFromCharacter() {
+        if (character == null) return;
+
+        nameField.setValue(character.getName());
+        emoteColorField.setValue(String.format("#%06X", character.getEmoteColor()));
+        descriptionField.setValue(character.getDescription());
+
+        character.getPlayerInfo().ifPresent(info -> {
+            urlField.setValue(info.getSkinURL());
+            boolean isWide = info.getModel().equals(PlayerInfo.SkinModel.WIDE);
+            modelButton.setWide(isWide);
+            isWideModel = isWide;
+        });
+    }
+
+    private void addConfirmAndCancelButtons() {
+        int buttonY = screenY + SCREEN_HEIGHT / 2 - MARGIN;
+        int confirmButtonX = (screenX + SCREEN_WIDTH) - (BUTTON_WIDTH * 2 + 28);
+        int cancelButtonX = (screenX + SCREEN_WIDTH) - (BUTTON_WIDTH + MARGIN + 8);
 
         Button confirmButton = Button.builder(Component.literal("Confirm"), this::onConfirm)
-                .bounds((x + screenWidth) - (buttonWidth * 2 + 28), buttonY, buttonWidth, buttonHeight)
+                .bounds(confirmButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT)
                 .build();
 
-        Button cancelButton = Button.builder(Component.literal("Cancel"), this::onCancel)
-                .bounds((x + screenWidth) - (buttonWidth + MARGIN + 8), buttonY, buttonWidth, buttonHeight)
+        Button cancelButton = Button.builder(Component.literal("Cancel"), button -> minecraft.setScreen(previousScreen))
+                .bounds(cancelButtonX, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT)
                 .build();
 
         addRenderableWidget(confirmButton);
@@ -115,7 +147,6 @@ public class CharacterEditorScreen extends Screen {
 
     private boolean isValidHexInput(@NotNull String input) {
         if (input.isEmpty()) return true;
-
         if (!input.startsWith("#")) return false;
 
         String hexPart = input.substring(1);
@@ -123,25 +154,32 @@ public class CharacterEditorScreen extends Screen {
     }
 
     private void onConfirm(Button button) {
-        String name = nameField.getValue();
-        String skinURL = urlField.getValue();
-        String description = descriptionField.getValue();
-        int emoteColor;
+        String name = nameField.getValue().trim();
+        if (name.isEmpty()) return;
 
+        String skinURL = urlField.getValue().trim();
+        String description = descriptionField.getValue();
+        PlayerSkin.Model model = isWideModel ? PlayerSkin.Model.WIDE : PlayerSkin.Model.SLIM;
+
+        int emoteColor;
         try {
             emoteColor = Integer.decode(emoteColorField.getValue());
         } catch (NumberFormatException e) {
             return;
         }
 
-        if (name.isEmpty()) return;
+        boolean isNewCharacter = (character == null);
+        updateOrCreateCharacter(isNewCharacter, name, description, emoteColor, skinURL, model);
 
-        boolean goToRoleSelection = false;
+        PacketDistributor.sendToServer(new UpdateCharacter(character));
+        navigateToNextScreen(isNewCharacter);
+    }
 
-        if (character == null) {
+    private void updateOrCreateCharacter(boolean isNewCharacter, String name, String description, int emoteColor,
+                                         String skinURL, PlayerSkin.Model model) {
+        if (isNewCharacter) {
             character = new Character(minecraft.player.getUUID(), name, description, emoteColor);
             CharacterManager.get(minecraft.level).addCharacter(character);
-            goToRoleSelection = true;
         } else {
             character.setName(name);
             character.setEmoteColor(emoteColor);
@@ -149,43 +187,54 @@ public class CharacterEditorScreen extends Screen {
         }
 
         SkinManager.loadSkin(skinURL, String.valueOf(character.getUUID()));
-        character.getPlayerInfo().ifPresentOrElse(
-                info -> info.setSkinURL(skinURL),
-                () -> character.setPlayerInfo(new PlayerInfo(skinURL, PlayerSkin.Model.WIDE))
-        );
 
-        PacketDistributor.sendToServer(new UpdateCharacter(character));
-        assert minecraft != null;
-        if (goToRoleSelection) {
-            minecraft.setScreen(new RoleSelectionScreen(previousScreen, character));
-        } else {
-            minecraft.setScreen(previousScreen);
-        }
+        character.getPlayerInfo().ifPresentOrElse(
+                info -> {
+                    info.setSkinURL(skinURL);
+                    info.setModel(PlayerInfo.SkinModel.fromMinecraftModel(model));
+                },
+                () -> character.setPlayerInfo(new PlayerInfo(skinURL, PlayerInfo.SkinModel.fromMinecraftModel(model)))
+        );
     }
 
-    private void onCancel(Button button) {
-        assert minecraft != null;
-        minecraft.setScreen(previousScreen);
+    private void navigateToNextScreen(boolean isNewCharacter) {
+        if (minecraft == null) return;
+
+        if (isNewCharacter) {
+            minecraft.setScreen(new RoleSelectionScreen(previousScreen, character));
+        } else {
+            if (previousScreen instanceof CharacterSelectionScreen selectionScreen) {
+                CharacterManager characterManager = CharacterManager.get(minecraft.level);
+                Character activeCharacter = characterManager.getActiveCharacter(minecraft.player);
+
+                if (activeCharacter != null && activeCharacter.getUUID().equals(character.getUUID())) {
+                    selectionScreen.switchCharacter(character);
+                }
+            }
+
+            minecraft.setScreen(previousScreen);
+        }
     }
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
-
         renderPlayer(guiGraphics);
+        renderLabels(guiGraphics);
+    }
 
-        int startX = x + MARGIN + 120;
-        int startY = y + MARGIN + 5;
-        int textColor = 0xFFFFFF;
+    private void renderLabels(@NotNull GuiGraphics guiGraphics) {
+        int startX = screenX + MARGIN + 120;
+        int startY = screenY + MARGIN + 5;
         int spacing = font.lineHeight * 2 + 5;
 
-        guiGraphics.drawString(font, "Name:", startX, startY, textColor, false);
+        guiGraphics.drawString(font, "Name:", startX, startY, TEXT_COLOR, false);
         startY += spacing;
-        guiGraphics.drawString(font, "Emote Color:", startX, startY, textColor, false);
+        guiGraphics.drawString(font, "Emote Color:", startX, startY, TEXT_COLOR, false);
         startY += spacing;
-        guiGraphics.drawString(font, "Skin URL:", startX, startY, textColor, false);
+        guiGraphics.drawString(font, "Skin URL:", startX, startY, TEXT_COLOR, false);
         startY += spacing;
-        guiGraphics.drawString(font, "Description:", startX, startY, textColor, false);
+        guiGraphics.drawString(font, "Description:", startX, startY, TEXT_COLOR, false);
     }
 
     @Override
@@ -193,29 +242,31 @@ public class CharacterEditorScreen extends Screen {
         super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 
         RenderSystem.enableBlend();
-        guiGraphics.blitSprite(BACKGROUND, x, y, screenWidth, screenHeight);
+        guiGraphics.blitSprite(BACKGROUND, screenX, screenY, SCREEN_WIDTH, SCREEN_HEIGHT);
         RenderSystem.disableBlend();
     }
 
     private void renderPlayer(@NotNull GuiGraphics guiGraphics) {
-        int playerX = x + MARGIN + 5;
-        int playerY = y + MARGIN;
-        int playerWidth = 90;
-        int playerHeight = 160;
+        int playerX = screenX + MARGIN + 6;
+        int playerY = screenY + MARGIN;
 
-        AbstractClientPlayer fakePlayer = character == null ? null : getAbstractClientPlayer(character);
+        AbstractClientPlayer fakePlayer = (character == null) ? null :
+                getAbstractClientPlayer(character, isWideModel ? PlayerSkin.Model.WIDE : PlayerSkin.Model.SLIM);
 
-        assert Minecraft.getInstance().player != null;
-        renderEntityInInventoryFollowsAngle(
-                guiGraphics,
-                playerX,
-                playerY,
-                playerX + playerWidth,
-                playerY + playerHeight,
-                80,
-                0f, rotationX, 0f,
-                fakePlayer == null ? Minecraft.getInstance().player : fakePlayer
-        );
+        LivingEntity entityToRender = (fakePlayer != null) ? fakePlayer : minecraft.player;
+
+        if (entityToRender != null) {
+            renderEntityInInventoryFollowsAngle(
+                    guiGraphics,
+                    playerX,
+                    playerY,
+                    playerX + PLAYER_RENDER_WIDTH,
+                    playerY + PLAYER_RENDER_HEIGHT,
+                    RENDER_SCALE,
+                    0f, rotationX, 0f,
+                    entityToRender
+            );
+        }
     }
 
     public static void renderEntityInInventoryFollowsAngle(@NotNull GuiGraphics graphics, int leftX, int topY, int rightX, int bottomY, int scale, float yOffset, float horizontalRotation, float verticalRotation, @NotNull LivingEntity entity) {
@@ -261,24 +312,23 @@ public class CharacterEditorScreen extends Screen {
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        int playerX = x + MARGIN + 5;
-        int playerY = y + MARGIN;
-        int playerWidth = 90;
-        int playerHeight = 160;
-
-        if (mouseX >= playerX &&
-                mouseY >= playerY &&
-                mouseX <= playerX + playerWidth &&
-                mouseY <= playerY + playerHeight) {
-
-            rotationX -= (float) dragX * 0.5f;
-
+        if (isMouseInPlayerRenderArea(mouseX, mouseY)) {
+            rotationX -= (float) dragX * ROTATION_SENSITIVITY;
             return true;
         }
 
         return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 
+    private boolean isMouseInPlayerRenderArea(double mouseX, double mouseY) {
+        int playerX = screenX + MARGIN + 5;
+        int playerY = screenY + MARGIN;
+
+        return mouseX >= playerX &&
+                mouseY >= playerY &&
+                mouseX <= playerX + PLAYER_RENDER_WIDTH &&
+                mouseY <= playerY + PLAYER_RENDER_HEIGHT;
+    }
 
     @Override
     public boolean isPauseScreen() {
