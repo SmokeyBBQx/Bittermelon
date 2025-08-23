@@ -9,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Contract;
@@ -40,7 +41,7 @@ public class SkinUtil {
         return null;
     }
 
-    public static AbstractClientPlayer getAbstractClientPlayer(UUID playerUUID, String name, ResourceLocation skin, PlayerSkin.Model model) {
+    public static @NotNull AbstractClientPlayer getAbstractClientPlayer(UUID playerUUID, String name, ResourceLocation skin, PlayerSkin.Model model) {
         AbstractClientPlayer fakePlayer;
 
         GameProfile profile = new GameProfile(playerUUID, name);
@@ -68,6 +69,8 @@ public class SkinUtil {
                 );
             }
         };
+
+        fakePlayer.getEntityData().set(Player.DATA_PLAYER_MODE_CUSTOMISATION, (byte) 126);
 
         return fakePlayer;
     }
