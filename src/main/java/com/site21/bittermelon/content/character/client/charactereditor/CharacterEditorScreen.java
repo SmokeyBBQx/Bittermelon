@@ -15,6 +15,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.MultiLineEditBox;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.resources.DefaultPlayerSkin;
@@ -108,6 +109,7 @@ public class CharacterEditorScreen extends Screen {
 
         modelButton = new ModelButton(screenX + MARGIN + 43, screenY + SCREEN_HEIGHT / 2 - MARGIN,
                 16, 16, button -> isWideModel = button.isWide());
+        modelButton.setTooltip(Tooltip.create(Component.literal("Toggle Wide/Slim Model")));
 
         populateFieldsFromCharacter();
 
