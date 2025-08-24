@@ -49,4 +49,8 @@ public class BitterAttachmentTypes {
     public static final Supplier<AttachmentType<Integer>> FEAR = ATTACHMENT_TYPES.register(
             "fear", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).build()
     );
+
+    public static final Supplier<AttachmentType<Long>> LAST_TYPING_TIME = ATTACHMENT_TYPES.register(
+            "last_typing_time", () -> AttachmentType.builder(() -> 0L).build()
+    );
 }

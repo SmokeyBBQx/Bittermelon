@@ -38,6 +38,7 @@ import com.site21.bittermelon.networking.client.ContainerDataUpdate;
 import com.site21.bittermelon.networking.client.OpenCPRScreen;
 import com.site21.bittermelon.networking.client.SetForcedPose;
 import com.site21.bittermelon.networking.server.AddEffect;
+import com.site21.bittermelon.networking.server.SetLastTypingTime;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -456,6 +457,12 @@ public class PayloadRegistration {
                 SyncActiveCharacter.TYPE,
                 SyncActiveCharacter.STREAM_CODEC,
                 SyncActiveCharacter::handle
+        );
+
+        registrar.playBidirectional(
+                SetLastTypingTime.TYPE,
+                SetLastTypingTime.STREAM_CODEC,
+                SetLastTypingTime::handle
         );
     }
 }

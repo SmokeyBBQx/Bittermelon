@@ -11,8 +11,10 @@ import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercom
 import com.site21.bittermelon.content.substance.reactions.Reactions;
 import com.site21.bittermelon.init.neoforge.BitterEntities;
 import com.site21.bittermelon.init.neoforge.BitterRegistries;
+import com.site21.bittermelon.networking.server.SetLastTypingTime;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
@@ -37,6 +39,7 @@ import static com.site21.bittermelon.init.custom.LogicalOperators.LOGICAL_OPERAT
 import static com.site21.bittermelon.init.custom.Roles.ROLES;
 import static com.site21.bittermelon.init.neoforge.BitterActivity.ACTIVITY;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ATTACHMENT_TYPES;
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.LAST_TYPING_TIME;
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.BLOCK_ENTITY_TYPES;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.BLOCKS;
 import static com.site21.bittermelon.init.neoforge.BitterCreativeTabs.CREATIVE_MODE_TABS;
@@ -98,8 +101,20 @@ public class Bittermelon {
     public void onEntityTick(EntityTickEvent.@NotNull Post event) {
         Level level = event.getEntity().level();
         if (level.isClientSide) return;
-       Character character = CharacterManager.get(level).getActiveCharacter(event.getEntity());
-       if (character != null) character.update(level);
+        Character character = CharacterManager.get(level).getActiveCharacter(event.getEntity());
+        if (character != null) character.update(level);
+
+        Entity entity = event.getEntity();
+
+        if (entity.getExistingDataOrNull(LAST_TYPING_TIME) != null) {
+            long lastTypingTime = entity.getData(LAST_TYPING_TIME);
+            long timeSinceTyping = System.currentTimeMillis() - lastTypingTime;
+
+            if (timeSinceTyping > 5000) {
+                entity.removeData(LAST_TYPING_TIME);
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new SetLastTypingTime(entity.getUUID(), -1));
+            }
+        }
     }
 
     @SubscribeEvent

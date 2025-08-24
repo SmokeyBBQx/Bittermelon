@@ -6,11 +6,11 @@
     },
     {
       "type": "bitmap",
-      "file": "bittermelon:font/controls.png",
+      "file": "bittermelon:font/icons.png",
       "height": 11,
       "ascent": 9,
       "chars": [
-        "\uE000\uE001\uE002"
+        "\uE000\uE001\uE002\uE003"
       ]
     },
     {
