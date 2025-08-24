@@ -25,6 +25,8 @@ jobs:
         run: |
           VERSION=$(date +%Y.%m.%d)-$(git rev-parse --short HEAD)
           echo "version=v$VERSION" >> $GITHUB_OUTPUT
+      - name: Run data
+        run: ./gradlew runData
       - name: Build release artifacts
         run: ./gradlew build
       - name: Create and push tag
