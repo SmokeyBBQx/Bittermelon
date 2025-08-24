@@ -6,6 +6,7 @@ import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -22,10 +23,10 @@ public class ChatScreenMixin {
         long currentTime = System.currentTimeMillis();
         Long lastTypingTime = player.getExistingDataOrNull(LAST_TYPING_TIME);
 
-//        if (lastTypingTime == null || (currentTime - lastTypingTime) > 3500) {
-//            player.setData(LAST_TYPING_TIME, currentTime);
+        if (lastTypingTime == null || (currentTime - lastTypingTime) > 4000) {
+            player.setData(LAST_TYPING_TIME, currentTime);
             PacketDistributor.sendToServer(new SetLastTypingTime(player.getUUID(), currentTime));
-//        }
+        }
     }
 
     @Inject(method = "removed", at = @At("HEAD"))
