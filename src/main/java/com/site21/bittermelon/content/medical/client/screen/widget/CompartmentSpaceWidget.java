@@ -443,7 +443,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         guiGraphics.blit(WINDOW_TEXTURE, x + width / 2, y, 252 - width / 2, 0, width / 2, 23);
 
         guiGraphics.blit(WINDOW_SIDES_TEXTURE, x, y + 23, 0, 23, width / 2, height - 48);
-        guiGraphics.blit(WINDOW_SIDES_TEXTURE, x + width / 2, y + 23, 252 - width / 2, 23, width / 2, height - 48);
+        guiGraphics.blit(WINDOW_SIDES_TEXTURE, x + width / 2, y + 23, 256 - width / 2, 23, width / 2, height - 48);
 
         guiGraphics.blit(WINDOW_TEXTURE, x, y + height - 25, 0, 130 - 5, width / 2, 15);
         guiGraphics.blit(WINDOW_TEXTURE, x + width / 2, y + height - 25, 252 - width / 2, 130 - 5, width / 2, 15);

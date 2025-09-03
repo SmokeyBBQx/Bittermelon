@@ -7,6 +7,7 @@ import com.site21.bittermelon.content.blocks.devices.implementations.containment
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.OpenContainmentPanelScreen;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.networking.*;
 import com.site21.bittermelon.content.character.networking.*;
+import com.site21.bittermelon.content.items.scps.scp377.networking.OpenSCP3771Screen;
 import com.site21.bittermelon.content.personnel.privilege.networking.*;
 import com.site21.bittermelon.content.personnel.registry.networking.AddPersonnelEntry;
 import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.networking.PlaySlidingDoorStuckSound;
@@ -463,6 +464,12 @@ public class PayloadRegistration {
                 SetLastTypingTime.TYPE,
                 SetLastTypingTime.STREAM_CODEC,
                 SetLastTypingTime::handle
+        );
+
+        registrar.playToClient(
+                OpenSCP3771Screen.TYPE,
+                OpenSCP3771Screen.STREAM_CODEC,
+                OpenSCP3771Screen::handle
         );
     }
 }

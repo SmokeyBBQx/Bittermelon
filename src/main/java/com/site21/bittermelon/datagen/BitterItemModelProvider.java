@@ -22,6 +22,9 @@ public class BitterItemModelProvider extends ItemModelProvider {
         basicItem(BitterItems.TASER_CARTRIDGE.get());
         basicItem(BitterItems.SCP_018.get());
         handheldItem(BitterItems.SYRINGE.get());
+        basicItem(BitterItems.FORTUNE_COOKIE.get());
+        basicItem(BitterItems.CRACKED_FORTUNE_COOKIE.get());
+        basicItem(BitterItems.SCP_377_1.get());
         generateBlockItemModels();
         basicItem(BitterItems.LARGE_SLIDING_DOOR.get());
     }

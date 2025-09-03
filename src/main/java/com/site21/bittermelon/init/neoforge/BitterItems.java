@@ -11,6 +11,9 @@ import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.handheldprogrammer.HandheldProgrammerItem;
 import com.site21.bittermelon.content.items.scps.scp2398.SCP2398;
+import com.site21.bittermelon.content.items.scps.scp377.SCP377;
+import com.site21.bittermelon.content.items.scps.scp377.SCP3771;
+import com.site21.bittermelon.content.items.scps.scp377.SCP377Cookie;
 import com.site21.bittermelon.content.items.smokable.SmokableItem;
 import com.site21.bittermelon.content.items.substance.PowderedSubstanceItem;
 import com.site21.bittermelon.content.items.substance.pill.PillItem;
@@ -30,12 +33,17 @@ import com.site21.bittermelon.content.items.writablepaper.WritablePaper;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.food.FoodData;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.List;
+import java.util.Optional;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.*;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.ENERGY_LOSS_ON_BOUNCE;
@@ -447,5 +455,22 @@ public class BitterItems {
     public static final DeferredItem<BlockItem> KEYCARD_PRINTER = ITEMS.register("keycard_printer", () -> new BlockItem(
             BitterBlocks.KEYCARD_PRINTER.get(),
             new Item.Properties()
+    ));
+
+    public static final DeferredItem<SCP377> SCP_377 = ITEMS.register("scp_377", () -> new SCP377(
+            new Item.Properties()
+    ));
+
+    public static final DeferredItem<SCP3771> SCP_377_1 = ITEMS.register("scp_377_1", () -> new SCP3771(
+            new Item.Properties()
+    ));
+
+    public static final DeferredItem<SCP377Cookie> FORTUNE_COOKIE = ITEMS.register("fortune_cookie", () -> new SCP377Cookie(
+            new Item.Properties()
+    ));
+
+    public static final DeferredItem<Item> CRACKED_FORTUNE_COOKIE = ITEMS.register("cracked_fortune_cookie", () -> new Item(
+            new Item.Properties().food(new FoodProperties(1, 1, true, 1,
+                    Optional.empty(), List.of()))
     ));
 }

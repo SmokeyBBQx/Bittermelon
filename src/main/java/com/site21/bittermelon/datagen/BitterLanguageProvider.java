@@ -27,6 +27,8 @@ public class BitterLanguageProvider extends LanguageProvider {
         addCustomItem(SCP_109, "SCP-109");
         addCustomItem(SCP_2398, "SCP-2398");
         addCustomItem(SCP_018, "SCP-018");
+        addCustomItem(SCP_377_1, "Fortune");
+        addCustomItem(SCP_377, "SCP-377");
         BitterItems.ITEMS.getEntries().forEach(this::addItemTranslation);
         BitterMobEffects.MOB_EFFECTS.getEntries().forEach(effect ->
                 addEffect(effect, formatName(effect.getKey().location().getPath())));

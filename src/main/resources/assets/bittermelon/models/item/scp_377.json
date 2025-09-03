@@ -1,0 +1,14 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "bittermelon:item/scp_377"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "bittermelon:empty": 1.0
+      },
+      "model": "bittermelon:item/scp_377_empty"
+    }
+  ]
+}

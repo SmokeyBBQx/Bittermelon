@@ -67,6 +67,15 @@ public class ClientSetup {
                 (stack, level, entity, seed) -> stack.getOrDefault(PILL_SHAPE, PillShape.ROUND).ordinal()
         );
 
+        ItemProperties.register(
+                SCP_377.get(),
+                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "empty"),
+                (stack, level, entity, seed) -> {
+                    if (stack.getOrDefault(EMPTY_TIME, -1L) != -1L) return 1;
+                    return 0;
+                }
+        );
+
         ItemColors itemColors = Minecraft.getInstance().getItemColors();
 
         itemColors.register((stack, tintIndex) -> {

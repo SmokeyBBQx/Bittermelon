@@ -10,6 +10,8 @@ import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.client.characterselection.CharacterSelectionScreen;
 import com.site21.bittermelon.content.containment.client.ContainmentPanelScreen;
 import com.site21.bittermelon.content.economy.client.ATMScreen;
+import com.site21.bittermelon.content.items.scps.scp377.Fortune;
+import com.site21.bittermelon.content.items.scps.scp377.client.SCP3771Screen;
 import com.site21.bittermelon.content.items.wires.wire.client.WiringScreen;
 import com.site21.bittermelon.content.items.writablepaper.client.PaperEditScreen;
 import com.site21.bittermelon.content.medical.client.screen.HealthScreenV2;
@@ -53,5 +55,9 @@ public class ClientHandler {
 
     public static void displayCharacterScreen(int maxCharacters) {
         Minecraft.getInstance().setScreen(new CharacterSelectionScreen(maxCharacters));
+    }
+
+    public static void displaySCP3771Screen(Fortune fortune) {
+        Minecraft.getInstance().setScreen(new SCP3771Screen(fortune));
     }
 }

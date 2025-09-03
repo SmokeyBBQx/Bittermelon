@@ -3,6 +3,7 @@ package com.site21.bittermelon.init.neoforge;
 import com.mojang.serialization.Codec;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.items.itemcontainers.client.ItemContainerContents;
+import com.site21.bittermelon.content.items.scps.scp377.Fortune;
 import com.site21.bittermelon.content.items.substance.data.SubstanceContents;
 import com.site21.bittermelon.content.items.substance.pill.PillShape;
 import com.site21.bittermelon.content.medical.blood.BloodData;
@@ -44,12 +45,12 @@ public class BitterDataComponents {
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> CAN_SMOKE = DATA_COMPONENTS.registerComponentType(
             "can_smoke",
-            builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL)
+            builder -> builder.persistent(Codec.BOOL)
     );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> HAS_LANDED = DATA_COMPONENTS.registerComponentType(
             "has_landed",
-            builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL)
+            builder -> builder.persistent(Codec.BOOL)
     );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> IS_WRAPPED = DATA_COMPONENTS.registerComponentType(
@@ -104,7 +105,7 @@ public class BitterDataComponents {
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> CAN_SPILL = DATA_COMPONENTS.registerComponentType(
             "can_spill",
-            builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL)
+            builder -> builder.persistent(Codec.BOOL)
     );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> COOLDOWN = DATA_COMPONENTS.registerComponentType(
@@ -160,5 +161,25 @@ public class BitterDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<PillShape>> PILL_SHAPE = DATA_COMPONENTS.registerComponentType(
             "pill_shape",
             builder -> builder.persistent(PillShape.CODEC).networkSynchronized(PillShape.STREAM_CODEC)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Fortune>> FORTUNE = DATA_COMPONENTS.registerComponentType(
+            "fortune",
+            builder -> builder.persistent(Fortune.CODEC)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> FORTUNE_READ_TIME = DATA_COMPONENTS.registerComponentType(
+            "fortune_read_time",
+            builder -> builder.persistent(Codec.LONG)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> COOKIE_COUNT = DATA_COMPONENTS.registerComponentType(
+            "cookie_count",
+            builder -> builder.persistent(Codec.INT)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> EMPTY_TIME = DATA_COMPONENTS.registerComponentType(
+            "empty_time",
+            builder -> builder.persistent(Codec.LONG)
     );
 }
