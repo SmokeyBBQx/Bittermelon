@@ -3,6 +3,7 @@ package com.site21.bittermelon.init.neoforge;
 import com.mojang.serialization.Codec;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.atmosphere.data.AtmosBlockData;
+import com.site21.bittermelon.content.items.scps.scp377.FortuneInstance;
 import net.minecraft.core.UUIDUtil;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -52,5 +53,10 @@ public class BitterAttachmentTypes {
 
     public static final Supplier<AttachmentType<Long>> LAST_TYPING_TIME = ATTACHMENT_TYPES.register(
             "last_typing_time", () -> AttachmentType.builder(() -> 0L).build()
+    );
+
+    public static final Supplier<AttachmentType<List<FortuneInstance>>> FORTUNE_INSTANCES = ATTACHMENT_TYPES.register(
+            "fortune_instances", () -> AttachmentType.builder(() -> List.<FortuneInstance>of())
+                    .serialize(Codec.list(FortuneInstance.CODEC)).build()
     );
 }

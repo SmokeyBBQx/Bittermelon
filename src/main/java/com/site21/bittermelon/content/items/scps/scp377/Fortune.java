@@ -17,6 +17,7 @@ import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -34,12 +35,22 @@ public enum Fortune implements StringRepresentable {
     LIGHTNING("The weather is really just not your friend today.", player
             -> summonEntity(LIGHTNING_BOLT, player, player.getOnPos())),
     BROKEN_BONE("What breaks in a moment may take years to mend.", player
-            -> LocalMessageHelper.sendLocalMessage(player, 10, Component.literal(player.getDisplayName() +
-                    " breaks several bones in their back. (Placeholder)"))),
+            -> LocalMessageHelper.sendLocalMessage(player, 10, Component.literal(player.getName() +
+            " breaks several bones in their back. (Placeholder)"))),
     TELEPORT("This isn’t where you’re meant to be.", player
-            -> player.randomTeleport(20, 20, 20, true)),
+            -> {
+        boolean teleported = false;
+        int attempts = 0;
+        int maxAttempts = 20;
+        int range = 20;
+
+        while (!teleported && attempts <= maxAttempts) {
+            attempts++;
+        teleported = player.randomTeleport(range, range, range, true);
+        }
+    }),
     FIRE("You'll be surrounded by warmth.", player
-            -> player.setRemainingFireTicks(100)),
+            -> player.setRemainingFireTicks(200)),
     CLEAR_INVENTORY("Your burdens will be lifted", player
             -> player.getInventory().clearContent()),
     STRENGTH("You are stronger than you think.", player
@@ -47,7 +58,20 @@ public enum Fortune implements StringRepresentable {
     BREAD("Bread today is better than cake tomorrow", player
             -> player.getInventory().add(new ItemStack(Items.BREAD, 640))),
     SPEAR("A well aimed spear is better than three.", player
-            -> summonEntity(TRIDENT, player, player.getOnPos().above(3))),
+            -> {
+        ThrownTrident trident = new ThrownTrident(EntityType.TRIDENT, player.level());
+
+        Vec3 eyePosition = player.getEyePosition();
+        Vec3 lookDirection = player.getLookAngle();
+
+        Vec3 spawnPos = eyePosition.add(lookDirection.scale(1.0));
+        trident.setPos(spawnPos.x, spawnPos.y, spawnPos.z);
+
+        Vec3 velocity = lookDirection.scale(-2.5);
+        trident.setDeltaMovement(velocity);
+
+        player.level().addFreshEntity(trident);
+    }),
     ATTRACT("People are naturally attracted to you.", player -> {
         AABB box = AABB.ofSize(Vec3.atCenterOf(player.getOnPos()), 10, 10, 10);
         List<Player> players = player.level().getNearbyPlayers(TargetingConditions.DEFAULT, player, box);
@@ -57,7 +81,7 @@ public enum Fortune implements StringRepresentable {
     }),
     EGGS("Don't put all your eggs in one basket.", player -> {
         for (int i = 0; i < 64; i++) {
-            summonEntity(EGG, player, player.getOnPos().above(2));
+            summonEntity(EGG, player, player.getOnPos().above(4));
         }
     }),
     EXPLODE("Show everyone what you can do.", player
@@ -94,7 +118,7 @@ public enum Fortune implements StringRepresentable {
 
     private static void summonEntity(EntityType<?> entityType, @NotNull Player player, BlockPos pos) {
         if (player.level() instanceof ServerLevel level) {
-            entityType.spawn(level, player.getOnPos(), MobSpawnType.MOB_SUMMONED);
+            entityType.spawn(level, pos, MobSpawnType.MOB_SUMMONED);
         }
     }
 

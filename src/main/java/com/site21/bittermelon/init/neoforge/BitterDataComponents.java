@@ -168,9 +168,9 @@ public class BitterDataComponents {
             builder -> builder.persistent(Fortune.CODEC)
     );
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> FORTUNE_READ_TIME = DATA_COMPONENTS.registerComponentType(
-            "fortune_read_time",
-            builder -> builder.persistent(Codec.LONG)
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> FORTUNE_READ = DATA_COMPONENTS.registerComponentType(
+            "fortune_read",
+            builder -> builder.persistent(Codec.BOOL)
     );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> COOKIE_COUNT = DATA_COMPONENTS.registerComponentType(

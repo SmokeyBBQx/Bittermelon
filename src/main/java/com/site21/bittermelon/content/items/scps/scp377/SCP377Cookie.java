@@ -23,7 +23,7 @@ public class SCP377Cookie extends Item {
 
         if (level.isClientSide) return InteractionResultHolder.pass(stack);
 
-        player.getInventory().removeItem(stack);
+        stack.consume(1, player);
 
         ItemStack fortune = new ItemStack(SCP_377_1.get());
         fortune.set(FORTUNE, Fortune.getRandom(player.getRandom()));
