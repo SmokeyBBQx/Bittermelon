@@ -6,6 +6,7 @@ import com.site21.bittermelon.content.blocks.devices.implementations.intercom.In
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.client.IntercomScreen;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.PersonnelTerminalBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client.PersonnelTerminalScreen;
+import com.site21.bittermelon.content.blocks.devices.privilege.client.PrivilegeEditorScreen;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.client.characterselection.CharacterSelectionScreen;
 import com.site21.bittermelon.content.containment.client.ContainmentPanelScreen;
@@ -20,6 +21,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
@@ -59,5 +61,9 @@ public class ClientHandler {
 
     public static void displaySCP3771Screen(Fortune fortune) {
         Minecraft.getInstance().setScreen(new SCP3771Screen(fortune));
+    }
+
+    public static void displayPrivilegeEditorScreen(BlockEntity blockEntity) {
+        Minecraft.getInstance().setScreen(new PrivilegeEditorScreen(blockEntity));
     }
 }

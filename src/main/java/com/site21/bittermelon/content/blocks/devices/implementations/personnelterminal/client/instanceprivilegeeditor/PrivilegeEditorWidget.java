@@ -4,7 +4,7 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client.BitterButton;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client.PersonnelTerminalScreen;
 import com.site21.bittermelon.content.personnel.privilege.PrivilegeManager;
-import com.site21.bittermelon.content.personnel.privilege.PrivilegeUser;
+import com.site21.bittermelon.content.personnel.privilege.PrivilegeOwner;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -21,7 +21,7 @@ import java.util.Map;
 
 public abstract class PrivilegeEditorWidget extends AbstractWidget {
     protected final PrivilegeManager privilegeManager;
-    protected final PrivilegeUser privilegeUser;
+    protected final PrivilegeOwner privilegeOwner;
 
     protected EditBox inputField;
     protected BitterButton toggleButton;
@@ -32,10 +32,10 @@ public abstract class PrivilegeEditorWidget extends AbstractWidget {
     protected boolean searchMode = false;
     protected String currentSearchTerm = "";
 
-    public PrivilegeEditorWidget(int x, int y, int width, int height, Component message, PrivilegeUser privilegeUser) {
+    public PrivilegeEditorWidget(int x, int y, int width, int height, Component message, PrivilegeOwner privilegeOwner) {
         super(x, y, width, height, message);
         this.privilegeManager = PrivilegeManager.get(Minecraft.getInstance().player.level());
-        this.privilegeUser = privilegeUser;
+        this.privilegeOwner = privilegeOwner;
         initializeComponents(x, y, width, height);
     }
 
@@ -139,8 +139,8 @@ public abstract class PrivilegeEditorWidget extends AbstractWidget {
 
         privileges.entrySet().removeIf(
                 entry ->
-                        entry.getKey().equals(privilegeUser.getName())
-                                || privilegeUser.getPrivileges().containsKey(entry.getKey())
+                        entry.getKey().equals(privilegeOwner.getName())
+                                || privilegeOwner.getPrivileges().containsKey(entry.getKey())
         );
 
         if (!currentSearchTerm.isEmpty()) {
@@ -153,7 +153,7 @@ public abstract class PrivilegeEditorWidget extends AbstractWidget {
     }
 
     protected void refreshPrivileges() {
-        Map<String, Boolean> privileges = privilegeUser.getPrivileges();
+        Map<String, Boolean> privileges = privilegeOwner.getPrivileges();
 
         privileges = privileges.entrySet().stream()
                 .sorted((e1, e2) -> {
@@ -174,7 +174,7 @@ public abstract class PrivilegeEditorWidget extends AbstractWidget {
     protected void onAddButtonPressed() {
         String privilege = inputField.getValue().trim();
         if (!privilege.isEmpty()) {
-            privilegeUser.getPrivileges().put(privilege, privilegeValue);
+            privilegeOwner.getPrivileges().put(privilege, privilegeValue);
             setPrivilege(privilege, privilegeValue);
             inputField.setValue("");
             exitSearchMode();

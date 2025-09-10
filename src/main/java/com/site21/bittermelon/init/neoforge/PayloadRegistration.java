@@ -6,6 +6,9 @@ import com.site21.bittermelon.content.atmosphere.networking.*;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.ContainmentNameUpdate;
 import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.networking.OpenContainmentPanelScreen;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.networking.*;
+import com.site21.bittermelon.content.blocks.devices.privilege.networking.OpenPrivilegeEditorScreen;
+import com.site21.bittermelon.content.blocks.devices.privilege.networking.RemovePrivilegeForBE;
+import com.site21.bittermelon.content.blocks.devices.privilege.networking.SetPrivilegeForBE;
 import com.site21.bittermelon.content.character.networking.*;
 import com.site21.bittermelon.content.items.scps.scp377.networking.OpenSCP3771Screen;
 import com.site21.bittermelon.content.personnel.privilege.networking.*;
@@ -470,6 +473,24 @@ public class PayloadRegistration {
                 OpenSCP3771Screen.TYPE,
                 OpenSCP3771Screen.STREAM_CODEC,
                 OpenSCP3771Screen::handle
+        );
+
+        registrar.playToServer(
+                SetPrivilegeForBE.TYPE,
+                SetPrivilegeForBE.STREAM_CODEC,
+                SetPrivilegeForBE::handle
+        );
+
+        registrar.playToServer(
+                RemovePrivilegeForBE.TYPE,
+                RemovePrivilegeForBE.STREAM_CODEC,
+                RemovePrivilegeForBE::handle
+        );
+
+        registrar.playToClient(
+                OpenPrivilegeEditorScreen.TYPE,
+                OpenPrivilegeEditorScreen.STREAM_CODEC,
+                OpenPrivilegeEditorScreen::handle
         );
     }
 }

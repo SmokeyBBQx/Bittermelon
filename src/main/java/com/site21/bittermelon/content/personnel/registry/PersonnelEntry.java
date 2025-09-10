@@ -3,7 +3,7 @@ package com.site21.bittermelon.content.personnel.registry;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.personnel.privilege.PrivilegeUser;
+import com.site21.bittermelon.content.personnel.privilege.PrivilegeOwner;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class PersonnelEntry implements PrivilegeUser {
+public class PersonnelEntry implements PrivilegeOwner {
     public static final Codec<PersonnelEntry> CODEC;
     public static final StreamCodec<ByteBuf, PersonnelEntry> STREAM_CODEC;
 

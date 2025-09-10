@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class PrivilegeGroup implements PrivilegeUser {
+public class PrivilegeGroup implements PrivilegeOwner {
     public static final Codec<PrivilegeGroup> CODEC;
     public static final StreamCodec<ByteBuf, PrivilegeGroup> STREAM_CODEC;
 

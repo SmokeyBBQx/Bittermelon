@@ -4,6 +4,7 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.items.GermTest;
 import com.site21.bittermelon.content.items.IntercomPhoneItem;
 import com.site21.bittermelon.content.items.KeycardItem;
+import com.site21.bittermelon.content.items.handheldsysteminterface.HandheldSystemInterface;
 import com.site21.bittermelon.content.items.medical.tools.SyringeItem;
 import com.site21.bittermelon.content.items.mop.MopItem;
 import com.site21.bittermelon.content.items.scps.SCP109;
@@ -30,10 +31,6 @@ import com.site21.bittermelon.content.items.medical.tools.*;
 import com.site21.bittermelon.content.items.toolbox.ToolBoxItem;
 import com.site21.bittermelon.content.items.wires.wire.Wire;
 import com.site21.bittermelon.content.items.writablepaper.WritablePaper;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.food.FoodData;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -472,5 +469,9 @@ public class BitterItems {
     public static final DeferredItem<Item> CRACKED_FORTUNE_COOKIE = ITEMS.register("cracked_fortune_cookie", () -> new Item(
             new Item.Properties().food(new FoodProperties(1, 1, true, 1,
                     Optional.empty(), List.of()))
+    ));
+
+    public static final DeferredItem<HandheldSystemInterface> HANDHELD_SYSTEM_INTERFACE= ITEMS.register("handheld_system_interface", () -> new HandheldSystemInterface(
+            new Item.Properties()
     ));
 }

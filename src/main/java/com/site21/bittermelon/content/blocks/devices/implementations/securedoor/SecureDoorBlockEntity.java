@@ -34,7 +34,6 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
     private final Map<String, OutputPort> outputPorts;
     private final Map<String, InputPort> inputPorts;
     private boolean isLocked = true;
-    private final List<String> requiredPrivileges = new ArrayList<>();
     private int lockTickCounter = 0;
     private static final int LOCK_TICK_THRESHOLD = 80;
     private String address;
@@ -176,13 +175,6 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
         }
     }
 
-    public List<String> getRequiredPrivileges() {
-        return requiredPrivileges;
-    }
-
-    public void addPrivilege(String privilege) {
-        requiredPrivileges.add(privilege);
-    }
 
     @Override
     public Map<String, OutputPort> getOutputPorts() {
@@ -210,13 +202,6 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
         tag.putBoolean("isLocked", isLocked);
         saveInputPorts(tag);
         saveOutputPorts(tag);
-        ListTag privilegesList = new ListTag();
-        for (String privilege : requiredPrivileges) {
-            CompoundTag privilegeTag = new CompoundTag();
-            privilegeTag.putString("privilege", privilege);
-            privilegesList.add(privilegeTag);
-        }
-        tag.put("privileges", privilegesList);
         tag.putString("address", address);
     }
 
@@ -227,13 +212,6 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
         loadInputPorts(tag, level);
         loadOutputPorts(tag, level);
 
-        requiredPrivileges.clear();
-        ListTag privilegesList = tag.getList("privileges", Tag.TAG_COMPOUND);
-
-        for (int i = 0; i < privilegesList.size(); i++) {
-            CompoundTag privilegeTag = privilegesList.getCompound(i);
-            requiredPrivileges.add(privilegeTag.getString("privilege"));
-        }
         address = tag.getString("address");
     }
 

@@ -1,5 +1,6 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.securedoor;
 
+import com.site21.bittermelon.content.personnel.registry.PersonnelRegistry;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -20,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
+import java.util.Map;
+
 import static com.site21.bittermelon.init.neoforge.BitterItems.KEYCARD;
 
 public class KeycardReaderSecureDoorBlock extends SecureDoorBlock implements EntityBlock {
@@ -39,7 +42,7 @@ public class KeycardReaderSecureDoorBlock extends SecureDoorBlock implements Ent
     }
 
     protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
-        if (level.getBlockEntity(pos) instanceof SecureDoorBlockEntity blockEntity) {
+        if (level.getBlockEntity(pos) instanceof KeycardReaderSecureDoorBlockEntity blockEntity) {
             if (!blockEntity.isLocked()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
             if (stack.is(KEYCARD.get())) {
@@ -51,14 +54,14 @@ public class KeycardReaderSecureDoorBlock extends SecureDoorBlock implements Ent
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
-    public void scan(int id, Level level, BlockPos pos, SecureDoorBlockEntity blockEntity) {
+    public void scan(int id, Level level, BlockPos pos, KeycardReaderSecureDoorBlockEntity blockEntity) {
         if (level == null) return;
-//        List<String> privileges = PersonnelRegistry.get(level).getEntry(id).getPrivileges();
-//        if (privileges.stream().anyMatch(requiredPrivileges::contains)) {
-//            setLocked(false);
-//        }
-        blockEntity.setLocked(false);
-        blockEntity.runForOtherHalf(otherHalf -> otherHalf.setLocked(false));
-        level.playSound(null, pos, SoundEvents.NOTE_BLOCK_BELL.value(), SoundSource.BLOCKS);
+        Map<String, Boolean> requiredPrivileges = blockEntity.getPrivileges();
+        Map<String, Boolean> privileges = PersonnelRegistry.get(level).getEntry(id).getPrivileges();
+        if (privileges.keySet().stream().anyMatch(requiredPrivileges.keySet()::contains)) {
+            blockEntity.setLocked(false);
+            blockEntity.runForOtherHalf(otherHalf -> otherHalf.setLocked(false));
+            level.playSound(null, pos, SoundEvents.NOTE_BLOCK_BELL.value(), SoundSource.BLOCKS);
+        }
     }
 }
