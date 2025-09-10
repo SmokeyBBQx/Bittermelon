@@ -51,11 +51,9 @@ public class SCP377 extends Item {
     public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, Entity entity, int slotId, boolean isSelected) {
         if (level.isClientSide) return;
 
-        if (!(entity instanceof Player player)) return;
         if (level.getGameTime() - stack.getOrDefault(EMPTY_TIME, -1L) > REFILL_DELAY) {
-            stack.set(COOKIE_COUNT, DEFAULT_COOKIE_COUNT - 1);
+            stack.set(COOKIE_COUNT, DEFAULT_COOKIE_COUNT);
             stack.remove(EMPTY_TIME);
-            player.addItem(FORTUNE_COOKIE.toStack());
         }
     }
 }
