@@ -95,7 +95,7 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
         }
     }
 
-    private boolean isOn() {
+    public boolean isOn() {
         if (supply >= draw) return true;
         if (supply <= 0 || level == null) return false;
         float random = level.getRandom().nextFloat();
@@ -166,6 +166,10 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
     }
 
     public void setLocked(boolean locked) {
+        setLocked(locked, isOn());
+    }
+
+    public void setLocked(boolean locked, boolean on) {
         if (!isOn()) return;
 
         if (locked != isLocked) {
@@ -174,7 +178,6 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
             setChanged();
         }
     }
-
 
     @Override
     public Map<String, OutputPort> getOutputPorts() {

@@ -21,7 +21,9 @@ public class HandheldSystemInterface extends Item {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
 
-        if (level.getBlockEntity(pos) instanceof PrivilegeOwner && context.getPlayer() instanceof ServerPlayer player) {
+        if (level.getBlockEntity(pos) instanceof PrivilegeOwner privilegeOwner && context.getPlayer() instanceof ServerPlayer player) {
+            if (!privilegeOwner.canAccess()) return InteractionResult.FAIL;
+
             PacketDistributor.sendToPlayer(player, new OpenPrivilegeEditorScreen(pos));
             return InteractionResult.SUCCESS;
         }

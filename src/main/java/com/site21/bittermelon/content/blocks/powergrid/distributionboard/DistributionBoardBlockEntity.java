@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.DISTRIBUTION_BOARD_BLOCK_ENTITY;
@@ -32,24 +33,20 @@ public class DistributionBoardBlockEntity extends ElectronicBlockEntity {
 
     public DistributionBoardBlockEntity(BlockPos pos, BlockState blockState) {
         super(DISTRIBUTION_BOARD_BLOCK_ENTITY.get(), pos, blockState);
+        breakers = new LinkedHashMap<>();
+        loads = new HashMap<>();
 
-        outputPorts = Map.of(
-                "WAY_1", new OutputPort("WAY_1", this::supplyPower, worldPosition),
-                "WAY_2", new OutputPort("WAY_2", this::supplyPower, worldPosition),
-                "WAY_3", new OutputPort("WAY_3", this::supplyPower, worldPosition),
-                "WAY_4", new OutputPort("WAY_4", this::supplyPower, worldPosition),
-                "WAY_5", new OutputPort("WAY_5", this::supplyPower, worldPosition),
-                "WAY_6", new OutputPort("WAY_6", this::supplyPower, worldPosition),
-                "WAY_7", new OutputPort("WAY_7", this::supplyPower, worldPosition),
-                "WAY_8", new OutputPort("WAY_8", this::supplyPower, worldPosition)
-        );
+        outputPorts = new LinkedHashMap<>();
+        for (int i = 1; i <= 8; i++) {
+            String key = "WAY_" + i;
+            outputPorts.put(key, new OutputPort(key, this::supplyPower, worldPosition));
+            breakers.put(key, false);
+        }
 
         inputPorts = Map.of(
                 "SUPPLY", new InputPort("SUPPLY", this::receivePower, worldPosition)
         );
 
-        breakers = new HashMap<>();
-        loads = new HashMap<>();
     }
 
     public void tick() {
@@ -104,6 +101,15 @@ public class DistributionBoardBlockEntity extends ElectronicBlockEntity {
         }
     }
 
+    public void toggleBreaker(String breakerName) {
+        breakers.computeIfPresent(breakerName, (k, v) -> !v);
+        setChanged();
+    }
+
+    public boolean isBreakerOn(String breakerName) {
+        return breakers.getOrDefault(breakerName, false);
+    }
+
     @Override
     public Map<String, OutputPort> getOutputPorts() {
         return outputPorts;
@@ -119,6 +125,12 @@ public class DistributionBoardBlockEntity extends ElectronicBlockEntity {
         super.saveAdditional(tag, registries);
         saveInputPorts(tag);
         saveOutputPorts(tag);
+
+        CompoundTag breakersTag = new CompoundTag();
+        for (Map.Entry<String, Boolean> entry : breakers.entrySet()) {
+            breakersTag.putBoolean(entry.getKey(), entry.getValue());
+        }
+        tag.put("breakers", breakersTag);
     }
 
     @Override
@@ -126,6 +138,14 @@ public class DistributionBoardBlockEntity extends ElectronicBlockEntity {
         super.loadAdditional(tag, registries);
         loadInputPorts(tag, level);
         loadOutputPorts(tag, level);
+
+        if (tag.contains("breakers")) {
+            CompoundTag breakersTag = tag.getCompound("breakers");
+            breakers.clear();
+            for (String key : breakersTag.getAllKeys()) {
+                breakers.put(key, breakersTag.getBoolean(key));
+            }
+        }
     }
 
     public ClientboundBlockEntityDataPacket getUpdatePacket() {

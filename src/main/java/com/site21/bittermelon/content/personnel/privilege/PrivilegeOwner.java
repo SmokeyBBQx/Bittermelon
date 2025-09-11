@@ -5,4 +5,7 @@ import java.util.Map;
 public interface PrivilegeOwner {
     Map<String, Boolean> getPrivileges();
     String getName();
+    default boolean canAccess() {
+        return true;
+    }
 }

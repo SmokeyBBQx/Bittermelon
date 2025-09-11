@@ -9,6 +9,8 @@ import com.site21.bittermelon.content.blocks.devices.implementations.intercom.ne
 import com.site21.bittermelon.content.blocks.devices.privilege.networking.OpenPrivilegeEditorScreen;
 import com.site21.bittermelon.content.blocks.devices.privilege.networking.RemovePrivilegeForBE;
 import com.site21.bittermelon.content.blocks.devices.privilege.networking.SetPrivilegeForBE;
+import com.site21.bittermelon.content.blocks.powergrid.distributionboard.networking.OpenDistributionBoardScreen;
+import com.site21.bittermelon.content.blocks.powergrid.distributionboard.networking.ToggleBreaker;
 import com.site21.bittermelon.content.character.networking.*;
 import com.site21.bittermelon.content.items.scps.scp377.networking.OpenSCP3771Screen;
 import com.site21.bittermelon.content.personnel.privilege.networking.*;
@@ -491,6 +493,18 @@ public class PayloadRegistration {
                 OpenPrivilegeEditorScreen.TYPE,
                 OpenPrivilegeEditorScreen.STREAM_CODEC,
                 OpenPrivilegeEditorScreen::handle
+        );
+
+        registrar.playToClient(
+                OpenDistributionBoardScreen.TYPE,
+                OpenDistributionBoardScreen.STREAM_CODEC,
+                OpenDistributionBoardScreen::handle
+        );
+
+        registrar.playToServer(
+                ToggleBreaker.TYPE,
+                ToggleBreaker.STREAM_CODEC,
+                ToggleBreaker::handle
         );
     }
 }

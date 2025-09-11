@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -29,8 +30,15 @@ public class KeycardReaderSecureDoorBlockEntity extends SecureDoorBlockEntity im
     }
 
     @Override
+    public boolean canAccess() {
+        return getBlockState().getValue(SecureDoorBlock.HALF).equals(DoubleBlockHalf.UPPER);
+    }
+
+    @Override
     protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.saveAdditional(tag, registries);
+        if (getBlockState().getValue(SecureDoorBlock.HALF).equals(DoubleBlockHalf.LOWER)) return;
+
         CompoundTag privilegesTag = new CompoundTag();
         for (Map.Entry<String, Boolean> entry : privileges.entrySet()) {
             privilegesTag.putBoolean(entry.getKey(), entry.getValue());
@@ -41,6 +49,7 @@ public class KeycardReaderSecureDoorBlockEntity extends SecureDoorBlockEntity im
     @Override
     public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.loadAdditional(tag, registries);
+        if (getBlockState().getValue(SecureDoorBlock.HALF).equals(DoubleBlockHalf.LOWER)) return;
 
         privileges.clear();
         CompoundTag privilegesTag = tag.getCompound("privileges");

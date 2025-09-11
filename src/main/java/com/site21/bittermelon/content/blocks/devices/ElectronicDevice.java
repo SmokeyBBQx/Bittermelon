@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,7 +31,7 @@ public interface ElectronicDevice {
      * @return map of port ID to OutputPort objects
      */
     default Map<String, OutputPort> getOutputPorts() {
-        return Map.of();
+        return new LinkedHashMap<>();
     }
 
     /**
@@ -40,7 +41,7 @@ public interface ElectronicDevice {
      * @return map of port ID to InputPort objects
      */
     default Map<String, InputPort> getInputPorts() {
-        return Map.of();
+        return new LinkedHashMap<>();
     }
 
     /**

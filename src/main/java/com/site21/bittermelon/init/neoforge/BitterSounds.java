@@ -61,7 +61,7 @@ public class BitterSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> FACILITY_AMBIENCE = register("ambient.facility_ambience");
     public static final DeferredHolder<SoundEvent, SoundEvent> PULSING = register("ambient.pulsing");
     public static final DeferredHolder<SoundEvent, SoundEvent> BANJO = register("music.banjo");
-
+    public static final DeferredHolder<SoundEvent, SoundEvent> BREAKER_SWITCH = register("machine.breaker_switch");
 
     private static @NotNull DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return SOUND_EVENTS.register(name, () ->

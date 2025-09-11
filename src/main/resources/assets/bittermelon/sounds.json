@@ -314,6 +314,12 @@
       }
     ]
   },
+  "machine.breaker_switch": {
+    "category": "ui",
+    "sounds": [
+      "bittermelon:machine/breaker_switch"
+    ]
+  },
   "container.toolbox_open": {
     "category": "neutral",
     "sounds": [

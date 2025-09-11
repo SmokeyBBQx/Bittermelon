@@ -7,6 +7,8 @@ import com.site21.bittermelon.content.blocks.devices.implementations.intercom.cl
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.PersonnelTerminalBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client.PersonnelTerminalScreen;
 import com.site21.bittermelon.content.blocks.devices.privilege.client.PrivilegeEditorScreen;
+import com.site21.bittermelon.content.blocks.powergrid.distributionboard.DistributionBoardBlockEntity;
+import com.site21.bittermelon.content.blocks.powergrid.distributionboard.client.DistributionBoardScreen;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.client.characterselection.CharacterSelectionScreen;
 import com.site21.bittermelon.content.containment.client.ContainmentPanelScreen;
@@ -65,5 +67,9 @@ public class ClientHandler {
 
     public static void displayPrivilegeEditorScreen(BlockEntity blockEntity) {
         Minecraft.getInstance().setScreen(new PrivilegeEditorScreen(blockEntity));
+    }
+
+    public static void displayDistributionBoardScreen(DistributionBoardBlockEntity distributionBoard) {
+        Minecraft.getInstance().setScreen(new DistributionBoardScreen(distributionBoard));
     }
 }

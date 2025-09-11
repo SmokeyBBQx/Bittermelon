@@ -12,6 +12,9 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 @OnlyIn(Dist.CLIENT)
 public class PrivilegeEditorScreen extends Screen {
+    private static final int WIDGET_WIDTH = 300;
+    private static final int WIDGET_HEIGHT = 200;
+
     private final BlockEntity blockEntity;
     private PrivilegeOwner privilegeOwner;
     PrivilegeListWidget listWidget;
@@ -26,7 +29,10 @@ public class PrivilegeEditorScreen extends Screen {
 
     @Override
     protected void init() {
-        listWidget = new PrivilegeListWidget(width / 2, height / 3, 200, 200,
+        int x = width / 2 - WIDGET_WIDTH / 2;
+        int y = height / 2 - WIDGET_HEIGHT / 2;
+
+        listWidget = new PrivilegeListWidget(x, y, WIDGET_WIDTH, WIDGET_HEIGHT,
                 Component.literal("Privileges"), privilegeOwner, this);
         addRenderableWidget(listWidget);
     }
@@ -39,5 +45,10 @@ public class PrivilegeEditorScreen extends Screen {
     public void removePrivilege(String privilege) {
         privilegeOwner.getPrivileges().remove(privilege);
         PacketDistributor.sendToServer(new RemovePrivilegeForBE(blockEntity.getBlockPos(), privilege));
+    }
+
+    @Override
+    public boolean isPauseScreen() {
+        return false;
     }
 }
