@@ -67,7 +67,7 @@ public class SpeakerBlockEntity extends ElectronicBlockEntity implements Electro
     @Override
     public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.loadAdditional(tag, registries);
-        loadInputPorts(tag, level);
+        loadInputPorts(tag);
     }
 
     public ClientboundBlockEntityDataPacket getUpdatePacket() {

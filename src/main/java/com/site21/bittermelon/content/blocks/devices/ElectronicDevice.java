@@ -74,7 +74,7 @@ public interface ElectronicDevice {
     default void connectToOutputPort(String outputPortID, InputPort inputPort) {
         OutputPort outputPort = findOutputPort(outputPortID);
         if (outputPort != null) {
-            outputPort.connectedPort = inputPort;
+            outputPort.connectTo(inputPort);
         }
     }
 
@@ -88,7 +88,7 @@ public interface ElectronicDevice {
     default void connectToInputPort(String inputPortID, OutputPort outputPort) {
         InputPort inputPort = findInputPort(inputPortID);
         if (inputPort != null) {
-            inputPort.connectedPort = outputPort;
+            inputPort.connectTo(outputPort);
         }
     }
 
@@ -105,9 +105,9 @@ public interface ElectronicDevice {
             CompoundTag portTag = new CompoundTag();
 
             portTag.putString("id", port.id);
-            if (port.connectedPort != null) {
-                portTag.putLong("connectedPos", port.connectedPort.pos.asLong());
-                portTag.putString("connectedID", port.connectedPort.id);
+            if (port.connectedPos != null && port.connectedPortId != null) {
+                portTag.putLong("connectedPos", port.connectedPos.asLong());
+                portTag.putString("connectedID", port.connectedPortId);
             }
 
             portsListTag.add(portTag);
@@ -121,26 +121,18 @@ public interface ElectronicDevice {
      * Looks up connected devices by position and reconnects ports by ID.
      *
      * @param tag the CompoundTag to read data from
-     * @param level the world level for looking up block entities
      */
-    default void loadInputPorts(@NotNull CompoundTag tag, Level level) {
+    default void loadInputPorts(@NotNull CompoundTag tag) {
         ListTag portsListTag = tag.getList("inputPorts", Tag.TAG_COMPOUND);
-
         for (int i = 0; i < portsListTag.size(); i++) {
             CompoundTag portTag = portsListTag.getCompound(i);
             String portId = portTag.getString("id");
             InputPort port = findInputPort(portId);
 
-            if (portTag.contains("connectedPos") && portTag.contains("connectedID")) {
-                BlockPos connectedPos = BlockPos.of(portTag.getLong("connectedPos"));
-                String connectedID = portTag.getString("connectedID");
-
-                OutputPort outputPort = null;
-                if (level.getBlockEntity(connectedPos) instanceof ElectronicDevice electronic) {
-                    outputPort = electronic.findOutputPort(connectedID);
-                }
-
-                port.connectedPort = outputPort;
+            if (port != null && portTag.contains("connectedPos")) {
+                port.connectedPos = BlockPos.of(portTag.getLong("connectedPos"));
+                port.connectedPortId = portTag.getString("connectedID");
+                port.invalidateCache();
             }
         }
     }
@@ -158,10 +150,9 @@ public interface ElectronicDevice {
             CompoundTag portTag = new CompoundTag();
 
             portTag.putString("id", port.id);
-
-            if (port.connectedPort != null) {
-                portTag.putLong("connectedPos", port.connectedPort.pos.asLong());
-                portTag.putString("connectedID", port.connectedPort.id);
+            if (port.connectedPos != null && port.connectedPortId != null) {
+                portTag.putLong("connectedPos", port.connectedPos.asLong());
+                portTag.putString("connectedID", port.connectedPortId);
             }
 
             portsListTag.add(portTag);
@@ -175,26 +166,18 @@ public interface ElectronicDevice {
      * Looks up connected devices by position and reconnects ports by ID.
      *
      * @param tag the CompoundTag to read data from
-     * @param level the world level for looking up block entities
      */
-    default void loadOutputPorts(@NotNull CompoundTag tag, Level level) {
+    default void loadOutputPorts(@NotNull CompoundTag tag) {
         ListTag portsListTag = tag.getList("outputPorts", Tag.TAG_COMPOUND);
-
         for (int i = 0; i < portsListTag.size(); i++) {
             CompoundTag portTag = portsListTag.getCompound(i);
             String portId = portTag.getString("id");
             OutputPort port = findOutputPort(portId);
 
-            if (portTag.contains("connectedPos") && portTag.contains("connectedID")) {
-                BlockPos connectedPos = BlockPos.of(portTag.getLong("connectedPos"));
-                String connectedID = portTag.getString("connectedID");
-
-                InputPort inputPort = null;
-                if (level.getBlockEntity(connectedPos) instanceof ElectronicDevice electronic) {
-                    inputPort = electronic.findInputPort(connectedID);
-                }
-
-                port.connectedPort = inputPort;
+            if (port != null && portTag.contains("connectedPos")) {
+                port.connectedPos = BlockPos.of(portTag.getLong("connectedPos"));
+                port.connectedPortId = portTag.getString("connectedID");
+                port.invalidateCache();
             }
         }
     }
@@ -205,33 +188,38 @@ public interface ElectronicDevice {
      *
      * @param level the world level for looking up block entities
      */
-    default void clearElectronicData(@NotNull Level level) {
-        if (level.isClientSide) return;
+    default void clearElectronicData(Level level) {
+        if (level == null || level.isClientSide) return;
+
         Set<BlockEntity> updatedBlockEntities = new HashSet<>();
 
         // Disconnect all devices connected to our input ports
         for (InputPort port : getInputPorts().values()) {
-            OutputPort connectedPort = port.connectedPort;
-            if (connectedPort != null) {
-                connectedPort.connectedPort = null;
-
-                BlockEntity connectedPortBlockEntity = level.getBlockEntity(connectedPort.pos);
-                if (connectedPortBlockEntity != null) {
-                    updatedBlockEntities.add(connectedPortBlockEntity);
+            if (port.connectedPos != null) {
+                BlockEntity connectedBE = level.getBlockEntity(port.connectedPos);
+                if (connectedBE instanceof ElectronicDevice electronic) {
+                    OutputPort connectedPort = electronic.findOutputPort(port.connectedPortId);
+                    if (connectedPort != null) {
+                        connectedPort.disconnect();
+                        updatedBlockEntities.add(connectedBE);
+                    }
                 }
+                port.disconnect();
             }
         }
 
         // Disconnect all devices connected to our output ports
         for (OutputPort port : getOutputPorts().values()) {
-            InputPort connectedPort = port.connectedPort;
-            if (connectedPort != null) {
-                connectedPort.connectedPort = null;
-
-                BlockEntity connectedPortBlockEntity = level.getBlockEntity(connectedPort.pos);
-                if (connectedPortBlockEntity != null) {
-                    updatedBlockEntities.add(connectedPortBlockEntity);
+            if (port.connectedPos != null) {
+                BlockEntity connectedBE = level.getBlockEntity(port.connectedPos);
+                if (connectedBE instanceof ElectronicDevice electronic) {
+                    InputPort connectedPort = electronic.findInputPort(port.connectedPortId);
+                    if (connectedPort != null) {
+                        connectedPort.disconnect();
+                        updatedBlockEntities.add(connectedBE);
+                    }
                 }
+                port.disconnect();
             }
         }
 

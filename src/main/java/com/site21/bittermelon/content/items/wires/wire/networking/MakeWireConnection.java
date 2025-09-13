@@ -50,10 +50,10 @@ public record MakeWireConnection(BlockPos inputPos, BlockPos outputPos, String i
 
         if (inputPort == null || outputPort == null) return;
 
-        inputPort.connectedPort = outputPort;
-        outputPort.connectedPort = inputPort;
+        inputPort.connectTo(outputPort);
+        outputPort.connectTo(inputPort);
 
-        System.out.println("Wire connection made. InputPort connected port: " + inputPort.connectedPort.id + " OutputPort connected port: " + outputPort.connectedPort.id);
+        System.out.println("Wire connection made. InputPort connected port: " + inputPort.getConnectedPort(level).id + " OutputPort connected port: " + outputPort.getConnectedPort(level).id);
 
         if (level.getBlockEntity(inputPos) instanceof BlockEntity entity) {
             entity.setChanged();

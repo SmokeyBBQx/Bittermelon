@@ -76,7 +76,7 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
             }
         }
 
-        InputPort connectedPort = findOutputPort("IS_LOCKED").connectedPort;
+        InputPort connectedPort = findOutputPort("IS_LOCKED").getConnectedPort(level);
         if (connectedPort != null) {
             connectedPort.receive(new Signal(isLocked));
         }
@@ -87,7 +87,7 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
     }
 
     private void updatePowerConsumption() {
-        OutputPort connectedPort = inputPorts.get("POWER_SUPPLY").connectedPort;
+        OutputPort connectedPort = inputPorts.get("POWER_SUPPLY").getConnectedPort(level);
         if (connectedPort == null) return;
         if (level == null) return;
         if (level.getBlockEntity(connectedPort.pos) instanceof DistributionBoardBlockEntity DB) {
@@ -139,7 +139,7 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
     }
 
     private void triggerMotorsActiveOutput() {
-        InputPort connectedPort = findOutputPort("MOTORS_ACTIVE").connectedPort;
+        InputPort connectedPort = findOutputPort("MOTORS_ACTIVE").getConnectedPort(level);
         if (connectedPort != null) {
             connectedPort.receive(new Signal(true));
         }
@@ -203,19 +203,18 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
     protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putBoolean("isLocked", isLocked);
+        tag.putString("address", address);
         saveInputPorts(tag);
         saveOutputPorts(tag);
-        tag.putString("address", address);
     }
 
     @Override
     public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.loadAdditional(tag, registries);
         isLocked = tag.getBoolean("isLocked");
-        loadInputPorts(tag, level);
-        loadOutputPorts(tag, level);
-
         address = tag.getString("address");
+        loadInputPorts(tag);
+        loadOutputPorts(tag);
     }
 
     public void runForOtherHalf(Consumer<SecureDoorBlockEntity> action) {

@@ -58,7 +58,7 @@ public class DistributionBoardBlockEntity extends ElectronicBlockEntity {
 //                outputPorts.get(load).emit();
 //            }
             for (OutputPort outputPort : outputPorts.values()) {
-                outputPort.update();
+                outputPort.update(level);
             }
         }
     }
@@ -123,21 +123,20 @@ public class DistributionBoardBlockEntity extends ElectronicBlockEntity {
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.saveAdditional(tag, registries);
-        saveInputPorts(tag);
-        saveOutputPorts(tag);
 
         CompoundTag breakersTag = new CompoundTag();
         for (Map.Entry<String, Boolean> entry : breakers.entrySet()) {
             breakersTag.putBoolean(entry.getKey(), entry.getValue());
         }
         tag.put("breakers", breakersTag);
+
+        saveInputPorts(tag);
+        saveOutputPorts(tag);
     }
 
     @Override
     public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.loadAdditional(tag, registries);
-        loadInputPorts(tag, level);
-        loadOutputPorts(tag, level);
 
         if (tag.contains("breakers")) {
             CompoundTag breakersTag = tag.getCompound("breakers");
@@ -146,6 +145,9 @@ public class DistributionBoardBlockEntity extends ElectronicBlockEntity {
                 breakers.put(key, breakersTag.getBoolean(key));
             }
         }
+
+        loadInputPorts(tag);
+        loadOutputPorts(tag);
     }
 
     public ClientboundBlockEntityDataPacket getUpdatePacket() {

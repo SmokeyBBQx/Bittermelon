@@ -74,7 +74,7 @@ public class DetonatorBlockEntity extends ElectronicBlockEntity implements Elect
     public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.loadAdditional(tag, registries);
         ItemStack.parse(registries, tag.get("payload")).ifPresent(stack -> payload = stack);
-        loadInputPorts(tag, level);
+        loadInputPorts(tag);
     }
 
     @Override

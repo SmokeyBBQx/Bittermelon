@@ -57,7 +57,7 @@ public class IntercomBlockEntity extends ElectronicBlockEntity implements ISyncS
     }
 
     private void updatePowerConsumption() {
-        OutputPort connectedPort = inputPorts.get("POWER_SUPPLY").connectedPort;
+        OutputPort connectedPort = inputPorts.get("POWER_SUPPLY").getConnectedPort(level);
         if (connectedPort == null) return;
         if (level == null) return;
         if (level.getBlockEntity(connectedPort.pos) instanceof DistributionBoardBlockEntity DB) {
@@ -91,7 +91,7 @@ public class IntercomBlockEntity extends ElectronicBlockEntity implements ISyncS
             level.playSound(null, worldPosition, event.getSoundEvent(), SoundSource.NEUTRAL, 0.05f, 1);
         }
         LocalMessageHelper.sendLocalMessage(level, getBlockPos(), isPhonePickedUp() ? 1 : speakerRadius, intercomMessage);
-        InputPort connectedPort = findOutputPort("SOUND").connectedPort;
+        InputPort connectedPort = findOutputPort("SOUND").getConnectedPort(level);
         if (connectedPort != null) {
             connectedPort.receive(new Signal(event));
         }
@@ -211,8 +211,8 @@ public class IntercomBlockEntity extends ElectronicBlockEntity implements ISyncS
                 phoneUser = loadedPhoneUser;
             }
         }
-        loadOutputPorts(tag, level);
-        loadInputPorts(tag, level);
+        loadOutputPorts(tag);
+        loadInputPorts(tag);
     }
 
     public ClientboundBlockEntityDataPacket getUpdatePacket() {

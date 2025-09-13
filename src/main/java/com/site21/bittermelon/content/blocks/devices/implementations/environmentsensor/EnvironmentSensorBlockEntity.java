@@ -72,7 +72,7 @@ public class EnvironmentSensorBlockEntity extends ElectronicBlockEntity implemen
         if (changed) setChanged();
 
         for (OutputPort outputPort : outputPorts.values()) {
-            outputPort.update();
+            outputPort.update(level);
         }
     }
 
@@ -104,7 +104,7 @@ public class EnvironmentSensorBlockEntity extends ElectronicBlockEntity implemen
         temperature = tag.getFloat("temperature");
         pressure = tag.getFloat("pressure");
 
-        loadOutputPorts(tag, level);
+        loadOutputPorts(tag);
     }
 
     @Override
