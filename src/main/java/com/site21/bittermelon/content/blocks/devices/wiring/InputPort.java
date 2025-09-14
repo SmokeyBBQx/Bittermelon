@@ -8,20 +8,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public class InputPort {
-    public final String id;
+public class InputPort extends Port<OutputPort> {
     public final Consumer<Signal> consumer;
-    public final BlockPos pos;
-    public @Nullable BlockPos connectedPos;
-    public @Nullable String connectedPortId;
-
-    private @Nullable OutputPort cachedConnectedPort;
-    private boolean cacheValid = false;
 
     public InputPort(String id, Consumer<Signal> consumer, BlockPos pos) {
-        this.id = id;
+        super(id, pos);
         this.consumer = consumer;
-        this.pos = pos;
     }
 
     public void receive(Signal signal) {
@@ -42,24 +34,5 @@ public class InputPort {
         }
 
         return cachedConnectedPort;
-    }
-
-    public void connectTo(@NotNull OutputPort outputPort) {
-        connectedPos = outputPort.pos;
-        connectedPortId = outputPort.id;
-        cachedConnectedPort = outputPort;
-        cacheValid = true;
-    }
-
-    public void disconnect() {
-        connectedPos = null;
-        connectedPortId = null;
-        cachedConnectedPort = null;
-        cacheValid = false;
-    }
-
-    public void invalidateCache() {
-        cacheValid = false;
-        cachedConnectedPort = null;
     }
 }

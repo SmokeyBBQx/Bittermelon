@@ -1,5 +1,6 @@
 package com.site21.bittermelon.content.items.wires.wire.client;
 
+import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
 import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
@@ -9,8 +10,10 @@ import com.site21.bittermelon.content.items.wires.wire.networking.WiringDataUpda
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -21,21 +24,20 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.CORD_CONNECTION;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.PORT_ID;
 
 @OnlyIn(Dist.CLIENT)
 public class WiringScreen extends Screen {
-    private static final Logger log = LoggerFactory.getLogger(WiringScreen.class);
+    private static final ResourceLocation WIRE_TERMINAL_SPRITE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "wiring/wire_terminal");
+
     private final ElectronicDevice electronic;
     private final InteractionHand hand;
-
-    private static final int PORT_BUTTON_WIDTH = 100;
-    private static final int PORT_BUTTON_HEIGHT = 20;
-    private static final int PORT_SPACING = 10;
-    private static final int LEFT_MARGIN = 50;
-    private static final int RIGHT_MARGIN = 50;
-    private static final int TOP_MARGIN = 40;
+    private List<PortButton> inputPorts;
+    private List<PortButton> outputPorts;
 
     public WiringScreen(@NotNull ElectronicDevice electronic, InteractionHand hand) {
         super(Component.literal("Wiring"));
@@ -45,43 +47,73 @@ public class WiringScreen extends Screen {
 
     @Override
     protected void init() {
-        final int centerX = this.width / 2;
+        inputPorts = new ArrayList<>();
+        outputPorts = new ArrayList<>();
 
-        int yPos = TOP_MARGIN;
+        int y = height / 6;
+        int margin = 200;
+        int inputX = margin - 30;
+        int outputX = width - margin;
+        int portSpacing = 30;
+        int portSize = 60;
+
+        int iteration = 0;
+
         for (InputPort port : electronic.getInputPorts().values()) {
-            Button inputButton = new Button.Builder(Component.literal(port.id), (button) -> {
-                handleInputPortClick(port);
-            })
-                    .pos(LEFT_MARGIN, yPos)
-                    .size(PORT_BUTTON_WIDTH, PORT_BUTTON_HEIGHT)
-                    .build();
+            iteration++;
+            PortButton portButton = new PortButton(inputX, y + iteration * portSpacing, 30, 30, port,
+                    button -> handleInputPortClick(port));
 
-            this.addRenderableWidget(inputButton);
-            yPos += PORT_BUTTON_HEIGHT + PORT_SPACING;
+            OutputPort connectedPort = port.getConnectedPort(minecraft.level);
+            if (connectedPort != null) {
+                portButton.setWired(true);
+                portButton.setTooltip(Tooltip.create(Component.literal(connectedPort.id)));
+            }
+
+            inputPorts.add(portButton);
+            addRenderableWidget(portButton);
         }
 
-        yPos = TOP_MARGIN;
+        iteration = 0;
 
         for (OutputPort port : electronic.getOutputPorts().values()) {
-            Button outputButton = new Button.Builder(Component.literal(port.id), (button) -> {
-                handleOutputPortClick(port);
-            })
-                    .pos(this.width - RIGHT_MARGIN - PORT_BUTTON_WIDTH, yPos)
-                    .size(PORT_BUTTON_WIDTH, PORT_BUTTON_HEIGHT)
-                    .build();
+            iteration++;
+            PortButton portButton = new PortButton(outputX, y + iteration * portSpacing, 30, 30, port,
+                    button -> handleOutputPortClick(port));
 
-            this.addRenderableWidget(outputButton);
-            yPos += PORT_BUTTON_HEIGHT + PORT_SPACING;
+            InputPort connectedPort = port.getConnectedPort(minecraft.level);
+            if (connectedPort != null) {
+                portButton.setWired(true);
+                portButton.setTooltip(Tooltip.create(Component.literal(connectedPort.id)));
+            }
+
+            outputPorts.add(portButton);
+            addRenderableWidget(portButton);
         }
-
-
     }
 
     @Override
-    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        super.render(graphics, mouseX, mouseY, partialTick);
+    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
 
+        for (PortButton port : inputPorts) {
+            String id = port.getPort().id;
+            int x = port.getX() + port.getWidth();
+            int y = port.getY() + port.getHeight() / 3;
 
+            guiGraphics.drawString(minecraft.font, id, x, y, 0xFFFFFF);
+        }
+
+        for (PortButton port : outputPorts) {
+            String id = port.getPort().id;
+            int textWidth = minecraft.font.width(id);
+            int x = port.getX() - textWidth - 5;
+            int y = port.getY() + port.getHeight() / 3;
+
+            guiGraphics.drawString(minecraft.font, id, x, y, 0xFFFFFF);
+        }
+
+        guiGraphics.blitSprite(WIRE_TERMINAL_SPRITE, mouseX - 26 / 2, mouseY - 10, 26, 89);
     }
 
     private void handleInputPortClick(@NotNull InputPort port) {

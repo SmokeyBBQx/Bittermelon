@@ -15,6 +15,7 @@ import com.site21.bittermelon.content.items.scps.scp2398.SCP2398;
 import com.site21.bittermelon.content.items.scps.scp377.SCP377;
 import com.site21.bittermelon.content.items.scps.scp377.SCP3771;
 import com.site21.bittermelon.content.items.scps.scp377.SCP377Cookie;
+import com.site21.bittermelon.content.items.screwdriver.ScrewdriverItem;
 import com.site21.bittermelon.content.items.smokable.SmokableItem;
 import com.site21.bittermelon.content.items.substance.PowderedSubstanceItem;
 import com.site21.bittermelon.content.items.substance.pill.PillItem;
@@ -473,5 +474,12 @@ public class BitterItems {
 
     public static final DeferredItem<HandheldSystemInterface> HANDHELD_SYSTEM_INTERFACE= ITEMS.register("handheld_system_interface", () -> new HandheldSystemInterface(
             new Item.Properties()
+    ));
+
+    public static final DeferredItem<ScrewdriverItem> SCREWDRIVER = ITEMS.register("screwdriver", () -> new ScrewdriverItem(
+            new Item.Properties(),
+            1,
+            2,
+            ItemWeight.LIGHT
     ));
 }

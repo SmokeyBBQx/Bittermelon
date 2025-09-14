@@ -9,20 +9,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
-public class OutputPort {
-    public final String id;
+public class OutputPort extends Port<InputPort> {
     public final Supplier<?> supplier;
-    public final BlockPos pos;
-    public @Nullable BlockPos connectedPos;
-    public @Nullable String connectedPortId;
-
-    private @Nullable InputPort cachedConnectedPort;
-    private boolean cacheValid = false;
 
     public OutputPort(String id, Supplier<?> supplier, BlockPos pos) {
-        this.id = id;
+        super(id, pos);
         this.supplier = supplier;
-        this.pos = pos;
     }
 
     @Contract(" -> new")
@@ -53,22 +45,4 @@ public class OutputPort {
         return cachedConnectedPort;
     }
 
-    public void connectTo(@NotNull InputPort inputPort) {
-        connectedPos = inputPort.pos;
-        connectedPortId = inputPort.id;
-        cachedConnectedPort = inputPort;
-        cacheValid = true;
-    }
-
-    public void disconnect() {
-        connectedPos = null;
-        connectedPortId = null;
-        cachedConnectedPort = null;
-        cacheValid = false;
-    }
-
-    public void invalidateCache() {
-        cacheValid = false;
-        cachedConnectedPort = null;
-    }
 }

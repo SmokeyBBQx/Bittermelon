@@ -1,6 +1,7 @@
 package com.site21.bittermelon.content.items.wires.wire;
 
 import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
+import com.site21.bittermelon.content.blocks.devices.PanelDevice;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.wires.wire.networking.OpenWiringScreen;
@@ -33,6 +34,7 @@ public class Wire extends BaseItem {
 
         if (level.getBlockEntity(pos) instanceof ElectronicDevice) {
             if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+                if (level.getBlockEntity(pos) instanceof PanelDevice panelDevice && !panelDevice.isPanelOpen()) return InteractionResult.FAIL;
                 PacketDistributor.sendToPlayer(serverPlayer, new OpenWiringScreen(pos, context.getHand()));
             }
             return InteractionResult.SUCCESS;

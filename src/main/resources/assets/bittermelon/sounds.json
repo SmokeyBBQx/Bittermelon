@@ -320,6 +320,12 @@
       "bittermelon:machine/breaker_switch"
     ]
   },
+  "item.screwdriver": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:item/screwdriver"
+    ]
+  },
   "container.toolbox_open": {
     "category": "neutral",
     "sounds": [

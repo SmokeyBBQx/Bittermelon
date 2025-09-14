@@ -3,6 +3,7 @@ package com.site21.bittermelon.content.blocks.devices.implementations.securedoor
 import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
 import com.site21.bittermelon.content.blocks.devices.NetworkDevice;
 import com.site21.bittermelon.content.blocks.devices.ElectronicBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.PanelDevice;
 import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.Signal;
@@ -24,13 +25,14 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.SECURE_DOOR_BLOCK_ENTITY;
 
-public class SecureDoorBlockEntity extends ElectronicBlockEntity implements ElectronicDevice, NetworkDevice {
+public class SecureDoorBlockEntity extends ElectronicBlockEntity implements ElectronicDevice, NetworkDevice, PanelDevice {
     private final Map<String, OutputPort> outputPorts;
     private final Map<String, InputPort> inputPorts;
     private boolean isLocked = true;
@@ -39,23 +41,24 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
     private String address;
     private float draw = 255;
     private float supply = 0;
+    public boolean isPanelOpen = false;
 
     public SecureDoorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
         address = generateAddress("DOOR");
 
-        outputPorts = Map.of(
+        outputPorts = new LinkedHashMap<>(Map.of(
                 "IS_LOCKED", new OutputPort("IS_LOCKED", this::isLocked, worldPosition),
                 "MOTORS_ACTIVE", new OutputPort("MOTORS_ACTIVE", null, worldPosition)
-        );
+        ));
 
-        inputPorts = Map.of(
+        inputPorts = new LinkedHashMap<>(Map.of(
                 "POWER_SUPPLY", new InputPort("POWER_SUPPLY", this::receivePower, worldPosition),
                 "TOGGLE_LOCK", new InputPort("TOGGLE_LOCK", this::toggleLocked, worldPosition),
                 "SET_LOCK", new InputPort("SET_LOCK", this::setLocked, worldPosition),
                 "TOGGLE_MOTORS", new InputPort("TOGGLE_MOTORS", this::toggleMotors, worldPosition),
                 "SET_MOTORS", new InputPort("SET_MOTORS", this::setMotors, worldPosition)
-        );
+        ));
     }
 
     public SecureDoorBlockEntity(BlockPos pos, BlockState state) {
@@ -204,10 +207,23 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
     }
 
     @Override
+    public boolean isPanelOpen() {
+        return isPanelOpen;
+    }
+
+    @Override
+    public void togglePanel() {
+        isPanelOpen = !isPanelOpen;
+        runForOtherHalf(otherHalf -> otherHalf.isPanelOpen = isPanelOpen);
+        setChanged();
+    }
+
+    @Override
     protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putBoolean("isLocked", isLocked);
         tag.putString("address", address);
+        tag.putBoolean("isPanelOpen", isPanelOpen);
         saveInputPorts(tag);
         saveOutputPorts(tag);
     }
@@ -217,6 +233,7 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
         super.loadAdditional(tag, registries);
         isLocked = tag.getBoolean("isLocked");
         address = tag.getString("address");
+        isPanelOpen = tag.getBoolean("isPanelOpen");
         loadInputPorts(tag);
         loadOutputPorts(tag);
     }
