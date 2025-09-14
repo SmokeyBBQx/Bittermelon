@@ -98,12 +98,23 @@ public class DistributionBoardBlockEntity extends ElectronicBlockEntity {
     public void setMainSwitch(boolean value) {
         if (mainSwitch != value) {
             mainSwitch = value;
+            setChanged();
         }
     }
 
-    public void toggleBreaker(String breakerName) {
-        breakers.computeIfPresent(breakerName, (k, v) -> !v);
+    public void toggleMainSwitch() {
+        mainSwitch = !mainSwitch;
         setChanged();
+    }
+
+    public void toggleBreaker(String breakerName) {
+        if (breakers.computeIfPresent(breakerName, (k, v) -> !v) != null) {
+            setChanged();
+        }
+    }
+
+    public boolean isMainSwitchOn() {
+        return mainSwitch;
     }
 
     public boolean isBreakerOn(String breakerName) {
@@ -124,6 +135,8 @@ public class DistributionBoardBlockEntity extends ElectronicBlockEntity {
     protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.saveAdditional(tag, registries);
 
+        tag.putBoolean("mainSwitch", mainSwitch);
+
         CompoundTag breakersTag = new CompoundTag();
         for (Map.Entry<String, Boolean> entry : breakers.entrySet()) {
             breakersTag.putBoolean(entry.getKey(), entry.getValue());
@@ -137,6 +150,8 @@ public class DistributionBoardBlockEntity extends ElectronicBlockEntity {
     @Override
     public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.loadAdditional(tag, registries);
+
+        mainSwitch = tag.getBoolean("mainSwitch");
 
         if (tag.contains("breakers")) {
             CompoundTag breakersTag = tag.getCompound("breakers");

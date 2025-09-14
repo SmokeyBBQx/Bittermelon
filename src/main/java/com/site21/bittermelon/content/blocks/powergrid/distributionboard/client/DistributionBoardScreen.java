@@ -1,24 +1,24 @@
 package com.site21.bittermelon.content.blocks.powergrid.distributionboard.client;
 
-import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
+import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.powergrid.distributionboard.DistributionBoardBlockEntity;
 import com.site21.bittermelon.content.blocks.powergrid.distributionboard.networking.ToggleBreaker;
+import com.site21.bittermelon.content.blocks.powergrid.distributionboard.networking.ToggleMainSwitch;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.MultiLineEditBox;
-import net.minecraft.client.gui.components.MultilineTextField;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 public class DistributionBoardScreen extends Screen {
     private final DistributionBoardBlockEntity board;
     private final List<BreakerButton> breakers;
+    private BreakerButton mainSwitch;
 
     public DistributionBoardScreen(DistributionBoardBlockEntity board) {
         super(Component.literal("Distribution Board"));
@@ -28,7 +28,7 @@ public class DistributionBoardScreen extends Screen {
 
     @Override
     protected void init() {
-        int x = width / 2 - (60 * board.getOutputPorts().size()) / 2;
+        int x = 20 + width / 2 - (60 * board.getOutputPorts().size()) / 2;
         int y = height / 3 + 50 / 2;
 
         for (int i = 1; i <= board.getOutputPorts().size(); i++) {
@@ -43,6 +43,17 @@ public class DistributionBoardScreen extends Screen {
             addRenderableWidget(breaker);
             addRenderableWidget(nameField);
         }
+
+        mainSwitch = new BreakerButton(x - 20, y, 50, 50, button -> toggleMainSwitch(),
+                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "distributionboard/main_switch_on"),
+                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "distributionboard/main_switch_on_highlighted"),
+                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "distributionboard/main_switch_off"),
+                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "distributionboard/main_switch_off_highlighted")
+        );
+
+        mainSwitch.setOn(board.isMainSwitchOn());
+
+        addRenderableWidget(mainSwitch);
     }
 
     @Override
@@ -57,9 +68,15 @@ public class DistributionBoardScreen extends Screen {
 
             guiGraphics.drawString(minecraft.font, name, x, y, 0xFFFFFF);
         }
+
+        guiGraphics.drawString(minecraft.font, "Main Switch", mainSwitch.getX() + (mainSwitch.getWidth() - minecraft.font.width("Main Switch")) / 2, mainSwitch.getY() - 20, 0xFFFFFF);
     }
 
     private void toggleBreaker(String breaker) {
         PacketDistributor.sendToServer(new ToggleBreaker(breaker, board.getBlockPos()));
+    }
+
+    private void toggleMainSwitch() {
+        PacketDistributor.sendToServer(new ToggleMainSwitch(board.getBlockPos()));
     }
 }

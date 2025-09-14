@@ -25,6 +25,8 @@ public class BitterItemModelProvider extends ItemModelProvider {
         basicItem(BitterItems.FORTUNE_COOKIE.get());
         basicItem(BitterItems.CRACKED_FORTUNE_COOKIE.get());
         basicItem(BitterItems.SCP_377_1.get());
+        basicItem(BitterItems.WIRE.get());
+        basicItem(BitterItems.HANDHELD_SYSTEM_INTERFACE.get());
         generateBlockItemModels();
         basicItem(BitterItems.LARGE_SLIDING_DOOR.get());
     }

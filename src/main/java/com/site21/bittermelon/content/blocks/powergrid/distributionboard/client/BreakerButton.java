@@ -15,25 +15,39 @@ import org.jetbrains.annotations.NotNull;
 import static com.site21.bittermelon.init.neoforge.BitterSounds.BREAKER_SWITCH;
 
 public class BreakerButton extends AbstractWidget {
-    private static final ResourceLocation ON_ICON = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "distributionboard/breaker_on");
-    private static final ResourceLocation ON_HIGHLIGHTED_ICON = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "distributionboard/breaker_on_highlighted");
-    private static final ResourceLocation OFF_ICON = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "distributionboard/breaker_off");
-    private static final ResourceLocation OFF_HIGHLIGHTED_ICON = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "distributionboard/breaker_off_highlighted");
-
     private final OnPress onPress;
+
+    private final ResourceLocation onIcon;
+    private final ResourceLocation onHighlightedIcon;
+    private final ResourceLocation offIcon;
+    private final ResourceLocation offHighlightedIcon;
+
     private boolean on = false;
 
-    public BreakerButton(int x, int y, int width, int height, OnPress onPress) {
+    public BreakerButton(int x, int y, int width, int height, OnPress onPress, ResourceLocation onIcon, ResourceLocation onHighlightedIcon, ResourceLocation offIcon, ResourceLocation offHighlightedIcon) {
         super(x, y, width, height, Component.literal("Breaker"));
         this.onPress = onPress;
+        this.onIcon = onIcon;
+        this.onHighlightedIcon = onHighlightedIcon;
+        this.offIcon = offIcon;
+        this.offHighlightedIcon = offHighlightedIcon;
+    }
+
+    public BreakerButton(int x, int y, int width, int height, OnPress onPress) {
+        this(x, y, width, height, onPress,
+                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "distributionboard/breaker_on"),
+                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "distributionboard/breaker_on_highlighted"),
+                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "distributionboard/breaker_off"),
+                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "distributionboard/breaker_off_highlighted")
+        );
     }
 
     @Override
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (isHovered) {
-            guiGraphics.blitSprite(on ? ON_HIGHLIGHTED_ICON : OFF_HIGHLIGHTED_ICON, x, y, width, height);
+            guiGraphics.blitSprite(on ? onHighlightedIcon : offHighlightedIcon, x, y, width, height);
         } else {
-            guiGraphics.blitSprite(on ? ON_ICON : OFF_ICON, x, y, width, height);
+            guiGraphics.blitSprite(on ? onIcon : offIcon, x, y, width, height);
         }
     }
 

@@ -91,7 +91,11 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
         if (connectedPort == null) return;
         if (level == null) return;
         if (level.getBlockEntity(connectedPort.pos) instanceof DistributionBoardBlockEntity DB) {
-            supply = DB.drawPower(connectedPort.id, draw);
+            float newSupply = DB.drawPower(connectedPort.id, draw);
+            if (newSupply != supply) {
+                supply = DB.drawPower(connectedPort.id, draw);
+                setChanged();
+            }
         }
     }
 

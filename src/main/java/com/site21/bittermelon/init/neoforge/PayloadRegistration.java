@@ -11,6 +11,7 @@ import com.site21.bittermelon.content.blocks.devices.privilege.networking.Remove
 import com.site21.bittermelon.content.blocks.devices.privilege.networking.SetPrivilegeForBE;
 import com.site21.bittermelon.content.blocks.powergrid.distributionboard.networking.OpenDistributionBoardScreen;
 import com.site21.bittermelon.content.blocks.powergrid.distributionboard.networking.ToggleBreaker;
+import com.site21.bittermelon.content.blocks.powergrid.distributionboard.networking.ToggleMainSwitch;
 import com.site21.bittermelon.content.character.networking.*;
 import com.site21.bittermelon.content.items.scps.scp377.networking.OpenSCP3771Screen;
 import com.site21.bittermelon.content.personnel.privilege.networking.*;
@@ -505,6 +506,12 @@ public class PayloadRegistration {
                 ToggleBreaker.TYPE,
                 ToggleBreaker.STREAM_CODEC,
                 ToggleBreaker::handle
+        );
+
+        registrar.playToServer(
+                ToggleMainSwitch.TYPE,
+                ToggleMainSwitch.STREAM_CODEC,
+                ToggleMainSwitch::handle
         );
     }
 }
