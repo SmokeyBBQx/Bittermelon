@@ -69,7 +69,7 @@ public class ScrewdriverItem extends BaseItem {
 
             if (level.getBlockEntity(targetPos) instanceof PanelDevice panelDevice) {
                 panelDevice.togglePanel();
-                player.sendSystemMessage(Component.literal("Panel has been " + (panelDevice.isPanelOpen() ? "opened" : "closed") + ".").withStyle(ChatFormatting.GREEN));
+                player.sendSystemMessage(Component.literal("You " + (panelDevice.isPanelOpen() ? "open" : "close") + " the panel.").withStyle(ChatFormatting.GREEN));
             }
         }
 

@@ -1,5 +1,6 @@
 package com.site21.bittermelon.content.items.wires.wire.client;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
 import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
@@ -33,11 +34,15 @@ import static com.site21.bittermelon.init.neoforge.BitterDataComponents.PORT_ID;
 @OnlyIn(Dist.CLIENT)
 public class WiringScreen extends Screen {
     private static final ResourceLocation WIRE_TERMINAL_SPRITE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "wiring/wire_terminal");
+    private static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "generic_background");
 
     private final ElectronicDevice electronic;
     private final InteractionHand hand;
     private List<PortButton> inputPorts;
     private List<PortButton> outputPorts;
+    private int leftX = 0;
+    private int backgroundWidth = 0;
+    private int backgroundHeight = 0;
 
     public WiringScreen(@NotNull ElectronicDevice electronic, InteractionHand hand) {
         super(Component.literal("Wiring"));
@@ -50,19 +55,24 @@ public class WiringScreen extends Screen {
         inputPorts = new ArrayList<>();
         outputPorts = new ArrayList<>();
 
-        int y = height / 6;
-        int margin = 200;
-        int inputX = margin - 30;
-        int outputX = width - margin;
-        int portSpacing = 30;
-        int portSize = 60;
+        int marginX = (int) (width / 3.5);
+        int startY = height / 6;
+
+        int portSize = Math.max(20, height / 25);
+        int portSpacing = portSize + 8;
+
+        int inputX = marginX - portSize;
+        int outputX = width - marginX;
 
         int iteration = 0;
-
         for (InputPort port : electronic.getInputPorts().values()) {
+            int y = startY + iteration * portSpacing;
             iteration++;
-            PortButton portButton = new PortButton(inputX, y + iteration * portSpacing, 30, 30, port,
-                    button -> handleInputPortClick(port));
+
+            PortButton portButton = new PortButton(
+                    inputX, y, portSize, portSize, port,
+                    button -> handleInputPortClick(port)
+            );
 
             OutputPort connectedPort = port.getConnectedPort(minecraft.level);
             if (connectedPort != null) {
@@ -75,11 +85,14 @@ public class WiringScreen extends Screen {
         }
 
         iteration = 0;
-
         for (OutputPort port : electronic.getOutputPorts().values()) {
+            int y = startY + iteration * portSpacing;
             iteration++;
-            PortButton portButton = new PortButton(outputX, y + iteration * portSpacing, 30, 30, port,
-                    button -> handleOutputPortClick(port));
+
+            PortButton portButton = new PortButton(
+                    outputX, y, portSize, portSize, port,
+                    button -> handleOutputPortClick(port)
+            );
 
             InputPort connectedPort = port.getConnectedPort(minecraft.level);
             if (connectedPort != null) {
@@ -90,6 +103,10 @@ public class WiringScreen extends Screen {
             outputPorts.add(portButton);
             addRenderableWidget(portButton);
         }
+
+        leftX = inputX - 64;
+        backgroundWidth = outputX - leftX + 89;
+        backgroundHeight = 136 * Math.round((float) backgroundWidth / 256f);
     }
 
     @Override
@@ -98,22 +115,37 @@ public class WiringScreen extends Screen {
 
         for (PortButton port : inputPorts) {
             String id = port.getPort().id;
-            int x = port.getX() + port.getWidth();
-            int y = port.getY() + port.getHeight() / 3;
-
+            int x = port.getX() + port.getWidth() + 10;
+            int y = port.getY() + port.getHeight() / 2;
             guiGraphics.drawString(minecraft.font, id, x, y, 0xFFFFFF);
         }
 
         for (PortButton port : outputPorts) {
             String id = port.getPort().id;
             int textWidth = minecraft.font.width(id);
-            int x = port.getX() - textWidth - 5;
-            int y = port.getY() + port.getHeight() / 3;
-
+            int x = port.getX() - textWidth - 4;
+            int y = port.getY() + port.getHeight() / 2;
             guiGraphics.drawString(minecraft.font, id, x, y, 0xFFFFFF);
         }
 
-        guiGraphics.blitSprite(WIRE_TERMINAL_SPRITE, mouseX - 26 / 2, mouseY - 10, 26, 89);
+        int spriteWidth = 26;
+        int spriteHeight = 89;
+        guiGraphics.blitSprite(WIRE_TERMINAL_SPRITE,
+                mouseX - spriteWidth / 2,
+                mouseY - spriteHeight / 7,
+                spriteWidth,
+                spriteHeight);
+    }
+
+
+    @Override
+    public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+        int margin = 4;
+
+        RenderSystem.enableBlend();
+        guiGraphics.blitSprite(BACKGROUND, leftX - margin, height / 6 - margin * 4, backgroundWidth + margin * 2, backgroundHeight);
+        RenderSystem.disableBlend();
     }
 
     private void handleInputPortClick(@NotNull InputPort port) {

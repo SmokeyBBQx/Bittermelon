@@ -40,13 +40,13 @@ public class CharacterEditorScreen extends Screen {
     private static final int MARGIN = 15;
     private static final int SCREEN_WIDTH = 384;
     private static final int SCREEN_HEIGHT = 384;
-    private static final int TEXT_COLOR = 0xFFFFFF;
     private static final int BUTTON_WIDTH = 60;
     private static final int BUTTON_HEIGHT = 20;
     private static final int PLAYER_RENDER_WIDTH = 90;
     private static final int PLAYER_RENDER_HEIGHT = 160;
     private static final int RENDER_SCALE = 80;
     private static final float ROTATION_SENSITIVITY = 0.5f;
+    private static final int TEXT_COLOR = 0xFFFFFF;
 
     private Character character;
     private final Screen previousScreen;
