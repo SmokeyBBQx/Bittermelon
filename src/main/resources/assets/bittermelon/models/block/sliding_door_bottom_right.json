@@ -1,0 +1,40 @@
+{
+	"format_version": "1.9.0",
+	"render_type": "minecraft:cutout",
+	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
+	"textures": {
+		"0": "bittermelon:block/sliding_door_bottom",
+		"particle": "#0"
+	},
+	"elements": [
+		{
+			"name": "bottom_layer",
+			"from": [-0.5, -1.5, 6],
+			"to": [16.5, 15.5, 10],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, -0.75, 6.5]},
+			"faces": {
+				"north": {"uv": [4, 0, 0, 4], "texture": "#0"},
+				"east": {"uv": [0, 8, 0.75, 12], "texture": "#0"},
+				"south": {"uv": [0, 0, 4, 4], "texture": "#0"},
+				"west": {"uv": [8, 0, 8.75, 4], "texture": "#0"},
+				"up": {"uv": [4.75, 8.75, 0.75, 8], "texture": "#0"},
+				"down": {"uv": [12, 4, 8, 4.75], "texture": "#0"}
+			}
+		},
+		{
+			"name": "bottom",
+			"from": [0, 0, 6.5],
+			"to": [16, 16, 9.5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 1, 6.5]},
+			"faces": {
+				"north": {"uv": [8, 0, 4, 4], "texture": "#0"},
+				"east": {"uv": [4.75, 8, 5.5, 12], "texture": "#0"},
+				"south": {"uv": [4, 0, 8, 4], "texture": "#0"},
+				"west": {"uv": [8, 4.75, 8.75, 8.75], "texture": "#0"},
+				"up": {"uv": [12.75, 0.75, 8.75, 0], "texture": "#0"},
+				"down": {"uv": [4.75, 8.75, 0.75, 9.5], "texture": "#0"}
+			}
+		}
+	]
+}

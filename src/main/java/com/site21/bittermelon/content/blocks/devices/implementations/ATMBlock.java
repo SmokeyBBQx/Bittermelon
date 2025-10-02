@@ -2,7 +2,7 @@ package com.site21.bittermelon.content.blocks.devices.implementations;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.site21.bittermelon.content.economy.networking.OpenATMScreen;
+import com.site21.bittermelon.content.economy.bank.networking.OpenATMScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;

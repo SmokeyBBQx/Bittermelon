@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.economy;
+package com.site21.bittermelon.content.economy.bank;
 
 import com.site21.bittermelon.content.personnel.registry.PersonnelEntry;
 import net.minecraft.core.HolderLookup;

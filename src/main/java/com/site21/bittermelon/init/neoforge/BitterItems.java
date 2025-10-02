@@ -482,4 +482,9 @@ public class BitterItems {
             2,
             ItemWeight.LIGHT
     ));
+
+    public static final DeferredItem<BlockItem> SLIDING_DOOR = ITEMS.register("sliding_door", () -> new BlockItem(
+            BitterBlocks.SLIDING_DOOR.get(),
+            new Item.Properties()
+    ));
 }

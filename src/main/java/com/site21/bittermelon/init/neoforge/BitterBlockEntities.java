@@ -11,7 +11,8 @@ import com.site21.bittermelon.content.blocks.devices.implementations.intercom.In
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.PersonnelTerminalBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.KeycardReaderSecureDoorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.SecureDoorBlockEntity;
-import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.LargeSlidingDoorBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.LargeSlidingDoorBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.SlidingDoorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.speaker.SpeakerBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.thermometer.ThermometerBlockEntity;
 import com.site21.bittermelon.content.blocks.powergrid.distributionboard.DistributionBoardBlockEntity;
@@ -74,4 +75,7 @@ public class BitterBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PersonnelTerminalBlockEntity>> PERSONNEL_TERMINAL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("personnel_terminal_block_entity",
             () -> BlockEntityType.Builder.of(PersonnelTerminalBlockEntity::new, PERSONNEL_TERMINAL.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SlidingDoorBlockEntity>> SLIDING_DOOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("sliding_door_block_entity",
+            () -> BlockEntityType.Builder.of(SlidingDoorBlockEntity::new, SLIDING_DOOR.get()).build(null));
 }

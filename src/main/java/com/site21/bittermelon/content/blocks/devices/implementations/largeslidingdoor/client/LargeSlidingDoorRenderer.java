@@ -1,10 +1,10 @@
-package com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.client;
+package com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.LargeSlidingDoorBlock;
-import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.LargeSlidingDoorBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.LargeSlidingDoorBlock;
+import com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.LargeSlidingDoorBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -21,9 +21,9 @@ import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
 public class LargeSlidingDoorRenderer implements BlockEntityRenderer<LargeSlidingDoorBlockEntity> {
-    public static final ModelResourceLocation LEFT_DOOR_MODEL =  new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/large_sliding_door_left"), "standalone");
-    public static final ModelResourceLocation RIGHT_DOOR_MODEL =  new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/large_sliding_door_right"), "standalone");
-    public static final ModelResourceLocation FRAME_MODEL =  new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/large_sliding_door_frame"), "standalone");
+    public static final ModelResourceLocation LEFT_DOOR_MODEL = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/large_sliding_door_left"), "standalone");
+    public static final ModelResourceLocation RIGHT_DOOR_MODEL = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/large_sliding_door_right"), "standalone");
+    public static final ModelResourceLocation FRAME_MODEL = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/large_sliding_door_frame"), "standalone");
     private BakedModel leftDoorModel;
     private BakedModel rightDoorModel;
     private BakedModel frameModel;

@@ -1,6 +1,6 @@
-package com.site21.bittermelon.content.economy.client.list;
+package com.site21.bittermelon.content.economy.bank.client.list;
 
-import com.site21.bittermelon.content.economy.Account;
+import com.site21.bittermelon.content.economy.bank.Account;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;

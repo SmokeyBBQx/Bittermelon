@@ -12,7 +12,7 @@ import com.site21.bittermelon.content.blocks.powergrid.distributionboard.client.
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.client.characterselection.CharacterSelectionScreen;
 import com.site21.bittermelon.content.containment.client.ContainmentPanelScreen;
-import com.site21.bittermelon.content.economy.client.ATMScreen;
+import com.site21.bittermelon.content.economy.bank.client.ATMScreen;
 import com.site21.bittermelon.content.items.scps.scp377.Fortune;
 import com.site21.bittermelon.content.items.scps.scp377.client.SCP3771Screen;
 import com.site21.bittermelon.content.items.wires.wire.client.WiringScreen;

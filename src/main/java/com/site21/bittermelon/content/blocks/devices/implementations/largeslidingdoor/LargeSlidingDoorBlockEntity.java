@@ -1,9 +1,9 @@
-package com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor;
+package com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor;
 
 import com.site21.bittermelon.content.blocks.devices.ElectronicBlockEntity;
-import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.networking.PlaySlidingDoorStuckSound;
-import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.networking.UpdateSlidingDoorProgress;
-import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.networking.UpdateSlidingDoorState;
+import com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.networking.PlaySlidingDoorStuckSound;
+import com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.networking.UpdateSlidingDoorProgress;
+import com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.networking.UpdateSlidingDoorState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -15,14 +15,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.LargeSlidingDoorBlock.*;
+import static com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.LargeSlidingDoorBlock.*;
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.LARGE_SLIDING_DOOR_BLOCK_ENTITY;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.LARGE_SLIDING_DOOR;
 
 public class LargeSlidingDoorBlockEntity extends ElectronicBlockEntity {
+    private static final float ANIMATION_SPEED = 0.05f;
+
     private float doorProgress = 0.0f;
     private float lastProgress = 0.0f;
-    private static final float ANIMATION_SPEED = 0.05f;
     private boolean reverseStuckAnimation = false;
 
     public LargeSlidingDoorBlockEntity(BlockPos pos, BlockState blockState) {

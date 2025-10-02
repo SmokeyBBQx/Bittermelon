@@ -1,7 +1,7 @@
-package com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.networking;
+package com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.LargeSlidingDoorBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.LargeSlidingDoorBlockEntity;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.ByteBufCodecs;

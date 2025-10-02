@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.economy;
+package com.site21.bittermelon.content.economy.bank;
 
 import java.util.Date;
 import java.util.UUID;

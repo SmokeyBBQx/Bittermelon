@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor;
+package com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor;
 
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import io.netty.buffer.ByteBuf;

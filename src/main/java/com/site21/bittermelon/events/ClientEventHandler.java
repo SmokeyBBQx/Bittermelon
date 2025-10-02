@@ -4,7 +4,7 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.atmosphere.data.AtmosLevelData;
 import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.personnel.registry.PersonnelRegistry;
-import com.site21.bittermelon.content.economy.AccountRegistry;
+import com.site21.bittermelon.content.economy.bank.AccountRegistry;
 import com.site21.bittermelon.content.personnel.privilege.PrivilegeManager;
 import com.site21.bittermelon.content.telecomms.intercom.IntercomManager;
 import net.neoforged.api.distmarker.Dist;

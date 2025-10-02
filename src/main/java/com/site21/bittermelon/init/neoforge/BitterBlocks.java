@@ -9,7 +9,8 @@ import com.site21.bittermelon.content.blocks.devices.implementations.keycardprin
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.PersonnelTerminalBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.KeycardReaderSecureDoorBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.SecureDoorBlock;
-import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.LargeSlidingDoorBlock;
+import com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.LargeSlidingDoorBlock;
+import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.SlidingDoorBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.speaker.SpeakerBlock;
 import com.site21.bittermelon.content.blocks.dirtyfloor.DirtyFloorBlock;
 import com.site21.bittermelon.content.blocks.base.structuralblock.StructuralBlock;
@@ -122,4 +123,7 @@ public class BitterBlocks {
 
     public static final DeferredBlock<KeycardPrinter> KEYCARD_PRINTER = BLOCKS.register("keycard_printer",
             () -> new KeycardPrinter(BlockBehaviour.Properties.of()));
+
+    public static final DeferredBlock<SlidingDoorBlock> SLIDING_DOOR = BLOCKS.register("sliding_door",
+            () -> new SlidingDoorBlock(BlockBehaviour.Properties.of().noOcclusion()));
 }

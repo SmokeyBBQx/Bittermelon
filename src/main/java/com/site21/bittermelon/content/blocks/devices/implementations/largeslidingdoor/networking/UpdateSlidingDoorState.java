@@ -1,8 +1,8 @@
-package com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.networking;
+package com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.LargeSlidingDoorBlock;
-import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.LargeSlidingDoorBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.LargeSlidingDoorBlock;
+import com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.LargeSlidingDoorBlockEntity;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.StreamCodec;
@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.LargeSlidingDoorBlock.Z_AXIS;
+import static com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.LargeSlidingDoorBlock.Z_AXIS;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.LARGE_SLIDING_DOOR;
 
 public record UpdateSlidingDoorState(BlockPos pos, LargeSlidingDoorBlock.State state) implements CustomPacketPayload {

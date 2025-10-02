@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.economy.networking;
+package com.site21.bittermelon.content.economy.bank.networking;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.ClientHandler;

@@ -3,13 +3,13 @@ package com.site21.bittermelon.events;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.base.structuralblock.client.StructuralBlockRenderer;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.client.PhoneCordRenderer;
-import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.client.LargeSlidingDoorRenderer;
+import com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.client.LargeSlidingDoorRenderer;
+import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.client.SlidingDoorRenderer;
 import com.site21.bittermelon.content.blocks.devices.implementations.thermometer.client.ThermometerRenderer;
 import com.site21.bittermelon.content.blocks.substance.fluid.client.FluidBlockColor;
 import com.site21.bittermelon.content.entities.implementations.chicken.client.ChickenRenderer;
 import com.site21.bittermelon.content.entities.implementations.scp131.client.SCP131Renderer;
 import com.site21.bittermelon.content.entities.implementations.scp1507.client.SCP1507Renderer;
-import com.site21.bittermelon.content.entities.implementations.scp650.SCP650;
 import com.site21.bittermelon.content.entities.implementations.scp650.client.SCP650Renderer;
 import com.site21.bittermelon.content.entities.implementations.scp939.client.SCP939Renderer;
 import com.site21.bittermelon.content.items.substance.PowderedSubstanceItem;
@@ -22,7 +22,6 @@ import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Items;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -32,7 +31,7 @@ import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.client.LargeSlidingDoorRenderer.*;
+import static com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.client.LargeSlidingDoorRenderer.*;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 import static com.site21.bittermelon.init.neoforge.BitterEntities.*;
@@ -109,6 +108,7 @@ public class ClientSetup {
         event.registerBlockEntityRenderer(BitterBlockEntities.THERMOMETER_BLOCK_ENTITY.get(), ThermometerRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.INTERCOM_BLOCK_ENTITY.get(), PhoneCordRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.LARGE_SLIDING_DOOR_BLOCK_ENTITY.get(), LargeSlidingDoorRenderer::new);
+        event.registerBlockEntityRenderer(BitterBlockEntities.SLIDING_DOOR_BLOCK_ENTITY.get(), SlidingDoorRenderer::new);
     }
 
     @SubscribeEvent

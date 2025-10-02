@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.economy;
+package com.site21.bittermelon.content.economy.bank;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

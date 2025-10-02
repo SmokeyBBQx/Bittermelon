@@ -1,10 +1,10 @@
-package com.site21.bittermelon.content.economy.client;
+package com.site21.bittermelon.content.economy.bank.client;
 
 import com.site21.bittermelon.content.personnel.registry.PersonnelEntry;
-import com.site21.bittermelon.content.economy.Account;
-import com.site21.bittermelon.content.economy.AccountRegistry;
-import com.site21.bittermelon.content.economy.client.list.AccountListWidget;
-import com.site21.bittermelon.content.economy.client.list.AccountUserEntry;
+import com.site21.bittermelon.content.economy.bank.Account;
+import com.site21.bittermelon.content.economy.bank.AccountRegistry;
+import com.site21.bittermelon.content.economy.bank.client.list.AccountListWidget;
+import com.site21.bittermelon.content.economy.bank.client.list.AccountUserEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;

@@ -1,7 +1,7 @@
-package com.site21.bittermelon.content.economy.client;
+package com.site21.bittermelon.content.economy.bank.client;
 
-import com.site21.bittermelon.content.economy.Account;
-import com.site21.bittermelon.content.economy.AccountRegistry;
+import com.site21.bittermelon.content.economy.bank.Account;
+import com.site21.bittermelon.content.economy.bank.AccountRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
