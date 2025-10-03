@@ -18,6 +18,7 @@ import com.site21.bittermelon.content.blocks.devices.implementations.thermometer
 import com.site21.bittermelon.content.blocks.powergrid.distributionboard.DistributionBoardBlockEntity;
 import com.site21.bittermelon.content.blocks.scp.scp151.SCP151BlockEntity;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
+import com.site21.bittermelon.content.blocks.wallwriting.WallWritingBlockEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -78,4 +79,7 @@ public class BitterBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SlidingDoorBlockEntity>> SLIDING_DOOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("sliding_door_block_entity",
             () -> BlockEntityType.Builder.of(SlidingDoorBlockEntity::new, SLIDING_DOOR.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WallWritingBlockEntity>> WALL_WRITING_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("wall_writing_block_entity",
+            () -> BlockEntityType.Builder.of(WallWritingBlockEntity::new, WALL_WRITING.get()).build(null));
 }

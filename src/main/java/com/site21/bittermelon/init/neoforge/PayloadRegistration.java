@@ -12,6 +12,8 @@ import com.site21.bittermelon.content.blocks.devices.privilege.networking.SetPri
 import com.site21.bittermelon.content.blocks.powergrid.distributionboard.networking.OpenDistributionBoardScreen;
 import com.site21.bittermelon.content.blocks.powergrid.distributionboard.networking.ToggleBreaker;
 import com.site21.bittermelon.content.blocks.powergrid.distributionboard.networking.ToggleMainSwitch;
+import com.site21.bittermelon.content.blocks.wallwriting.networking.OpenWallWritingScreen;
+import com.site21.bittermelon.content.blocks.wallwriting.networking.UpdateWallWriting;
 import com.site21.bittermelon.content.character.networking.*;
 import com.site21.bittermelon.content.items.scps.scp377.networking.OpenSCP3771Screen;
 import com.site21.bittermelon.content.personnel.privilege.networking.*;
@@ -512,6 +514,18 @@ public class PayloadRegistration {
                 ToggleMainSwitch.TYPE,
                 ToggleMainSwitch.STREAM_CODEC,
                 ToggleMainSwitch::handle
+        );
+
+        registrar.playToServer(
+                UpdateWallWriting.TYPE,
+                UpdateWallWriting.STREAM_CODEC,
+                UpdateWallWriting::handle
+        );
+
+        registrar.playToClient(
+                OpenWallWritingScreen.TYPE,
+                OpenWallWritingScreen.STREAM_CODEC,
+                OpenWallWritingScreen::handle
         );
     }
 }

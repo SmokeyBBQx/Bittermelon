@@ -9,6 +9,8 @@ import com.site21.bittermelon.content.blocks.devices.implementations.personnelte
 import com.site21.bittermelon.content.blocks.devices.privilege.client.PrivilegeEditorScreen;
 import com.site21.bittermelon.content.blocks.powergrid.distributionboard.DistributionBoardBlockEntity;
 import com.site21.bittermelon.content.blocks.powergrid.distributionboard.client.DistributionBoardScreen;
+import com.site21.bittermelon.content.blocks.wallwriting.WallWritingBlockEntity;
+import com.site21.bittermelon.content.blocks.wallwriting.client.WallWritingScreen;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.client.characterselection.CharacterSelectionScreen;
 import com.site21.bittermelon.content.containment.client.ContainmentPanelScreen;
@@ -71,5 +73,9 @@ public class ClientHandler {
 
     public static void displayDistributionBoardScreen(DistributionBoardBlockEntity distributionBoard) {
         Minecraft.getInstance().setScreen(new DistributionBoardScreen(distributionBoard));
+    }
+
+    public static void displayWallWritingScreen(WallWritingBlockEntity wallWriting) {
+        Minecraft.getInstance().setScreen(new WallWritingScreen(wallWriting));
     }
 }

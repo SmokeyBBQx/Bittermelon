@@ -32,6 +32,8 @@ import com.site21.bittermelon.content.items.medical.tools.*;
 import com.site21.bittermelon.content.items.toolbox.ToolBoxItem;
 import com.site21.bittermelon.content.items.wires.wire.Wire;
 import com.site21.bittermelon.content.items.writablepaper.WritablePaper;
+import com.site21.bittermelon.content.items.writingutensils.ChalkItem;
+import com.site21.bittermelon.content.items.writingutensils.HighlighterItem;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -487,4 +489,18 @@ public class BitterItems {
             BitterBlocks.SLIDING_DOOR.get(),
             new Item.Properties()
     ));
+
+    public static final DeferredItem<BlockItem> WALL_WRITING = ITEMS.register("wall_writing", () -> new BlockItem(
+            BitterBlocks.WALL_WRITING.get(),
+            new Item.Properties()
+    ));
+
+    public static final DeferredItem<ChalkItem> CHALK = ITEMS.register("chalk", () -> new ChalkItem(
+            new Item.Properties()));
+
+    public static final DeferredItem<ChalkItem> CRAYON = ITEMS.register("crayon", () -> new ChalkItem(
+            new Item.Properties()));
+
+    public static final DeferredItem<HighlighterItem> HIGHLIGHTER = ITEMS.register("highlighter", () -> new HighlighterItem(
+            new Item.Properties()));
 }

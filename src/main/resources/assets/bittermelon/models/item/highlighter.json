@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "bittermelon:item/highlighter_layer0",
+    "layer1": "bittermelon:item/highlighter_layer1"
+  }
+}

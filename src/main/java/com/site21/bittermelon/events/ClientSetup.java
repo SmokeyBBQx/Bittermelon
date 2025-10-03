@@ -7,6 +7,7 @@ import com.site21.bittermelon.content.blocks.devices.implementations.largeslidin
 import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.client.SlidingDoorRenderer;
 import com.site21.bittermelon.content.blocks.devices.implementations.thermometer.client.ThermometerRenderer;
 import com.site21.bittermelon.content.blocks.substance.fluid.client.FluidBlockColor;
+import com.site21.bittermelon.content.blocks.wallwriting.client.WallWritingRenderer;
 import com.site21.bittermelon.content.entities.implementations.chicken.client.ChickenRenderer;
 import com.site21.bittermelon.content.entities.implementations.scp131.client.SCP131Renderer;
 import com.site21.bittermelon.content.entities.implementations.scp1507.client.SCP1507Renderer;
@@ -36,6 +37,8 @@ import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 import static com.site21.bittermelon.init.neoforge.BitterEntities.*;
 import static com.site21.bittermelon.init.neoforge.BitterItems.*;
+import static net.minecraft.core.component.DataComponents.BASE_COLOR;
+import static net.minecraft.world.item.DyeColor.WHITE;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientSetup {
@@ -92,6 +95,16 @@ public class ClientSetup {
                     return 0xFFFFFFFF;
                 }, PILL.get()
         );
+
+        itemColors.register((stack, tintIndex) -> stack.getOrDefault(BASE_COLOR, WHITE).getTextColor(), CRAYON.get());
+
+        itemColors.register((stack, tintIndex) -> {
+                    if (tintIndex == 0) {
+                        return stack.getOrDefault(BASE_COLOR, WHITE).getTextColor();
+                    }
+                    return 0x00FFFFFF;
+                }, HIGHLIGHTER.get()
+        );
     }
 
     @SubscribeEvent
@@ -109,6 +122,7 @@ public class ClientSetup {
         event.registerBlockEntityRenderer(BitterBlockEntities.INTERCOM_BLOCK_ENTITY.get(), PhoneCordRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.LARGE_SLIDING_DOOR_BLOCK_ENTITY.get(), LargeSlidingDoorRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.SLIDING_DOOR_BLOCK_ENTITY.get(), SlidingDoorRenderer::new);
+        event.registerBlockEntityRenderer(BitterBlockEntities.WALL_WRITING_BLOCK_ENTITY.get(), WallWritingRenderer::new);
     }
 
     @SubscribeEvent

@@ -22,6 +22,7 @@ import com.site21.bittermelon.content.blocks.poster.SmallPosterBlock;
 import com.site21.bittermelon.content.blocks.powergrid.distributionboard.DistributionBoardBlock;
 import com.site21.bittermelon.content.blocks.scp.scp151.SCP151Block;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlock;
+import com.site21.bittermelon.content.blocks.wallwriting.WallWritingBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
@@ -126,4 +127,7 @@ public class BitterBlocks {
 
     public static final DeferredBlock<SlidingDoorBlock> SLIDING_DOOR = BLOCKS.register("sliding_door",
             () -> new SlidingDoorBlock(BlockBehaviour.Properties.of().noOcclusion()));
+
+    public static final DeferredBlock<WallWritingBlock> WALL_WRITING = BLOCKS.register("wall_writing",
+            () -> new WallWritingBlock(BlockBehaviour.Properties.of().noOcclusion().noCollission()));
 }
