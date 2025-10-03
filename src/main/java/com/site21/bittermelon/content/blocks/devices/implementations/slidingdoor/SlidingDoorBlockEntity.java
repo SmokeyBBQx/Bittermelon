@@ -32,7 +32,6 @@ public class SlidingDoorBlockEntity extends BlockEntity {
 
         if (!open && door.animation.finished()) {
             level.setBlock(pos, state.setValue(SlidingDoorBlock.VISIBLE, true), Block.UPDATE_ALL);
-            level.playSound(null, pos, SoundEvents.IRON_DOOR_CLOSE, SoundSource.BLOCKS, .5f, 1);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor;
 
+import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
@@ -19,7 +20,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -202,7 +202,7 @@ public class SlidingDoorBlock extends Block implements EntityBlock {
     }
 
     private void playSound(@Nullable Entity source, @NotNull Level level, BlockPos pos, boolean isOpening) {
-        level.playSound(source, pos, isOpening ? BlockSetType.IRON.doorOpen() : BlockSetType.IRON.doorClose(), SoundSource.BLOCKS, 1.0F, level.getRandom().nextFloat() * 0.1F + 0.9F);
+        level.playSound(source, pos, BitterSounds.SLIDING_DOOR_CLOSE.get(), SoundSource.BLOCKS, 1.0f, 1.1f);
     }
 
     public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, LivingEntity placer, @NotNull ItemStack stack) {

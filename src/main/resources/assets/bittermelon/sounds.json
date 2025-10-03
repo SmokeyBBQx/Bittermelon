@@ -326,6 +326,30 @@
       "bittermelon:item/screwdriver"
     ]
   },
+  "machine.door_lock": {
+    "category": "blocks",
+    "sounds": [
+      "bittermelon:machine/door_lock"
+    ]
+  },
+  "machine.door_unlock": {
+    "category": "blocks",
+    "sounds": [
+      "bittermelon:machine/door_unlock"
+    ]
+  },
+  "machine.sliding_door_open": {
+    "category": "blocks",
+    "sounds": [
+      "bittermelon:machine/sliding_door_open"
+    ]
+  },
+  "machine.sliding_door_close": {
+    "category": "blocks",
+    "sounds": [
+      "bittermelon:machine/sliding_door_close"
+    ]
+  },
   "container.toolbox_open": {
     "category": "neutral",
     "sounds": [

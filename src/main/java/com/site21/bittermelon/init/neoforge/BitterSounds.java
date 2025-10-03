@@ -63,6 +63,10 @@ public class BitterSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> BANJO = register("music.banjo");
     public static final DeferredHolder<SoundEvent, SoundEvent> BREAKER_SWITCH = register("machine.breaker_switch");
     public static final DeferredHolder<SoundEvent, SoundEvent> SCREWDRIVER = register("item.screwdriver");
+    public static final DeferredHolder<SoundEvent, SoundEvent> DOOR_UNLOCK = register("machine.door_unlock");
+    public static final DeferredHolder<SoundEvent, SoundEvent> DOOR_LOCK = register("machine.door_lock");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SLIDING_DOOR_OPEN = register("machine.sliding_door_open");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SLIDING_DOOR_CLOSE = register("machine.sliding_door_close");
 
     private static @NotNull DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return SOUND_EVENTS.register(name, () ->
