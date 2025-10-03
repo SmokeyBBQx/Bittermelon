@@ -27,27 +27,24 @@ public class SlidingDoorRenderer implements BlockEntityRenderer<SlidingDoorBlock
     @Override
     public void render(@NotNull SlidingDoorBlockEntity blockEntity, float partialTick, @NotNull PoseStack poseStack,
                        @NotNull MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        BlockState blockState = blockEntity.getBlockState();
-        BlockRenderDispatcher blockRenderer = Minecraft.getInstance().getBlockRenderer();
-
-        if (blockState.getValue(SlidingDoorBlock.VISIBLE)) return;
+        BlockState state = blockEntity.getBlockState();
+        if (state.getValue(SlidingDoorBlock.VISIBLE)) return;
 
         poseStack.pushPose();
-        float openAmount = blockEntity.getAnimationProgress(partialTick);
 
-        Direction facing = blockState.getValue(BlockStateProperties.HORIZONTAL_FACING);
+        float openAmount = blockEntity.getAnimationProgress(partialTick);
+        Direction facing = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
 
         Vec3 offset = calculateOffset(facing, openAmount);
-        if (blockState.getValue(SlidingDoorBlock.HINGE) == DoorHingeSide.LEFT) {
+        if (state.getValue(SlidingDoorBlock.HINGE) == DoorHingeSide.LEFT) {
             offset = offset.scale(-1);
         }
 
         poseStack.translate(offset.x, offset.y, offset.z);
 
-        BlockState closedState = blockState.setValue(SlidingDoorBlock.VISIBLE, true);
-
-        blockRenderer.renderSingleBlock(
-                closedState,
+        state = state.setValue(SlidingDoorBlock.VISIBLE, true);
+        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(
+                state,
                 poseStack,
                 bufferSource,
                 packedLight,

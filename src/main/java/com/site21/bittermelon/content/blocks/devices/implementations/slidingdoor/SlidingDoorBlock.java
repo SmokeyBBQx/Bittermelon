@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -32,8 +33,18 @@ public class SlidingDoorBlock extends Block implements EntityBlock {
     public static final BooleanProperty VISIBLE;
     public static final EnumProperty<DoorHingeSide> HINGE;
     public static final EnumProperty<DoubleBlockHalf> HALF;
-    protected static final VoxelShape X_AABB;
-    protected static final VoxelShape Z_AABB;
+
+    protected static final VoxelShape NORTH_SOUTH_AABB;
+    protected static final VoxelShape EAST_WEST_AABB;
+
+    protected static final VoxelShape NORTH_RIGHT_OPEN;
+    protected static final VoxelShape NORTH_LEFT_OPEN;
+    protected static final VoxelShape SOUTH_RIGHT_OPEN;
+    protected static final VoxelShape SOUTH_LEFT_OPEN;
+    protected static final VoxelShape EAST_RIGHT_OPEN;
+    protected static final VoxelShape EAST_LEFT_OPEN;
+    protected static final VoxelShape WEST_RIGHT_OPEN;
+    protected static final VoxelShape WEST_LEFT_OPEN;
 
     public SlidingDoorBlock(Properties properties) {
         super(properties);
@@ -69,13 +80,25 @@ public class SlidingDoorBlock extends Block implements EntityBlock {
 
     protected @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         Direction direction = state.getValue(FACING);
-        boolean flag = !(Boolean) state.getValue(OPEN);
-        boolean flag1 = state.getValue(HINGE) == DoorHingeSide.RIGHT;
+        boolean isOpen = state.getValue(OPEN);
+        DoorHingeSide hinge = state.getValue(HINGE);
 
-        if (direction == Direction.NORTH || direction == Direction.SOUTH) {
-            return X_AABB;
+        if (!isOpen) {
+            if (direction == Direction.NORTH || direction == Direction.SOUTH) {
+                return NORTH_SOUTH_AABB;
+            } else {
+                return EAST_WEST_AABB;
+            }
+        }
+
+        if (direction == Direction.NORTH) {
+            return hinge == DoorHingeSide.RIGHT ? NORTH_RIGHT_OPEN : NORTH_LEFT_OPEN;
+        } else if (direction == Direction.SOUTH) {
+            return hinge == DoorHingeSide.RIGHT ? SOUTH_RIGHT_OPEN : SOUTH_LEFT_OPEN;
+        } else if (direction == Direction.EAST) {
+            return hinge == DoorHingeSide.RIGHT ? EAST_RIGHT_OPEN : EAST_LEFT_OPEN;
         } else {
-            return Z_AABB;
+            return hinge == DoorHingeSide.RIGHT ? WEST_RIGHT_OPEN : WEST_LEFT_OPEN;
         }
     }
 
@@ -89,7 +112,7 @@ public class SlidingDoorBlock extends Block implements EntityBlock {
         BlockState upperBlockState = level.getBlockState(pos.above());
         if (!upperBlockState.canBeReplaced(context)) return null;
 
-        return this.defaultBlockState()
+        return defaultBlockState()
                 .setValue(FACING, context.getHorizontalDirection())
                 .setValue(HINGE, getHinge(context))
                 .setValue(HALF, DoubleBlockHalf.LOWER);
@@ -200,7 +223,18 @@ public class SlidingDoorBlock extends Block implements EntityBlock {
         VISIBLE = BooleanProperty.create("visible");
         HINGE = BlockStateProperties.DOOR_HINGE;
         HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
-        X_AABB = Block.box((double) 0.0F, (double) 0.0F, (double) 0.0F, (double) 16.0F, (double) 16.0F, (double) 3.0F);
-        Z_AABB = Block.box((double) 13.0F, (double) 0.0F, (double) 0.0F, (double) 16.0F, (double) 16.0F, (double) 16.0F);
+
+        NORTH_SOUTH_AABB = Block.box(0.0, 0.0, 6.5, 16.0, 16.0, 9.5);
+        EAST_WEST_AABB = Block.box(6.5, 0.0, 0.0, 9.5, 16.0, 16.0);
+
+        double offset = 14.0;
+        NORTH_RIGHT_OPEN = Block.box(offset, 0.0, 6.5, 16.0, 16.0, 9.5);
+        NORTH_LEFT_OPEN = Block.box(0.0, 0.0, 6.5, 16.0 - offset, 16.0, 9.5);
+        SOUTH_RIGHT_OPEN = Block.box(0.0, 0.0, 6.5, 16.0 - offset, 16.0, 9.5);
+        SOUTH_LEFT_OPEN = Block.box(offset, 0.0, 6.5, 16.0, 16.0, 9.5);
+        EAST_RIGHT_OPEN = Block.box(6.5, 0.0, offset, 9.5, 16.0, 16.0);
+        EAST_LEFT_OPEN = Block.box(6.5, 0.0, 0.0, 9.5, 16.0, 16.0 - offset);
+        WEST_RIGHT_OPEN = Block.box(6.5, 0.0, 0.0, 9.5, 16.0, 16.0 - offset);
+        WEST_LEFT_OPEN = Block.box(6.5, 0.0, offset, 9.5, 16.0, 16.0);
     }
 }
