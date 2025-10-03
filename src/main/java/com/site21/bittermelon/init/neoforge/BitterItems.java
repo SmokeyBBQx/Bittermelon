@@ -490,11 +490,6 @@ public class BitterItems {
             new Item.Properties()
     ));
 
-    public static final DeferredItem<BlockItem> WALL_WRITING = ITEMS.register("wall_writing", () -> new BlockItem(
-            BitterBlocks.WALL_WRITING.get(),
-            new Item.Properties()
-    ));
-
     public static final DeferredItem<ChalkItem> CHALK = ITEMS.register("chalk", () -> new ChalkItem(
             new Item.Properties()));
 
