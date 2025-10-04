@@ -17,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
+import static net.minecraft.world.level.block.Block.UPDATE_CLIENTS;
+
 public abstract class WallWriterItem extends BlockItem implements WallWriter {
     public WallWriterItem(Block block, Properties properties) {
         super(block, properties);
@@ -30,6 +32,7 @@ public abstract class WallWriterItem extends BlockItem implements WallWriter {
                 if (player instanceof ServerPlayer serverPlayer) {
                     PacketDistributor.sendToPlayer(serverPlayer, new OpenWallWritingScreen(wallWriting.getBlockPos()));
                     formatText(wallWriting, stack);
+                    level.sendBlockUpdated(pos, state, state, UPDATE_CLIENTS);
                 }
             }
         }

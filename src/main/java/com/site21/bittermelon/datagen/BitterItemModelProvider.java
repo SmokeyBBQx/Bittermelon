@@ -28,8 +28,11 @@ public class BitterItemModelProvider extends ItemModelProvider {
         basicItem(BitterItems.WIRE.get());
         handheldItem(BitterItems.HANDHELD_SYSTEM_INTERFACE.get());
         handheldItem(BitterItems.SCREWDRIVER.get());
-        generateBlockItemModels();
         basicItem(BitterItems.LARGE_SLIDING_DOOR.get());
+        basicItem(BitterItems.SECURE_DOOR.get());
+        basicItem(BitterItems.SLIDING_DOOR.get());
+
+        generateBlockItemModels();
     }
 
     private void generateBlockItemModels() {

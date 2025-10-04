@@ -23,6 +23,7 @@ public class AnimalMedicalStats extends MedicalStats {
     private float bloodVolume = 100;
     private float hematocrit = 50;
     private float oxygenSaturation = 100;
+    private int heartRate;
 
     private static final int HYPOXIA_THRESHOLD = 80;
     private static final int BLOOD_LOSS_THRESHOLD = 60;

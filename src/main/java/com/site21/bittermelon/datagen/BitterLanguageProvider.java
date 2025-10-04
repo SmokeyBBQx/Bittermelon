@@ -29,7 +29,7 @@ public class BitterLanguageProvider extends LanguageProvider {
         addCustomItem(SCP_018, "SCP-018");
         addCustomItem(SCP_377_1, "Fortune");
         addCustomItem(SCP_377, "SCP-377");
-        customItemTranslations.add(CHALK.get());
+        addCustomItem(CHALK, "Chalk");
         customItemTranslations.add(CRAYON.get());
         customItemTranslations.add(HIGHLIGHTER.get());
         BitterItems.ITEMS.getEntries().forEach(this::addItemTranslation);

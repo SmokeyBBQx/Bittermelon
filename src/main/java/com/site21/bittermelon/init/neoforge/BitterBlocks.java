@@ -129,5 +129,10 @@ public class BitterBlocks {
             () -> new SlidingDoorBlock(BlockBehaviour.Properties.of().noOcclusion()));
 
     public static final DeferredBlock<WallWritingBlock> WALL_WRITING = BLOCKS.register("wall_writing",
-            () -> new WallWritingBlock(BlockBehaviour.Properties.of().noOcclusion().noCollission()));
+            () -> new WallWritingBlock(BlockBehaviour.Properties.of()
+                    .noOcclusion()
+                    .noCollission()
+                    .replaceable()
+                    .destroyTime(-1)
+            ));
 }

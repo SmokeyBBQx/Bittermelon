@@ -76,6 +76,17 @@ public class WallWritingScreen extends Screen {
         Lighting.setupFor3DItems();
     }
 
+    @Override
+    public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+
+        int panelWidth = 200;
+        int panelHeight = 80;
+        int panelX = width / 2 - panelWidth / 2;
+        int panelY = 90 - panelHeight / 2;
+        guiGraphics.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, 0xC0000000);
+    }
+
     private void renderText(@NotNull GuiGraphics guiGraphics) {
         setupRenderTransform(guiGraphics);
 
