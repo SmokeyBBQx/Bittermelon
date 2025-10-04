@@ -240,7 +240,7 @@ public class MedicalStats {
 
         return compartments.values().stream()
                 .filter(parent -> parent.getLayers().stream()
-                        .anyMatch(layer -> layer.getCompartments().contains(childId)))
+                        .anyMatch(layer -> layer.contains(childId)))
                 .findFirst()
                 .orElse(null);
     }

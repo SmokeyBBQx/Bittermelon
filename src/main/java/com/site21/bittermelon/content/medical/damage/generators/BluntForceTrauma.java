@@ -1,17 +1,13 @@
 package com.site21.bittermelon.content.medical.damage.generators;
 
-import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
 import com.site21.bittermelon.content.medical.damage.DamageGenerator;
 import com.site21.bittermelon.content.medical.damage.InjuryResult;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
-
-import static com.site21.bittermelon.init.custom.Compartments.INJURY;
 
 public class BluntForceTrauma extends DamageGenerator {
     public BluntForceTrauma(EnumSet<CompartmentTag> allowedCompartments) {

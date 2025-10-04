@@ -10,9 +10,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.EnumSet;
 import java.util.UUID;
 
-public class MajorBodyPart extends Compartment {
+public class MajorBodyPart {
     public MajorBodyPart(String id, EnumSet<CompartmentTag> defaultTags) {
-        super(id, defaultTags);
+
     }
 
 }

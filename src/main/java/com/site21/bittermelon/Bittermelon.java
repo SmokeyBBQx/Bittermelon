@@ -6,29 +6,19 @@ import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.client.gui.loreopening.LoreOpeningOverlay;
 import com.site21.bittermelon.content.character.networking.SyncActiveCharacter;
 import com.site21.bittermelon.content.character.networking.SyncCharacters;
-import com.site21.bittermelon.content.items.scps.scp377.Fortune;
-import com.site21.bittermelon.content.items.scps.scp377.FortuneInstance;
 import com.site21.bittermelon.content.telecomms.intercom.IntercomManager;
 import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
 import com.site21.bittermelon.content.substance.reactions.Reactions;
 import com.site21.bittermelon.init.neoforge.BitterEntities;
 import com.site21.bittermelon.init.neoforge.BitterRegistries;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.decoration.PaintingVariant;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -42,8 +32,6 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-
-import java.util.UUID;
 
 import static com.site21.bittermelon.init.custom.Compartments.COMPARTMENTS;
 import static com.site21.bittermelon.init.custom.Drugs.DRUGS;
@@ -59,7 +47,6 @@ import static com.site21.bittermelon.init.neoforge.BitterMemoryTypes.MEMORY_MODU
 import static com.site21.bittermelon.init.neoforge.BitterItems.ITEMS;
 import static com.site21.bittermelon.init.neoforge.BitterMenus.MENUS;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.MOB_EFFECTS;
-import static com.site21.bittermelon.init.neoforge.BitterPaintings.PAINTING_VARIANTS;
 import static com.site21.bittermelon.init.neoforge.BitterSensors.SENSOR_TYPES;
 import static com.site21.bittermelon.init.neoforge.BitterSounds.LOW_IMPACT;
 import static com.site21.bittermelon.init.neoforge.BitterSounds.SOUND_EVENTS;

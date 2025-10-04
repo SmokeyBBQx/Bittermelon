@@ -36,6 +36,8 @@ public class CompartmentNodeWidget extends AbstractWidget {
 
     private int relativeX;
     private int relativeY;
+    private NativeImage cachedImage = null;
+    private ResourceLocation cachedImageLocation = null;
 
     public CompartmentNodeWidget(int x, int y, int width, int height, Component message, HealthScreenV2 healthScreen, CompartmentInstance compartment) {
         super(x, y, width, height, message);
@@ -158,7 +160,7 @@ public class CompartmentNodeWidget extends AbstractWidget {
         if (compartment.getVisualData().icon != null && compartment.getItem() != null) {
             guiGraphics.blitSprite(compartment.getVisualData().icon, this.getX() + 8, this.getY() + 5, 16, 16);
         } else {
-            guiGraphics.renderFakeItem(new ItemStack(compartment.getItemHolder()), this.getX() + 8, this.getY() + 5);
+            guiGraphics.renderFakeItem(new ItemStack(compartment.getItem()), this.getX() + 8, this.getY() + 5);
         }
 
         guiGraphics.pose().popPose();
@@ -206,52 +208,65 @@ public class CompartmentNodeWidget extends AbstractWidget {
 
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
-        if (!compartment.getVisualData().isHidden || (compartment.getHealth() <= 0)) {
-            VisualData visualData = compartment.getVisualData();
-            float scaleFactor = visualData.scale;
+        if (compartment.getVisualData().isHidden) return false;
 
-            int centerX = this.getX() + 8;
-            int centerY = this.getY() + 8;
+        VisualData visualData = compartment.getVisualData();
+        float scaleFactor = visualData.scale;
 
-            double relX = mouseX - centerX;
-            double relY = mouseY - centerY;
+        int centerX = this.getX() + 8;
+        int centerY = this.getY() + 8;
 
-            if (compartment.getVisualData().icon == null) {
-                float distance = (float) Math.sqrt(relX * relX + relY * relY);
-                float hitboxRadius = 8 + (2 * (float) Math.sqrt(scaleFactor));
-                return distance <= hitboxRadius;
-            }
+        double relX = mouseX - centerX;
+        double relY = mouseY - centerY;
 
-            double unscaledRelX = relX / scaleFactor;
-            double unscaledRelY = relY / scaleFactor;
-
-            int texX = (int) Math.round(unscaledRelX);
-            int texY = (int) Math.round(unscaledRelY);
-
-            if (texX >= 0 && texX < visualData.width && texY >= 0 && texY < visualData.height) {
-                return getAlphaAtPixel(compartment.getVisualData().icon, texX, texY) >= 1;
-            }
+        if (compartment.getVisualData().icon == null) {
+            float distance = (float) Math.sqrt(relX * relX + relY * relY);
+            float hitboxRadius = 8 + (2 * (float) Math.sqrt(scaleFactor));
+            return distance <= hitboxRadius;
         }
+
+        double unscaledRelX = relX / scaleFactor;
+        double unscaledRelY = relY / scaleFactor;
+
+        int texX = (int) Math.round(unscaledRelX);
+        int texY = (int) Math.round(unscaledRelY);
+
+        if (texX >= 0 && texX < visualData.width && texY >= 0 && texY < visualData.height) {
+            return getAlphaAtPixel(compartment.getVisualData().icon, texX, texY) >= 1;
+        }
+
         return false;
     }
 
     private float getAlphaAtPixel(ResourceLocation resourceLocation, int x, int y) {
-        NativeImage image;
-        try {
-            image = NativeImage.read(Minecraft.getInstance().getResourceManager().getResource(resourceLocation).get().open());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (cachedImage == null || !resourceLocation.equals(cachedImageLocation)) {
+            if (cachedImage != null) {
+                cachedImage.close();
+            }
+
+            try {
+                cachedImage = NativeImage.read(Minecraft.getInstance().getResourceManager().getResource(resourceLocation).get().open());
+                cachedImageLocation = resourceLocation;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
-        if (x >= 0 && x < image.getWidth() && y >= 0 && y < image.getHeight()) {
-            int rgba = image.getPixelRGBA(x, y);
+        if (x >= 0 && x < cachedImage.getWidth() && y >= 0 && y < cachedImage.getHeight()) {
+            int rgba = cachedImage.getPixelRGBA(x, y);
             int alpha = (rgba >> 24) & 0xFF;
-//            System.out.println("Pixel at " + x + "," + y + " - RGBA: " + Integer.toHexString(rgba) + ", Alpha: " + alpha);
-            image.close();
             return alpha / 255.0f;
         }
 
         return 0.5f;
+    }
+
+    public void cleanup() {
+        if (cachedImage != null) {
+            cachedImage.close();
+            cachedImage = null;
+            cachedImageLocation = null;
+        }
     }
 
     public CompartmentInstance getCompartment() {

@@ -2,56 +2,273 @@ package com.site21.bittermelon.init.custom;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.medical.compartments.Compartment;
-import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
+import com.site21.bittermelon.content.medical.compartments.LayerData;
 import com.site21.bittermelon.content.medical.compartments.MedicalAttribute;
-import com.site21.bittermelon.content.medical.compartments.conditions.Bleed;
-import com.site21.bittermelon.content.medical.compartments.firstaid.Retractor;
+import com.site21.bittermelon.content.medical.compartments.VisualData;
+import com.site21.bittermelon.init.neoforge.BitterItems;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import java.util.EnumSet;
-import java.util.function.Supplier;
-
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_REGISTRY_KEY;
+import static net.minecraft.world.item.Items.RED_WOOL;
 
 public class Compartments {
     public static final DeferredRegister<Compartment> COMPARTMENTS = DeferredRegister.create(COMPARTMENT_REGISTRY_KEY, Bittermelon.MOD_ID);
 
-    public static final Supplier<Compartment> BLEED = COMPARTMENTS.register("bleed", () -> new Bleed("bleed", EnumSet.of(
-            CompartmentTag.BLEED,
-            CompartmentTag.CONDITION
-    )));
+    public static final DeferredHolder<Compartment, Compartment> WHOLE_BODY = COMPARTMENTS.register("whole_body",
+            () -> new Compartment("whole_body", new Compartment.Properties()
+                    .defaultHealth(100)
+                    .layers(
+                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/stone.png"), "Major Body Parts", 0, 0)
+                    )
+                    .item(BitterItems.BODY_PART.get())
+            )
+    );
 
-    public static final Supplier<Compartment> TRAUMATIC_AMPUTATION = COMPARTMENTS.register("traumatic_amputation", () -> new Compartment("traumatic_amputation", EnumSet.of(
-            CompartmentTag.TRAUMATIC_AMPUTATION,
-            CompartmentTag.CONDITION,
-            CompartmentTag.INJURY
-    )));
+    public static final DeferredHolder<Compartment, Compartment> HEAD = COMPARTMENTS.register("head",
+            () -> new Compartment("head", new Compartment.Properties()
+                    .defaultHealth(100)
+                    .layers(
+                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/white_terracotta.png"), "Scalp", 0, 0),
+                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/bone_block_side.png"), "Skull", 0, 0),
+                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/black_concrete.png"), "Brain Cavity", 0, 0),
+                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/smooth_stone.png"), "Facial Structure", 0, 0)
+                    )
+                    .item(RED_WOOL)
+            )
+    );
 
-    public static final Supplier<Compartment> BANDAGE = COMPARTMENTS.register("bandage", () -> new Compartment("bandage", EnumSet.of(
-            CompartmentTag.FIRST_AID,
-            CompartmentTag.BANDAGE
-    )));
+    public static final DeferredHolder<Compartment, Compartment> TORSO = COMPARTMENTS.register("torso",
+            () -> new Compartment("torso", new Compartment.Properties()
+                    .defaultHealth(150)
+                    .layers(
+                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/white_terracotta.png"), "Skin", 0, 0),
+                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/bone_block_side.png"), "Ribcage", 0, 0),
+                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/red_concrete.png"), "Thoracic Cavity", 0, 0)
+                    )
+                    .item(RED_WOOL)
+            )
+    );
 
-    public static final Supplier<Compartment> TOOL = COMPARTMENTS.register("tool", () -> new Compartment("tool", EnumSet.of(
-            CompartmentTag.FIRST_AID
-    )));
+    public static final DeferredHolder<Compartment, Compartment> ABDOMEN = COMPARTMENTS.register("abdomen",
+            () -> new Compartment("abdomen", new Compartment.Properties()
+                    .defaultHealth(100)
+                    .layers(
+                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/white_terracotta.png"), "Skin", 0, 0),
+                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/horn_coral_block.png"), "Fat", 0, 0),
+                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/netherrack.png"), "Muscle", 0, 0),
+                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/dead_brain_coral_block.png"), "Peritoneum", 0, 0),
+                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/netherrack.png"), "Abdominal Cavity", 0, 0),
+                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/brown_concrete.png"), "Retroperitoneal Space", 0, 0)
+                    )
+                    .item(RED_WOOL)
+            )
+    );
 
-    public static final Supplier<Compartment> RETRACTOR = COMPARTMENTS.register("retractor", () -> new Retractor("retractor", EnumSet.of(
-            CompartmentTag.FIRST_AID
-    )));
+    public static final DeferredHolder<Compartment, Compartment> LIMB = COMPARTMENTS.register("limb",
+            () -> new Compartment("limb", new Compartment.Properties()
+                    .defaultHealth(80)
+                    .layers(
+                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/white_terracotta.png"), "Skin", 0, 0),
+                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/netherrack.png"), "Muscle", 0, 0),
+                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/bone_block_side.png"), "Bone", 0, 0)
+                    )
+                    .item(BitterItems.BODY_PART.get())
+            )
+    );
 
-    public static final Supplier<Compartment> SOFT_TISSUE = COMPARTMENTS.register("soft_tissue", () -> new Compartment("soft_tissue", EnumSet.of(
-            CompartmentTag.BODY_PART,
-            CompartmentTag.SOFT_TISSUE
-    )));
+    // ==================== Tissue Types ====================
+    public static final DeferredHolder<Compartment, Compartment> SOFT_TISSUE = COMPARTMENTS.register("soft_tissue",
+            () -> new Compartment("soft_tissue", new Compartment.Properties()
+                    .defaultHealth(50)
+                    .layers() // No layers - leaf node
+                    .item(BitterItems.BODY_PART.get())
+            )
+    );
 
-    public static final Supplier<Compartment> HARD_TISSUE = COMPARTMENTS.register("hard_tissue", () -> new Compartment("hard_tissue", EnumSet.of(
-            CompartmentTag.BODY_PART,
-            CompartmentTag.HARD_TISSUE
-    )));
+    public static final DeferredHolder<Compartment, Compartment> SKIN = COMPARTMENTS.register("skin",
+            () -> new Compartment("skin", new Compartment.Properties()
+                    .defaultHealth(40)
+                    .layers()
+                    .item(BitterItems.BODY_PART.get())
+            )
+    );
 
-    public static final Supplier<Compartment> INJURY = COMPARTMENTS.register("injury", () -> new Compartment("injury", EnumSet.of(
-            CompartmentTag.BODY_PART,
-            CompartmentTag.HARD_TISSUE
-    )));
+    public static final DeferredHolder<Compartment, Compartment> FAT = COMPARTMENTS.register("fat",
+            () -> new Compartment("fat", new Compartment.Properties()
+                    .defaultHealth(60)
+                    .layers()
+                    .item(BitterItems.BODY_PART.get())
+            )
+    );
+
+    public static final DeferredHolder<Compartment, Compartment> MUSCLE = COMPARTMENTS.register("muscle",
+            () -> new Compartment("muscle", new Compartment.Properties()
+                    .defaultHealth(100)
+                    .layers()
+                    .item(BitterItems.BODY_PART.get())
+            )
+    );
+
+    public static final DeferredHolder<Compartment, Compartment> MEMBRANE = COMPARTMENTS.register("membrane",
+            () -> new Compartment("membrane", new Compartment.Properties()
+                    .defaultHealth(5)
+                    .layers()
+                    .item(BitterItems.BODY_PART.get())
+            )
+    );
+
+    public static final DeferredHolder<Compartment, Compartment> BRAIN = COMPARTMENTS.register("brain",
+            () -> new Compartment("brain", new Compartment.Properties()
+                    .defaultHealth(20)
+                    .layers(
+                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/dead_brain_coral_block.png"), "Meninges", 100, 100),
+                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/brain_coral_block.png"), "Brain", 100, 100)
+                    )
+            )
+    );
+
+    public static final DeferredHolder<Compartment, Compartment> FRONTAL_LOBE = COMPARTMENTS.register("frontal_lobe",
+            () -> new Compartment("frontal_lobe", new Compartment.Properties()
+                    .defaultHealth(10)
+                    .addAttribute(MedicalAttribute.BRAIN_MOTOR_ABILITY)
+                    .addAttribute(MedicalAttribute.BRAIN_CONSCIOUSNESS)
+            )
+    );
+
+    public static final DeferredHolder<Compartment, Compartment> PARIETAL_LOBE = COMPARTMENTS.register("parietal_lobe",
+            () -> new Compartment("parietal_lobe", new Compartment.Properties()
+                    .defaultHealth(10)
+                    .addAttribute(MedicalAttribute.NERVOUS)
+            )
+    );
+
+    public static final DeferredHolder<Compartment, Compartment> BRAINSTEM = COMPARTMENTS.register("brainstem",
+            () -> new Compartment("brainstem", new Compartment.Properties()
+                    .defaultHealth(10)
+                    .addAttribute(MedicalAttribute.BRAIN_VITALS)
+            )
+    );
+
+    public static final DeferredHolder<Compartment, Compartment> HEART = COMPARTMENTS.register("heart",
+            () -> new Compartment("heart", new Compartment.Properties()
+                    .defaultHealth(40)
+                    .layers(
+                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/pink_terracotta.png"), "Pericardium", 0, 0),
+                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/red_concrete.png"), "Cardiac Chambers", 0, 0)
+                    )
+            )
+    );
+
+    public static final DeferredHolder<Compartment, Compartment> LUNG = COMPARTMENTS.register("lung",
+            () -> new Compartment("lung", new Compartment.Properties()
+                    .defaultHealth(35)
+            )
+    );
+
+    public static final DeferredHolder<Compartment, Compartment> KIDNEY = COMPARTMENTS.register("kidney",
+            () -> new Compartment("kidney", new Compartment.Properties()
+                    .defaultHealth(30)
+                    .item(BitterItems.KIDNEY.get())
+            )
+    );
+
+    public static final DeferredHolder<Compartment, Compartment> STOMACH = COMPARTMENTS.register("stomach",
+            () -> new Compartment("stomach", new Compartment.Properties()
+                    .defaultHealth(30)
+                    .item(BitterItems.STOMACH.get())
+                    .addAttribute(MedicalAttribute.DIGESTION)
+                    .visualData(VisualData.empty()
+                            .x(20)
+                            .y(0)
+                            .z(2)
+                            .width(15)
+                            .height(14)
+                            .scale(5)
+                            .icon("anatomical_stomach"))
+            )
+    );
+
+    public static final DeferredHolder<Compartment, Compartment> SMALL_INTESTINE = COMPARTMENTS.register("small_intestine",
+            () -> new Compartment("small_intestine", new Compartment.Properties()
+                    .defaultHealth(40)
+                    .visualData(VisualData.empty()
+                            .x(5)
+                            .y(40)
+                            .z(0)
+                            .width(17)
+                            .height(19)
+                            .scale(5)
+                            .icon("anatomical_small_intestine"))
+                    .addAttribute(MedicalAttribute.CIRCULATION)
+                    .addAttribute(MedicalAttribute.MOVEMENT)
+                    .addAttribute(MedicalAttribute.MANIPULATION)
+                    .addAttribute(MedicalAttribute.RESPIRATION)
+            )
+    );
+
+    public static final DeferredHolder<Compartment, Compartment> COLON = COMPARTMENTS.register("colon",
+            () -> new Compartment("colon", new Compartment.Properties()
+                    .defaultHealth(40)
+                    .item(BitterItems.COLON.get())
+                    .visualData(VisualData.empty()
+                            .x(-5)
+                            .y(45)
+                            .z(1)
+                            .width(22)
+                            .height(19)
+                            .scale(5)
+                            .icon("anatomical_colon"))
+            )
+    );
+
+    public static final DeferredHolder<Compartment, Compartment> LIVER = COMPARTMENTS.register("liver",
+            () -> new Compartment("liver", new Compartment.Properties()
+                    .defaultHealth(40)
+                    .item(BitterItems.LIVER.get())
+                    .addAttribute(MedicalAttribute.ELIMINATION)
+                    .visualData(VisualData.empty()
+                            .x(0)
+                            .y(0)
+                            .z(4)
+                            .width(19)
+                            .height(14)
+                            .scale(5)
+                            .icon("anatomical_liver"))
+            )
+    );
+
+    public static final DeferredHolder<Compartment, Compartment> GALLBLADDER = COMPARTMENTS.register("gallbladder",
+            () -> new Compartment("gallbladder", new Compartment.Properties()
+                    .defaultHealth(40)
+                    .item(BitterItems.GALLBLADDER.get())
+                    .visualData(VisualData.empty()
+                            .x(25)
+                            .y(50)
+                            .z(3)
+                            .width(3)
+                            .height(3)
+                            .scale(5)
+                            .icon("anatomical_gallbladder"))
+            )
+    );
+
+    public static final DeferredHolder<Compartment, Compartment> PANCREAS = COMPARTMENTS.register("pancreas",
+            () -> new Compartment("pancreas", new Compartment.Properties()
+                    .defaultHealth(25)
+            )
+    );
+
+    public static final DeferredHolder<Compartment, Compartment> SPLEEN = COMPARTMENTS.register("spleen",
+            () -> new Compartment("spleen", new Compartment.Properties()
+                    .defaultHealth(20)
+            )
+    );
+
+    public static final DeferredHolder<Compartment, Compartment> EYE = COMPARTMENTS.register("eye",
+            () -> new Compartment("eye", new Compartment.Properties()
+                    .defaultHealth(10)
+            )
+    );
 }

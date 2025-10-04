@@ -48,26 +48,25 @@ public record MoveCompartment(UUID instanceID, int layerIndex, UUID targetCompar
     );
 
     public void handle(@NotNull IPayloadContext ctx) {
-        Player player = ctx.player();
-        Character character = CharacterManager.get(player.level()).getCharacter(characterID);
-        if (character != null) {
-            MedicalStats medicalStats = character.getMedicalStats();
-            CompartmentInstance instance = medicalStats.getCompartment(instanceID);
-            if (instance != null) {
-                CompartmentInstance oldParent = medicalStats.getParent(instance);
-                if (oldParent != null) {
-                    oldParent.removeCompartment(layerIndex, instance);
-                }
+        Character character = CharacterManager.get(ctx.player().level()).getCharacter(characterID);
+        if (character == null) return;
 
-                VisualData visualData = instance.getVisualData();
-                visualData.x = newX;
-                visualData.y = newY;
-                visualData.isHidden = false;
+        MedicalStats medicalStats = character.getMedicalStats();
+        CompartmentInstance instance = medicalStats.getCompartment(instanceID);
+        if (instance == null) return;
 
-                CompartmentInstance targetCompartment = medicalStats.getCompartment(targetCompartmentID);
-                if (targetCompartment != null) {
-                    targetCompartment.addCompartment(layerIndex, instance);
-                }
+        VisualData visualData = instance.getVisualData();
+        visualData.x = newX;
+        visualData.y = newY;
+        visualData.isHidden = false;
+
+        CompartmentInstance targetCompartment = medicalStats.getCompartment(targetCompartmentID);
+        if (targetCompartment == null) return;
+
+        if (targetCompartment.tryToInsert(layerIndex, instance)) {
+            CompartmentInstance oldParent = medicalStats.getParent(instance);
+            if (oldParent != null) {
+                oldParent.removeCompartment(layerIndex, instance);
             }
         }
     }

@@ -5,14 +5,12 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import net.minecraft.core.Holder;
 import net.minecraft.core.UUIDUtil;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +27,7 @@ public class CompartmentInstance {
 
     private final Compartment compartment;
     private final UUID uuid;
-    private final List<LayerData> layers;
+    private final List<HashSet<UUID>> layers;
     private final float maxHealth;
     private final EnumMap<MedicalAttribute, Float> attributes;
     private final EnumSet<CompartmentTag> tags;
@@ -38,14 +36,13 @@ public class CompartmentInstance {
 
     private float health;
     private float function;
-    private Item item;
     private boolean dirty;
     private Set<CompartmentInstance> cachedCompartments;
     private boolean compartmentsCacheDirty = true;
 
-    public CompartmentInstance(@NotNull Compartment compartment, UUID uuid, List<LayerData> layers, float health,
+    public CompartmentInstance(@NotNull Compartment compartment, UUID uuid, List<HashSet<UUID>> layers, float health,
                                float maxHealth, EnumMap<MedicalAttribute, Float> attributes, EnumSet<CompartmentTag> tags,
-                               @NotNull Item item, String name, VisualData visualData) {
+                               String name, VisualData visualData) {
         this.compartment = compartment;
         this.uuid = uuid;
         this.layers = layers;
@@ -53,21 +50,14 @@ public class CompartmentInstance {
         this.maxHealth = maxHealth;
         this.attributes = attributes;
         this.tags = tags;
-        this.item = item;
         this.name = name;
         this.visualData = visualData;
         dirty = true;
     }
 
-    public CompartmentInstance(@NotNull Holder<Compartment> compartment, UUID uuid, List<LayerData> layers, float health, float maxHealth,
-                               EnumMap<MedicalAttribute, Float> attributes, EnumSet<CompartmentTag> tags,
-                               @NotNull Holder<Item> item, String name, VisualData visualData) {
-        this(compartment.value(), uuid, layers, health, maxHealth, attributes, tags, item.value(), name, visualData);
-    }
-
-    public CompartmentInstance(Compartment compartment, float maxHealth, String name, VisualData visualData) {
-        this(compartment, UUID.randomUUID(), new ArrayList<>(), maxHealth, maxHealth, new EnumMap<>(MedicalAttribute.class),
-                EnumSet.noneOf(CompartmentTag.class), Items.AIR, name, visualData);
+    public CompartmentInstance(@NotNull Holder<Compartment> compartment, UUID uuid, List<HashSet<UUID>> layers, float health, float maxHealth,
+                               EnumMap<MedicalAttribute, Float> attributes, EnumSet<CompartmentTag> tags, String name, VisualData visualData) {
+        this(compartment.value(), uuid, layers, health, maxHealth, attributes, tags, name, visualData);
     }
 
     public void tick(MedicalStats medicalStats) {
@@ -99,7 +89,7 @@ public class CompartmentInstance {
     public Set<CompartmentInstance> getAllCompartments(MedicalStats medicalStats) {
         if (compartmentsCacheDirty || cachedCompartments == null) {
             cachedCompartments = layers.stream()
-                    .flatMap(layer -> layer.getCompartments().stream())
+                    .flatMap(Set::stream)
                     .map(medicalStats::getCompartment)
                     .collect(Collectors.toSet());
             compartmentsCacheDirty = false;
@@ -119,11 +109,11 @@ public class CompartmentInstance {
         return uuid;
     }
 
-    public List<LayerData> getLayers() {
+    public List<HashSet<UUID>> getLayers() {
         return layers;
     }
 
-    public LayerData getLayer(int index) {
+    public Set<UUID> getLayer(int index) {
         return layers.get(index);
     }
 
@@ -147,14 +137,6 @@ public class CompartmentInstance {
         return tags.contains(tag);
     }
 
-    public Item getItem() {
-        return item;
-    }
-
-    public Holder<Item> getItemHolder() {
-        return item.builtInRegistryHolder();
-    }
-
     public String getName() {
         return name;
     }
@@ -163,32 +145,28 @@ public class CompartmentInstance {
         return visualData;
     }
 
+    public Item getItem() {
+        return compartment.getItem();
+    }
+
     public boolean isDirty() {
         return dirty;
     }
 
-    public void setItem(Item item) {
-        this.item = item;
+    public boolean tryToInsert(int layer, CompartmentInstance instance) {
+        return getCompartment().tryToInsert(this, instance, layer);
     }
 
-    public void addCompartment(int layer, CompartmentInstance instance) {
-        layers.get(layer).addCompartment(instance);
+    protected void addCompartment(int layer, @NotNull CompartmentInstance instance) {
+        layers.get(layer).add(instance.uuid);
     }
 
-    public void removeCompartment(int layer, CompartmentInstance instance) {
-        layers.get(layer).removeCompartment(instance);
+    public void removeCompartment(int layer, @NotNull CompartmentInstance instance) {
+        layers.get(layer).remove(instance.uuid);
     }
 
     public void removeCompartment(CompartmentInstance instance) {
-        layers.forEach(layerData -> layerData.removeCompartment(instance));
-    }
-
-    public void setLayer(int index, LayerData layerData) {
-        layers.add(index, layerData);
-    }
-
-    public void addLayer(LayerData layerData) {
-        layers.add(layerData);
+        layers.forEach(set -> set.remove(instance.uuid));
     }
 
     public void setAttribute(MedicalAttribute attribute, float value) {
@@ -224,30 +202,35 @@ public class CompartmentInstance {
         CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 COMPARTMENT_REGISTRY.byNameCodec().fieldOf("compartment").forGetter(CompartmentInstance::getCompartment),
                 UUIDUtil.CODEC.fieldOf("uuid").forGetter(CompartmentInstance::getUUID),
-                LayerData.CODEC.listOf().fieldOf("layers").forGetter(CompartmentInstance::getLayers),
-                Codec.FLOAT.fieldOf("max_health").forGetter(CompartmentInstance::getMaxHealth),
+                Codec.list(Codec.list(UUIDUtil.CODEC).xmap(
+                        HashSet::new,
+                        ArrayList::new
+                )).fieldOf("layers").forGetter(CompartmentInstance::getLayers),
                 Codec.FLOAT.fieldOf("health").forGetter(CompartmentInstance::getHealth),
-                Codec.unboundedMap(MedicalAttribute.CODEC, Codec.FLOAT).fieldOf("attributes").forGetter(CompartmentInstance::getAttributes),
-                CompartmentTag.CODEC.listOf().fieldOf("tags").forGetter(ci -> new ArrayList<>(ci.getTags())),
-                BuiltInRegistries.ITEM.byNameCodec().optionalFieldOf("item", Items.AIR).forGetter(CompartmentInstance::getItem),
+                Codec.FLOAT.fieldOf("max_health").forGetter(CompartmentInstance::getMaxHealth),
+                Codec.unboundedMap(MedicalAttribute.CODEC, Codec.FLOAT).xmap(
+                        map -> {
+                            EnumMap<MedicalAttribute, Float> em = new EnumMap<>(MedicalAttribute.class);
+                            em.putAll(map);
+                            return em;
+                        },
+                        em -> em
+                ).fieldOf("attributes").forGetter(CompartmentInstance::getAttributes),
+                CompartmentTag.CODEC.listOf().xmap(
+                        list -> list.isEmpty() ? EnumSet.noneOf(CompartmentTag.class) : EnumSet.copyOf(list),
+                        ArrayList::new
+                ).fieldOf("tags").forGetter(CompartmentInstance::getTags),
                 Codec.STRING.fieldOf("name").forGetter(CompartmentInstance::getName),
                 VisualData.CODEC.fieldOf("visual_data").forGetter(CompartmentInstance::getVisualData)
-        ).apply(instance, (compartment, uuid, layers, maxHealth, health,
-                           attributes, tagsList, item, name,
-                           visualData) -> {
-            EnumMap<MedicalAttribute, Float> attrMap = new EnumMap<>(MedicalAttribute.class);
-            attrMap.putAll(attributes);
-            EnumSet<CompartmentTag> tagSet = tagsList.isEmpty() ? EnumSet.noneOf(CompartmentTag.class) : EnumSet.copyOf(tagsList);
-
-            return new CompartmentInstance(compartment, uuid, layers, health, maxHealth, attrMap, tagSet, item, name, visualData);
-        }));
+        ).apply(instance, CompartmentInstance::new));
 
         STREAM_CODEC = new StreamCodec<>() {
             @Override
             public void encode(@NotNull RegistryFriendlyByteBuf buf, @NotNull CompartmentInstance value) {
                 COMPARTMENT_STREAM_CODEC.encode(buf, value.getCompartmentHolder());
                 buf.writeUUID(value.getUUID());
-                LayerData.STREAM_CODEC.apply(ByteBufCodecs.list()).encode(buf, value.getLayers());
+                ByteBufCodecs.collection(HashSet::new, UUIDUtil.STREAM_CODEC)
+                        .apply(ByteBufCodecs.list()).encode(buf, value.getLayers());
                 buf.writeFloat(value.getHealth());
                 buf.writeFloat(value.getMaxHealth());
                 buf.writeMap(value.getAttributes(),
@@ -255,7 +238,6 @@ public class CompartmentInstance {
                         FriendlyByteBuf::writeFloat
                 );
                 buf.writeEnumSet(value.getTags(), CompartmentTag.class);
-                ByteBufCodecs.holderRegistry(BuiltInRegistries.ITEM.key()).encode(buf, value.getItemHolder());
                 buf.writeUtf(value.getName());
                 VisualData.STREAM_CODEC.encode(buf, value.getVisualData());
             }
@@ -264,7 +246,8 @@ public class CompartmentInstance {
             public @NotNull CompartmentInstance decode(@NotNull RegistryFriendlyByteBuf buf) {
                 Holder<Compartment> compartmentHolder = COMPARTMENT_STREAM_CODEC.decode(buf);
                 UUID uuid = buf.readUUID();
-                List<LayerData> layers = LayerData.STREAM_CODEC.apply(ByteBufCodecs.list()).decode(buf);
+                List<HashSet<UUID>> layers = buf.readList(byteBuf ->
+                        byteBuf.readCollection(HashSet::new, byteBuf1 -> byteBuf1.readUUID()));
                 float health = buf.readFloat();
                 float maxHealth = buf.readFloat();
                 EnumMap<MedicalAttribute, Float> attributes = new EnumMap<>(MedicalAttribute.class);
@@ -274,12 +257,11 @@ public class CompartmentInstance {
                 );
                 attributes.putAll(tempMap);
                 EnumSet<CompartmentTag> tags = buf.readEnumSet(CompartmentTag.class);
-                Holder<Item> item = ByteBufCodecs.holderRegistry(BuiltInRegistries.ITEM.key()).decode(buf);
                 String displayName = buf.readUtf();
                 VisualData visualData = VisualData.STREAM_CODEC.decode(buf);
 
                 return new CompartmentInstance(
-                        compartmentHolder, uuid, layers, health, maxHealth, attributes, tags, item, displayName, visualData
+                        compartmentHolder, uuid, layers, health, maxHealth, attributes, tags, displayName, visualData
                 );
             }
         };

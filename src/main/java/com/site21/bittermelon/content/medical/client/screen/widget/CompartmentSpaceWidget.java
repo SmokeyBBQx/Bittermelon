@@ -36,6 +36,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     public static final ResourceLocation INJURED_SELECTED_LAYER_TEXTURE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/healthscreen/injured_selected_layer.png");
 
     private static final int HEADER_HEIGHT = 15;
+    private static final int TILE_SIZE = 80;
 
     private Button closeWidgetButton;
     private Button collapseWidgetButton;
@@ -65,7 +66,8 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     private final HealthScreenV2 healthScreen;
     private final List<CompartmentNodeWidget> compartmentWidgets;
     private int layerIndex = 0;
-    private List<LayerData> layers;
+    private final LayerData[] layers;
+    private List<CompartmentNodeWidget> sortedWidgets = null;
 
     private final Button[] buttons;
     private ResourceLocation backgroundTexture;
@@ -76,13 +78,13 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         this.compartment = compartment;
         this.healthScreen = healthScreen;
         this.compartmentWidgets = new ArrayList<>();
-        this.layers = compartment.getLayers();
+        this.layers = compartment.getCompartment().getLayers();
         this.name = title;
         initializeButtons();
         buttons = new Button[]{closeWidgetButton, collapseWidgetButton, increaseLayerButton, decreaseLayerButton,
                 recenterButton, zoomInButton, zoomOutButton};
         refreshCompartmentNodes();
-        backgroundTexture = layers.getFirst().getBackgroundTexture();
+        backgroundTexture = layers[0].getBackgroundTexture();
     }
 
     private void initializeButtons() {
@@ -162,7 +164,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
 
     private void increaseLayer() {
         if (layerIndex == 0) {
-            layerIndex = layers.size() - 1;
+            layerIndex = layers.length - 1;
             refreshCompartmentNodes();
             return;
         }
@@ -171,7 +173,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     }
 
     private void decreaseLayer() {
-        if (layerIndex >= layers.size() - 1) {
+        if (layerIndex >= layers.length - 1) {
             layerIndex = 0;
             refreshCompartmentNodes();
             return;
@@ -201,17 +203,17 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     }
 
     public void refreshCompartmentNodes() {
-        compartmentWidgets.clear();
+        clearCompartmentNodes();
+        sortedWidgets = null;
 
-        LayerData layerData = compartment.getLayer(layerIndex);
-        List<UUID> list = new ArrayList<>(layerData.getCompartments());
+        LayerData layerData = layers[layerIndex];
         backgroundTexture = layerData.getBackgroundTexture();
         setMessage(Component.literal(layerData.getName()));
 
-        createCompartmentWidgets(list);
+        createCompartmentWidgets(compartment.getLayer(layerIndex));
     }
 
-    private void createCompartmentWidgets(@NotNull List<UUID> compartmentList) {
+    private void createCompartmentWidgets(@NotNull Set<UUID> compartmentList) {
         for (UUID uuid : compartmentList) {
             CompartmentInstance compartment = healthScreen.getMedicalStats().getCompartment(uuid);
             if (compartment == null) continue;
@@ -235,12 +237,26 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
 
         widget.setRelativeX(visualData.x);
         widget.setRelativeY(visualData.y);
+
+        widget.setX(x + widget.getRelativeX() - Mth.floor(scrollX));
+        widget.setY(y + widget.getRelativeY() - Mth.floor(scrollY));
+
         return widget;
     }
 
     @Override
     protected int getHeaderHeight() {
         return HEADER_HEIGHT;
+    }
+
+    @Override
+    protected int getMinWidth() {
+        return Minecraft.getInstance().font.width(getMessage()) + CLOSE_RIGHT_MARGIN + COLLAPSE_RIGHT_MARGIN;
+    }
+
+    @Override
+    protected int getMinHeight() {
+        return INCREASE_TOP_MARGIN * 2 + 5;
     }
 
     @Override
@@ -262,7 +278,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         List<VisualData> revealingCompartments = new ArrayList<>();
 
         if (layerIndex > 0) {
-            for (UUID uuid : compartment.getLayer(layerIndex - 1).getCompartments()) {
+            for (UUID uuid : compartment.getLayer(layerIndex - 1)) {
                 CompartmentInstance instance = healthScreen.getMedicalStats().getCompartment(uuid);
                 if (instance.hasTag(CompartmentTag.CUT)) {
                     revealingCompartments.add(instance.getVisualData());
@@ -326,8 +342,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
 
     private void renderWidgets(GuiGraphics guiGraphics, int contentX, int contentY, int mouseX, int mouseY,
                                float partialTick, List<VisualData> revealingCompartments) {
-        compartmentWidgets.sort((a, b) ->
-                Float.compare(a.getCompartment().getVisualData().z, b.getCompartment().getVisualData().z));
+        sortWidgets();
 
         for (CompartmentNodeWidget widget : compartmentWidgets) {
             CompartmentNodeWidget hoveredWidget = getHoveredWidget(mouseX, mouseY);
@@ -335,6 +350,14 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
                     && isWithinRevealedArea(revealingCompartments, mouseX, mouseY, contentX, contentY))
                 continue;
             widget.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+        }
+    }
+
+    private void sortWidgets() {
+        if (sortedWidgets == null) {
+            sortedWidgets = new ArrayList<>(compartmentWidgets);
+            sortedWidgets.sort((a, b) ->
+                    Float.compare(a.getCompartment().getVisualData().z, b.getCompartment().getVisualData().z));
         }
     }
 
@@ -389,7 +412,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     }
 
     private void renderLayerIndicators(GuiGraphics guiGraphics) {
-        for (int i = 0; i < layers.size(); i++) {
+        for (int i = 0; i < layers.length; i++) {
             int indicatorX = x + width - 24;
             int indicatorY = y + 50 + i * 6;
 
@@ -412,23 +435,33 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(contentX, contentY, 0.0F);
 
-        int tileOffsetX = -(int) scrollX / 5;
-        int tileOffsetY = -(int) scrollY / 5;
+        int tileOffsetX = (int) -scrollX / 5;
+        int tileOffsetY = (int) -scrollY / 5;
 
-        int tilesX = (contentWidth / 16 * 5) + 2;
-        int tilesY = (contentHeight / 16 * 5) + 2;
+        int startTileX = (tileOffsetX / TILE_SIZE) - 1;
+        int startTileY = (tileOffsetY / TILE_SIZE) - 1;
+        int endTileX = ((tileOffsetX + contentWidth) / TILE_SIZE) + 2;
+        int endTileY = ((tileOffsetY + contentHeight) / TILE_SIZE) + 2;
 
-        int startX = (tileOffsetX % 16 * 5);
-        int startY = (tileOffsetY % 16 * 5);
+        int startX = (startTileX * TILE_SIZE) - tileOffsetX;
+        int startY = (startTileY * TILE_SIZE) - tileOffsetY;
 
-        for (int i = -1; i <= tilesX; i++) {
-            for (int j = -1; j <= tilesY; j++) {
-                guiGraphics.blit(
-                        backgroundTexture,
-                        startX + (16 * 5 * i),
-                        startY + (16 * 5 * j),
-                        0, 0, 16 * 5, 16 * 5, 16 * 5, 16 * 5
-                );
+        RenderSystem.setShaderTexture(0, backgroundTexture);
+
+        for (int i = startTileX; i <= endTileX; i++) {
+            int x = startX + ((i - startTileX) * TILE_SIZE);
+            for (int j = startTileY; j <= endTileY; j++) {
+                int y = startY + ((j - startTileY) * TILE_SIZE);
+
+                if (x + TILE_SIZE >= 0 && x <= contentWidth && y + TILE_SIZE >= 0 && y <= contentHeight) {
+                    guiGraphics.blit(
+                            backgroundTexture,
+                            x, y,
+                            0, 0,
+                            TILE_SIZE, TILE_SIZE,
+                            TILE_SIZE, TILE_SIZE
+                    );
+                }
             }
         }
 
@@ -490,7 +523,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     }
 
     private boolean isLayerInjured(int layerIndex) {
-        List<UUID> instances = new ArrayList<>(layers.get(layerIndex).getCompartments());
+//        List<UUID> instances = new ArrayList<>(layers.get(layerIndex).getCompartments());
 
 //        if (layers.stream()
 //                .anyMatch(uuid -> healthScreen.getMedicalStats().getCompartment(uuid).hasTag(CompartmentTag.CONDITION))) {
@@ -602,8 +635,10 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         CompartmentInstance instance = healthScreen.getHeldItem().get(BitterDataComponents.COMPARTMENT).toInstance();
 
         VisualData visualData = instance.getVisualData();
-        int newX = (int) (mouseX - x + scrollX);
-        int newY = (int) (mouseY - y + scrollY);
+        int offsetX = visualData.getWidth() * 2;
+        int offsetY = visualData.getHeight() * 2;
+        int newX = (int) (mouseX - x + scrollX) - offsetX;
+        int newY = (int) (mouseY - y + scrollY) - offsetY;
         visualData.x = newX;
         visualData.y = newY;
         visualData.isHidden = false;
@@ -617,9 +652,10 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
                 newY
         ));
 
-        healthScreen.getMedicalStats().getParent(instance).removeCompartment(instance);
-        compartment.addCompartment(layerIndex, instance);
-        healthScreen.setHeldItem(null);
+        if (compartment.tryToInsert(layerIndex, instance)) {
+            healthScreen.getMedicalStats().getParent(instance).removeCompartment(instance);
+            healthScreen.setHeldItem(null);
+        }
     }
 
     @Override
@@ -695,6 +731,9 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     }
 
     public void clearCompartmentNodes() {
+        for (CompartmentNodeWidget widget : compartmentWidgets) {
+            widget.cleanup();
+        }
         compartmentWidgets.clear();
     }
 

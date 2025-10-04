@@ -3,7 +3,6 @@ package com.site21.bittermelon.content.medical.compartments.conditions;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.medical.compartments.*;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
-import com.site21.bittermelon.init.custom.Compartments;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,14 +13,14 @@ import java.util.Random;
 import static com.site21.bittermelon.content.medical.compartments.CompartmentTag.*;
 import static com.site21.bittermelon.content.medical.compartments.CompartmentTag.CAPILLARY_BLEED;
 
-public class Bleed extends Compartment {
+public class Bleed {
     public static final float BASE_MAJOR_ARTERIAL_BLEED_RATE = 2.0f;
     public static final float BASE_ARTERIAL_BLEED_RATE = 1.0f;
     public static final float BASE_VENOUS_BLEED_RATE = 0.5f;
     public static final float BASE_CAPILLARY_BLEED_RATE = 0.2f;
 
     public Bleed(String id, EnumSet<CompartmentTag> defaultTags) {
-        super(id, defaultTags);
+
     }
 
 //    @Override

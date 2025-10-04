@@ -2,14 +2,11 @@ package com.site21.bittermelon.content.medical.damage.generators;
 
 import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
-import com.site21.bittermelon.content.medical.compartments.conditions.Bleed;
 import com.site21.bittermelon.content.medical.damage.InjuryResult;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
-
-import static com.site21.bittermelon.init.custom.Compartments.INJURY;
 
 public class BoneBreakingBite extends Bite {
     public BoneBreakingBite(EnumSet<CompartmentTag> allowedCompartments) {

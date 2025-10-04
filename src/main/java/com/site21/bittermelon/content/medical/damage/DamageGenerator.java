@@ -5,8 +5,6 @@ import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
-import com.site21.bittermelon.init.custom.Compartments;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

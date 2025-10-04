@@ -3,54 +3,134 @@ package com.site21.bittermelon.content.medical.compartments;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
-import com.site21.bittermelon.init.neoforge.BitterItems;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Consumer;
 
+import static com.site21.bittermelon.init.neoforge.BitterItems.BODY_PART;
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_REGISTRY;
 
 public class Compartment {
     protected final String id;
-    protected final EnumSet<CompartmentTag> defaultTags;
-    protected final Consumer<CompartmentInstance> attributeInitializer;
+    protected final Properties properties;
 
-    public Compartment(String id, EnumSet<CompartmentTag> defaultTags, Consumer<CompartmentInstance> attributeInitializer) {
+    public Compartment(String id, Properties properties) {
         this.id = id;
-        this.defaultTags = defaultTags;
-        this.attributeInitializer = attributeInitializer;
+        this.properties = properties;
     }
 
-    public Compartment(String id, EnumSet<CompartmentTag> defaultTags) {
-        this(id, defaultTags, compartmentInstance -> {});
+    public CompartmentInstance toInstance() {
+        List<HashSet<UUID>> layers = new ArrayList<>();
+        for (int i = 0; i < properties.layers.length; ++i) {
+            layers.add(new HashSet<>());
+        }
+
+        return new CompartmentInstance(
+                this,
+                UUID.randomUUID(),
+                layers,
+                properties.defaultHealth,
+                properties.defaultHealth,
+                properties.defaultAttributes,
+                properties.defaultTags,
+                id,
+                properties.visualData
+        );
     }
 
-    public void tick(MedicalStats medicalStats, @NotNull CompartmentInstance instance) {
-    }
+    public void tick(MedicalStats medicalStats, @NotNull CompartmentInstance instance) {}
 
-    public void onExtract(MedicalStats medicalStats, CompartmentInstance instance) {
-
-    }
+    public void onExtract(MedicalStats medicalStats, CompartmentInstance instance) {}
 
     public boolean canExtract(CompartmentInstance instance, MedicalStats medicalStats) {
         return false;
     }
 
-    public EnumSet<CompartmentTag> getDefaultTags() {
-        return defaultTags;
+    public boolean tryToInsert(@NotNull CompartmentInstance instance, CompartmentInstance input, int layer) {
+        if (properties.layers == null || properties.layers[layer] == null) return false;
+
+        instance.addCompartment(layer, input);
+        return true;
+    }
+
+    public ItemStack createItemStack(@NotNull CompartmentInstance instance) {
+        ItemStack stack = properties.item.getDefaultInstance();
+        stack.set(BitterDataComponents.COMPARTMENT, instance.toData());
+        return stack;
     }
 
     public Holder<Compartment> builtInRegistryHolder() {
         return COMPARTMENT_REGISTRY.getHolder(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, id)).get();
     }
 
-    public ItemStack createItemStack(@NotNull CompartmentInstance instance) {
-        ItemStack stack = new ItemStack(BitterItems.BODY_PART.get());
-        stack.set(BitterDataComponents.COMPARTMENT, instance.toData());
-        return stack;
+    public LayerData[] getLayers() {
+        return properties.layers;
+    }
+
+    public EnumSet<CompartmentTag> getDefaultTags() {
+        return properties.defaultTags;
+    }
+
+    public Item getItem() {
+        return properties.item;
+    }
+
+    public static class Properties {
+        EnumSet<CompartmentTag> defaultTags = EnumSet.noneOf(CompartmentTag.class);
+        EnumMap<MedicalAttribute, Float> defaultAttributes = new EnumMap<>(MedicalAttribute.class);
+        LayerData[] layers = new LayerData[]{new LayerData(ResourceLocation.withDefaultNamespace("textures/block/stone.png"), "Compartment", 0, 0)};
+        Item item = BODY_PART.get();
+        float defaultHealth = 0;
+        VisualData visualData = VisualData.empty();
+
+        public Properties defaultTags(EnumSet<CompartmentTag> defaultTags) {
+            this.defaultTags = defaultTags;
+            return this;
+        }
+
+        public Properties defaultTags(CompartmentTag @NotNull ... tags) {
+            this.defaultTags = tags.length > 0 ? EnumSet.of(tags[0], tags) : EnumSet.noneOf(CompartmentTag.class);
+            return this;
+        }
+
+        public Properties defaultAttributes(EnumMap<MedicalAttribute, Float> defaultAttributes) {
+            this.defaultAttributes = defaultAttributes;
+            return this;
+        }
+
+        public Properties addAttribute(MedicalAttribute attribute, float value) {
+            this.defaultAttributes.put(attribute, value);
+            return this;
+        }
+
+        public Properties addAttribute(MedicalAttribute attribute) {
+            this.defaultAttributes.put(attribute, 1.0f);
+            return this;
+        }
+
+        public Properties layers(LayerData... layers) {
+            this.layers = layers;
+            return this;
+        }
+
+        public Properties item(Item item) {
+            this.item = item;
+            return this;
+        }
+
+        public Properties defaultHealth(float defaultHealth) {
+            this.defaultHealth = defaultHealth;
+            return this;
+        }
+
+        public Properties visualData(VisualData visualData) {
+            this.visualData = visualData;
+            return this;
+        }
     }
 }

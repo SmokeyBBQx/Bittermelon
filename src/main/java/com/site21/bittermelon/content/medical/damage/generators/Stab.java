@@ -1,14 +1,11 @@
 package com.site21.bittermelon.content.medical.damage.generators;
 
 import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
-import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
-import com.site21.bittermelon.content.medical.compartments.conditions.Bleed;
 import com.site21.bittermelon.content.medical.damage.DamageGenerator;
 import com.site21.bittermelon.content.medical.damage.InjuryResult;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.init.custom.Compartments.INJURY;
 
 public class Stab extends DamageGenerator {
     @Override

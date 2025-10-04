@@ -1,14 +1,10 @@
 package com.site21.bittermelon.content.medical.client.screen.widget;
 
-import com.site21.bittermelon.Bittermelon;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 
 public abstract class MovableResizableWidget extends AbstractWidget {
-    public static final ResourceLocation WINDOW_TEXTURE = ResourceLocation.withDefaultNamespace("textures/gui/advancements/window.png");
-    public static final ResourceLocation WINDOW_SIDES_TEXTURE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/window_sides.png");
-
     protected boolean isDragging = false;
     protected boolean isResizing = false;
     protected int dragOffsetX, dragOffsetY;
@@ -38,6 +34,22 @@ public abstract class MovableResizableWidget extends AbstractWidget {
 
     protected int getHeaderHeight() {
         return 15;
+    }
+
+    protected int getMinWidth() {
+        return 50;
+    }
+
+    protected int getMinHeight() {
+        return getHeaderHeight() + 10;
+    }
+
+    protected int getMaxWidth() {
+        return 200;
+    }
+
+    protected int getMaxHeight() {
+        return 200;
     }
 
     protected boolean isInResizeArea(double mouseX, double mouseY) {
@@ -84,10 +96,10 @@ public abstract class MovableResizableWidget extends AbstractWidget {
             return true;
         } else if (isResizing) {
             if (resizeEdge == 1 || resizeEdge == 3) {
-                setWidth(Math.max(50, (int)(mouseX - getX()))); // Minimum width
+                setWidth((int) Mth.clamp(mouseX - getX(), getMinWidth(), getMaxWidth()));
             }
             if (resizeEdge == 2 || resizeEdge == 3) {
-                setHeight(Math.max(getHeaderHeight() + 10, (int)(mouseY - getY()))); // Minimum height
+                setHeight((int) Mth.clamp(mouseY - getY(), getMinHeight(), getMaxHeight()));
             }
             return true;
         }
