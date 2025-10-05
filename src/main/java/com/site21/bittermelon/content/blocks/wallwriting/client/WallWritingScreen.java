@@ -66,7 +66,7 @@ public class WallWritingScreen extends Screen {
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         Lighting.setupForFlatItems();
-        guiGraphics.drawCenteredString(font, title, width / 2, 40, 16777215);
+        guiGraphics.drawCenteredString(font, title, width / 2, 50, 16777215);
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(width / 2.0f, 90.0f, 50.0f);
@@ -80,11 +80,11 @@ public class WallWritingScreen extends Screen {
     public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 
-        int panelWidth = 200;
-        int panelHeight = 80;
+        int panelWidth = 100;
+        int panelHeight = 50;
         int panelX = width / 2 - panelWidth / 2;
         int panelY = 90 - panelHeight / 2;
-        guiGraphics.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, 0xC0000000);
+        guiGraphics.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, 0x55000000);
     }
 
     private void renderText(@NotNull GuiGraphics guiGraphics) {

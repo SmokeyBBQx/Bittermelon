@@ -123,6 +123,7 @@ public class WallWritingBlock extends Block implements EntityBlock, SimpleWaterl
         if (stack.is(SPONGE)) {
             level.setBlock(pos, Blocks.AIR.defaultBlockState(), UPDATE_ALL);
             level.playSound(null, pos, SoundEvents.SPONGE_HIT, SoundSource.BLOCKS, 1.0f, level.getRandom().nextFloat() * 0.1f + 0.9f);
+            return ItemInteractionResult.SUCCESS;
         }
 
         if (level.isClientSide) return ItemInteractionResult.CONSUME;
@@ -139,18 +140,6 @@ public class WallWritingBlock extends Block implements EntityBlock, SimpleWaterl
         }
 
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-    }
-
-
-    @Override
-    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
-        if (level.isClientSide) return InteractionResult.PASS;
-
-        if (player instanceof ServerPlayer serverPlayer) {
-            PacketDistributor.sendToPlayer(serverPlayer, new OpenWallWritingScreen(pos));
-        }
-
-        return InteractionResult.SUCCESS;
     }
 
     @Override
