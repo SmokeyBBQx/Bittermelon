@@ -527,5 +527,17 @@ public class PayloadRegistration {
                 OpenWallWritingScreen.STREAM_CODEC,
                 OpenWallWritingScreen::handle
         );
+
+        registrar.playToClient(
+                UpdateCompartments.TYPE,
+                UpdateCompartments.STREAM_CODEC,
+                UpdateCompartments::handle
+        );
+
+        registrar.playToClient(
+                UpdateCompartmentPosition.TYPE,
+                UpdateCompartmentPosition.STREAM_CODEC,
+                UpdateCompartmentPosition::handle
+        );
     }
 }

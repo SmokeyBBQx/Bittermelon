@@ -2,6 +2,7 @@ package com.site21.bittermelon.content.medical.compartments;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.site21.bittermelon.content.medical.client.screen.networking.UpdateCompartments;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import net.minecraft.core.Holder;
 import net.minecraft.core.UUIDUtil;
@@ -11,6 +12,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 

@@ -20,7 +20,7 @@ public class Compartments {
             () -> new Compartment("whole_body", new Compartment.Properties()
                     .defaultHealth(100)
                     .layers(
-                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/stone.png"), "Major Body Parts", 0, 0)
+                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/stone.png"), "Body")
                     )
                     .item(BitterItems.BODY_PART.get())
             )
@@ -30,10 +30,10 @@ public class Compartments {
             () -> new Compartment("head", new Compartment.Properties()
                     .defaultHealth(100)
                     .layers(
-                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/white_terracotta.png"), "Scalp", 0, 0),
-                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/bone_block_side.png"), "Skull", 0, 0),
-                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/black_concrete.png"), "Brain Cavity", 0, 0),
-                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/smooth_stone.png"), "Facial Structure", 0, 0)
+                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/white_terracotta.png"), "Scalp"),
+                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/bone_block_side.png"), "Skull"),
+                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/black_concrete.png"), "Brain Cavity"),
+                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/smooth_stone.png"), "Facial Structure")
                     )
                     .item(RED_WOOL)
             )
@@ -43,9 +43,9 @@ public class Compartments {
             () -> new Compartment("torso", new Compartment.Properties()
                     .defaultHealth(150)
                     .layers(
-                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/white_terracotta.png"), "Skin", 0, 0),
-                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/bone_block_side.png"), "Ribcage", 0, 0),
-                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/red_concrete.png"), "Thoracic Cavity", 0, 0)
+                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/white_terracotta.png"), "Skin"),
+                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/bone_block_side.png"), "Ribcage"),
+                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/red_concrete.png"), "Thoracic Cavity")
                     )
                     .item(RED_WOOL)
             )
@@ -55,12 +55,12 @@ public class Compartments {
             () -> new Compartment("abdomen", new Compartment.Properties()
                     .defaultHealth(100)
                     .layers(
-                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/white_terracotta.png"), "Skin", 0, 0),
-                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/horn_coral_block.png"), "Fat", 0, 0),
-                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/netherrack.png"), "Muscle", 0, 0),
-                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/dead_brain_coral_block.png"), "Peritoneum", 0, 0),
-                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/netherrack.png"), "Abdominal Cavity", 0, 0),
-                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/brown_concrete.png"), "Retroperitoneal Space", 0, 0)
+                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/white_terracotta.png"), "Skin"),
+                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/horn_coral_block.png"), "Fat"),
+                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/netherrack.png"), "Muscle"),
+                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/dead_brain_coral_block.png"), "Peritoneum"),
+                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/netherrack.png"), "Abdominal Cavity"),
+                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/brown_concrete.png"), "Retroperitoneal Space")
                     )
                     .item(RED_WOOL)
             )
@@ -123,8 +123,8 @@ public class Compartments {
             () -> new Compartment("brain", new Compartment.Properties()
                     .defaultHealth(20)
                     .layers(
-                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/dead_brain_coral_block.png"), "Meninges", 100, 100),
-                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/brain_coral_block.png"), "Brain", 100, 100)
+                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/dead_brain_coral_block.png"), "Meninges"),
+                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/brain_coral_block.png"), "Brain")
                     )
             )
     );

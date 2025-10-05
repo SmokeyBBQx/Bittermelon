@@ -245,6 +245,10 @@ public class MedicalStats {
                 .orElse(null);
     }
 
+    public Map<CompartmentInstance, CompartmentInstance> getCompartmentRelations() {
+        return compartmentRelations;
+    }
+
     public void addDrug(DrugInstance instance) {
         activeDrugs.add(instance);
     }

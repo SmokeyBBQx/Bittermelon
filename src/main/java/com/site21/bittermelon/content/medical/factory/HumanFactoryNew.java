@@ -30,7 +30,7 @@ public class HumanFactoryNew implements AnatomyFactory {
 
     private void buildHead() {
         CompartmentInstance head = addCompartment(HEAD, wholeBody, 0);
-        head.getVisualData().x(10);
+        head.getVisualData().x(20).y(30);
         CompartmentInstance brain = addCompartment(BRAIN, head, 3);
         addCompartment(FRONTAL_LOBE, brain, 1);
         addCompartment(PARIETAL_LOBE, brain, 1);
@@ -39,6 +39,7 @@ public class HumanFactoryNew implements AnatomyFactory {
 
     private void buildAbdomen() {
         CompartmentInstance abdomen = addCompartment(ABDOMEN, wholeBody, 0);
+        abdomen.getVisualData().x(50).y(30);
         addCompartment(STOMACH, abdomen, 4);
         addCompartment(SMALL_INTESTINE, abdomen, 4);
         addCompartment(COLON, abdomen, 4);

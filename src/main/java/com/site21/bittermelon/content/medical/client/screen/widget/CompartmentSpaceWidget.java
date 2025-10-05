@@ -2,8 +2,8 @@ package com.site21.bittermelon.content.medical.client.screen.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.medical.client.screen.HealthScreenV2;
+import com.site21.bittermelon.content.medical.client.screen.HeldItemData;
 import com.site21.bittermelon.content.medical.client.screen.networking.MoveCompartment;
 import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
 import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
@@ -17,7 +17,6 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,6 +36,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
 
     private static final int HEADER_HEIGHT = 15;
     private static final int TILE_SIZE = 80;
+    private static final int EDGE_MARGIN = 20;
 
     private Button closeWidgetButton;
     private Button collapseWidgetButton;
@@ -62,7 +62,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     private static final float MAX_ZOOM = 2.0f;
     private static final float ZOOM_STEP = 0.25f;
 
-    private final CompartmentInstance compartment;
+    private CompartmentInstance compartment;
     private final HealthScreenV2 healthScreen;
     private final List<CompartmentNodeWidget> compartmentWidgets;
     private int layerIndex = 0;
@@ -71,20 +71,18 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
 
     private final Button[] buttons;
     private ResourceLocation backgroundTexture;
-    private final Component name;
 
-    public CompartmentSpaceWidget(int x, int y, int width, int height, Component title, @NotNull CompartmentInstance compartment, HealthScreenV2 healthScreen) {
-        super(x, y, width, height, title);
+    public CompartmentSpaceWidget(int x, int y, int width, int height, @NotNull CompartmentInstance compartment, HealthScreenV2 healthScreen) {
+        super(x, y, width, height, Component.literal(compartment.getName()));
         this.compartment = compartment;
         this.healthScreen = healthScreen;
         this.compartmentWidgets = new ArrayList<>();
         this.layers = compartment.getCompartment().getLayers();
-        this.name = title;
         initializeButtons();
         buttons = new Button[]{closeWidgetButton, collapseWidgetButton, increaseLayerButton, decreaseLayerButton,
                 recenterButton, zoomInButton, zoomOutButton};
         refreshCompartmentNodes();
-        backgroundTexture = layers[0].getBackgroundTexture();
+        backgroundTexture = layers[0].backgroundTexture();
     }
 
     private void initializeButtons() {
@@ -207,18 +205,18 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         sortedWidgets = null;
 
         LayerData layerData = layers[layerIndex];
-        backgroundTexture = layerData.getBackgroundTexture();
-        setMessage(Component.literal(layerData.getName()));
+        backgroundTexture = layerData.backgroundTexture();
+        setMessage(Component.literal(layerData.name()));
 
         createCompartmentWidgets(compartment.getLayer(layerIndex));
     }
 
     private void createCompartmentWidgets(@NotNull Set<UUID> compartmentList) {
         for (UUID uuid : compartmentList) {
-            CompartmentInstance compartment = healthScreen.getMedicalStats().getCompartment(uuid);
-            if (compartment == null) continue;
+            CompartmentInstance instance = healthScreen.getMedicalStats().getCompartment(uuid);
+            if (instance == null) continue;
 
-            CompartmentNodeWidget widget = getCompartmentNodeWidget(compartment);
+            CompartmentNodeWidget widget = getCompartmentNodeWidget(instance);
             compartmentWidgets.add(widget);
         }
     }
@@ -257,6 +255,16 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     @Override
     protected int getMinHeight() {
         return INCREASE_TOP_MARGIN * 2 + 5;
+    }
+
+    @Override
+    protected int getMaxWidth() {
+        return layers[layerIndex].width() + EDGE_MARGIN;
+    }
+
+    @Override
+    protected int getMaxHeight() {
+        return layers[layerIndex].height() + EDGE_MARGIN;
     }
 
     @Override
@@ -523,7 +531,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     }
 
     private boolean isLayerInjured(int layerIndex) {
-//        List<UUID> instances = new ArrayList<>(layers.get(layerIndex).getCompartments());
+//        List<UUID> instances = new ArrayList<>(layers.get(layer).getCompartments());
 
 //        if (layers.stream()
 //                .anyMatch(uuid -> healthScreen.getMedicalStats().getCompartment(uuid).hasTag(CompartmentTag.CONDITION))) {
@@ -562,6 +570,18 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         if (isContentDragging && isOpen) {
             scrollX -= dragX;
             scrollY -= dragY;
+
+            int contentWidth = width - 17;
+            int contentHeight = height - 18;
+
+            int layerWidth = layers[layerIndex].width();
+            int layerHeight = layers[layerIndex].height();
+
+            double maxScrollX = Math.max(0, layerWidth - contentWidth);
+            double maxScrollY = Math.max(0, layerHeight - contentHeight);
+
+            scrollX = Mth.clamp(scrollX, 0, maxScrollX);
+            scrollY = Mth.clamp(scrollY, 0, maxScrollY);
 
             updateCompartmentWidgetPositions();
             return true;
@@ -619,43 +639,52 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     protected boolean onContentAreaClicked(double mouseX, double mouseY, int button) {
         for (CompartmentNodeWidget widget : compartmentWidgets) {
             if (widget.isMouseOver(mouseX, mouseY)) {
-                return widget.mouseClicked(mouseX, mouseY, button);
+                return widget.mouseClicked(mouseX, mouseY, button, this);
             }
         }
 
         if (button == 0) {
             isContentDragging = true;
-            return true;
         }
 
-        return false;
+        return true;
     }
 
-    public void handleCompartmentPlacement(double mouseX, double mouseY, int button) {
-        CompartmentInstance instance = healthScreen.getHeldItem().get(BitterDataComponents.COMPARTMENT).toInstance();
+    public void handleCompartmentInteraction(double mouseX, double mouseY, int button) {
+        if (button == 0) {
+            for (CompartmentNodeWidget widget : compartmentWidgets) {
+                if (widget.isMouseOver(mouseX, mouseY)) {
+                    return;
+                }
+            }
+        }
 
-        VisualData visualData = instance.getVisualData();
+        if (button == 1) {
+            handleCompartmentPlacement(mouseX, mouseY);
+        }
+    }
+
+    public void handleCompartmentPlacement(double mouseX, double mouseY) {
+        HeldItemData heldItem = healthScreen.getHeldItemData();
+        CompartmentInstance target = heldItem.heldItem().get(BitterDataComponents.COMPARTMENT).toInstance();
+
+        VisualData visualData = target.getVisualData();
         int offsetX = visualData.getWidth() * 2;
         int offsetY = visualData.getHeight() * 2;
         int newX = (int) (mouseX - x + scrollX) - offsetX;
         int newY = (int) (mouseY - y + scrollY) - offsetY;
-        visualData.x = newX;
-        visualData.y = newY;
-        visualData.isHidden = false;
+        visualData.x(newX).y(newY);
 
         PacketDistributor.sendToServer(new MoveCompartment(
-                instance.getUUID(),
-                layerIndex,
-                compartment.getUUID(),
                 healthScreen.getMedicalStats().getCharacterID(),
-                newX,
-                newY
+                compartment.getUUID(),
+                target.getUUID(),
+                heldItem.parent().compartment.getUUID(),
+                layerIndex,
+                visualData
         ));
 
-        if (compartment.tryToInsert(layerIndex, instance)) {
-            healthScreen.getMedicalStats().getParent(instance).removeCompartment(instance);
-            healthScreen.setHeldItem(null);
-        }
+        healthScreen.setHeldItemData(null);
     }
 
     @Override
@@ -735,6 +764,14 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
             widget.cleanup();
         }
         compartmentWidgets.clear();
+    }
+
+    public CompartmentInstance getCompartment() {
+        return compartment;
+    }
+
+    public void setCompartment(CompartmentInstance compartment) {
+        this.compartment = compartment;
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.medical.client.screen.HealthScreenV2;
+import com.site21.bittermelon.content.medical.client.screen.HeldItemData;
 import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
 import com.site21.bittermelon.content.medical.compartments.VisualData;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
@@ -187,16 +188,15 @@ public class CompartmentNodeWidget extends AbstractWidget {
         }
     }
 
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button, CompartmentSpaceWidget parent) {
         if (button == 1) {
-            healthScreen.addCompartmentSpace(Component.literal(compartment.getName()), compartment);
+            healthScreen.addCompartmentSpace(compartment);
             return true;
-        } else if (healthScreen.getHeldItem() == null) {
+        } else if (healthScreen.getHeldItemData() == null) {
             playDownSound(Minecraft.getInstance().getSoundManager());
-            compartment.getVisualData().isHidden = true;
             visible = false;
-            healthScreen.setHeldItem(compartment.getCompartment().createItemStack(compartment));
+            compartment.getVisualData().isHidden(true);
+            healthScreen.setHeldItemData(new HeldItemData(compartment.getCompartment().createItemStack(compartment), parent));
         }
         return super.mouseClicked(mouseX, mouseY, button);
     }

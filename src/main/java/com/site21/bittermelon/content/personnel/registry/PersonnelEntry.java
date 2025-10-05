@@ -123,7 +123,7 @@ public class PersonnelEntry implements PrivilegeOwner {
         CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.INT.fieldOf("id").forGetter(PersonnelEntry::getId),
                 UUIDUtil.CODEC.fieldOf("playerUUID").forGetter(PersonnelEntry::getPlayerUUID),
-                UUIDUtil.CODEC.fieldOf("characterUUID").forGetter(PersonnelEntry::getCharacterUUID),
+                UUIDUtil.CODEC.fieldOf("characterID").forGetter(PersonnelEntry::getCharacterUUID),
                 Codec.STRING.fieldOf("name").forGetter(PersonnelEntry::getName),
                 Codec.STRING.fieldOf("occupation").forGetter(PersonnelEntry::getOccupation),
                 Codec.STRING.optionalFieldOf("department", "").forGetter(PersonnelEntry::getDepartment),

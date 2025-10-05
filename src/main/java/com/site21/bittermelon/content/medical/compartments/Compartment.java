@@ -10,7 +10,6 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 import static com.site21.bittermelon.init.neoforge.BitterItems.BODY_PART;
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_REGISTRY;
@@ -30,6 +29,8 @@ public class Compartment {
             layers.add(new HashSet<>());
         }
 
+        VisualData visualData = properties.visualData;
+
         return new CompartmentInstance(
                 this,
                 UUID.randomUUID(),
@@ -39,7 +40,7 @@ public class Compartment {
                 properties.defaultAttributes,
                 properties.defaultTags,
                 id,
-                properties.visualData
+                new VisualData(visualData.x, visualData.y, visualData.z, visualData.scale, visualData.width, visualData.height, visualData.icon)
         );
     }
 
@@ -86,7 +87,7 @@ public class Compartment {
         LayerData[] layers = new LayerData[]{new LayerData(ResourceLocation.withDefaultNamespace("textures/block/stone.png"), "Compartment", 0, 0)};
         Item item = BODY_PART.get();
         float defaultHealth = 0;
-        VisualData visualData = VisualData.empty();
+        VisualData visualData = VisualData.empty().width(200).height(200);
 
         public Properties defaultTags(EnumSet<CompartmentTag> defaultTags) {
             this.defaultTags = defaultTags;
