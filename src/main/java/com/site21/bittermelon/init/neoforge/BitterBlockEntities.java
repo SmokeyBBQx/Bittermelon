@@ -17,6 +17,7 @@ import com.site21.bittermelon.content.blocks.devices.implementations.speaker.Spe
 import com.site21.bittermelon.content.blocks.devices.implementations.thermometer.ThermometerBlockEntity;
 import com.site21.bittermelon.content.blocks.powergrid.distributionboard.DistributionBoardBlockEntity;
 import com.site21.bittermelon.content.blocks.scp.scp151.SCP151BlockEntity;
+import com.site21.bittermelon.content.blocks.stickynote.StickyNoteBlockEntity;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.content.blocks.wallwriting.WallWritingBlockEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -82,4 +83,7 @@ public class BitterBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WallWritingBlockEntity>> WALL_WRITING_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("wall_writing_block_entity",
             () -> BlockEntityType.Builder.of(WallWritingBlockEntity::new, WALL_WRITING.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StickyNoteBlockEntity>> STICKY_NOTE_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("sticky_note_block_entity",
+            () -> BlockEntityType.Builder.of(StickyNoteBlockEntity::new, STICKY_NOTE.get()).build(null));
 }

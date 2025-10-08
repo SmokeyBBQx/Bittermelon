@@ -31,6 +31,8 @@ public class BitterItemModelProvider extends ItemModelProvider {
         basicItem(BitterItems.LARGE_SLIDING_DOOR.get());
         basicItem(BitterItems.SECURE_DOOR.get());
         basicItem(BitterItems.SLIDING_DOOR.get());
+        basicItem(BitterItems.STICKY_NOTE.get());
+        basicItem(BitterItems.PEN.get());
 
         generateBlockItemModels();
     }

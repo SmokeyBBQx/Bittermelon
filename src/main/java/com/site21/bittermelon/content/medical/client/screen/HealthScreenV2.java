@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.site21.bittermelon.init.custom.Compartments.TRAY;
+
 public class HealthScreenV2 extends Screen {
     private final UUID characterUUID;
     private Character character;

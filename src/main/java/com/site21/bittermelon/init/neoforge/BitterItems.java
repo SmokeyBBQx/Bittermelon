@@ -4,6 +4,7 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.items.GermTest;
 import com.site21.bittermelon.content.items.IntercomPhoneItem;
 import com.site21.bittermelon.content.items.KeycardItem;
+import com.site21.bittermelon.content.items.StickyNote;
 import com.site21.bittermelon.content.items.handheldsysteminterface.HandheldSystemInterface;
 import com.site21.bittermelon.content.items.medical.tools.SyringeItem;
 import com.site21.bittermelon.content.items.mop.MopItem;
@@ -498,4 +499,13 @@ public class BitterItems {
 
     public static final DeferredItem<HighlighterItem> HIGHLIGHTER = ITEMS.register("highlighter", () -> new HighlighterItem(
             new Item.Properties()));
+
+    public static final DeferredItem<StickyNote> STICKY_NOTE = ITEMS.register("sticky_note", () -> new StickyNote(
+            BitterBlocks.STICKY_NOTE.get(),
+            new Item.Properties().stacksTo(16)
+    ));
+
+    public static final DeferredItem<Item> PEN = ITEMS.register("pen", () -> new Item(
+            new Item.Properties()
+    ));
 }

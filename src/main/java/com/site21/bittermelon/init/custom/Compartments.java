@@ -1,10 +1,7 @@
 package com.site21.bittermelon.init.custom;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.medical.compartments.Compartment;
-import com.site21.bittermelon.content.medical.compartments.LayerData;
-import com.site21.bittermelon.content.medical.compartments.MedicalAttribute;
-import com.site21.bittermelon.content.medical.compartments.VisualData;
+import com.site21.bittermelon.content.medical.compartments.*;
 import com.site21.bittermelon.init.neoforge.BitterItems;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -271,4 +268,17 @@ public class Compartments {
                     .defaultHealth(10)
             )
     );
+
+    public static final DeferredHolder<Compartment, Compartment> TRAY = COMPARTMENTS.register("tray",
+            () -> new Compartment("tray", new Compartment.Properties()
+                    .layers(
+                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/iron_block.png"), "Surgical Tray", 100, 80)
+                    )
+            ));
+
+    public static final DeferredHolder<Compartment, Compartment> SCALPEL = COMPARTMENTS.register("scalpel",
+            () -> new SharpObject("scalpel", new Compartment.Properties().item(BitterItems.SCALPEL.get())));
+
+    public static final DeferredHolder<Compartment, Compartment> CUT = COMPARTMENTS.register("cut",
+            () -> new Compartment("cut", new Compartment.Properties().visualData(VisualData.empty().icon("cut"))));
 }

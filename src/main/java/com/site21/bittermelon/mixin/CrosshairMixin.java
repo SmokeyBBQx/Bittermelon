@@ -3,6 +3,8 @@ package com.site21.bittermelon.mixin;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.content.blocks.stickynote.StickyNoteBlock;
+import com.site21.bittermelon.content.blocks.stickynote.StickyNoteBlockEntity;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
@@ -27,6 +29,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Objects;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlockTags.INSPECTABLE;
+import static com.site21.bittermelon.init.neoforge.BitterBlocks.STICKY_NOTE;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.YELLOW_INSPECTION_POSTER;
 
 @Mixin(Gui.class)
@@ -41,6 +44,22 @@ public class CrosshairMixin {
             if (minecraft.level == null) return;
             BlockState blockState = minecraft.level.getBlockState(pos);
 
+            if (blockState.getBlock() instanceof StickyNoteBlock stickyNoteBlock
+                    && minecraft.level.getBlockEntity(pos) instanceof StickyNoteBlockEntity stickyNote) {
+                StickyNoteBlock.Position position = stickyNoteBlock.getPosition(blockState, blockHitResult.getLocation(), pos);
+                String note = stickyNote.getNotes()[position.ordinal()];
+                if (note == null) return;
+
+                boolean hasNote = stickyNoteBlock.hasNoteAtPosition(position, blockState) && !note.isEmpty();
+
+                if (hasNote) {
+                    bittermelon$renderCustomCrosshairTexture(guiGraphics, minecraft);
+                    ci.cancel();
+                }
+                return;
+            }
+
+            // TODO: Inspectable tag is not working, need to figure out why
             if (blockState.is(INSPECTABLE) || blockState.is(YELLOW_INSPECTION_POSTER)) {
                 bittermelon$renderCustomCrosshairTexture(guiGraphics, minecraft);
                 ci.cancel();
@@ -66,7 +85,7 @@ public class CrosshairMixin {
                 customCrosshairTexture,
                 (screenWidth - crosshairSize) / 2,
                 (screenHeight - crosshairSize) / 2,
-                0,0,
+                0, 0,
                 crosshairSize, crosshairSize,
                 crosshairSize, crosshairSize
         );

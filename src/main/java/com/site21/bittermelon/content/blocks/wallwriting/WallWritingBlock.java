@@ -2,15 +2,12 @@ package com.site21.bittermelon.content.blocks.wallwriting;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.site21.bittermelon.content.blocks.wallwriting.networking.OpenWallWritingScreen;
 import com.site21.bittermelon.content.items.writingutensils.WallWriter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -28,13 +25,11 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-import static net.minecraft.world.item.Items.AIR;
 import static net.minecraft.world.item.Items.SPONGE;
 import static net.minecraft.world.level.block.FaceAttachedHorizontalDirectionalBlock.canAttach;
 

@@ -12,6 +12,8 @@ import com.site21.bittermelon.content.blocks.devices.privilege.networking.SetPri
 import com.site21.bittermelon.content.blocks.powergrid.distributionboard.networking.OpenDistributionBoardScreen;
 import com.site21.bittermelon.content.blocks.powergrid.distributionboard.networking.ToggleBreaker;
 import com.site21.bittermelon.content.blocks.powergrid.distributionboard.networking.ToggleMainSwitch;
+import com.site21.bittermelon.content.blocks.stickynote.networking.OpenStickyNoteScreen;
+import com.site21.bittermelon.content.blocks.stickynote.networking.UpdateStickyNote;
 import com.site21.bittermelon.content.blocks.wallwriting.networking.OpenWallWritingScreen;
 import com.site21.bittermelon.content.blocks.wallwriting.networking.UpdateWallWriting;
 import com.site21.bittermelon.content.character.networking.*;
@@ -538,6 +540,18 @@ public class PayloadRegistration {
                 UpdateCompartmentPosition.TYPE,
                 UpdateCompartmentPosition.STREAM_CODEC,
                 UpdateCompartmentPosition::handle
+        );
+
+        registrar.playToClient(
+                OpenStickyNoteScreen.TYPE,
+                OpenStickyNoteScreen.STREAM_CODEC,
+                OpenStickyNoteScreen::handle
+        );
+
+        registrar.playToServer(
+                UpdateStickyNote.TYPE,
+                UpdateStickyNote.STREAM_CODEC,
+                UpdateStickyNote::handle
         );
     }
 }

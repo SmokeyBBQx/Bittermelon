@@ -1,6 +1,8 @@
 package com.site21.bittermelon.content.medical.compartments;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.content.medical.client.screen.HealthScreenV2;
+import com.site21.bittermelon.content.medical.client.screen.widget.CompartmentSpaceWidget;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.core.Holder;
@@ -63,6 +65,14 @@ public class Compartment {
         ItemStack stack = properties.item.getDefaultInstance();
         stack.set(BitterDataComponents.COMPARTMENT, instance.toData());
         return stack;
+    }
+
+    public void performAction(@NotNull CompartmentSpaceWidget widget, double mouseX, double mouseY, int button) {
+        widget.handleCompartmentPlacement(mouseX, mouseY);
+    }
+
+    public void performActionOn(@NotNull CompartmentSpaceWidget widget, CompartmentInstance target, CompartmentInstance instance, double mouseX, double mouseY, int button) {
+        widget.handleCompartmentPlacement(mouseX, mouseY);
     }
 
     public Holder<Compartment> builtInRegistryHolder() {

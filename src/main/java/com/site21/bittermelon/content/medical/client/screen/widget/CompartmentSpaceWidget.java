@@ -352,7 +352,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
                                float partialTick, List<VisualData> revealingCompartments) {
         sortWidgets();
 
-        for (CompartmentNodeWidget widget : compartmentWidgets) {
+        for (CompartmentNodeWidget widget : sortedWidgets) {
             CompartmentNodeWidget hoveredWidget = getHoveredWidget(mouseX, mouseY);
             if (hoveredWidget != null && hoveredWidget.equals(widget)
                     && isWithinRevealedArea(revealingCompartments, mouseX, mouseY, contentX, contentY))
@@ -571,17 +571,17 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
             scrollX -= dragX;
             scrollY -= dragY;
 
-            int contentWidth = width - 17;
-            int contentHeight = height - 18;
-
-            int layerWidth = layers[layerIndex].width();
-            int layerHeight = layers[layerIndex].height();
-
-            double maxScrollX = Math.max(0, layerWidth - contentWidth);
-            double maxScrollY = Math.max(0, layerHeight - contentHeight);
-
-            scrollX = Mth.clamp(scrollX, 0, maxScrollX);
-            scrollY = Mth.clamp(scrollY, 0, maxScrollY);
+//            int contentWidth = width - 17;
+//            int contentHeight = height - 18;
+//
+//            int layerWidth = layers[layerIndex].width();
+//            int layerHeight = layers[layerIndex].height();
+//
+//            double maxScrollX = Math.max(0, layerWidth - contentWidth);
+//            double maxScrollY = Math.max(0, layerHeight - contentHeight);
+//
+//            scrollX = Mth.clamp(scrollX, 0, maxScrollX);
+//            scrollY = Mth.clamp(scrollY, 0, maxScrollY);
 
             updateCompartmentWidgetPositions();
             return true;
@@ -651,20 +651,21 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     }
 
     public void handleCompartmentInteraction(double mouseX, double mouseY, int button) {
-        if (button == 0) {
-            for (CompartmentNodeWidget widget : compartmentWidgets) {
-                if (widget.isMouseOver(mouseX, mouseY)) {
-                    return;
-                }
+        CompartmentInstance heldCompartment = healthScreen.getHeldItemData().heldItem().get(BitterDataComponents.COMPARTMENT).toInstance();
+
+        for (CompartmentNodeWidget widget : compartmentWidgets) {
+            if (widget.isMouseOver(mouseX, mouseY)) {
+                heldCompartment.getCompartment().performActionOn(this, widget.getCompartment(), heldCompartment, mouseX, mouseY, button);
+                return;
             }
         }
 
-        if (button == 1) {
-            handleCompartmentPlacement(mouseX, mouseY);
-        }
+        heldCompartment.getCompartment().performAction(this, mouseX, mouseY, button);
     }
 
     public void handleCompartmentPlacement(double mouseX, double mouseY) {
+        // TODO: Prevent from placing compartments outside the layer area
+
         HeldItemData heldItem = healthScreen.getHeldItemData();
         CompartmentInstance target = heldItem.heldItem().get(BitterDataComponents.COMPARTMENT).toInstance();
 
@@ -772,6 +773,10 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
 
     public void setCompartment(CompartmentInstance compartment) {
         this.compartment = compartment;
+    }
+
+    public HealthScreenV2 getHealthScreen() {
+        return healthScreen;
     }
 
     @Override

@@ -182,4 +182,9 @@ public class BitterDataComponents {
             "empty_time",
             builder -> builder.persistent(Codec.LONG)
     );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> MESSAGE = DATA_COMPONENTS.registerComponentType(
+            "message",
+            builder -> builder.persistent(Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8)
+    );
 }

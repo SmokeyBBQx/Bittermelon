@@ -21,8 +21,10 @@ import com.site21.bittermelon.content.blocks.devices.implementations.thermometer
 import com.site21.bittermelon.content.blocks.poster.SmallPosterBlock;
 import com.site21.bittermelon.content.blocks.powergrid.distributionboard.DistributionBoardBlock;
 import com.site21.bittermelon.content.blocks.scp.scp151.SCP151Block;
+import com.site21.bittermelon.content.blocks.stickynote.StickyNoteBlock;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.content.blocks.wallwriting.WallWritingBlock;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
@@ -134,5 +136,21 @@ public class BitterBlocks {
                     .noCollission()
                     .replaceable()
                     .destroyTime(-1)
+                    .sound(SoundType.SAND)
+            ));
+
+    public static final DeferredBlock<StickyNoteBlock> STICKY_NOTE = BLOCKS.register("sticky_note",
+            () -> new StickyNoteBlock(BlockBehaviour.Properties.of()
+                    .noOcclusion()
+                    .noCollission()
+                    .sound(new SoundType(
+                            1.0f,
+                            1.0f,
+                            SoundEvents.BOOK_PUT,
+                            SoundEvents.BOOK_PUT,
+                            SoundEvents.BOOK_PUT,
+                            SoundEvents.BOOK_PUT,
+                            SoundEvents.BOOK_PUT
+                    ))
             ));
 }
