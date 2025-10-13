@@ -61,8 +61,8 @@ public class KeycardReaderSecureDoorBlock extends SecureDoorBlock implements Ent
         Map<String, Boolean> requiredPrivileges = blockEntity.getPrivileges();
         Map<String, Boolean> privileges = PersonnelRegistry.get(level).getEntry(id).getPrivileges();
         if (privileges.keySet().stream().anyMatch(requiredPrivileges.keySet()::contains)) {
-            blockEntity.setLocked(false, true);
-            blockEntity.runForOtherHalf(otherHalf -> otherHalf.setLocked(false, true));
+            blockEntity.setLocked(false);
+            blockEntity.runForOtherHalf(otherHalf -> otherHalf.setLocked(false));
             level.playSound(null, pos, SoundEvents.NOTE_BLOCK_BELL.value(), SoundSource.BLOCKS);
         }
     }

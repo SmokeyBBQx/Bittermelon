@@ -4,6 +4,7 @@ import com.site21.bittermelon.content.blocks.devices.ElectronicBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.Signal;
+import com.site21.bittermelon.content.blocks.powergrid.PowerCell;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -19,7 +20,7 @@ import java.util.Map;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.DISTRIBUTION_BOARD_BLOCK_ENTITY;
 
-public class DistributionBoardBlockEntity extends ElectronicBlockEntity {
+public class DistributionBoardBlockEntity extends ElectronicBlockEntity implements PowerCell {
     private final Map<String, OutputPort> outputPorts;
     private final Map<String, InputPort> inputPorts;
     private boolean mainSwitch = true;
@@ -28,8 +29,6 @@ public class DistributionBoardBlockEntity extends ElectronicBlockEntity {
     private float supply = 300;
     private int maxDraw = 1000;
     private final Map<String, Float> loads;
-    private int updateTimer = 0;
-    private final int UPDATE_THRESHOLD = 20;
 
     public DistributionBoardBlockEntity(BlockPos pos, BlockState blockState) {
         super(DISTRIBUTION_BOARD_BLOCK_ENTITY.get(), pos, blockState);
@@ -50,17 +49,7 @@ public class DistributionBoardBlockEntity extends ElectronicBlockEntity {
     }
 
     public void tick() {
-        updateTimer++;
 
-        if (updateTimer >= UPDATE_THRESHOLD) {
-            updateTimer = 0;
-//            for (String load : loads.keySet()) {
-//                outputPorts.get(load).emit();
-//            }
-            for (OutputPort outputPort : outputPorts.values()) {
-                outputPort.update(level);
-            }
-        }
     }
 
     @Contract(mutates = "this")
@@ -73,19 +62,22 @@ public class DistributionBoardBlockEntity extends ElectronicBlockEntity {
     }
 
     public float drawPower(String port, float requestedDraw) {
+        // If main switch is off or breaker is off, no power is drawn
         if (!mainSwitch) return 0;
-        if (!breakers.getOrDefault(port, true)) return 0;
+        if (!breakers.getOrDefault(port, false)) return 0;
 
         loads.put(port, requestedDraw);
 
         float totalDemand = loads.values().stream().reduce(0f, Float::sum);
 
+        // Check for overload
         if (totalDemand > maxDraw) {
             setMainSwitch(false);
             loads.clear();
             return 0;
         }
 
+        // Distribute power proportionally if demand exceeds supply
         if (totalDemand > supply) {
             float actualDraw = (supply / totalDemand) * requestedDraw;
             loads.put(port, actualDraw);

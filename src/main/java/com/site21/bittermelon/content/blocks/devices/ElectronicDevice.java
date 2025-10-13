@@ -2,6 +2,7 @@ package com.site21.bittermelon.content.blocks.devices;
 
 import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
+import com.site21.bittermelon.content.blocks.powergrid.PowerCell;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -228,4 +229,21 @@ public interface ElectronicDevice {
             blockEntity.setChanged();
         }
     }
+
+    default void drawPower(Level level, float draw) {
+        InputPort powerSupplyPort = getInputPorts().get("POWER_SUPPLY");
+        if (powerSupplyPort == null) return;
+
+        OutputPort connectedPort = powerSupplyPort.getConnectedPort(level);
+        if (connectedPort == null) return;
+
+        if (level.getBlockEntity(connectedPort.pos) instanceof PowerCell powerCell) {
+            setSupply(powerCell.drawPower(connectedPort.id, draw));
+            setDraw(draw);
+        }
+    }
+
+    void setSupply(float supply);
+
+    void setDraw(float draw);
 }

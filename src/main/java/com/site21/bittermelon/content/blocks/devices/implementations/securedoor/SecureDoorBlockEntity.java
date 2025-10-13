@@ -7,13 +7,9 @@ import com.site21.bittermelon.content.blocks.devices.PanelDevice;
 import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.Signal;
-import com.site21.bittermelon.content.blocks.powergrid.distributionboard.DistributionBoardBlockEntity;
-import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -24,23 +20,20 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.SECURE_DOOR_BLOCK_ENTITY;
 
 public class SecureDoorBlockEntity extends ElectronicBlockEntity implements ElectronicDevice, NetworkDevice, PanelDevice {
+    private static final int LOCK_TICK_THRESHOLD = 80;
+
     private final Map<String, OutputPort> outputPorts;
     private final Map<String, InputPort> inputPorts;
     private boolean isLocked = true;
     private int lockTickCounter = 0;
-    private static final int LOCK_TICK_THRESHOLD = 80;
     private String address;
-    private float draw = 255;
-    private float supply = 0;
     public boolean isPanelOpen = false;
 
     public SecureDoorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
@@ -66,6 +59,8 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
     }
 
     public void tick() {
+        if (level == null) return;
+
         if (!isLocked) {
             lockTickCounter++;
             if (lockTickCounter >= LOCK_TICK_THRESHOLD) {
@@ -74,7 +69,6 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
                 runForOtherHalf(otherHalf -> otherHalf.setLocked(true));
                 setMotors(false);
                 runForOtherHalf(SecureDoorBlockEntity::triggerMotorsActiveOutput);
-                if (level == null) return;
                 level.playSound(null, worldPosition, SoundEvents.NOTE_BLOCK_IRON_XYLOPHONE.value(), SoundSource.BLOCKS);
             }
         }
@@ -85,64 +79,43 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
         }
     }
 
+    public float getIdleDraw() {
+        return 15;
+    }
+
     private void receivePower(Signal signal) {
-        updatePowerConsumption();
+        drawPower(draw);
     }
 
-    private void updatePowerConsumption() {
-        OutputPort connectedPort = inputPorts.get("POWER_SUPPLY").getConnectedPort(level);
-        if (connectedPort == null) return;
-        if (level == null) return;
-        if (level.getBlockEntity(connectedPort.pos) instanceof DistributionBoardBlockEntity DB) {
-            float newSupply = DB.drawPower(connectedPort.id, draw);
-            if (newSupply != supply) {
-                supply = DB.drawPower(connectedPort.id, draw);
-                setChanged();
-            }
-        }
-    }
-
-    public boolean isOn() {
-        if (supply >= draw) return true;
-        if (supply <= 0 || level == null) return false;
-        float random = level.getRandom().nextFloat();
-
-        if (random < (supply / draw)) {
-            return true;
-        } else {
-            level.playSound(null, worldPosition, BitterSounds.SPARKS.get(), SoundSource.BLOCKS, 1, 1);
-            return false;
-        }
+    private boolean isOpen(@NotNull BlockState blockState) {
+        return blockState.getValue(DoorBlock.OPEN);
     }
 
     private void toggleMotors(@NotNull Signal signal) {
-        if (!isOn()) return;
-
         if (signal.asBoolean()) {
-            BlockState blockState = getBlockState();
-            if (blockState.getBlock() instanceof SecureDoorBlock secureDoorBlock) {
-                if (isLocked && !secureDoorBlock.isOpen(blockState)) return;
-                setMotors(!secureDoorBlock.isOpen(blockState));
-                runForOtherHalf(SecureDoorBlockEntity::triggerMotorsActiveOutput);
-            }
+            setMotors(!isOpen(getBlockState()));
         }
     }
 
     private void setMotors(@NotNull Signal signal) {
-        if (!isOn()) return;
-
         setMotors(signal.asBoolean());
-        runForOtherHalf(SecureDoorBlockEntity::triggerMotorsActiveOutput);
     }
 
     public void setMotors(boolean open) {
         if (level == null) return;
+
+        drawPower(180);
+        if (!isOn()) return;
+
         BlockState blockState = getBlockState();
         if (blockState.getBlock() instanceof SecureDoorBlock secureDoorBlock) {
             if (isLocked && !secureDoorBlock.isOpen(blockState)) return;
             secureDoorBlock.setOpen(null, level, blockState, worldPosition, open);
             triggerMotorsActiveOutput();
+            runForOtherHalf(SecureDoorBlockEntity::triggerMotorsActiveOutput);
         }
+
+        sleep();
     }
 
     private void triggerMotorsActiveOutput() {
@@ -153,8 +126,6 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
     }
 
     private void toggleLocked(@NotNull Signal signal) {
-        if (!isOn()) return;
-
         if (signal.asBoolean()) {
             setLocked(!isLocked);
             runForOtherHalf(otherHalf -> otherHalf.setLocked(isLocked));
@@ -162,8 +133,6 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
     }
 
     private void setLocked(@NotNull Signal signal) {
-        if (!isOn()) return;
-
         setLocked(signal.asBoolean());
         runForOtherHalf(otherHalf -> otherHalf.setLocked(signal.asBoolean()));
     }
@@ -173,10 +142,7 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
     }
 
     public void setLocked(boolean locked) {
-        setLocked(locked, isOn());
-    }
-
-    public void setLocked(boolean locked, boolean on) {
+        drawPower(110);
         if (!isOn()) return;
 
         if (locked != isLocked) {
@@ -184,6 +150,8 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
             isLocked = locked;
             setChanged();
         }
+
+        sleep();
     }
 
     @Override

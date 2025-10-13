@@ -65,11 +65,6 @@ public class IntercomBlockEntity extends ElectronicBlockEntity implements ISyncS
         }
     }
 
-    private boolean isOn() {
-//        return supply >= draw;
-        return true;
-    }
-
     @Override
     public void onSyncSound(@NotNull SyncSoundEvent event) {
         if (!isOn() || !micOn || event.getSoundType() == SyncSoundType.SPEAKER) return;
