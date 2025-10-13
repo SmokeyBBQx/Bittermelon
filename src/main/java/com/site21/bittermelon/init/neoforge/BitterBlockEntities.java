@@ -8,6 +8,7 @@ import com.site21.bittermelon.content.blocks.devices.implementations.containment
 import com.site21.bittermelon.content.blocks.devices.implementations.detonator.DetonatorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.environmentsensor.EnvironmentSensorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.implementations.keycardscanner.KeycardReaderBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.PersonnelTerminalBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.KeycardReaderSecureDoorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.SecureDoorBlockEntity;
@@ -86,4 +87,7 @@ public class BitterBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StickyNoteBlockEntity>> STICKY_NOTE_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("sticky_note_block_entity",
             () -> BlockEntityType.Builder.of(StickyNoteBlockEntity::new, STICKY_NOTE.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KeycardReaderBlockEntity>> KEYCARD_READER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("keycard_reader_block_entity",
+            () -> BlockEntityType.Builder.of(KeycardReaderBlockEntity::new, KEYCARD_READER.get()).build(null));
 }

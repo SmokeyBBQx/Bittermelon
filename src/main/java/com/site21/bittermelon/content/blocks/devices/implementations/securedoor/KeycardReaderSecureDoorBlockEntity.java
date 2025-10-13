@@ -14,10 +14,11 @@ import java.util.Map;
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.KEYCARD_READER_SECURE_DOOR_BLOCK_ENTITY;
 
 public class KeycardReaderSecureDoorBlockEntity extends SecureDoorBlockEntity implements PrivilegeOwner {
-    private final Map<String, Boolean> privileges = new HashMap<>();
+    private final Map<String, Boolean> privileges;
 
     public KeycardReaderSecureDoorBlockEntity(BlockPos pos, BlockState blockState) {
         super(KEYCARD_READER_SECURE_DOOR_BLOCK_ENTITY.get(), pos, blockState);
+        privileges = new HashMap<>();
     }
 
     public Map<String, Boolean> getPrivileges() {
@@ -39,11 +40,7 @@ public class KeycardReaderSecureDoorBlockEntity extends SecureDoorBlockEntity im
         super.saveAdditional(tag, registries);
         if (getBlockState().getValue(SecureDoorBlock.HALF).equals(DoubleBlockHalf.LOWER)) return;
 
-        CompoundTag privilegesTag = new CompoundTag();
-        for (Map.Entry<String, Boolean> entry : privileges.entrySet()) {
-            privilegesTag.putBoolean(entry.getKey(), entry.getValue());
-        }
-        tag.put("privileges", privilegesTag);
+        serializePrivileges(tag);
     }
 
     @Override
@@ -51,11 +48,6 @@ public class KeycardReaderSecureDoorBlockEntity extends SecureDoorBlockEntity im
         super.loadAdditional(tag, registries);
         if (getBlockState().getValue(SecureDoorBlock.HALF).equals(DoubleBlockHalf.LOWER)) return;
 
-        privileges.clear();
-        CompoundTag privilegesTag = tag.getCompound("privileges");
-
-        for (String key : privilegesTag.getAllKeys()) {
-            privileges.put(key, privilegesTag.getBoolean(key));
-        }
+        deserializePrivileges(tag);
     }
 }

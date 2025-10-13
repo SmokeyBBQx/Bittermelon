@@ -1,5 +1,7 @@
 package com.site21.bittermelon.content.blocks.poster;
 
+import com.site21.bittermelon.content.blocks.properties.BitterStateProperties;
+import com.site21.bittermelon.content.blocks.properties.Placement;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.StringRepresentable;
@@ -20,20 +22,13 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
 public class SmallPosterBlock extends Block implements SimpleWaterloggedBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
-    public static final EnumProperty<Placement> PLACEMENT = EnumProperty.create("placement", Placement.class);
+    public static final EnumProperty<Placement> PLACEMENT = BitterStateProperties.PLACEMENT;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-
-    private static final VoxelShape SHAPE_LEFT_NORTH = Block.box(1.5, 0.5, 0, 9.5, 11.5, 1);
-    private static final VoxelShape SHAPE_LEFT_EAST = Block.box(15, 0.5, 1.5, 16, 11.5, 9.5);
-    private static final VoxelShape SHAPE_LEFT_SOUTH = Block.box(6.5, 0.5, 15, 14.5, 11.5, 16);
-    private static final VoxelShape SHAPE_LEFT_WEST = Block.box(0, 0.5, 6.5, 1, 11.5, 14.5);
-
-    private static final VoxelShape SHAPE_RIGHT_NORTH = Block.box(6.5, 0.5, 0, 14.5, 11.5, 1);
-    private static final VoxelShape SHAPE_RIGHT_EAST = Block.box(15, 0.5, 6.5, 16, 11.5, 14.5);
-    private static final VoxelShape SHAPE_RIGHT_SOUTH = Block.box(1.5, 0.5, 15, 9.5, 11.5, 16);
-    private static final VoxelShape SHAPE_RIGHT_WEST = Block.box(0, 0.5, 1.5, 1, 11.5, 9.5);
+    private static final Map<Direction, Map<Placement, VoxelShape>> SHAPES;
 
     public SmallPosterBlock(Properties properties) {
         super(properties);
@@ -52,22 +47,7 @@ public class SmallPosterBlock extends Block implements SimpleWaterloggedBlock {
     public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         Direction direction = state.getValue(FACING);
         Placement placement = state.getValue(PLACEMENT);
-
-        if (placement == Placement.RIGHT) {
-            return switch (direction) {
-                case EAST -> SHAPE_RIGHT_EAST;
-                case SOUTH -> SHAPE_RIGHT_SOUTH;
-                case WEST -> SHAPE_RIGHT_WEST;
-                default -> SHAPE_RIGHT_NORTH;
-            };
-        } else {
-            return switch (direction) {
-                case EAST -> SHAPE_LEFT_EAST;
-                case SOUTH -> SHAPE_LEFT_SOUTH;
-                case WEST -> SHAPE_LEFT_WEST;
-                default -> SHAPE_LEFT_NORTH;
-            };
-        }
+        return SHAPES.get(direction).get(placement);
     }
 
     @Override
@@ -103,29 +83,27 @@ public class SmallPosterBlock extends Block implements SimpleWaterloggedBlock {
 
     @Override
     public @NotNull FluidState getFluidState(@NotNull BlockState state) {
-        return state.getValue(WATERLOGGED) ?
-                Fluids.WATER.getSource(false) :
-                super.getFluidState(state);
+        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
-    public enum Placement implements StringRepresentable {
-        LEFT("left"),
-        RIGHT("right");
-
-        private final String name;
-
-        Placement(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public @NotNull String getSerializedName() {
-            return this.name;
-        }
-
-        @Override
-        public String toString() {
-            return this.name;
-        }
+    static {
+        SHAPES = Map.of(
+                Direction.NORTH, Map.of(
+                        Placement.LEFT, Block.box(1.5, 0.5, 0, 9.5, 11.5, 1),
+                        Placement.RIGHT, Block.box(6.5, 0.5, 0, 14.5, 11.5, 1)
+                ),
+                Direction.EAST, Map.of(
+                        Placement.LEFT, Block.box(15, 0.5, 1.5, 16, 11.5, 9.5),
+                        Placement.RIGHT, Block.box(15, 0.5, 6.5, 16, 11.5, 14.5)
+                ),
+                Direction.SOUTH, Map.of(
+                        Placement.LEFT, Block.box(6.5, 0.5, 15, 14.5, 11.5, 16),
+                        Placement.RIGHT, Block.box(1.5, 0.5, 15, 9.5, 11.5, 16)
+                ),
+                Direction.WEST, Map.of(
+                        Placement.LEFT, Block.box(0, 0.5, 6.5, 1, 11.5, 14.5),
+                        Placement.RIGHT, Block.box(0, 0.5, 1.5, 1, 11.5, 9.5)
+                )
+        );
     }
 }

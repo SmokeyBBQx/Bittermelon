@@ -508,4 +508,9 @@ public class BitterItems {
     public static final DeferredItem<Item> PEN = ITEMS.register("pen", () -> new Item(
             new Item.Properties()
     ));
+
+    public static final DeferredItem<BlockItem> KEYCARD_READER = ITEMS.register("keycard_reader", () -> new BlockItem(
+            BitterBlocks.KEYCARD_READER.get(),
+            new Item.Properties()
+    ));
 }

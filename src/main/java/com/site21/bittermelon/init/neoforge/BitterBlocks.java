@@ -6,6 +6,7 @@ import com.site21.bittermelon.content.blocks.devices.implementations.detonator.D
 import com.site21.bittermelon.content.blocks.devices.implementations.environmentsensor.EnvironmentSensor;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.keycardprinter.KeycardPrinter;
+import com.site21.bittermelon.content.blocks.devices.implementations.keycardscanner.KeycardReaderBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.PersonnelTerminalBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.KeycardReaderSecureDoorBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.SecureDoorBlock;
@@ -25,6 +26,7 @@ import com.site21.bittermelon.content.blocks.stickynote.StickyNoteBlock;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.content.blocks.wallwriting.WallWritingBlock;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
@@ -153,4 +155,10 @@ public class BitterBlocks {
                             SoundEvents.BOOK_PUT
                     ))
             ));
+
+    public static final DeferredBlock<KeycardReaderBlock> KEYCARD_READER = BLOCKS.register("keycard_reader", () -> new KeycardReaderBlock(BlockBehaviour.Properties.of()
+            .noOcclusion()
+            .sound(SoundType.METAL)
+            .destroyTime(1.5f)
+    ));
 }

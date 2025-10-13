@@ -50,8 +50,9 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
                 "TOGGLE_LOCK", new InputPort("TOGGLE_LOCK", this::toggleLocked, worldPosition),
                 "SET_LOCK", new InputPort("SET_LOCK", this::setLocked, worldPosition),
                 "TOGGLE_MOTORS", new InputPort("TOGGLE_MOTORS", this::toggleMotors, worldPosition),
-                "SET_MOTORS", new InputPort("SET_MOTORS", this::setMotors, worldPosition)
-        ));
+                "SET_MOTORS", new InputPort("SET_MOTORS", this::setMotors, worldPosition),
+                "TOGGLE_OPEN", new InputPort("TOGGLE_OPEN", this::toggleOpen, worldPosition
+        )));
     }
 
     public SecureDoorBlockEntity(BlockPos pos, BlockState state) {
@@ -152,6 +153,13 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
         }
 
         sleep();
+    }
+
+    private void toggleOpen(@NotNull Signal signal) {
+        if (signal.asBoolean()) {
+            setLocked(false);
+            setMotors(!isOpen(getBlockState()));
+        }
     }
 
     @Override

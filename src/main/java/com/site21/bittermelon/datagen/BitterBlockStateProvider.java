@@ -3,6 +3,7 @@ package com.site21.bittermelon.datagen;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.poster.SmallPosterBlock;
 import com.site21.bittermelon.content.blocks.powergrid.distributionboard.DistributionBoardBlock;
+import com.site21.bittermelon.content.blocks.properties.Placement;
 import com.site21.bittermelon.content.blocks.scp.scp151.SCP151Block;
 import com.site21.bittermelon.content.blocks.stickynote.StickyNoteBlock;
 import net.minecraft.core.Direction;
@@ -46,6 +47,7 @@ public class BitterBlockStateProvider extends BlockStateProvider {
         createCustomTrapdoorBlockState(DISTRIBUTION_BOARD.get(), "block/distribution_board");
         createPaintingBlockState(SCP151.get(), "block/scp151");
         createStickyNoteBlock(STICKY_NOTE.get());
+        createKeycardReader(KEYCARD_READER.get());
     }
 
     private void createSmallPosterBlockState(Block block, String path) {
@@ -55,7 +57,7 @@ public class BitterBlockStateProvider extends BlockStateProvider {
             if (direction.getAxis().isHorizontal()) {
                 builder.partialState()
                         .with(SmallPosterBlock.FACING, direction)
-                        .with(SmallPosterBlock.PLACEMENT, SmallPosterBlock.Placement.RIGHT)
+                        .with(SmallPosterBlock.PLACEMENT, Placement.RIGHT)
                         .modelForState()
                         .modelFile(models().withExistingParent(path + "_right", modLoc("block/small_poster_right"))
                                 .texture("texture", modLoc(path)))
@@ -64,7 +66,7 @@ public class BitterBlockStateProvider extends BlockStateProvider {
 
                 builder.partialState()
                         .with(SmallPosterBlock.FACING, direction)
-                        .with(SmallPosterBlock.PLACEMENT, SmallPosterBlock.Placement.LEFT)
+                        .with(SmallPosterBlock.PLACEMENT, Placement.LEFT)
                         .modelForState()
                         .modelFile(models().withExistingParent(path + "_left", modLoc("block/small_poster_left"))
                                 .texture("texture", modLoc(path)))
@@ -200,6 +202,30 @@ public class BitterBlockStateProvider extends BlockStateProvider {
         return models().withExistingParent(blockName + "_" + binaryPattern, modLoc("block/sticky_note"))
                 .texture("texture", texture)
                 .renderType("cutout");
+    }
+
+    private void createKeycardReader(Block block) {
+        VariantBlockStateBuilder builder = getVariantBuilder(block);
+
+        for (Direction direction : Direction.values()) {
+            if (direction.getAxis().isHorizontal()) {
+                builder.partialState()
+                        .with(SmallPosterBlock.FACING, direction)
+                        .with(SmallPosterBlock.PLACEMENT, Placement.RIGHT)
+                        .modelForState()
+                        .modelFile(models().getExistingFile(modLoc("block/keycard_reader_right")))
+                        .rotationY(getYRotation(direction))
+                        .addModel();
+
+                builder.partialState()
+                        .with(SmallPosterBlock.FACING, direction)
+                        .with(SmallPosterBlock.PLACEMENT, Placement.LEFT)
+                        .modelForState()
+                        .modelFile(models().getExistingFile(modLoc("block/keycard_reader_left")))
+                        .rotationY(getYRotation(direction))
+                        .addModel();
+            }
+        }
     }
 
     @Contract(pure = true)

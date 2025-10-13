@@ -21,13 +21,14 @@ import java.util.Map;
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.DISTRIBUTION_BOARD_BLOCK_ENTITY;
 
 public class DistributionBoardBlockEntity extends ElectronicBlockEntity implements PowerCell {
+    private static final int MAX_DRAW = 1000;
+
     private final Map<String, OutputPort> outputPorts;
     private final Map<String, InputPort> inputPorts;
     private boolean mainSwitch = true;
     private final Map<String, Boolean> breakers;
     private float draw;
     private float supply = 300;
-    private int maxDraw = 1000;
     private final Map<String, Float> loads;
 
     public DistributionBoardBlockEntity(BlockPos pos, BlockState blockState) {
@@ -49,7 +50,6 @@ public class DistributionBoardBlockEntity extends ElectronicBlockEntity implemen
     }
 
     public void tick() {
-
     }
 
     @Contract(mutates = "this")
@@ -71,7 +71,7 @@ public class DistributionBoardBlockEntity extends ElectronicBlockEntity implemen
         float totalDemand = loads.values().stream().reduce(0f, Float::sum);
 
         // Check for overload
-        if (totalDemand > maxDraw) {
+        if (totalDemand > MAX_DRAW) {
             setMainSwitch(false);
             loads.clear();
             return 0;

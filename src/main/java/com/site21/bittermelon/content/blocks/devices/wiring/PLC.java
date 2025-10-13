@@ -57,6 +57,16 @@ public class PLC implements ElectronicDevice {
         return null;
     }
 
+    @Override
+    public void setSupply(float supply) {
+
+    }
+
+    @Override
+    public void setDraw(float draw) {
+
+    }
+
     private void handleInput(Signal signal, String inputID, Level level) {
         for (Instruction instruction : instructions) {
             if (Objects.equals(instruction.inputID(), inputID)) {

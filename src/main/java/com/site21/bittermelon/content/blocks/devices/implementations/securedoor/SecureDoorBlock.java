@@ -46,17 +46,20 @@ public class SecureDoorBlock extends DoorBlock implements EntityBlock {
     @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
         if (level.getBlockEntity(pos) instanceof SecureDoorBlockEntity blockEntity) {
-            if (!blockEntity.isLocked()) {
-                blockEntity.setMotors(!isOpen(state));
-                this.playSound(player, level, pos, state.getValue(OPEN));
-                level.gameEvent(player, !this.isOpen(state) ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
-                if (this.isOpen(state)) {
-                    blockEntity.setLocked(true);
-                    blockEntity.runForOtherHalf(otherHalf -> otherHalf.setLocked(true));
-                    level.playSound(null, pos, SoundEvents.NOTE_BLOCK_IRON_XYLOPHONE.value(), SoundSource.BLOCKS);
-                }
-                return InteractionResult.sidedSuccess(level.isClientSide);
+            if (blockEntity.isLocked()) return InteractionResult.PASS;
+
+            blockEntity.setMotors(!isOpen(state));
+            playSound(player, level, pos, state.getValue(OPEN));
+            level.gameEvent(player, !isOpen(state) ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
+
+            if (isOpen(state)) {
+                blockEntity.setLocked(true);
+                blockEntity.runForOtherHalf(otherHalf -> otherHalf.setLocked(true));
+                level.playSound(null, pos, SoundEvents.NOTE_BLOCK_IRON_XYLOPHONE.value(), SoundSource.BLOCKS);
             }
+
+            return InteractionResult.sidedSuccess(level.isClientSide);
+
         }
         return InteractionResult.FAIL;
     }

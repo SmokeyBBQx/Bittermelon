@@ -41,28 +41,31 @@ public class KeycardReaderSecureDoorBlock extends SecureDoorBlock implements Ent
         return new KeycardReaderSecureDoorBlockEntity(blockPos, blockState);
     }
 
+    @Override
     protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
-        if (level.getBlockEntity(pos) instanceof KeycardReaderSecureDoorBlockEntity blockEntity) {
-            if (!blockEntity.isLocked()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (level.getBlockEntity(pos) instanceof KeycardReaderSecureDoorBlockEntity door) {
+            if (!door.isLocked()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
             if (stack.is(KEYCARD.get())) {
                 int id = stack.getOrDefault(BitterDataComponents.ID_NUMBER, 0);
-                scan(id, level, pos, blockEntity);
-                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+                if (id == 0) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+
+                scan(id, level, pos, door);
+                return ItemInteractionResult.SUCCESS;
             }
         }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
-    public void scan(int id, Level level, BlockPos pos, KeycardReaderSecureDoorBlockEntity blockEntity) {
+    public void scan(int id, Level level, BlockPos pos, KeycardReaderSecureDoorBlockEntity door) {
         if (level == null) return;
-        if (!blockEntity.isOn()) return;
+        if (!door.isOn()) return;
 
-        Map<String, Boolean> requiredPrivileges = blockEntity.getPrivileges();
+        Map<String, Boolean> requiredPrivileges = door.getPrivileges();
         Map<String, Boolean> privileges = PersonnelRegistry.get(level).getEntry(id).getPrivileges();
-        if (privileges.keySet().stream().anyMatch(requiredPrivileges.keySet()::contains)) {
-            blockEntity.setLocked(false);
-            blockEntity.runForOtherHalf(otherHalf -> otherHalf.setLocked(false));
+        if (door.hasPermission(privileges, requiredPrivileges)) {
+            door.setLocked(false);
+            door.runForOtherHalf(otherHalf -> otherHalf.setLocked(false));
             level.playSound(null, pos, SoundEvents.NOTE_BLOCK_BELL.value(), SoundSource.BLOCKS);
         }
     }
