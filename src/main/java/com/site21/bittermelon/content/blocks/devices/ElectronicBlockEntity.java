@@ -41,8 +41,8 @@ public abstract class ElectronicBlockEntity extends BlockEntity implements Elect
     }
 
     public boolean isOn() {
-        if (supply >= draw) return true;
         if (supply <= 0 || level == null) return false;
+        if (supply >= draw) return true;
         float random = level.getRandom().nextFloat();
 
         if (random < (supply / draw)) {

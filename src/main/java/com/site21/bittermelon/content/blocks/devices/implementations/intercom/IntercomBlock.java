@@ -42,6 +42,7 @@ public class IntercomBlock extends IndentedSmallBlock implements EntityBlock {
         if (level.isClientSide) return InteractionResult.CONSUME_PARTIAL;
 
         if (player.isCrouching()) {
+
             if (player.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) > 2 * 2) {
                 player.sendSystemMessage(Component.literal("Too far away to pick up the phone.").withStyle(ChatFormatting.RED));
                 return InteractionResult.FAIL;
@@ -52,7 +53,8 @@ public class IntercomBlock extends IndentedSmallBlock implements EntityBlock {
                     player.sendSystemMessage(Component.literal("Someone has already picked up the phone.").withStyle(ChatFormatting.RED));
                     return InteractionResult.FAIL;
                 }
-                ItemStack phone = new ItemStack(INTERCOM_PHONE.get());
+
+                ItemStack phone = INTERCOM_PHONE.toStack();
                 intercom.setPhoneUser(player);
                 phone.set(CORD_CONNECTION.get(), pos);
                 player.setItemInHand(InteractionHand.MAIN_HAND, phone);
@@ -60,6 +62,7 @@ public class IntercomBlock extends IndentedSmallBlock implements EntityBlock {
                 level.playSound(null, pos, SoundEvents.HEAVY_CORE_HIT, SoundSource.PLAYERS);
                 intercom.setPhonePickedUp(true);
             }
+
             return InteractionResult.SUCCESS_NO_ITEM_USED;
         }
 
@@ -72,7 +75,6 @@ public class IntercomBlock extends IndentedSmallBlock implements EntityBlock {
 
     protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
         if (stack.getCount() < 1) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-
         if (level.isClientSide) return ItemInteractionResult.FAIL;
 
         if (stack.getItem() instanceof IntercomPhoneItem) {
@@ -83,6 +85,7 @@ public class IntercomBlock extends IndentedSmallBlock implements EntityBlock {
                 intercom.setPhonePickedUp(false);
                 intercom.setPhoneUser(null);
             }
+
             return ItemInteractionResult.SUCCESS;
         }
 

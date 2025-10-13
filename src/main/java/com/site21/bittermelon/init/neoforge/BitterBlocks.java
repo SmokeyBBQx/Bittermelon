@@ -8,6 +8,7 @@ import com.site21.bittermelon.content.blocks.devices.implementations.intercom.In
 import com.site21.bittermelon.content.blocks.devices.implementations.keycardprinter.KeycardPrinter;
 import com.site21.bittermelon.content.blocks.devices.implementations.keycardreader.KeycardReaderBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.PersonnelTerminalBlock;
+import com.site21.bittermelon.content.blocks.devices.implementations.redstonedevice.RedstoneDeviceBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.KeycardReaderSecureDoorBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.SecureDoorBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.LargeSlidingDoorBlock;
@@ -156,7 +157,11 @@ public class BitterBlocks {
             ));
 
     public static final DeferredBlock<KeycardReaderBlock> KEYCARD_READER = BLOCKS.register("keycard_reader", () -> new KeycardReaderBlock(BlockBehaviour.Properties.of()
-            .noOcclusion()
+            .sound(SoundType.METAL)
+            .destroyTime(1.5f)
+    ));
+
+    public static final DeferredBlock<RedstoneDeviceBlock> REDSTONE_DEVICE = BLOCKS.register("redstone_device", () -> new RedstoneDeviceBlock(BlockBehaviour.Properties.of()
             .sound(SoundType.METAL)
             .destroyTime(1.5f)
     ));

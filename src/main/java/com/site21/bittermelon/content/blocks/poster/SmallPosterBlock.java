@@ -63,7 +63,7 @@ public class SmallPosterBlock extends Block implements SimpleWaterloggedBlock {
                 .setValue(WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == net.minecraft.world.level.material.Fluids.WATER);
     }
 
-    private static @NotNull Placement getPlacement(@NotNull BlockPlaceContext context, @NotNull Direction horizontalDirection) {
+    public static @NotNull Placement getPlacement(@NotNull BlockPlaceContext context, @NotNull Direction horizontalDirection) {
         Placement placement;
         Vec3 clickLocation = context.getClickLocation();
         BlockPos clickedPos = context.getClickedPos();

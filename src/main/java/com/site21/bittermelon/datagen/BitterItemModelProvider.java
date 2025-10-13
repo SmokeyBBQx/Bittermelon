@@ -2,7 +2,10 @@ package com.site21.bittermelon.datagen;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.init.neoforge.BitterItems;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
@@ -40,11 +43,10 @@ public class BitterItemModelProvider extends ItemModelProvider {
     private void generateBlockItemModels() {
         for (DeferredHolder<Item, ? extends Item> itemHolder : BitterItems.ITEMS.getEntries()) {
             Item item = itemHolder.get();
-            if (item instanceof BlockItem) {
-                String blockName = itemHolder.getId().getPath();
-
-                if (existingFileHelper.exists(modLoc("block/" + blockName), net.minecraft.server.packs.PackType.CLIENT_RESOURCES, ".json", "models")) {
-                    withExistingParent(blockName, modLoc("block/" + blockName));
+            if (item instanceof BlockItem blockItem) {
+                ResourceLocation resourceLocation = BuiltInRegistries.BLOCK.getKey(blockItem.getBlock());
+                if (existingFileHelper.exists(resourceLocation, PackType.CLIENT_RESOURCES)) {
+                    simpleBlockItem(resourceLocation);
                 }
             } else if (item instanceof SpawnEggItem) {
                 spawnEggItem(item);

@@ -10,6 +10,7 @@ import com.site21.bittermelon.content.blocks.devices.implementations.environment
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.keycardreader.KeycardReaderBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.PersonnelTerminalBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.implementations.redstonedevice.RedstoneDeviceBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.KeycardReaderSecureDoorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.SecureDoorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.LargeSlidingDoorBlockEntity;
@@ -90,4 +91,7 @@ public class BitterBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KeycardReaderBlockEntity>> KEYCARD_READER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("keycard_reader_block_entity",
             () -> BlockEntityType.Builder.of(KeycardReaderBlockEntity::new, KEYCARD_READER.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RedstoneDeviceBlockEntity>> REDSTONE_DEVICE_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("redstone_device_block_entity",
+            () -> BlockEntityType.Builder.of(RedstoneDeviceBlockEntity::new, REDSTONE_DEVICE.get()).build(null));
 }

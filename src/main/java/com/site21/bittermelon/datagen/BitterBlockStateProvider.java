@@ -1,6 +1,7 @@
 package com.site21.bittermelon.datagen;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.content.blocks.devices.implementations.redstonedevice.RedstoneDeviceBlock;
 import com.site21.bittermelon.content.blocks.poster.SmallPosterBlock;
 import com.site21.bittermelon.content.blocks.powergrid.distributionboard.DistributionBoardBlock;
 import com.site21.bittermelon.content.blocks.properties.Placement;
@@ -48,6 +49,7 @@ public class BitterBlockStateProvider extends BlockStateProvider {
         createPaintingBlockState(SCP151.get(), "block/scp151");
         createStickyNoteBlock(STICKY_NOTE.get());
         createKeycardReader(KEYCARD_READER.get());
+        createRedstoneDevice(REDSTONE_DEVICE.get());
     }
 
     private void createSmallPosterBlockState(Block block, String path) {
@@ -227,6 +229,34 @@ public class BitterBlockStateProvider extends BlockStateProvider {
             }
         }
     }
+
+    private void createRedstoneDevice(Block block) {
+        VariantBlockStateBuilder builder = getVariantBuilder(block);
+
+        ModelFile modelOff = models().getExistingFile(modLoc("block/redstone_device_off"));
+        ModelFile modelOn = models().getExistingFile(modLoc("block/redstone_device_on"));
+
+        for (Direction direction : Direction.values()) {
+            if (direction.getAxis().isHorizontal()) {
+                builder.partialState()
+                        .with(RedstoneDeviceBlock.FACING, direction)
+                        .with(RedstoneDeviceBlock.POWERED, false)
+                        .modelForState()
+                        .modelFile(modelOff)
+                        .rotationY(getYRotation(direction))
+                        .addModel();
+
+                builder.partialState()
+                        .with(RedstoneDeviceBlock.FACING, direction)
+                        .with(RedstoneDeviceBlock.POWERED, true)
+                        .modelForState()
+                        .modelFile(modelOn)
+                        .rotationY(getYRotation(direction))
+                        .addModel();
+            }
+        }
+    }
+
 
     @Contract(pure = true)
     private int getYRotation(@NotNull Direction direction) {

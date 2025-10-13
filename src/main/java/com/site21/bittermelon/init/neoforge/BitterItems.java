@@ -513,4 +513,9 @@ public class BitterItems {
             BitterBlocks.KEYCARD_READER.get(),
             new Item.Properties()
     ));
+
+    public static final DeferredItem<BlockItem> REDSTONE_DEVICE = ITEMS.register("redstone_device", () -> new BlockItem(
+            BitterBlocks.REDSTONE_DEVICE.get(),
+            new Item.Properties()
+    ));
 }

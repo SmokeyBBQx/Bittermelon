@@ -1,8 +1,11 @@
 package com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor;
 
+import com.site21.bittermelon.content.blocks.properties.Placement;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -28,6 +31,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
+
 public class SlidingDoorBlock extends Block implements EntityBlock {
     public static final DirectionProperty FACING;
     public static final BooleanProperty OPEN;
@@ -35,17 +40,9 @@ public class SlidingDoorBlock extends Block implements EntityBlock {
     public static final EnumProperty<DoorHingeSide> HINGE;
     public static final EnumProperty<DoubleBlockHalf> HALF;
 
+    private static final Map<Direction, Map<Placement, VoxelShape>> SHAPES;
     protected static final VoxelShape NORTH_SOUTH_AABB;
     protected static final VoxelShape EAST_WEST_AABB;
-
-    protected static final VoxelShape NORTH_RIGHT_OPEN;
-    protected static final VoxelShape NORTH_LEFT_OPEN;
-    protected static final VoxelShape SOUTH_RIGHT_OPEN;
-    protected static final VoxelShape SOUTH_LEFT_OPEN;
-    protected static final VoxelShape EAST_RIGHT_OPEN;
-    protected static final VoxelShape EAST_LEFT_OPEN;
-    protected static final VoxelShape WEST_RIGHT_OPEN;
-    protected static final VoxelShape WEST_LEFT_OPEN;
 
     public SlidingDoorBlock(Properties properties) {
         super(properties);
@@ -80,26 +77,16 @@ public class SlidingDoorBlock extends Block implements EntityBlock {
     }
 
     protected @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
-        Direction direction = state.getValue(FACING);
-        boolean isOpen = state.getValue(OPEN);
-        DoorHingeSide hinge = state.getValue(HINGE);
-
-        if (!isOpen) {
-            if (direction == Direction.NORTH || direction == Direction.SOUTH) {
-                return NORTH_SOUTH_AABB;
-            } else {
-                return EAST_WEST_AABB;
-            }
-        }
-
-        if (direction == Direction.NORTH) {
-            return hinge == DoorHingeSide.RIGHT ? NORTH_RIGHT_OPEN : NORTH_LEFT_OPEN;
-        } else if (direction == Direction.SOUTH) {
-            return hinge == DoorHingeSide.RIGHT ? SOUTH_RIGHT_OPEN : SOUTH_LEFT_OPEN;
-        } else if (direction == Direction.EAST) {
-            return hinge == DoorHingeSide.RIGHT ? EAST_RIGHT_OPEN : EAST_LEFT_OPEN;
+        if (!state.getValue(OPEN)) {
+            return switch (state.getValue(FACING)) {
+                case NORTH, SOUTH -> NORTH_SOUTH_AABB;
+                case EAST, WEST -> EAST_WEST_AABB;
+                default -> throw new IllegalStateException("Unexpected value: " + state.getValue(FACING));
+            };
         } else {
-            return hinge == DoorHingeSide.RIGHT ? WEST_RIGHT_OPEN : WEST_LEFT_OPEN;
+            Direction facing = state.getValue(FACING);
+            Placement placement = state.getValue(HINGE) == DoorHingeSide.LEFT ? Placement.LEFT : Placement.RIGHT;
+            return SHAPES.get(facing).get(placement);
         }
     }
 
@@ -173,33 +160,38 @@ public class SlidingDoorBlock extends Block implements EntityBlock {
         return useRightHinge ? DoorHingeSide.RIGHT : DoorHingeSide.LEFT;
     }
 
+    @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
-        playSound(player, level, pos, state.getValue(OPEN));
-        level.gameEvent(player, isOpen(state) ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
+        if (level.isClientSide) return InteractionResult.PASS;
 
-        BlockPos otherHalf;
-        if (state.getValue(HALF) == DoubleBlockHalf.UPPER) {
-            otherHalf = pos.below();
-        } else {
-            otherHalf = pos.above();
+        if (level.getBlockEntity(pos) instanceof SlidingDoorBlockEntity blockEntity) {
+            if (!blockEntity.isOn() && !state.getValue(OPEN)) {
+                level.gameEvent(player, GameEvent.BLOCK_OPEN, pos);
+                setOpen(level, pos, true);
+                return InteractionResult.SUCCESS;
+            } else if (blockEntity.isOn()) {
+                player.sendSystemMessage(Component.literal("The door's motors prevent you from opening it by hand.")
+                        .withStyle(ChatFormatting.ITALIC)
+                        .withStyle(ChatFormatting.GRAY));
+                return InteractionResult.PASS;
+            }
         }
 
-        toggleOpen(level, pos);
-        toggleOpen(level, otherHalf);
-
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return super.useWithoutItem(state, level, pos, player, hitResult);
     }
 
-    public boolean isOpen(@NotNull BlockState state) {
-        return state.getValue(OPEN);
-    }
+    public void setOpen(@NotNull Level level, BlockPos pos, boolean open) {
+        playSound(null, level, pos, open);
 
-    public void toggleOpen(@NotNull Level level, BlockPos pos) {
-        BlockState state = level.getBlockState(pos);
+        BlockState currentState = level.getBlockState(pos);
+        BlockPos otherHalfPos = currentState.getValue(HALF) == DoubleBlockHalf.UPPER ? pos.below() : pos.above();
+        BlockState otherHalfState = level.getBlockState(otherHalfPos);
 
-        state = state.cycle(OPEN);
-        state = state.setValue(VISIBLE, false);
-        level.setBlock(pos, state, 10);
+        currentState = currentState.setValue(OPEN, open).setValue(VISIBLE, false);
+        otherHalfState = otherHalfState.setValue(OPEN, open).setValue(VISIBLE, false);
+
+        level.setBlock(pos, currentState, 3);
+        level.setBlock(otherHalfPos, otherHalfState, 3);
     }
 
     private void playSound(@Nullable Entity source, @NotNull Level level, BlockPos pos, boolean isOpening) {
@@ -236,13 +228,23 @@ public class SlidingDoorBlock extends Block implements EntityBlock {
         EAST_WEST_AABB = Block.box(6.5, 0.0, 0.0, 9.5, 16.0, 16.0);
 
         double offset = 14.0;
-        NORTH_RIGHT_OPEN = Block.box(offset, 0.0, 6.5, 16.0, 16.0, 9.5);
-        NORTH_LEFT_OPEN = Block.box(0.0, 0.0, 6.5, 16.0 - offset, 16.0, 9.5);
-        SOUTH_RIGHT_OPEN = Block.box(0.0, 0.0, 6.5, 16.0 - offset, 16.0, 9.5);
-        SOUTH_LEFT_OPEN = Block.box(offset, 0.0, 6.5, 16.0, 16.0, 9.5);
-        EAST_RIGHT_OPEN = Block.box(6.5, 0.0, offset, 9.5, 16.0, 16.0);
-        EAST_LEFT_OPEN = Block.box(6.5, 0.0, 0.0, 9.5, 16.0, 16.0 - offset);
-        WEST_RIGHT_OPEN = Block.box(6.5, 0.0, 0.0, 9.5, 16.0, 16.0 - offset);
-        WEST_LEFT_OPEN = Block.box(6.5, 0.0, offset, 9.5, 16.0, 16.0);
+        SHAPES = Map.of(
+                Direction.NORTH, Map.of(
+                        Placement.LEFT, Block.box(0.0, 0.0, 6.5, 16.0 - offset, 16.0, 9.5),
+                        Placement.RIGHT, Block.box(offset, 0.0, 6.5, 16.0, 16.0, 9.5)
+                ),
+                Direction.SOUTH, Map.of(
+                        Placement.LEFT, Block.box(offset, 0.0, 6.5, 16.0, 16.0, 9.5),
+                        Placement.RIGHT, Block.box(0.0, 0.0, 6.5, 16.0 - offset, 16.0, 9.5)
+                ),
+                Direction.EAST, Map.of(
+                        Placement.LEFT, Block.box(6.5, 0.0, 0.0, 9.5, 16.0, 16.0 - offset),
+                        Placement.RIGHT, Block.box(6.5, 0.0, offset, 9.5, 16.0, 16.0)
+                ),
+                Direction.WEST, Map.of(
+                        Placement.LEFT, Block.box(6.5, 0.0, offset, 9.5, 16.0, 16.0),
+                        Placement.RIGHT, Block.box(6.5, 0.0, 0.0, 9.5, 16.0, 16.0 - offset)
+                )
+        );
     }
 }

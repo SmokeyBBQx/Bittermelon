@@ -5,9 +5,13 @@ import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.Signal;
 import com.site21.bittermelon.content.personnel.privilege.PrivilegeOwner;
+import com.site21.bittermelon.content.personnel.registry.PersonnelEntry;
+import com.site21.bittermelon.content.personnel.registry.PersonnelRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,16 +58,28 @@ public class KeycardReaderBlockEntity extends ElectronicBlockEntity implements P
         return "";
     }
 
-    public void triggerAccessGranted() {
+    public void scan(int id) {
         drawPower(20);
         if (!isOn()) return;
 
+        PersonnelEntry entry = PersonnelRegistry.get(level).getEntry(id);
+        if (entry == null) return;
+
+        Map<String, Boolean> requiredPrivileges = getPrivileges();
+        Map<String, Boolean> privileges = entry.getPrivileges();
+        if (hasPermission(privileges, requiredPrivileges)) {
+            triggerAccessGranted();
+            level.playSound(null, worldPosition, SoundEvents.NOTE_BLOCK_BELL.value(), SoundSource.BLOCKS);
+        }
+
+        sleep();
+    }
+
+    public void triggerAccessGranted() {
         InputPort connectedPort = findOutputPort("ACCESS_GRANTED").getConnectedPort(level);
         if (connectedPort != null) {
             connectedPort.receive(new Signal(true));
         }
-
-        sleep();
     }
 
     @Override
