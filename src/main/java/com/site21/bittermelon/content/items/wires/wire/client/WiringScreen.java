@@ -1,18 +1,18 @@
 package com.site21.bittermelon.content.items.wires.wire.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.math.Axis;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
 import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
-import com.site21.bittermelon.content.items.wires.wire.networking.MakeWireConnection;
-import com.site21.bittermelon.content.items.wires.wire.networking.RemoveWiringData;
-import com.site21.bittermelon.content.items.wires.wire.networking.WiringDataUpdate;
+import com.site21.bittermelon.content.items.wires.wire.networking.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -152,17 +152,25 @@ public class WiringScreen extends Screen {
         Player player = Minecraft.getInstance().player;
         if (player == null) return;
         ItemStack wireItem = player.getItemInHand(hand);
+        BlockPos wirePort = wireItem.get(CORD_CONNECTION);
+        String wireId = wireItem.get(PORT_ID);
 
-        if (wireItem.get(CORD_CONNECTION) == null) {
+        if (wirePort == null) {
             PacketDistributor.sendToServer(new WiringDataUpdate(port.pos, port.id, player.getUUID(), hand));
             wireItem.set(CORD_CONNECTION, port.pos);
             wireItem.set(PORT_ID, port.id);
         } else {
-            PacketDistributor.sendToServer(new MakeWireConnection(port.pos, wireItem.get(CORD_CONNECTION), port.id, wireItem.get(PORT_ID)));
+            if (port.connectedPos != null) {
+                PacketDistributor.sendToServer(new SpliceOutputWire(wirePort, port.connectedPos, wireId, port.connectedPortId));
+            } else {
+                PacketDistributor.sendToServer(new MakeWireConnection(port.pos, wirePort, port.id, wireId));
+            }
+
             PacketDistributor.sendToServer(new RemoveWiringData(player.getUUID(), hand));
             wireItem.remove(CORD_CONNECTION);
             wireItem.remove(PORT_ID);
         }
+
         onClose();
     }
 
@@ -170,17 +178,25 @@ public class WiringScreen extends Screen {
         Player player = Minecraft.getInstance().player;
         if (player == null) return;
         ItemStack wireItem = player.getItemInHand(hand);
+        BlockPos wirePort = wireItem.get(CORD_CONNECTION);
+        String wireId = wireItem.get(PORT_ID);
 
-        if (wireItem.get(CORD_CONNECTION) == null) {
+        if (wirePort == null) {
             PacketDistributor.sendToServer(new WiringDataUpdate(port.pos, port.id, player.getUUID(), hand));
             wireItem.set(CORD_CONNECTION, port.pos);
             wireItem.set(PORT_ID, port.id);
         } else {
-            PacketDistributor.sendToServer(new MakeWireConnection(wireItem.get(CORD_CONNECTION), port.pos, wireItem.get(PORT_ID), port.id));
+            if (port.connectedPos != null) {
+                PacketDistributor.sendToServer(new SpliceInputWire(wirePort, port.connectedPos, wireId, port.connectedPortId));
+            } else {
+                PacketDistributor.sendToServer(new MakeWireConnection(wirePort, port.pos, wireId, port.id));
+            }
+
             PacketDistributor.sendToServer(new RemoveWiringData(player.getUUID(), hand));
             wireItem.remove(CORD_CONNECTION);
             wireItem.remove(PORT_ID);
         }
+
         onClose();
     }
 

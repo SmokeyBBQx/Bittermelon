@@ -105,20 +105,20 @@ public class KeycardReaderBlock extends Block implements EntityBlock {
     static {
         SHAPES = Map.of(
                 Direction.NORTH, Map.of(
-                        Placement.LEFT, Block.box(9, 0, 15, 15, 8, 16),
-                        Placement.RIGHT, Block.box(1, 0, 15, 7, 8, 16)
+                        Placement.LEFT, Block.box(10, 3, 15.5, 14, 8, 16),
+                        Placement.RIGHT, Block.box(2, 3, 15.5, 6, 8, 16)
                 ),
                 Direction.EAST, Map.of(
-                        Placement.LEFT, Block.box(0, 0, 9, 1, 8, 15),
-                        Placement.RIGHT, Block.box(0, 0, 1, 1, 8, 7)
+                        Placement.LEFT, Block.box(0, 3, 10, 0.5, 8, 14),
+                        Placement.RIGHT, Block.box(0, 3, 2, 0.5, 8, 6)
                 ),
                 Direction.SOUTH, Map.of(
-                        Placement.LEFT, Block.box(1, 0, 0, 7, 8, 1),
-                        Placement.RIGHT, Block.box(9, 0, 0, 15, 8, 1)
+                        Placement.LEFT, Block.box(2, 3, 0, 6, 8, 0.5),
+                        Placement.RIGHT, Block.box(10, 3, 0, 14, 8, 0.5)
                 ),
                 Direction.WEST, Map.of(
-                        Placement.LEFT, Block.box(15, 0, 1, 16, 8, 7),
-                        Placement.RIGHT, Block.box(15, 0, 9, 16, 8, 15)
+                        Placement.LEFT, Block.box(15.5, 3, 2, 16, 8, 6),
+                        Placement.RIGHT, Block.box(15.5, 3, 10, 16, 8, 14)
                 )
         );
     }

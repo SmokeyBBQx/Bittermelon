@@ -60,7 +60,8 @@ public abstract class ElectronicBlockEntity extends BlockEntity implements Elect
     @Override
     public void setRemoved() {
         super.setRemoved();
-        if (level != null) {
+        if (level == null) return;
+        if (!level.isClientSide && level.isLoaded(worldPosition)) {
             clearElectronicData(level);
         }
     }

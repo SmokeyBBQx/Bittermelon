@@ -18,6 +18,7 @@ import com.site21.bittermelon.content.blocks.wallwriting.networking.OpenWallWrit
 import com.site21.bittermelon.content.blocks.wallwriting.networking.UpdateWallWriting;
 import com.site21.bittermelon.content.character.networking.*;
 import com.site21.bittermelon.content.items.scps.scp377.networking.OpenSCP3771Screen;
+import com.site21.bittermelon.content.items.wires.wire.networking.*;
 import com.site21.bittermelon.content.personnel.privilege.networking.*;
 import com.site21.bittermelon.content.personnel.registry.networking.AddPersonnelEntry;
 import com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.networking.PlaySlidingDoorStuckSound;
@@ -28,10 +29,6 @@ import com.site21.bittermelon.content.mobeffects.electrocuted.networking.CutOffC
 import com.site21.bittermelon.content.entities.implementations.scp650.networking.SetEntityPos;
 import com.site21.bittermelon.content.items.substance.networking.ReleasePressureUpdate;
 import com.site21.bittermelon.content.items.substance.networking.TransferRateUpdate;
-import com.site21.bittermelon.content.items.wires.wire.networking.MakeWireConnection;
-import com.site21.bittermelon.content.items.wires.wire.networking.OpenWiringScreen;
-import com.site21.bittermelon.content.items.wires.wire.networking.RemoveWiringData;
-import com.site21.bittermelon.content.items.wires.wire.networking.WiringDataUpdate;
 import com.site21.bittermelon.content.items.writablepaper.client.OpenPaperEditScreen;
 import com.site21.bittermelon.content.medical.client.screen.networking.*;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.networking.OpenPersonnelScreen;
@@ -552,6 +549,18 @@ public class PayloadRegistration {
                 UpdateStickyNote.TYPE,
                 UpdateStickyNote.STREAM_CODEC,
                 UpdateStickyNote::handle
+        );
+
+        registrar.playToServer(
+                SpliceOutputWire.TYPE,
+                SpliceOutputWire.STREAM_CODEC,
+                SpliceOutputWire::handle
+        );
+
+        registrar.playToServer(
+                SpliceInputWire.TYPE,
+                SpliceInputWire.STREAM_CODEC,
+                SpliceInputWire::handle
         );
     }
 }

@@ -10,6 +10,7 @@ public abstract class Port<T extends Port<? extends Port<?>>> {
     public final BlockPos pos;
     public @Nullable BlockPos connectedPos;
     public @Nullable String connectedPortId;
+    public boolean spliced;
 
     protected @Nullable T cachedConnectedPort;
     protected boolean cacheValid = false;
@@ -20,6 +21,14 @@ public abstract class Port<T extends Port<? extends Port<?>>> {
     }
 
     public abstract @Nullable T getConnectedPort(Level level);
+
+    public void connectTo(@NotNull Port<?> port, boolean spliced) {
+        connectedPos = port.pos;
+        connectedPortId = port.id;
+        cachedConnectedPort = null;
+        cacheValid = false;
+        this.spliced = spliced;
+    }
 
     public void connectTo(@NotNull T port) {
         connectedPos = port.pos;

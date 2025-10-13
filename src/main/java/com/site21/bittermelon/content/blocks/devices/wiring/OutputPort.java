@@ -34,10 +34,16 @@ public class OutputPort extends Port<InputPort> {
             return null;
         }
 
+        // If the cache is invalid, look up the connected port again
         if (!cacheValid) {
             cachedConnectedPort = null;
             if (level.getBlockEntity(connectedPos) instanceof ElectronicDevice electronic) {
-                cachedConnectedPort = electronic.findInputPort(connectedPortId);
+                // If spliced, we need to find the output port and then get its connected port
+                if (spliced) {
+                    cachedConnectedPort = electronic.findOutputPort(connectedPortId).getConnectedPort(level);
+                } else {
+                    cachedConnectedPort = electronic.findInputPort(connectedPortId);
+                }
             }
             cacheValid = true;
         }

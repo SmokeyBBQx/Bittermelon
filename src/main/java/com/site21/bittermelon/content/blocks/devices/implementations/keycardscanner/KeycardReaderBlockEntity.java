@@ -79,18 +79,16 @@ public class KeycardReaderBlockEntity extends ElectronicBlockEntity implements P
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.saveAdditional(tag, registries);
-
+        serializePrivileges(tag);
         saveInputPorts(tag);
         saveOutputPorts(tag);
-        serializePrivileges(tag);
     }
 
     @Override
     public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.loadAdditional(tag, registries);
-
+        deserializePrivileges(tag);
         loadInputPorts(tag);
         loadOutputPorts(tag);
-        deserializePrivileges(tag);
     }
 }
