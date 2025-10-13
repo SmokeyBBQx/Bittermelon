@@ -166,9 +166,7 @@ public class IntercomBlockEntity extends ElectronicBlockEntity implements ISyncS
     public void setRemoved() {
         super.setRemoved();
         if (level != null && !level.isClientSide()) {
-            IntercomManager.get(level).removeIntercom(worldPosition);
             NeoForge.EVENT_BUS.unregister(this);
-            clearElectronicData(level);
         }
     }
 

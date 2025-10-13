@@ -8,7 +8,7 @@ import com.site21.bittermelon.content.blocks.devices.implementations.containment
 import com.site21.bittermelon.content.blocks.devices.implementations.detonator.DetonatorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.environmentsensor.EnvironmentSensorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlockEntity;
-import com.site21.bittermelon.content.blocks.devices.implementations.keycardscanner.KeycardReaderBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.implementations.keycardreader.KeycardReaderBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.PersonnelTerminalBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.KeycardReaderSecureDoorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.SecureDoorBlockEntity;

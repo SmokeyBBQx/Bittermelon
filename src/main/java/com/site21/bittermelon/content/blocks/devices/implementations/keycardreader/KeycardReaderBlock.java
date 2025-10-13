@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.blocks.devices.implementations.keycardscanner;
+package com.site21.bittermelon.content.blocks.devices.implementations.keycardreader;
 
 import com.site21.bittermelon.content.blocks.properties.BitterStateProperties;
 import com.site21.bittermelon.content.blocks.properties.Placement;

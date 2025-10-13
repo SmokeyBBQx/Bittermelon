@@ -4,6 +4,7 @@ import com.site21.bittermelon.content.blocks.base.IndentedSmallBlock;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.client.IntercomScreen;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.networking.OpenIntercomScreen;
 import com.site21.bittermelon.content.items.IntercomPhoneItem;
+import com.site21.bittermelon.content.telecomms.intercom.IntercomManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -38,34 +39,32 @@ public class IntercomBlock extends IndentedSmallBlock implements EntityBlock {
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
+        if (level.isClientSide) return InteractionResult.CONSUME_PARTIAL;
+
         if (player.isCrouching()) {
-            if (!level.isClientSide) {
-                if (player.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) > 2 * 2) {
-                    player.sendSystemMessage(Component.literal("Too far away to pick up the phone.").withStyle(ChatFormatting.RED));
+            if (player.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) > 2 * 2) {
+                player.sendSystemMessage(Component.literal("Too far away to pick up the phone.").withStyle(ChatFormatting.RED));
+                return InteractionResult.FAIL;
+            }
+
+            if (level.getBlockEntity(pos) instanceof IntercomBlockEntity intercom) {
+                if (intercom.isPhonePickedUp()) {
+                    player.sendSystemMessage(Component.literal("Someone has already picked up the phone.").withStyle(ChatFormatting.RED));
                     return InteractionResult.FAIL;
                 }
-
-                if (level.getBlockEntity(pos) instanceof IntercomBlockEntity intercom) {
-                    if (intercom.isPhonePickedUp()) {
-                        player.sendSystemMessage(Component.literal("Someone has already picked up the phone.").withStyle(ChatFormatting.RED));
-                        return InteractionResult.FAIL;
-                    }
-                    ItemStack phone = new ItemStack(INTERCOM_PHONE.get());
-                    intercom.setPhoneUser(player);
-                    phone.set(CORD_CONNECTION.get(), pos);
-                    player.setItemInHand(InteractionHand.MAIN_HAND, phone);
-                    player.sendSystemMessage(Component.literal("You pick up the phone.").withStyle(ChatFormatting.GRAY));
-                    level.playSound(null, pos, SoundEvents.HEAVY_CORE_HIT, SoundSource.PLAYERS);
-                    intercom.setPhonePickedUp(true);
-                }
+                ItemStack phone = new ItemStack(INTERCOM_PHONE.get());
+                intercom.setPhoneUser(player);
+                phone.set(CORD_CONNECTION.get(), pos);
+                player.setItemInHand(InteractionHand.MAIN_HAND, phone);
+                player.sendSystemMessage(Component.literal("You pick up the phone.").withStyle(ChatFormatting.GRAY));
+                level.playSound(null, pos, SoundEvents.HEAVY_CORE_HIT, SoundSource.PLAYERS);
+                intercom.setPhonePickedUp(true);
             }
             return InteractionResult.SUCCESS_NO_ITEM_USED;
         }
 
-        if (!level.isClientSide()) {
-            if (player instanceof ServerPlayer serverPlayer) {
-                PacketDistributor.sendToPlayer(serverPlayer, new OpenIntercomScreen(pos));
-            }
+        if (player instanceof ServerPlayer serverPlayer) {
+            PacketDistributor.sendToPlayer(serverPlayer, new OpenIntercomScreen(pos));
         }
 
         return InteractionResult.SUCCESS_NO_ITEM_USED;
@@ -93,6 +92,14 @@ public class IntercomBlock extends IndentedSmallBlock implements EntityBlock {
         }
 
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    @Override
+    protected void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean movedByPiston) {
+        if (level.getBlockEntity(pos) instanceof IntercomBlockEntity intercom) {
+            intercom.clearElectronicData(level);
+            IntercomManager.get(level).removeIntercom(pos);
+        }
     }
 
     @Override

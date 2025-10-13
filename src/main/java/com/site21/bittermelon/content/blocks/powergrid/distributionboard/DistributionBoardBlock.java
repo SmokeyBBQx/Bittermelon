@@ -1,6 +1,5 @@
 package com.site21.bittermelon.content.blocks.powergrid.distributionboard;
 
-import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.SecureDoorBlockEntity;
 import com.site21.bittermelon.content.blocks.powergrid.distributionboard.networking.OpenDistributionBoardScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -31,17 +30,13 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
+
 public class DistributionBoardBlock extends Block implements EntityBlock {
     public static final EnumProperty<Type> TYPE = EnumProperty.create("type", Type.class);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-
-    protected static final VoxelShape SHAPE_EAST;
-    protected static final VoxelShape SHAPE_WEST;
-    protected static final VoxelShape SHAPE_SOUTH;
-    protected static final VoxelShape SHAPE_NORTH;
-    protected static final VoxelShape SHAPE_DOWN;
-    protected static final VoxelShape SHAPE_UP;
+    private static final Map<Direction, VoxelShape> SHAPES;
 
     public DistributionBoardBlock(Properties properties) {
         super(properties);
@@ -96,19 +91,8 @@ public class DistributionBoardBlock extends Block implements EntityBlock {
 
     @Override
     public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
-        Direction facing = state.getValue(FACING);
-        Type type = state.getValue(TYPE);
-
-        if (type == Type.SIDE) {
-            return switch (facing) {
-                case SOUTH -> SHAPE_SOUTH;
-                case WEST -> SHAPE_WEST;
-                case EAST -> SHAPE_EAST;
-                default -> SHAPE_NORTH;
-            };
-        } else {
-            return type == Type.TOP ? SHAPE_UP : SHAPE_DOWN;
-        }
+        Direction direction = state.getValue(FACING);
+        return SHAPES.get(direction);
     }
 
     @Override
@@ -119,12 +103,14 @@ public class DistributionBoardBlock extends Block implements EntityBlock {
     }
 
     static {
-        SHAPE_EAST = Block.box(0.0F, 0.0F, 0.0F, 3.0F, 16.0F, 16.0F);
-        SHAPE_WEST = Block.box(13.0F, 0.0F, 0.0F, 16.0F, 16.0F, 16.0F);
-        SHAPE_SOUTH = Block.box(0.0F, 0.0F, 0.0F, 16.0F, 16.0F, 3.0F);
-        SHAPE_NORTH = Block.box(0.0F, 0.0F, 13.0F, 16.0F, 16.0F, 16.0F);
-        SHAPE_DOWN = Block.box(0.0F, 0.0F, 0.0F, 16.0F, 3.0F, 16.0F);
-        SHAPE_UP = Block.box(0.0F, 13.0F, 0.0F, 16.0F, 16.0F, 16.0F);
+        SHAPES = Map.of(
+                Direction.NORTH, Block.box(0.0F, 0.0F, 13.0F, 16.0F, 16.0F, 16.0F),
+                Direction.EAST, Block.box(0.0F, 0.0F, 0.0F, 3.0F, 16.0F, 16.0F),
+                Direction.SOUTH, Block.box(0.0F, 0.0F, 0.0F, 16.0F, 16.0F, 3.0F),
+                Direction.WEST, Block.box(13.0F, 0.0F, 0.0F, 16.0F, 16.0F, 16.0F),
+                Direction.UP, Block.box(0.0F, 13.0F, 0.0F, 16.0F, 16.0F, 16.0F),
+                Direction.DOWN, Block.box(0.0F, 0.0F, 0.0F, 16.0F, 3.0F, 16.0F)
+        );
     }
 
     public enum Type implements StringRepresentable {

@@ -105,12 +105,9 @@ public interface ElectronicDevice {
         for (InputPort port : getInputPorts().values()) {
             CompoundTag portTag = new CompoundTag();
 
-            System.out.println("Saving input port:");
-            System.out.println("port: " + port.id);
-            System.out.println("connectedPos: " + port.connectedPos);
-            System.out.println("connectedID: " + port.connectedPortId);
-
             portTag.putString("id", port.id);
+
+            // Only save connection info if the port is connected
             if (port.connectedPos != null && port.connectedPortId != null) {
                 portTag.putLong("connectedPos", port.connectedPos.asLong());
                 portTag.putString("connectedID", port.connectedPortId);
@@ -135,11 +132,7 @@ public interface ElectronicDevice {
             String portId = portTag.getString("id");
             InputPort port = findInputPort(portId);
 
-            System.out.println("Loading input port:");
-            System.out.println("port: " + portId);
-            System.out.println("tag: " + portTag);
-            System.out.println("contains: " + portTag.contains("connectedPos"));
-
+            // Restore connection info if present
             if (port != null && portTag.contains("connectedPos")) {
                 port.connectedPos = BlockPos.of(portTag.getLong("connectedPos"));
                 port.connectedPortId = portTag.getString("connectedID");
@@ -160,12 +153,9 @@ public interface ElectronicDevice {
         for (OutputPort port : getOutputPorts().values()) {
             CompoundTag portTag = new CompoundTag();
 
-            System.out.println("Saving output port:");
-            System.out.println("port: " + port.id);
-            System.out.println("connectedPos: " + port.connectedPos);
-            System.out.println("connectedID: " + port.connectedPortId);
-
             portTag.putString("id", port.id);
+
+            // Only save connection info if the port is connected
             if (port.connectedPos != null && port.connectedPortId != null) {
                 portTag.putLong("connectedPos", port.connectedPos.asLong());
                 portTag.putString("connectedID", port.connectedPortId);
@@ -190,11 +180,7 @@ public interface ElectronicDevice {
             String portId = portTag.getString("id");
             OutputPort port = findOutputPort(portId);
 
-            System.out.println("Loading output port:");
-            System.out.println("port: " + portId);
-            System.out.println("tag: " + portTag);
-            System.out.println("contains: " + portTag.contains("connectedPos"));
-
+            // Restore connection info if present
             if (port != null && portTag.contains("connectedPos")) {
                 port.connectedPos = BlockPos.of(portTag.getLong("connectedPos"));
                 port.connectedPortId = portTag.getString("connectedID");
