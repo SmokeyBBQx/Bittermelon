@@ -1,27 +1,24 @@
 package com.site21.bittermelon.content.character.client.characterselection;
 
-import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.character.networking.SwitchCharacter;
 import com.site21.bittermelon.networking.server.AddEffect;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static net.minecraft.world.effect.MobEffects.CONFUSION;
+import static net.minecraft.world.effect.MobEffects.NAUSEA;
 
 @OnlyIn(Dist.CLIENT)
 public class CharacterSelectionScreen extends Screen {
@@ -84,11 +81,11 @@ public class CharacterSelectionScreen extends Screen {
         if (minecraft == null || minecraft.player == null) return;
 
         minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.PORTAL_TRAVEL, 1));
-        PacketDistributor.sendToServer(new AddEffect(new MobEffectInstance(CONFUSION, 160, 255), minecraft.player.getId()));
+        ClientPacketDistributor.sendToServer(new AddEffect(new MobEffectInstance(NAUSEA, 160, 255), minecraft.player.getId()));
 
-        PacketDistributor.sendToServer(new SwitchCharacter(character.getEntityUUID(), character.getUUID()));
+        ClientPacketDistributor.sendToServer(new SwitchCharacter(character.getEntityUUID(), character.getUUID()));
         characterManager.setActiveCharacter(minecraft.player, character.getUUID());
-        minecraft.player.sendSystemMessage(Component.literal("Switched to: " + character.getName()).withStyle(ChatFormatting.GREEN));
+        minecraft.player.displayClientMessage(Component.literal("Switched to: " + character.getName()).withStyle(ChatFormatting.GREEN), false);
 
         onClose();
     }

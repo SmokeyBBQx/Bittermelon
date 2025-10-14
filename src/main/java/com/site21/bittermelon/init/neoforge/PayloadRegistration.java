@@ -31,7 +31,7 @@ import com.site21.bittermelon.content.mobeffects.electrocuted.networking.CutOffC
 import com.site21.bittermelon.content.entities.implementations.scp650.networking.SetEntityPos;
 import com.site21.bittermelon.content.items.substance.networking.ReleasePressureUpdate;
 import com.site21.bittermelon.content.items.substance.networking.TransferRateUpdate;
-import com.site21.bittermelon.content.items.writablepaper.client.OpenPaperEditScreen;
+import com.site21.bittermelon.content.items.writablepaper.networking.OpenPaperEditScreen;
 import com.site21.bittermelon.content.medical.client.screen.networking.*;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.networking.OpenPersonnelScreen;
 import com.site21.bittermelon.content.personnel.registry.networking.RemovePersonnelEntry;
@@ -55,7 +55,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.jetbrains.annotations.NotNull;
 
-@EventBusSubscriber(modid = Bittermelon.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class PayloadRegistration {
     @SubscribeEvent
     public static void register(final @NotNull RegisterPayloadHandlersEvent event) {

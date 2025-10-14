@@ -12,7 +12,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.PredicateSensor;
 import net.tslat.smartbrainlib.object.SquareRadius;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 
 import java.util.List;
@@ -46,6 +46,6 @@ public class NearbyFoodSensor<E extends Mob & HasBasicNeeds> extends PredicateSe
                 ItemEntity.class,
                 item -> predicate().test(item, entity));
 
-        BrainUtils.setMemory(entity, BitterMemoryTypes.NEARBY_EDIBLE_ITEMS.get(), foodItems);
+        BrainUtil.setMemory(entity, BitterMemoryTypes.NEARBY_EDIBLE_ITEMS.get(), foodItems);
     }
 }

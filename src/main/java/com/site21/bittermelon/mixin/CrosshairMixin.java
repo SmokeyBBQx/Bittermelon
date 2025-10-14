@@ -1,7 +1,5 @@
 package com.site21.bittermelon.mixin;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.stickynote.StickyNoteBlock;
 import com.site21.bittermelon.content.blocks.stickynote.StickyNoteBlockEntity;
@@ -11,9 +9,7 @@ import net.minecraft.client.Options;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -29,7 +25,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Objects;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlockTags.INSPECTABLE;
-import static com.site21.bittermelon.init.neoforge.BitterBlocks.STICKY_NOTE;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.YELLOW_INSPECTION_POSTER;
 
 @Mixin(Gui.class)

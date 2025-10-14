@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.PredicateSensor;
 import net.tslat.smartbrainlib.object.SquareRadius;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -58,9 +58,9 @@ public class NearbyDrinkableFluidsSensor<E extends Mob & HasBasicNeeds> extends 
         }
 
         if (fluids.isEmpty()) {
-            BrainUtils.clearMemory(entity, BitterMemoryTypes.NEARBY_DRINKABLE_FLUIDS.get());
+            BrainUtil.clearMemory(entity, BitterMemoryTypes.NEARBY_DRINKABLE_FLUIDS.get());
         } else {
-            BrainUtils.setMemory(entity, BitterMemoryTypes.NEARBY_DRINKABLE_FLUIDS.get(), fluids);
+            BrainUtil.setMemory(entity, BitterMemoryTypes.NEARBY_DRINKABLE_FLUIDS.get(), fluids);
         }
     }
 }

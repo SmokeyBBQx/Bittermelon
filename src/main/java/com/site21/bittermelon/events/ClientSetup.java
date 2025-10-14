@@ -40,7 +40,7 @@ import static com.site21.bittermelon.init.neoforge.BitterItems.*;
 import static net.minecraft.core.component.DataComponents.BASE_COLOR;
 import static net.minecraft.world.item.DyeColor.WHITE;
 
-@EventBusSubscriber(modid = Bittermelon.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class ClientSetup {
 
     @SubscribeEvent

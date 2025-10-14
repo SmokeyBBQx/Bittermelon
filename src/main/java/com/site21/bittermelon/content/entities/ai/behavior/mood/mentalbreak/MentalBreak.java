@@ -8,7 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 
 import java.util.List;
 
@@ -24,11 +24,11 @@ public class MentalBreak<E extends LivingEntity & NeedsUser> extends ExtendedBeh
 
     @Override
     protected void start(E entity) {
-        BrainUtils.setMemory(entity, BitterMemoryTypes.HAS_MENTAL_BREAK.get(), true);
+        BrainUtil.setMemory(entity, BitterMemoryTypes.HAS_MENTAL_BREAK.get(), true);
     }
 
     @Override
     protected void stop(E entity) {
-        BrainUtils.setMemory(entity, BitterMemoryTypes.HAS_MENTAL_BREAK.get(), false);
+        BrainUtil.setMemory(entity, BitterMemoryTypes.HAS_MENTAL_BREAK.get(), false);
     }
 }

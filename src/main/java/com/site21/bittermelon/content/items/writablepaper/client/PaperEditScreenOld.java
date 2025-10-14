@@ -12,7 +12,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix3x2f;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -95,14 +96,14 @@ public class PaperEditScreenOld extends Screen {
         DisplayCache displayCache = this.getDisplayCache();
 
         for (LineInfo lineInfo : displayCache.lines) {
-            guiGraphics.pose().pushPose();
+            guiGraphics.pose().pushMatrix();
             float scale = lineInfo.scale;
-            guiGraphics.pose().scale(scale, scale, 0);
+            guiGraphics.pose().scale(scale, scale, new Matrix3x2f());
             guiGraphics.drawString(this.font, lineInfo.asComponent,
                     (int) (lineInfo.x / scale),
                     (int) (lineInfo.y / scale),
                     -16777216, false);
-            guiGraphics.pose().popPose();
+            guiGraphics.pose().popMatrix();
         }
 
         this.renderHighlight(guiGraphics, displayCache.selection);
@@ -111,7 +112,7 @@ public class PaperEditScreenOld extends Screen {
 
     public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         this.renderTransparentBackground(guiGraphics);
-        guiGraphics.blit(PAPER_LOCATION, (this.width - 250) / 2, 20, 0, 0, 250, 256);
+        guiGraphics.blit(PAPER_LOCATION, (width - 250) / 2, 20, 2, 2, 0, 0, 250, 256);
     }
 
     private void renderCursor(GuiGraphics guiGraphics, Pos2i cursorPos, boolean isEndOfText) {
@@ -131,7 +132,7 @@ public class PaperEditScreenOld extends Screen {
             int j = rect2i.getY();
             int k = i + rect2i.getWidth();
             int l = j + rect2i.getHeight();
-            guiGraphics.fill(RenderType.guiTextHighlight(), i, j, k, l, -16776961);
+            guiGraphics.fill(RenderPipelines.GUI_TEXT_HIGHLIGHT, i, j, k, l, -16776961);
         }
 
     }

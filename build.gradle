@@ -129,7 +129,7 @@ configurations {
 }
 
 dependencies {
-    implementation "net.tslat.smartbrainlib:SmartBrainLib-neoforge-${minecraft_version}:${sbl_version}"
+    implementation "net.tslat.smartbrainlib:SmartBrainLib-neoforge-1.21.7:${sbl_version}"
     implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
 }
 

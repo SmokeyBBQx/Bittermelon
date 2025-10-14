@@ -6,7 +6,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 
-@EventBusSubscriber(modid = Bittermelon.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class BitterGameRules {
     public static GameRules.Key<GameRules.BooleanValue> ENTITIES_MAKE_FLOORS_DIRTY_RULE;
 

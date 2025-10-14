@@ -10,7 +10,7 @@ import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class ObserversSensor<E extends Mob> extends ExtendedSensor<E> {
         if (!observers.isEmpty()) {
             entity.getBrain().setMemory(OBSERVERS.get(), observers);
         } else {
-            BrainUtils.clearMemory(entity, OBSERVERS.get());
+            BrainUtil.clearMemory(entity, OBSERVERS.get());
         }
     }
 

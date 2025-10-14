@@ -8,10 +8,10 @@ import com.site21.bittermelon.content.medical.blood.BloodData;
 import com.site21.bittermelon.content.medical.medicalstats.AnimalMedicalStats;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.CarpetBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -32,11 +32,8 @@ public class BleedingEffect extends MobEffect {
     }
 
     @Override
-    public boolean applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
-        if (entity.level().isClientSide) return true;
-
+    public boolean applyEffectTick(@NotNull ServerLevel level, @NotNull LivingEntity entity, int amplifier) {
         BlockPos pos = entity.getOnPos().above();
-        Level level = entity.level();
 
         BlockState existingState = level.getBlockState(pos);
         if (level.getBlockState(pos.below()).getBlock() instanceof CarpetBlock) return false;

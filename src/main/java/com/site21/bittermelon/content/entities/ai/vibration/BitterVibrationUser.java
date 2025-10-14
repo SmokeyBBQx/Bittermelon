@@ -9,7 +9,7 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.level.gameevent.EntityPositionSource;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.gameevent.PositionSource;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.Nullable;
 
 public class BitterVibrationUser implements BitterVibrationSystem.User {
@@ -51,7 +51,7 @@ public class BitterVibrationUser implements BitterVibrationSystem.User {
                     scp939.increaseAngerAt(vibrationEntity);
                 }
             }
-            if (!scp939.getAngerLevel().isAngry() && BrainUtils.getTargetOfEntity(scp939) == null) {
+            if (!scp939.getAngerLevel().isAngry() && BrainUtil.getTargetOfEntity(scp939) == null) {
                 SCP939.setDisturbanceLocation(pos, scp939);
             }
         }

@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 
+@Deprecated
 public abstract class ConditionOld extends CompartmentOld {
     protected final LivingEntity entity;
     protected final Character character;

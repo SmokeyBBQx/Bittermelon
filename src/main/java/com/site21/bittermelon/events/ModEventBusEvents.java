@@ -17,7 +17,7 @@ import static com.site21.bittermelon.content.entities.implementations.scp131.cli
 import static com.site21.bittermelon.content.entities.implementations.scp1507.client.SCP1507Renderer.SCP1507_LAYER;
 import static com.site21.bittermelon.content.entities.implementations.scp650.client.SCP650Model.SCP650_LAYER;
 
-@EventBusSubscriber(modid = Bittermelon.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class ModEventBusEvents {
 
     @SubscribeEvent

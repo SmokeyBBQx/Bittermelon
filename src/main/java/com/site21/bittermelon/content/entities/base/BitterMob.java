@@ -3,13 +3,15 @@ package com.site21.bittermelon.content.entities.base;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.DebugPackets;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
 import org.jetbrains.annotations.NotNull;
@@ -100,18 +102,20 @@ public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob im
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
+    protected void addAdditionalSaveData(@NotNull ValueOutput output) {
+        super.addAdditionalSaveData(output);
+
         for (Need need : getNeeds().keySet()) {
-            compound.putFloat(need.name(), getNeed(need));
+            output.putFloat(need.name(), getNeed(need));
         }
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
+    protected void readAdditionalSaveData(@NotNull ValueInput input) {
+        super.readAdditionalSaveData(input);
+
         for (Need need : getNeeds().keySet()) {
-            setNeed(need, compound.getFloat(need.name()));
+            setNeed(need, input.getFloatOr(need.name(), 0.0f));
         }
     }
 
@@ -121,7 +125,8 @@ public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob im
     }
 
     @Override
-    protected void customServerAiStep() {
+    protected void customServerAiStep(@NotNull ServerLevel level) {
+        super.customServerAiStep(level);
         tickBrain((T) this);
     }
 

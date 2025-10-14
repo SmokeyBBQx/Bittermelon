@@ -1,16 +1,13 @@
 package com.site21.bittermelon.content.character.client.charactereditor;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.character.PlayerInfo;
 import com.site21.bittermelon.content.character.client.charactereditor.roleselection.RoleSelectionScreen;
 import com.site21.bittermelon.content.character.client.characterselection.CharacterSelectionScreen;
-import com.site21.bittermelon.content.character.networking.SwitchCharacter;
 import com.site21.bittermelon.content.character.networking.UpdateCharacter;
 import com.site21.bittermelon.content.character.skin.SkinManager;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -18,15 +15,15 @@ import net.minecraft.client.gui.components.MultiLineEditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -104,8 +101,10 @@ public class CharacterEditorScreen extends Screen {
         urlField.setResponder(url -> skin = SkinManager.loadSkin(url, "temp" + url.hashCode()));
 
         startY += fieldSpacing;
-        descriptionField = new MultiLineEditBox(font, startX, startY, fieldWidth,
-                (int) (fieldHeight * 4.5), Component.literal(""), Component.literal("Description"));
+        descriptionField = MultiLineEditBox.builder()
+                .setX(startX)
+                .setY(startY)
+                .build(font, fieldWidth, (int) (fieldHeight * 4.5f), Component.literal("Description"));
 
         modelButton = new ModelButton(screenX + MARGIN + 43, screenY + SCREEN_HEIGHT / 2 - MARGIN,
                 16, 16, button -> isWideModel = button.isWide());
@@ -179,7 +178,7 @@ public class CharacterEditorScreen extends Screen {
         boolean isNewCharacter = (character == null);
         updateOrCreateCharacter(isNewCharacter, name, description, emoteColor, skinURL, model);
 
-        PacketDistributor.sendToServer(new UpdateCharacter(character));
+        ClientPacketDistributor.sendToServer(new UpdateCharacter(character));
         navigateToNextScreen(isNewCharacter);
     }
 
@@ -249,9 +248,7 @@ public class CharacterEditorScreen extends Screen {
     public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 
-        RenderSystem.enableBlend();
-        guiGraphics.blitSprite(BACKGROUND, screenX, screenY, SCREEN_WIDTH, SCREEN_HEIGHT);
-        RenderSystem.disableBlend();
+        guiGraphics.blitSprite(RenderPipelines.GUI, BACKGROUND, screenX, screenY, SCREEN_WIDTH, SCREEN_HEIGHT);
     }
 
     private void renderPlayer(@NotNull GuiGraphics guiGraphics) {
@@ -273,11 +270,11 @@ public class CharacterEditorScreen extends Screen {
         );
     }
 
-    public static void renderEntityInInventoryFollowsAngle(@NotNull GuiGraphics graphics, int leftX, int topY, int rightX, int bottomY, int scale, float yOffset, float horizontalRotation, float verticalRotation, @NotNull LivingEntity entity) {
-        float centerX = (float) (leftX + rightX) / 2.0F;
-        float centerY = (float) (topY + bottomY) / 2.0F;
+    public static void renderEntityInInventoryFollowsAngle(@NotNull GuiGraphics graphics, int x1, int y1, int x2, int y2, int scale, float yOffset, float horizontalRotation, float verticalRotation, @NotNull LivingEntity entity) {
+        float centerX = (float) (x1 + x2) / 2.0F;
+        float centerY = (float) (y1 + y2) / 2.0F;
 
-        graphics.enableScissor(leftX, topY, rightX, bottomY);
+        graphics.enableScissor(x1, y1, x2, y2);
 
         Quaternionf baseRotation = (new Quaternionf()).rotateZ((float) Math.PI);
         Quaternionf verticalTiltRotation = (new Quaternionf()).rotateX(verticalRotation * 20.0F * ((float) Math.PI / 180F));
@@ -303,7 +300,7 @@ public class CharacterEditorScreen extends Screen {
         Vector3f translation = new Vector3f(0.0F, entity.getBbHeight() / 2.0F + yOffset * entityScale, 0.0F);
         float adjustedScale = (float) scale / entityScale;
 
-        renderEntityInInventory(graphics, centerX, centerY, adjustedScale, translation, baseRotation, verticalTiltRotation, entity);
+        renderEntityInInventory(graphics, x1, y1, x2, y2, adjustedScale, translation, baseRotation, verticalTiltRotation, entity);
 
         entity.yBodyRot = originalBodyRotation;
         entity.setYRot(originalYaw);

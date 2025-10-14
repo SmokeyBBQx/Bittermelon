@@ -2,8 +2,8 @@ package com.site21.bittermelon.content.entities.ai.behavior.basicneeds;
 
 import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
-import com.site21.bittermelon.content.entities.base.NeedsUser;
 import com.site21.bittermelon.content.entities.base.Need;
+import com.site21.bittermelon.content.entities.base.NeedsUser;
 import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.entity.Mob;
@@ -11,7 +11,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.memory.WalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -41,7 +41,7 @@ public class Drink<E extends Mob & HasBasicNeeds & NeedsUser> extends ExtendedBe
             // TODO: Figure out how to get nutritional value of food
             entity.modifyNeed(Need.THIRST, -5);
         } else {
-            BrainUtils.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(fluid.getBlockPos(), 1.25f, 0));
+            BrainUtil.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(fluid.getBlockPos(), 1.25f, 0));
         }
     }
 }

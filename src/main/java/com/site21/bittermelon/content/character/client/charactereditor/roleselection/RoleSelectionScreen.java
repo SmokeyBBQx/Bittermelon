@@ -5,7 +5,6 @@ import com.site21.bittermelon.content.character.client.characterselection.Charac
 import com.site21.bittermelon.content.roles.FoundationRole;
 import com.site21.bittermelon.content.roles.Role;
 import com.site21.bittermelon.content.roles.networking.AddRole;
-import com.site21.bittermelon.init.custom.Roles;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -13,9 +12,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.RegistryManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -66,7 +64,7 @@ public class RoleSelectionScreen extends Screen {
     }
 
     private void onConfirm(Button button) {
-        PacketDistributor.sendToServer(new AddRole(character.getUUID(), selectedRole.getRoleHolder()));
+        ClientPacketDistributor.sendToServer(new AddRole(character.getUUID(), selectedRole.getRoleHolder()));
         if (previousScreen instanceof CharacterSelectionScreen screen) {
             screen.switchCharacter(character);
             onClose();

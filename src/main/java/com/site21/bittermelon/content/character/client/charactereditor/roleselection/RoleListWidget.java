@@ -1,24 +1,15 @@
 package com.site21.bittermelon.content.character.client.charactereditor.roleselection;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.client.PersonnelListWidget;
 import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.character.CharacterManager;
-import com.site21.bittermelon.content.personnel.registry.PersonnelEntry;
 import com.site21.bittermelon.content.roles.Role;
-import com.site21.bittermelon.util.ColorUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
-import net.minecraft.client.multiplayer.ClientPacketListener;
-import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.resources.DefaultPlayerSkin;
-import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -83,10 +74,10 @@ public class RoleListWidget extends ObjectSelectionList<RoleListWidget.Entry> {
             int playerY = top + 8;
             float playerScale = 1.25f;
             guiGraphics.fill(left + entryWidth - 35, top, left + entryWidth, top + entryHeight, 0xFF000000);
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().scale(playerScale, playerScale, 0);
+            guiGraphics.pose().pushMatrix();
+            guiGraphics.pose().scale(playerScale, playerScale);
             renderPlayer(guiGraphics, (int) (playerX / playerScale), (int) (playerY / playerScale));
-            guiGraphics.pose().popPose();
+            guiGraphics.pose().popMatrix();
         }
 
         private void renderText(GuiGraphics guiGraphics, int x, int y, int maxWidth) {

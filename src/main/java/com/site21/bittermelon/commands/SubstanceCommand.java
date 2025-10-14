@@ -3,16 +3,13 @@ package com.site21.bittermelon.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
-import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.atmosphere.AtmosInstance;
 import com.site21.bittermelon.content.atmosphere.AtmosHandler;
+import com.site21.bittermelon.content.atmosphere.AtmosInstance;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.content.items.substance.SubstanceContainerItem;
 import com.site21.bittermelon.content.substance.Substance;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import com.site21.bittermelon.init.custom.Substances;
-import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -20,18 +17,15 @@ import net.minecraft.commands.arguments.ResourceArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
-
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
-import static com.site21.bittermelon.init.neoforge.BitterRegistries.*;
+import static com.site21.bittermelon.init.neoforge.BitterRegistries.SUBSTANCE_REGISTRY_KEY;
 
 public class SubstanceCommand {
-    public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext) {
+    public static void register(@NotNull CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext) {
         dispatcher.register(Commands.literal("substance")
                 .requires(source -> source.hasPermission(2))
                 .then(Commands.literal("fluid")
@@ -209,7 +203,7 @@ public class SubstanceCommand {
         return 0;
     }
 
-    private static int showFluidContents(CommandSourceStack source) {
+    private static int showFluidContents(@NotNull CommandSourceStack source) {
         BlockPos pos = BlockPos.containing(source.getPosition());
         BlockEntity blockEntity = source.getLevel().getBlockEntity(pos);
 

@@ -1,15 +1,11 @@
 package com.site21.bittermelon.content.economy.bank;
 
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.site21.bittermelon.content.personnel.registry.PersonnelEntry;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -19,35 +15,18 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class AccountRegistry extends SavedData {
+    public static final SavedDataType<AccountRegistry> TYPE;
+
     private static AccountRegistry clientInstance;
     private final Map<Integer, Account> accounts = new HashMap<>();
-    private static final String DATA_NAME = "account_registry";
 
     public static AccountRegistry get(@NotNull Level level) {
         if (level.isClientSide()) {
             return getClient();
         } else {
             ServerLevel overworld = level.getServer().getLevel(Level.OVERWORLD);
-            return overworld.getDataStorage().computeIfAbsent(
-                    new SavedData.Factory<>(
-                            AccountRegistry::new,
-                            AccountRegistry::load,
-                            DataFixTypes.LEVEL
-                    ),
-                    DATA_NAME
-            );
+            return overworld.getDataStorage().computeIfAbsent(TYPE);
         }
-    }
-
-    public static @NotNull AccountRegistry get(@NotNull MinecraftServer server) {
-        return server.getLevel(Level.OVERWORLD).getDataStorage().computeIfAbsent(
-                new SavedData.Factory<>(
-                        AccountRegistry::new,
-                        AccountRegistry::load,
-                        DataFixTypes.LEVEL
-                ),
-                DATA_NAME
-        );
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -110,34 +89,6 @@ public class AccountRegistry extends SavedData {
         addTransaction(toAccountID, transaction);
     }
 
-    public static @NotNull AccountRegistry load(@NotNull CompoundTag tag, HolderLookup.Provider lookupProvider) {
-        AccountRegistry registry = new AccountRegistry();
-        ListTag accountList = tag.getList("accounts", ListTag.TAG_COMPOUND);
-
-        accountList.forEach(accountTag -> {
-            Account.CODEC.parse(NbtOps.INSTANCE, accountTag)
-                    .result()
-                    .ifPresent(account -> registry.accounts.put(account.getId(), account));
-        });
-
-        return registry;
-    }
-
-
-    @Override
-    public @NotNull CompoundTag save(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider) {
-        ListTag accountList = new ListTag();
-
-        accounts.values().forEach(account -> {
-            Account.CODEC.encodeStart(NbtOps.INSTANCE, account)
-                    .result()
-                    .ifPresent(accountList::add);
-        });
-
-        tag.put("accounts", accountList);
-        return tag;
-    }
-
     public Collection<Account> getAccounts() {
         return new ArrayList<>(accounts.values());
     }
@@ -167,5 +118,23 @@ public class AccountRegistry extends SavedData {
 
     public boolean doesAccountExist(int id) {
         return accounts.containsKey(id);
+    }
+
+    static {
+        TYPE = new SavedDataType<>(
+                "accounts",
+                AccountRegistry::new,
+                RecordCodecBuilder.create(instance -> instance.group(
+                        Account.CODEC.listOf().fieldOf("accounts")
+                                .forGetter(cm -> new ArrayList<>(cm.accounts.values()))
+                ).apply(instance, (List<Account> accounts) -> {
+                            AccountRegistry cm = new AccountRegistry();
+                            for (Account account : accounts) {
+                                cm.accounts.put(account.getId(), account);
+                            }
+                            return cm;
+                        }
+                ))
+        );
     }
 }

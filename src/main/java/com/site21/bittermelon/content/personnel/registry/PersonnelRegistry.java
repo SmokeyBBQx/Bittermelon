@@ -1,28 +1,22 @@
 package com.site21.bittermelon.content.personnel.registry;
 
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.personnel.registry.networking.AddPersonnelEntry;
-import com.site21.bittermelon.content.personnel.privilege.PrivilegeManager;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class PersonnelRegistry extends SavedData {
+    public static final SavedDataType<PersonnelRegistry> TYPE;
     private static PersonnelRegistry clientInstance;
     private final Map<Integer, PersonnelEntry> personnelEntries = new HashMap<>();
     private final Map<UUID, Integer> characterToEntry = new HashMap<>();
@@ -33,27 +27,13 @@ public class PersonnelRegistry extends SavedData {
         } else {
             ServerLevel overworld = Objects.requireNonNull(level.getServer()).getLevel(Level.OVERWORLD);
             assert overworld != null;
-            return overworld.getDataStorage().computeIfAbsent(
-                    new SavedData.Factory<>(
-                            PersonnelRegistry::new,
-                            PersonnelRegistry::load,
-                            DataFixTypes.LEVEL
-                    ),
-                    "personnel_registry"
-            );
+            return overworld.getDataStorage().computeIfAbsent(TYPE);
         }
     }
 
     // Alternative static getter that doesn't require a level
     public static @NotNull PersonnelRegistry get(@NotNull MinecraftServer server) {
-        return Objects.requireNonNull(server.getLevel(Level.OVERWORLD)).getDataStorage().computeIfAbsent(
-                new SavedData.Factory<>(
-                        PersonnelRegistry::new,
-                        PersonnelRegistry::load,
-                        DataFixTypes.LEVEL
-                ),
-                "personnel_registry"
-        );
+        return Objects.requireNonNull(server.getLevel(Level.OVERWORLD)).getDataStorage().computeIfAbsent(TYPE);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -123,44 +103,26 @@ public class PersonnelRegistry extends SavedData {
         setDirty();
     }
 
-    public boolean containsId(int id) {
-        return personnelEntries.containsKey(id);
-    }
-
     @OnlyIn(Dist.CLIENT)
     public void addEntryFromServer(PersonnelEntry entry) {
         personnelEntries.put(entry.getId(), entry);
     }
 
-    public static @NotNull PersonnelRegistry load(@NotNull CompoundTag tag, HolderLookup.Provider lookupProvider) {
-        PersonnelRegistry data = new PersonnelRegistry();
-        ListTag entryList = tag.getList("personnel_entries", ListTag.TAG_COMPOUND);
-        entryList.forEach(entryTag -> {
-            CompoundTag compound = (CompoundTag) entryTag;
-            int id = compound.getInt("id");
-            PersonnelEntry.CODEC.parse(NbtOps.INSTANCE, compound.get("entry"))
-                    .result()
-                    .ifPresent(entry -> {
-                        data.personnelEntries.put(id, entry);
-                        data.characterToEntry.put(entry.getCharacterUUID(), id);
-                    });
-        });
-        return data;
-    }
-
-    @Override
-    public @NotNull CompoundTag save(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider) {
-        ListTag entryList = new ListTag();
-
-        personnelEntries.forEach((id, entry) -> {
-            CompoundTag entryTag = new CompoundTag();
-            entryTag.putInt("id", id);
-            PersonnelEntry.CODEC.encodeStart(NbtOps.INSTANCE, entry)
-                    .result()
-                    .ifPresent(entryNBT -> entryTag.put("entry", entryNBT));
-            entryList.add(entryTag);
-        });
-        tag.put("personnel_entries", entryList);
-        return tag;
+    static {
+        TYPE = new SavedDataType<>(
+                "personnel",
+                PersonnelRegistry::new,
+                RecordCodecBuilder.create(instance -> instance.group(
+                        PersonnelEntry.CODEC.listOf().fieldOf("personnelEntries")
+                                .forGetter(pr -> new ArrayList<>(pr.personnelEntries.values()))
+                ).apply(instance, (java.util.List<PersonnelEntry> entryList) -> {
+                    PersonnelRegistry pr = new PersonnelRegistry();
+                    for (PersonnelEntry entry : entryList) {
+                        pr.personnelEntries.put(entry.getId(), entry);
+                        pr.characterToEntry.put(entry.getCharacterUUID(), entry.getId());
+                    }
+                    return pr;
+                }))
+        );
     }
 }

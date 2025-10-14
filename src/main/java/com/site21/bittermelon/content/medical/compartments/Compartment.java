@@ -1,7 +1,6 @@
 package com.site21.bittermelon.content.medical.compartments;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.medical.client.screen.HealthScreenV2;
 import com.site21.bittermelon.content.medical.client.screen.widget.CompartmentSpaceWidget;
 import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
@@ -76,7 +75,7 @@ public class Compartment {
     }
 
     public Holder<Compartment> builtInRegistryHolder() {
-        return COMPARTMENT_REGISTRY.getHolder(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, id)).get();
+        return COMPARTMENT_REGISTRY.get(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, id)).orElseThrow();
     }
 
     public LayerData[] getLayers() {

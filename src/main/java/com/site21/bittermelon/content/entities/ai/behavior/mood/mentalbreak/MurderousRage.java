@@ -9,7 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.memory.NearestVisibleLivingEntities;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +39,7 @@ public class MurderousRage<E extends LivingEntity & NeedsUser> extends MentalBre
     protected void start(E entity) {
         super.start(entity);
 
-        NearestVisibleLivingEntities nearestEntities = BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES);
+        NearestVisibleLivingEntities nearestEntities = BrainUtil.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES);
         if (nearestEntities != null) {
             Optional<LivingEntity> closestEntity;
 
@@ -49,7 +49,7 @@ public class MurderousRage<E extends LivingEntity & NeedsUser> extends MentalBre
                 closestEntity = nearestEntities.findClosest(Entity::isAttackable);
             }
 
-            closestEntity.ifPresent(livingEntity -> BrainUtils.setMemory(entity, MemoryModuleType.ATTACK_TARGET, livingEntity));
+            closestEntity.ifPresent(livingEntity -> BrainUtil.setMemory(entity, MemoryModuleType.ATTACK_TARGET, livingEntity));
         }
     }
 }

@@ -66,7 +66,7 @@ public class Substance {
     }
 
     public @NotNull Holder<Substance> builtInRegistryHolder() {
-        return SUBSTANCE_REGISTRY.getHolder(SUBSTANCE_REGISTRY.getId(this)).orElseThrow();
+        return SUBSTANCE_REGISTRY.get(SUBSTANCE_REGISTRY.getId(this)).orElseThrow();
     }
 
     public static class Properties {

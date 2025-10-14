@@ -5,10 +5,11 @@ import com.site21.bittermelon.content.combat.CombatHandler;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.List;
+import java.util.Random;
 
 public class Attack<E extends Mob> extends AnimatableMeleeAttack<E> {
     private final List<AttackTemplate> attackTemplates;
@@ -20,7 +21,7 @@ public class Attack<E extends Mob> extends AnimatableMeleeAttack<E> {
 
     @Override
     protected void doDelayedAction(E entity) {
-        BrainUtils.setForgettableMemory(entity, MemoryModuleType.ATTACK_COOLING_DOWN, true, this.attackIntervalSupplier.apply(entity));
+        BrainUtil.setForgettableMemory(entity, MemoryModuleType.ATTACK_COOLING_DOWN, true, this.attackIntervalSupplier.applyAsInt(entity));
 
         if (this.target == null) return;
 

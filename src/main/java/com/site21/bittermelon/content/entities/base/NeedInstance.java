@@ -6,10 +6,10 @@ import net.minecraft.world.entity.schedule.Activity;
 import java.util.function.Function;
 
 public class NeedInstance {
-    private float decayRate;
+    private final float decayRate;
     private float value;
-    private Function<Float, Double> priorityEvaluator;
-    private Activity activity;
+    private final Function<Float, Double> priorityEvaluator;
+    private final Activity activity;
 
     public NeedInstance(float decayRate, float value, Function<Float, Double> priorityEvaluator, Activity activity) {
         this.decayRate = decayRate;

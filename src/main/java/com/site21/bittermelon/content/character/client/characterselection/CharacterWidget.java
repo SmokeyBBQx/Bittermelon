@@ -17,6 +17,7 @@ import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -75,9 +76,9 @@ public class CharacterWidget extends AbstractWidget {
     @Override
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (isHovered && !editButton.isHovered()) {
-            guiGraphics.blitSprite(selected ? BACKGROUND_SELECTED_HOVERED : BACKGROUND_HOVERED, x, y, width, height);
+            guiGraphics.blitSprite(RenderPipelines.GUI, selected ? BACKGROUND_SELECTED_HOVERED : BACKGROUND_HOVERED, x, y, width, height);
         } else {
-            guiGraphics.blitSprite(selected ? BACKGROUND_SELECTED : BACKGROUND, x, y, width, height);
+            guiGraphics.blitSprite(RenderPipelines.GUI, selected ? BACKGROUND_SELECTED : BACKGROUND, x, y, width, height);
         }
 
         if (character == null) {
@@ -118,9 +119,9 @@ public class CharacterWidget extends AbstractWidget {
 
     private void renderCreateCharacter(@NotNull GuiGraphics guiGraphics) {
         if (isHovered) {
-            guiGraphics.blitSprite(ADD_ICON_HOVERED, x, y, width, height);
+            guiGraphics.blitSprite(RenderPipelines.GUI, ADD_ICON_HOVERED, x, y, width, height);
         } else {
-            guiGraphics.blitSprite(ADD_ICON, x, y, width, height);
+            guiGraphics.blitSprite(RenderPipelines.GUI, ADD_ICON, x, y, width, height);
         }
     }
 

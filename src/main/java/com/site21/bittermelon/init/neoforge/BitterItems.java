@@ -3,35 +3,33 @@ package com.site21.bittermelon.init.neoforge;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.items.GermTest;
 import com.site21.bittermelon.content.items.IntercomPhoneItem;
-import com.site21.bittermelon.content.items.KeycardItem;
 import com.site21.bittermelon.content.items.StickyNote;
-import com.site21.bittermelon.content.items.handheldsysteminterface.HandheldSystemInterface;
-import com.site21.bittermelon.content.items.medical.tools.SyringeItem;
-import com.site21.bittermelon.content.items.mop.MopItem;
-import com.site21.bittermelon.content.items.scps.SCP109;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
+import com.site21.bittermelon.content.items.cardboardbox.CardboardBoxItem;
+import com.site21.bittermelon.content.items.cardboardbox.CollapsedCardboardBoxItem;
 import com.site21.bittermelon.content.items.handheldprogrammer.HandheldProgrammerItem;
+import com.site21.bittermelon.content.items.handheldsysteminterface.HandheldSystemInterface;
+import com.site21.bittermelon.content.items.laserdesignator.LaserDesignatorItem;
+import com.site21.bittermelon.content.items.medical.organic.BodyPart;
+import com.site21.bittermelon.content.items.medical.tools.*;
+import com.site21.bittermelon.content.items.mop.MopItem;
+import com.site21.bittermelon.content.items.scps.SCP109;
 import com.site21.bittermelon.content.items.scps.scp2398.SCP2398;
 import com.site21.bittermelon.content.items.scps.scp377.SCP377;
 import com.site21.bittermelon.content.items.scps.scp377.SCP3771;
 import com.site21.bittermelon.content.items.scps.scp377.SCP377Cookie;
 import com.site21.bittermelon.content.items.screwdriver.ScrewdriverItem;
 import com.site21.bittermelon.content.items.smokable.SmokableItem;
-import com.site21.bittermelon.content.items.substance.PowderedSubstanceItem;
-import com.site21.bittermelon.content.items.substance.pill.PillItem;
-import com.site21.bittermelon.content.items.taser.TaserItem;
-import com.site21.bittermelon.content.items.wirecutters.WireCuttersItem;
-import com.site21.bittermelon.content.items.wires.networkcable.NetworkCable;
-import com.site21.bittermelon.content.items.cardboardbox.CardboardBoxItem;
-import com.site21.bittermelon.content.items.cardboardbox.CollapsedCardboardBoxItem;
 import com.site21.bittermelon.content.items.substance.FluidContainerItem;
 import com.site21.bittermelon.content.items.substance.GasContainerItem;
 import com.site21.bittermelon.content.items.substance.GlassFluidContainerItem;
-import com.site21.bittermelon.content.items.laserdesignator.LaserDesignatorItem;
-import com.site21.bittermelon.content.items.medical.organic.BodyPart;
-import com.site21.bittermelon.content.items.medical.tools.*;
+import com.site21.bittermelon.content.items.substance.PowderedSubstanceItem;
+import com.site21.bittermelon.content.items.substance.pill.PillItem;
+import com.site21.bittermelon.content.items.taser.TaserItem;
 import com.site21.bittermelon.content.items.toolbox.ToolBoxItem;
+import com.site21.bittermelon.content.items.wirecutters.WireCuttersItem;
+import com.site21.bittermelon.content.items.wires.networkcable.NetworkCable;
 import com.site21.bittermelon.content.items.wires.wire.WireItem;
 import com.site21.bittermelon.content.items.writablepaper.WritablePaper;
 import com.site21.bittermelon.content.items.writingutensils.ChalkItem;
@@ -39,15 +37,10 @@ import com.site21.bittermelon.content.items.writingutensils.HighlighterItem;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.neoforged.neoforge.common.DeferredSpawnEggItem;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import java.util.List;
-import java.util.Optional;
-
-import static com.site21.bittermelon.init.neoforge.BitterBlocks.*;
+import static com.site21.bittermelon.init.neoforge.BitterBlocks.THERMOMETER;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 
 public class BitterItems {
@@ -318,11 +311,8 @@ public class BitterItems {
             CIGARETTE_BUTT.get()
     ));
 
-    public static final DeferredItem<KeycardItem> KEYCARD = ITEMS.register("keycard", () -> new KeycardItem(
-            new Item.Properties(),
-            1,
-            1,
-            ItemWeight.VERY_LIGHT
+    public static final DeferredItem<Item> KEYCARD = ITEMS.register("keycard", () -> new Item(
+            new Item.Properties()
     ));
 
     public static final DeferredItem<BlockItem> SECURE_DOOR = ITEMS.register("secure_door", () -> new BlockItem(
@@ -390,18 +380,6 @@ public class BitterItems {
             ItemWeight.LIGHT
     ));
 
-    public static final DeferredHolder<Item, DeferredSpawnEggItem> SCP_131_SPAWN_EGG = ITEMS.register("scp_131_spawn_egg",
-            () -> new DeferredSpawnEggItem(BitterEntities.SCP_131, 0xE36124, 0xF5CB42, new Item.Properties()));
-
-    public static final DeferredHolder<Item, DeferredSpawnEggItem> SCP_650_SPAWN_EGG = ITEMS.register("scp_650_spawn_egg",
-            () -> new DeferredSpawnEggItem(BitterEntities.SCP_650, 0x242221, 0x403E3D, new Item.Properties()));
-
-    public static final DeferredHolder<Item, DeferredSpawnEggItem> SCP_939_SPAWN_EGG = ITEMS.register("scp_939_spawn_egg",
-            () -> new DeferredSpawnEggItem(BitterEntities.SCP_939, 0xA33434, 0xDE2C2C, new Item.Properties()));
-
-    public static final DeferredHolder<Item, DeferredSpawnEggItem> SCP_1507_SPAWN_EGG = ITEMS.register("scp_1507_spawn_egg",
-            () -> new DeferredSpawnEggItem(BitterEntities.SCP_1507, 0xC967A4, 0xE687DB, new Item.Properties()));
-
     public static final DeferredItem<BaseItem> SCP_018 = ITEMS.register("scp_018", () -> new BaseItem(
             new Item.Properties().component(ENERGY_LOSS_ON_BOUNCE, 1.5f).component(MAX_BOUNCES, 10000),
             1,
@@ -460,8 +438,7 @@ public class BitterItems {
     ));
 
     public static final DeferredItem<Item> CRACKED_FORTUNE_COOKIE = ITEMS.register("cracked_fortune_cookie", () -> new Item(
-            new Item.Properties().food(new FoodProperties(1, 1, true, 1,
-                    Optional.empty(), List.of()))
+            new Item.Properties().food(new FoodProperties(1, 1, true))
     ));
 
     public static final DeferredItem<HandheldSystemInterface> HANDHELD_SYSTEM_INTERFACE= ITEMS.register("handheld_system_interface", () -> new HandheldSystemInterface(

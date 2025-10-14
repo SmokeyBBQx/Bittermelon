@@ -17,7 +17,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -65,12 +65,12 @@ public class TeleportBehindRandomTarget<E extends SCP650> extends ExtendedBehavi
         entity.setPos(teleportPos);
         entity.setYRot(yaw);
 
-        BrainUtils.setForgettableMemory(entity, SCARE_TARGET.get(), randomPlayer, 2400);
+        BrainUtil.setForgettableMemory(entity, SCARE_TARGET.get(), randomPlayer, 2400);
 
         // REPEAT TORMENTING LOGIC
-        Map<UUID, Integer> timesScared = BrainUtils.memoryOrDefault(entity, TIMES_TARGET_SCARED.get(), HashMap::new);
+        Map<UUID, Integer> timesScared = BrainUtil.memoryOrDefault(entity, TIMES_TARGET_SCARED.get(), HashMap::new);
         timesScared.compute(randomPlayer.getUUID(), (k, v) -> (v == null ? 0 : v) + 1);
-        BrainUtils.setMemory(entity, TIMES_TARGET_SCARED.get(), timesScared);
+        BrainUtil.setMemory(entity, TIMES_TARGET_SCARED.get(), timesScared);
 
         // If the player has been scared 10 times, it'll get guilt poses instead.
         entity.setPose(entity.getRandomPose(timesScared.getOrDefault(randomPlayer.getUUID(), 0) >= 10));

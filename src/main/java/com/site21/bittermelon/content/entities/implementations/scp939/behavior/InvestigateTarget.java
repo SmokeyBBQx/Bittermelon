@@ -7,7 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 
 import java.util.List;
 
@@ -24,15 +24,15 @@ public class InvestigateTarget<E extends SCP939> extends ExtendedBehaviour<E> {
 
     @Override
     protected void start(E entity) {
-            LivingEntity nearestAttackable = BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_ATTACKABLE);
-            BrainUtils.setMemory(entity, MemoryModuleType.ATTACK_TARGET, nearestAttackable);
-            BrainUtils.clearMemory(entity, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
+            LivingEntity nearestAttackable = BrainUtil.getMemory(entity, MemoryModuleType.NEAREST_ATTACKABLE);
+            BrainUtil.setMemory(entity, MemoryModuleType.ATTACK_TARGET, nearestAttackable);
+            BrainUtil.clearMemory(entity, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
     }
 
     @Override
     protected void tick(E entity) {
-            LivingEntity nearestAttackable = BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_ATTACKABLE);
-            BrainUtils.setMemory(entity, MemoryModuleType.ATTACK_TARGET, nearestAttackable);
-            BrainUtils.clearMemory(entity, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
+            LivingEntity nearestAttackable = BrainUtil.getMemory(entity, MemoryModuleType.NEAREST_ATTACKABLE);
+            BrainUtil.setMemory(entity, MemoryModuleType.ATTACK_TARGET, nearestAttackable);
+            BrainUtil.clearMemory(entity, MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
     }
 }

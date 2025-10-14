@@ -17,7 +17,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
 import net.tslat.smartbrainlib.object.MemoryTest;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -82,8 +82,8 @@ public class GenericInteraction<E extends LivingEntity & Socializable & NeedsUse
     protected void start(@NotNull E entity) {
         this.socializeTick = entity.tickCount + this.socializeTime.apply(entity, this.partner);
 
-        BrainUtils.setMemory(entity, BitterMemoryTypes.SOCIALIZE_TARGET.get(), this.partner);
-        BrainUtils.setMemory(this.partner, BitterMemoryTypes.SOCIALIZE_TARGET.get(), entity);
+        BrainUtil.setMemory(entity, BitterMemoryTypes.SOCIALIZE_TARGET.get(), this.partner);
+        BrainUtil.setMemory(this.partner, BitterMemoryTypes.SOCIALIZE_TARGET.get(), entity);
         BehaviorUtils.lockGazeAndWalkToEachOther(entity, this.partner, this.speedMod.apply(entity, this.partner), this.closeEnoughDist.applyAsInt(entity, this.partner));
         sendRandomMessage(entity);
     }
@@ -115,18 +115,18 @@ public class GenericInteraction<E extends LivingEntity & Socializable & NeedsUse
                 }
             }
 
-            BrainUtils.clearMemory(entity, BitterMemoryTypes.SOCIALIZE_TARGET.get());
-            BrainUtils.clearMemory(this.partner, BitterMemoryTypes.SOCIALIZE_TARGET.get());
+            BrainUtil.clearMemory(entity, BitterMemoryTypes.SOCIALIZE_TARGET.get());
+            BrainUtil.clearMemory(this.partner, BitterMemoryTypes.SOCIALIZE_TARGET.get());
         }
     }
 
 
     @Override
     protected void stop(E entity) {
-        BrainUtils.clearMemories(entity, BitterMemoryTypes.SOCIALIZE_TARGET.get(), MemoryModuleType.LOOK_TARGET, MemoryModuleType.WALK_TARGET);
+        BrainUtil.clearMemories(entity, BitterMemoryTypes.SOCIALIZE_TARGET.get(), MemoryModuleType.LOOK_TARGET, MemoryModuleType.WALK_TARGET);
 
         if (this.partner != null)
-            BrainUtils.clearMemories(this.partner, BitterMemoryTypes.SOCIALIZE_TARGET.get(), MemoryModuleType.LOOK_TARGET, MemoryModuleType.WALK_TARGET);
+            BrainUtil.clearMemories(this.partner, BitterMemoryTypes.SOCIALIZE_TARGET.get(), MemoryModuleType.LOOK_TARGET, MemoryModuleType.WALK_TARGET);
 
         this.socializeTick = -1;
         this.partner = null;
@@ -134,7 +134,7 @@ public class GenericInteraction<E extends LivingEntity & Socializable & NeedsUse
 
     @Nullable
     protected LivingEntity findPartner(E entity) {
-        return BrainUtils.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES).findClosest(entity2 -> entity2 instanceof LivingEntity partner && this.partnerPredicate.test(entity, partner)).map(LivingEntity.class::cast).orElse(null);
+        return BrainUtil.getMemory(entity, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES).findClosest(entity2 -> entity2 instanceof LivingEntity partner && this.partnerPredicate.test(entity, partner)).map(LivingEntity.class::cast).orElse(null);
     }
 
     protected void sendRandomMessage(E entity) {

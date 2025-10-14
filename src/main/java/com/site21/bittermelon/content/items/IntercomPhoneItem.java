@@ -1,41 +1,41 @@
 package com.site21.bittermelon.content.items;
 
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlockEntity;
-import com.site21.bittermelon.content.items.base.BaseItem;
-import com.site21.bittermelon.content.items.base.ItemWeight;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.CORD_CONNECTION;
 
-public class IntercomPhoneItem extends BaseItem {
-    public IntercomPhoneItem(Properties properties, int width, int height, ItemWeight itemWeight) {
-        super(properties, width, height, itemWeight);
+public class IntercomPhoneItem extends Item {
+    public IntercomPhoneItem(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
-        super.inventoryTick(stack, level, entity, slotId, isSelected);
-
-        if (level.isClientSide) return;
+    public void inventoryTick(@NotNull ItemStack stack, @NotNull ServerLevel level, @NotNull Entity entity, @Nullable EquipmentSlot slot) {
         BlockPos intercomPos = stack.get(CORD_CONNECTION.get());
 
         if (intercomPos == null) return;
+        if (!(entity instanceof ServerPlayer player)) return;
 
         if (level.getBlockEntity(intercomPos) instanceof IntercomBlockEntity intercom) {
-            if (!isSelected) {
+            if (slot != EquipmentSlot.MAINHAND && slot != EquipmentSlot.OFFHAND) {
                 stack.setCount(0);
                 intercom.setPhonePickedUp(false);
                 intercom.setPhoneUser(null);
                 level.playSound(null, intercomPos, SoundEvents.HEAVY_CORE_HIT, SoundSource.PLAYERS);
-                entity.sendSystemMessage(Component.literal("You must hold the phone.").withStyle(ChatFormatting.RED));
+                player.sendSystemMessage(Component.literal("You must hold the phone.").withStyle(ChatFormatting.RED));
             }
 
             if (entity.distanceToSqr(intercomPos.getX(), intercomPos.getY(), intercomPos.getZ()) > 2 * 2) {
@@ -43,7 +43,7 @@ public class IntercomPhoneItem extends BaseItem {
                 intercom.setPhonePickedUp(false);
                 intercom.setPhoneUser(null);
                 level.playSound(null, intercomPos, SoundEvents.HEAVY_CORE_HIT, SoundSource.PLAYERS);
-                entity.sendSystemMessage(Component.literal("You must stay within range.").withStyle(ChatFormatting.RED));
+                player.sendSystemMessage(Component.literal("You must stay within range.").withStyle(ChatFormatting.RED));
             }
         }
     }

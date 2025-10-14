@@ -2,6 +2,7 @@ package com.site21.bittermelon.content.medical.mobeffects;
 
 import com.site21.bittermelon.client.visualeffects.screenshake.StartScreenshake;
 import com.site21.bittermelon.content.medical.client.screen.networking.UpdateTremor;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.InstantenousMobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -17,9 +18,7 @@ public class TremorEffect extends InstantenousMobEffect {
     }
 
     @Override
-    public boolean applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
-        if (entity.level().isClientSide) return true;
-
+    public boolean applyEffectTick(@NotNull ServerLevel level, @NotNull LivingEntity entity, int amplifier) {
         int duration = entity.getEffect(TREMOR).getDuration();
 
         if (entity instanceof ServerPlayer player) {

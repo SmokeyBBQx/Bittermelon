@@ -111,11 +111,6 @@ public interface BitterVibrationSystem {
         return data != null ? data.frequency() : 0;
     }
 
-    static int getGameEventFrequency(ResourceKey<GameEvent> eventKey) {
-        var holder = net.minecraft.core.registries.BuiltInRegistries.GAME_EVENT.getHolder(eventKey);
-        return holder.map(BitterVibrationSystem::getGameEventFrequency).orElse(0);
-    }
-
     static ResourceKey<GameEvent> getResonanceEventByFrequency(int frequency) {
         return RESONANCE_EVENTS.get(frequency - 1);
     }

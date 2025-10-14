@@ -42,28 +42,29 @@ public record ThrowItem(UUID playerUUID) implements CustomPacketPayload {
     public void handle(@NotNull IPayloadContext ctx) {
         Level level = ctx.player().level();
         Player player = level.getPlayerByUUID(playerUUID);
-
         if (player == null) return;
+
         ItemStack heldItem = player.getMainHandItem();
+        if (heldItem.isEmpty()) return;
+
         level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.SNOWBALL_THROW,
                 SoundSource.NEUTRAL, 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
 
-        if (!heldItem.isEmpty()) {
-            ThrownItemProjectile projectile = new ThrownItemProjectile(level, player, heldItem.copy(),
-                    heldItem.getOrDefault(ENERGY_LOSS_ON_BOUNCE, 0.7f),
-                    heldItem.getOrDefault(MAX_BOUNCES, 50));
+        ThrownItemProjectile projectile = new ThrownItemProjectile(level, player, heldItem.copy(),
+                heldItem.getOrDefault(ENERGY_LOSS_ON_BOUNCE, 0.7f),
+                heldItem.getOrDefault(MAX_BOUNCES, 50));
 
-            projectile.setPos(player.getX(), player.getEyeY() - 0.1, player.getZ());
-            projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0f, 1f, 1.0f);
-            player.level().addFreshEntity(projectile);
+        projectile.setPos(player.getX(), player.getEyeY() - 0.1, player.getZ());
+        projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0f, 1f, 1.0f);
+        player.level().addFreshEntity(projectile);
 
-            Character character = CharacterManager.get(level).getActiveCharacter(player);
-            if (character != null) {
-                Component component = Component.literal(character.getName() + " throws " + heldItem.getHoverName().getString().toLowerCase() + ".")
-                        .setStyle(Style.EMPTY.withColor(character.getEmoteColor()));
-                sendLocalMessage(player, 10, component);
-            }
-            heldItem.shrink(1);
+        Character character = CharacterManager.get(level).getActiveCharacter(player);
+        if (character != null) {
+            Component component = Component.literal(character.getName() + " throws " + heldItem.getHoverName().getString().toLowerCase() + ".")
+                    .setStyle(Style.EMPTY.withColor(character.getEmoteColor()));
+            sendLocalMessage(player, 10, component);
         }
+
+        heldItem.shrink(1);
     }
 }

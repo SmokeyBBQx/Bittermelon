@@ -11,7 +11,7 @@ import net.minecraft.world.entity.ai.memory.WalkTarget;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,14 +29,14 @@ public class FindDarkness<E extends PathfinderMob> extends ExtendedBehaviour<E> 
 
     @Override
     protected boolean doStartCheck(@NotNull ServerLevel level, E entity, long gameTime) {
-        return level.isDay() && !isInDarkness(level, entity);
+        return !level.isDarkOutside() && !isInDarkness(level, entity);
     }
 
     @Override
     protected void tick(@NotNull ServerLevel level, @NotNull E entity, long gameTime) {
         BlockPos targetPos = findDarkArea(level, entity);
         if (targetPos != null) {
-            BrainUtils.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(targetPos, 2.5F, 0));
+            BrainUtil.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(targetPos, 2.5F, 0));
         }
     }
 

@@ -9,7 +9,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import java.util.UUID;
 
@@ -32,7 +32,7 @@ public class RiseKeyHandler {
                 keyPressed = true;
                 ticksHeld++;
                 if (ticksHeld >= TICKS_REQUIRED) {
-                    PacketDistributor.sendToServer(new AttemptToRise(uuid));
+                    ClientPacketDistributor.sendToServer(new AttemptToRise(uuid));
                     keyPressed = false;
                     ticksHeld = 0;
                 }

@@ -1,7 +1,5 @@
 package com.site21.bittermelon.content.economy.budget;
 
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.saveddata.SavedData;
 
 import java.util.EnumMap;
@@ -24,10 +22,5 @@ public class BudgetManager extends SavedData {
 
     public void setTotalBudget(float budget) {
         totalBudget = budget;
-    }
-
-    @Override
-    public CompoundTag save(CompoundTag compoundTag, HolderLookup.Provider provider) {
-        return null;
     }
 }

@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.items.writablepaper.client;
+package com.site21.bittermelon.content.items.writablepaper.networking;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.ClientHandler;

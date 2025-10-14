@@ -2,26 +2,28 @@ package com.site21.bittermelon.content.items.wires.wire;
 
 import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
 import com.site21.bittermelon.content.blocks.devices.PanelDevice;
-import com.site21.bittermelon.content.items.base.BaseItem;
-import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.wires.wire.networking.OpenWiringScreen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.CORD_CONNECTION;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.PORT_ID;
 
-public class WireItem extends BaseItem {
-    public WireItem(Properties properties, int width, int height, ItemWeight itemWeight) {
-        super(properties, width, height, itemWeight);
+public class WireItem extends Item {
+    public WireItem(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -44,10 +46,10 @@ public class WireItem extends BaseItem {
     }
 
     @Override
-    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
-        super.inventoryTick(stack, level, entity, slotId, isSelected);
+    public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
+        super.inventoryTick(stack, level, entity, slot);
 
-        if (!isSelected) {
+        if (slot != EquipmentSlot.MAINHAND && slot != EquipmentSlot.OFFHAND) {
             stack.remove(CORD_CONNECTION);
             stack.remove(PORT_ID);
         }

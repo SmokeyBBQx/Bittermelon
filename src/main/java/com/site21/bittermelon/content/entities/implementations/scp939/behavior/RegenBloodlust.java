@@ -11,7 +11,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.player.Player;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class RegenBloodlust<E extends SCP939> extends ExtendedBehaviour<E> {
 
     @Override
     protected void start(E entity) {
-        LivingEntity target = BrainUtils.getTargetOfEntity(entity);
+        LivingEntity target = BrainUtil.getTargetOfEntity(entity);
 
         if (target == null)
             return;

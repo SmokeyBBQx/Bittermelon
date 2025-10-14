@@ -3,6 +3,7 @@ package com.site21.bittermelon.content.stumble;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.client.visualeffects.screenshake.StartScreenshake;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffect;
@@ -44,9 +45,7 @@ public class FallenEffect extends MobEffect {
     }
 
     @Override
-    public boolean applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
-        if (entity.level().isClientSide) return true;
-
+    public boolean applyEffectTick(@NotNull ServerLevel level, @NotNull LivingEntity entity, int amplifier) {
         if (!isStunned(entity) && !(entity instanceof Player)) {
             if (entity.getPose() != Pose.STANDING) {
                 entity.setPose(Pose.STANDING);

@@ -60,8 +60,6 @@ public class Bittermelon {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public Bittermelon(IEventBus modEventBus, @NotNull ModContainer modContainer) {
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
-
         NeoForge.EVENT_BUS.register(this);
 
         BLOCKS.register(modEventBus);

@@ -9,7 +9,9 @@ import com.site21.bittermelon.content.entities.implementations.ThrownItemProject
 import com.site21.bittermelon.content.entities.implementations.chicken.Chicken;
 import com.site21.bittermelon.content.items.scps.scp2398.SCP2398Projectile;
 import com.site21.bittermelon.content.items.taser.TaserProjectile;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.neoforged.bus.api.IEventBus;
@@ -19,47 +21,47 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 
 public class BitterEntities {
-    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, Bittermelon.MOD_ID);
+    public static final DeferredRegister.Entities ENTITY_TYPES = DeferredRegister.createEntities(Bittermelon.MOD_ID);
 
     public static final DeferredHolder<EntityType<?>, EntityType<ThrownItemProjectile>> THROWN_ITEM_PROJECTILE = ENTITY_TYPES.register("thrown_item_projectile",
             () -> EntityType.Builder.<ThrownItemProjectile>of(ThrownItemProjectile::new, MobCategory.MISC)
                     .sized(0.5f, 0.5f)
-                    .build("thrown_item_projectile"));
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "thrown_item_projectile"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SCP2398Projectile>> SCP_2398_PROJECTILE = ENTITY_TYPES.register("scp_2398_projectile",
             () -> EntityType.Builder.<SCP2398Projectile>of(SCP2398Projectile::new, MobCategory.MISC)
                     .sized(0.5f, 0.5f)
-                    .build("scp_2398_projectile"));
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_2398_projectile"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SCP939>> SCP_939 = ENTITY_TYPES.register("scp939",
             () -> EntityType.Builder.of(SCP939::new, MobCategory.MONSTER)
                     .sized(0.9f, 0.9f)
-                    .build("scp939"));
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp939"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Chicken>> CHICKEN = ENTITY_TYPES.register("chicken",
             () -> EntityType.Builder.of(Chicken::new, MobCategory.AMBIENT)
                     .sized(0.3f, 0.3f)
-                    .build("chicken"));
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "chicken"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SCP650>> SCP_650 = ENTITY_TYPES.register("scp650",
             () -> EntityType.Builder.of(SCP650::new, MobCategory.MONSTER)
                     .sized(0.9f, 1.6f)
-                    .build("scp650"));
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp650"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SCP131>> SCP_131 = ENTITY_TYPES.register("scp131",
             () -> EntityType.Builder.of(SCP131::new, MobCategory.AMBIENT)
                     .sized(0.3f, 0.3f)
-                    .build("scp131"));
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp131"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<TaserProjectile>> TASER_PROJECTILE = ENTITY_TYPES.register("taser_projectile",
             () -> EntityType.Builder.<TaserProjectile>of(TaserProjectile::new, MobCategory.MISC)
                     .sized(0.5f, 0.5f)
-                    .build("taser_projectile"));
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "taser_projectile"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SCP1507>> SCP_1507 = ENTITY_TYPES.register("scp1507",
             () -> EntityType.Builder.of(SCP1507::new, MobCategory.MONSTER)
                     .sized(0.5f, 0.5f)
-                    .build("scp1507"));
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp1507"))));
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);

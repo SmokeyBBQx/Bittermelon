@@ -1,13 +1,8 @@
 package com.site21.bittermelon.content.entities.implementations.scp939;
 
-import com.mojang.serialization.Dynamic;
-import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.character.Character;
 import com.site21.bittermelon.content.character.CharacterManager;
 import com.site21.bittermelon.content.combat.AttackTemplate;
-import com.site21.bittermelon.content.entities.ai.vibration.BitterAngerManagement;
-import com.site21.bittermelon.content.entities.ai.vibration.BitterVibrationSystem;
-import com.site21.bittermelon.content.entities.ai.vibration.BitterVibrationUser;
 import com.site21.bittermelon.content.entities.ai.behavior.attack.Attack;
 import com.site21.bittermelon.content.entities.ai.behavior.attack.Pull;
 import com.site21.bittermelon.content.entities.ai.behavior.attack.Push;
@@ -21,6 +16,9 @@ import com.site21.bittermelon.content.entities.ai.behavior.social.Relationship;
 import com.site21.bittermelon.content.entities.ai.behavior.social.Socializable;
 import com.site21.bittermelon.content.entities.ai.behavior.social.interactions.GenericInteraction;
 import com.site21.bittermelon.content.entities.ai.behavior.target.InvalidateAttackTarget;
+import com.site21.bittermelon.content.entities.ai.vibration.BitterAngerManagement;
+import com.site21.bittermelon.content.entities.ai.vibration.BitterVibrationSystem;
+import com.site21.bittermelon.content.entities.ai.vibration.BitterVibrationUser;
 import com.site21.bittermelon.content.entities.base.BitterMob;
 import com.site21.bittermelon.content.entities.base.Need;
 import com.site21.bittermelon.content.entities.base.NeedInstance;
@@ -29,9 +27,7 @@ import com.site21.bittermelon.content.medical.factory.Anatomy;
 import com.site21.bittermelon.init.neoforge.BitterActivity;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtOps;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -53,6 +49,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.DynamicGameEventListener;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.behaviour.AllApplicableBehaviours;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
@@ -67,7 +65,7 @@ import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.UnreachableTargetSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -154,43 +152,30 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
+    protected void addAdditionalSaveData(@NotNull ValueOutput output) {
+        super.addAdditionalSaveData(output);
 
-        ListTag list = new ListTag();
+        output.store("listener", Data.CODEC, vibrationData);
+        output.store("anger", BitterAngerManagement.codec(this::canTargetEntity), angerManagement);
+
+        ValueOutput.TypedOutputList<UUID> victimsOutput = output.list("victims", UUIDUtil.CODEC);
         for (UUID uuid : victims) {
-            CompoundTag uuidTag = new CompoundTag();
-            uuidTag.putUUID("UUID", uuid);
-            list.add(uuidTag);
+            victimsOutput.add(uuid);
         }
-        compound.put("Victims", list);
 
-        Data.CODEC.encodeStart(NbtOps.INSTANCE, this.vibrationData).resultOrPartial(
-                Bittermelon.LOGGER::error).ifPresent(tag -> compound.put("listener", tag));
-        BitterAngerManagement.codec(this::canTargetEntity).encodeStart(NbtOps.INSTANCE, this.angerManagement).resultOrPartial(
-                Bittermelon.LOGGER::error).ifPresent(tag -> compound.put("anger", tag));
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
+    protected void readAdditionalSaveData(@NotNull ValueInput input) {
+        super.readAdditionalSaveData(input);
 
-        ListTag list = compound.getList("Victims", CompoundTag.TAG_COMPOUND);
+        input.read("listener", Data.CODEC).ifPresent(data -> vibrationData = data);
+        input.read("anger", BitterAngerManagement.codec(this::canTargetEntity))
+                .ifPresent(angerM -> angerManagement = angerM);
+
         victims.clear();
-        for (int i = 0; i < list.size(); i++) {
-            CompoundTag uuidTag = list.getCompound(i);
-            victims.add(uuidTag.getUUID("UUID"));
-        }
-
-        if (compound.contains("anger")) {
-            BitterAngerManagement.codec(this::canTargetEntity).parse(
-                    new Dynamic<>(NbtOps.INSTANCE, compound.get("anger"))).resultOrPartial(Bittermelon.LOGGER::error).ifPresent(
-                    angerM -> this.angerManagement = angerM);
-            this.syncClientAngerLevel();
-        }
-        if (compound.contains("listener", 10)) Data.CODEC.parse(
-                new Dynamic<>(NbtOps.INSTANCE, compound.getCompound("listener"))).resultOrPartial(
-                Bittermelon.LOGGER::error).ifPresent(data -> this.vibrationData = data);
+        input.list("victims", UUIDUtil.CODEC).ifPresent(
+                list -> victims.addAll(list.stream().toList()));
     }
 
     @Override
@@ -261,15 +246,16 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
     }
 
     @Override
-    public boolean hurt(@NotNull DamageSource source, float amount) {
-        boolean flag = super.hurt(source, amount);
-        if (!this.level().isClientSide && !this.isNoAi()) {
+    public boolean hurtServer(@NotNull ServerLevel level, @NotNull DamageSource source, float amount) {
+        boolean flag = super.hurtServer(level, source, amount);
+        if (!isNoAi()) {
             Entity entity = source.getEntity();
-            this.increaseAngerAt(entity, AngerLevel.ANGRY.getMinimumAnger() + 20);
-            if (this.brain.getMemory(MemoryModuleType.ATTACK_TARGET).isEmpty()
+            increaseAngerAt(entity, AngerLevel.ANGRY.getMinimumAnger() + 20);
+
+            if (brain.getMemory(MemoryModuleType.ATTACK_TARGET).isEmpty()
                     && entity instanceof LivingEntity livingentity
-                    && (source.isDirect() || this.closerThan(livingentity, 5.0))) {
-                this.setAttackTarget(livingentity);
+                    && (source.isDirect() || closerThan(livingentity, 5.0))) {
+                setAttackTarget(livingentity);
             }
         }
 
@@ -318,13 +304,11 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
     }
 
     @Override
-    protected void customServerAiStep() {
-        super.customServerAiStep();
-
-        var serverLevel = (ServerLevel) this.level();
+    protected void customServerAiStep(@NotNull ServerLevel level) {
+        super.customServerAiStep(level);
 
         if (this.tickCount % 20 == 0) {
-            this.angerManagement.tick(serverLevel, this::canTargetEntity);
+            this.angerManagement.tick(level, this::canTargetEntity);
             this.syncClientAngerLevel();
         }
 
@@ -336,7 +320,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
     }
 
     private void syncClientAngerLevel() {
-        this.entityData.set(CLIENT_ANGER_LEVEL, this.getActiveAnger());
+        entityData.set(CLIENT_ANGER_LEVEL, getActiveAnger());
         setNeed(Need.ANGER, 100 - getActiveAnger());
     }
 
@@ -361,8 +345,8 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
     }
 
     public static void setDisturbanceLocation(BlockPos pos, SCP939 entity) {
-        BrainUtils.setForgettableMemory(entity, MemoryModuleType.DISTURBANCE_LOCATION, pos, 600);
-        BrainUtils.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(pos, 1.2f, 1));
+        BrainUtil.setForgettableMemory(entity, MemoryModuleType.DISTURBANCE_LOCATION, pos, 600);
+        BrainUtil.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(pos, 1.2f, 1));
     }
 
     public Component getRandomLureLine() {

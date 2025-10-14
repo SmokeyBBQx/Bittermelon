@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.Bittermelon.LOGGER;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.STEP_COUNTER;
+import static net.minecraft.core.component.DataComponents.FOOD;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class SkillUpdater {
@@ -58,7 +59,7 @@ public class SkillUpdater {
     public static void onItemUseFinish(LivingEntityUseItemEvent.@NotNull Finish event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             ItemStack item = event.getItem();
-            FoodProperties foodProperties = item.getFoodProperties(player);
+            FoodProperties foodProperties = item.get(FOOD);
             if (foodProperties != null) {
                 Character character = CharacterManager.get(player.level()).getActiveCharacter(player);
                 if (character == null) return;

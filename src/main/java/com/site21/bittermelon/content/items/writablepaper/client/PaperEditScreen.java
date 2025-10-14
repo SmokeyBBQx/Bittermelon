@@ -19,6 +19,7 @@ import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix3x2f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,22 +51,22 @@ public class PaperEditScreen extends Screen {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
         for (LineInfo lineInfo : getDisplayCache().lines) {
-            guiGraphics.pose().pushPose();
+            guiGraphics.pose().pushMatrix();
             float scale = lineInfo.scale;
-            guiGraphics.pose().scale(scale, scale, 0);
+            guiGraphics.pose().scale(scale, scale, new Matrix3x2f());
 
             float xPos = lineInfo.centered ?
                     (width / 2f) - font.width(lineInfo.text) / 2f :
                     (width - 200) / 2f;
 
             guiGraphics.drawString(font, lineInfo.text, (int) (xPos / scale), (int) (lineInfo.y / scale), 0, false);
-            guiGraphics.pose().popPose();
+            guiGraphics.pose().popMatrix();
         }
     }
 
     public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         this.renderTransparentBackground(guiGraphics);
-        guiGraphics.blit(PAPER_LOCATION, (this.width - 250) / 2, 20, 0, 0, 250, 256);
+        guiGraphics.blit(PAPER_LOCATION, (this.width - 250) / 2, 20, 0, 0, 0, 0, 250, 256);
     }
 
     @Override

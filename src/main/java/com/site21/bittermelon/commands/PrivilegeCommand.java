@@ -9,9 +9,10 @@ import com.site21.bittermelon.content.personnel.privilege.PrivilegeManager;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
 
 public class PrivilegeCommand {
-    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+    public static void register(@NotNull CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("privilege")
                 .requires(source -> source.hasPermission(4))
                 .then(Commands.literal("add")
@@ -82,7 +83,7 @@ public class PrivilegeCommand {
         }
     }
 
-    private static int listPrivileges(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int listPrivileges(@NotNull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         PrivilegeManager manager = PrivilegeManager.get(context.getSource().getServer());
 
         if (manager.getPrivileges().isEmpty()) {
@@ -222,7 +223,7 @@ public class PrivilegeCommand {
         }
     }
 
-    private static int listGroups(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int listGroups(@NotNull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         PrivilegeManager manager = PrivilegeManager.get(context.getSource().getServer());
 
         if (manager.getPrivilegeGroups().isEmpty()) {

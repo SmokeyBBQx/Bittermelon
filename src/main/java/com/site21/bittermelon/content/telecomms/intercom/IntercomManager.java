@@ -1,32 +1,28 @@
 package com.site21.bittermelon.content.telecomms.intercom;
 
-import com.site21.bittermelon.Bittermelon;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlockEntity;
 import com.site21.bittermelon.content.syncsound.SyncSoundEvent;
 import com.site21.bittermelon.content.telecomms.intercom.networking.AddIntercomToClient;
 import com.site21.bittermelon.content.telecomms.intercom.networking.RemoveIntercomFromClient;
-import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class IntercomManager extends SavedData {
+    public static final SavedDataType<IntercomManager> TYPE;
     private static IntercomManager clientInstance;
-    private static final String DATA_NAME = "intercom";
     private final Map<BlockPos, String> intercomIDs = new HashMap<>();
 
     public static IntercomManager get(@NotNull Level level) {
@@ -34,26 +30,8 @@ public class IntercomManager extends SavedData {
             return getClient();
         } else {
             ServerLevel overworld = level.getServer().getLevel(Level.OVERWORLD);
-            return overworld.getDataStorage().computeIfAbsent(
-                    new SavedData.Factory<>(
-                            IntercomManager::new,
-                            IntercomManager::load,
-                            DataFixTypes.LEVEL
-                    ),
-                    DATA_NAME
-            );
+            return overworld.getDataStorage().computeIfAbsent(TYPE);
         }
-    }
-
-    public static @NotNull IntercomManager get(@NotNull MinecraftServer server) {
-        return server.getLevel(Level.OVERWORLD).getDataStorage().computeIfAbsent(
-                new SavedData.Factory<>(
-                        IntercomManager::new,
-                        IntercomManager::load,
-                        DataFixTypes.LEVEL
-                ),
-                DATA_NAME
-        );
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -73,9 +51,10 @@ public class IntercomManager extends SavedData {
 
     /**
      * Transmits a message to all intercoms with the specified target ID.
-     * @param event The sound event to transmit.
+     *
+     * @param event    The sound event to transmit.
      * @param targetID The target intercom ID.
-     * @param level The level in which to find the intercoms.
+     * @param level    The level in which to find the intercoms.
      */
     public void transmitMessage(SyncSoundEvent event, String targetID, Level level) {
         for (Map.Entry<BlockPos, String> entry : intercomIDs.entrySet()) {
@@ -89,8 +68,9 @@ public class IntercomManager extends SavedData {
 
     /**
      * Adds an intercom to the manager and syncs it to all clients.
+     *
      * @param pos The position of the intercom.
-     * @param id The unique ID of the intercom.
+     * @param id  The unique ID of the intercom.
      */
     public void addIntercom(BlockPos pos, String id) {
         if (id != null && !id.isEmpty()) {
@@ -102,6 +82,7 @@ public class IntercomManager extends SavedData {
 
     /**
      * Removes an intercom from the manager and syncs the removal to all clients.
+     *
      * @param pos The position of the intercom to remove.
      */
     public void removeIntercom(BlockPos pos) {
@@ -113,6 +94,7 @@ public class IntercomManager extends SavedData {
 
     /**
      * Gets the intercom ID at the given position.
+     *
      * @param pos The position to check for an intercom.
      * @return The intercom ID at the given position, or null if none exists.
      */
@@ -122,6 +104,7 @@ public class IntercomManager extends SavedData {
 
     /**
      * Gets a map of all intercom positions and their corresponding IDs.
+     *
      * @return A map of all intercom positions and their IDs.
      */
     public Map<BlockPos, String> getIntercomIDs() {
@@ -144,37 +127,19 @@ public class IntercomManager extends SavedData {
         intercomIDs.putAll(intercoms);
     }
 
-    @Override
-    public @NotNull CompoundTag save(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider) {
-        ListTag positionsList = new ListTag();
-
-        for (Map.Entry<BlockPos, String> entry : intercomIDs.entrySet()) {
-            CompoundTag positionTag = new CompoundTag();
-            positionTag.putLong("pos", entry.getKey().asLong());
-            positionTag.putString("id", entry.getValue());
-            positionsList.add(positionTag);
-        }
-
-        tag.put("positions", positionsList);
-        return tag;
-    }
-
-    public static @NotNull IntercomManager load(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider provider) {
-        IntercomManager manager = new IntercomManager();
-
-        ListTag positionsList = tag.getList("positions", ListTag.TAG_COMPOUND);
-
-        for (int i = 0; i < positionsList.size(); i++) {
-            CompoundTag positionTag = positionsList.getCompound(i);
-            long posLong = positionTag.getLong("pos");
-            String id = positionTag.getString("id");
-
-            if (!id.isEmpty()) {
-                BlockPos pos = BlockPos.of(posLong);
-                manager.intercomIDs.put(pos, id);
-            }
-        }
-
-        return manager;
+    static {
+        TYPE = new SavedDataType<>(
+                "intercoms",
+                IntercomManager::new,
+                RecordCodecBuilder.create(instance -> instance.group(
+                        Codec.unboundedMap(BlockPos.CODEC, Codec.STRING).fieldOf("intercomIDs")
+                                .forGetter(im -> im.intercomIDs)
+                ).apply(instance, (Map<BlockPos, String> intercomIDs) -> {
+                            IntercomManager manager = new IntercomManager();
+                            manager.intercomIDs.putAll(intercomIDs);
+                            return manager;
+                        }
+                ))
+        );
     }
 }

@@ -11,7 +11,7 @@ import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.PredicateSensor;
 import net.tslat.smartbrainlib.object.FixedNearestVisibleLivingEntities;
 import net.tslat.smartbrainlib.object.SquareRadius;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,7 +55,7 @@ public class VisionConeLivingEntitySensor<E extends LivingEntity> extends Predic
 
         entities.sort(Comparator.comparingDouble(entity::distanceToSqr));
 
-        BrainUtils.setMemory(entity, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES,
+        BrainUtil.setMemory(entity, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES,
                 new FixedNearestVisibleLivingEntities(entity, entities));
     }
 

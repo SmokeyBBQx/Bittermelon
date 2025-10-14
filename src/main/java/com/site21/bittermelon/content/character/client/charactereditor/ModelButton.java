@@ -4,6 +4,7 @@ import com.site21.bittermelon.Bittermelon;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
@@ -28,9 +29,9 @@ public class ModelButton extends AbstractWidget {
     @Override
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (isHovered) {
-            guiGraphics.blitSprite(wide ? WIDE_ICON_HIGHLIGHTED : SLIM_ICON_HIGHLIGHTED, x, y, width, height);
+            guiGraphics.blitSprite(RenderPipelines.GUI, wide ? WIDE_ICON_HIGHLIGHTED : SLIM_ICON_HIGHLIGHTED, x, y, width, height);
         } else {
-            guiGraphics.blitSprite(wide ? WIDE_ICON : SLIM_ICON, x, y, width, height);
+            guiGraphics.blitSprite(RenderPipelines.GUI, wide ? WIDE_ICON : SLIM_ICON, x, y, width, height);
         }
     }
 

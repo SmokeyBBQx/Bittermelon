@@ -11,14 +11,12 @@ import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static net.minecraft.world.level.block.Blocks.*;
 
 public class SearchArea<E extends BitterMob<?>> extends ExtendedBehaviour<E> {
     private static final List<Pair<MemoryModuleType<?>, MemoryStatus>> MEMORY_REQUIREMENTS = ObjectArrayList.of(
@@ -168,7 +166,7 @@ public class SearchArea<E extends BitterMob<?>> extends ExtendedBehaviour<E> {
 //            }
             currentTarget = newTarget;
 //            entity.getNavigation().moveTo(newTarget.getX(), newTarget.getY(), newTarget.getZ(), 1.0F);
-            BrainUtils.setMemory(entity, MemoryModuleType.WALK_TARGET,
+            BrainUtil.setMemory(entity, MemoryModuleType.WALK_TARGET,
                     new WalkTarget(newTarget, 1.0F, 2));
         }
     }

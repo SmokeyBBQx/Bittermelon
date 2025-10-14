@@ -8,7 +8,7 @@ import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.memory.WalkTarget;
 import net.minecraft.world.entity.player.Player;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -43,6 +43,6 @@ public class SeekNearestPlayer<E extends PathfinderMob> extends ExtendedBehaviou
         Player nearestPlayer = entity.level().getNearestPlayer(entity, searchDistance);
 
         if (nearestPlayer == null) return;
-        BrainUtils.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(nearestPlayer.getOnPos(), 1.5f, distanceThreshold));
+        BrainUtil.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(nearestPlayer.getOnPos(), 1.5f, distanceThreshold));
     }
 }

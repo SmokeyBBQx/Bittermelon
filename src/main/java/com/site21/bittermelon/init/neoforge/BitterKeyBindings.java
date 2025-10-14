@@ -13,7 +13,7 @@ import net.neoforged.neoforge.client.settings.KeyModifier;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
-@EventBusSubscriber(modid = Bittermelon.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class BitterKeyBindings {
 
     public static final Lazy<KeyMapping> HEALTH_SCREEN_KEY = Lazy.of(() ->

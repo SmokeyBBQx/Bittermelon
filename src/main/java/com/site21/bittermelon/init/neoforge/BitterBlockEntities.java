@@ -9,11 +9,11 @@ import com.site21.bittermelon.content.blocks.devices.implementations.detonator.D
 import com.site21.bittermelon.content.blocks.devices.implementations.environmentsensor.EnvironmentSensorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.keycardreader.KeycardReaderBlockEntity;
+import com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.LargeSlidingDoorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.PersonnelTerminalBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.redstonedevice.RedstoneDeviceBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.KeycardReaderSecureDoorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.SecureDoorBlockEntity;
-import com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.LargeSlidingDoorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.SlidingDoorBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.speaker.SpeakerBlockEntity;
 import com.site21.bittermelon.content.blocks.devices.implementations.thermometer.ThermometerBlockEntity;
@@ -23,86 +23,97 @@ import com.site21.bittermelon.content.blocks.stickynote.StickyNoteBlockEntity;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.content.blocks.wallwriting.WallWritingBlockEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Supplier;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.*;
 
 public class BitterBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, Bittermelon.MOD_ID);
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FluidBlockEntity>> FLUID_BLOCK_ENTITY =
-            register("fluid", FluidBlockEntity::new, FLUID);
+    public static final Supplier<BlockEntityType<FluidBlockEntity>> FLUID_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "fluid_block_entity",
+            () -> new BlockEntityType<>(FluidBlockEntity::new, false, FLUID.get()));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BoxBlockEntity>> BOX_BLOCK_ENTITY =
-            register("box", BoxBlockEntity::new, SMALL_CARDBOARD_BOX);
+    public static final Supplier<BlockEntityType<BoxBlockEntity>> BOX_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "box_block_entity",
+            () -> new BlockEntityType<>(BoxBlockEntity::new, false, SMALL_CARDBOARD_BOX.get()));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StructuralBlockEntity>> STRUCTURAL_BLOCK_ENTITY =
-            register("structural", StructuralBlockEntity::new, STRUCTURAL_BLOCK);
+    public static final Supplier<BlockEntityType<StructuralBlockEntity>> STRUCTURAL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "structural_block_entity",
+            () -> new BlockEntityType<>(StructuralBlockEntity::new, false, STRUCTURAL_BLOCK.get()));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ContainmentPanelBlockEntity>> CONTAINMENT_PANEL_BLOCK_ENTITY =
-            register("containment_panel", ContainmentPanelBlockEntity::new, CONTAINMENT_PANEL);
+    public static final Supplier<BlockEntityType<ContainmentPanelBlockEntity>> CONTAINMENT_PANEL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "containment_panel_block_entity",
+            () -> new BlockEntityType<>(ContainmentPanelBlockEntity::new, false, CONTAINMENT_PANEL.get()));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PersonnelTerminalBlockEntity>> PERSONNEL_TERMINAL_BLOCK_ENTITY =
-            register("personnel_terminal", PersonnelTerminalBlockEntity::new, PERSONNEL_TERMINAL);
+    public static final Supplier<BlockEntityType<PersonnelTerminalBlockEntity>> PERSONNEL_TERMINAL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "personnel_terminal_block_entity",
+            () -> new BlockEntityType<>(PersonnelTerminalBlockEntity::new, false, PERSONNEL_TERMINAL.get()));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KeycardReaderBlockEntity>> KEYCARD_READER_BLOCK_ENTITY =
-            register("keycard_reader", KeycardReaderBlockEntity::new, KEYCARD_READER);
+    public static final Supplier<BlockEntityType<KeycardReaderBlockEntity>> KEYCARD_READER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "keycard_reader_block_entity",
+            () -> new BlockEntityType<>(KeycardReaderBlockEntity::new, false, KEYCARD_READER.get()));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ThermometerBlockEntity>> THERMOMETER_BLOCK_ENTITY =
-            register("thermometer", ThermometerBlockEntity::new, THERMOMETER);
+    public static final Supplier<BlockEntityType<ThermometerBlockEntity>> THERMOMETER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "thermometer_block_entity",
+            () -> new BlockEntityType<>(ThermometerBlockEntity::new, false, THERMOMETER.get()));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EnvironmentSensorBlockEntity>> ENVIRONMENT_SENSOR_BLOCK_ENTITY =
-            register("environment_sensor", EnvironmentSensorBlockEntity::new, ENVIRONMENT_SENSOR);
+    public static final Supplier<BlockEntityType<EnvironmentSensorBlockEntity>> ENVIRONMENT_SENSOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "environment_sensor_block_entity",
+            () -> new BlockEntityType<>(EnvironmentSensorBlockEntity::new, false, ENVIRONMENT_SENSOR.get()));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<IntercomBlockEntity>> INTERCOM_BLOCK_ENTITY =
-            register("intercom", IntercomBlockEntity::new, INTERCOM);
+    public static final Supplier<BlockEntityType<IntercomBlockEntity>> INTERCOM_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "intercom_block_entity",
+            () -> new BlockEntityType<>(IntercomBlockEntity::new, false, INTERCOM.get()));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SpeakerBlockEntity>> SPEAKER_BLOCK_ENTITY =
-            register("speaker", SpeakerBlockEntity::new, SPEAKER);
+    public static final Supplier<BlockEntityType<SpeakerBlockEntity>> SPEAKER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "speaker_block_entity",
+            () -> new BlockEntityType<>(SpeakerBlockEntity::new, false, SPEAKER.get()));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ContainmentAlarmBlockEntity>> CONTAINMENT_ALARM_BLOCK_ENTITY =
-            register("containment_alarm", ContainmentAlarmBlockEntity::new, CONTAINMENT_ALARM);
+    public static final Supplier<BlockEntityType<ContainmentAlarmBlockEntity>> CONTAINMENT_ALARM_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "containment_alarm_block_entity",
+            () -> new BlockEntityType<>(ContainmentAlarmBlockEntity::new, false, CONTAINMENT_ALARM.get()));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DetonatorBlockEntity>> DETONATOR_BLOCK_ENTITY =
-            register("detonator", DetonatorBlockEntity::new, DETONATOR);
+    public static final Supplier<BlockEntityType<DetonatorBlockEntity>> DETONATOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "detonator_block_entity",
+            () -> new BlockEntityType<>(DetonatorBlockEntity::new, false, DETONATOR.get()));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SecureDoorBlockEntity>> SECURE_DOOR_BLOCK_ENTITY =
-            register("secure_door", SecureDoorBlockEntity::new, SECURE_DOOR);
+    public static final Supplier<BlockEntityType<SecureDoorBlockEntity>> SECURE_DOOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "secure_door_block_entity",
+            () -> new BlockEntityType<>(SecureDoorBlockEntity::new, false, SECURE_DOOR.get()));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KeycardReaderSecureDoorBlockEntity>> KEYCARD_READER_SECURE_DOOR_BLOCK_ENTITY =
-            register("keycard_reader_secure_door", KeycardReaderSecureDoorBlockEntity::new, KEYCARD_READER_SECURE_DOOR);
+    public static final Supplier<BlockEntityType<KeycardReaderSecureDoorBlockEntity>> KEYCARD_READER_SECURE_DOOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "keycard_reader_secure_door_block_entity",
+            () -> new BlockEntityType<>(KeycardReaderSecureDoorBlockEntity::new, false, KEYCARD_READER_SECURE_DOOR.get()));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SlidingDoorBlockEntity>> SLIDING_DOOR_BLOCK_ENTITY =
-            register("sliding_door", SlidingDoorBlockEntity::new, SLIDING_DOOR);
+    public static final Supplier<BlockEntityType<SlidingDoorBlockEntity>> SLIDING_DOOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "sliding_door_block_entity",
+            () -> new BlockEntityType<>(SlidingDoorBlockEntity::new, false, SLIDING_DOOR.get()));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LargeSlidingDoorBlockEntity>> LARGE_SLIDING_DOOR_BLOCK_ENTITY =
-            register("large_sliding_door", LargeSlidingDoorBlockEntity::new, LARGE_SLIDING_DOOR);
+    public static final Supplier<BlockEntityType<LargeSlidingDoorBlockEntity>> LARGE_SLIDING_DOOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "large_sliding_door_block_entity",
+            () -> new BlockEntityType<>(LargeSlidingDoorBlockEntity::new, false, LARGE_SLIDING_DOOR.get()));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DistributionBoardBlockEntity>> DISTRIBUTION_BOARD_BLOCK_ENTITY =
-            register("distribution_board", DistributionBoardBlockEntity::new, DISTRIBUTION_BOARD);
+    public static final Supplier<BlockEntityType<DistributionBoardBlockEntity>> DISTRIBUTION_BOARD_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "distribution_board_block_entity",
+            () -> new BlockEntityType<>(DistributionBoardBlockEntity::new, false, DISTRIBUTION_BOARD.get()));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RedstoneDeviceBlockEntity>> REDSTONE_DEVICE_BLOCK_ENTITY =
-            register("redstone_device", RedstoneDeviceBlockEntity::new, REDSTONE_DEVICE);
+    public static final Supplier<BlockEntityType<RedstoneDeviceBlockEntity>> REDSTONE_DEVICE_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "redstone_device_block_entity",
+            () -> new BlockEntityType<>(RedstoneDeviceBlockEntity::new, false, REDSTONE_DEVICE.get()));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SCP151BlockEntity>> SCP151_BLOCK_ENTITY =
-            register("scp_151", SCP151BlockEntity::new, SCP_151);
+    public static final Supplier<BlockEntityType<SCP151BlockEntity>> SCP151_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "scp_151_block_entity",
+            () -> new BlockEntityType<>(SCP151BlockEntity::new, false, SCP_151.get()));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WallWritingBlockEntity>> WALL_WRITING_BLOCK_ENTITY =
-            register("wall_writing", WallWritingBlockEntity::new, WALL_WRITING);
+    public static final Supplier<BlockEntityType<WallWritingBlockEntity>> WALL_WRITING_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "wall_writing_block_entity",
+            () -> new BlockEntityType<>(WallWritingBlockEntity::new, false, WALL_WRITING.get()));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StickyNoteBlockEntity>> STICKY_NOTE_BLOCK_ENTITY =
-            register("sticky_note", StickyNoteBlockEntity::new, STICKY_NOTE);
-
-    private static <T extends BlockEntity> @NotNull DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> register(
-            String name,
-            BlockEntityType.BlockEntitySupplier<T> supplier,
-            DeferredHolder<Block, ? extends Block> block) {
-        return BLOCK_ENTITY_TYPES.register(name + "_block_entity",
-                () -> BlockEntityType.Builder.of(supplier, block.get()).build(null));
-    }
+    public static final Supplier<BlockEntityType<StickyNoteBlockEntity>> STICKY_NOTE_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "sticky_note_block_entity",
+            () -> new BlockEntityType<>(StickyNoteBlockEntity::new, false, STICKY_NOTE.get()));
 }
