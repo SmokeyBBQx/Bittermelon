@@ -187,4 +187,24 @@ public class BitterDataComponents {
             "message",
             builder -> builder.persistent(Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8)
     );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> VOLUME = DATA_COMPONENTS.registerComponentType(
+            "volume",
+            builder -> builder.persistent(Codec.FLOAT).networkSynchronized(ByteBufCodecs.FLOAT)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> MAX_TRANSFER_RATE = DATA_COMPONENTS.registerComponentType(
+            "max_transfer_rate",
+            builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> MAX_PRESSURE = DATA_COMPONENTS.registerComponentType(
+            "max_pressure",
+            builder -> builder.persistent(Codec.FLOAT).networkSynchronized(ByteBufCodecs.FLOAT)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> WEIGHT = DATA_COMPONENTS.registerComponentType(
+            "weight",
+            builder -> builder.persistent(Codec.FLOAT).networkSynchronized(ByteBufCodecs.FLOAT)
+    );
 }

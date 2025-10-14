@@ -110,6 +110,7 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
      */
 
     public void updateSubstance(SubstanceStack substance) {
+        // Merge with existing substances if possible
         for (SubstanceStack stack : substances) {
             if (stack.canMergeWith(substance)) {
                 stack.modifyAmount(substance.getAmount());
@@ -119,10 +120,8 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
             }
         }
 
-        System.out.println("Adding " + substance.getSubstance().getName() + " with volume " + substance.getVolume() + " and amount " + substance.getAmount() + " to " + worldPosition);
-
+        // Otherwise, add as a new substance
         substances.add(substance);
-
         updatePuddleLevel();
         setChanged();
     }
@@ -163,6 +162,11 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
         return transferredSubstances;
     }
 
+    /**
+     * Transfer substances based on volume instead of amount.
+     * @param amount The volume to transfer.
+     * @return A list of SubstanceStacks representing the transferred substances.
+     */
     public List<SubstanceStack> transferSubstancesVolume(float amount) {
         if (substances.isEmpty()) {
             return Collections.emptyList();
@@ -176,16 +180,16 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
             SubstanceStack stack = iterator.next();
             float availableVolume = stack.getVolume();
 
-            float transferAmount = (amount * availableVolume) / totalVolume;
-            float actualAmount = Math.min(availableVolume, transferAmount);
+            float transferVolume = (amount * availableVolume) / totalVolume;
+            float actualVolume = Math.min(availableVolume, transferVolume);
 
-            if (actualAmount > 0) {
-                stack.modifyVolume(-actualAmount);
+            if (actualVolume > 0) {
+                stack.modifyVolume(-actualVolume);
                 SubstanceStack stackToTransfer = stack.copy();
-                stackToTransfer.setVolume(actualAmount);
+                stackToTransfer.setVolume(actualVolume);
                 transferredSubstances.add(stackToTransfer);
 
-                if (availableVolume <= actualAmount) {
+                if (availableVolume <= actualVolume) {
                     iterator.remove();
                 }
             }
@@ -347,8 +351,6 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
         BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
         BlockPos.MutableBlockPos checkPos = new BlockPos.MutableBlockPos();
 
-        int worldY = worldPosition.getY();
-
         BlockState currentState = level.getBlockState(worldPosition);
         boolean isDisplaced = !(currentState.getBlock() instanceof FluidBlock) || getTotalVolume() > MAX_CAPACITY;
 
@@ -398,7 +400,7 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
 
             if (!validNeighbors.isEmpty()) {
                 for (long neighborPacked : validNeighbors) {
-                    if (worldY - BlockPos.getY(neighborPacked) > 0) {
+                    if (worldPosition.getY() - BlockPos.getY(neighborPacked) > 0) {
                         return longSetToBlockPos(validNeighbors);
                     }
                 }
@@ -525,9 +527,11 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
     }
 
     private void equalizeSubstances() {
+        // Find all connected fluid blocks
         List<FluidBlockEntity> flowCandidates = new ArrayList<>(5);
         flowCandidates.add(this);
 
+        // Check horizontal neighbors
         for (Direction dir : Direction.Plane.HORIZONTAL) {
             BlockPos neighborPos = worldPosition.relative(dir);
             if (level != null && level.getBlockEntity(neighborPos) instanceof FluidBlockEntity entity) {
@@ -537,9 +541,11 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
             }
         }
 
+        // Equalize substances among all connected fluid blocks
         if (flowCandidates.size() > 1) {
             List<SubstanceStack> totalSubstances = new ArrayList<>();
 
+            // Sum up all substances
             for (FluidBlockEntity fluid : flowCandidates) {
                 for (SubstanceStack stack : fluid.getSubstances()) {
                     SubstanceStack stackCopy = stack.copy();
@@ -547,6 +553,7 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
                 }
             }
 
+            // Divide substances equally
             totalSubstances.removeIf(stack -> {
                 if (stack.getVolume() > 0) {
                     stack.setVolume(stack.getVolume() / flowCandidates.size());
@@ -555,6 +562,7 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
                 return true;
             });
 
+            // Update each fluid block with the new substances
             for (FluidBlockEntity puddle : flowCandidates) {
                 List<SubstanceStack> puddleSubstances = new ArrayList<>();
                 for (SubstanceStack stack : totalSubstances) {
@@ -566,9 +574,11 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
     }
 
     private void equalizeTemperature() {
+        // Find all connected fluid blocks
         List<FluidBlockEntity> flowCandidates = new ArrayList<>(5);
         flowCandidates.add(this);
 
+        // Check horizontal neighbors
         for (Direction dir : Direction.Plane.HORIZONTAL) {
             BlockPos neighborPos = worldPosition.relative(dir);
             if (level != null && level.getBlockEntity(neighborPos) instanceof FluidBlockEntity entity) {
@@ -578,15 +588,19 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
             }
         }
 
+        // Equalize temperature among all connected fluid blocks
         if (flowCandidates.size() > 1) {
             float totalTemperature = 0;
 
+            // Sum up all temperatures
             for (FluidBlockEntity fluid : flowCandidates) {
                 totalTemperature += fluid.getTemperature();
             }
 
+            // Calculate the distributed temperature
             float distributedTemperature = totalTemperature / flowCandidates.size();
 
+            // Update each fluid block with the new temperature
             for (FluidBlockEntity fluid : flowCandidates) {
                 fluid.setTemperature(distributedTemperature);
             }

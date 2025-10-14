@@ -20,8 +20,8 @@ import org.jetbrains.annotations.NotNull;
 public class PowderedSubstanceItem extends SubstanceContainerItem {
     protected final int SNORT_RATE = 20;
 
-    public PowderedSubstanceItem(Properties properties, int width, int height, ItemWeight itemWeight, int capacity) {
-        super(properties, width, height, itemWeight, capacity);
+    public PowderedSubstanceItem(Properties properties, int width, int height, ItemWeight itemWeight) {
+        super(properties, width, height, itemWeight);
     }
 
     @Override

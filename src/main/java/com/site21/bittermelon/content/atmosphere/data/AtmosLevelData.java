@@ -1,12 +1,10 @@
 package com.site21.bittermelon.content.atmosphere.data;
 
-import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.atmosphere.AtmosInstance;
 import com.site21.bittermelon.content.atmosphere.networking.CreateAtmosInstance;
 import com.site21.bittermelon.content.atmosphere.networking.RemoveAtmosInstance;
 import com.site21.bittermelon.content.atmosphere.networking.SyncAtmosInstance;
 import com.site21.bittermelon.content.atmosphere.networking.SyncAtmosInstances;
-import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -18,7 +16,6 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -64,7 +61,7 @@ public class AtmosLevelData extends SavedData {
         for (String key : instances.getAllKeys()) {
             AtmosInstance.CODEC.parse(NbtOps.INSTANCE, instances.get(key))
                     .result()
-                    .ifPresent(instance -> data.atmosInstances.put(instance.getUuid(), instance));
+                    .ifPresent(instance -> data.atmosInstances.put(instance.getUUID(), instance));
         }
         return data;
     }
@@ -90,7 +87,7 @@ public class AtmosLevelData extends SavedData {
     }
 
     public void addAtmosInstance(AtmosInstance instance) {
-        atmosInstances.put(instance.getUuid(), instance);
+        atmosInstances.put(instance.getUUID(), instance);
         PacketDistributor.sendToAllPlayers(new CreateAtmosInstance(instance));
         setDirty();
     }

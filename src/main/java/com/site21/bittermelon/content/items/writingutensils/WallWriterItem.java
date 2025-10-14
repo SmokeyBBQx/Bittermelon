@@ -28,6 +28,7 @@ public abstract class WallWriterItem extends BlockItem implements WallWriter {
         super(block, properties);
     }
 
+    // Open the writing screen when shift-right-clicking a wall writing block
     @Override
     public @NotNull InteractionResult useOn(@NotNull UseOnContext context) {
         Level level = context.getLevel();
@@ -50,6 +51,7 @@ public abstract class WallWriterItem extends BlockItem implements WallWriter {
         return super.useOn(context);
     }
 
+    // Make sure to open the writing screen when placing the block if needed
     @Override
     protected boolean updateCustomBlockEntityTag(@NotNull BlockPos pos, @NotNull Level level, @Nullable Player player, @NotNull ItemStack stack, @NotNull BlockState state) {
         boolean shouldUpdate = super.updateCustomBlockEntityTag(pos, level, player, stack, state);
@@ -68,6 +70,7 @@ public abstract class WallWriterItem extends BlockItem implements WallWriter {
 
     protected abstract void formatText(@NotNull WallWritingBlockEntity wallWriting, ItemStack stack);
 
+    // Apply the text to the wall writing block entity and open the writing screen
     @Override
     public boolean tryApplyToWall(@NotNull Level level, @NotNull WallWritingBlockEntity wallWriting, @NotNull Player player, ItemStack stack) {
         if (player.isShiftKeyDown() && player instanceof ServerPlayer serverPlayer) {

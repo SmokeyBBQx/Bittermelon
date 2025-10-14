@@ -71,6 +71,12 @@ public class IntercomManager extends SavedData {
         }
     }
 
+    /**
+     * Transmits a message to all intercoms with the specified target ID.
+     * @param event The sound event to transmit.
+     * @param targetID The target intercom ID.
+     * @param level The level in which to find the intercoms.
+     */
     public void transmitMessage(SyncSoundEvent event, String targetID, Level level) {
         for (Map.Entry<BlockPos, String> entry : intercomIDs.entrySet()) {
             if (Objects.equals(entry.getValue(), targetID)) {
@@ -81,6 +87,11 @@ public class IntercomManager extends SavedData {
         }
     }
 
+    /**
+     * Adds an intercom to the manager and syncs it to all clients.
+     * @param pos The position of the intercom.
+     * @param id The unique ID of the intercom.
+     */
     public void addIntercom(BlockPos pos, String id) {
         if (id != null && !id.isEmpty()) {
             intercomIDs.put(pos, id);
@@ -89,6 +100,10 @@ public class IntercomManager extends SavedData {
         }
     }
 
+    /**
+     * Removes an intercom from the manager and syncs the removal to all clients.
+     * @param pos The position of the intercom to remove.
+     */
     public void removeIntercom(BlockPos pos) {
         if (intercomIDs.remove(pos) != null) {
             setDirty();
@@ -96,10 +111,19 @@ public class IntercomManager extends SavedData {
         }
     }
 
+    /**
+     * Gets the intercom ID at the given position.
+     * @param pos The position to check for an intercom.
+     * @return The intercom ID at the given position, or null if none exists.
+     */
     public String getIntercomId(BlockPos pos) {
         return intercomIDs.get(pos);
     }
 
+    /**
+     * Gets a map of all intercom positions and their corresponding IDs.
+     * @return A map of all intercom positions and their IDs.
+     */
     public Map<BlockPos, String> getIntercomIDs() {
         return intercomIDs;
     }

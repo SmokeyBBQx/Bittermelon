@@ -36,10 +36,18 @@ public class PlayerInfo {
         return model;
     }
 
+    /**
+     * Sets the skin URL. This should be a direct link to the skin image.
+     * @param skinURL the URL of the skin image
+     */
     public void setSkinURL(String skinURL) {
         this.skinURL = skinURL;
     }
 
+    /**
+     * Sets the skin model (SLIM or WIDE).
+     * @param model the skin model
+     */
     public void setModel(SkinModel model) {
         this.model = model;
     }
@@ -71,12 +79,22 @@ public class PlayerInfo {
             return this.id;
         }
 
+        /**
+         * Converts this enum to the corresponding Minecraft PlayerSkin.Model enum.
+         * @return The corresponding Minecraft PlayerSkin.Model enum.
+         */
         @Contract(pure = true)
         @OnlyIn(Dist.CLIENT)
         public PlayerSkin.@NotNull Model toMinecraftModel() {
             return PlayerSkin.Model.byName(this.id);
         }
 
+        /**
+         * Converts a Minecraft PlayerSkin.Model enum to this enum.
+         * @param minecraftModel The Minecraft PlayerSkin.Model enum.
+         * @return The corresponding SkinModel enum.
+         */
+        @Contract(pure = true)
         @OnlyIn(Dist.CLIENT)
         public static SkinModel fromMinecraftModel(PlayerSkin.@NotNull Model minecraftModel) {
             return byName(minecraftModel.id());

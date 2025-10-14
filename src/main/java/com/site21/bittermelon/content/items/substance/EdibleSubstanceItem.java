@@ -22,8 +22,8 @@ import java.util.Iterator;
 public class EdibleSubstanceItem extends SubstanceContainerItem {
     protected final int CONSUME_RATE = 20;
 
-    public EdibleSubstanceItem(Properties properties, int width, int height, ItemWeight itemWeight, int capacity) {
-        super(properties, width, height, itemWeight, capacity);
+    public EdibleSubstanceItem(Properties properties, int width, int height, ItemWeight itemWeight) {
+        super(properties, width, height, itemWeight);
     }
 
     @Override

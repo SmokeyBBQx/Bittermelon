@@ -71,35 +71,73 @@ public class CharacterManager extends SavedData {
         }
     }
 
+    /** Sets the active character for the given entity.
+     *
+     * @param entity        The entity to set the active character for.
+     * @param characterUUID The UUID of the character to set as active.
+     */
     public void setActiveCharacter(Entity entity, UUID characterUUID) {
         if (characters.containsKey(characterUUID)) {
             entity.setData(ACTIVE_CHARACTER.get(), characterUUID);
         }
     }
 
+    /**
+     * Gets the active character for the given entity.
+     *
+     * @param entity The entity to get the active character for.
+     * @return The active character, or null if none is set or the character does not exist.
+     */
     public @Nullable Character getActiveCharacter(@NotNull Entity entity) {
         UUID characterUUID = entity.getData(ACTIVE_CHARACTER.get());
         return characters.get(characterUUID);
     }
 
+    /**
+     * Gets the map of all characters.
+     *
+     * @return The map of all characters.
+     */
     public Map<UUID, Character> getCharacters() {
         return characters;
     }
 
+    /**
+     * Gets a character by its UUID.
+     *
+     * @param uuid The UUID of the character.
+     * @return The character, or null if not found.
+     */
     public Character getCharacter(UUID uuid) {
         return characters.get(uuid);
     }
 
+    /**
+     * Adds a character to the manager.
+     *
+     * @param character The character to add.
+     */
     public void addCharacter(Character character) {
         characters.put(character.getUUID(), character);
         setDirty();
     }
 
+    /**
+     * Removes a character from the manager.
+     *
+     * @param uuid The UUID of the character to remove.
+     */
     public void removeCharacter(UUID uuid) {
         characters.remove(uuid);
         setDirty();
     }
 
+    /**
+     * Gets a list of characters associated with the given entity UUID.
+     *
+     * @param entityUUID The UUID of the entity.
+     * @return A list of characters associated with the entity UUID.
+     */
     public List<Character> getCharactersByEntityUUID(UUID entityUUID) {
         List<Character> characterList = new ArrayList<>();
 
@@ -112,6 +150,14 @@ public class CharacterManager extends SavedData {
         return characterList;
     }
 
+    /**
+     * Switches the active character for the given player.
+     * Saves the previous character's data and loads the new character's data.
+     *
+     * @param player            The player to switch the character for.
+     * @param previousCharacter The previous active character, or null if none.
+     * @param switchedTo        The character to switch to.
+     */
     public void switchCharacter(@NotNull Player player, @Nullable Character previousCharacter, @NotNull Character switchedTo) {
         if (previousCharacter != null) {
             CompoundTag playerData = player.saveWithoutId(new CompoundTag());
@@ -127,21 +173,6 @@ public class CharacterManager extends SavedData {
         }
 
         switchedTo.getPlayerInfo().ifPresent(info -> SkinOverrideSystem.setSkinOverride(player.getUUID(), switchedTo.getUUID(), info.getSkinURL(), info.getModel().toMinecraftModel()));
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public void addCharacterFromServer(Character character) {
-        characters.put(character.getUUID(), character);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public void removeCharacterFromServer(UUID uuid) {
-        characters.remove(uuid);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public void updateCharacterFromServer(Character character) {
-        characters.put(character.getUUID(), character);
     }
 
     public static @NotNull CharacterManager load(@NotNull CompoundTag tag, HolderLookup.Provider lookupProvider) {

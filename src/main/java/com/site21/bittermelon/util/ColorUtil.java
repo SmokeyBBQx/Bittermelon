@@ -6,6 +6,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 public final class ColorUtil {
+    /**
+     * Mixes multiple colors together based on their associated amounts.
+     *
+     * @param colors A map where keys are colors (as ARGB integers) and values are their respective amounts.
+     * @return The resulting mixed color as an ARGB integer.
+     */
     public static int mixColors(@NotNull Map<Integer, Float> colors) {
         float totalAmount = 0;
         float redSum = 0, greenSum = 0, blueSum = 0;
@@ -27,6 +33,12 @@ public final class ColorUtil {
         return 0xFF000000 | (red << 16) | (green << 8) | blue;
     }
 
+    /**
+     * Mixes multiple colors together based on their associated amounts and returns the RGB components.
+     *
+     * @param colors A map where keys are colors (as ARGB integers) and values are their respective amounts.
+     * @return An array containing the RGB components of the resulting mixed color.
+     */
     @Contract("_ -> new")
     public static int @NotNull [] mixColorsRGB(@NotNull Map<Integer, Float> colors) {
         float totalAmount = 0;

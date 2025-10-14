@@ -26,6 +26,6 @@ public record CreateAtmosInstance(AtmosInstance instance) implements CustomPacke
 
     public void handle(@NotNull IPayloadContext ctx) {
             AtmosLevelData data = AtmosLevelData.get(ctx.player().level());
-            data.getAtmosInstances().put(instance.getUuid(), instance);
+            data.getAtmosInstances().put(instance.getUUID(), instance);
     }
 }

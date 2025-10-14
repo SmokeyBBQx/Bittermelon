@@ -8,10 +8,8 @@ import com.site21.bittermelon.content.atmosphere.networking.UpdateAtmosTemperatu
 import com.site21.bittermelon.content.substance.Substance;
 import com.site21.bittermelon.content.substance.SubstanceStack;
 import com.site21.bittermelon.util.SubstanceUtils;
-import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
-import net.minecraft.core.Holder;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -34,7 +32,7 @@ public class AtmosInstance {
     public static final Codec<AtmosInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.FLOAT.fieldOf("temperature").forGetter(AtmosInstance::getTemperature),
             SubstanceStack.CODEC.listOf().fieldOf("gases").forGetter(AtmosInstance::getGases),
-            UUIDUtil.CODEC.fieldOf("uuid").forGetter(AtmosInstance::getUuid),
+            UUIDUtil.CODEC.fieldOf("uuid").forGetter(AtmosInstance::getUUID),
             LONG_SET_CODEC.fieldOf("blocks").forGetter(AtmosInstance::getBlocks)
     ).apply(instance, AtmosInstance::new));
 
@@ -45,7 +43,7 @@ public class AtmosInstance {
                     SubstanceStack.STREAM_CODEC.apply(ByteBufCodecs.list()),
                     AtmosInstance::getGases,
                     UUIDUtil.STREAM_CODEC,
-                    AtmosInstance::getUuid,
+                    AtmosInstance::getUUID,
                     ByteBufCodecs.collection(
                             LongOpenHashSet::new,
                             ByteBufCodecs.VAR_LONG
@@ -86,42 +84,75 @@ public class AtmosInstance {
         return gases;
     }
 
+    /**
+     * Calculates the pressure of the atmosphere instance using the ideal gas law.
+     *
+     * @return The pressure in kPa.
+     */
     public float getPressure() {
         if (blocks.isEmpty()) return 0;
         return SubstanceUtils.getTotalAmount(gases) * GAS_CONSTANT * temperature / (blocks.size() * 1000);
     }
 
-    public UUID getUuid() {
+    public UUID getUUID() {
         return uuid;
     }
 
-
-    public void addBlock(Long packedPos, Level level) {
+    /**
+     * Adds a block to this atmosphere instance and notifies all clients of the change.
+     *
+     * @param packedPos The packed position of the block to add.
+     * @param level     The level in which the block is being added.
+     */
+    public void addBlock(Long packedPos, @NotNull Level level) {
         blocks.add(packedPos);
         if (!level.isClientSide) {
             PacketDistributor.sendToAllPlayers(new UpdateAtmosBlocks(uuid, true, packedPos));
         }
     }
 
-    public void removeBlock(Long packedPos, Level level) {
+    /**
+     * Removes a block from this atmosphere instance and notifies all clients of the change.
+     *
+     * @param packedPos The packed position of the block to remove.
+     * @param level     The level in which the block is being removed.
+     */
+    public void removeBlock(Long packedPos, @NotNull Level level) {
         blocks.remove(packedPos);
         if (!level.isClientSide) {
             PacketDistributor.sendToAllPlayers(new UpdateAtmosBlocks(uuid, false, packedPos));
         }
     }
 
+    /**
+     * Gets the set of blocks associated with this atmosphere instance.
+     *
+     * @return A LongSet of packed block positions.
+     */
     public LongSet getBlocks() {
         return blocks;
     }
 
-    public void setTemperature(float temperature, Level level) {
+    /**
+     * Sets the temperature of this atmosphere instance and notifies all clients of the change.
+     *
+     * @param temperature The new temperature in Kelvin.
+     * @param level       The level in which the temperature is being set.
+     */
+    public void setTemperature(float temperature, @NotNull Level level) {
         this.temperature = temperature;
         if (!level.isClientSide) {
             PacketDistributor.sendToAllPlayers(new UpdateAtmosTemperature(uuid, temperature));
         }
     }
 
-
+    /**
+     * Merges another atmosphere instance into this one, averaging temperatures and combining gases.
+     * Notifies all clients of the changes.
+     *
+     * @param other The other atmosphere instance to merge.
+     * @param level The level in which the merge is occurring.
+     */
     public void merge(@NotNull AtmosInstance other, Level level) {
         setTemperature((temperature + other.getTemperature()) / 2, level);
         for (SubstanceStack gas : other.gases) {
@@ -129,6 +160,13 @@ public class AtmosInstance {
         }
     }
 
+    /**
+     * Updates the amount of a specific gas in this atmosphere instance, adding it if not present.
+     * Notifies all clients of the change.
+     *
+     * @param gas   The SubstanceStack representing the gas to update.
+     * @param level The level in which the gas is being updated.
+     */
     public void updateGas(SubstanceStack gas, Level level) {
         for (SubstanceStack stack : gases) {
             if (stack.canMergeWith(gas)) {
@@ -146,6 +184,11 @@ public class AtmosInstance {
         }
     }
 
+    /**
+     * Checks if this atmosphere instance contains a specific gas.
+     * @param gas The Substance to check for.
+     * @return True if the gas is present, false otherwise.
+     */
     public boolean containsGas(Substance gas) {
         return gases.stream().anyMatch(stack -> stack.getSubstance().equals(gas));
     }

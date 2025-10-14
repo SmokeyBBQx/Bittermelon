@@ -48,19 +48,16 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.*;
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.ENERGY_LOSS_ON_BOUNCE;
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.MAX_BOUNCES;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 
 public class BitterItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Bittermelon.MOD_ID);
 
     public static final DeferredItem<FluidContainerItem> BEER_BOTTLE = ITEMS.register("beer_bottle", () -> new GlassFluidContainerItem(
-            new Item.Properties(),
+            new Item.Properties().component(VOLUME, 75.0f),
             3,
             2,
             ItemWeight.MEDIUM,
-            75,
-            10,
             true
             ));
 
@@ -205,18 +202,14 @@ public class BitterItems {
             1,
             3,
             ItemWeight.MEDIUM,
-            100,
-            2000,
             1200
     ));
 
     public static final DeferredItem<BaseItem> WHISKEY_BOTTLE = ITEMS.register("whiskey_bottle", () -> new FluidContainerItem(
-            new Item.Properties(),
+            new Item.Properties().component(VOLUME, 100.0f),
             3,
             2,
             ItemWeight.MEDIUM,
-            100,
-            10,
             true)
     );
 
@@ -434,11 +427,10 @@ public class BitterItems {
     ));
 
     public static final DeferredItem<PowderedSubstanceItem> POWDER = ITEMS.register("powder", () -> new PowderedSubstanceItem(
-            new Item.Properties(),
+            new Item.Properties().component(VOLUME, 20.0f),
             1,
             1,
-            ItemWeight.VERY_LIGHT,
-            20
+            ItemWeight.VERY_LIGHT
     ));
 
     public static final DeferredItem<PillItem> PILL = ITEMS.register("pill", () -> new PillItem(

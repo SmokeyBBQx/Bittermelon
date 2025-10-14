@@ -37,10 +37,18 @@ public class Substance {
         return DataComponentMap.EMPTY;
     }
 
+    /**
+     * Calculates the molar volume of the substance in cm³/mol.
+     * @return Molar volume in cm³/mol.
+     */
     public float getMolarVolume() {
         return properties.molarMass / properties.density;
     }
 
+    /**
+     * Gets the slipperiness of the substance.
+     * @return Slipperiness value (0.0 - 1.0).
+     */
     public float getSlipperiness() {
         return properties.slipperiness;
     }

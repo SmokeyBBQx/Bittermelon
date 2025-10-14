@@ -10,8 +10,8 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 public class GlassFluidContainerItem extends FluidContainerItem implements FragileItem {
-    public GlassFluidContainerItem(Properties properties, int width, int height, ItemWeight itemWeight, int capacity, int maxTransferRate, boolean hasLid) {
-        super(properties, width, height, itemWeight, capacity, maxTransferRate, hasLid);
+    public GlassFluidContainerItem(Properties properties, int width, int height, ItemWeight itemWeight, boolean hasLid) {
+        super(properties, width, height, itemWeight, hasLid);
     }
 
     @Override

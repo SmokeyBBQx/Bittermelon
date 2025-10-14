@@ -72,10 +72,20 @@ public class PersonnelRegistry extends SavedData {
         }
     }
 
+    /**
+     * Gets the PersonnelEntry associated with the given ID.
+     * @param id The ID of the PersonnelEntry to retrieve.
+     * @return The PersonnelEntry with the specified ID, or null if none exists.
+     */
     public PersonnelEntry getEntry(int id) {
         return personnelEntries.get(id);
     }
 
+    /**
+     * Gets the PersonnelEntry associated with the given Character.
+     * @param character The Character whose PersonnelEntry is to be retrieved.
+     * @return The PersonnelEntry associated with the Character, or null if none exists.
+     */
     public PersonnelEntry getEntry(@NotNull Character character) {
         Integer entryId = characterToEntry.get(character.getUUID());
         if (entryId == null) {
@@ -84,10 +94,18 @@ public class PersonnelRegistry extends SavedData {
         return getEntry(entryId);
     }
 
+    /**
+     * Gets the PersonnelEntry ID associated with the given Character.
+     * @return The PersonnelEntry ID, or null if none exists.
+     */
     public Map<Integer, PersonnelEntry> getPersonnelEntries() {
         return personnelEntries;
     }
 
+    /**
+     * Adds a new PersonnelEntry to the registry and notifies all clients.
+     * @param entry The PersonnelEntry to add.
+     */
     public void addEntry(PersonnelEntry entry) {
         personnelEntries.put(entry.getId(), entry);
         characterToEntry.put(entry.getCharacterUUID(), entry.getId());
@@ -95,6 +113,10 @@ public class PersonnelRegistry extends SavedData {
         PacketDistributor.sendToAllPlayers(new AddPersonnelEntry(entry));
     }
 
+    /**
+     * Removes a PersonnelEntry from the registry by its ID and notifies all clients.
+     * @param id The ID of the PersonnelEntry to remove.
+     */
     public void removeEntry(int id) {
         characterToEntry.remove(getEntry(id).getCharacterUUID());
         personnelEntries.remove(id);
@@ -103,11 +125,6 @@ public class PersonnelRegistry extends SavedData {
 
     public boolean containsId(int id) {
         return personnelEntries.containsKey(id);
-    }
-
-    public boolean hasPermission(PersonnelEntry entry, Level level) {
-        PrivilegeManager.get(level);
-        return true;
     }
 
     @OnlyIn(Dist.CLIENT)

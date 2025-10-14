@@ -25,27 +25,8 @@ import java.util.stream.Collectors;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 
 public class SubstanceContainerItem extends BaseItem implements ReactionContainer {
-    protected final int capacity;
-    private List<SubstanceStack> initialSubstances = new ArrayList<>();
-
-    public SubstanceContainerItem(Properties properties, int width, int height, ItemWeight itemWeight, int capacity) {
+    public SubstanceContainerItem(Properties properties, int width, int height, ItemWeight itemWeight) {
         super(properties, width, height, itemWeight);
-        this.capacity = capacity;
-        initializeSubstances();
-    }
-
-    private void initializeSubstances() {
-        for (SubstanceStack substance : initialSubstances) {
-        }
-    }
-
-    public SubstanceContainerItem addInitialSubstance(SubstanceStack substance) {
-        this.initialSubstances.add(substance);
-        return this;
-    }
-
-    public void setInitialSubstances(List<SubstanceStack> initialSubstances) {
-        this.initialSubstances = initialSubstances;
     }
 
     public SubstanceContents getSubstanceData(@NotNull ItemStack stack) {
@@ -74,6 +55,11 @@ public class SubstanceContainerItem extends BaseItem implements ReactionContaine
         return getSubstanceData(stack).getTotalVolume();
     }
 
+    /**
+     * Updates the substance in the item stack by adding or modifying the given substance stack.
+     * @param itemStack the item stack to update
+     * @param substanceStack the substance stack to add or modify
+     */
     public void updateSubstance(ItemStack itemStack, SubstanceStack substanceStack) {
         if (substanceStack != null) {
             SubstanceContents.Mutable mutableData = getMutableSubstanceData(itemStack);
@@ -82,22 +68,21 @@ public class SubstanceContainerItem extends BaseItem implements ReactionContaine
         }
     }
 
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public int getCapacity(@NotNull ItemStack stack) {
-        if (stack.getItem() instanceof SubstanceContainerItem item) {
-            return item.getCapacity();
-        }
-
-        return 0;
+    public float getCapacity(@NotNull ItemStack stack) {
+        return stack.getOrDefault(VOLUME, 0.0f);
     }
 
     public boolean isContainerEmpty(ItemStack stack) {
         return getContents(stack).isEmpty();
     }
 
+    /**
+     * Consumes substances from the container based on the consume rate and the proportion of each substance.
+     * @param stack The ItemStack representing the substance container.
+     * @param consumeRate The total amount to consume from the container.
+     * @param entity The LivingEntity consuming the substances.
+     * @return The updated ItemStack after consumption.
+     */
     public ItemStack consumeSubstances(ItemStack stack, float consumeRate, LivingEntity entity) {
         float totalAmount = getTotalVolume(stack);
         SubstanceContents.Mutable mutableData = getMutableSubstanceData(stack);
@@ -153,12 +138,12 @@ public class SubstanceContainerItem extends BaseItem implements ReactionContaine
 
     @Override
     public int getBarWidth(@NotNull ItemStack stack) {
-        return (int) ((long) getSubstanceData(stack).getTotalVolume() * MAX_BAR_WIDTH / capacity);
+        return (int) ((long) getSubstanceData(stack).getTotalVolume() * MAX_BAR_WIDTH / getCapacity(stack));
     }
 
     @Override
     public int getBarColor(@NotNull ItemStack stack) {
-        float fillPercentage = getSubstanceData(stack).getTotalVolume() / capacity;
+        float fillPercentage = getSubstanceData(stack).getTotalVolume() / getCapacity(stack);
         if (fillPercentage < 0.5f) {
             return 0xFF0000 | (Math.round(510 * fillPercentage) << 8); // Red to Yellow
         } else {

@@ -43,6 +43,9 @@ public class Character {
     private int willpower;
     private PlayerInfo playerInfo;
 
+    /** Full constructor for deserialization purposes.
+     * Use other constructors for creating new characters.
+     */
     public Character(UUID uuid, UUID entityUUID, String name, String description, int emoteColor, MedicalStats medicalStats, EnumMap<Skill, Float> skills, int willpower) {
         this.uuid = uuid;
         this.entityUUID = entityUUID;
@@ -54,6 +57,7 @@ public class Character {
         this.willpower = willpower;
     }
 
+    /** Creates a new character with default anatomy (human) and random emote color. */
     public Character(UUID entityUUID, String name, @NotNull Anatomy anatomy) {
         this.uuid = UUID.randomUUID();
         this.entityUUID = entityUUID;
@@ -65,12 +69,14 @@ public class Character {
         willpower = 6;
     }
 
+    /** Creates a new character with default anatomy (human) and specified emote color as hex string (e.g. "FF5733"). */
     public Character(UUID entityUUID, String name, String description, String emoteColor) {
         this(entityUUID, name, Anatomy.HUMAN);
         this.description = description;
         this.emoteColor = TextColor.parseColor("#" + emoteColor).getOrThrow().getValue();
     }
 
+    /** Creates a new character with default anatomy (human) and specified emote color as integer. */
     public Character(UUID entityUUID, String name, String description, int emoteColor) {
         this(entityUUID, name, Anatomy.HUMAN);
         this.description = description;
@@ -125,6 +131,10 @@ public class Character {
         this.playerInfo = playerInfo;
     }
 
+    /**
+     *  Gets the character's medical stats.
+     * @return The character's medical stats. If not set, returns default human anatomy with O- blood type.
+     */
     public MedicalStats getMedicalStats() {
         if (medicalStats == null) {
             return Anatomy.HUMAN.getFactory().build(BloodType.O_MINUS, this);
@@ -132,6 +142,10 @@ public class Character {
         return medicalStats;
     }
 
+    /**
+     * Updates the character's medical stats. Should be called periodically, e.g. each server tick.
+     * @param level The current game level.
+     */
     public void update(Level level) {
         if (medicalStats != null) {
             medicalStats.update(level);
@@ -148,6 +162,11 @@ public class Character {
         return skills.getOrDefault(skill, 1f);
     }
 
+    /**
+     * Modifies the character's skill level by the specified amount, ensuring it does not exceed the skill's maximum level.
+     * @param skill The skill to modify.
+     * @param amount The amount to modify the skill by (can be positive or negative).
+     */
     public void modifySkill(Skill skill, float amount) {
         skills.compute(skill, (k, v) -> Math.min(v == null ? 1 + amount : v + amount, skill.getMaxLevel()));
     }
@@ -160,6 +179,11 @@ public class Character {
         this.willpower = willpower;
     }
 
+    /**
+     * Saves the character's persistent data to a file in the world's "characterdata" directory.
+     * @param data The NBT data to save.
+     * @param level The server level (world) to save the data in.
+     */
     public void savePlayerData(CompoundTag data, @NotNull ServerLevel level) {
         try {
             Path dataDir = level.getServer().getWorldPath(LevelResource.ROOT).resolve("characterdata");
@@ -172,6 +196,11 @@ public class Character {
         }
     }
 
+    /**
+     * Loads the character's persistent data from a file in the world's "characterdata" directory.
+     * @param level The server level (world) to load the data from.
+     * @return The loaded NBT data, or an empty CompoundTag if loading failed or the file does not exist.
+     */
     public CompoundTag getPlayerData(@NotNull ServerLevel level) {
         try {
             Path worldPath = level.getServer().getWorldPath(LevelResource.ROOT);

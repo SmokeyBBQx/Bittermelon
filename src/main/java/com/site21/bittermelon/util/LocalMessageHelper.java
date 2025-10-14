@@ -11,6 +11,13 @@ import java.util.List;
 import java.util.Objects;
 
 public class LocalMessageHelper {
+    /**
+     * Sends a local message to all players within a certain range of an entity.
+     *
+     * @param entity           The entity to measure distance from.
+     * @param range            The range within which players will receive the message.
+     * @param messageComponent The message to send.
+     */
     public static void sendLocalMessage(@NotNull Entity entity, int range, Component messageComponent) {
         List<ServerPlayer> serverPlayers = Objects.requireNonNull(entity.getServer()).getPlayerList().getPlayers();
         for (ServerPlayer serverPlayer : serverPlayers) {
@@ -20,6 +27,14 @@ public class LocalMessageHelper {
         }
     }
 
+    /**
+     * Sends a local message to all players within a certain range of a block position.
+     *
+     * @param level            The level where the block position is located.
+     * @param pos              The block position to measure distance from.
+     * @param range            The range within which players will receive the message.
+     * @param messageComponent The message to send.
+     */
     public static void sendLocalMessage(@NotNull Level level, @NotNull BlockPos pos, int range, Component messageComponent) {
         List<ServerPlayer> serverPlayers = Objects.requireNonNull(level.getServer()).getPlayerList().getPlayers();
         double rangeSq = range * range;

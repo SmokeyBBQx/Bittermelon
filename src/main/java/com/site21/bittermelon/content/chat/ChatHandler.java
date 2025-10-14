@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ACTIVE_CHANNEL;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.ELECTROCUTED;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.TASERED;
+import static java.lang.Character.isLetter;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class ChatHandler {
@@ -63,14 +64,17 @@ public class ChatHandler {
         int emoteColor = character.getEmoteColor();
         MutableComponent messageComponent = Component.empty();
 
+        // If the message does not contain any emotes, use the standard format
         if (!message.contains("*")) {
             messageComponent.append(Component.literal(character.getName() + " " + verb + ", ").withColor(emoteColor));
         } else {
             messageComponent.append(Component.literal("(" + character.getName() + ") ").withColor(emoteColor));
         }
 
+        // Split message into emotes and dialogue
         Matcher matcher = EMOTE_PATTERN.matcher(message);
         while (matcher.find()) {
+            // If group 1 is not null, it's an emote. Otherwise, it's dialogue
             if (matcher.group(1) != null) {
                 String emoteText = matcher.group(1);
                 Component emote = Component.literal(emoteText).withColor(emoteColor);
@@ -83,6 +87,8 @@ public class ChatHandler {
         }
 
         sendMessage(messageComponent, player, range);
+
+        // Broadcast sound event for speech
         if (!player.level().isClientSide) {
             NeoForge.EVENT_BUS.post(new SyncSoundEvent(player.level(), player.getOnPos(), SyncSoundType.SPEECH, messageComponent, range));
         }
@@ -121,10 +127,11 @@ public class ChatHandler {
     private static @NotNull String formatElectrocuted(@NotNull String text, RandomSource random) {
         StringBuilder result = new StringBuilder();
 
+        // Randomly applies effects to letters in the text
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
 
-            if (java.lang.Character.isLetter(c)) {
+            if (isLetter(c)) {
                 if (random.nextFloat() > 0.5f) {
                     result.append(applyElectrocutedEffect(c, random));
                 } else {
@@ -144,6 +151,7 @@ public class ChatHandler {
 
         switch (effect) {
             case 0 -> {
+                // Repeat the character 1 to 4 times
                 return String.valueOf(c).repeat(random.nextIntBetweenInclusive(1, 4));
             }
             case 1 -> {

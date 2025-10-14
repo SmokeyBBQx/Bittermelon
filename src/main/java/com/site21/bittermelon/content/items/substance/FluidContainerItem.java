@@ -32,27 +32,24 @@ import java.util.Iterator;
 import java.util.List;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.CAN_SPILL;
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.HAS_LANDED;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 import static net.minecraft.world.level.block.Block.UPDATE_ALL_IMMEDIATE;
 
 public class FluidContainerItem extends SubstanceContainerItem {
     public static final int MIN_TRANSFER_RATE = 1;
     private static final int DRINK_SPEED = 32;
 
-    public final int maxTransferRate;
     private final boolean hasLid;
 
-    public FluidContainerItem(Properties properties, int width, int height, ItemWeight itemWeight, int capacity, int maxTransferRate, boolean hasLid) {
-        super(properties, width, height, itemWeight, capacity);
-        this.maxTransferRate = maxTransferRate;
+    public FluidContainerItem(Properties properties, int width, int height, ItemWeight itemWeight, boolean hasLid) {
+        super(properties, width, height, itemWeight);
         this.hasLid = hasLid;
     }
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-        tooltipComponents.add(Component.literal("Contents: " + getSubstanceData(stack).getTotalVolume() + "/" + capacity));
+        tooltipComponents.add(Component.literal("Contents: " + getSubstanceData(stack).getTotalVolume() + "/" + getCapacity(stack)));
     }
 
     @Override
@@ -67,7 +64,7 @@ public class FluidContainerItem extends SubstanceContainerItem {
             return InteractionResultHolder.fail(player.getMainHandItem());
         }
 
-
+        // If the player is holding a fluid container in the offhand, try to transfer substances into it
         if (usedHand == InteractionHand.MAIN_HAND
                 && offhandItem.getItem() instanceof FluidContainerItem
                 && itemInHand.getOrDefault(CAN_SPILL, true)) {
@@ -76,18 +73,24 @@ public class FluidContainerItem extends SubstanceContainerItem {
                 transferSubstancesToContainer(itemInHand, offhandItem, level, player);
             }
         } else {
+            // Otherwise, handle drinking or toggling spill state
+
             BlockHitResult blockHit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
             boolean isLookingAtBlock = blockHit.getType() == HitResult.Type.BLOCK;
             BlockState blockState = level.getBlockState(blockHit.getBlockPos());
 
+            // If the item has a lid, toggle spill state when sneaking and not looking at a block
             if (player.isShiftKeyDown() && hasLid && !isLookingAtBlock) {
                 boolean currentSpillState = itemInHand.getOrDefault(CAN_SPILL, false);
                 itemInHand.set(CAN_SPILL, !currentSpillState);
                 // TODO: Lid sound
             } else if (itemInHand.getOrDefault(CAN_SPILL, true) && !blockState.is(FLUID)) {
+                // If the item can spill and the player isn't looking at a fluid block, start drinking
+
                 if (level.isClientSide) {
                     playDrinkSound(level, player.getOnPos());
                 }
+
                 return ItemUtils.startUsingInstantly(level, player, usedHand);
             }
         }
@@ -105,12 +108,14 @@ public class FluidContainerItem extends SubstanceContainerItem {
         if (!stack.getOrDefault(CAN_SPILL, true)) return InteractionResult.FAIL;
 
         if (!level.isClientSide && player != null) {
+            // If the container isn't empty and the player is sneaking, try to spill
             if (!isContainerEmpty(stack)) {
                 if (player.isShiftKeyDown()) {
                     return handleSpillAction(clickedPos, level, player, stack);
                 }
             }
 
+            // If the container isn't full and the clicked block is a fluid block, try to fill from it
             if (level.getBlockState(clickedPos).getBlock() instanceof FluidBlock) {
                 transferSubstancesFromBlock(clickedPos, level, stack);
                 return InteractionResult.SUCCESS;
@@ -125,6 +130,7 @@ public class FluidContainerItem extends SubstanceContainerItem {
         BlockState existingState = level.getBlockState(spillPos);
         BlockState clickedOnState = level.getBlockState(clickedOnPos);
 
+        // Try to spill above the clicked block first, then on the clicked block if that fails
        if (clickedOnState.canBeReplaced()) {
            if (!(clickedOnState.getBlock() instanceof FluidBlock)) {
                level.setBlock(clickedOnPos, FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
@@ -151,7 +157,7 @@ public class FluidContainerItem extends SubstanceContainerItem {
 
     protected void transferSubstancesFromBlock(BlockPos pos, @NotNull Level level, ItemStack stack) {
         if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluidEntity) {
-            float availableCapacity = capacity - getTotalVolume(stack);
+            float availableCapacity = getCapacity(stack) - getTotalVolume(stack);
             float transferRate = Math.min(getTransferRate(stack), availableCapacity);
 
             List<SubstanceStack> transferredSubstances = fluidEntity.transferSubstancesVolume(transferRate);
@@ -222,13 +228,17 @@ public class FluidContainerItem extends SubstanceContainerItem {
         return stack.getOrDefault(BitterDataComponents.TRANSFER_RATE.get(), MIN_TRANSFER_RATE);
     }
 
+    public static int getMaxTransferRate(@NotNull ItemStack stack) {
+        return stack.getOrDefault(MAX_TRANSFER_RATE, 10);
+    }
+
     public float getLimitedTransferRate(@NotNull ItemStack stack) {
         return Math.min(stack.getOrDefault(BitterDataComponents.TRANSFER_RATE.get(), MIN_TRANSFER_RATE), getTotalVolume(stack));
     }
 
     public static void setTransferRate(@NotNull ItemStack stack, int rate) {
         if (stack.getItem() instanceof FluidContainerItem fluidContainerItem) {
-            stack.set(BitterDataComponents.TRANSFER_RATE.get(), Mth.clamp(rate, MIN_TRANSFER_RATE, fluidContainerItem.maxTransferRate));
+            stack.set(BitterDataComponents.TRANSFER_RATE.get(), Mth.clamp(rate, MIN_TRANSFER_RATE, getMaxTransferRate(stack)));
         }
     }
 
@@ -288,7 +298,7 @@ public class FluidContainerItem extends SubstanceContainerItem {
             if (!stack.getOrDefault(HAS_LANDED.get(), false)) {
                 stack.set(HAS_LANDED.get(), true);
                 if (stack.getOrDefault(CAN_SPILL, true)) {
-                    spill(stack, level, entity.blockPosition(), maxTransferRate * entity.getRandom().nextFloat());
+                    spill(stack, level, entity.blockPosition(), getMaxTransferRate(stack) * entity.getRandom().nextFloat());
                 }
             }
         }

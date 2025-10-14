@@ -15,16 +15,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 import java.util.List;
 
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.MAX_PRESSURE;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.RELEASE_PRESSURE;
 import static com.site21.bittermelon.init.custom.Substances.OXYGEN;
 
 public class GasContainerItem extends SubstanceContainerItem {
-    private final int maxPressure;
     private final int maxReleasePressure;
 
-    public GasContainerItem(Properties properties, int width, int height, ItemWeight itemWeight, int capacity, int maxPressure, int maxReleasePressure) {
-        super(properties, width, height, itemWeight, capacity);
-        this.maxPressure = maxPressure;
+    public GasContainerItem(Properties properties, int width, int height, ItemWeight itemWeight, int maxReleasePressure) {
+        super(properties, width, height, itemWeight);
         this.maxReleasePressure = maxReleasePressure;
     }
 
@@ -40,35 +39,26 @@ public class GasContainerItem extends SubstanceContainerItem {
         return maxReleasePressure;
     }
 
-    @Override
-    public int getCapacity() {
-        return maxPressure;
-    }
 
-    @Override
-    public int getCapacity(@NotNull ItemStack stack) {
-        if (stack.getItem() instanceof SubstanceContainerItem item) {
-            return maxPressure;
-        }
-
-        return 0;
+    public float getMaxPressure(@NotNull ItemStack stack) {
+        return stack.getOrDefault(MAX_PRESSURE, 0.0f);
     }
 
     public float getPressure(ItemStack stack) {
-        return SubstanceUtils.getPressure(getSubstanceData(stack).substances(), capacity, getTemperature());
+        return SubstanceUtils.getPressure(getSubstanceData(stack).substances(), getMaxPressure(stack), getTemperature());
     }
 
     @Override
     public int getBarWidth(@NotNull ItemStack stack) {
-        return Math.min((int) ((long) getPressure(stack) * MAX_BAR_WIDTH / getCapacity()), MAX_BAR_WIDTH);
+        return Math.min((int) ((long) getPressure(stack) * MAX_BAR_WIDTH / getMaxPressure(stack)), MAX_BAR_WIDTH);
     }
 
     @Override
     public int getBarColor(@NotNull ItemStack stack) {
         float pressure = getPressure(stack);
-        float fillPercentage = pressure / getCapacity();
+        float fillPercentage = pressure / getMaxPressure(stack);
 
-        if (pressure > getCapacity()) {
+        if (pressure > getMaxPressure(stack)) {
             // Purple/magenta color
             return 0xFF00FF;
         }
@@ -86,7 +76,7 @@ public class GasContainerItem extends SubstanceContainerItem {
 
         if (level.isClientSide) return;
 
-        if (getPressure(stack) > maxPressure * 1.10f) {
+        if (getPressure(stack) > getMaxPressure(stack) * 1.10f) {
             level.explode(entity, entity.getX(), entity.getY(), entity.getZ(),
                     2.0f,
                     Level.ExplosionInteraction.TNT);
