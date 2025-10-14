@@ -19,7 +19,7 @@ import com.site21.bittermelon.content.containment.client.ContainmentPanelScreen;
 import com.site21.bittermelon.content.economy.bank.client.ATMScreen;
 import com.site21.bittermelon.content.items.scps.scp377.Fortune;
 import com.site21.bittermelon.content.items.scps.scp377.client.SCP3771Screen;
-import com.site21.bittermelon.content.items.wirecutter.client.WireCutterScreen;
+import com.site21.bittermelon.content.items.wirecutters.client.WireCutterScreen;
 import com.site21.bittermelon.content.items.wires.wire.client.WireConnectionScreen;
 import com.site21.bittermelon.content.items.writablepaper.client.PaperEditScreen;
 import com.site21.bittermelon.content.medical.client.screen.HealthScreenV2;

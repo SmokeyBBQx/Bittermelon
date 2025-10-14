@@ -1,32 +1,34 @@
 package com.site21.bittermelon.content.items.base;
 
-public enum ItemSize {
-    TINY(1, 2, "Tiny"),
-    SMALL(3, 4, "Small"),
-    NORMAL(5, 6, "Normal"),
-    BULKY(7, 9, "Bulky"),
-    HUGE(10, 12, "Huge"),
-    GIGANTIC(13, 16, "Gigantic");
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.StringRepresentable;
+import org.jetbrains.annotations.NotNull;
 
-    private final int minArea;
-    private final int maxArea;
+public enum ItemSize implements StringRepresentable {
+    TINY("Tiny"),
+    SMALL("Small"),
+    NORMAL("Normal"),
+    BULKY("Bulky"),
+    HUGE("Huge"),
+    GIGANTIC("Gigantic");
+
     public final String description;
 
-    ItemSize(int minArea, int maxArea, String description) {
-        this.minArea = minArea;
-        this.maxArea = maxArea;
+    ItemSize(String description) {
         this.description = description;
     }
 
-    public static ItemSize fromDimensions(int width, int height) {
-        int area = width * height;
-
-        for (ItemSize size : ItemSize.values()) {
-            if (area >= size.minArea && area <= size.maxArea) {
-                return size;
-            }
-        }
-
-        return GIGANTIC;
+    @Override
+    public @NotNull String getSerializedName() {
+        return description.toLowerCase();
     }
+
+    public static final EnumCodec<ItemSize> CODEC = StringRepresentable.fromEnum(ItemSize::values);
+
+    public static final StreamCodec<ByteBuf, ItemSize> STREAM_CODEC = ByteBufCodecs.idMapper(
+            i -> ItemSize.values()[i],
+            ItemSize::ordinal
+    );
 }

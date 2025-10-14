@@ -21,7 +21,7 @@ import com.site21.bittermelon.content.items.smokable.SmokableItem;
 import com.site21.bittermelon.content.items.substance.PowderedSubstanceItem;
 import com.site21.bittermelon.content.items.substance.pill.PillItem;
 import com.site21.bittermelon.content.items.taser.TaserItem;
-import com.site21.bittermelon.content.items.wirecutter.WireCuttersItem;
+import com.site21.bittermelon.content.items.wirecutters.WireCuttersItem;
 import com.site21.bittermelon.content.items.wires.networkcable.NetworkCable;
 import com.site21.bittermelon.content.items.cardboardbox.CardboardBoxItem;
 import com.site21.bittermelon.content.items.cardboardbox.CollapsedCardboardBoxItem;
@@ -271,8 +271,8 @@ public class BitterItems {
             new Item.Properties()
     ));
 
-    public static final DeferredItem<SCP109> SCP_109 = ITEMS.register("scp109", () -> new SCP109(
-            new Item.Properties()
+    public static final DeferredItem<SCP109> SCP_109 = ITEMS.register("scp_109", () -> new SCP109(
+            new Item.Properties().component(VOLUME, 0.0f)
     ));
 
     public static final DeferredItem<BodyPart> COLON = ITEMS.register("colon", () -> new BodyPart(
@@ -289,7 +289,7 @@ public class BitterItems {
             ItemWeight.LIGHT
     ));
 
-    public static final DeferredItem<SCP2398> SCP_2398 = ITEMS.register("scp2398", () -> new SCP2398(
+    public static final DeferredItem<SCP2398> SCP_2398 = ITEMS.register("scp_2398", () -> new SCP2398(
             new Item.Properties().stacksTo(1),
             1,
             3,
@@ -311,11 +311,10 @@ public class BitterItems {
     ));
 
     public static final DeferredItem<BaseItem> CIGARETTE = ITEMS.register("cigarette", () -> new SmokableItem(
-            new Item.Properties(),
+            new Item.Properties().component(VOLUME, 20.0f),
             1,
             1,
             ItemWeight.VERY_LIGHT,
-            20,
             CIGARETTE_BUTT.get()
     ));
 
@@ -391,19 +390,19 @@ public class BitterItems {
             ItemWeight.LIGHT
     ));
 
-    public static final DeferredHolder<Item, DeferredSpawnEggItem> SCP131_SPAWN_EGG = ITEMS.register("scp131_spawn_egg",
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> SCP_131_SPAWN_EGG = ITEMS.register("scp_131_spawn_egg",
             () -> new DeferredSpawnEggItem(BitterEntities.SCP_131, 0xE36124, 0xF5CB42, new Item.Properties()));
 
-    public static final DeferredHolder<Item, DeferredSpawnEggItem> SCP650_SPAWN_EGG = ITEMS.register("scp650_spawn_egg",
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> SCP_650_SPAWN_EGG = ITEMS.register("scp_650_spawn_egg",
             () -> new DeferredSpawnEggItem(BitterEntities.SCP_650, 0x242221, 0x403E3D, new Item.Properties()));
 
-    public static final DeferredHolder<Item, DeferredSpawnEggItem> SCP939_SPAWN_EGG = ITEMS.register("scp939_spawn_egg",
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> SCP_939_SPAWN_EGG = ITEMS.register("scp_939_spawn_egg",
             () -> new DeferredSpawnEggItem(BitterEntities.SCP_939, 0xA33434, 0xDE2C2C, new Item.Properties()));
 
-    public static final DeferredHolder<Item, DeferredSpawnEggItem> SCP1507_SPAWN_EGG = ITEMS.register("scp1507_spawn_egg",
+    public static final DeferredHolder<Item, DeferredSpawnEggItem> SCP_1507_SPAWN_EGG = ITEMS.register("scp_1507_spawn_egg",
             () -> new DeferredSpawnEggItem(BitterEntities.SCP_1507, 0xC967A4, 0xE687DB, new Item.Properties()));
 
-    public static final DeferredItem<BaseItem> SCP_018 = ITEMS.register("scp018", () -> new BaseItem(
+    public static final DeferredItem<BaseItem> SCP_018 = ITEMS.register("scp_018", () -> new BaseItem(
             new Item.Properties().component(ENERGY_LOSS_ON_BOUNCE, 1.5f).component(MAX_BOUNCES, 10000),
             1,
             1,
@@ -411,16 +410,14 @@ public class BitterItems {
     ));
 
     public static final DeferredItem<SyringeItem> SYRINGE = ITEMS.register("syringe", () -> new SyringeItem(
-            new Item.Properties(),
+            new Item.Properties().component(VOLUME, 10.0f),
             1,
             2,
-            ItemWeight.VERY_LIGHT,
-            10,
-            10
+            ItemWeight.VERY_LIGHT
     ));
 
     public static final DeferredItem<MopItem> MOP = ITEMS.register("mop", () -> new MopItem(
-            new Item.Properties(),
+            new Item.Properties().component(VOLUME, 50.0f).component(MAX_TRANSFER_RATE, 20),
             1,
             2,
             ItemWeight.VERY_LIGHT
@@ -434,11 +431,10 @@ public class BitterItems {
     ));
 
     public static final DeferredItem<PillItem> PILL = ITEMS.register("pill", () -> new PillItem(
-            new Item.Properties(),
+            new Item.Properties().component(VOLUME, 20.0f),
             1,
             1,
-            ItemWeight.VERY_LIGHT,
-            20
+            ItemWeight.VERY_LIGHT
     ));
 
     public static final DeferredItem<BlockItem> PERSONNEL_TERMINAL = ITEMS.register("personnel_terminal", () -> new BlockItem(

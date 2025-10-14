@@ -1,9 +1,9 @@
-package com.site21.bittermelon.content.items.wirecutter.client;
+package com.site21.bittermelon.content.items.wirecutters.client;
 
 import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
 import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
-import com.site21.bittermelon.content.items.wirecutter.networking.CutWire;
+import com.site21.bittermelon.content.items.wirecutters.networking.CutWire;
 import com.site21.bittermelon.content.items.wires.wire.client.WiringScreen;
 import net.minecraft.client.gui.GuiGraphics;
 import net.neoforged.neoforge.network.PacketDistributor;

@@ -2,6 +2,7 @@ package com.site21.bittermelon.init.neoforge;
 
 import com.mojang.serialization.Codec;
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.content.items.base.ItemSize;
 import com.site21.bittermelon.content.items.itemcontainers.client.ItemContainerContents;
 import com.site21.bittermelon.content.items.scps.scp377.Fortune;
 import com.site21.bittermelon.content.items.substance.data.SubstanceContents;
@@ -206,5 +207,10 @@ public class BitterDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> WEIGHT = DATA_COMPONENTS.registerComponentType(
             "weight",
             builder -> builder.persistent(Codec.FLOAT).networkSynchronized(ByteBufCodecs.FLOAT)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemSize>> SIZE = DATA_COMPONENTS.registerComponentType(
+            "size",
+            builder -> builder.persistent(ItemSize.CODEC).networkSynchronized(ItemSize.STREAM_CODEC)
     );
 }

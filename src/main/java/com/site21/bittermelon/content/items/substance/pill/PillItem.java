@@ -16,8 +16,8 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 public class PillItem extends SubstanceContainerItem {
-    public PillItem(Properties properties, int width, int height, ItemWeight itemWeight, int capacity) {
-        super(properties, width, height, itemWeight, capacity);
+    public PillItem(Properties properties, int width, int height, ItemWeight itemWeight) {
+        super(properties, width, height, itemWeight);
     }
 
     @Override

@@ -27,7 +27,7 @@ import static com.site21.bittermelon.init.neoforge.BitterDataComponents.TRANSFER
 
 public class MopItem extends FluidContainerItem {
     public MopItem(Properties properties, int width, int height, ItemWeight itemWeight) {
-        super(properties, width, height, itemWeight, 50, 20, false);
+        super(properties, width, height, itemWeight, false);
     }
 
     @Override

@@ -25,7 +25,7 @@ import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 
 public class SCP109 extends FluidContainerItem {
     public SCP109(Properties properties) {
-        super(properties, 1, 1, ItemWeight.MEDIUM, 0, 10, true);
+        super(properties, 1, 1, ItemWeight.MEDIUM, true);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class SCP109 extends FluidContainerItem {
             stack.set(COOLDOWN, stack.getOrDefault(COOLDOWN, 20) - 1);
             if (stack.getOrDefault(CAN_SPILL, true) && stack.getOrDefault(COOLDOWN, 20) <= 0) {
                 stack.set(COOLDOWN, 20);
-                spill(stack, level, entity.blockPosition(), maxTransferRate * entity.getRandom().nextFloat());
+                spill(stack, level, entity.blockPosition(), getMaxTransferRate(stack) * entity.getRandom().nextFloat());
                 entity.playSound(SoundEvents.WATER_AMBIENT, 0.3f, 1);
             }
         }

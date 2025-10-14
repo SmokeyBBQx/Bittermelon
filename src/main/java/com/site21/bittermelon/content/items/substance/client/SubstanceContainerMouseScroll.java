@@ -27,11 +27,11 @@ public class SubstanceContainerMouseScroll {
             ItemStack heldItem = player.getMainHandItem();
             Item item = heldItem.getItem();
 
-            if (item instanceof FluidContainerItem fluidContainerItem) {
+            if (item instanceof FluidContainerItem) {
                 int currentRate = FluidContainerItem.getTransferRate(heldItem);
                 int newRate = Mth.clamp(currentRate + (event.getScrollDeltaY() > 0 ? 1 : -1),
                         FluidContainerItem.MIN_TRANSFER_RATE,
-                        fluidContainerItem.maxTransferRate);
+                        FluidContainerItem.getMaxTransferRate(heldItem));
                 FluidContainerItem.setTransferRate(heldItem, newRate);
 
                 PacketDistributor.sendToServer(new TransferRateUpdate(newRate, InteractionHand.MAIN_HAND));

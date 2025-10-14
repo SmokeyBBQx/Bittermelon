@@ -17,4 +17,9 @@ public class BitterItemTags {
             Registries.ITEM,
             ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "lighter")
     );
+
+    public static final TagKey<Item> WIRE_CUTTER = TagKey.create(
+            Registries.ITEM,
+            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "wire_cutter")
+    );
 }

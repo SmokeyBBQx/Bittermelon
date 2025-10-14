@@ -38,8 +38,8 @@ public class SmokableItem extends SubstanceContainerItem implements Equipable {
     private static final double PARTICLE_OFFSET_DISTANCE = 0.3;
     private static final double PARTICLE_OFFSET_HEIGHT = 1.6;
 
-    public SmokableItem(Properties properties, int width, int height, ItemWeight itemWeight, int capacity, Item buttItem) {
-        super(properties, width, height, itemWeight, capacity);
+    public SmokableItem(Properties properties, int width, int height, ItemWeight itemWeight, Item buttItem) {
+        super(properties, width, height, itemWeight);
         this.buttItem = buttItem;
     }
 
@@ -64,7 +64,7 @@ public class SmokableItem extends SubstanceContainerItem implements Equipable {
                                                                                    ItemStack smokableItem, @NotNull ItemStack otherItem) {
         if (otherItem.is(LIGHTER) || otherItem.is(Items.FLINT_AND_STEEL)) {
             SubstanceStack substance = new SubstanceStack(BLOOD.get(), 0);
-            substance.setVolume(capacity);
+            substance.setVolume(getCapacity(smokableItem));
             updateSubstance(smokableItem, substance);
 
             playLightingSound(level, player);

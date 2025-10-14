@@ -1,4 +1,4 @@
-package com.site21.bittermelon.content.items.wirecutter.networking;
+package com.site21.bittermelon.content.items.wirecutters.networking;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
@@ -27,7 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.ELECTROCUTED;
-import static com.site21.bittermelon.init.neoforge.BitterMobEffects.STUN;
 
 public record CutWire(BlockPos pos, String portId, UUID playerId, boolean inputPort) implements CustomPacketPayload {
     public static final Type<CutWire> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "cut_wire"));

@@ -31,8 +31,8 @@ import static com.site21.bittermelon.init.neoforge.BitterDataComponents.CAN_SPIL
 public class SyringeItem extends FluidContainerItem {
     private static final int INJECTION_SPEED = 32;
 
-    public SyringeItem(Properties properties, int width, int height, ItemWeight itemWeight, int capacity, int maxTransferRate) {
-        super(properties, width, height, itemWeight, capacity, maxTransferRate, false);
+    public SyringeItem(Properties properties, int width, int height, ItemWeight itemWeight) {
+        super(properties, width, height, itemWeight, false);
     }
 
     @Override

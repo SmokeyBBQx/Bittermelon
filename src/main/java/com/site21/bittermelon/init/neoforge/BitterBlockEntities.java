@@ -90,7 +90,7 @@ public class BitterBlockEntities {
             register("redstone_device", RedstoneDeviceBlockEntity::new, REDSTONE_DEVICE);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SCP151BlockEntity>> SCP151_BLOCK_ENTITY =
-            register("scp151", SCP151BlockEntity::new, SCP_151);
+            register("scp_151", SCP151BlockEntity::new, SCP_151);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WallWritingBlockEntity>> WALL_WRITING_BLOCK_ENTITY =
             register("wall_writing", WallWritingBlockEntity::new, WALL_WRITING);
@@ -101,7 +101,7 @@ public class BitterBlockEntities {
     private static <T extends BlockEntity> @NotNull DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> register(
             String name,
             BlockEntityType.BlockEntitySupplier<T> supplier,
-            DeferredHolder<?, ? extends Block> block) {
+            DeferredHolder<Block, ? extends Block> block) {
         return BLOCK_ENTITY_TYPES.register(name + "_block_entity",
                 () -> BlockEntityType.Builder.of(supplier, block.get()).build(null));
     }
