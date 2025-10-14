@@ -6,6 +6,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.STICKY_NOTE_BLOCK_ENTITY;
@@ -27,22 +29,22 @@ public class StickyNoteBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
+
         for (int i = 0; i < notes.length; i++) {
             if (notes[i] != null) {
-                tag.putString("note_" + i, notes[i]);
+                output.putString("note_" + i, notes[i]);
             }
         }
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
+
         for (int i = 0; i < notes.length; i++) {
-            if (tag.contains("note_" + i)) {
-                notes[i] = tag.getString("note_" + i);
-            }
+            notes[i] = input.getString("note_" + i).orElse(null);
         }
     }
 

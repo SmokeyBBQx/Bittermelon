@@ -50,7 +50,7 @@ public class SCP151BlockEntity extends BlockEntity {
                     player.hurtMarked = true;
                     Component message = Component.literal("You notice a peculiar blue painting. It resembles the sea.")
                             .withStyle(ChatFormatting.RED).withStyle(ChatFormatting.ITALIC);
-                    player.sendSystemMessage(message);
+                    player.displayClientMessage(message, false);
                     if (player instanceof ServerPlayer serverPlayer) {
                         serverPlayer.connection.send(new ClientboundSoundPacket(
                                 BitterSounds.SCARE_1,
@@ -104,7 +104,8 @@ public class SCP151BlockEntity extends BlockEntity {
             expectedDirection = new Vec3(0, -1, 0);
         } else {
             Direction facing = state.getValue(SCP151Block.FACING).getOpposite();
-            expectedDirection = Vec3.atLowerCornerOf(facing.getNormal());
+//            expectedDirection = Vec3.atLowerCornerOf(facing.getNormal());
+            expectedDirection = Vec3.atLowerCornerOf(facing.getUnitVec3i());
         }
 
         double facingDot = toBlock.dot(expectedDirection);

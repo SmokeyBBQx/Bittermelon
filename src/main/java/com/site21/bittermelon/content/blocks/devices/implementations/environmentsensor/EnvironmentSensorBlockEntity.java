@@ -11,6 +11,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -90,25 +92,22 @@ public class EnvironmentSensorBlockEntity extends ElectronicBlockEntity implemen
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.putFloat("temperature", temperature);
-        tag.putFloat("pressure", pressure);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
 
-        saveOutputPorts(tag);
+        output.putFloat("temperature", temperature);
+        output.putFloat("pressure", pressure);
+
+        saveOutputPorts(output);
     }
 
     @Override
-    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
-        temperature = tag.getFloat("temperature");
-        pressure = tag.getFloat("pressure");
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
 
-        loadOutputPorts(tag);
-    }
+        temperature = input.getFloatOr("temperature", 0.0f);
+        pressure = input.getFloatOr("pressure", 0.0f);
 
-    @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
+        loadOutputPorts(input);
     }
 }

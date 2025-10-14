@@ -29,10 +29,6 @@ public class SecureDoorBlock extends DoorBlock implements EntityBlock {
     }
 
     @Override
-    protected void neighborChanged(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Block block, @NotNull BlockPos fromPos, boolean isMoving) {
-    }
-
-    @Override
     public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos blockPos, @NotNull BlockState blockState) {
         return new SecureDoorBlockEntity(blockPos, blockState);
     }
@@ -58,7 +54,7 @@ public class SecureDoorBlock extends DoorBlock implements EntityBlock {
                 level.playSound(null, pos, SoundEvents.NOTE_BLOCK_IRON_XYLOPHONE.value(), SoundSource.BLOCKS);
             }
 
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            return InteractionResult.SUCCESS;
 
         }
         return InteractionResult.FAIL;

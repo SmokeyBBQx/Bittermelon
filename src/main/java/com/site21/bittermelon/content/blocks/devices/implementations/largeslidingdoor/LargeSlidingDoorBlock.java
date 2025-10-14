@@ -6,12 +6,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -125,13 +125,12 @@ public class LargeSlidingDoorBlock extends Block implements EntityBlock {
     }
 
     @Override
-    protected void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean movedByPiston) {
+    protected void affectNeighborsAfterRemoval(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, boolean movedByPiston) {
         // TODO: Half-baked break logic (only works for the master block)
 
-        super.onRemove(state, level, pos, newState, movedByPiston);
+        super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
 
         if (level.isClientSide) return;
-        if (state.getBlock() == newState.getBlock()) return;
         if (!state.getValue(MASTER)) return;
 
         boolean zAxis = state.getValue(Z_AXIS);
@@ -219,17 +218,17 @@ public class LargeSlidingDoorBlock extends Block implements EntityBlock {
         return InteractionResult.SUCCESS;
     }
 
-    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
-        if (level.isClientSide) return ItemInteractionResult.FAIL;
+    protected @NotNull InteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+        if (level.isClientSide) return InteractionResult.FAIL;
 
         // FORCE OPEN LOGIC
-        if (!stack.is(Items.IRON_AXE)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (!stack.is(Items.IRON_AXE)) return InteractionResult.TRY_WITH_EMPTY_HAND;
         if (!state.getValue(MASTER)) {
             pos = findMasterBlock(level, pos);
-            if (pos == null) return ItemInteractionResult.FAIL;
+            if (pos == null) return InteractionResult.FAIL;
             state = level.getBlockState(pos);
         }
-        if (level.getBlockState(pos).getValue(STATE) == State.OPEN) return ItemInteractionResult.FAIL;
+        if (level.getBlockState(pos).getValue(STATE) == State.OPEN) return InteractionResult.FAIL;
         if (level.getBlockEntity(pos) instanceof LargeSlidingDoorBlockEntity blockEntity) {
             // Update gap size.
             blockEntity.setDoorProgress(blockEntity.getDoorProgress() + 0.05f);
@@ -246,9 +245,9 @@ public class LargeSlidingDoorBlock extends Block implements EntityBlock {
             if (blockEntity.getDoorProgress() >= 1) {
                 level.setBlock(pos, state.setValue(STATE, State.OPEN), 3);
             }
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     @Nullable

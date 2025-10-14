@@ -9,6 +9,7 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +61,7 @@ public class AddPrivilegeGroupWidget extends AbstractWidget {
 
     @Override
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        guiGraphics.blitSprite(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/button"),
+        guiGraphics.blitSprite(RenderPipelines.GUI, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/button"),
                 x, y, width, height);
 
         nameField.render(guiGraphics, mouseX, mouseY, partialTick);

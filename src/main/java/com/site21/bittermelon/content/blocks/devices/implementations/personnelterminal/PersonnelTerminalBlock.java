@@ -40,7 +40,7 @@ public class PersonnelTerminalBlock extends IndentedSmallBlock implements Entity
             }
         }
 
-        return InteractionResult.SUCCESS_NO_ITEM_USED;
+        return InteractionResult.SUCCESS;
     }
 
     @Override

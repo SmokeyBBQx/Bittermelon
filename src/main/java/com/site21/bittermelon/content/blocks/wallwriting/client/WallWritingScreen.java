@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.network.chat.CommonComponents;
@@ -14,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.SignText;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
@@ -164,7 +166,7 @@ public class WallWritingScreen extends Screen {
         int highlightLeft = Math.min(startX, endX);
         int highlightRight = Math.max(startX, endX);
 
-        guiGraphics.fill(RenderType.guiTextHighlight(), highlightLeft, lineY, highlightRight,
+        guiGraphics.fill(RenderPipelines.GUI_TEXT_HIGHLIGHT, highlightLeft, lineY, highlightRight,
                 lineY + TEXT_LINE_HEIGHT, -16776961);
     }
 
@@ -201,6 +203,6 @@ public class WallWritingScreen extends Screen {
 
     @Override
     public void removed() {
-        PacketDistributor.sendToServer(new UpdateWallWriting(wallWriting.getBlockPos(), messages));
+        ClientPacketDistributor.sendToServer(new UpdateWallWriting(wallWriting.getBlockPos(), messages));
     }
 }

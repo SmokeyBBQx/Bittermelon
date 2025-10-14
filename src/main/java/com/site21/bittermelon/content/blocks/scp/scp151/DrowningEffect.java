@@ -39,10 +39,8 @@ public class DrowningEffect extends MobEffect {
     }
 
     @Override
-    public boolean applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
-        if (!(entity instanceof Player player) || entity.level().isClientSide) {
-            return true;
-        }
+    public boolean applyEffectTick(@NotNull ServerLevel level, @NotNull LivingEntity entity, int amplifier) {
+        if (!(entity instanceof Player player)) return true;
 
         int ticksRemaining = Objects.requireNonNull(entity.getEffect(DROWNING)).getDuration();
         int progressionInterval = amplifier < 4 ? 5000 : 400;
@@ -51,8 +49,8 @@ public class DrowningEffect extends MobEffect {
             int newAmplifier = amplifier + 1;
             handleDrownProgression(player, newAmplifier);
 
-                Objects.requireNonNull(entity.getEffect(DROWNING)).update(
-                        new MobEffectInstance(DROWNING, ticksRemaining, newAmplifier, true, false, false));
+            Objects.requireNonNull(entity.getEffect(DROWNING)).update(
+                    new MobEffectInstance(DROWNING, ticksRemaining, newAmplifier, true, false, false));
 //                System.out.println("Progressing amplifier to: " + newAmplifier + " with " + ticksRemaining + " ticks remaining");
         }
 
@@ -86,7 +84,7 @@ public class DrowningEffect extends MobEffect {
 
         if (!message.isBlank()) {
             Component component = Component.literal(message).withStyle(ChatFormatting.RED).withStyle(ChatFormatting.ITALIC);
-            player.sendSystemMessage(component);
+            player.displayClientMessage(component, false);
         }
     }
 

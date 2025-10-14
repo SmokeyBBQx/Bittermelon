@@ -9,7 +9,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -44,21 +43,20 @@ public class ContainmentPanelBlock extends IndentedSmallBlock implements EntityB
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
         BlockState newState = state.setValue(ON, true);
         level.setBlock(pos, newState, 3);
-        BlockEntity blockEntity = level.getBlockEntity(pos);
         if (!level.isClientSide) {
             if (player instanceof ServerPlayer serverPlayer)
                 PacketDistributor.sendToPlayer(serverPlayer, new OpenContainmentPanelScreen(pos));
         }
 
-        return InteractionResult.SUCCESS_NO_ITEM_USED;
+        return InteractionResult.PASS;
     }
 
-    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+    protected @NotNull InteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
         if (level.getBlockEntity(pos) instanceof ContainmentPanelBlockEntity blockEntity) {
             BlockPos pos1 = stack.get(POSITION_1.get());
             BlockPos pos2 = stack.get(POSITION_2.get());
 
-            if (pos1 == null || pos2 == null) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            if (pos1 == null || pos2 == null) return InteractionResult.TRY_WITH_EMPTY_HAND;
 
             BoundingBox boundingBox = BoundingBox.fromCorners(new Vec3i(pos1.getX(), pos1.getY(), pos1.getZ()), new Vec3i(pos2.getX(), pos2.getY(), pos2.getZ()));
             blockEntity.setBoundingBox(boundingBox);
@@ -66,7 +64,7 @@ public class ContainmentPanelBlock extends IndentedSmallBlock implements EntityB
             player.level().playSound(null, player.getOnPos(), SCANNER_BEEP.get(), SoundSource.PLAYERS, 0.5f, 0.8f);
         }
 
-        return ItemInteractionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override

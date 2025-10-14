@@ -24,28 +24,28 @@ public final class LogicalOperator {
     public Signal apply(Signal signal) {
         return function.apply(signal);
     }
-
-    public @NotNull CompoundTag save() {
-        CompoundTag tag = new CompoundTag();
-        tag.putString("functionID", functionID);
-        tag.putFloat("configValue", configValue);
-        return tag;
-    }
-
-    public static @NotNull LogicalOperator load(@NotNull CompoundTag tag) {
-        String id = tag.getString("functionID");
-        float config = tag.getFloat("configValue");
-
-        ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, id);
-        Optional<Function<Float, Function<Signal, Signal>>> optionalLogicFunctionFunction = LOGICAL_OPERATORS_REGISTRY.getOptional(resourceLocation);
-
-        if (optionalLogicFunctionFunction.isPresent()) {
-            Function<Float, Function<Signal, Signal>> logicFunctionFunction = optionalLogicFunctionFunction.get();
-            Function<Signal, Signal> function = logicFunctionFunction.apply(config);
-            return new LogicalOperator(id, function, config);
-        } else {
-            Bittermelon.LOGGER.warn("Unknown logical operator ID: {}. Falling back to BUFFER operator.", id);
-            return new LogicalOperator("buffer", signal -> signal, config);
-        }
-    }
+//
+//    public @NotNull CompoundTag save() {
+//        CompoundTag tag = new CompoundTag();
+//        tag.putString("functionID", functionID);
+//        tag.putFloat("configValue", configValue);
+//        return tag;
+//    }
+//
+//    public static @NotNull LogicalOperator load(@NotNull CompoundTag tag) {
+//        String id = tag.getString("functionID");
+//        float config = tag.getFloat("configValue");
+//
+//        ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, id);
+//        Optional<Function<Float, Function<Signal, Signal>>> optionalLogicFunctionFunction = LOGICAL_OPERATORS_REGISTRY.getOptional(resourceLocation);
+//
+//        if (optionalLogicFunctionFunction.isPresent()) {
+//            Function<Float, Function<Signal, Signal>> logicFunctionFunction = optionalLogicFunctionFunction.get();
+//            Function<Signal, Signal> function = logicFunctionFunction.apply(config);
+//            return new LogicalOperator(id, function, config);
+//        } else {
+//            Bittermelon.LOGGER.warn("Unknown logical operator ID: {}. Falling back to BUFFER operator.", id);
+//            return new LogicalOperator("buffer", signal -> signal, config);
+//        }
+//    }
 }

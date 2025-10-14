@@ -14,6 +14,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -160,7 +161,7 @@ public class CharacterManager extends SavedData {
      */
     public void switchCharacter(@NotNull Player player, @Nullable Character previousCharacter, @NotNull Character switchedTo) {
         if (previousCharacter != null) {
-            CompoundTag playerData = player.saveWithoutId(new CompoundTag());
+            CompoundTag playerData = player.saveWithoutId();
             previousCharacter.savePlayerData(playerData, (ServerLevel) player.level());
         }
 

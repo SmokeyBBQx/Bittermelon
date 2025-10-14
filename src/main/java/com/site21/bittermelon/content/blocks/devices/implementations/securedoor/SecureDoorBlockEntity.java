@@ -18,6 +18,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
@@ -195,23 +197,25 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.putBoolean("isLocked", isLocked);
-        tag.putString("address", address);
-        tag.putBoolean("isPanelOpen", isPanelOpen);
-        saveInputPorts(tag);
-        saveOutputPorts(tag);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
+
+        output.putBoolean("isLocked", isLocked);
+        output.putString("address", address);
+        output.putBoolean("isPanelOpen", isPanelOpen);
+        saveInputPorts(output);
+        saveOutputPorts(output);
     }
 
     @Override
-    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
-        isLocked = tag.getBoolean("isLocked");
-        address = tag.getString("address");
-        isPanelOpen = tag.getBoolean("isPanelOpen");
-        loadInputPorts(tag);
-        loadOutputPorts(tag);
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
+
+        isLocked = input.getBooleanOr("isLocked", true);
+        address = input.getStringOr("address", generateAddress("DOOR"));
+        isPanelOpen = input.getBooleanOr("isPanelOpen", false);
+        loadInputPorts(input);
+        loadOutputPorts(input);
     }
 
     public void runForOtherHalf(Consumer<SecureDoorBlockEntity> action) {
@@ -228,9 +232,5 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
         if (otherBlockEntity instanceof SecureDoorBlockEntity otherHalf) {
             action.accept(otherHalf);
         }
-    }
-
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 }

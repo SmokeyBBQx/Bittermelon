@@ -6,7 +6,7 @@ import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -18,7 +18,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -32,7 +31,7 @@ import static com.site21.bittermelon.content.blocks.poster.SmallPosterBlock.getP
 import static com.site21.bittermelon.init.neoforge.BitterItems.KEYCARD;
 
 public class KeycardReaderBlock extends Block implements EntityBlock {
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final EnumProperty<Placement> PLACEMENT = BitterStateProperties.PLACEMENT;
     private static final Map<Direction, Map<Placement, VoxelShape>> SHAPES;
 
@@ -71,18 +70,18 @@ public class KeycardReaderBlock extends Block implements EntityBlock {
     }
 
     @Override
-    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+    protected @NotNull InteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
         if (level.getBlockEntity(pos) instanceof KeycardReaderBlockEntity reader) {
             if (stack.is(KEYCARD.get())) {
                 int id = stack.getOrDefault(BitterDataComponents.ID_NUMBER, 0);
-                if (id == 0) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+                if (id == 0) return InteractionResult.TRY_WITH_EMPTY_HAND;
 
                 reader.scan(id);
 
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     static {

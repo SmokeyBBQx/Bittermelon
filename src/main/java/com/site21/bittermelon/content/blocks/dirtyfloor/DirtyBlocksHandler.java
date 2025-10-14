@@ -4,6 +4,7 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.init.neoforge.BitterGameRules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -21,21 +22,19 @@ import static com.site21.bittermelon.init.neoforge.BitterBlocks.DIRTY_FLOOR;
 @EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class DirtyBlocksHandler {
     private static final float SPAWN_CHANCE = 0.001F;
-    private static final Random random = new Random();
 
     @SubscribeEvent
     public static void onEntityTick(@NotNull EntityTickEvent.Post event) {
         if (!(event.getEntity() instanceof LivingEntity entity)) return;
-        Level level = entity.level();
-        if (!level.getGameRules().getBoolean(BitterGameRules.ENTITIES_MAKE_FLOORS_DIRTY_RULE)) return;
-        if (level.isClientSide) return;
-        if (entity instanceof Player player) {
-            if (player.isCreative() || player.isSpectator()) return;
-        }
-        BlockPos entityPos = entity.blockPosition();
-        BlockState blockState = level.getBlockState(entityPos);
+        if (entity.level() instanceof ServerLevel level) {
+            if (!level.getGameRules().getBoolean(BitterGameRules.ENTITIES_MAKE_FLOORS_DIRTY_RULE)) return;
+            if (entity instanceof Player player) {
+                if (player.isCreative() || player.isSpectator()) return;
+            }
 
-        if (random.nextFloat() < SPAWN_CHANCE) {
+            BlockPos entityPos = entity.blockPosition();
+            BlockState blockState = level.getBlockState(entityPos);
+            if (level.random.nextFloat() > SPAWN_CHANCE) return;
 
             BlockState stateBelow = level.getBlockState(entityPos.below());
             if (!stateBelow.canBeReplaced() && stateBelow.isCollisionShapeFullBlock(level, entityPos.below())) {

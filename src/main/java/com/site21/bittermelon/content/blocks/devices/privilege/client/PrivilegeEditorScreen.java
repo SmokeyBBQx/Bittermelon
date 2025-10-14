@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 @OnlyIn(Dist.CLIENT)
@@ -39,12 +40,12 @@ public class PrivilegeEditorScreen extends Screen {
 
     public void setPrivilege(String privilege, boolean value) {
         privilegeOwner.getPrivileges().put(privilege, value);
-        PacketDistributor.sendToServer(new SetPrivilegeForBE(blockEntity.getBlockPos(), privilege, value));
+        ClientPacketDistributor.sendToServer(new SetPrivilegeForBE(blockEntity.getBlockPos(), privilege, value));
     }
 
     public void removePrivilege(String privilege) {
         privilegeOwner.getPrivileges().remove(privilege);
-        PacketDistributor.sendToServer(new RemovePrivilegeForBE(blockEntity.getBlockPos(), privilege));
+        ClientPacketDistributor.sendToServer(new RemovePrivilegeForBE(blockEntity.getBlockPos(), privilege));
     }
 
     @Override

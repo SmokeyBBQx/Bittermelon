@@ -8,6 +8,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
@@ -66,20 +68,20 @@ public class RedstoneDeviceBlockEntity extends ElectronicBlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
 
-        tag.putInt("powerLevel", powerLevel);
-        saveInputPorts(tag);
-        saveOutputPorts(tag);
+        output.putInt("powerLevel", powerLevel);
+        saveInputPorts(output);
+        saveOutputPorts(output);
     }
 
     @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
 
-        powerLevel = tag.getInt("powerLevel");
-        loadInputPorts(tag);
-        loadOutputPorts(tag);
+        powerLevel = input.getIntOr("powerLevel", 0);
+        loadInputPorts(input);
+        loadOutputPorts(input);
     }
 }

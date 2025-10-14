@@ -9,7 +9,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,6 +81,6 @@ public class StickyNoteScreen extends Screen {
 
     @Override
     public void removed() {
-        PacketDistributor.sendToServer(new UpdateStickyNote(stickyNote.getBlockPos(), message, noteIndex));
+        ClientPacketDistributor.sendToServer(new UpdateStickyNote(stickyNote.getBlockPos(), message, noteIndex));
     }
 }

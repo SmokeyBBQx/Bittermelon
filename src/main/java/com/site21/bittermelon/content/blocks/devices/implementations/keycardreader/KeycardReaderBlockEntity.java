@@ -13,6 +13,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -93,18 +95,20 @@ public class KeycardReaderBlockEntity extends ElectronicBlockEntity implements P
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
-        serializePrivileges(tag);
-        saveInputPorts(tag);
-        saveOutputPorts(tag);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
+
+        serializePrivileges(output);
+        saveInputPorts(output);
+        saveOutputPorts(output);
     }
 
     @Override
-    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
-        deserializePrivileges(tag);
-        loadInputPorts(tag);
-        loadOutputPorts(tag);
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
+
+        deserializePrivileges(input);
+        loadInputPorts(input);
+        loadOutputPorts(input);
     }
 }

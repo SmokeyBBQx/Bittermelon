@@ -1,12 +1,8 @@
 package com.site21.bittermelon.content.blocks.wallwriting;
 
-import com.mojang.serialization.DataResult;
-import com.site21.bittermelon.Bittermelon;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -16,6 +12,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -58,25 +56,17 @@ public class WallWritingBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
 
-        DataResult<Tag> result = SignText.DIRECT_CODEC.encodeStart(NbtOps.INSTANCE, text);
-        result.resultOrPartial(error ->
-                        Bittermelon.LOGGER.error("Wall writing failed to save at {}", worldPosition))
-                .ifPresent(encodedTag -> tag.put("text", encodedTag));
+        output.store("text", SignText.DIRECT_CODEC, text);
     }
 
     @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
 
-        if (tag.contains("text")) {
-            DataResult<SignText> result = SignText.DIRECT_CODEC.parse(NbtOps.INSTANCE, tag.get("text"));
-            result.resultOrPartial(error ->
-                            Bittermelon.LOGGER.error("Wall writing failed to load at {}", worldPosition))
-                    .ifPresent(loadedText -> text = loadedText);
-        }
+        text = input.read("text", SignText.DIRECT_CODEC).orElse(new SignText());
     }
 
     public ClientboundBlockEntityDataPacket getUpdatePacket() {

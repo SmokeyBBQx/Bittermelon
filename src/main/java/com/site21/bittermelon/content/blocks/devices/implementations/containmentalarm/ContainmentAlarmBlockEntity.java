@@ -14,6 +14,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 
@@ -110,26 +112,21 @@ public class ContainmentAlarmBlockEntity extends ElectronicBlockEntity implement
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.putBoolean("isActive", isActive);
-        tag.putBoolean("isAlerted", isAlerted);
-        tag.putBoolean("isEmergency", isEmergency);
-        plc.save(tag);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
+
+        output.putBoolean("isActive", isActive);
+        output.putBoolean("isAlerted", isAlerted);
+        output.putBoolean("isEmergency", isEmergency);
     }
 
     @Override
-    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
-        isActive = tag.getBoolean("isActive");
-        isAlerted = tag.getBoolean("isAlerted");
-        isEmergency = tag.getBoolean("isEmergency");
-        plc.load(tag, level);
-    }
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
 
-    @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
+        isActive = input.getBooleanOr("isActive", false);
+        isAlerted = input.getBooleanOr("isAlerted", false);
+        isEmergency = input.getBooleanOr("isEmergency", false);
     }
 
     @Override

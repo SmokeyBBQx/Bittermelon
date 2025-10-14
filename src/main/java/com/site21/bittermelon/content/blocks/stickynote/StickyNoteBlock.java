@@ -10,7 +10,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -24,7 +23,10 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.*;
+import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -45,7 +47,7 @@ import static net.minecraft.world.level.block.FaceAttachedHorizontalDirectionalB
 
 public class StickyNoteBlock extends Block implements EntityBlock {
     public static final EnumProperty<AttachFace> FACE;
-    public static final DirectionProperty FACING;
+    public static final EnumProperty<Direction> FACING;
     public static final BooleanProperty TOP_LEFT;
     public static final BooleanProperty TOP_RIGHT;
     public static final BooleanProperty BOTTOM_LEFT;
@@ -169,21 +171,21 @@ public class StickyNoteBlock extends Block implements EntityBlock {
     }
 
     @Override
-    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+    protected @NotNull InteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
         if (level.isClientSide) {
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
 
         Position position = getPosition(state, hitResult.getLocation(), pos);
 
-        if (!hasNoteAtPosition(position, state)) return ItemInteractionResult.FAIL;
+        if (!hasNoteAtPosition(position, state)) return InteractionResult.FAIL;
 
         if (stack.is(PEN) && player instanceof ServerPlayer serverPlayer) {
             PacketDistributor.sendToPlayer(serverPlayer, new OpenStickyNoteScreen(pos, position.ordinal()));
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     @Override
@@ -203,8 +205,8 @@ public class StickyNoteBlock extends Block implements EntityBlock {
                         Component.literal(message).withStyle() :
                         Component.literal("Empty Note").withStyle(ChatFormatting.ITALIC)
                                 .withStyle(ChatFormatting.GRAY);
-                player.sendSystemMessage(component);
-                return InteractionResult.CONSUME_PARTIAL;
+                player.displayClientMessage(component, false);
+                return InteractionResult.CONSUME;
             }
         }
 

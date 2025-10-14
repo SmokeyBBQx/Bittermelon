@@ -11,7 +11,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -19,6 +18,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -340,8 +341,6 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
     }
 
     private Set<BlockPos> getValidNeighbors() {
-        level.getProfiler().push("fluid-bfs");
-
         if (level == null) return Collections.emptySet();
 
         LongSet validNeighbors = new LongOpenHashSet(4);
@@ -419,7 +418,6 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
             }
         }
 
-        level.getProfiler().pop();
         return longSetToBlockPos(validNeighbors);
     }
 
@@ -678,41 +676,26 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
      */
 
     @Override
-    public void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.put(CONTENTS_KEY, serializeData(registries));
-        tag.putBoolean(ACTIVE_KEY, active);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
+
+        ValueOutput.TypedOutputList<SubstanceStack> substancesList = output.list(CONTENTS_KEY, SubstanceStack.CODEC);
+        for (SubstanceStack stack : substances) {
+            substancesList.add(stack);
+        }
+
+        output.putBoolean(ACTIVE_KEY, active);
     }
 
     @Override
-    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
-        CompoundTag contentsData = tag.getCompound(CONTENTS_KEY);
-        deserializeData(contentsData, registries);
-        active = tag.getBoolean(ACTIVE_KEY);
-    }
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
 
-    private @NotNull CompoundTag serializeData(HolderLookup.Provider registries) {
-        CompoundTag nbt = new CompoundTag();
-        ListTag substancesList = new ListTag();
-        for (SubstanceStack stack : substances) {
-            if (stack.getAmount() > 0) {
-                substancesList.add(stack.save(registries));
-            }
-        }
-        nbt.put(CONTENTS_KEY, substancesList);
-        return nbt;
-    }
-
-    private void deserializeData(@NotNull CompoundTag nbt, HolderLookup.Provider registries) {
         substances.clear();
-        ListTag substancesList = nbt.getList(CONTENTS_KEY, 10);
-        for (int i = 0; i < substancesList.size(); i++) {
-            CompoundTag substanceTag = substancesList.getCompound(i);
-            SubstanceStack substance = SubstanceStack.parseOptional(registries, substanceTag);
-            substances.add(substance);
-        }
-        setChanged();
+        input.list(CONTENTS_KEY, SubstanceStack.CODEC).ifPresent(substancesList ->
+                substances.addAll(substancesList.stream().toList()));
+
+        active = input.getBooleanOr(ACTIVE_KEY, true);
     }
 
     /**
@@ -725,11 +708,7 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
 
     @Override
     public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
-        CompoundTag tag = new CompoundTag();
-        CompoundTag contents = serializeData(registries);
-        tag.put(CONTENTS_KEY, contents);
-//        tag.putBoolean(ACTIVE_KEY, active);
-        return tag;
+        return saveCustomOnly(registries);
     }
 
     @Override

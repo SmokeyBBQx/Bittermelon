@@ -14,7 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 public class ATMBlock extends Block {
-    public static final DirectionProperty FACING;
+    public static final EnumProperty<Direction> FACING;
     private static final Map<Direction, VoxelShape> AABBS;
 
     public ATMBlock(Properties properties) {
@@ -36,7 +36,7 @@ public class ATMBlock extends Block {
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
         if (player instanceof ServerPlayer serverPlayer) {
             PacketDistributor.sendToPlayer(serverPlayer, new OpenATMScreen(0));
-            return InteractionResult.SUCCESS_NO_ITEM_USED;
+            return InteractionResult.SUCCESS;
         }
 
         return InteractionResult.PASS;

@@ -6,13 +6,12 @@ import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.PipeBlock;
@@ -23,6 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
@@ -66,23 +66,21 @@ public class FluidBlock extends Block implements EntityBlock {
     }
 
     @Override
-    public @NotNull BlockState updateShape(@NotNull BlockState stateIn, @NotNull Direction facing, @NotNull BlockState facingState, @NotNull LevelAccessor worldIn, @NotNull BlockPos currentPos, @NotNull BlockPos facingPos) {
-        boolean canConnect = this.canConnectTo(worldIn, facingPos);
+    protected @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull LevelReader level, @NotNull ScheduledTickAccess scheduledTickAccess, @NotNull BlockPos pos, @NotNull Direction direction, @NotNull BlockPos neighborPos, @NotNull BlockState neighborState, @NotNull RandomSource random) {
+        boolean canConnect = this.canConnectTo(level, neighborPos);
 
-        BooleanProperty property = PROPERTY_BY_DIRECTION.get(facing);
+        BooleanProperty property = PROPERTY_BY_DIRECTION.get(direction);
         if (property != null) {
-            stateIn = stateIn.setValue(property, canConnect);
-        } else {
-//            ModLogger.warn("Attempted to set null property for direction: " + facing);
+            state = state.setValue(property, canConnect);
         }
 
-        boolean isFloating = worldIn.getBlockState(currentPos.below()).isAir();
-        stateIn = stateIn.setValue(FLOATING, isFloating);
+        boolean isFloating = level.getBlockState(pos.below()).isAir();
+        state = state.setValue(FLOATING, isFloating);
 
-        return stateIn;
+        return state;
     }
 
-    private boolean canConnectTo(@NotNull LevelAccessor world, BlockPos facingPos) {
+    private boolean canConnectTo(@NotNull LevelReader world, BlockPos facingPos) {
         BlockState facingState = world.getBlockState(facingPos);
         return facingState.isFaceSturdy(world, facingPos, Direction.UP) || facingState.getBlock() instanceof FluidBlock;
     }
@@ -105,8 +103,8 @@ public class FluidBlock extends Block implements EntityBlock {
     }
 
     @Override
-    protected void neighborChanged(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Block neighborBlock, @NotNull BlockPos neighborPos, boolean movedByPiston) {
-        super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
+    protected void neighborChanged(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Block neighborBlock, @Nullable Orientation orientation, boolean movedByPiston) {
+        super.neighborChanged(state, level, pos, neighborBlock, orientation, movedByPiston);
         if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluidEntity) {
             fluidEntity.setActive();
         }
@@ -118,7 +116,7 @@ public class FluidBlock extends Block implements EntityBlock {
     }
 
     @Override
-    protected void entityInside(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Entity entity) {
+    protected void entityInside(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Entity entity, @NotNull InsideBlockEffectApplier effectApplier) {
         if (level.isClientSide) return;
 
         if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluidBlockEntity) {

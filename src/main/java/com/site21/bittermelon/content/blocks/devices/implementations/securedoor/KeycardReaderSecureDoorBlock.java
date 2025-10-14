@@ -6,7 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -42,19 +42,19 @@ public class KeycardReaderSecureDoorBlock extends SecureDoorBlock implements Ent
     }
 
     @Override
-    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+    protected @NotNull InteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
         if (level.getBlockEntity(pos) instanceof KeycardReaderSecureDoorBlockEntity door) {
-            if (!door.isLocked()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            if (!door.isLocked()) return InteractionResult.TRY_WITH_EMPTY_HAND;
 
             if (stack.is(KEYCARD.get())) {
                 int id = stack.getOrDefault(BitterDataComponents.ID_NUMBER, 0);
-                if (id == 0) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+                if (id == 0) return InteractionResult.TRY_WITH_EMPTY_HAND;
 
                 scan(id, level, pos, door);
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     public void scan(int id, Level level, BlockPos pos, KeycardReaderSecureDoorBlockEntity door) {

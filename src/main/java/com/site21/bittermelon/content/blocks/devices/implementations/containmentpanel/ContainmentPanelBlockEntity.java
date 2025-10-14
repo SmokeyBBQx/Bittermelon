@@ -11,6 +11,8 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -236,41 +238,41 @@ public class ContainmentPanelBlockEntity extends ElectronicBlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.putString("name", name);
-        tag.putFloat("containmentScore", containmentScore);
-        tag.putFloat("securityScore", securityScore);
-        tag.putFloat("researchScore", researchScore);
-        tag.putFloat("maintenanceScore", maintenanceScore);
-        tag.putFloat("caretakingScore", caretakingScore);
-        tag.putInt("boundingBoxMinX", boundingBox.minX());
-        tag.putInt("boundingBoxMinY", boundingBox.minY());
-        tag.putInt("boundingBoxMinZ", boundingBox.minZ());
-        tag.putInt("boundingBoxMaxX", boundingBox.maxX());
-        tag.putInt("boundingBoxMaxY", boundingBox.maxY());
-        tag.putInt("boundingBoxMaxZ", boundingBox.maxZ());
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
+
+        output.putString("name", name);
+        output.putFloat("containmentScore", containmentScore);
+        output.putFloat("securityScore", securityScore);
+        output.putFloat("researchScore", researchScore);
+        output.putFloat("maintenanceScore", maintenanceScore);
+        output.putFloat("caretakingScore", caretakingScore);
+        output.putInt("boundingBoxMinX", boundingBox.minX());
+        output.putInt("boundingBoxMinY", boundingBox.minY());
+        output.putInt("boundingBoxMinZ", boundingBox.minZ());
+        output.putInt("boundingBoxMaxX", boundingBox.maxX());
+        output.putInt("boundingBoxMaxY", boundingBox.maxY());
+        output.putInt("boundingBoxMaxZ", boundingBox.maxZ());
     }
 
     @Override
-    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
-        name = tag.getString("name");
-        containmentScore = tag.getFloat("containmentScore");
-        securityScore = tag.getFloat("securityScore");
-        researchScore = tag.getFloat("researchScore");
-        maintenanceScore = tag.getFloat("maintenanceScore");
-        caretakingScore = tag.getFloat("caretakingScore");
-        int minX = tag.getInt("boundingBoxMinX");
-        int minY = tag.getInt("boundingBoxMinY");
-        int minZ = tag.getInt("boundingBoxMinZ");
-        int maxX = tag.getInt("boundingBoxMaxX");
-        int maxY = tag.getInt("boundingBoxMaxY");
-        int maxZ = tag.getInt("boundingBoxMaxZ");
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
+
+        name = input.getStringOr("name", "");
+        containmentScore = input.getFloatOr("containmentScore", 0.0f);
+        securityScore = input.getFloatOr("securityScore", 0.0f);
+        researchScore = input.getFloatOr("researchScore", 0.0f);
+        maintenanceScore = input.getFloatOr("maintenanceScore", 0.0f);
+        caretakingScore = input.getFloatOr("caretakingScore", 0.0f);
+
+        int minX = input.getIntOr("boundingBoxMinX", 0);
+        int minY = input.getIntOr("boundingBoxMinY", 0);
+        int minZ = input.getIntOr("boundingBoxMinZ", 0);
+        int maxX = input.getIntOr("boundingBoxMaxX", 0);
+        int maxY = input.getIntOr("boundingBoxMaxY", 0);
+        int maxZ = input.getIntOr("boundingBoxMaxZ", 0);
         boundingBox = new BoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
     }
 
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
 }

@@ -6,11 +6,10 @@ import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.Signal;
 import com.site21.bittermelon.content.blocks.powergrid.PowerCell;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -124,40 +123,39 @@ public class DistributionBoardBlockEntity extends ElectronicBlockEntity implemen
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
 
-        tag.putBoolean("mainSwitch", mainSwitch);
+        output.putBoolean("mainSwitch", mainSwitch);
 
-        CompoundTag breakersTag = new CompoundTag();
+        ValueOutput.TypedOutputList<CompoundTag> breakersList = output.list("breakers", CompoundTag.CODEC);
         for (Map.Entry<String, Boolean> entry : breakers.entrySet()) {
-            breakersTag.putBoolean(entry.getKey(), entry.getValue());
+            CompoundTag breakerTag = new CompoundTag();
+            breakerTag.putString("name", entry.getKey());
+            breakerTag.putBoolean("state", entry.getValue());
+            breakersList.add(breakerTag);
         }
-        tag.put("breakers", breakersTag);
 
-        saveInputPorts(tag);
-        saveOutputPorts(tag);
+        saveInputPorts(output);
+        saveOutputPorts(output);
+
     }
 
     @Override
-    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
 
-        mainSwitch = tag.getBoolean("mainSwitch");
-
-        if (tag.contains("breakers")) {
-            CompoundTag breakersTag = tag.getCompound("breakers");
+        mainSwitch = input.getBooleanOr("mainSwitch", true);
+        input.list("breakers", CompoundTag.CODEC).ifPresent(breakersList -> {
             breakers.clear();
-            for (String key : breakersTag.getAllKeys()) {
-                breakers.put(key, breakersTag.getBoolean(key));
+            for (CompoundTag breakerTag : breakersList) {
+                String name = breakerTag.getStringOr("name", "UNKNOWN");
+                boolean state = breakerTag.getBooleanOr("state", false);
+                breakers.put(name, state);
             }
-        }
+        });
 
-        loadInputPorts(tag);
-        loadOutputPorts(tag);
-    }
-
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
+        loadInputPorts(input);
+        loadOutputPorts(input);
     }
 }

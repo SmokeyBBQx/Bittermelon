@@ -8,7 +8,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -35,7 +35,7 @@ import static net.minecraft.world.level.block.FaceAttachedHorizontalDirectionalB
 
 public class WallWritingBlock extends Block implements EntityBlock, SimpleWaterloggedBlock {
     public static final EnumProperty<AttachFace> FACE;
-    public static final DirectionProperty FACING;
+    public static final EnumProperty<Direction> FACING;
     public static final BooleanProperty WATERLOGGED;
     private static final Map<Direction, VoxelShape> AABBS;
 
@@ -114,27 +114,27 @@ public class WallWritingBlock extends Block implements EntityBlock, SimpleWaterl
     }
 
     @Override
-    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+    protected @NotNull InteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
         if (stack.is(SPONGE)) {
             level.setBlock(pos, Blocks.AIR.defaultBlockState(), UPDATE_ALL);
             level.playSound(null, pos, SoundEvents.SPONGE_HIT, SoundSource.BLOCKS, 1.0f, level.getRandom().nextFloat() * 0.1f + 0.9f);
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
-        if (level.isClientSide) return ItemInteractionResult.CONSUME;
+        if (level.isClientSide) return InteractionResult.CONSUME;
 
         if (level.getBlockEntity(pos) instanceof WallWritingBlockEntity wallWriting
                 && stack.getItem() instanceof WallWriter wallWriter) {
 
             if (wallWriter.tryApplyToWall(level, wallWriting, player, stack)) {
                 level.sendBlockUpdated(pos, state, state, UPDATE_CLIENTS);
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             } else {
-                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+                return InteractionResult.TRY_WITH_EMPTY_HAND;
             }
         }
 
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     @Override

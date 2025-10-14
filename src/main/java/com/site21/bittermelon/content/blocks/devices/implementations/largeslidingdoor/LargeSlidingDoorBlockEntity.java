@@ -12,6 +12,9 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,12 +43,12 @@ public class LargeSlidingDoorBlockEntity extends ElectronicBlockEntity {
         } else if (state == State.OPENING) {
             this.doorProgress = Math.min(1.0f, this.doorProgress + ANIMATION_SPEED);
             if (doorProgress >= 1) {
-                PacketDistributor.sendToServer(new UpdateSlidingDoorState(worldPosition, State.OPEN));
+                ClientPacketDistributor.sendToServer(new UpdateSlidingDoorState(worldPosition, State.OPEN));
             }
         } else if (state == State.CLOSING) {
             this.doorProgress = Math.max(0.0f, this.doorProgress - ANIMATION_SPEED);
             if (doorProgress <= 0) {
-                PacketDistributor.sendToServer(new UpdateSlidingDoorState(worldPosition, State.CLOSED));
+                ClientPacketDistributor.sendToServer(new UpdateSlidingDoorState(worldPosition, State.CLOSED));
             }
         }
     }
@@ -55,16 +58,16 @@ public class LargeSlidingDoorBlockEntity extends ElectronicBlockEntity {
 
         if (!reverseStuckAnimation) {
             this.doorProgress = Math.min(1f, this.doorProgress + ANIMATION_SPEED);
-            PacketDistributor.sendToServer(new UpdateSlidingDoorProgress(doorProgress, worldPosition));
+            ClientPacketDistributor.sendToServer(new UpdateSlidingDoorProgress(doorProgress, worldPosition));
             if (doorProgress >= 1f) {
                 reverseStuckAnimation = true;
             }
         } else {
             this.doorProgress = Math.max(0.3f, this.doorProgress - ANIMATION_SPEED);
-            PacketDistributor.sendToServer(new UpdateSlidingDoorProgress(doorProgress, worldPosition));
+            ClientPacketDistributor.sendToServer(new UpdateSlidingDoorProgress(doorProgress, worldPosition));
             if (doorProgress <= 0.3f) {
                 reverseStuckAnimation = false;
-                PacketDistributor.sendToServer(new PlaySlidingDoorStuckSound(worldPosition));
+                ClientPacketDistributor.sendToServer(new PlaySlidingDoorStuckSound(worldPosition));
             }
         }
     }
@@ -100,14 +103,16 @@ public class LargeSlidingDoorBlockEntity extends ElectronicBlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.putFloat("doorProgress", doorProgress);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
+
+        output.putFloat("doorProgress", doorProgress);
     }
 
     @Override
-    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
-        doorProgress = tag.getFloat("doorProgress");
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
+
+        doorProgress = input.getFloatOr("doorProgress", 0.0f);
     }
 }

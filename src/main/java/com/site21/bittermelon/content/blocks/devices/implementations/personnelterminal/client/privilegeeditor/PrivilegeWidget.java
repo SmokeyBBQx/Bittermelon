@@ -11,10 +11,12 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -89,7 +91,7 @@ public class PrivilegeWidget extends AbstractWidget {
     private void onAddPrivilege(Button button) {
         String input = inputField.getValue();
         if (input.isEmpty()) return;
-        PacketDistributor.sendToServer(new AddPrivilege(input));
+        ClientPacketDistributor.sendToServer(new AddPrivilege(input));
         inputField.setValue("");
         currentSearchTerm = "";
         manager.getPrivileges().add(input);
@@ -98,7 +100,7 @@ public class PrivilegeWidget extends AbstractWidget {
 
     @Override
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        guiGraphics.blitSprite(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/generic_background"),
+        guiGraphics.blitSprite(RenderPipelines.GUI, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/generic_background"),
                 getX(), getY(), getWidth(), getHeight());
 
         privilegeList.render(guiGraphics, mouseX, mouseY, partialTick);

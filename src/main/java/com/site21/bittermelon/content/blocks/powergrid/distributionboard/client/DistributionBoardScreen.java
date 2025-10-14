@@ -9,7 +9,7 @@ import net.minecraft.client.gui.components.MultiLineEditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -37,8 +37,10 @@ public class DistributionBoardScreen extends Screen {
             breaker.setOn(board.isBreakerOn("WAY_" + i));
             breakers.add(breaker);
 
-            MultiLineEditBox nameField = new MultiLineEditBox(minecraft.font, x + i * 50, y + 60, 50,
-                    30, Component.literal(""), Component.literal(""));
+            MultiLineEditBox nameField = MultiLineEditBox.builder()
+                    .setX(x + i * 50)
+                    .setY(y + 60)
+                    .build(minecraft.font, 50, 30, Component.literal(""));
 
             addRenderableWidget(breaker);
             addRenderableWidget(nameField);
@@ -73,10 +75,10 @@ public class DistributionBoardScreen extends Screen {
     }
 
     private void toggleBreaker(String breaker) {
-        PacketDistributor.sendToServer(new ToggleBreaker(breaker, board.getBlockPos()));
+        ClientPacketDistributor.sendToServer(new ToggleBreaker(breaker, board.getBlockPos()));
     }
 
     private void toggleMainSwitch() {
-        PacketDistributor.sendToServer(new ToggleMainSwitch(board.getBlockPos()));
+        ClientPacketDistributor.sendToServer(new ToggleMainSwitch(board.getBlockPos()));
     }
 }

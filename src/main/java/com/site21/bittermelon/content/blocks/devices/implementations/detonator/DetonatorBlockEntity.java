@@ -14,6 +14,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -64,25 +65,8 @@ public class DetonatorBlockEntity extends ElectronicBlockEntity implements Elect
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.put("payload", payload.save(registries));
-        saveInputPorts(tag);
-    }
-
-    @Override
-    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
-        ItemStack.parse(registries, tag.get("payload")).ifPresent(stack -> payload = stack);
-        loadInputPorts(tag);
-    }
-
-    @Override
     public Map<String, InputPort> getInputPorts() {
         return inputPorts;
     }
 
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
 }

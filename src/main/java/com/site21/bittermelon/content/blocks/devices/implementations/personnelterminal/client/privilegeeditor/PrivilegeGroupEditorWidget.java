@@ -11,6 +11,7 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,12 +26,12 @@ public class PrivilegeGroupEditorWidget extends PrivilegeEditorWidget {
 
     @Override
     public void setPrivilege(String privilege, boolean value) {
-        PacketDistributor.sendToServer(new SetPrivilegeForGroup(group.getName(), privilege, value));
+        ClientPacketDistributor.sendToServer(new SetPrivilegeForGroup(group.getName(), privilege, value));
     }
 
     @Override
     public void removePrivilege(String privilege) {
-        PacketDistributor.sendToServer(new RemovePrivilegeForGroup(group.getName(), privilege));
+        ClientPacketDistributor.sendToServer(new RemovePrivilegeForGroup(group.getName(), privilege));
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.site21.bittermelon.content.personnel.privilege.networking.RemovePrivi
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,7 +47,7 @@ public class PrivilegeGroupListWidget extends DeletableListWidget<PrivilegeGroup
 
         @Override
         protected void onDeleteClicked() {
-            PacketDistributor.sendToServer(new RemovePrivilegeGroup(group.getName()));
+            ClientPacketDistributor.sendToServer(new RemovePrivilegeGroup(group.getName()));
             removeEntry(this);
         }
 

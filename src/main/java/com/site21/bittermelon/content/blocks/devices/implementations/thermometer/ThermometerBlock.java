@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 public class ThermometerBlock extends Block implements EntityBlock {
-    public static final DirectionProperty FACING;
+    public static final EnumProperty<Direction> FACING;
     private static final Map<Direction, VoxelShape> AABBS;
 
     public ThermometerBlock(Properties properties) {

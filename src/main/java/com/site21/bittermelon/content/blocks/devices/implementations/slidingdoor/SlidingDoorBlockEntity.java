@@ -15,6 +15,8 @@ import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
@@ -149,20 +151,20 @@ public class SlidingDoorBlockEntity extends ElectronicBlockEntity implements Pan
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
 
-        tag.putBoolean("isPanelOpen", isPanelOpen);
-        saveInputPorts(tag);
-        saveOutputPorts(tag);
+        output.putBoolean("isPanelOpen", isPanelOpen);
+        saveInputPorts(output);
+        saveOutputPorts(output);
     }
 
     @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
 
-        isPanelOpen = tag.getBoolean("isPanelOpen");
-        loadInputPorts(tag);
-        loadOutputPorts(tag);
+        isPanelOpen = input.getBooleanOr("isPanelOpen", false);
+        loadInputPorts(input);
+        loadOutputPorts(input);
     }
 }

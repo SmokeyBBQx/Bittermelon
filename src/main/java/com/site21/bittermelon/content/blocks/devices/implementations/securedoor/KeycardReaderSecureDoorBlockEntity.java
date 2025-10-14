@@ -6,6 +6,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -36,18 +38,16 @@ public class KeycardReaderSecureDoorBlockEntity extends SecureDoorBlockEntity im
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
-        if (getBlockState().getValue(SecureDoorBlock.HALF).equals(DoubleBlockHalf.LOWER)) return;
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
 
-        serializePrivileges(tag);
+        serializePrivileges(output);
     }
 
     @Override
-    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (getBlockState().getValue(SecureDoorBlock.HALF).equals(DoubleBlockHalf.LOWER)) return;
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
 
-        deserializePrivileges(tag);
+        deserializePrivileges(input);
     }
 }

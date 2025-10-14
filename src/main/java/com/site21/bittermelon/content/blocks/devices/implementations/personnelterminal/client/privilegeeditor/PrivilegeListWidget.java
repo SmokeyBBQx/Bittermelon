@@ -6,6 +6,7 @@ import com.site21.bittermelon.content.personnel.privilege.networking.RemovePrivi
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,7 +46,7 @@ public class PrivilegeListWidget extends DeletableListWidget<PrivilegeListWidget
         @Override
         protected void onDeleteClicked() {
             removeEntry(this);
-            PacketDistributor.sendToServer(new RemovePrivilege(privilege));
+            ClientPacketDistributor.sendToServer(new RemovePrivilege(privilege));
             PrivilegeManager.get(minecraft.level).removePrivilege(privilege);
         }
 

@@ -78,28 +78,28 @@ public class PLC implements ElectronicDevice {
         }
     }
 
-    public void save(@NotNull CompoundTag tag) {
-        CompoundTag plcTag = new CompoundTag();
-        saveInputPorts(plcTag);
-        saveOutputPorts(plcTag);
-        ListTag instructionList = new ListTag();
-        for (Instruction instruction : instructions) {
-            instructionList.add(instruction.save());
-        }
-        plcTag.put("instructions", instructionList);
-        tag.put("plc", plcTag);
-    }
-
-    public void load(@NotNull CompoundTag tag, Level level) {
-        CompoundTag plcTag = tag.getCompound("plc");
-        loadInputPorts(plcTag);
-        loadOutputPorts(plcTag);
-        instructions.clear();
-        ListTag instructionList = tag.getList("instructions", Tag.TAG_COMPOUND);
-        for (int i = 0; i < instructionList.size(); i++) {
-            CompoundTag instructionTag = instructionList.getCompound(i);
-            instructions.add(Instruction.load(instructionTag));
-        }
-    }
+//    public void save(@NotNull CompoundTag tag) {
+//        CompoundTag plcTag = new CompoundTag();
+//        saveInputPorts(plcTag);
+//        saveOutputPorts(plcTag);
+//        ListTag instructionList = new ListTag();
+//        for (Instruction instruction : instructions) {
+//            instructionList.add(instruction.save());
+//        }
+//        plcTag.put("instructions", instructionList);
+//        tag.put("plc", plcTag);
+//    }
+//
+//    public void load(@NotNull CompoundTag tag, Level level) {
+//        CompoundTag plcTag = tag.getCompound("plc");
+//        loadInputPorts(plcTag);
+//        loadOutputPorts(plcTag);
+//        instructions.clear();
+//        ListTag instructionList = tag.getList("instructions", Tag.TAG_COMPOUND);
+//        for (int i = 0; i < instructionList.size(); i++) {
+//            CompoundTag instructionTag = instructionList.getCompound(i);
+//            instructions.add(Instruction.load(instructionTag));
+//        }
+//    }
 }
 

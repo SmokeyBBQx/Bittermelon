@@ -9,6 +9,9 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -96,15 +99,13 @@ public interface ElectronicDevice {
     /**
      * Serializes all input port data to NBT.
      * Saves port IDs and their connection information (position and connected port ID).
-     *
-     * @param tag the CompoundTag to write data to
+     * @param output the ValueOutput to write data to
      */
-    default void saveInputPorts(CompoundTag tag) {
-        ListTag portsListTag = new ListTag();
+    default void saveInputPorts(@NotNull ValueOutput output) {
+        ValueOutput.TypedOutputList<CompoundTag> portsList = output.list("inputPorts", CompoundTag.CODEC);
 
         for (InputPort port : getInputPorts().values()) {
             CompoundTag portTag = new CompoundTag();
-
             portTag.putString("id", port.id);
 
             // Only save connection info if the port is connected
@@ -113,46 +114,47 @@ public interface ElectronicDevice {
                 portTag.putString("connectedID", port.connectedPortId);
             }
 
-            portsListTag.add(portTag);
+            portsList.add(portTag);
         }
-
-        tag.put("inputPorts", portsListTag);
     }
 
     /**
      * Deserializes input port data from NBT and restores connections.
      * Looks up connected devices by position and reconnects ports by ID.
      *
-     * @param tag the CompoundTag to read data from
+     * @param input the ValueInput to read data from
      */
-    default void loadInputPorts(@NotNull CompoundTag tag) {
-        ListTag portsListTag = tag.getList("inputPorts", Tag.TAG_COMPOUND);
-        for (int i = 0; i < portsListTag.size(); i++) {
-            CompoundTag portTag = portsListTag.getCompound(i);
-            String portId = portTag.getString("id");
-            InputPort port = findInputPort(portId);
+    default void loadInputPorts(@NotNull ValueInput input) {
+        ValueInput.TypedInputList<CompoundTag> portsList = input.list("inputPorts", CompoundTag.CODEC).orElseThrow();
 
-            // Restore connection info if present
-            if (port != null && portTag.contains("connectedPos")) {
-                port.connectedPos = BlockPos.of(portTag.getLong("connectedPos"));
-                port.connectedPortId = portTag.getString("connectedID");
-                port.invalidateCache();
-            }
+        for (CompoundTag portTag : portsList) {
+            portTag.getString("id").ifPresent(portId -> {
+                InputPort port = findInputPort(portId);
+
+                if (port != null) {
+                    // Restore connection info if present
+                    portTag.getLong("connectedPos").ifPresent(pos -> {
+                        port.connectedPos = BlockPos.of(pos);
+                        portTag.getString("connectedID").ifPresent(id -> {
+                            port.connectedPortId = id;
+                            port.invalidateCache();
+                        });
+                    });
+                }
+            });
         }
     }
 
     /**
      * Serializes all output port data to NBT.
      * Saves port IDs and their connection information (position and connected port ID).
-     *
-     * @param tag the CompoundTag to write data to
+     * @param output the ValueOutput to write data to
      */
-    default void saveOutputPorts(CompoundTag tag) {
-        ListTag portsListTag = new ListTag();
+    default void saveOutputPorts(@NotNull ValueOutput output) {
+        ValueOutput.TypedOutputList<CompoundTag> portsList = output.list("outputPorts", CompoundTag.CODEC);
 
         for (OutputPort port : getOutputPorts().values()) {
             CompoundTag portTag = new CompoundTag();
-
             portTag.putString("id", port.id);
 
             // Only save connection info if the port is connected
@@ -161,31 +163,34 @@ public interface ElectronicDevice {
                 portTag.putString("connectedID", port.connectedPortId);
             }
 
-            portsListTag.add(portTag);
+            portsList.add(portTag);
         }
-
-        tag.put("outputPorts", portsListTag);
     }
 
     /**
      * Deserializes output port data from NBT and restores connections.
      * Looks up connected devices by position and reconnects ports by ID.
      *
-     * @param tag the CompoundTag to read data from
+     * @param input the ValueInput to read data from
      */
-    default void loadOutputPorts(@NotNull CompoundTag tag) {
-        ListTag portsListTag = tag.getList("outputPorts", Tag.TAG_COMPOUND);
-        for (int i = 0; i < portsListTag.size(); i++) {
-            CompoundTag portTag = portsListTag.getCompound(i);
-            String portId = portTag.getString("id");
-            OutputPort port = findOutputPort(portId);
+    default void loadOutputPorts(@NotNull ValueInput input) {
+        ValueInput.TypedInputList<CompoundTag> portsList = input.list("outputPorts", CompoundTag.CODEC).orElseThrow();
 
-            // Restore connection info if present
-            if (port != null && portTag.contains("connectedPos")) {
-                port.connectedPos = BlockPos.of(portTag.getLong("connectedPos"));
-                port.connectedPortId = portTag.getString("connectedID");
-                port.invalidateCache();
-            }
+        for (CompoundTag portTag : portsList) {
+            portTag.getString("id").ifPresent(portId -> {
+                OutputPort port = findOutputPort(portId);
+
+                if (port != null) {
+                    // Restore connection info if present
+                    portTag.getLong("connectedPos").ifPresent(pos -> {
+                        port.connectedPos = BlockPos.of(pos);
+                        portTag.getString("connectedID").ifPresent(id -> {
+                            port.connectedPortId = id;
+                            port.invalidateCache();
+                        });
+                    });
+                }
+            });
         }
     }
 

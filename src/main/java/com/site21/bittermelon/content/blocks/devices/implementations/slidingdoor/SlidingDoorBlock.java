@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 public class SlidingDoorBlock extends Block implements EntityBlock {
-    public static final DirectionProperty FACING;
+    public static final EnumProperty<Direction> FACING;
     public static final BooleanProperty OPEN;
     public static final BooleanProperty VISIBLE;
     public static final EnumProperty<DoorHingeSide> HINGE;
@@ -95,7 +95,7 @@ public class SlidingDoorBlock extends Block implements EntityBlock {
         BlockPos pos = context.getClickedPos();
         Level level = context.getLevel();
 
-        if (pos.getY() >= level.getMaxBuildHeight() - 1) return null;
+        if (pos.getY() >= level.getMaxY() - 1) return null;
 
         BlockState upperBlockState = level.getBlockState(pos.above());
         if (!upperBlockState.canBeReplaced(context)) return null;
@@ -170,9 +170,10 @@ public class SlidingDoorBlock extends Block implements EntityBlock {
                 setOpen(level, pos, true);
                 return InteractionResult.SUCCESS;
             } else if (blockEntity.isOn()) {
-                player.sendSystemMessage(Component.literal("The door's motors prevent you from opening it by hand.")
+                player.displayClientMessage(Component.literal("The door's motors prevent you from opening it by hand.")
                         .withStyle(ChatFormatting.ITALIC)
-                        .withStyle(ChatFormatting.GRAY));
+                        .withStyle(ChatFormatting.GRAY),
+                        true);
                 return InteractionResult.PASS;
             }
         }

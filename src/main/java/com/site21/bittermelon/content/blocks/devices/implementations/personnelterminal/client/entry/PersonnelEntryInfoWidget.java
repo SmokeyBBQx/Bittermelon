@@ -21,6 +21,7 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -31,8 +32,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix3x2f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -162,7 +165,7 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
         editMode = false;
         updateFieldStates();
 
-        PacketDistributor.sendToServer(new UpdatePersonnelEntry(entry));
+        ClientPacketDistributor.sendToServer(new UpdatePersonnelEntry(entry));
     }
 
     private void cancelEdit(Button button) {
@@ -178,7 +181,7 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
     }
 
     private void deleteEntry(Button button) {
-        PacketDistributor.sendToServer(new RemovePersonnelEntry(entry.getId()));
+        ClientPacketDistributor.sendToServer(new RemovePersonnelEntry(entry.getId()));
         screen.setActiveWidget(null);
         screen.refreshContent();
     }
@@ -189,22 +192,23 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
 
     @Override
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        guiGraphics.blitSprite(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/generic_background"),
+        guiGraphics.blitSprite(RenderPipelines.GUI, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/generic_background"),
                 getX(), getY(), getWidth(), getHeight());
 
-        RenderSystem.enableBlend();
-        guiGraphics.blitSprite(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/scp_logo"),
+//        RenderSystem.enableBlend();
+        guiGraphics.blitSprite(RenderPipelines.GUI, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/scp_logo"),
                 x + width - 100, y, 100, 100);
-        RenderSystem.disableBlend();
+//        RenderSystem.disableBlend();
 
         Font font = Minecraft.getInstance().font;
 
-        guiGraphics.pose().pushPose();
+        guiGraphics.pose().pushMatrix();
         int pictureStartX = getX() + 30;
         int pictureStartY = getY() + 10;
         float pictureScale = 4;
 
-        guiGraphics.pose().scale(pictureScale, pictureScale, 0);
+//        guiGraphics.pose().scale(pictureScale, pictureScale, 0);
+        guiGraphics.pose().scale(pictureScale, pictureScale, new Matrix3x2f());
 
         int playerWidth = 13;
         int playerHeight = 19;
@@ -217,21 +221,22 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
         guiGraphics.blit(texture, bgX, bgY, 0, 0, bgWidth, bgHeight, 16, 16);
 
         renderPlayer(guiGraphics, (int) (pictureStartX / pictureScale), (int) (pictureStartY / pictureScale));
-        guiGraphics.pose().popPose();
+        guiGraphics.pose().popMatrix();
 
         int startX = getX() + 10;
         int startY = getY() + pictureStartY + 40;
 
-        guiGraphics.pose().pushPose();
+        guiGraphics.pose().pushMatrix();
 
         int titleStartX = getX() + 90;
         int titleStartY = getY() + 10;
         float scale = 1.5f;
 
-        guiGraphics.pose().scale(scale, scale, 0);
+//        guiGraphics.pose().scale(scale, scale, 0);
+        guiGraphics.pose().scale(scale, scale, new Matrix3x2f());
 
         guiGraphics.drawString(font, entry.getName(), (int) (titleStartX / scale), (int) (titleStartY / scale), 0xFFFFFF);
-        guiGraphics.pose().popPose();
+        guiGraphics.pose().popMatrix();
 
         String[] labels = {"ID: ", "Name:", "Position:", "Department:", "Notes:"};
         int maxLabelWidth = 0;

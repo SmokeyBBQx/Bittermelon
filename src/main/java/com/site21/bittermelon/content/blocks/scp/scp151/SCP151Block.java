@@ -1,7 +1,5 @@
 package com.site21.bittermelon.content.blocks.scp.scp151;
 
-import com.site21.bittermelon.content.blocks.powergrid.distributionboard.DistributionBoardBlock;
-import com.site21.bittermelon.content.blocks.powergrid.distributionboard.DistributionBoardBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.StringRepresentable;
@@ -18,7 +16,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
@@ -29,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class SCP151Block extends Block implements SimpleWaterloggedBlock, EntityBlock {
     public static final EnumProperty<SCP151Block.Type> TYPE = EnumProperty.create("type", SCP151Block.Type.class);
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
     protected static final VoxelShape SHAPE_EAST;
@@ -70,7 +67,7 @@ public class SCP151Block extends Block implements SimpleWaterloggedBlock, Entity
     }
 
     @Override
-    public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
+    public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos blockPos, @NotNull BlockState blockState) {
         return new SCP151BlockEntity(blockPos, blockState);
     }
 

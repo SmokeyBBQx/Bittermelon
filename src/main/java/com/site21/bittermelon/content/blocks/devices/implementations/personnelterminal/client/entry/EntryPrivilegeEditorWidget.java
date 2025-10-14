@@ -10,6 +10,7 @@ import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,12 +24,12 @@ public class EntryPrivilegeEditorWidget extends PrivilegeEditorWidget {
 
     @Override
     public void setPrivilege(String privilege, boolean value) {
-        PacketDistributor.sendToServer(new SetPrivilegeForEntry(entry.getId(), privilege, value));
+        ClientPacketDistributor.sendToServer(new SetPrivilegeForEntry(entry.getId(), privilege, value));
     }
 
     @Override
     public void removePrivilege(String privilege) {
-        PacketDistributor.sendToServer(new RemovePrivilegeForEntry(entry.getId(), privilege));
+        ClientPacketDistributor.sendToServer(new RemovePrivilegeForEntry(entry.getId(), privilege));
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.site21.bittermelon.Bittermelon;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
@@ -45,9 +46,9 @@ public class BreakerButton extends AbstractWidget {
     @Override
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (isHovered) {
-            guiGraphics.blitSprite(on ? onHighlightedIcon : offHighlightedIcon, x, y, width, height);
+            guiGraphics.blitSprite(RenderPipelines.GUI, on ? onHighlightedIcon : offHighlightedIcon, x, y, width, height);
         } else {
-            guiGraphics.blitSprite(on ? onIcon : offIcon, x, y, width, height);
+            guiGraphics.blitSprite(RenderPipelines.GUI, on ? onIcon : offIcon, x, y, width, height);
         }
     }
 

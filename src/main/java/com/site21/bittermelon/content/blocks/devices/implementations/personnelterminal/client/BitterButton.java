@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.Holder;
@@ -41,11 +42,11 @@ public class BitterButton extends Button {
     @Override
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         Minecraft minecraft = Minecraft.getInstance();
-        guiGraphics.setColor(1.0F, 1.0F, 1.0F, this.alpha);
-        RenderSystem.enableBlend();
-        RenderSystem.enableDepthTest();
-        guiGraphics.blitSprite(sprites.get(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
-        guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+//        guiGraphics.setColor(1.0F, 1.0F, 1.0F, this.alpha);
+//        RenderSystem.enableBlend();
+//        RenderSystem.enableDepthTest();
+        guiGraphics.blitSprite(RenderPipelines.GUI, sprites.get(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+//        guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         int i = this.getFGColor();
         this.renderString(guiGraphics, minecraft.font, i | Mth.ceil(this.alpha * 255.0F) << 24);
     }

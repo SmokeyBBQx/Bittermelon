@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -18,10 +19,10 @@ public class ListWidget<T extends ObjectSelectionList.Entry<T>> extends ObjectSe
         centerListVertically = false;
     }
 
-    @Override
-    protected int getScrollbarPosition() {
-        return getX() + width - 12;
-    }
+//    @Override
+//    protected int getScrollbarPosition() {
+//        return getX() + width - 12;
+//    }
 
     @Override
     public int getRowLeft() {
@@ -36,20 +37,20 @@ public class ListWidget<T extends ObjectSelectionList.Entry<T>> extends ObjectSe
     public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
 
-        if (this.scrollbarVisible()) {
-            int l = this.getScrollbarPosition();
-            int i1 = (int) ((float) (this.height * this.height) / (float) this.getMaxPosition());
-            i1 = Mth.clamp(i1, 32, this.height - 8);
-            int k = (int) this.getScrollAmount() * (this.height - i1) / this.getMaxScroll() + this.getY();
-            if (k < this.getY()) {
-                k = this.getY();
-            }
-
-            RenderSystem.enableBlend();
-            guiGraphics.blitSprite(PersonnelTerminalScreen.SCROLLER_BACKGROUND_SPRITE, l, this.getY(), 12, this.getHeight());
-            guiGraphics.blitSprite(PersonnelTerminalScreen.SCROLLER_SPRITE, l, k, 12, i1);
-            RenderSystem.disableBlend();
-        }
+//        if (this.scrollbarVisible()) {
+//            int l = this.getScrollbarPosition();
+//            int i1 = (int) ((float) (this.height * this.height) / (float) this.getMaxPosition());
+//            i1 = Mth.clamp(i1, 32, this.height - 8);
+//            int k = (int) this.getScrollbarPosition() * (this.height - i1) / this.getMaxScroll() + this.getY();
+//            if (k < this.getY()) {
+//                k = this.getY();
+//            }
+//
+//            RenderSystem.enableBlend();
+//            guiGraphics.blitSprite(RenderPipelines.GUI, PersonnelTerminalScreen.SCROLLER_BACKGROUND_SPRITE, l, this.getY(), 12, this.getHeight());
+//            guiGraphics.blitSprite(RenderPipelines.GUI, PersonnelTerminalScreen.SCROLLER_SPRITE, l, k, 12, i1);
+//            RenderSystem.disableBlend();
+//        }
     }
 
     @Override

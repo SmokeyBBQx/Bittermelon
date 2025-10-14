@@ -13,12 +13,15 @@ import com.site21.bittermelon.content.telecomms.intercom.IntercomManager;
 import com.site21.bittermelon.util.LocalMessageHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 
@@ -171,40 +174,39 @@ public class IntercomBlockEntity extends ElectronicBlockEntity implements ISyncS
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
 
-        tag.putString("intercomID", intercomID);
-        tag.putString("targetID", targetID);
-        tag.putBoolean("speakerOn", speakerOn);
-        tag.putBoolean("micOn", micOn);
-        tag.putBoolean("phonePickedUp", phonePickedUp);
-        tag.putInt("speakerRadius", speakerRadius);
+        output.putString("intercomID", intercomID);
+        output.putString("targetID", targetID);
+        output.putBoolean("speakerOn", speakerOn);
+        output.putBoolean("micOn", micOn);
+        output.putBoolean("phonePickedUp", phonePickedUp);
+        output.putInt("speakerRadius", speakerRadius);
         if (phoneUser != null) {
-            tag.putUUID("phoneUser", phoneUser.getUUID());
+            output.store("phoneUser", UUIDUtil.CODEC, phoneUser.getUUID());
         }
-        saveOutputPorts(tag);
-        saveInputPorts(tag);
+        saveOutputPorts(output);
+        saveInputPorts(output);
     }
 
     @Override
-    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
 
-        intercomID = tag.getString("intercomID");
-        targetID = tag.getString("targetID");
-        speakerOn = tag.getBoolean("speakerOn");
-        micOn = tag.getBoolean("micOn");
-        phonePickedUp = tag.getBoolean("phonePickedUp");
-        speakerRadius = tag.getInt("speakerRadius");
+        intercomID = input.getStringOr("intercomID", "");
+        targetID = input.getStringOr("targetID", "");
+        speakerOn = input.getBooleanOr("speakerOn", true);
+        micOn = input.getBooleanOr("micOn", true);
+        phonePickedUp = input.getBooleanOr("phonePickedUp", false);
+        speakerRadius = input.getIntOr("speakerRadius", 8);
         if (level == null) return;
-        if (tag.hasUUID("phoneUser")) {
-            Player loadedPhoneUser = level.getPlayerByUUID(tag.getUUID("phoneUser"));
+        input.read("phoneUser", UUIDUtil.CODEC).ifPresent(uuid -> {
+            if (level == null) return;
+            Player loadedPhoneUser = level.getPlayerByUUID(uuid);
             if (loadedPhoneUser != null) {
                 phoneUser = loadedPhoneUser;
             }
-        }
-        loadOutputPorts(tag);
-        loadInputPorts(tag);
+        });
     }
 }

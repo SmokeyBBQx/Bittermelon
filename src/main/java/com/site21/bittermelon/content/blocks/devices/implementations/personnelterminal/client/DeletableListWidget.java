@@ -4,6 +4,7 @@ import com.site21.bittermelon.Bittermelon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -91,12 +92,12 @@ public class DeletableListWidget<T extends DeletableListWidget.DeletableEntry> e
             }
 
             ResourceLocation icon = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, getIconPath());
-            guiGraphics.blitSprite(icon, left + 4, top, ICON_SIZE, ICON_SIZE);
+            guiGraphics.blitSprite(RenderPipelines.GUI, icon, left + 4, top, ICON_SIZE, ICON_SIZE);
 
             if (hasDeleteButton()) {
                 ResourceLocation deleteIcon = getDeleteButtonIcon(mouseX, mouseY);
                 if (deleteIcon != null) {
-                    guiGraphics.blitSprite(deleteIcon, getDeleteButtonX(), getButtonY(), BUTTON_SIZE, BUTTON_SIZE);
+                    guiGraphics.blitSprite(RenderPipelines.GUI, deleteIcon, getDeleteButtonX(), getButtonY(), BUTTON_SIZE, BUTTON_SIZE);
                 }
             }
 

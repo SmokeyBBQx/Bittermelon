@@ -5,6 +5,7 @@ import com.site21.bittermelon.content.blocks.devices.implementations.personnelte
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -92,14 +93,14 @@ public class OwnedPrivilegeListWidget extends ListWidget<OwnedPrivilegeListWidge
                 guiGraphics.fill(left, top - 2, left + entryWidth, top + entryHeight + 2, 0xFFD3E3FD);
             }
 
-            guiGraphics.blitSprite(getIcon(), left + 4, top, 16, 16);
+            guiGraphics.blitSprite(RenderPipelines.GUI, getIcon(), left + 4, top, 16, 16);
 
             int toggleButtonX = getToggleButtonX();
             int deleteButtonX = getDeleteButtonX();
             int buttonY = getButtonY();
 
-            guiGraphics.blitSprite(getToggleButtonIcon(mouseX, mouseY), toggleButtonX, buttonY, BUTTON_SIZE, BUTTON_SIZE);
-            guiGraphics.blitSprite(getDeleteButtonIcon(mouseX, mouseY), deleteButtonX, buttonY, BUTTON_SIZE, BUTTON_SIZE);
+            guiGraphics.blitSprite(RenderPipelines.GUI, getToggleButtonIcon(mouseX, mouseY), toggleButtonX, buttonY, BUTTON_SIZE, BUTTON_SIZE);
+            guiGraphics.blitSprite(RenderPipelines.GUI, getDeleteButtonIcon(mouseX, mouseY), deleteButtonX, buttonY, BUTTON_SIZE, BUTTON_SIZE);
 
             int textColor = isFocused() ? 0xFFFFFFFF : 0xFF000000;
             guiGraphics.drawString(Minecraft.getInstance().font, privilege, left + 22, top + 3, textColor, false);

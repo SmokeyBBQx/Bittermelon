@@ -10,12 +10,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -39,18 +40,18 @@ public class IntercomBlock extends IndentedSmallBlock implements EntityBlock {
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
-        if (level.isClientSide) return InteractionResult.CONSUME_PARTIAL;
+        if (level.isClientSide) return InteractionResult.PASS;
 
         if (player.isCrouching()) {
 
             if (player.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) > 2 * 2) {
-                player.sendSystemMessage(Component.literal("Too far away to pick up the phone.").withStyle(ChatFormatting.RED));
+                player.displayClientMessage(Component.literal("Too far away to pick up the phone.").withStyle(ChatFormatting.RED), true);
                 return InteractionResult.FAIL;
             }
 
             if (level.getBlockEntity(pos) instanceof IntercomBlockEntity intercom) {
                 if (intercom.isPhonePickedUp()) {
-                    player.sendSystemMessage(Component.literal("Someone has already picked up the phone.").withStyle(ChatFormatting.RED));
+                    player.displayClientMessage(Component.literal("Someone has already picked up the phone.").withStyle(ChatFormatting.RED), true);
                     return InteractionResult.FAIL;
                 }
 
@@ -58,47 +59,47 @@ public class IntercomBlock extends IndentedSmallBlock implements EntityBlock {
                 intercom.setPhoneUser(player);
                 phone.set(CORD_CONNECTION.get(), pos);
                 player.setItemInHand(InteractionHand.MAIN_HAND, phone);
-                player.sendSystemMessage(Component.literal("You pick up the phone.").withStyle(ChatFormatting.GRAY));
+                player.displayClientMessage(Component.literal("You pick up the phone.").withStyle(ChatFormatting.GRAY), true);
                 level.playSound(null, pos, SoundEvents.HEAVY_CORE_HIT, SoundSource.PLAYERS);
                 intercom.setPhonePickedUp(true);
             }
 
-            return InteractionResult.SUCCESS_NO_ITEM_USED;
+            return InteractionResult.SUCCESS;
         }
 
         if (player instanceof ServerPlayer serverPlayer) {
             PacketDistributor.sendToPlayer(serverPlayer, new OpenIntercomScreen(pos));
         }
 
-        return InteractionResult.SUCCESS_NO_ITEM_USED;
+        return InteractionResult.SUCCESS;
     }
 
-    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
-        if (stack.getCount() < 1) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (level.isClientSide) return ItemInteractionResult.FAIL;
+    protected @NotNull InteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+        if (stack.getCount() < 1) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (level.isClientSide) return InteractionResult.FAIL;
 
         if (stack.getItem() instanceof IntercomPhoneItem) {
             stack.setCount(0);
-            player.sendSystemMessage(Component.literal("You place the phone back.").withStyle(ChatFormatting.GRAY));
+            player.displayClientMessage(Component.literal("You place the phone back.").withStyle(ChatFormatting.GRAY), true);
             level.playSound(null, pos, SoundEvents.HEAVY_CORE_HIT, SoundSource.PLAYERS);
             if (level.getBlockEntity(pos) instanceof IntercomBlockEntity intercom) {
                 intercom.setPhonePickedUp(false);
                 intercom.setPhoneUser(null);
             }
 
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
         if (player.isCrouching() && stack.getCount() > 0) {
-            player.sendSystemMessage(Component.literal("You must have an empty hand to do that.").withStyle(ChatFormatting.RED));
-            return ItemInteractionResult.FAIL;
+            player.displayClientMessage(Component.literal("You must have an empty hand to do that.").withStyle(ChatFormatting.RED), true);
+            return InteractionResult.FAIL;
         }
 
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     @Override
-    protected void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean movedByPiston) {
+    protected void affectNeighborsAfterRemoval(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, boolean movedByPiston) {
         if (level.getBlockEntity(pos) instanceof IntercomBlockEntity intercom) {
             intercom.clearElectronicData(level);
             IntercomManager.get(level).removeIntercom(pos);

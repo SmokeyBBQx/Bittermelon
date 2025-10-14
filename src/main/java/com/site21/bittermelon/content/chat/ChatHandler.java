@@ -111,7 +111,7 @@ public class ChatHandler {
     }
 
     public static void sendMessage(Component message, @NotNull ServerPlayer player, int range) {
-        for (ServerPlayer serverPlayer : player.server.getPlayerList().getPlayers()) {
+        for (ServerPlayer serverPlayer : player.getServer().getPlayerList().getPlayers()) {
             if (player.distanceTo(serverPlayer) <= range) {
                 serverPlayer.sendSystemMessage(message);
             }
@@ -119,7 +119,7 @@ public class ChatHandler {
     }
 
     public static void sendMessage(Component message, @NotNull ServerPlayer player) {
-        for (ServerPlayer serverPlayer : player.server.getPlayerList().getPlayers()) {
+        for (ServerPlayer serverPlayer : player.getServer().getPlayerList().getPlayers()) {
             serverPlayer.sendSystemMessage(message);
         }
     }
