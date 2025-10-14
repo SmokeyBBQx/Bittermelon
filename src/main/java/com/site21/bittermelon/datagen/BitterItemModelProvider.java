@@ -10,9 +10,10 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
-import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredHolder;
+
+import static com.site21.bittermelon.init.neoforge.BitterItems.YELLOW_INSPECTION_POSTER;
 
 public class BitterItemModelProvider extends ItemModelProvider {
     public BitterItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
@@ -36,6 +37,9 @@ public class BitterItemModelProvider extends ItemModelProvider {
         basicItem(BitterItems.SLIDING_DOOR.get());
         basicItem(BitterItems.STICKY_NOTE.get());
         basicItem(BitterItems.PEN.get());
+        basicItem(BitterItems.WIRE_CUTTERS.get());
+        basicItem(BitterItems.SCP_151.get());
+        basicItem(YELLOW_INSPECTION_POSTER.get());
 
         generateBlockItemModels();
     }

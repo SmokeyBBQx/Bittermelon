@@ -110,10 +110,4 @@ public class LargeSlidingDoorBlockEntity extends ElectronicBlockEntity {
         super.loadAdditional(tag, registries);
         doorProgress = tag.getFloat("doorProgress");
     }
-
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
 }

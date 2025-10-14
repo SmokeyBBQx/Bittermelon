@@ -19,8 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.CORD_CONNECTION;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.PORT_ID;
 
-public class Wire extends BaseItem {
-    public Wire(Properties properties, int width, int height, ItemWeight itemWeight) {
+public class WireItem extends BaseItem {
+    public WireItem(Properties properties, int width, int height, ItemWeight itemWeight) {
         super(properties, width, height, itemWeight);
     }
 

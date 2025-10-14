@@ -4,6 +4,8 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
 import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
 import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
+import com.site21.bittermelon.content.character.Character;
+import com.site21.bittermelon.content.character.CharacterManager;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -53,7 +55,7 @@ public record MakeWireConnection(BlockPos inputPos, BlockPos outputPos, String i
         inputPort.connectTo(outputPort);
         outputPort.connectTo(inputPort);
 
-        System.out.println("Wire connection made. InputPort connected port: " + inputPort.getConnectedPort(level).id + " OutputPort connected port: " + outputPort.getConnectedPort(level).id);
+        System.out.println("WireItem connection made. InputPort connected port: " + inputPort.getConnectedPort(level).id + " OutputPort connected port: " + outputPort.getConnectedPort(level).id);
 
         if (level.getBlockEntity(inputPos) instanceof BlockEntity entity) {
             entity.setChanged();

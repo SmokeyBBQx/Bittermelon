@@ -120,7 +120,7 @@ public class BitterBlocks {
     public static final DeferredBlock<DistributionBoardBlock> DISTRIBUTION_BOARD = BLOCKS.register("distribution_board",
             () -> new DistributionBoardBlock(BlockBehaviour.Properties.of()));
 
-    public static final DeferredBlock<SCP151Block> SCP151 = BLOCKS.register("scp151",
+    public static final DeferredBlock<SCP151Block> SCP_151 = BLOCKS.register("scp151",
             () -> new SCP151Block(BlockBehaviour.Properties.of()));
 
     public static final DeferredBlock<PersonnelTerminalBlock> PERSONNEL_TERMINAL = BLOCKS.register("personnel_terminal_block",

@@ -24,7 +24,7 @@ import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.site21.bittermelon.init.neoforge.BitterSounds.SCREWDRIVER;
+import static com.site21.bittermelon.init.neoforge.BitterSounds.*;
 
 public class ScrewdriverItem extends BaseItem {
     private static final int USE_DURATION = 60;
@@ -69,7 +69,11 @@ public class ScrewdriverItem extends BaseItem {
 
             if (level.getBlockEntity(targetPos) instanceof PanelDevice panelDevice) {
                 panelDevice.togglePanel();
-                player.sendSystemMessage(Component.literal("You " + (panelDevice.isPanelOpen() ? "open" : "close") + " the panel.").withStyle(ChatFormatting.GREEN));
+
+                playPanelSound(level, targetPos, panelDevice.isPanelOpen());
+                player.sendSystemMessage(Component.literal("You " + (panelDevice.isPanelOpen() ? "open" : "close") + " the panel.")
+                        .withStyle(ChatFormatting.ITALIC)
+                        .withStyle(ChatFormatting.GRAY));
             }
         }
 
@@ -90,5 +94,9 @@ public class ScrewdriverItem extends BaseItem {
             entity.level().playSound(null, entity.getOnPos(), SCREWDRIVER.get(), SoundSource.AMBIENT,
                     0.3f, 1f);
         }
+    }
+
+    private void playPanelSound(@NotNull Level level, BlockPos pos, boolean open) {
+        level.playSound(null, pos, open ? SCREWDRIVER_OPEN.get() : SCREWDRIVER_CLOSE.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
     }
 }

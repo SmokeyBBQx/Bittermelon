@@ -21,6 +21,7 @@ import com.site21.bittermelon.content.items.smokable.SmokableItem;
 import com.site21.bittermelon.content.items.substance.PowderedSubstanceItem;
 import com.site21.bittermelon.content.items.substance.pill.PillItem;
 import com.site21.bittermelon.content.items.taser.TaserItem;
+import com.site21.bittermelon.content.items.wirecutter.WireCuttersItem;
 import com.site21.bittermelon.content.items.wires.networkcable.NetworkCable;
 import com.site21.bittermelon.content.items.cardboardbox.CardboardBoxItem;
 import com.site21.bittermelon.content.items.cardboardbox.CollapsedCardboardBoxItem;
@@ -31,7 +32,7 @@ import com.site21.bittermelon.content.items.laserdesignator.LaserDesignatorItem;
 import com.site21.bittermelon.content.items.medical.organic.BodyPart;
 import com.site21.bittermelon.content.items.medical.tools.*;
 import com.site21.bittermelon.content.items.toolbox.ToolBoxItem;
-import com.site21.bittermelon.content.items.wires.wire.Wire;
+import com.site21.bittermelon.content.items.wires.wire.WireItem;
 import com.site21.bittermelon.content.items.writablepaper.WritablePaper;
 import com.site21.bittermelon.content.items.writingutensils.ChalkItem;
 import com.site21.bittermelon.content.items.writingutensils.HighlighterItem;
@@ -253,7 +254,7 @@ public class BitterItems {
             ItemWeight.LIGHT
     ));
 
-    public static final DeferredItem<Wire> WIRE = ITEMS.register("wire", () -> new Wire(
+    public static final DeferredItem<WireItem> WIRE = ITEMS.register("wire", () -> new WireItem(
             new Item.Properties(),
             1,
             1,
@@ -378,8 +379,8 @@ public class BitterItems {
             new Item.Properties()
     ));
 
-    public static final DeferredItem<BlockItem> SCP151 = ITEMS.register("scp151", () -> new BlockItem(
-            BitterBlocks.SCP151.get(),
+    public static final DeferredItem<BlockItem> SCP_151 = ITEMS.register("scp_151", () -> new BlockItem(
+            BitterBlocks.SCP_151.get(),
             new Item.Properties()
     ));
 
@@ -516,6 +517,10 @@ public class BitterItems {
 
     public static final DeferredItem<BlockItem> REDSTONE_DEVICE = ITEMS.register("redstone_device", () -> new BlockItem(
             BitterBlocks.REDSTONE_DEVICE.get(),
+            new Item.Properties()
+    ));
+
+    public static final DeferredItem<WireCuttersItem> WIRE_CUTTERS = ITEMS.register("wire_cutters", () -> new WireCuttersItem(
             new Item.Properties()
     ));
 }

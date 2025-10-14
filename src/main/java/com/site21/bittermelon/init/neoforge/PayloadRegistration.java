@@ -18,6 +18,8 @@ import com.site21.bittermelon.content.blocks.wallwriting.networking.OpenWallWrit
 import com.site21.bittermelon.content.blocks.wallwriting.networking.UpdateWallWriting;
 import com.site21.bittermelon.content.character.networking.*;
 import com.site21.bittermelon.content.items.scps.scp377.networking.OpenSCP3771Screen;
+import com.site21.bittermelon.content.items.wirecutter.networking.CutWire;
+import com.site21.bittermelon.content.items.wirecutter.networking.OpenWireCutterScreen;
 import com.site21.bittermelon.content.items.wires.wire.networking.*;
 import com.site21.bittermelon.content.personnel.privilege.networking.*;
 import com.site21.bittermelon.content.personnel.registry.networking.AddPersonnelEntry;
@@ -561,6 +563,18 @@ public class PayloadRegistration {
                 SpliceInputWire.TYPE,
                 SpliceInputWire.STREAM_CODEC,
                 SpliceInputWire::handle
+        );
+
+        registrar.playToServer(
+                CutWire.TYPE,
+                CutWire.STREAM_CODEC,
+                CutWire::handle
+        );
+
+        registrar.playToClient(
+                OpenWireCutterScreen.TYPE,
+                OpenWireCutterScreen.STREAM_CODEC,
+                OpenWireCutterScreen::handle
         );
     }
 }

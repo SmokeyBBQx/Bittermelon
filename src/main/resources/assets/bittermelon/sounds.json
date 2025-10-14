@@ -350,6 +350,30 @@
       "bittermelon:machine/sliding_door_close"
     ]
   },
+  "item.wire_cutters": {
+    "category": "players",
+    "sounds": [
+      "bittermelon:item/wire_cutters"
+    ]
+  },
+  "item.screwdriver_open": {
+    "category": "players",
+    "sounds": [
+      "bittermelon:item/screwdriver_open"
+    ]
+  },
+  "item.screwdriver_close": {
+    "category": "players",
+    "sounds": [
+      "bittermelon:item/screwdriver_close"
+    ]
+  },
+  "misc.zap": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:misc/zap"
+    ]
+  },
   "container.toolbox_open": {
     "category": "neutral",
     "sounds": [

@@ -8,7 +8,6 @@ import com.site21.bittermelon.content.blocks.properties.Placement;
 import com.site21.bittermelon.content.blocks.scp.scp151.SCP151Block;
 import com.site21.bittermelon.content.blocks.stickynote.StickyNoteBlock;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -18,12 +17,8 @@ import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.*;
 
@@ -46,10 +41,10 @@ public class BitterBlockStateProvider extends BlockStateProvider {
 
         createSmallPosterBlockState(YELLOW_INSPECTION_POSTER.get(), "block/yellow_inspection_poster");
         createCustomTrapdoorBlockState(DISTRIBUTION_BOARD.get(), "block/distribution_board");
-        createPaintingBlockState(SCP151.get(), "block/scp151");
+        createPaintingBlockState(SCP_151.get(), "block/scp_151");
         createStickyNoteBlock(STICKY_NOTE.get());
-        createKeycardReader(KEYCARD_READER.get());
-        createRedstoneDevice(REDSTONE_DEVICE.get());
+        createKeycardReader();
+        createRedstoneDevice();
     }
 
     private void createSmallPosterBlockState(Block block, String path) {
@@ -206,8 +201,8 @@ public class BitterBlockStateProvider extends BlockStateProvider {
                 .renderType("cutout");
     }
 
-    private void createKeycardReader(Block block) {
-        VariantBlockStateBuilder builder = getVariantBuilder(block);
+    private void createKeycardReader() {
+        VariantBlockStateBuilder builder = getVariantBuilder(KEYCARD_READER.get());
 
         for (Direction direction : Direction.values()) {
             if (direction.getAxis().isHorizontal()) {
@@ -230,8 +225,8 @@ public class BitterBlockStateProvider extends BlockStateProvider {
         }
     }
 
-    private void createRedstoneDevice(Block block) {
-        VariantBlockStateBuilder builder = getVariantBuilder(block);
+    private void createRedstoneDevice() {
+        VariantBlockStateBuilder builder = getVariantBuilder(REDSTONE_DEVICE.get());
 
         ModelFile modelOff = models().getExistingFile(modLoc("block/redstone_device_off"));
         ModelFile modelOn = models().getExistingFile(modLoc("block/redstone_device_on"));
@@ -256,7 +251,6 @@ public class BitterBlockStateProvider extends BlockStateProvider {
             }
         }
     }
-
 
     @Contract(pure = true)
     private int getYRotation(@NotNull Direction direction) {

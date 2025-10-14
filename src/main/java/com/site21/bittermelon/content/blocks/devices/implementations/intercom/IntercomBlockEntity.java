@@ -207,8 +207,4 @@ public class IntercomBlockEntity extends ElectronicBlockEntity implements ISyncS
         loadOutputPorts(tag);
         loadInputPorts(tag);
     }
-
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
 }

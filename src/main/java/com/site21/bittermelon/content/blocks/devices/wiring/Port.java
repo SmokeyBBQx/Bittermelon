@@ -2,6 +2,7 @@ package com.site21.bittermelon.content.blocks.devices.wiring;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,8 +45,26 @@ public abstract class Port<T extends Port<? extends Port<?>>> {
         cacheValid = false;
     }
 
+    public void disconnect(Level level) {
+        T other = getConnectedPort(level);
+        if (other != null) {
+            other.disconnect();
+            if (level.getBlockEntity(connectedPos) instanceof BlockEntity be) {
+                be.setChanged();
+            }
+        }
+        connectedPos = null;
+        connectedPortId = null;
+        cachedConnectedPort = null;
+        cacheValid = false;
+    }
+
     public void invalidateCache() {
         cacheValid = false;
         cachedConnectedPort = null;
+    }
+
+    public boolean isConnected() {
+        return connectedPos != null && connectedPortId != null;
     }
 }

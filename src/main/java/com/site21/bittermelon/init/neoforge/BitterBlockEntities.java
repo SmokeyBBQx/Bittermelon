@@ -75,7 +75,7 @@ public class BitterBlockEntities {
             () -> BlockEntityType.Builder.of(DistributionBoardBlockEntity::new, DISTRIBUTION_BOARD.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SCP151BlockEntity>> SCP151_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("scp151_block_entity",
-            () -> BlockEntityType.Builder.of(SCP151BlockEntity::new, SCP151.get()).build(null));
+            () -> BlockEntityType.Builder.of(SCP151BlockEntity::new, SCP_151.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PersonnelTerminalBlockEntity>> PERSONNEL_TERMINAL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("personnel_terminal_block_entity",
             () -> BlockEntityType.Builder.of(PersonnelTerminalBlockEntity::new, PERSONNEL_TERMINAL.get()).build(null));

@@ -1,0 +1,25 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "front": "bittermelon:block/redstone_device_front_off",
+    "alt_side": "bittermelon:block/redstone_device_side_2",
+    "side": "bittermelon:block/redstone_device_side",
+    "top": "bittermelon:block/redstone_device_top",
+    "bottom": "bittermelon:block/redstone_device_bottom",
+    "particle": "#front"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 0],
+      "to": [16, 16, 16],
+      "faces": {
+        "north": { "texture": "#front", "uv": [0, 0, 16, 16] },
+        "east":  { "texture": "#alt_side", "uv": [0, 0, 16, 16] },
+        "south": { "texture": "#side", "uv": [0, 0, 16, 16] },
+        "west":  { "texture": "#side", "uv": [0, 0, 16, 16] },
+        "up":    { "texture": "#top", "uv": [0, 0, 16, 16] },
+        "down":  { "texture": "#bottom", "uv": [0, 0, 16, 16] }
+      }
+    }
+  ]
+}

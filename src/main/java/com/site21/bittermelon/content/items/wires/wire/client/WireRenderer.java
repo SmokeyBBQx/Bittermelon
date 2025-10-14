@@ -4,12 +4,10 @@ import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
-import com.site21.bittermelon.content.items.wires.wire.Wire;
+import com.site21.bittermelon.content.items.wires.wire.WireItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -40,7 +38,7 @@ public class WireRenderer {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.player != null) {
             ItemStack heldItem = minecraft.player.getMainHandItem();
-            if (heldItem.getItem() instanceof Wire) {
+            if (heldItem.getItem() instanceof WireItem) {
                 BlockPos devicePos = heldItem.get(CORD_CONNECTION.get());
                 String port = heldItem.get(PORT_ID.get());
 
@@ -70,7 +68,7 @@ public class WireRenderer {
         if (player == null) return;
 
         ItemStack heldItem = player.getMainHandItem();
-        if (!(heldItem.getItem() instanceof Wire)) return;
+        if (!(heldItem.getItem() instanceof WireItem)) return;
 
         BlockPos devicePos = heldItem.get(CORD_CONNECTION.get());
         String port = heldItem.get(PORT_ID.get());

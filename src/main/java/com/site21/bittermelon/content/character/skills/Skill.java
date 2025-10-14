@@ -13,7 +13,8 @@ public enum Skill implements StringRepresentable {
     SURGICAL("surgical", 2),
     COOKING("cooking", 2),
     FORTITUDE("fortitude", 2),
-    BRAVERY("bravery", 2);
+    BRAVERY("bravery", 2),
+    ELECTRICAL("electrical", 2);
 
     private final String name;
     private final float maxLevel;
