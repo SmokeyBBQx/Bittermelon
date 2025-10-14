@@ -96,7 +96,7 @@ public class ClientSetup {
                 }, PILL.get()
         );
 
-        itemColors.register((stack, tintIndex) -> stack.getOrDefault(BASE_COLOR, WHITE).getTextColor(), CRAYON.get());
+        itemColors.register((stack, tintIndex) -> stack.getOrDefault(BASE_COLOR, WHITE).getTextColor(), CHALK.get());
 
         itemColors.register((stack, tintIndex) -> {
                     if (tintIndex == 0) {

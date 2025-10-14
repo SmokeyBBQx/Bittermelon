@@ -495,9 +495,6 @@ public class BitterItems {
     public static final DeferredItem<ChalkItem> CHALK = ITEMS.register("chalk", () -> new ChalkItem(
             new Item.Properties()));
 
-    public static final DeferredItem<ChalkItem> CRAYON = ITEMS.register("crayon", () -> new ChalkItem(
-            new Item.Properties()));
-
     public static final DeferredItem<HighlighterItem> HIGHLIGHTER = ITEMS.register("highlighter", () -> new HighlighterItem(
             new Item.Properties()));
 

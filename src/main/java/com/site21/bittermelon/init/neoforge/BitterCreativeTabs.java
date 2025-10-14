@@ -17,8 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
-import static com.site21.bittermelon.init.neoforge.BitterItems.CRAYON;
-import static com.site21.bittermelon.init.neoforge.BitterItems.HIGHLIGHTER;
+import static com.site21.bittermelon.init.neoforge.BitterItems.*;
 import static net.minecraft.core.component.DataComponents.BASE_COLOR;
 import static net.minecraft.core.component.DataComponents.ITEM_NAME;
 
@@ -31,12 +30,12 @@ public class BitterCreativeTabs {
                     .icon(() -> new ItemStack(BitterItems.BITTERMELON.get()))
                     .displayItems((parameters, output) -> {
                         for (DeferredHolder<Item, ? extends Item> item : BitterItems.ITEMS.getEntries()) {
-                            if (item.equals(CRAYON) || item.equals(HIGHLIGHTER)) continue;
+                            if (item.equals(CHALK) || item.equals(HIGHLIGHTER)) continue;
                             output.accept(item.get());
                         }
 
                         for (DyeColor color : DyeColor.values()) {
-                            output.accept(createDyedItem(CRAYON.toStack(), color, "Crayon"));
+                            output.accept(createDyedItem(CHALK.toStack(), color, "Chalk"));
                             output.accept(createDyedItem(HIGHLIGHTER.toStack(), color, "Highlighter"));
                         }
                     })
