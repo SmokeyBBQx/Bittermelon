@@ -1,6 +1,6 @@
 package com.site21.bittermelon.util;
 
-import com.site21.bittermelon.systems.substance.SubstanceStack;
+import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

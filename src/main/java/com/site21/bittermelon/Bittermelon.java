@@ -1,14 +1,14 @@
 package com.site21.bittermelon;
 
 import com.mojang.logging.LogUtils;
-import com.site21.bittermelon.systems.atmosphere.data.AtmosLevelData;
-import com.site21.bittermelon.systems.character.Character;
-import com.site21.bittermelon.systems.character.CharacterManager;
-import com.site21.bittermelon.systems.character.networking.SyncActiveCharacter;
-import com.site21.bittermelon.systems.character.networking.SyncCharacters;
-import com.site21.bittermelon.systems.substance.reactions.Reactions;
-import com.site21.bittermelon.systems.telecomms.intercom.IntercomManager;
-import com.site21.bittermelon.systems.telecomms.intercom.networking.SyncIntercomList;
+import com.site21.bittermelon.common.systems.atmosphere.data.AtmosLevelData;
+import com.site21.bittermelon.common.systems.character.Character;
+import com.site21.bittermelon.common.systems.character.CharacterManager;
+import com.site21.bittermelon.common.systems.character.networking.SyncActiveCharacter;
+import com.site21.bittermelon.common.systems.character.networking.SyncCharacters;
+import com.site21.bittermelon.common.systems.substance.reactions.Reactions;
+import com.site21.bittermelon.common.systems.telecomms.intercom.IntercomManager;
+import com.site21.bittermelon.common.systems.telecomms.intercom.networking.SyncIntercomList;
 import com.site21.bittermelon.init.neoforge.BitterEntities;
 import com.site21.bittermelon.init.neoforge.BitterRegistries;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;

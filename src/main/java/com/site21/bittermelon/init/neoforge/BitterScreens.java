@@ -1,8 +1,8 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.items.itemcontainers.client.ContainerMenu;
-import com.site21.bittermelon.content.items.itemcontainers.client.ContainerScreen;
+import com.site21.bittermelon.common.content.items.itemcontainers.client.ContainerMenu;
+import com.site21.bittermelon.common.content.items.itemcontainers.client.ContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;

@@ -1,7 +1,7 @@
 package com.site21.bittermelon.init.custom;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.systems.chat.VerbSet;
+import com.site21.bittermelon.common.systems.chat.VerbSet;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;

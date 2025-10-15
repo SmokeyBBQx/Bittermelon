@@ -1,8 +1,8 @@
 package com.site21.bittermelon.mixin;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.stickynote.StickyNoteBlock;
-import com.site21.bittermelon.content.blocks.stickynote.StickyNoteBlockEntity;
+import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlock;
+import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlockEntity;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;

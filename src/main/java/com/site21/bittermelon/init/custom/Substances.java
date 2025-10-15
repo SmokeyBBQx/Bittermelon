@@ -1,7 +1,7 @@
 package com.site21.bittermelon.init.custom;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.systems.substance.Substance;
+import com.site21.bittermelon.common.systems.substance.Substance;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;

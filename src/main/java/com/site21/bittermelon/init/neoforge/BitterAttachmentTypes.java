@@ -2,8 +2,8 @@ package com.site21.bittermelon.init.neoforge;
 
 import com.mojang.serialization.Codec;
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.systems.atmosphere.data.AtmosBlockData;
-import com.site21.bittermelon.content.items.scps.scp377.FortuneInstance;
+import com.site21.bittermelon.common.systems.atmosphere.data.AtmosBlockData;
+import com.site21.bittermelon.common.content.items.scps.scp377.FortuneInstance;
 import net.minecraft.core.UUIDUtil;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;

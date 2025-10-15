@@ -1,14 +1,14 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.entities.scp131.SCP131;
-import com.site21.bittermelon.content.entities.scp1507.SCP1507;
-import com.site21.bittermelon.content.entities.scp650.SCP650;
-import com.site21.bittermelon.content.entities.scp939.SCP939;
-import com.site21.bittermelon.content.entities.ThrownItemProjectile;
-import com.site21.bittermelon.content.entities.chicken.Chicken;
-import com.site21.bittermelon.content.items.scps.scp2398.SCP2398Projectile;
-import com.site21.bittermelon.content.items.taser.TaserProjectile;
+import com.site21.bittermelon.common.content.entities.scp131.SCP131;
+import com.site21.bittermelon.common.content.entities.scp1507.SCP1507;
+import com.site21.bittermelon.common.content.entities.scp650.SCP650;
+import com.site21.bittermelon.common.content.entities.scp939.SCP939;
+import com.site21.bittermelon.common.content.entities.ThrownItemProjectile;
+import com.site21.bittermelon.common.content.entities.chicken.Chicken;
+import com.site21.bittermelon.common.content.items.scps.scp2398.SCP2398Projectile;
+import com.site21.bittermelon.common.content.items.taser.TaserProjectile;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;

@@ -1,7 +1,7 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.items.toolbox.client.ToolBoxMenu;
+import com.site21.bittermelon.common.content.items.toolbox.client.ToolBoxMenu;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
