@@ -1,12 +1,12 @@
 package com.site21.bittermelon.content.items.medical.tools;
 
-import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.character.CharacterManager;
+import com.site21.bittermelon.systems.character.Character;
+import com.site21.bittermelon.systems.character.CharacterManager;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.substance.FluidContainerItem;
-import com.site21.bittermelon.content.medical.blood.BloodData;
-import com.site21.bittermelon.content.medical.medicalstats.AnimalMedicalStats;
-import com.site21.bittermelon.content.substance.SubstanceStack;
+import com.site21.bittermelon.systems.medical.blood.BloodData;
+import com.site21.bittermelon.systems.medical.medicalstats.AnimalMedicalStats;
+import com.site21.bittermelon.systems.substance.SubstanceStack;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;

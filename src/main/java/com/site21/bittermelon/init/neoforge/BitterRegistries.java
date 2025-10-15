@@ -1,12 +1,12 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.devices.wiring.Signal;
-import com.site21.bittermelon.content.chat.VerbSet;
-import com.site21.bittermelon.content.medical.compartments.Compartment;
-import com.site21.bittermelon.content.medical.drugs.Drug;
-import com.site21.bittermelon.content.roles.Role;
-import com.site21.bittermelon.content.substance.Substance;
+import com.site21.bittermelon.systems.electronics.wiring.Signal;
+import com.site21.bittermelon.systems.chat.VerbSet;
+import com.site21.bittermelon.systems.medical.compartment.Compartment;
+import com.site21.bittermelon.systems.medical.drug.Drug;
+import com.site21.bittermelon.systems.roles.Role;
+import com.site21.bittermelon.systems.substance.Substance;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;

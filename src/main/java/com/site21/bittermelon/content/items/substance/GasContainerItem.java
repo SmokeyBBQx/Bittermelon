@@ -1,10 +1,10 @@
 package com.site21.bittermelon.content.items.substance;
 
-import com.site21.bittermelon.content.atmosphere.AtmosHandler;
-import com.site21.bittermelon.content.atmosphere.AtmosInstance;
+import com.site21.bittermelon.systems.atmosphere.AtmosHandler;
+import com.site21.bittermelon.systems.atmosphere.AtmosInstance;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.substance.data.SubstanceContents;
-import com.site21.bittermelon.content.substance.SubstanceStack;
+import com.site21.bittermelon.systems.substance.SubstanceStack;
 import com.site21.bittermelon.util.SubstanceUtils;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;

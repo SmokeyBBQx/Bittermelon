@@ -1,8 +1,8 @@
 package com.site21.bittermelon.datagen;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.devices.implementations.redstonedevice.RedstoneDeviceBlock;
-import com.site21.bittermelon.content.blocks.poster.SmallPosterBlock;
+import com.site21.bittermelon.content.blocks.electronics.redstonedevice.RedstoneDeviceBlock;
+import com.site21.bittermelon.content.blocks.SmallPosterBlock;
 import com.site21.bittermelon.content.blocks.powergrid.distributionboard.DistributionBoardBlock;
 import com.site21.bittermelon.content.blocks.properties.Placement;
 import com.site21.bittermelon.content.blocks.scp.scp151.SCP151Block;

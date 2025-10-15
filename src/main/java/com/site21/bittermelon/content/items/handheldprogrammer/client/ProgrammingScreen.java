@@ -1,6 +1,6 @@
 package com.site21.bittermelon.content.items.handheldprogrammer.client;
 
-import com.site21.bittermelon.content.blocks.devices.wiring.PLC;
+import com.site21.bittermelon.systems.electronics.wiring.PLC;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;

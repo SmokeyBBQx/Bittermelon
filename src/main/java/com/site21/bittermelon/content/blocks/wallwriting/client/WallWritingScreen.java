@@ -1,6 +1,5 @@
 package com.site21.bittermelon.content.blocks.wallwriting.client;
 
-import com.mojang.blaze3d.platform.Lighting;
 import com.site21.bittermelon.content.blocks.wallwriting.WallWritingBlockEntity;
 import com.site21.bittermelon.content.blocks.wallwriting.networking.UpdateWallWriting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -8,7 +7,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -16,7 +14,6 @@ import net.minecraft.world.level.block.entity.SignText;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
@@ -67,15 +64,12 @@ public class WallWritingScreen extends Screen {
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
-        Lighting.setupForFlatItems();
         guiGraphics.drawCenteredString(font, title, width / 2, 50, 16777215);
 
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(width / 2.0f, 90.0f, 50.0f);
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().translate(width / 2.0f, 90.0f);
         renderText(guiGraphics);
-        guiGraphics.pose().popPose();
-
-        Lighting.setupFor3DItems();
+        guiGraphics.pose().popMatrix();
     }
 
     @Override
@@ -115,9 +109,9 @@ public class WallWritingScreen extends Screen {
     }
 
     private void setupRenderTransform(@NotNull GuiGraphics guiGraphics) {
-        guiGraphics.pose().translate(0.0F, 0.0F, 4.0F);
+        guiGraphics.pose().translate(0.0F, 0.0F);
         Vector3f scale = TEXT_SCALE;
-        guiGraphics.pose().scale(scale.x(), scale.y(), scale.z());
+        guiGraphics.pose().scale(scale.x(), scale.y());
     }
 
     private String formatMessageForDisplay(String message) {

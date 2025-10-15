@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.items;
 
-import com.site21.bittermelon.content.germs.Germ;
-import com.site21.bittermelon.content.germs.GermRegistry;
+import com.site21.bittermelon.systems.germs.Germ;
+import com.site21.bittermelon.systems.germs.GermRegistry;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;

@@ -1,11 +1,11 @@
 package com.site21.bittermelon.content.items.base;
 
-import com.site21.bittermelon.content.character.Character;
+import com.site21.bittermelon.systems.character.Character;
 import com.site21.bittermelon.content.items.medical.MedicalItem;
-import com.site21.bittermelon.content.medical.client.screen.minigame.IncisionMinigame;
-import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
-import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
-import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.systems.medical.client.screen.minigame.IncisionMinigame;
+import com.site21.bittermelon.systems.medical.compartment.CompartmentInstance;
+import com.site21.bittermelon.systems.medical.compartment.CompartmentTag;
+import com.site21.bittermelon.systems.medical.medicalstats.MedicalStats;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;

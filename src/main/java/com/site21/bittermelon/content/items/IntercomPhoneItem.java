@@ -1,6 +1,6 @@
 package com.site21.bittermelon.content.items;
 
-import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlockEntity;
+import com.site21.bittermelon.content.blocks.electronics.intercom.IntercomBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

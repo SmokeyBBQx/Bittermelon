@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.items.wires.wire;
 
-import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
-import com.site21.bittermelon.content.blocks.devices.PanelDevice;
+import com.site21.bittermelon.systems.electronics.ElectronicDevice;
+import com.site21.bittermelon.systems.electronics.PanelDevice;
 import com.site21.bittermelon.content.items.wires.wire.networking.OpenWiringScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;

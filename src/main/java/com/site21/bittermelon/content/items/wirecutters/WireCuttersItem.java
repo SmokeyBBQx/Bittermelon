@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.items.wirecutters;
 
-import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
-import com.site21.bittermelon.content.blocks.devices.PanelDevice;
+import com.site21.bittermelon.systems.electronics.ElectronicDevice;
+import com.site21.bittermelon.systems.electronics.PanelDevice;
 import com.site21.bittermelon.content.items.wirecutters.networking.OpenWireCutterScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;

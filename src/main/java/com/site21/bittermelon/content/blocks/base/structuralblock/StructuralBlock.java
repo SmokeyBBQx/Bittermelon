@@ -2,8 +2,6 @@ package com.site21.bittermelon.content.blocks.base.structuralblock;
 
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -48,20 +46,20 @@ public class StructuralBlock extends Block implements EntityBlock {
 
     @Override
     public float getDestroyProgress(@NotNull BlockState state, @NotNull Player player, @NotNull BlockGetter level, @NotNull BlockPos pos) {
-        if (level instanceof Level realLevel && !realLevel.isClientSide()) {
-            if (level.getBlockEntity(pos) instanceof StructuralBlockEntity blockEntity) {
-                float progress = blockEntity.getBreakProgress();
-                float newProgress = Math.min(1.0f, progress + 0.01f * player.getDigSpeed(state, pos));
-                player.getItemInHand(InteractionHand.MAIN_HAND).hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
-                blockEntity.setBreakProgress(newProgress);
-                if (newProgress >= 1.0f) {
-                    realLevel.destroyBlock(pos, true);
-                    return 1.0f;
-                }
-            } else {
-                realLevel.setBlockEntity(new StructuralBlockEntity(pos, state));
-            }
-        }
+//        if (level instanceof Level realLevel && !realLevel.isClientSide()) {
+//            if (level.getBlockEntity(pos) instanceof StructuralBlockEntity blockEntity) {
+//                float progress = blockEntity.getBreakProgress();
+//                float newProgress = Math.min(1.0f, progress + 0.01f * player.getDigSpeed(state, pos));
+//                player.getItemInHand(InteractionHand.MAIN_HAND).hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+//                blockEntity.setBreakProgress(newProgress);
+//                if (newProgress >= 1.0f) {
+//                    realLevel.destroyBlock(pos, true);
+//                    return 1.0f;
+//                }
+//            } else {
+//                realLevel.setBlockEntity(new StructuralBlockEntity(pos, state));
+//            }
+//        }
         return 0;
     }
 

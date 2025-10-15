@@ -1,10 +1,7 @@
 package com.site21.bittermelon.content.items.substance;
 
 import com.site21.bittermelon.content.items.base.ItemWeight;
-import com.site21.bittermelon.content.items.substance.data.SubstanceContents;
-import com.site21.bittermelon.content.substance.SubstanceStack;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -16,8 +13,6 @@ import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Iterator;
 
 public class EdibleSubstanceItem extends SubstanceContainerItem {
     protected final int CONSUME_RATE = 20;

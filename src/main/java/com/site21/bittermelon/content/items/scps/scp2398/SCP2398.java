@@ -1,6 +1,6 @@
 package com.site21.bittermelon.content.items.scps.scp2398;
 
-import com.site21.bittermelon.content.entities.implementations.ThrownItemProjectile;
+import com.site21.bittermelon.content.entities.ThrownItemProjectile;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.init.neoforge.BitterItemTags;

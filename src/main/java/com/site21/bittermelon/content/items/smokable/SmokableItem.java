@@ -1,10 +1,10 @@
 package com.site21.bittermelon.content.items.smokable;
 
-import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.character.CharacterManager;
+import com.site21.bittermelon.systems.character.Character;
+import com.site21.bittermelon.systems.character.CharacterManager;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.substance.SubstanceContainerItem;
-import com.site21.bittermelon.content.substance.SubstanceStack;
+import com.site21.bittermelon.systems.substance.SubstanceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;

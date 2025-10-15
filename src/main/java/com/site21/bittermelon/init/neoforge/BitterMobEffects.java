@@ -2,11 +2,10 @@ package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.content.blocks.scp.scp151.DrowningEffect;
-import com.site21.bittermelon.content.mobeffects.BitterEffect;
+import com.site21.bittermelon.content.mobeffects.*;
 import com.site21.bittermelon.content.mobeffects.electrocuted.ElectrocutedEffect;
 import com.site21.bittermelon.content.items.taser.TaserEffect;
-import com.site21.bittermelon.content.medical.mobeffects.*;
-import com.site21.bittermelon.content.stumble.FallenEffect;
+import com.site21.bittermelon.systems.stumble.FallenEffect;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;

@@ -3,7 +3,7 @@ package com.site21.bittermelon.content.items.scps;
 import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import com.site21.bittermelon.content.items.substance.FluidContainerItem;
-import com.site21.bittermelon.content.substance.SubstanceStack;
+import com.site21.bittermelon.systems.substance.SubstanceStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

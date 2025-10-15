@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.items.substance.data;
 
 import com.mojang.serialization.Codec;
-import com.site21.bittermelon.content.substance.SubstanceStack;
+import com.site21.bittermelon.systems.substance.SubstanceStack;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;

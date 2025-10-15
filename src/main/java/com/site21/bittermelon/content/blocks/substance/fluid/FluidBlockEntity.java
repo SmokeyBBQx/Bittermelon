@@ -1,8 +1,8 @@
 package com.site21.bittermelon.content.blocks.substance.fluid;
 
-import com.site21.bittermelon.content.substance.SubstanceStack;
-import com.site21.bittermelon.content.substance.reactions.ReactionContainer;
-import com.site21.bittermelon.content.substance.reactions.ReactionHandler;
+import com.site21.bittermelon.systems.substance.SubstanceStack;
+import com.site21.bittermelon.systems.substance.reactions.ReactionContainer;
+import com.site21.bittermelon.systems.substance.reactions.ReactionHandler;
 import com.site21.bittermelon.util.ColorUtil;
 import it.unimi.dsi.fastutil.longs.LongArrayFIFOQueue;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;

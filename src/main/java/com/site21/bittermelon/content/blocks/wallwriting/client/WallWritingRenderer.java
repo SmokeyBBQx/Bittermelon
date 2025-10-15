@@ -14,6 +14,7 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -22,20 +23,19 @@ import static net.minecraft.client.renderer.blockentity.SignRenderer.getDarkColo
 
 @OnlyIn(Dist.CLIENT)
 public class WallWritingRenderer implements BlockEntityRenderer<WallWritingBlockEntity> {
+    private static final float TEXT_SCALE = 0.010416667f;
     private final Font font;
-    private static final int TEXT_COLOR = 0x000000;
-    private static final float TEXT_SCALE = 0.010416667F;
 
     public WallWritingRenderer(BlockEntityRendererProvider.@NotNull Context context) {
         font = context.getFont();
     }
 
     @Override
-    public void render(@NotNull WallWritingBlockEntity wallWritingBlockEntity, float partialTick, @NotNull PoseStack poseStack,
-                       @NotNull MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        if (wallWritingBlockEntity.getText() == null) return;
+    public void render(@NotNull WallWritingBlockEntity wallWriting, float partialTick, @NotNull PoseStack poseStack,
+                       @NotNull MultiBufferSource bufferSource, int packedLight, int packedOverlay, @NotNull Vec3 cameraPos) {
+        if (wallWriting.getText() == null) return;
 
-        BlockState state = wallWritingBlockEntity.getBlockState();
+        BlockState state = wallWriting.getBlockState();
         poseStack.pushPose();
 
         poseStack.translate(0.5, 0.5, 0.5);
@@ -46,7 +46,7 @@ public class WallWritingRenderer implements BlockEntityRenderer<WallWritingBlock
         int startY = -lineCount * 10 / 2;
 
         for (int line = 0; line < lineCount; line++) {
-            SignText text = wallWritingBlockEntity.getText();
+            SignText text = wallWriting.getText();
             Component message = text.getMessage(line, false);
 
             if (!message.getString().isEmpty()) {

@@ -1,6 +1,6 @@
 package com.site21.bittermelon.content.items.laserdesignator;
 
-import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.ContainmentPanelBlockEntity;
+import com.site21.bittermelon.content.blocks.electronics.containmentpanel.ContainmentPanelBlockEntity;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import net.minecraft.core.BlockPos;

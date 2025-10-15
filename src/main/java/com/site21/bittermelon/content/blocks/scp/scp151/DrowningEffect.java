@@ -1,9 +1,9 @@
 package com.site21.bittermelon.content.blocks.scp.scp151;
 
-import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.character.CharacterManager;
-import com.site21.bittermelon.content.stumble.StumbleHandler;
-import com.site21.bittermelon.content.substance.SubstanceStack;
+import com.site21.bittermelon.systems.character.Character;
+import com.site21.bittermelon.systems.character.CharacterManager;
+import com.site21.bittermelon.systems.stumble.StumbleHandler;
+import com.site21.bittermelon.systems.substance.SubstanceStack;
 import com.site21.bittermelon.init.custom.Substances;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import com.site21.bittermelon.util.LocalMessageHelper;

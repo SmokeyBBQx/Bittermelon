@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.items.wires.networkcable;
 
-import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
-import com.site21.bittermelon.content.blocks.devices.implementations.containmentalarm.ContainmentAlarmBlockEntity;
+import com.site21.bittermelon.systems.electronics.ElectronicDevice;
+import com.site21.bittermelon.content.blocks.electronics.containmentalarm.ContainmentAlarmBlockEntity;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
 import net.minecraft.core.BlockPos;

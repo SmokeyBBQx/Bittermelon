@@ -1,12 +1,12 @@
 package com.site21.bittermelon.content.items.wirecutters.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
-import com.site21.bittermelon.content.blocks.devices.wiring.Port;
-import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.character.CharacterManager;
-import com.site21.bittermelon.content.character.skills.Skill;
-import com.site21.bittermelon.content.stumble.StumbleHandler;
+import com.site21.bittermelon.systems.electronics.ElectronicDevice;
+import com.site21.bittermelon.systems.electronics.wiring.Port;
+import com.site21.bittermelon.systems.character.Character;
+import com.site21.bittermelon.systems.character.CharacterManager;
+import com.site21.bittermelon.systems.character.skills.Skill;
+import com.site21.bittermelon.systems.stumble.StumbleHandler;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;

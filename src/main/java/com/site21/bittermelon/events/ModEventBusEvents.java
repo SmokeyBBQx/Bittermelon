@@ -1,11 +1,11 @@
 package com.site21.bittermelon.events;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.entities.implementations.chicken.client.ChickenModel;
-import com.site21.bittermelon.content.entities.implementations.scp131.client.SCP131Model;
-import com.site21.bittermelon.content.entities.implementations.scp1507.client.SCP1507Model;
-import com.site21.bittermelon.content.entities.implementations.scp650.client.SCP650Model;
-import com.site21.bittermelon.content.entities.implementations.scp939.client.SCP939Model;
+import com.site21.bittermelon.content.entities.chicken.client.ChickenModel;
+import com.site21.bittermelon.content.entities.scp131.client.SCP131Model;
+import com.site21.bittermelon.content.entities.scp1507.client.SCP1507Model;
+import com.site21.bittermelon.content.entities.scp650.client.SCP650Model;
+import com.site21.bittermelon.content.entities.scp939.client.SCP939Model;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
@@ -13,9 +13,9 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.content.entities.client.ModelLayers.CHICKEN_LAYER;
 import static com.site21.bittermelon.content.entities.client.ModelLayers.SCP939_LAYER;
-import static com.site21.bittermelon.content.entities.implementations.scp131.client.SCP131Model.SCP131_LAYER;
-import static com.site21.bittermelon.content.entities.implementations.scp1507.client.SCP1507Renderer.SCP1507_LAYER;
-import static com.site21.bittermelon.content.entities.implementations.scp650.client.SCP650Model.SCP650_LAYER;
+import static com.site21.bittermelon.content.entities.scp131.client.SCP131Model.SCP131_LAYER;
+import static com.site21.bittermelon.content.entities.scp1507.client.SCP1507Renderer.SCP1507_LAYER;
+import static com.site21.bittermelon.content.entities.scp650.client.SCP650Model.SCP650_LAYER;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class ModEventBusEvents {

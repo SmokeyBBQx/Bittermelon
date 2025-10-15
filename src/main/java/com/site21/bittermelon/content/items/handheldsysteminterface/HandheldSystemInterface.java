@@ -1,9 +1,9 @@
 package com.site21.bittermelon.content.items.handheldsysteminterface;
 
-import com.site21.bittermelon.content.blocks.devices.privilege.networking.OpenPrivilegeEditorScreen;
-import com.site21.bittermelon.content.personnel.privilege.PrivilegeManager;
-import com.site21.bittermelon.content.personnel.privilege.PrivilegeOwner;
-import com.site21.bittermelon.content.personnel.privilege.networking.SyncPrivileges;
+import com.site21.bittermelon.systems.electronics.privilege.networking.OpenPrivilegeEditorScreen;
+import com.site21.bittermelon.systems.personnel.privilege.PrivilegeManager;
+import com.site21.bittermelon.systems.personnel.privilege.PrivilegeOwner;
+import com.site21.bittermelon.systems.personnel.privilege.networking.SyncPrivileges;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;

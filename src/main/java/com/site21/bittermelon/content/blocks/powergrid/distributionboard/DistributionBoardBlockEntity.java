@@ -1,9 +1,9 @@
 package com.site21.bittermelon.content.blocks.powergrid.distributionboard;
 
-import com.site21.bittermelon.content.blocks.devices.ElectronicBlockEntity;
-import com.site21.bittermelon.content.blocks.devices.wiring.InputPort;
-import com.site21.bittermelon.content.blocks.devices.wiring.OutputPort;
-import com.site21.bittermelon.content.blocks.devices.wiring.Signal;
+import com.site21.bittermelon.systems.electronics.ElectronicBlockEntity;
+import com.site21.bittermelon.systems.electronics.wiring.InputPort;
+import com.site21.bittermelon.systems.electronics.wiring.OutputPort;
+import com.site21.bittermelon.systems.electronics.wiring.Signal;
 import com.site21.bittermelon.content.blocks.powergrid.PowerCell;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

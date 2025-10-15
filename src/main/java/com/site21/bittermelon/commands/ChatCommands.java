@@ -2,9 +2,9 @@ package com.site21.bittermelon.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.character.CharacterManager;
-import com.site21.bittermelon.content.chat.ChatHandler;
+import com.site21.bittermelon.systems.character.Character;
+import com.site21.bittermelon.systems.character.CharacterManager;
+import com.site21.bittermelon.systems.chat.ChatHandler;
 import com.site21.bittermelon.init.custom.VerbSets;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -13,8 +13,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.content.chat.ChatHandler.NORMAL_RANGE;
-import static com.site21.bittermelon.content.chat.ChatHandler.sendRPMessage;
+import static com.site21.bittermelon.systems.chat.ChatHandler.NORMAL_RANGE;
+import static com.site21.bittermelon.systems.chat.ChatHandler.sendRPMessage;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ACTIVE_CHANNEL;
 
 public class ChatCommands {

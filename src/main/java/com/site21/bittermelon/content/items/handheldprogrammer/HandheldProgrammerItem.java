@@ -1,10 +1,7 @@
 package com.site21.bittermelon.content.items.handheldprogrammer;
 
-import com.site21.bittermelon.content.blocks.devices.wiring.PLCUser;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
-import com.site21.bittermelon.content.items.handheldprogrammer.client.ProgrammingScreen;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;

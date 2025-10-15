@@ -7,8 +7,8 @@ import com.site21.bittermelon.content.items.itemcontainers.client.ItemContainerC
 import com.site21.bittermelon.content.items.scps.scp377.Fortune;
 import com.site21.bittermelon.content.items.substance.data.SubstanceContents;
 import com.site21.bittermelon.content.items.substance.pill.PillShape;
-import com.site21.bittermelon.content.medical.blood.BloodData;
-import com.site21.bittermelon.content.medical.compartments.CompartmentData;
+import com.site21.bittermelon.systems.medical.blood.BloodData;
+import com.site21.bittermelon.systems.medical.compartment.CompartmentData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentType;

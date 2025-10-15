@@ -1,57 +1,52 @@
 package com.site21.bittermelon;
 
-import com.site21.bittermelon.content.atmosphere.data.AtmosLevelData;
-import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.character.CharacterManager;
-import com.site21.bittermelon.client.gui.loreopening.LoreOpeningOverlay;
-import com.site21.bittermelon.content.character.networking.SyncActiveCharacter;
-import com.site21.bittermelon.content.character.networking.SyncCharacters;
-import com.site21.bittermelon.content.telecomms.intercom.IntercomManager;
-import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
-import com.site21.bittermelon.content.substance.reactions.Reactions;
+import com.mojang.logging.LogUtils;
+import com.site21.bittermelon.systems.atmosphere.data.AtmosLevelData;
+import com.site21.bittermelon.systems.character.Character;
+import com.site21.bittermelon.systems.character.CharacterManager;
+import com.site21.bittermelon.systems.character.networking.SyncActiveCharacter;
+import com.site21.bittermelon.systems.character.networking.SyncCharacters;
+import com.site21.bittermelon.systems.substance.reactions.Reactions;
+import com.site21.bittermelon.systems.telecomms.intercom.IntercomManager;
+import com.site21.bittermelon.systems.telecomms.intercom.networking.SyncIntercomList;
 import com.site21.bittermelon.init.neoforge.BitterEntities;
 import com.site21.bittermelon.init.neoforge.BitterRegistries;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
-import com.mojang.logging.LogUtils;
-
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.server.ServerStartingEvent;
-
 import static com.site21.bittermelon.init.custom.Compartments.COMPARTMENTS;
 import static com.site21.bittermelon.init.custom.Drugs.DRUGS;
 import static com.site21.bittermelon.init.custom.LogicalOperators.LOGICAL_OPERATORS;
 import static com.site21.bittermelon.init.custom.Roles.ROLES;
+import static com.site21.bittermelon.init.custom.Substances.SUBSTANCES;
+import static com.site21.bittermelon.init.custom.VerbSets.VERB_SETS;
 import static com.site21.bittermelon.init.neoforge.BitterActivity.ACTIVITY;
-import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.*;
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ATTACHMENT_TYPES;
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.LAST_TYPING_TIME;
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.BLOCK_ENTITY_TYPES;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.BLOCKS;
 import static com.site21.bittermelon.init.neoforge.BitterCreativeTabs.CREATIVE_MODE_TABS;
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
-import static com.site21.bittermelon.init.neoforge.BitterMemoryTypes.MEMORY_MODULE_TYPES;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.DATA_COMPONENTS;
 import static com.site21.bittermelon.init.neoforge.BitterItems.ITEMS;
+import static com.site21.bittermelon.init.neoforge.BitterMemoryTypes.MEMORY_MODULE_TYPES;
 import static com.site21.bittermelon.init.neoforge.BitterMenus.MENUS;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.MOB_EFFECTS;
 import static com.site21.bittermelon.init.neoforge.BitterSensors.SENSOR_TYPES;
-import static com.site21.bittermelon.init.neoforge.BitterSounds.LOW_IMPACT;
 import static com.site21.bittermelon.init.neoforge.BitterSounds.SOUND_EVENTS;
-import static com.site21.bittermelon.init.custom.Substances.SUBSTANCES;
-import static com.site21.bittermelon.init.custom.VerbSets.VERB_SETS;
 
 @Mod(Bittermelon.MOD_ID)
 public class Bittermelon {
@@ -117,9 +112,9 @@ public class Bittermelon {
 
     @SubscribeEvent
     public void onPlayerJoin(PlayerEvent.@NotNull PlayerLoggedInEvent event) {
-        shouldDisplayText = true;
-        LoreOpeningOverlay.displayStartTime = System.currentTimeMillis();
-        event.getEntity().playNotifySound(LOW_IMPACT.get(), SoundSource.MASTER, 1, 1);
+//        shouldDisplayText = true;
+//        LoreOpeningOverlay.displayStartTime = System.currentTimeMillis();
+//        event.getEntity().playNotifySound(LOW_IMPACT.get(), SoundSource.MASTER, 1, 1);
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
             Level level = serverPlayer.level();
 

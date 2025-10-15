@@ -1,18 +1,18 @@
 package com.site21.bittermelon.events;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.base.structuralblock.client.StructuralBlockRenderer;
-import com.site21.bittermelon.content.blocks.devices.implementations.intercom.client.PhoneCordRenderer;
-import com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.client.LargeSlidingDoorRenderer;
-import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.client.SlidingDoorRenderer;
-import com.site21.bittermelon.content.blocks.devices.implementations.thermometer.client.ThermometerRenderer;
+import com.site21.bittermelon.content.blocks.base.structuralblock.StructuralBlockRenderer;
+import com.site21.bittermelon.content.blocks.electronics.intercom.client.PhoneCordRenderer;
+import com.site21.bittermelon.content.blocks.electronics.largeslidingdoor.client.LargeSlidingDoorRenderer;
+import com.site21.bittermelon.content.blocks.electronics.slidingdoor.client.SlidingDoorRenderer;
+import com.site21.bittermelon.content.blocks.electronics.thermometer.client.ThermometerRenderer;
 import com.site21.bittermelon.content.blocks.substance.fluid.client.FluidBlockColor;
 import com.site21.bittermelon.content.blocks.wallwriting.client.WallWritingRenderer;
-import com.site21.bittermelon.content.entities.implementations.chicken.client.ChickenRenderer;
-import com.site21.bittermelon.content.entities.implementations.scp131.client.SCP131Renderer;
-import com.site21.bittermelon.content.entities.implementations.scp1507.client.SCP1507Renderer;
-import com.site21.bittermelon.content.entities.implementations.scp650.client.SCP650Renderer;
-import com.site21.bittermelon.content.entities.implementations.scp939.client.SCP939Renderer;
+import com.site21.bittermelon.content.entities.chicken.client.ChickenRenderer;
+import com.site21.bittermelon.content.entities.scp131.client.SCP131Renderer;
+import com.site21.bittermelon.content.entities.scp1507.client.SCP1507Renderer;
+import com.site21.bittermelon.content.entities.scp650.client.SCP650Renderer;
+import com.site21.bittermelon.content.entities.scp939.client.SCP939Renderer;
 import com.site21.bittermelon.content.items.substance.PowderedSubstanceItem;
 import com.site21.bittermelon.content.items.substance.SubstanceContainerItem;
 import com.site21.bittermelon.content.items.substance.pill.PillShape;
@@ -32,7 +32,6 @@ import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.client.LargeSlidingDoorRenderer.*;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 import static com.site21.bittermelon.init.neoforge.BitterEntities.*;

@@ -2,8 +2,8 @@ package com.site21.bittermelon.content.items.taser;
 
 import com.site21.bittermelon.content.mobeffects.electrocuted.ElectrocutedEffect;
 import com.site21.bittermelon.content.mobeffects.electrocuted.networking.CutOffChat;
-import com.site21.bittermelon.content.entities.ai.behavior.misc.FeelsPain;
-import com.site21.bittermelon.content.stumble.StumbleHandler;
+import com.site21.bittermelon.systems.ai.behavior.misc.FeelsPain;
+import com.site21.bittermelon.systems.stumble.StumbleHandler;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;

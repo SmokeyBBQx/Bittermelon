@@ -1,7 +1,7 @@
 package com.site21.bittermelon.content.blocks.substance.fluid;
 
 import com.google.common.collect.ImmutableMap;
-import com.site21.bittermelon.content.stumble.StumbleHandler;
+import com.site21.bittermelon.systems.stumble.StumbleHandler;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

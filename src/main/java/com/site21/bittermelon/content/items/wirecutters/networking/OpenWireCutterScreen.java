@@ -2,7 +2,7 @@ package com.site21.bittermelon.content.items.wirecutters.networking;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.ClientHandler;
-import com.site21.bittermelon.content.blocks.devices.ElectronicDevice;
+import com.site21.bittermelon.systems.electronics.ElectronicDevice;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;

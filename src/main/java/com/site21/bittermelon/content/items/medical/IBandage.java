@@ -1,9 +1,9 @@
 package com.site21.bittermelon.content.items.medical;
 
-import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.medical.compartments.CompartmentInstance;
-import com.site21.bittermelon.content.medical.compartments.CompartmentTag;
-import com.site21.bittermelon.content.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.systems.character.Character;
+import com.site21.bittermelon.systems.medical.compartment.CompartmentInstance;
+import com.site21.bittermelon.systems.medical.compartment.CompartmentTag;
+import com.site21.bittermelon.systems.medical.medicalstats.MedicalStats;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;

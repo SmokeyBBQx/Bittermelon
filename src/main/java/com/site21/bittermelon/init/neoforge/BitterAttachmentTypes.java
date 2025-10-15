@@ -2,7 +2,7 @@ package com.site21.bittermelon.init.neoforge;
 
 import com.mojang.serialization.Codec;
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.atmosphere.data.AtmosBlockData;
+import com.site21.bittermelon.systems.atmosphere.data.AtmosBlockData;
 import com.site21.bittermelon.content.items.scps.scp377.FortuneInstance;
 import net.minecraft.core.UUIDUtil;
 import net.neoforged.neoforge.attachment.AttachmentType;
@@ -52,5 +52,9 @@ public class BitterAttachmentTypes {
     public static final Supplier<AttachmentType<List<FortuneInstance>>> FORTUNE_INSTANCES = ATTACHMENT_TYPES.register(
             "fortune_instances", () -> AttachmentType.builder(() -> List.<FortuneInstance>of())
                     .serialize(Codec.list(FortuneInstance.CODEC).fieldOf("fortune_instances")).build()
+    );
+
+    public static final Supplier<AttachmentType<String>> LORE_OPENING = ATTACHMENT_TYPES.register(
+            "lore_opening", () -> AttachmentType.builder(() -> "").serialize(Codec.STRING.fieldOf("lore_opening")).build()
     );
 }

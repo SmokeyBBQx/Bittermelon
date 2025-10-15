@@ -1,15 +1,11 @@
 package com.site21.bittermelon.content.items.screwdriver;
 
-import com.site21.bittermelon.content.blocks.devices.PanelDevice;
-import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlock;
-import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
+import com.site21.bittermelon.systems.electronics.PanelDevice;
 import com.site21.bittermelon.content.items.base.BaseItem;
 import com.site21.bittermelon.content.items.base.ItemWeight;
-import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
