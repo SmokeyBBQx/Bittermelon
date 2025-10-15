@@ -23,7 +23,6 @@ import com.site21.bittermelon.common.systems.ai.vibration.BitterVibrationUser;
 import com.site21.bittermelon.common.systems.ai.base.BitterMob;
 import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
-import com.site21.bittermelon.content.entities.scp939.behavior.*;
 import com.site21.bittermelon.common.systems.medical.factory.Anatomy;
 import com.site21.bittermelon.init.neoforge.BitterActivity;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -264,7 +263,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
     }
 
     protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
-        return SCREAM.get();
+        return SCREAM.value();
     }
 
     @Nullable

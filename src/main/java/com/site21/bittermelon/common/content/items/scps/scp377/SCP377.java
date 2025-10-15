@@ -2,14 +2,17 @@ package com.site21.bittermelon.common.content.items.scps.scp377;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.COOKIE_COUNT;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.EMPTY_TIME;
@@ -24,10 +27,10 @@ public class SCP377 extends Item {
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
+    public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
         ItemStack stack = player.getItemInHand(usedHand);
 
-        if (level.isClientSide) return InteractionResultHolder.pass(stack);
+        if (level.isClientSide) return InteractionResult.PASS;
         int cookieCount = stack.getOrDefault(COOKIE_COUNT, DEFAULT_COOKIE_COUNT);
 
         if (cookieCount > 0) {
@@ -37,16 +40,18 @@ public class SCP377 extends Item {
             if (cookieCount == 0) {
                 stack.set(EMPTY_TIME, level.getGameTime());
             }
-            return InteractionResultHolder.success(stack);
+            return InteractionResult.SUCCESS;
         }
 
-        player.sendSystemMessage(Component.literal("Box empty..").withStyle(ChatFormatting.RED).withStyle(ChatFormatting.ITALIC));
+        player.displayClientMessage(Component.literal("Box empty..").withStyle(ChatFormatting.RED).withStyle(ChatFormatting.ITALIC), true);
 
-        return InteractionResultHolder.fail(stack);
+        return InteractionResult.PASS;
     }
 
     @Override
-    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, Entity entity, int slotId, boolean isSelected) {
+    public void inventoryTick(@NotNull ItemStack stack, @NotNull ServerLevel level, @NotNull Entity entity, @Nullable EquipmentSlot slot) {
+        super.inventoryTick(stack, level, entity, slot);
+
         if (level.isClientSide) return;
 
         if (level.getGameTime() - stack.getOrDefault(EMPTY_TIME, -1L) > REFILL_DELAY) {

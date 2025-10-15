@@ -51,7 +51,7 @@ public class FluidBlock extends Block implements EntityBlock {
 
     public FluidBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any()
+        registerDefaultState(stateDefinition.any()
                 .setValue(NORTH, false)
                 .setValue(EAST, false)
                 .setValue(SOUTH, false)
@@ -126,7 +126,7 @@ public class FluidBlock extends Block implements EntityBlock {
                 if (entity.getDeltaMovement().length() > 0) {
                     if (entity.getRandom().nextFloat() > (entity.isSprinting() ? 1 - slipperiness : 1 - slipperiness / 10)) {
                         StumbleHandler.stumble(livingEntity);
-                        level.playSound(null, pos, BitterSounds.SLIP.get(), SoundSource.AMBIENT);
+                        level.playSound(null, pos, BitterSounds.SLIP.value(), SoundSource.AMBIENT);
                     }
                 }
             }

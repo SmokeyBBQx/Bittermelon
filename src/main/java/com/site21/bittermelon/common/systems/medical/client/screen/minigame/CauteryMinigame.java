@@ -84,7 +84,7 @@ public class CauteryMinigame extends MedicalMinigame {
                     clampedPoints.add(point);
 
                     Minecraft.getInstance().player.playSound(
-                            BitterSounds.CAUTERY.get(),
+                            BitterSounds.CAUTERY.value(),
                             1f,
                             1.0f
                     );

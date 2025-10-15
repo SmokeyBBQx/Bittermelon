@@ -1,7 +1,6 @@
 package com.site21.bittermelon.common.systems.medical.client.screen.widget;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.medical.client.screen.HealthScreenV2;
 import com.site21.bittermelon.common.systems.medical.client.screen.HeldItemData;
@@ -12,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
@@ -74,33 +74,36 @@ public class CompartmentNodeWidget extends AbstractWidget {
 
             float scaleFactor = visualData.scale;
 
-            guiGraphics.pose().pushPose();
+            guiGraphics.pose().pushMatrix();
 
-            guiGraphics.pose().translate(this.getX(), this.getY(), visualData.getZ());
+//            guiGraphics.pose().translate(this.getX(), this.getY(), visualData.getZ());
+            guiGraphics.pose().translate(this.getX(), this.getY());
 
-            guiGraphics.pose().scale(scaleFactor, scaleFactor, 0);
+            guiGraphics.pose().scale(scaleFactor, scaleFactor);
 
             if (visualData.icon != null) {
                 int width = visualData.width;
                 int height = visualData.height;
-                RenderSystem.enableBlend();
-                guiGraphics.blit(visualData.icon, 0, 0, 0, 0, width, height, width, height);
-                RenderSystem.disableBlend();
+                guiGraphics.blit(RenderPipelines.GUI_TEXTURED, visualData.icon, 0, 0, 0, 0, width, height, width, height);
             } else {
                 guiGraphics.renderFakeItem(new ItemStack(compartment.getItem()), 0, 0);
             }
 
-            guiGraphics.pose().popPose();
+            guiGraphics.pose().popMatrix();
         }
     }
 
     public void drawHover(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float fade, int screenWidth, int screenHeight) {
-        guiGraphics.pose().pushPose();
+        guiGraphics.pose().pushMatrix();
 
+//        guiGraphics.pose().translate(
+//                0,
+//                0,
+//                100
+//        );
         guiGraphics.pose().translate(
                 0,
-                0,
-                100
+                0
         );
 
         boolean isRightSide = screenWidth + mouseX + this.getX() + 200 >= healthScreen.width;
@@ -128,7 +131,6 @@ public class CompartmentNodeWidget extends AbstractWidget {
         int tooltipX = isRightSide ? this.getX() - tooltipWidth + 36 : this.getX() + 29;
         int tooltipY = this.getY() + 5;
 
-        RenderSystem.enableBlend();
         int y1 = this.getY();
         int x1;
         if (isRightSide) {
@@ -138,20 +140,20 @@ public class CompartmentNodeWidget extends AbstractWidget {
         }
 
         int boxHeight = 32 + tooltipLines.size() * 9;
-        guiGraphics.blitSprite(TITLE_BOX_SPRITE, x1, tooltipY, tooltipWidth, boxHeight);
+        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, TITLE_BOX_SPRITE, x1, tooltipY, tooltipWidth, boxHeight);
 
         float healthRatio = compartment.getHealth() / compartment.getMaxHealth();
         int progressWidth = Mth.floor(healthRatio * tooltipWidth);
         int remainingWidth = tooltipWidth - progressWidth;
 
-        guiGraphics.blitSprite(BOX_OBTAINED, 200, 26, 0, 0, x1, y1, progressWidth - 2, 26);
-        guiGraphics.blitSprite(BOX_UNOBTAINED, 200, 26, 200 - remainingWidth - 2, 0, x1 + progressWidth - 2, y1, remainingWidth + 2, 26);
+        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, BOX_OBTAINED, 200, 26, 0, 0, x1, y1, progressWidth - 2, 26);
+        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, BOX_UNOBTAINED, 200, 26, 200 - remainingWidth - 2, 0, x1 + progressWidth - 2, y1, remainingWidth + 2, 26);
         if (healthRatio == 1) {
-            guiGraphics.blitSprite(BOX_OBTAINED, 200, 26, 198, 0, x1 + progressWidth - 2, y1, 2, 26);
+            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, BOX_OBTAINED, 200, 26, 198, 0, x1 + progressWidth - 2, y1, 2, 26);
         }
 
         ResourceLocation frameSprite = getFrameSpriteForHealth();
-        guiGraphics.blitSprite(frameSprite, this.getX() + 3, this.getY(), 26, 26);
+        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, frameSprite, this.getX() + 3, this.getY(), 26, 26);
 
         guiGraphics.drawString(Minecraft.getInstance().font, compartment.getName(), tooltipX + 5, tooltipY + 3, -1);
         for (int i = 0; i < tooltipLines.size(); i++) {
@@ -159,12 +161,12 @@ public class CompartmentNodeWidget extends AbstractWidget {
         }
 
         if (compartment.getVisualData().icon != null && compartment.getItem() != null) {
-            guiGraphics.blitSprite(compartment.getVisualData().icon, this.getX() + 8, this.getY() + 5, 16, 16);
+            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, compartment.getVisualData().icon, this.getX() + 8, this.getY() + 5, 16, 16);
         } else {
             guiGraphics.renderFakeItem(new ItemStack(compartment.getItem()), this.getX() + 8, this.getY() + 5);
         }
 
-        guiGraphics.pose().popPose();
+        guiGraphics.pose().popMatrix();
     }
 
 
@@ -253,7 +255,7 @@ public class CompartmentNodeWidget extends AbstractWidget {
         }
 
         if (x >= 0 && x < cachedImage.getWidth() && y >= 0 && y < cachedImage.getHeight()) {
-            int rgba = cachedImage.getPixelRGBA(x, y);
+            int rgba = cachedImage.getPixel(x, y);
             int alpha = (rgba >> 24) & 0xFF;
             return alpha / 255.0f;
         }

@@ -196,7 +196,7 @@ public class SlidingDoorBlock extends Block implements EntityBlock {
     }
 
     private void playSound(@Nullable Entity source, @NotNull Level level, BlockPos pos, boolean isOpening) {
-        level.playSound(source, pos, BitterSounds.SLIDING_DOOR_CLOSE.get(), SoundSource.BLOCKS, 1.0f, 1.1f);
+        level.playSound(source, pos, BitterSounds.SLIDING_DOOR_CLOSE.value(), SoundSource.BLOCKS, 1.0f, 1.1f);
     }
 
     public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, LivingEntity placer, @NotNull ItemStack stack) {

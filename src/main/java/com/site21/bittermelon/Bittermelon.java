@@ -17,7 +17,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -54,21 +53,21 @@ public class Bittermelon {
     public static final String MOD_ID = "bittermelon";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public Bittermelon(IEventBus modEventBus, @NotNull ModContainer modContainer) {
+    public Bittermelon(IEventBus modEventBus) {
         NeoForge.EVENT_BUS.register(this);
 
+        SOUND_EVENTS.register(modEventBus);
         BLOCKS.register(modEventBus);
         ACTIVITY.register(modEventBus);
+        SUBSTANCES.register(modEventBus);
+        DATA_COMPONENTS.register(modEventBus);
         ITEMS.register(modEventBus);
         MEMORY_MODULE_TYPES.register(modEventBus);
         SENSOR_TYPES.register(modEventBus);
         BitterEntities.register(modEventBus);
-        SUBSTANCES.register(modEventBus);
         VERB_SETS.register(modEventBus);
         LOGICAL_OPERATORS.register(modEventBus);
         BLOCK_ENTITY_TYPES.register(modEventBus);
-        DATA_COMPONENTS.register(modEventBus);
-        SOUND_EVENTS.register(modEventBus);
         MENUS.register(modEventBus);
         ATTACHMENT_TYPES.register(modEventBus);
         MOB_EFFECTS.register(modEventBus);

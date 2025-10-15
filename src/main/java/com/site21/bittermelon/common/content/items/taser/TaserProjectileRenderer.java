@@ -6,25 +6,42 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-public class TaserProjectileRenderer extends EntityRenderer<TaserProjectile> {
+@OnlyIn(Dist.CLIENT)
+public class TaserProjectileRenderer extends EntityRenderer<TaserProjectile, TaserProjectileRenderState> {
     public TaserProjectileRenderer(EntityRendererProvider.Context context) {
         super(context);
     }
 
     @Override
-    public void render(@NotNull TaserProjectile entity, float entityYaw, float partialTick, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
-        if (!(entity.getOwner() instanceof LivingEntity shooter)) return;
+    public @NotNull TaserProjectileRenderState createRenderState() {
+        return new TaserProjectileRenderState();
+    }
+
+    @Override
+    public void extractRenderState(@NotNull TaserProjectile entity, @NotNull TaserProjectileRenderState reusedState, float partialTick) {
+        super.extractRenderState(entity, reusedState, partialTick);
+
+        if (entity.getOwner() instanceof LivingEntity shooter) {
+            reusedState.shooterPos = shooter.getRopeHoldPosition(partialTick);
+            reusedState.projectilePos = entity.getPosition(partialTick);
+        }
+    }
+
+    @Override
+    public void render(@NotNull TaserProjectileRenderState renderState, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
+        super.render(renderState, poseStack, bufferSource, packedLight);
 
         poseStack.pushPose();
 
-        Vec3 shooterPos = shooter.getRopeHoldPosition(partialTick);
-        Vec3 projectilePos = entity.getPosition(partialTick);
+        Vec3 shooterPos = renderState.shooterPos;
+        Vec3 projectilePos = renderState.projectilePos;
 
         float deltaX = (float) (shooterPos.x - projectilePos.x);
         float deltaY = (float) (shooterPos.y - projectilePos.y);
@@ -54,10 +71,5 @@ public class TaserProjectileRenderer extends EntityRenderer<TaserProjectile> {
         deltaY /= normalLength;
         deltaZ /= normalLength;
         consumer.addVertex(pose, currentX, currentY, currentZ).setColor(0xFF444444).setNormal(pose, deltaX, deltaY, deltaZ);
-    }
-
-    @Override
-    public @NotNull ResourceLocation getTextureLocation(@NotNull TaserProjectile taserProjectile) {
-        return null;
     }
 }

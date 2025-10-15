@@ -1,31 +1,30 @@
 package com.site21.bittermelon.common.content.items.substance;
 
-import com.site21.bittermelon.common.content.items.base.BaseItem;
-import com.site21.bittermelon.common.content.items.base.ItemWeight;
+import com.site21.bittermelon.common.content.items.base.BitterItem;
 import com.site21.bittermelon.common.content.items.substance.data.SubstanceContents;
 import com.site21.bittermelon.common.systems.substance.Substance;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
-import com.site21.bittermelon.common.systems.substance.reactions.ReactionContainer;
 import com.site21.bittermelon.util.ColorUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 
-public class SubstanceContainerItem extends BaseItem implements ReactionContainer {
-    public SubstanceContainerItem(Properties properties, int width, int height, ItemWeight itemWeight) {
-        super(properties, width, height, itemWeight);
+public class SubstanceContainerItem extends BitterItem {
+    public SubstanceContainerItem(Properties properties) {
+        super(properties);
     }
 
     public SubstanceContents getSubstanceData(@NotNull ItemStack stack) {
@@ -211,38 +210,11 @@ public class SubstanceContainerItem extends BaseItem implements ReactionContaine
                 .collect(Collectors.joining("\n"));
 
         return mainComponent.setStyle(mainComponent.getStyle().withHoverEvent(
-                new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(hoverText))));
+                new HoverEvent.ShowText(Component.literal(hoverText))));
     }
 
     private void updateVisuals(@NotNull ItemStack stack) {
         updateColor(stack);
         stack.set(LAST_UPDATED.get(), System.currentTimeMillis());
-    }
-
-    @Override
-    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
-        if (stack.getItem() instanceof ReactionContainer container) {
-//            ReactionHandler.getInstance().handleReactions(getContents(stack), container);
-        }
-    }
-
-    @Override
-    public float getTemperature() {
-        return 273.15f;
-    }
-
-    @Override
-    public float getHeatCapacity() {
-        return 0;
-    }
-
-    @Override
-    public void modifyTemperature(float temperature) {
-
-    }
-
-    @Override
-    public void updateSubstance(SubstanceStack stack) {
-
     }
 }

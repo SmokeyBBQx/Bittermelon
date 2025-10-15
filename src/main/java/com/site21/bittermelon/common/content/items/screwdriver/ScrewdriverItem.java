@@ -1,98 +1,55 @@
 package com.site21.bittermelon.common.content.items.screwdriver;
 
-import com.site21.bittermelon.common.systems.electronics.PanelDevice;
-import com.site21.bittermelon.common.content.items.base.BaseItem;
-import com.site21.bittermelon.common.content.items.base.ItemWeight;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundSource;
+import com.site21.bittermelon.common.systems.component.Screwdriver;
+import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import static com.site21.bittermelon.init.neoforge.BitterSounds.*;
-
-public class ScrewdriverItem extends BaseItem {
+public class ScrewdriverItem extends Item {
     private static final int USE_DURATION = 60;
 
-    public ScrewdriverItem(Properties properties, int width, int height, ItemWeight itemWeight) {
-        super(properties, width, height, itemWeight);
+    public ScrewdriverItem(Properties properties) {
+        super(properties);
     }
 
     @Override
     public @NotNull InteractionResult useOn(@NotNull UseOnContext context) {
-        Player player = context.getPlayer();
-        Level level = context.getLevel();
-        BlockPos clickedPos = context.getClickedPos();
-
-        if (level.isClientSide || player == null) return InteractionResult.FAIL;
-
-        if (level.getBlockEntity(clickedPos) instanceof PanelDevice) {
-            player.startUsingItem(context.getHand());
-            return InteractionResult.CONSUME;
+        ItemStack stack = context.getItemInHand();
+        Screwdriver screwdriver = stack.get(BitterDataComponents.SCREWDRIVER);
+        if (screwdriver != null) {
+            return screwdriver.useOn(context);
         }
 
-        return InteractionResult.FAIL;
+        return InteractionResult.PASS;
     }
 
     @Override
     public int getUseDuration(@NotNull ItemStack stack, @NotNull LivingEntity entity) {
-        return USE_DURATION;
+        return getScrewdriver(stack).screwDuration();
     }
 
     @Override
-    public @NotNull UseAnim getUseAnimation(@NotNull ItemStack stack) {
-        return UseAnim.BOW;
+    public @NotNull ItemUseAnimation getUseAnimation(@NotNull ItemStack stack) {
+        return ItemUseAnimation.BOW;
     }
 
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
-        if (level.isClientSide) return stack;
-
-        if (entity instanceof Player player) {
-            BlockPos targetPos = getTargetBlockPos(player);
-            if (targetPos == null) return stack;
-
-            if (level.getBlockEntity(targetPos) instanceof PanelDevice panelDevice) {
-                panelDevice.togglePanel();
-
-                playPanelSound(level, targetPos, panelDevice.isPanelOpen());
-                player.sendSystemMessage(Component.literal("You " + (panelDevice.isPanelOpen() ? "open" : "close") + " the panel.")
-                        .withStyle(ChatFormatting.ITALIC)
-                        .withStyle(ChatFormatting.GRAY));
-            }
-        }
-
-        return stack;
-    }
-
-    private @Nullable BlockPos getTargetBlockPos(@NotNull LivingEntity entity) {
-        var hitResult = entity.pick(entity.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE), 0.0F, false);
-        if (hitResult.getType() == HitResult.Type.BLOCK) {
-            return ((BlockHitResult) hitResult).getBlockPos();
-        }
-        return null;
+        return getScrewdriver(stack).finishUsingItem(stack, level, entity);
     }
 
     @Override
     public void onUseTick(@NotNull Level level, @NotNull LivingEntity entity, ItemStack stack, int remainingUseDuration) {
-        if (remainingUseDuration % 20 == 0) {
-            entity.level().playSound(null, entity.getOnPos(), SCREWDRIVER.get(), SoundSource.AMBIENT,
-                    0.3f, 1f);
-        }
+       getScrewdriver(stack).playScrewSound(level, entity, remainingUseDuration);
     }
 
-    private void playPanelSound(@NotNull Level level, BlockPos pos, boolean open) {
-        level.playSound(null, pos, open ? SCREWDRIVER_OPEN.get() : SCREWDRIVER_CLOSE.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
+    private Screwdriver getScrewdriver(@NotNull ItemStack stack) {
+        return stack.get(BitterDataComponents.SCREWDRIVER) == null ? Screwdriver.DEFAULT : stack.get(BitterDataComponents.SCREWDRIVER);
     }
 }

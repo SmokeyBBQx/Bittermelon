@@ -7,6 +7,7 @@ import com.site21.bittermelon.common.systems.medical.compartment.LayerData;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
 import com.site21.bittermelon.init.neoforge.BitterItems;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -23,7 +24,7 @@ public class Compartments {
                     .layers(
                             LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/stone.png"), "Body")
                     )
-                    .item(BitterItems.BODY_PART.get())
+                    .item(BitterItems.BODY_PART)
             )
     );
 
@@ -36,7 +37,7 @@ public class Compartments {
                             LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/black_concrete.png"), "Brain Cavity"),
                             LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/smooth_stone.png"), "Facial Structure")
                     )
-                    .item(RED_WOOL)
+                    .item(Holder.direct(RED_WOOL))
             )
     );
 
@@ -48,7 +49,7 @@ public class Compartments {
                             LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/bone_block_side.png"), "Ribcage"),
                             LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/red_concrete.png"), "Thoracic Cavity")
                     )
-                    .item(RED_WOOL)
+                    .item(Holder.direct(RED_WOOL))
             )
     );
 
@@ -63,7 +64,7 @@ public class Compartments {
                             LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/netherrack.png"), "Abdominal Cavity"),
                             LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/brown_concrete.png"), "Retroperitoneal Space")
                     )
-                    .item(RED_WOOL)
+                    .item(Holder.direct(RED_WOOL))
             )
     );
 
@@ -75,7 +76,7 @@ public class Compartments {
                             new LayerData(ResourceLocation.withDefaultNamespace("textures/block/netherrack.png"), "Muscle", 0, 0),
                             new LayerData(ResourceLocation.withDefaultNamespace("textures/block/bone_block_side.png"), "Bone", 0, 0)
                     )
-                    .item(BitterItems.BODY_PART.get())
+                    .item(BitterItems.BODY_PART)
             )
     );
 
@@ -84,7 +85,7 @@ public class Compartments {
             () -> new Compartment("soft_tissue", new Compartment.Properties()
                     .defaultHealth(50)
                     .layers() // No layers - leaf node
-                    .item(BitterItems.BODY_PART.get())
+                    .item(BitterItems.BODY_PART)
             )
     );
 
@@ -92,7 +93,7 @@ public class Compartments {
             () -> new Compartment("skin", new Compartment.Properties()
                     .defaultHealth(40)
                     .layers()
-                    .item(BitterItems.BODY_PART.get())
+                    .item(BitterItems.BODY_PART)
             )
     );
 
@@ -100,7 +101,7 @@ public class Compartments {
             () -> new Compartment("fat", new Compartment.Properties()
                     .defaultHealth(60)
                     .layers()
-                    .item(BitterItems.BODY_PART.get())
+                    .item(BitterItems.BODY_PART)
             )
     );
 
@@ -108,7 +109,7 @@ public class Compartments {
             () -> new Compartment("muscle", new Compartment.Properties()
                     .defaultHealth(100)
                     .layers()
-                    .item(BitterItems.BODY_PART.get())
+                    .item(BitterItems.BODY_PART)
             )
     );
 
@@ -116,7 +117,7 @@ public class Compartments {
             () -> new Compartment("membrane", new Compartment.Properties()
                     .defaultHealth(5)
                     .layers()
-                    .item(BitterItems.BODY_PART.get())
+                    .item(BitterItems.BODY_PART)
             )
     );
 
@@ -171,14 +172,14 @@ public class Compartments {
     public static final DeferredHolder<Compartment, Compartment> KIDNEY = COMPARTMENTS.register("kidney",
             () -> new Compartment("kidney", new Compartment.Properties()
                     .defaultHealth(30)
-                    .item(BitterItems.KIDNEY.get())
+                    .item(BitterItems.KIDNEY)
             )
     );
 
     public static final DeferredHolder<Compartment, Compartment> STOMACH = COMPARTMENTS.register("stomach",
             () -> new Compartment("stomach", new Compartment.Properties()
                     .defaultHealth(30)
-                    .item(BitterItems.STOMACH.get())
+                    .item(BitterItems.STOMACH)
                     .addAttribute(MedicalAttribute.DIGESTION)
                     .visualData(VisualData.empty()
                             .x(20)
@@ -212,7 +213,7 @@ public class Compartments {
     public static final DeferredHolder<Compartment, Compartment> COLON = COMPARTMENTS.register("colon",
             () -> new Compartment("colon", new Compartment.Properties()
                     .defaultHealth(40)
-                    .item(BitterItems.COLON.get())
+                    .item(BitterItems.COLON)
                     .visualData(VisualData.empty()
                             .x(-5)
                             .y(45)
@@ -227,7 +228,7 @@ public class Compartments {
     public static final DeferredHolder<Compartment, Compartment> LIVER = COMPARTMENTS.register("liver",
             () -> new Compartment("liver", new Compartment.Properties()
                     .defaultHealth(40)
-                    .item(BitterItems.LIVER.get())
+                    .item(BitterItems.LIVER)
                     .addAttribute(MedicalAttribute.ELIMINATION)
                     .visualData(VisualData.empty()
                             .x(0)
@@ -243,7 +244,7 @@ public class Compartments {
     public static final DeferredHolder<Compartment, Compartment> GALLBLADDER = COMPARTMENTS.register("gallbladder",
             () -> new Compartment("gallbladder", new Compartment.Properties()
                     .defaultHealth(40)
-                    .item(BitterItems.GALLBLADDER.get())
+                    .item(BitterItems.GALLBLADDER)
                     .visualData(VisualData.empty()
                             .x(25)
                             .y(50)
@@ -281,7 +282,7 @@ public class Compartments {
             ));
 
     public static final DeferredHolder<Compartment, Compartment> SCALPEL = COMPARTMENTS.register("scalpel",
-            () -> new SharpObject("scalpel", new Compartment.Properties().item(BitterItems.SCALPEL.get())));
+            () -> new SharpObject("scalpel", new Compartment.Properties().item(BitterItems.SCALPEL)));
 
     public static final DeferredHolder<Compartment, Compartment> CUT = COMPARTMENTS.register("cut",
             () -> new Compartment("cut", new Compartment.Properties().visualData(VisualData.empty().icon("cut"))));

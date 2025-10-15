@@ -1,6 +1,5 @@
 package com.site21.bittermelon.common.systems.stumble.client;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.stumble.StumbleHandler;
 import com.site21.bittermelon.init.neoforge.BitterMobEffects;
@@ -27,8 +26,7 @@ public class RiseProgressBar {
     private static void renderProgressBar(GuiGraphics guiGraphics, int x, int y) {
         float ticksHeld = RiseKeyHandler.getTicksHeld();
 
-        RenderSystem.setShaderTexture(0, PROGRESS_BAR_BACKGROUND);
-        RenderSystem.enableBlend();
+//        RenderSystem.setShaderTexture(0, PROGRESS_BAR_BACKGROUND);
 
         if (RiseKeyHandler.isKeyPressed()) {
             guiGraphics.blit(PROGRESS_BAR_BACKGROUND,
@@ -39,7 +37,7 @@ public class RiseProgressBar {
         }
 
         if (ticksHeld > 0) {
-            RenderSystem.setShaderTexture(0, PROGRESS_BAR_PROGRESS);
+//            RenderSystem.setShaderTexture(0, PROGRESS_BAR_PROGRESS);
             int progressWidth = (int) ((ticksHeld / (TICKS_REQUIRED - 2)) * 182);
             progressWidth = Math.min(progressWidth, 182);
 
@@ -50,7 +48,6 @@ public class RiseProgressBar {
                     182, 5);
         }
 
-        RenderSystem.disableBlend();
     }
 
     private static void renderStunBar(@NotNull GuiGraphics guiGraphics, int x, int y, @NotNull Player player) {
@@ -66,7 +63,7 @@ public class RiseProgressBar {
                 182, 5,
                 182, 5);
 
-        RenderSystem.setShaderTexture(0, STUN_BAR_BACKGROUND);
+//        RenderSystem.setShaderTexture(0, STUN_BAR_BACKGROUND);
         int progressWidth = (int) ((stunTime / (float) maxStunTime) * 182);
         progressWidth = Math.min(progressWidth, 182);
 
@@ -76,7 +73,6 @@ public class RiseProgressBar {
                 progressWidth, 5,
                 182, 5);
 
-        RenderSystem.disableBlend();
     }
 
     @SubscribeEvent

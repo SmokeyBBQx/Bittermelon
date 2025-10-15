@@ -3,7 +3,6 @@ package com.site21.bittermelon.common.content.entities.scp939;
 import com.site21.bittermelon.common.systems.combat.AttackTemplate;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentTag;
 import com.site21.bittermelon.common.systems.medical.damage.generators.*;
-import com.site21.bittermelon.systems.medical.damage.generators.*;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.common.systems.stumble.StumbleHandler;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
@@ -46,7 +45,7 @@ public final class SCP939AttackTemplates {
                             "%s lunges with gnashing teeth at %s's %s",
                             "%s attempts to sink its teeth into %s's %s"
                     )
-                    .setSound(BitterSounds.BITE.get())
+                    .setSound(BitterSounds.BITE.value())
                     .build(),
             new AttackTemplate.AttackTemplateBuilder()
                     .setDamageSupplier(() -> new Lacerations(EnumSet.of(CompartmentTag.SOFT_TISSUE, CompartmentTag.HARD_TISSUE)))
@@ -77,7 +76,7 @@ public final class SCP939AttackTemplates {
                             "%s's claws whistle through the air at %s's %s",
                             "%s unleashes a frenzied series of slashes at %s's %s"
                     )
-                    .setSound(SLASH.get())
+                    .setSound(SLASH.value())
                     .build(),
             new AttackTemplate.AttackTemplateBuilder()
                     .setDamageSupplier(() -> new BluntForceTrauma(EnumSet.of(CompartmentTag.SOFT_TISSUE, CompartmentTag.HARD_TISSUE)))
@@ -106,7 +105,7 @@ public final class SCP939AttackTemplates {
                     .setCondition((attacker, target) -> !StumbleHandler.isStumbled(target)
                             && !StumbleHandler.isStumbled(attacker))
                     .setSpecialAction((attacker, target) -> StumbleHandler.stumble(target))
-                    .setSound(SMASH.get())
+                    .setSound(SMASH.value())
                     .build(),
             new AttackTemplate.AttackTemplateBuilder()
                     .setDamageSupplier(() -> new Bite(EnumSet.of(CompartmentTag.SOFT_TISSUE, CompartmentTag.HARD_TISSUE)))
@@ -145,7 +144,7 @@ public final class SCP939AttackTemplates {
                         target.setDeltaMovement(pullDirection);
                         target.hurtMarked = true;
                     })
-                    .setSound(DRAG.get())
+                    .setSound(DRAG.value())
                     .build(),
             new AttackTemplate.AttackTemplateBuilder()
                     .setDamageSupplier(Stab::new)
@@ -173,7 +172,7 @@ public final class SCP939AttackTemplates {
                             "%s sinks its claws with frightening speed into %s's %s",
                             "%s plunges its cruel claws into %s's %s"
                     )
-                    .setSound(STAB.get())
+                    .setSound(STAB.value())
                     .build(),
             new AttackTemplate.AttackTemplateBuilder()
                     .setDamageSupplier(() -> new BluntForceTrauma(EnumSet.of(CompartmentTag.SOFT_TISSUE, CompartmentTag.HARD_TISSUE)))
@@ -208,7 +207,7 @@ public final class SCP939AttackTemplates {
                     )
                     .setCondition((attacker, target) -> StumbleHandler.isStumbled(target)
                             && !StumbleHandler.isStumbled(attacker))
-                    .setSound(WRESTLE.get())
+                    .setSound(WRESTLE.value())
                     .build()
     );
 }

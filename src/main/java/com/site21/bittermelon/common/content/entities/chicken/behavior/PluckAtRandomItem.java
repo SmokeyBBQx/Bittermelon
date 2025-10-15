@@ -1,10 +1,10 @@
 package com.site21.bittermelon.common.content.entities.chicken.behavior;
 
 import com.mojang.datafixers.util.Pair;
-import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.common.systems.character.Character;
-import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.content.entities.chicken.Chicken;
+import com.site21.bittermelon.common.systems.ai.base.Need;
+import com.site21.bittermelon.common.systems.character.Character;
+import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.util.LocalMessageHelper;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.network.chat.Component;
@@ -15,7 +15,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
 import net.tslat.smartbrainlib.registry.SBLMemoryTypes;
-import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -52,7 +52,7 @@ public class PluckAtRandomItem<E extends Chicken> extends ExtendedBehaviour<E> {
 
             entity.modifyNeed(Need.RECREATION, -20);
         } else {
-            BrainUtils.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(itemEntity.blockPosition(), 1, 0));
+            BrainUtil.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(itemEntity.blockPosition(), 1, 0));
         }
     }
 }

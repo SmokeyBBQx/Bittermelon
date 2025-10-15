@@ -1,21 +1,21 @@
 package com.site21.bittermelon.common.content.entities.scp939.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.site21.bittermelon.common.content.entities.scp939.SCP939;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
-public class SCP939Model<T extends SCP939> extends EntityModel<T> {
-    private final ModelPart body;
+@OnlyIn(Dist.CLIENT)
+public class SCP939Model extends EntityModel<SCP939RenderState> {
 
     public SCP939Model(ModelPart root) {
-        this.body = root.getChild("body");
+        super(root);
     }
 
-    public static LayerDefinition createBodyLayer() {
+    public static @NotNull LayerDefinition createBodyLayer() {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
 
@@ -89,15 +89,5 @@ public class SCP939Model<T extends SCP939> extends EntityModel<T> {
         PartDefinition mid_spikes_r1 = body.addOrReplaceChild("mid_spikes_r1", CubeListBuilder.create().texOffs(0, 6).addBox(-3.5F, 0.0F, -7.0F, 0.0F, 9.0F, 18.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(4.0F, -11.0F, 0.0F, 0.0873F, 0.0F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 128, 128);
-    }
-
-    @Override
-    public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-
-    }
-
-    @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
-        body.render(poseStack, buffer, packedLight, packedOverlay, color);
     }
 }

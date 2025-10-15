@@ -1,20 +1,19 @@
 package com.site21.bittermelon.common.content.entities.scp1507.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.site21.bittermelon.common.content.entities.scp1507.SCP1507;
-import net.minecraft.client.model.HierarchicalModel;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-public class SCP1507Model extends HierarchicalModel<SCP1507> {
-    private final ModelPart body;
+@OnlyIn(Dist.CLIENT)
+public class SCP1507Model extends EntityModel<SCP1507RenderState> {
 
     public SCP1507Model(@NotNull ModelPart root) {
-        this.body = root.getChild("body");
+        super(root);
     }
 
     public static @NotNull LayerDefinition createBodyLayer() {
@@ -40,24 +39,16 @@ public class SCP1507Model extends HierarchicalModel<SCP1507> {
     }
 
     @Override
-    public void setupAnim(@NotNull SCP1507 entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        root().getAllParts().forEach(ModelPart::resetPose);
+    public void setupAnim(@NotNull SCP1507RenderState renderState) {
+        super.setupAnim(renderState);
 
         float hopHeight = 8f;
         float hopSpeed = 1.5f;
 
-        float hopOffset = Math.abs(Mth.sin(limbSwing * hopSpeed)) * limbSwingAmount * hopHeight;
+        float f = renderState.walkAnimationPos;
+        float f1 = renderState.walkAnimationSpeed;
+        float hopOffset = Math.abs(Mth.sin(f * hopSpeed)) * f1 * hopHeight;
 
         root().y -= hopOffset;
-    }
-
-    @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
-        body.render(poseStack, buffer, packedLight, packedOverlay, color);
-    }
-
-    @Override
-    public @NotNull ModelPart root() {
-        return body;
     }
 }

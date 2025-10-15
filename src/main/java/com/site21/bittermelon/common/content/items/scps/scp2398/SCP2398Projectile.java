@@ -30,12 +30,8 @@ public class SCP2398Projectile extends ThrownItemProjectile {
         super(entityType, level);
     }
 
-    public SCP2398Projectile(Level level, LivingEntity player, ItemStack stack) {
-        super(level, player, stack, 0.7f, 50);
-    }
-
-    public SCP2398Projectile(Level pLevel, double pX, double pY, double pZ, ItemStack stack) {
-        super(pLevel, pX, pY, pZ, stack, 0.7f, 50);
+    public SCP2398Projectile(LivingEntity player, Level level, ItemStack stack) {
+        super(player, level, stack);
     }
 
     @Override

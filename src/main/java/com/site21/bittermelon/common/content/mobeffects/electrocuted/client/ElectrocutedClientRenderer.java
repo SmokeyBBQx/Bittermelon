@@ -12,7 +12,6 @@ import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.client.visualeffects.VignetteRenderer.renderVignette;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.*;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
@@ -47,14 +46,14 @@ public class ElectrocutedClientRenderer {
         Player player = Minecraft.getInstance().player;
         if (player == null) return;
 
-        if (player.hasEffect(TASERED) || player.hasEffect(ELECTROCUTED)) {
-            MobEffectInstance instance = player.getEffect(ELECTROCUTED);
-            if (instance == null) {
-                instance = player.getEffect(TASERED);
-            }
-
-            float amplifier = instance.getAmplifier();
-            renderVignette(event.getGuiGraphics(), 0, amplifier, amplifier);
-        }
+//        if (player.hasEffect(TASERED) || player.hasEffect(ELECTROCUTED)) {
+//            MobEffectInstance instance = player.getEffect(ELECTROCUTED);
+//            if (instance == null) {
+//                instance = player.getEffect(TASERED);
+//            }
+//
+//            float amplifier = instance.getAmplifier();
+//            renderVignette(event.getGuiGraphics(), 0, amplifier, amplifier);
+//        }
     }
 }

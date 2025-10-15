@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.content.items.scps.scp377;
 
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -18,10 +18,10 @@ public class SCP377Cookie extends Item {
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
+    public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
         ItemStack stack = player.getItemInHand(usedHand);
 
-        if (level.isClientSide) return InteractionResultHolder.pass(stack);
+        if (level.isClientSide) return InteractionResult.PASS;
 
         stack.consume(1, player);
 
@@ -30,6 +30,6 @@ public class SCP377Cookie extends Item {
 
         player.getInventory().add(fortune);
         player.getInventory().add(CRACKED_FORTUNE_COOKIE.toStack());
-        return InteractionResultHolder.consume(stack);
+        return InteractionResult.SUCCESS;
     }
 }

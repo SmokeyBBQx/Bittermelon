@@ -49,7 +49,7 @@ public abstract class ElectronicBlockEntity extends BlockEntity implements Elect
         if (random < (supply / draw)) {
             return true;
         } else {
-            level.playSound(null, worldPosition, BitterSounds.SPARKS.get(), SoundSource.BLOCKS, 1, 1);
+            level.playSound(null, worldPosition, BitterSounds.SPARKS.value(), SoundSource.BLOCKS, 1, 1);
             return false;
         }
     }

@@ -61,7 +61,7 @@ public class Compartment {
     }
 
     public ItemStack createItemStack(@NotNull CompartmentInstance instance) {
-        ItemStack stack = properties.item.getDefaultInstance();
+        ItemStack stack = properties.item.value().getDefaultInstance();
         stack.set(BitterDataComponents.COMPARTMENT, instance.toData());
         return stack;
     }
@@ -87,14 +87,14 @@ public class Compartment {
     }
 
     public Item getItem() {
-        return properties.item;
+        return properties.item.value();
     }
 
     public static class Properties {
         EnumSet<CompartmentTag> defaultTags = EnumSet.noneOf(CompartmentTag.class);
         EnumMap<MedicalAttribute, Float> defaultAttributes = new EnumMap<>(MedicalAttribute.class);
         LayerData[] layers = new LayerData[]{new LayerData(ResourceLocation.withDefaultNamespace("textures/block/stone.png"), "Compartment", 0, 0)};
-        Item item = BODY_PART.get();
+        Holder<Item> item = BODY_PART;
         float defaultHealth = 0;
         VisualData visualData = VisualData.empty().width(200).height(200);
 
@@ -128,7 +128,7 @@ public class Compartment {
             return this;
         }
 
-        public Properties item(Item item) {
+        public Properties item(Holder<Item> item) {
             this.item = item;
             return this;
         }

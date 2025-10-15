@@ -1,6 +1,5 @@
 package com.site21.bittermelon.common.systems.medical.client.screen.widget;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.medical.client.screen.HealthScreenV2;
 import com.site21.bittermelon.common.systems.medical.client.screen.HeldItemData;
@@ -17,13 +16,15 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 public class CompartmentSpaceWidget extends MovableResizableWidget {
     public static final ResourceLocation WINDOW_TEXTURE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/healthscreen/surgery_window.png");
@@ -269,7 +270,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
 
     @Override
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        Minecraft.getInstance().getMainRenderTarget().enableStencil();
+//        Minecraft.getInstance().getMainRenderTarget().enableStencil();
 
         int contentX = x + 8;
         int contentY = y + 15 - 11;
@@ -301,21 +302,21 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
                               int contentHeight, int mouseX, int mouseY, float partialTick, List<VisualData> revealingCompartments) {
         if (isOpen) {
             guiGraphics.enableScissor(contentX, contentY, contentX + contentWidth, contentY + contentHeight);
-            RenderSystem.enableBlend();
-            GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+//            RenderSystem.enableBlend();
+//            GL11.glEnable(GL11.GL_BLEND);
+//            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
             drawTiledBackground(guiGraphics, contentX, contentY, contentWidth, contentHeight);
             renderWidgets(guiGraphics, contentX, contentY, mouseX, mouseY, partialTick, revealingCompartments);
 //            renderFog(guiGraphics, contentX, contentY, contentWidth, contentHeight, revealingCompartments);
 
-            RenderSystem.disableBlend();
+//            RenderSystem.disableBlend();
 
             GL11.glEnable(GL11.GL_DEPTH_TEST);
             GL11.glDepthMask(false);
 
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().translate(0, 0, 100);
+            guiGraphics.pose().pushMatrix();
+//            guiGraphics.pose().translate(0, 0, 100);
 
             renderLayerIndicators(guiGraphics);
             renderButtons(guiGraphics, mouseX, mouseY, partialTick);
@@ -337,7 +338,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
                 0xFFFFFF
         );
 
-        guiGraphics.pose().popPose();
+        guiGraphics.pose().popMatrix();
     }
 
     private void renderButtons(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
@@ -400,19 +401,19 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
 
         guiGraphics.enableScissor(contentX, contentY, contentX + contentWidth, contentY + contentHeight);
 
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(0, 0, 50);
+        guiGraphics.pose().pushMatrix();
+//        guiGraphics.pose().translate(0, 0, 50);
 
         float pulse = (float) (Math.sin(System.currentTimeMillis() / 500.0) * 0.4f + 0.95f);
-        RenderSystem.enableBlend();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, pulse);
+//        RenderSystem.enableBlend();
+//        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, pulse);
 
         hoveredWidget.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
 
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.disableBlend();
+//        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+//        RenderSystem.disableBlend();
         guiGraphics.disableScissor();
-        guiGraphics.pose().popPose();
+        guiGraphics.pose().popMatrix();
 
         if (hoveredWidget.visible) {
             hoveredWidget.drawHover(guiGraphics, mouseX, mouseY, partialTick, width, height);
@@ -440,8 +441,8 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     }
 
     private void drawTiledBackground(@NotNull GuiGraphics guiGraphics, int contentX, int contentY, int contentWidth, int contentHeight) {
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(contentX, contentY, 0.0F);
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().translate(contentX, contentY);
 
         int tileOffsetX = (int) -scrollX / 5;
         int tileOffsetY = (int) -scrollY / 5;
@@ -454,7 +455,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         int startX = (startTileX * TILE_SIZE) - tileOffsetX;
         int startY = (startTileY * TILE_SIZE) - tileOffsetY;
 
-        RenderSystem.setShaderTexture(0, backgroundTexture);
+//        RenderSystem.setShaderTexture(0, backgroundTexture);
 
         for (int i = startTileX; i <= endTileX; i++) {
             int x = startX + ((i - startTileX) * TILE_SIZE);
@@ -473,61 +474,61 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
             }
         }
 
-        guiGraphics.pose().popPose();
+        guiGraphics.pose().popMatrix();
     }
 
     private void drawWindowFrame(@NotNull GuiGraphics guiGraphics) {
-        RenderSystem.enableBlend();
-        guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-
-        guiGraphics.blit(WINDOW_TEXTURE, x, y, 0, 0, width / 2, 23);
-        guiGraphics.blit(WINDOW_TEXTURE, x + width / 2, y, 252 - width / 2, 0, width / 2, 23);
-
-        guiGraphics.blit(WINDOW_SIDES_TEXTURE, x, y + 23, 0, 23, width / 2, height - 48);
-        guiGraphics.blit(WINDOW_SIDES_TEXTURE, x + width / 2, y + 23, 256 - width / 2, 23, width / 2, height - 48);
-
-        guiGraphics.blit(WINDOW_TEXTURE, x, y + height - 25, 0, 130 - 5, width / 2, 15);
-        guiGraphics.blit(WINDOW_TEXTURE, x + width / 2, y + height - 25, 252 - width / 2, 130 - 5, width / 2, 15);
-        RenderSystem.disableBlend();
+//        RenderSystem.enableBlend();
+//        guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+//
+//        guiGraphics.blit(WINDOW_TEXTURE, x, y, 0, 0, width / 2, 23);
+//        guiGraphics.blit(WINDOW_TEXTURE, x + width / 2, y, 252 - width / 2, 0, width / 2, 23);
+//
+//        guiGraphics.blit(WINDOW_SIDES_TEXTURE, x, y + 23, 0, 23, width / 2, height - 48);
+//        guiGraphics.blit(WINDOW_SIDES_TEXTURE, x + width / 2, y + 23, 256 - width / 2, 23, width / 2, height - 48);
+//
+//        guiGraphics.blit(WINDOW_TEXTURE, x, y + height - 25, 0, 130 - 5, width / 2, 15);
+//        guiGraphics.blit(WINDOW_TEXTURE, x + width / 2, y + height - 25, 252 - width / 2, 130 - 5, width / 2, 15);
+//        RenderSystem.disableBlend();
     }
 
     private void renderFog(@NotNull GuiGraphics guiGraphics, int contentX, int contentY, int contentWidth, int contentHeight, @NotNull List<VisualData> revealingCompartments) {
-        final int fogColor = 0xF2000000;
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-
-        if (revealingCompartments.isEmpty()) {
-            guiGraphics.fill(contentX, contentY, contentX + contentWidth, contentY + contentHeight, fogColor);
-            return;
-        }
-
-        GL11.glEnable(GL11.GL_STENCIL_TEST);
-        RenderSystem.stencilMask(0xFF);
-        RenderSystem.clearStencil(0);
-        GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
-
-        RenderSystem.stencilFunc(GL11.GL_ALWAYS, 1, 0xFF);
-        RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
-        RenderSystem.colorMask(false, false, false, false);
-
-        for (VisualData visualData : revealingCompartments) {
-            float scaleFactor = visualData.getScale();
-            int minRevealX = (int) (contentX + visualData.getX() - scrollX);
-            int minRevealY = (int) (contentY + visualData.getY() - scrollY);
-            int revealWidth = (int) (visualData.getWidth() * scaleFactor);
-            int revealHeight = (int) (visualData.getHeight() * scaleFactor);
-
-            guiGraphics.fill(minRevealX, minRevealY, minRevealX + revealWidth, minRevealY + revealHeight, 0xFFFFFFFF);
-        }
-
-        RenderSystem.stencilFunc(GL11.GL_NOTEQUAL, 1, 0xFF);
-        RenderSystem.stencilMask(0x00);
-        RenderSystem.colorMask(true, true, true, true);
-
-        guiGraphics.fill(contentX, contentY, contentX + contentWidth, contentY + contentHeight, fogColor);
-
-        GL11.glDisable(GL11.GL_STENCIL_TEST);
-        RenderSystem.disableBlend();
+//        final int fogColor = 0xF2000000;
+//        RenderSystem.enableBlend();
+//        RenderSystem.defaultBlendFunc();
+//
+//        if (revealingCompartments.isEmpty()) {
+//            guiGraphics.fill(contentX, contentY, contentX + contentWidth, contentY + contentHeight, fogColor);
+//            return;
+//        }
+//
+//        GL11.glEnable(GL11.GL_STENCIL_TEST);
+//        RenderSystem.stencilMask(0xFF);
+//        RenderSystem.clearStencil(0);
+//        GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
+//
+//        RenderSystem.stencilFunc(GL11.GL_ALWAYS, 1, 0xFF);
+//        RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
+//        RenderSystem.colorMask(false, false, false, false);
+//
+//        for (VisualData visualData : revealingCompartments) {
+//            float scaleFactor = visualData.getScale();
+//            int minRevealX = (int) (contentX + visualData.getX() - scrollX);
+//            int minRevealY = (int) (contentY + visualData.getY() - scrollY);
+//            int revealWidth = (int) (visualData.getWidth() * scaleFactor);
+//            int revealHeight = (int) (visualData.getHeight() * scaleFactor);
+//
+//            guiGraphics.fill(minRevealX, minRevealY, minRevealX + revealWidth, minRevealY + revealHeight, 0xFFFFFFFF);
+//        }
+//
+//        RenderSystem.stencilFunc(GL11.GL_NOTEQUAL, 1, 0xFF);
+//        RenderSystem.stencilMask(0x00);
+//        RenderSystem.colorMask(true, true, true, true);
+//
+//        guiGraphics.fill(contentX, contentY, contentX + contentWidth, contentY + contentHeight, fogColor);
+//
+//        GL11.glDisable(GL11.GL_STENCIL_TEST);
+//        RenderSystem.disableBlend();
     }
 
     private boolean isLayerInjured(int layerIndex) {
@@ -676,7 +677,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         int newY = (int) (mouseY - y + scrollY) - offsetY;
         visualData.x(newX).y(newY);
 
-        PacketDistributor.sendToServer(new MoveCompartment(
+        ClientPacketDistributor.sendToServer(new MoveCompartment(
                 healthScreen.getMedicalStats().getCharacterID(),
                 compartment.getUUID(),
                 target.getUUID(),

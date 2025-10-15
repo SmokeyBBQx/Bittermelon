@@ -44,7 +44,7 @@ public class Pull<E extends Mob> extends AnimatableMeleeAttack<E> {
         target.setDeltaMovement(pullDirection);
         target.hurtMarked = true;
 
-        entity.level().playSound(null, entity.getOnPos(), DRAG.get(), SoundSource.AMBIENT);
+        entity.level().playSound(null, entity.getOnPos(), DRAG.value(), SoundSource.AMBIENT);
 
         CharacterManager characterManager = CharacterManager.get(entity.level());
         Character entityCharacter = characterManager.getActiveCharacter(entity);

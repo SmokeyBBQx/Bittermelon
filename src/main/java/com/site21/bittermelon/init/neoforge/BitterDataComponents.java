@@ -3,10 +3,12 @@ package com.site21.bittermelon.init.neoforge;
 import com.mojang.serialization.Codec;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.items.base.ItemSize;
-import com.site21.bittermelon.common.content.items.itemcontainers.client.ItemContainerContents;
 import com.site21.bittermelon.common.content.items.scps.scp377.Fortune;
 import com.site21.bittermelon.common.content.items.substance.data.SubstanceContents;
 import com.site21.bittermelon.common.content.items.substance.pill.PillShape;
+import com.site21.bittermelon.common.systems.component.Screwdriver;
+import com.site21.bittermelon.common.systems.component.Smokable;
+import com.site21.bittermelon.common.systems.component.WireCutter;
 import com.site21.bittermelon.common.systems.medical.blood.BloodData;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentData;
 import net.minecraft.core.BlockPos;
@@ -58,11 +60,6 @@ public class BitterDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> IS_WRAPPED = DATA_COMPONENTS.registerComponentType(
             "is_wrapped",
             builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL)
-    );
-
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemContainerContents>> ITEM_CONTAINER_CONTENTS = DATA_COMPONENTS.registerComponentType(
-            "item_container_contents",
-            builder -> builder.persistent(ItemContainerContents.CODEC).networkSynchronized(ItemContainerContents.STREAM_CODEC).cacheEncoding()
     );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<UUID>>> GERMS = DATA_COMPONENTS.registerComponentType(
@@ -213,5 +210,20 @@ public class BitterDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemSize>> SIZE = DATA_COMPONENTS.registerComponentType(
             "size",
             builder -> builder.persistent(ItemSize.CODEC).networkSynchronized(ItemSize.STREAM_CODEC)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<WireCutter>> WIRE_CUTTER = DATA_COMPONENTS.registerComponentType(
+            "wire_cutter",
+            builder -> builder.persistent(WireCutter.CODEC)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Smokable>> SMOKABLE = DATA_COMPONENTS.registerComponentType(
+            "smokable",
+            builder -> builder.persistent(Smokable.CODEC)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Screwdriver>> SCREWDRIVER = DATA_COMPONENTS.registerComponentType(
+            "screwdriver",
+            builder -> builder.persistent(Screwdriver.CODEC)
     );
 }

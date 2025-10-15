@@ -1,0 +1,252 @@
+package com.site21.bittermelon.data;
+
+public class BitterBlockStateProviderOld {
+//    public BitterBlockStateProviderOld(PackOutput output, ExistingFileHelper exFileHelper) {
+//        super(output, Bittermelon.MOD_ID, exFileHelper);
+//    }
+//
+//    @Override
+//    protected void registerStatesAndModels() {
+//        doorBlockWithRenderType(SECURE_DOOR.get(),
+//                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/secure_door_bottom"),
+//                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/secure_door_top"),
+//                "minecraft:cutout");
+//
+//        doorBlockWithRenderType(KEYCARD_READER_SECURE_DOOR.get(),
+//                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/secure_door_bottom"),
+//                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/keycard_reader_secure_door_top"),
+//                "minecraft:cutout");
+//
+//        createSmallPosterBlockState(YELLOW_INSPECTION_POSTER.get(), "block/yellow_inspection_poster");
+//        createCustomTrapdoorBlockState(DISTRIBUTION_BOARD.get(), "block/distribution_board");
+//        createPaintingBlockState(SCP_151.get(), "block/scp_151");
+//        createStickyNoteBlock(STICKY_NOTE.get());
+//        createKeycardReader();
+//        createRedstoneDevice();
+//    }
+//
+//    private void createSmallPosterBlockState(Block block, String path) {
+//        VariantBlockStateBuilder builder = getVariantBuilder(block);
+//
+//        for (Direction direction : Direction.values()) {
+//            if (direction.getAxis().isHorizontal()) {
+//                builder.partialState()
+//                        .with(SmallPosterBlock.FACING, direction)
+//                        .with(SmallPosterBlock.PLACEMENT, Placement.RIGHT)
+//                        .modelForState()
+//                        .modelFile(models().withExistingParent(path + "_right", modLoc("block/small_poster_right"))
+//                                .texture("texture", modLoc(path)))
+//                        .rotationY(getYRotation(direction))
+//                        .addModel();
+//
+//                builder.partialState()
+//                        .with(SmallPosterBlock.FACING, direction)
+//                        .with(SmallPosterBlock.PLACEMENT, Placement.LEFT)
+//                        .modelForState()
+//                        .modelFile(models().withExistingParent(path + "_left", modLoc("block/small_poster_left"))
+//                                .texture("texture", modLoc(path)))
+//                        .rotationY(getYRotation(direction))
+//                        .addModel();
+//            }
+//        }
+//    }
+//
+//    private void createCustomTrapdoorBlockState(Block block, String path) {
+//        VariantBlockStateBuilder variantBuilder = getVariantBuilder(block);
+//
+//        for (Direction direction : Direction.values()) {
+//            if (direction.getAxis().isHorizontal()) {
+//                ModelFile topModel = models().withExistingParent(path + "_top", mcLoc("block/template_orientable_trapdoor_top"))
+//                        .texture("texture", path);
+//                ModelFile bottomModel = models().withExistingParent(path + "_bottom", mcLoc("block/template_orientable_trapdoor_bottom"))
+//                        .texture("texture", path);
+//                ModelFile sideModel = models().withExistingParent(path + "_side", mcLoc("block/template_orientable_trapdoor_open"))
+//                        .texture("texture", path);
+//
+//                variantBuilder.partialState()
+//                        .with(DistributionBoardBlock.TYPE, DistributionBoardBlock.Type.TOP)
+//                        .with(DistributionBoardBlock.FACING, direction)
+//                        .modelForState()
+//                        .modelFile(topModel)
+//                        .rotationY(getYRotation(direction))
+//                        .addModel();
+//
+//                variantBuilder.partialState()
+//                        .with(DistributionBoardBlock.TYPE, DistributionBoardBlock.Type.BOTTOM)
+//                        .with(DistributionBoardBlock.FACING, direction)
+//                        .modelForState()
+//                        .modelFile(bottomModel)
+//                        .rotationY(getYRotation(direction))
+//                        .addModel();
+//
+//                variantBuilder.partialState()
+//                        .with(DistributionBoardBlock.TYPE, DistributionBoardBlock.Type.SIDE)
+//                        .with(DistributionBoardBlock.FACING, direction)
+//                        .modelForState()
+//                        .modelFile(sideModel)
+//                        .rotationY(getYRotation(direction))
+//                        .addModel();
+//            }
+//        }
+//    }
+//
+//    private void createPaintingBlockState(Block block, String path) {
+//        VariantBlockStateBuilder variantBuilder = getVariantBuilder(block);
+//
+//        for (Direction direction : Direction.values()) {
+//            if (direction.getAxis().isHorizontal()) {
+//                ModelFile topModel = models().withExistingParent(path + "_top", modLoc("block/painting_top"))
+//                        .texture("texture", path);
+//                ModelFile bottomModel = models().withExistingParent(path + "_bottom", modLoc("block/painting_bottom"))
+//                        .texture("texture", path);
+//                ModelFile sideModel = models().withExistingParent(path, modLoc("block/painting_side"))
+//                        .texture("texture", path);
+//
+//                variantBuilder.partialState()
+//                        .with(SCP151Block.TYPE, SCP151Block.Type.TOP)
+//                        .with(SCP151Block.FACING, direction)
+//                        .modelForState()
+//                        .modelFile(topModel)
+//                        .rotationY(getYRotation(direction))
+//                        .addModel();
+//
+//                variantBuilder.partialState()
+//                        .with(SCP151Block.TYPE, SCP151Block.Type.BOTTOM)
+//                        .with(SCP151Block.FACING, direction)
+//                        .modelForState()
+//                        .modelFile(bottomModel)
+//                        .rotationY(getYRotation(direction))
+//                        .addModel();
+//
+//                variantBuilder.partialState()
+//                        .with(SCP151Block.TYPE, SCP151Block.Type.SIDE)
+//                        .with(SCP151Block.FACING, direction)
+//                        .modelForState()
+//                        .modelFile(sideModel)
+//                        .rotationY(getYRotation(direction))
+//                        .addModel();
+//            }
+//        }
+//    }
+//
+//    private void createStickyNoteBlock(@NotNull Block block) {
+//        String blockName = block.getName().getString();
+//
+//        ModelFile[] models = new ModelFile[16];
+//        for (int i = 0; i < 16; i++) {
+//            String binaryString = String.format("%04d",
+//                    Integer.parseInt(Integer.toBinaryString(i)));
+//            models[i] = createStickyNoteModel(blockName, binaryString);
+//        }
+//
+//        getVariantBuilder(block).forAllStates(state -> {
+//            AttachFace face = state.getValue(StickyNoteBlock.FACE);
+//            Direction facing = state.getValue(StickyNoteBlock.FACING);
+//            boolean topLeft = state.getValue(StickyNoteBlock.TOP_LEFT);
+//            boolean topRight = state.getValue(StickyNoteBlock.TOP_RIGHT);
+//            boolean bottomLeft = state.getValue(StickyNoteBlock.BOTTOM_LEFT);
+//            boolean bottomRight = state.getValue(StickyNoteBlock.BOTTOM_RIGHT);
+//
+//            int modelIndex = (topLeft ? 8 : 0) + (topRight ? 4 : 0) +
+//                    (bottomLeft ? 2 : 0) + (bottomRight ? 1 : 0);
+//
+//            int xRot = 0;
+//            int yRot = switch (face) {
+//                case CEILING -> {
+//                    xRot = 90;
+//                    yield getYRotationInverted(facing);
+//                }
+//                case FLOOR -> {
+//                    xRot = 270;
+//                    yield getYRotationInverted(facing);
+//                }
+//                case WALL -> getYRotationInverted(facing);
+//            };
+//
+//            return ConfiguredModel.builder()
+//                    .modelFile(models[modelIndex])
+//                    .rotationX(xRot)
+//                    .rotationY(yRot)
+//                    .build();
+//        });
+//    }
+//
+//    private @NotNull ModelFile createStickyNoteModel(String blockName, String binaryPattern) {
+//        ResourceLocation texture = modLoc("block/sticky_note_" + binaryPattern);
+//
+//        return models().withExistingParent(blockName + "_" + binaryPattern, modLoc("block/sticky_note"))
+//                .texture("texture", texture)
+//                .renderType("cutout");
+//    }
+//
+//    private void createKeycardReader() {
+//        VariantBlockStateBuilder builder = getVariantBuilder(KEYCARD_READER.get());
+//
+//        for (Direction direction : Direction.values()) {
+//            if (direction.getAxis().isHorizontal()) {
+//                builder.partialState()
+//                        .with(SmallPosterBlock.FACING, direction)
+//                        .with(SmallPosterBlock.PLACEMENT, Placement.RIGHT)
+//                        .modelForState()
+//                        .modelFile(models().getExistingFile(modLoc("block/keycard_reader_right")))
+//                        .rotationY(getYRotation(direction))
+//                        .addModel();
+//
+//                builder.partialState()
+//                        .with(SmallPosterBlock.FACING, direction)
+//                        .with(SmallPosterBlock.PLACEMENT, Placement.LEFT)
+//                        .modelForState()
+//                        .modelFile(models().getExistingFile(modLoc("block/keycard_reader_left")))
+//                        .rotationY(getYRotation(direction))
+//                        .addModel();
+//            }
+//        }
+//    }
+//
+//    private void createRedstoneDevice() {
+//        VariantBlockStateBuilder builder = getVariantBuilder(REDSTONE_DEVICE.get());
+//
+//        ModelFile modelOff = models().getExistingFile(modLoc("block/redstone_device_off"));
+//        ModelFile modelOn = models().getExistingFile(modLoc("block/redstone_device_on"));
+//
+//        for (Direction direction : Direction.values()) {
+//            if (direction.getAxis().isHorizontal()) {
+//                builder.partialState()
+//                        .with(RedstoneDeviceBlock.FACING, direction)
+//                        .with(RedstoneDeviceBlock.POWERED, false)
+//                        .modelForState()
+//                        .modelFile(modelOff)
+//                        .rotationY(getYRotation(direction))
+//                        .addModel();
+//
+//                builder.partialState()
+//                        .with(RedstoneDeviceBlock.FACING, direction)
+//                        .with(RedstoneDeviceBlock.POWERED, true)
+//                        .modelForState()
+//                        .modelFile(modelOn)
+//                        .rotationY(getYRotation(direction))
+//                        .addModel();
+//            }
+//        }
+//    }
+//
+//    @Contract(pure = true)
+//    private int getYRotation(@NotNull Direction direction) {
+//        return switch (direction) {
+//            case SOUTH -> 180;
+//            case WEST -> 270;
+//            case EAST -> 90;
+//            default -> 0;
+//        };
+//    }
+//
+//    @Contract(pure = true)
+//    private int getYRotationInverted(@NotNull Direction facing) {
+//        return switch (facing) {
+//            case EAST -> 90;
+//            case SOUTH -> 180;
+//            case WEST -> 270;
+//            default -> 0;
+//        };
+//    }
+}

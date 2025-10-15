@@ -1,10 +1,9 @@
 package com.site21.bittermelon.common.content.blocks.electronics.detonator;
 
-import com.site21.bittermelon.common.systems.electronics.ElectronicDevice;
 import com.site21.bittermelon.common.systems.electronics.ElectronicBlockEntity;
+import com.site21.bittermelon.common.systems.electronics.ElectronicDevice;
 import com.site21.bittermelon.common.systems.electronics.wiring.InputPort;
 import com.site21.bittermelon.common.systems.electronics.wiring.Signal;
-import com.site21.bittermelon.common.content.items.payload.Payload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -48,9 +47,9 @@ public class DetonatorBlockEntity extends ElectronicBlockEntity implements Elect
             return;
         }
 
-        if (payload.getItem() instanceof Payload payloadItem) {
-            payloadItem.detonate(level, worldPosition);
-        }
+//        if (payload.getItem() instanceof Payload payloadItem) {
+//            payloadItem.detonate(level, worldPosition);
+//        }
 
         if (level == null || level.isClientSide) return;
         level.explode(null, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),

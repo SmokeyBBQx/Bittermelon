@@ -1,11 +1,10 @@
 package com.site21.bittermelon.common.content.items.writablepaper;
 
-import com.site21.bittermelon.common.content.items.base.BaseItem;
-import com.site21.bittermelon.common.content.items.base.ItemWeight;
+import net.minecraft.world.item.Item;
 
-public class WritablePaper extends BaseItem {
-    public WritablePaper(Properties properties, int width, int height, ItemWeight itemWeight) {
-        super(properties, width, height, itemWeight);
+public class WritablePaper extends Item {
+    public WritablePaper(Properties properties) {
+        super(properties);
     }
 
 //    @Override

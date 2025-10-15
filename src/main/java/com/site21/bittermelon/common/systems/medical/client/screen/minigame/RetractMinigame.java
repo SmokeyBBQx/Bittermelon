@@ -120,7 +120,7 @@ public class RetractMinigame extends MedicalMinigame {
                 int retractIncrement = 4;
                 retractUp -= retractIncrement;
                 retractDown += retractIncrement;
-                makeSound(BitterSounds.RETRACT.get());
+                makeSound(BitterSounds.RETRACT.value());
                 spaceWasPressed = true;
                 return true;
             }

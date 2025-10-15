@@ -53,7 +53,7 @@ public record CutWire(BlockPos pos, String portId, UUID playerId, boolean inputP
         Player player = level.getPlayerByUUID(playerId);
         if (player == null) return;
 
-        level.playSound(null, pos, BitterSounds.WIRE_CUTTERS.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
+        level.playSound(null, pos, BitterSounds.WIRE_CUTTERS.value(), SoundSource.PLAYERS, 1.0f, 1.0f);
 
         float chance = 0.5f;
 
@@ -65,7 +65,7 @@ public record CutWire(BlockPos pos, String portId, UUID playerId, boolean inputP
         RandomSource random = player.getRandom();
         if (random.nextFloat() > chance) {
             StumbleHandler.stumble(player, 200, player.getLookAngle().scale(-1));
-            level.playSound(null, pos, BitterSounds.ZAP.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
+            level.playSound(null, pos, BitterSounds.ZAP.value(), SoundSource.PLAYERS, 1.0f, 1.0f);
             player.addEffect(new MobEffectInstance(ELECTROCUTED, 20, 1, false, false));
         } else {
             if (level.getBlockEntity(pos) instanceof ElectronicDevice electronic) {

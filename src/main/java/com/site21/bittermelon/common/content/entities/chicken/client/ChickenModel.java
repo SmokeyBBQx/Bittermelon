@@ -1,9 +1,5 @@
 package com.site21.bittermelon.common.content.entities.chicken.client;
 
-import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.site21.bittermelon.common.content.entities.chicken.Chicken;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -11,21 +7,20 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
-public class ChickenModel<T extends Chicken> extends EntityModel<T> {
+public class ChickenModel extends EntityModel<ChickenRenderState> {
     private final ModelPart head;
     private final ModelPart rightWing;
     private final ModelPart leftWing;
     private final ModelPart rightLeg;
     private final ModelPart leftLeg;
-    private final ModelPart body;
 
     public ChickenModel(@NotNull ModelPart root) {
+        super(root);
         this.head = root.getChild("head");
         this.rightWing = root.getChild("right_wing");
         this.leftWing = root.getChild("left_wing");
         this.rightLeg = root.getChild("right_leg");
         this.leftLeg = root.getChild("left_leg");
-        this.body = root.getChild("body");
     }
 
     public static @NotNull LayerDefinition createBodyLayer() {
@@ -75,30 +70,17 @@ public class ChickenModel<T extends Chicken> extends EntityModel<T> {
         return LayerDefinition.create(meshdefinition, 32, 32);
     }
 
-    protected Iterable<ModelPart> headParts() {
-        return ImmutableList.of(this.head);
-    }
-
-    protected Iterable<ModelPart> bodyParts() {
-        return ImmutableList.of(this.body, this.rightLeg, this.leftLeg, this.rightWing, this.leftWing);
-    }
-
-    public void setupAnim(@NotNull T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        this.head.xRot = headPitch * ((float)Math.PI / 180F);
-        this.head.yRot = netHeadYaw * ((float)Math.PI / 180F);
-        this.rightLeg.xRot = Mth.cos(limbSwing * 0.6662F) * 0.8F * limbSwingAmount;
-        this.leftLeg.xRot = Mth.cos(limbSwing * 0.6662F + (float)Math.PI) * 0.8F * limbSwingAmount;
-        this.rightWing.zRot = ageInTicks;
-        this.leftWing.zRot = -ageInTicks;
-    }
-
     @Override
-    public void renderToBuffer(@NotNull PoseStack poseStack, @NotNull VertexConsumer vertexConsumer, int i, int i1, int i2) {
-        head.render(poseStack, vertexConsumer, i, i1, i2);
-        rightWing.render(poseStack, vertexConsumer, i, i1, i2);
-        leftWing.render(poseStack, vertexConsumer, i, i1, i2);
-        rightLeg.render(poseStack, vertexConsumer, i, i1, i2);
-        leftLeg.render(poseStack, vertexConsumer, i, i1, i2);
-        body.render(poseStack, vertexConsumer, i, i1, i2);
+    public void setupAnim(@NotNull ChickenRenderState renderState) {
+        super.setupAnim(renderState);
+        float f = (Mth.sin(renderState.flap) + 1.0F) * renderState.flapSpeed;
+        head.xRot = renderState.xRot * (float) (Math.PI / 180.0);
+        head.yRot = renderState.yRot * (float) (Math.PI / 180.0);
+        float f1 = renderState.walkAnimationSpeed;
+        float f2 = renderState.walkAnimationPos;
+        rightLeg.xRot = Mth.cos(f2 * 0.6662F) * 1.4F * f1;
+        leftLeg.xRot = Mth.cos(f2 * 0.6662F + (float) Math.PI) * 1.4F * f1;
+        rightWing.zRot = f;
+        leftWing.zRot = -f;
     }
 }

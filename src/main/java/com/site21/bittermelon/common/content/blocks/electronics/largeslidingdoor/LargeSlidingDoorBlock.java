@@ -197,7 +197,7 @@ public class LargeSlidingDoorBlock extends Block implements EntityBlock {
                 // Closing logic
 
                 level.setBlock(pos, state.setValue(STATE, State.CLOSING), 3);
-                level.playSound(null, pos, BitterSounds.LARGE_SLIDING_DOOR_CLOSE.get(), SoundSource.BLOCKS);
+                level.playSound(null, pos, BitterSounds.LARGE_SLIDING_DOOR_CLOSE.value(), SoundSource.BLOCKS);
             } else if (state.getValue(STATE) == State.CLOSED) {
                 // Opening logic
 
@@ -207,12 +207,12 @@ public class LargeSlidingDoorBlock extends Block implements EntityBlock {
                 removeDummyBlock(level, pos.below());
                 removeDummyBlock(level, pos.below(2));
 
-                level.playSound(null, pos, BitterSounds.LARGE_SLIDING_DOOR_OPEN.get(), SoundSource.BLOCKS);
+                level.playSound(null, pos, BitterSounds.LARGE_SLIDING_DOOR_OPEN.value(), SoundSource.BLOCKS);
             } else if (!canClose(level, pos)) {
                 // Stuck logic
 
                 level.setBlock(pos, state.setValue(STATE, State.STUCK), 3);
-                level.playSound(null, pos, BitterSounds.LARGE_SLIDING_DOOR_OPEN.get(), SoundSource.BLOCKS);
+                level.playSound(null, pos, BitterSounds.LARGE_SLIDING_DOOR_OPEN.value(), SoundSource.BLOCKS);
             }
         }
         return InteractionResult.SUCCESS;

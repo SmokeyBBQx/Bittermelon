@@ -1,30 +1,28 @@
 package com.site21.bittermelon.common.content.items.substance;
 
+import com.site21.bittermelon.common.content.items.substance.data.SubstanceContents;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosHandler;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosInstance;
-import com.site21.bittermelon.common.content.items.base.ItemWeight;
-import com.site21.bittermelon.common.content.items.substance.data.SubstanceContents;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import com.site21.bittermelon.util.SubstanceUtils;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 import java.util.List;
 
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.MAX_PRESSURE;
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.RELEASE_PRESSURE;
 import static com.site21.bittermelon.init.custom.Substances.OXYGEN;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 
 public class GasContainerItem extends SubstanceContainerItem {
-    private final int maxReleasePressure;
-
-    public GasContainerItem(Properties properties, int width, int height, ItemWeight itemWeight, int maxReleasePressure) {
-        super(properties, width, height, itemWeight);
-        this.maxReleasePressure = maxReleasePressure;
+    public GasContainerItem(Properties properties) {
+        super(properties);
     }
 
     public int getReleasePressure(@NotNull ItemStack stack) {
@@ -32,11 +30,11 @@ public class GasContainerItem extends SubstanceContainerItem {
     }
 
     public void setReleasePressure(@NotNull ItemStack stack, int releasePressure) {
-        stack.set(RELEASE_PRESSURE.get(), Mth.clamp(releasePressure, 0, maxReleasePressure));
+        stack.set(RELEASE_PRESSURE.get(), Mth.clamp(releasePressure, 0, getMaxReleasePressure(stack)));
     }
 
-    public int getMaxReleasePressure() {
-        return maxReleasePressure;
+    public int getMaxReleasePressure(ItemStack stack) {
+        return 10;
     }
 
 
@@ -45,7 +43,7 @@ public class GasContainerItem extends SubstanceContainerItem {
     }
 
     public float getPressure(ItemStack stack) {
-        return SubstanceUtils.getPressure(getSubstanceData(stack).substances(), getMaxPressure(stack), getTemperature());
+        return SubstanceUtils.getPressure(getSubstanceData(stack).substances(), getMaxPressure(stack), stack.getOrDefault(TEMPERATURE, 293.15f));
     }
 
     @Override
@@ -71,8 +69,8 @@ public class GasContainerItem extends SubstanceContainerItem {
     }
 
     @Override
-    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
-        super.inventoryTick(stack, level, entity, slotId, isSelected);
+    public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
+        super.inventoryTick(stack, level, entity, slot);
 
         if (level.isClientSide) return;
 

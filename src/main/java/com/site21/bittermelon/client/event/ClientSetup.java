@@ -6,6 +6,7 @@ import com.site21.bittermelon.common.content.blocks.electronics.intercom.client.
 import com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.client.LargeSlidingDoorRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.slidingdoor.client.SlidingDoorRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.thermometer.client.ThermometerRenderer;
+import com.site21.bittermelon.common.content.blocks.substance.fluid.client.FluidBlockColor;
 import com.site21.bittermelon.common.content.blocks.wallwriting.client.WallWritingRenderer;
 import com.site21.bittermelon.common.content.entities.chicken.client.ChickenRenderer;
 import com.site21.bittermelon.common.content.entities.scp131.client.SCP131Renderer;
@@ -19,14 +20,14 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import org.jetbrains.annotations.NotNull;
 
+import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
 import static com.site21.bittermelon.init.neoforge.BitterEntities.*;
-import static com.site21.bittermelon.init.neoforge.BitterEntities.TASER_PROJECTILE;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class ClientSetup {
-
 
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.@NotNull RegisterRenderers event) {
@@ -46,5 +47,8 @@ public class ClientSetup {
         event.registerBlockEntityRenderer(BitterBlockEntities.WALL_WRITING_BLOCK_ENTITY.get(), WallWritingRenderer::new);
     }
 
-
+    @SubscribeEvent
+    public static void registerColorHandlers(RegisterColorHandlersEvent.@NotNull Block event) {
+        event.register(new FluidBlockColor(), FLUID.get());
+    }
 }

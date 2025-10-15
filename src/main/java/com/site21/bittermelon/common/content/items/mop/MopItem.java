@@ -2,19 +2,17 @@ package com.site21.bittermelon.common.content.items.mop;
 
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlockEntity;
-import com.site21.bittermelon.common.content.items.base.ItemWeight;
 import com.site21.bittermelon.common.content.items.substance.FluidContainerItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
@@ -23,17 +21,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class MopItem extends FluidContainerItem {
-    public MopItem(Properties properties, int width, int height, ItemWeight itemWeight) {
-        super(properties, width, height, itemWeight, false);
+    public MopItem(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
+    public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
         ItemStack itemInHand = player.getItemInHand(usedHand);
         ItemStack offhandItem = player.getOffhandItem();
 
         if (isContainerEmpty(itemInHand)) {
-            return InteractionResultHolder.pass(itemInHand);
+            return InteractionResult.PASS;
         }
 
         if (usedHand == InteractionHand.MAIN_HAND && offhandItem.getItem() instanceof FluidContainerItem) {
@@ -42,7 +40,7 @@ public class MopItem extends FluidContainerItem {
             }
         }
 
-        return InteractionResultHolder.success(itemInHand);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -80,8 +78,8 @@ public class MopItem extends FluidContainerItem {
     }
 
     @Override
-    public @NotNull UseAnim getUseAnimation(@NotNull ItemStack stack) {
-        return UseAnim.BRUSH;
+    public @NotNull ItemUseAnimation getUseAnimation(@NotNull ItemStack stack) {
+        return ItemUseAnimation.BRUSH;
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.site21.bittermelon.common.content.mobeffects.electrocuted.networking.
 import com.site21.bittermelon.common.systems.ai.behavior.misc.FeelsPain;
 import com.site21.bittermelon.common.systems.stumble.StumbleHandler;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -20,9 +21,9 @@ public class TaserEffect extends ElectrocutedEffect {
     }
 
     @Override
-    public boolean applyEffectTick(@NotNull LivingEntity entity, int amplifier) {
+    public boolean applyEffectTick(@NotNull ServerLevel level, @NotNull LivingEntity entity, int amplifier) {
         if (entity.tickCount % 19 == 0) {
-            entity.level().playSound(null, entity.getOnPos(), BitterSounds.TASER.get(), SoundSource.PLAYERS, 0.05f, 1);
+            entity.level().playSound(null, entity.getOnPos(), BitterSounds.TASER.value(), SoundSource.PLAYERS, 0.05f, 1);
         }
         return true;
     }

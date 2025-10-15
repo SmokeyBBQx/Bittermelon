@@ -4,22 +4,23 @@ import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.common.content.items.substance.data.SubstanceContents;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
-import com.site21.bittermelon.common.content.items.base.ItemWeight;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -27,9 +28,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
@@ -39,21 +42,19 @@ public class FluidContainerItem extends SubstanceContainerItem {
     public static final int MIN_TRANSFER_RATE = 1;
     private static final int DRINK_SPEED = 32;
 
-    private final boolean hasLid;
-
-    public FluidContainerItem(Properties properties, int width, int height, ItemWeight itemWeight, boolean hasLid) {
-        super(properties, width, height, itemWeight);
-        this.hasLid = hasLid;
+    public FluidContainerItem(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-        tooltipComponents.add(Component.literal("Contents: " + getSubstanceData(stack).getTotalVolume() + "/" + getCapacity(stack)));
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
+
+        tooltipAdder.accept(Component.literal("Contents: " + getSubstanceData(stack).getTotalVolume() + "/" + getCapacity(stack)));
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
+    public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
         // TODO: Figure out a way to make use and useOn not overlap
 
         ItemStack itemInHand = player.getItemInHand(usedHand);
@@ -61,7 +62,7 @@ public class FluidContainerItem extends SubstanceContainerItem {
 
         if (isContainerEmpty(itemInHand)) {
             playEmptySound(level, player.getOnPos());
-            return InteractionResultHolder.fail(player.getMainHandItem());
+            return InteractionResult.PASS;
         }
 
         // If the player is holding a fluid container in the offhand, try to transfer substances into it
@@ -80,7 +81,8 @@ public class FluidContainerItem extends SubstanceContainerItem {
             BlockState blockState = level.getBlockState(blockHit.getBlockPos());
 
             // If the item has a lid, toggle spill state when sneaking and not looking at a block
-            if (player.isShiftKeyDown() && hasLid && !isLookingAtBlock) {
+//            if (player.isShiftKeyDown() && hasLid && !isLookingAtBlock) {
+            if (player.isShiftKeyDown() && !isLookingAtBlock) {
                 boolean currentSpillState = itemInHand.getOrDefault(CAN_SPILL, false);
                 itemInHand.set(CAN_SPILL, !currentSpillState);
                 // TODO: Lid sound
@@ -140,7 +142,7 @@ public class FluidContainerItem extends SubstanceContainerItem {
             level.setBlock(spillPos, FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
             transferSubstancesToBlock(spillPos, level, stack, getLimitedTransferRate(stack));
         } else {
-            player.sendSystemMessage(Component.literal("Can't spill here!").withStyle(ChatFormatting.RED));
+            player.displayClientMessage(Component.literal("Can't spill here!").withStyle(ChatFormatting.RED), true);
             return InteractionResult.PASS;
         }
 
@@ -254,7 +256,7 @@ public class FluidContainerItem extends SubstanceContainerItem {
 
     protected void playDrinkSound(@NotNull Level level, BlockPos pos) {
         level.playSound(null, pos,
-                SoundEvents.GENERIC_DRINK, SoundSource.PLAYERS, 0.5F,
+                SoundEvents.GENERIC_DRINK.value(), SoundSource.PLAYERS, 0.5F,
                 level.getRandom().nextFloat() * 0.1F + 0.9F);
     }
 
@@ -270,15 +272,15 @@ public class FluidContainerItem extends SubstanceContainerItem {
     }
 
     @Override
-    public @NotNull UseAnim getUseAnimation(@NotNull ItemStack stack) {
-        return UseAnim.DRINK;
+    public @NotNull ItemUseAnimation getUseAnimation(@NotNull ItemStack stack) {
+        return ItemUseAnimation.DRINK;
     }
 
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
         if (entity instanceof Player player) {
             if (!level.isClientSide()) {
-                player.sendSystemMessage(getFlavorMessageComponent(stack));
+                player.displayClientMessage(getFlavorMessageComponent(stack), false);
             }
         }
 
@@ -306,8 +308,8 @@ public class FluidContainerItem extends SubstanceContainerItem {
     }
 
     @Override
-    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
-        super.inventoryTick(stack, level, entity, slotId, isSelected);
+    public void inventoryTick(@NotNull ItemStack stack, @NotNull ServerLevel level, @NotNull Entity entity, @Nullable EquipmentSlot slot) {
+        super.inventoryTick(stack, level, entity, slot);
 
         if (stack.getOrDefault(HAS_LANDED.get(), false)) {
             stack.set(HAS_LANDED.get(), false);

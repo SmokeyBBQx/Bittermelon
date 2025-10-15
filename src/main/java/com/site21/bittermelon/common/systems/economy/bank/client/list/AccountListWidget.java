@@ -19,7 +19,7 @@ public class AccountListWidget<E extends AccountEntry> extends ContainerObjectSe
     }
 
     @Override
-    protected int getScrollbarPosition() {
+    protected int scrollBarX() {
         return this.width - 6;
     }
 

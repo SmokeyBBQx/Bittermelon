@@ -41,7 +41,7 @@ public class FallenEffect extends MobEffect {
         if (entity instanceof ServerPlayer player) {
             PacketDistributor.sendToPlayer(player, new StartScreenshake(70, 10));
         }
-        entity.level().playSound(null, entity.getOnPos(), FALL.get(), SoundSource.PLAYERS);
+        entity.level().playSound(null, entity.getOnPos(), FALL.value(), SoundSource.PLAYERS);
     }
 
     @Override

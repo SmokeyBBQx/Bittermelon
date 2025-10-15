@@ -1,25 +1,18 @@
 package com.site21.bittermelon.common.content.entities.scp650.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.content.entities.scp650.SCP650;
-import net.minecraft.client.animation.AnimationDefinition;
-import net.minecraft.client.model.HierarchicalModel;
-import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-public class SCP650Model<T extends SCP650> extends HierarchicalModel<T> {
-    public static final ModelLayerLocation SCP650_LAYER = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp650_layer"), "main");
-    private final ModelPart body;
+@OnlyIn(Dist.CLIENT)
+public class SCP650Model extends EntityModel<SCP650RenderState> {
 
     public SCP650Model(@NotNull ModelPart root) {
-        this.body = root.getChild("650");
+        super(root);
     }
 
     public static @NotNull LayerDefinition createBodyLayer() {
@@ -70,19 +63,9 @@ public class SCP650Model<T extends SCP650> extends HierarchicalModel<T> {
     }
 
     @Override
-    public void setupAnim(@NotNull T entity, float v, float v1, float ageInTicks, float v3, float v4) {
-        root().getAllParts().forEach(ModelPart::resetPose);
-        AnimationDefinition currentPose = entity.getCurrentPoseAnimation();
-        this.applyStatic(currentPose);
-    }
+    public void setupAnim(@NotNull SCP650RenderState renderState) {
+        super.setupAnim(renderState);
 
-    @Override
-    public void renderToBuffer(@NotNull PoseStack poseStack, @NotNull VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
-        body.render(poseStack, buffer, packedLight, packedOverlay, color);
-    }
-
-    @Override
-    public @NotNull ModelPart root() {
-        return body;
+        renderState.pose.bake(root()).applyStatic();
     }
 }

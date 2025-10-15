@@ -180,7 +180,7 @@ public class ContainmentPanelScreen extends Screen {
     private void playAmbientSound() {
         if (this.minecraft != null && this.minecraft.player != null) {
             this.minecraft.player.playSound(
-                    TERMINAL_HUM.get(),
+                    TERMINAL_HUM.value(),
                     0.7F,
                     0.5F
             );
@@ -191,7 +191,7 @@ public class ContainmentPanelScreen extends Screen {
     private void playBootUpSound() {
         if (this.minecraft != null && this.minecraft.player != null) {
             this.minecraft.player.playSound(
-                    BOOT_UP_TUNE.get(),
+                    BOOT_UP_TUNE.value(),
                     0.5F,
                     1.0F
             );

@@ -139,7 +139,7 @@ public class IncisionMinigame extends MedicalMinigame {
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
         if (button == 0 && !isCompleting) {
             drawnPoints.add(new Point((int) mouseX, (int) mouseY));
-            makeSound(BitterSounds.SCALPEL.get());
+            makeSound(BitterSounds.SCALPEL.value());
             return true;
         }
         return false;

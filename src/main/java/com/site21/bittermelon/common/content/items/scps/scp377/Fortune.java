@@ -11,9 +11,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.item.ItemStack;
@@ -51,7 +50,7 @@ public enum Fortune implements StringRepresentable {
     CLEAR_INVENTORY("Your burdens will be lifted", player
             -> player.getInventory().clearContent()),
     STRENGTH("You are stronger than you think.", player
-            -> player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 240, 4, true, false))),
+            -> player.addEffect(new MobEffectInstance(MobEffects.STRENGTH, 240, 4, true, false))),
     BREAD("Bread today is better than cake tomorrow", player
             -> player.getInventory().add(new ItemStack(Items.BREAD, 640))),
     SPEAR("A well aimed spear is better than three.", player
@@ -71,7 +70,7 @@ public enum Fortune implements StringRepresentable {
     }),
     ATTRACT("People are naturally attracted to you.", player -> {
         AABB box = AABB.ofSize(Vec3.atCenterOf(player.getOnPos()), 10, 10, 10);
-        List<Player> players = player.level().getNearbyPlayers(TargetingConditions.DEFAULT, player, box);
+        List<Player> players = player.level().getEntitiesOfClass(Player.class, box);
         for (Player otherPlayer : players) {
             otherPlayer.teleportTo(player.getX(), player.getY(), player.getZ());
         }
@@ -84,7 +83,7 @@ public enum Fortune implements StringRepresentable {
     EXPLODE("Show everyone what you can do.", player
             -> summonEntity(TNT, player, player.getOnPos())),
     SPEED("Move quickly. Now is the time to make progress", player
-            -> player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 1000, 255, true, false)));
+            -> player.addEffect(new MobEffectInstance(MobEffects.SPEED, 1000, 255, true, false)));
 
     private final String message;
     private final Consumer<Player> behavior;
@@ -115,7 +114,7 @@ public enum Fortune implements StringRepresentable {
 
     private static void summonEntity(EntityType<?> entityType, @NotNull Player player, BlockPos pos) {
         if (player.level() instanceof ServerLevel level) {
-            entityType.spawn(level, pos, MobSpawnType.MOB_SUMMONED);
+            entityType.spawn(level, pos, EntitySpawnReason.MOB_SUMMONED);
         }
     }
 

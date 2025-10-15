@@ -1,15 +1,13 @@
 package com.site21.bittermelon.common.content.items.laserdesignator;
 
 import com.site21.bittermelon.common.content.blocks.electronics.containmentpanel.ContainmentPanelBlockEntity;
-import com.site21.bittermelon.common.content.items.base.BaseItem;
-import com.site21.bittermelon.common.content.items.base.ItemWeight;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -22,21 +20,21 @@ import static com.site21.bittermelon.init.neoforge.BitterDataComponents.POSITION
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.POSITION_2;
 import static com.site21.bittermelon.init.neoforge.BitterSounds.SCANNER_BEEP;
 
-public class LaserDesignatorItem extends BaseItem {
-    public LaserDesignatorItem(Properties properties, int width, int height, ItemWeight itemWeight) {
-        super(properties, width, height, itemWeight);
+public class LaserDesignatorItem extends Item {
+    public LaserDesignatorItem(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
+    public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
         ItemStack heldItem = player.getItemInHand(usedHand);
 
-        if (level.isClientSide) return InteractionResultHolder.fail(heldItem);
+        if (level.isClientSide) return InteractionResult.PASS;
 
         BlockPos pos1 = heldItem.get(POSITION_1);
         BlockPos pos2 = heldItem.get(POSITION_2);
         if (pos1 == null || pos2 == null) {
-            return InteractionResultHolder.pass(heldItem);
+            return InteractionResult.PASS;
         }
 
         Vec3 lookAngle = player.getLookAngle();
@@ -55,7 +53,7 @@ public class LaserDesignatorItem extends BaseItem {
         }
 
         playBeepSound(player);
-        return InteractionResultHolder.success(heldItem);
+        return InteractionResult.SUCCESS;
     }
 
     @Contract("_ -> new")
@@ -94,18 +92,18 @@ public class LaserDesignatorItem extends BaseItem {
                 BoundingBox boundingBox = blockEntity.getBoundingBox();
                 usedItem.set(POSITION_1.get(), new BlockPos(boundingBox.minX(), boundingBox.minY(), boundingBox.minZ()));
                 usedItem.set(POSITION_2.get(), new BlockPos(boundingBox.maxX(), boundingBox.maxY(), boundingBox.maxZ()));
-                player.level().playSound(null, player.getOnPos(), SCANNER_BEEP.get(), SoundSource.PLAYERS, 0.5f, 0.8f);
-                player.sendSystemMessage(Component.literal("Bounding box copied from containment panel.").withColor(3066993));
+                player.level().playSound(null, player.getOnPos(), SCANNER_BEEP.value(), SoundSource.PLAYERS, 0.5f, 0.8f);
+                player.displayClientMessage(Component.literal("Bounding box copied from containment panel.").withColor(3066993), true);
                 return InteractionResult.SUCCESS;
             }
         }
 
         if (player.isCrouching()) {
             context.getItemInHand().set(POSITION_2.get(), context.getClickedPos());
-            player.sendSystemMessage(Component.literal("Position 2 set to " + context.getClickedPos().toShortString()).withColor(3066993));
+            player.displayClientMessage(Component.literal("Position 2 set to " + context.getClickedPos().toShortString()).withColor(3066993), true);
         } else {
             context.getItemInHand().set(POSITION_1.get(), context.getClickedPos());
-            player.sendSystemMessage(Component.literal("Position 1 set to " + context.getClickedPos().toShortString()).withColor(3066993));
+            player.displayClientMessage(Component.literal("Position 1 set to " + context.getClickedPos().toShortString()).withColor(3066993), true);
         }
 
         playBeepSound(player);
@@ -113,6 +111,6 @@ public class LaserDesignatorItem extends BaseItem {
     }
 
     public void playBeepSound(@NotNull Player player) {
-        player.level().playSound(null, player.getOnPos(), SCANNER_BEEP.get(), SoundSource.PLAYERS, 0.5f, 0.8f);
+        player.level().playSound(null, player.getOnPos(), SCANNER_BEEP.value(), SoundSource.PLAYERS, 0.5f, 0.8f);
     }
 }

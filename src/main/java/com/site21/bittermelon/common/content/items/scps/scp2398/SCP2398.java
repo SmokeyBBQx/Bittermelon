@@ -1,33 +1,31 @@
 package com.site21.bittermelon.common.content.items.scps.scp2398;
 
 import com.site21.bittermelon.common.content.entities.ThrownItemProjectile;
-import com.site21.bittermelon.common.content.items.base.BaseItem;
-import com.site21.bittermelon.common.content.items.base.ItemWeight;
 import com.site21.bittermelon.init.neoforge.BitterItemTags;
 import com.site21.bittermelon.init.neoforge.BitterItems;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.neoforge.BitterSounds.BAT_IMPACT;
 
-public class SCP2398 extends BaseItem {
+public class SCP2398 extends Item {
     private static final int COOLDOWN_TICKS = 40;
     private static final int USE_DURATION_TICKS = 20;
 
-    public SCP2398(Properties properties, int width, int height, ItemWeight itemWeight) {
-        super(properties, width, height, itemWeight);
+    public SCP2398(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -36,13 +34,13 @@ public class SCP2398 extends BaseItem {
     }
 
     @Override
-    public @NotNull UseAnim getUseAnimation(@NotNull ItemStack stack) {
-        return UseAnim.BOW;
+    public @NotNull ItemUseAnimation getUseAnimation(@NotNull ItemStack stack) {
+        return ItemUseAnimation.BOW;
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
-        ItemStack itemStack = player.getItemInHand(usedHand);
+    public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
+        ItemStack stack = player.getItemInHand(usedHand);
         InteractionHand otherHand;
 
         if (usedHand == InteractionHand.MAIN_HAND) {
@@ -53,16 +51,16 @@ public class SCP2398 extends BaseItem {
 
         ItemStack otherHandStack = player.getItemInHand(otherHand);
 
-        if (player.getCooldowns().isOnCooldown(this)) {
-            return InteractionResultHolder.fail(itemStack);
+        if (player.getCooldowns().isOnCooldown(stack)) {
+            return InteractionResult.PASS;
         }
 
         if (otherHandStack.is(BitterItemTags.BASEBALL) || otherHandStack.is(BitterItems.BASEBALL.get())) {
             player.startUsingItem(usedHand);
-            return InteractionResultHolder.consume(itemStack);
+            return InteractionResult.CONSUME;
         }
 
-        return InteractionResultHolder.fail(itemStack);
+        return InteractionResult.PASS;
     }
 
     @Override
@@ -75,14 +73,14 @@ public class SCP2398 extends BaseItem {
             ItemStack otherHandStack = player.getItemInHand(otherHand);
 
             if (otherHandStack.is(BitterItemTags.BASEBALL) || otherHandStack.is(BitterItems.BASEBALL.get())) {
-                SCP2398Projectile projectile = new SCP2398Projectile(level, player, otherHandStack.copy());
+                SCP2398Projectile projectile = new SCP2398Projectile(player, level, otherHandStack.copy());
                 projectile.setPos(player.getX(), player.getEyeY() - 0.1, player.getZ());
                 projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 4.5F, 1.0F);
                 player.level().addFreshEntity(projectile);
                 otherHandStack.shrink(1);
-                level.playSound(null, player.getOnPos(), BAT_IMPACT.get(), SoundSource.PLAYERS, 2, 1);
+                level.playSound(null, player.getOnPos(), BAT_IMPACT.value(), SoundSource.PLAYERS, 2, 1);
 
-                player.getCooldowns().addCooldown(this, COOLDOWN_TICKS);
+                player.getCooldowns().addCooldown(stack, COOLDOWN_TICKS);
             }
         }
 
@@ -90,7 +88,7 @@ public class SCP2398 extends BaseItem {
     }
 
     @Override
-    public void releaseUsing(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity livingEntity, int timeLeft) {
+    public boolean releaseUsing(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity livingEntity, int timeLeft) {
         if (getUseDuration(stack, livingEntity) - timeLeft >= USE_DURATION_TICKS / 2) {
             if (livingEntity instanceof Player player) {
                 InteractionHand otherHand = player.getUsedItemHand() == InteractionHand.MAIN_HAND
@@ -100,40 +98,42 @@ public class SCP2398 extends BaseItem {
                 ItemStack otherHandStack = player.getItemInHand(otherHand);
 
                 if (otherHandStack.is(BitterItemTags.BASEBALL) || otherHandStack.is(BitterItems.BASEBALL.get())) {
-                    SCP2398Projectile projectile = new SCP2398Projectile(level, player, otherHandStack.copy());
+                    SCP2398Projectile projectile = new SCP2398Projectile(player, level, otherHandStack.copy());
                     float powerFactor = (float)(getUseDuration(stack, livingEntity) - timeLeft) / USE_DURATION_TICKS;
                     projectile.setPos(player.getX(), player.getEyeY() - 0.1, player.getZ());
                     projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 4.5F * powerFactor, 1.0F);
                     player.level().addFreshEntity(projectile);
                     otherHandStack.shrink(1);
-                    level.playSound(null, player.getOnPos(), BAT_IMPACT.get(), SoundSource.PLAYERS, 2, 1);
+                    level.playSound(null, player.getOnPos(), BAT_IMPACT.value(), SoundSource.PLAYERS, 2, 1);
 
-                    player.getCooldowns().addCooldown(this, COOLDOWN_TICKS);
+                    player.getCooldowns().addCooldown(stack, COOLDOWN_TICKS);
+
+                    return true;
                 }
             }
         }
+
+        return false;
     }
 
-    @Override
-    public void projectileHitEntity(ItemStack stack, @NotNull Entity entity, @NotNull DamageSources damageSources, ThrownItemProjectile thrownItemProjectile, Entity owner, Vec3 velocity) {
-        if (entity instanceof LivingEntity livingEntity) {
-            explodeEntity(stack, livingEntity, owner);
-            shootExplosiveProjectile(stack, livingEntity);
-        }
-    }
+//    @Override
+//    public void projectileHitEntity(ItemStack stack, @NotNull Entity entity, @NotNull DamageSources damageSources, ThrownItemProjectile thrownItemProjectile, Entity owner, Vec3 velocity) {
+//        if (entity instanceof LivingEntity livingEntity) {
+//            explodeEntity(stack, livingEntity, owner);
+//            shootExplosiveProjectile(stack, livingEntity);
+//        }
+//    }
 
     @Override
-    public boolean hurtEnemy(@NotNull ItemStack stack, @NotNull LivingEntity target, @NotNull LivingEntity attacker) {
-        attacker.level().playSound(null, attacker.getOnPos(), BAT_IMPACT.get(), SoundSource.PLAYERS, 2, 1);
+    public void hurtEnemy(@NotNull ItemStack stack, @NotNull LivingEntity target, @NotNull LivingEntity attacker) {
+        attacker.level().playSound(null, attacker.getOnPos(), BAT_IMPACT.value(), SoundSource.PLAYERS, 2, 1);
         explodeEntity(stack, target, attacker);
 
 
         if (attacker instanceof Player player) {
-            player.getCooldowns().addCooldown(this, COOLDOWN_TICKS);
+            player.getCooldowns().addCooldown(stack, COOLDOWN_TICKS);
             spawnSweepParticles(attacker.level(), player);
         }
-
-        return true;
     }
 
     private void explodeEntity(@NotNull ItemStack stack, @NotNull LivingEntity target, Entity attacker) {

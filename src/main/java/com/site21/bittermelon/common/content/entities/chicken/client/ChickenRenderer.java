@@ -10,20 +10,25 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.common.content.entities.client.ModelLayers.CHICKEN_LAYER;
 
-public class ChickenRenderer extends MobRenderer<Chicken, ChickenModel<Chicken>> {
-    private static final ResourceLocation CHICKEN_LOCATION = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/entity/silkie_white.png");
+public class ChickenRenderer extends MobRenderer<Chicken, ChickenRenderState, ChickenModel> {
 
     public ChickenRenderer(EntityRendererProvider.Context context) {
-        super(context, new ChickenModel<>(context.bakeLayer(CHICKEN_LAYER)), 0.2F);
+        super(context, new ChickenModel(context.bakeLayer(CHICKEN_LAYER)), 0.2F);
     }
 
-    public @NotNull ResourceLocation getTextureLocation(@NotNull Chicken entity) {
-        return CHICKEN_LOCATION;
+    @Override
+    public @NotNull ChickenRenderState createRenderState() {
+        return new ChickenRenderState();
     }
 
-    protected float getBob(@NotNull Chicken livingBase, float partialTicks) {
-        float f = Mth.lerp(partialTicks, livingBase.oFlap, livingBase.flap);
-        float f1 = Mth.lerp(partialTicks, livingBase.oFlapSpeed, livingBase.flapSpeed);
-        return (Mth.sin(f) + 1.0F) * f1;
+    public void extractRenderState(@NotNull Chicken entity, @NotNull ChickenRenderState reusedState, float partialTick) {
+        super.extractRenderState(entity, reusedState, partialTick);
+        reusedState.flap = Mth.lerp(partialTick, entity.oFlap, entity.flap);
+        reusedState.flapSpeed = Mth.lerp(partialTick, entity.oFlapSpeed, entity.flapSpeed);
+    }
+
+    @Override
+    public @NotNull ResourceLocation getTextureLocation(@NotNull ChickenRenderState renderState) {
+        return ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/entity/silkie_white.png");
     }
 }

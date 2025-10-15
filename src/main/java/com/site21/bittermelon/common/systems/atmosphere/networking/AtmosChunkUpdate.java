@@ -36,6 +36,6 @@ public record AtmosChunkUpdate(ChunkPos pos, AtmosBlockData data) implements Cus
         Level level = Minecraft.getInstance().player.level();
 
         level.getChunk(pos.x, pos.z).setData(ATMOSPHERE.get(), data());
-        level.getChunk(pos.x, pos.z).setUnsaved(true);
+        level.getChunk(pos.x, pos.z).markUnsaved();
     }
 }

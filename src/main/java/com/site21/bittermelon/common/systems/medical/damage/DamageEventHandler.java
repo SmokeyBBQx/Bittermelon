@@ -58,7 +58,7 @@ public class DamageEventHandler {
                         .setMessages(
                                 "%s hits %s's %s"
                         )
-                        .setSound(WRESTLE.get())
+                        .setSound(WRESTLE.value())
                         .build();
             } else {
                 attackTemplate = new AttackTemplate.AttackTemplateBuilder()
@@ -74,7 +74,7 @@ public class DamageEventHandler {
                                 "%s stabs %s's %s with " + stack.getDisplayName().getString().toLowerCase(),
                                 "%s pierces %s's %s with " + stack.getDisplayName().getString().toLowerCase()
                         )
-                        .setSound(WRESTLE.get())
+                        .setSound(WRESTLE.value())
                         .build();
             }
 

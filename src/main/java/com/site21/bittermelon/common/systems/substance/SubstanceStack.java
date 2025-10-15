@@ -40,6 +40,14 @@ public class SubstanceStack implements DataComponentHolder, MutableDataComponent
         this(tag.value(), amount, temperature);
     }
 
+    public SubstanceStack(@NotNull Holder<Substance> tag, float amount) {
+        this(tag.value(), amount, 273.15f);
+    }
+
+    public SubstanceStack(@NotNull Substance substance, float amount) {
+        this(substance, amount, 273.15f);
+    }
+
     public SubstanceStack(@NotNull Holder<Substance> tag, float amount, float temperature, DataComponentPatch components) {
         this(tag.value(), amount, temperature, PatchedDataComponentMap.fromPatch(tag.value().components(), components));
     }
@@ -93,10 +101,18 @@ public class SubstanceStack implements DataComponentHolder, MutableDataComponent
         setVolume(Math.max(0, getVolume() + delta));
     }
 
+    /**
+     * Checks if this SubstanceStack is empty (amount is zero or less).
+     * @return True if the SubstanceStack is empty, false otherwise.
+     */
     public boolean isEmpty() {
         return amount <= 0;
     }
 
+    /**
+     * Creates a copy of this SubstanceStack. If the stack is empty, returns SubstanceStack.EMPTY.
+     * @return A copy of this SubstanceStack.
+     */
     public SubstanceStack copy() {
         if (this.isEmpty()) {
             return EMPTY;
@@ -105,6 +121,12 @@ public class SubstanceStack implements DataComponentHolder, MutableDataComponent
         }
     }
 
+    /**
+     * Checks if this SubstanceStack can be merged with another SubstanceStack.
+     * Two SubstanceStacks can be merged if they have the same substance and the same components.
+     * @param other The other SubstanceStack to check against.
+     * @return True if the two SubstanceStacks can be merged, false otherwise.
+     */
     public boolean canMergeWith(SubstanceStack other) {
         if (this == other) {
             return true;
@@ -113,6 +135,12 @@ public class SubstanceStack implements DataComponentHolder, MutableDataComponent
         }
     }
 
+    /**
+     * Checks if two SubstanceStacks are exactly the same, including amount, temperature, substance, and components.
+     * @param stack The first SubstanceStack to compare.
+     * @param other The second SubstanceStack to compare.
+     * @return True if the two SubstanceStacks are exactly the same, false otherwise.
+     */
     public static boolean matches(SubstanceStack stack, SubstanceStack other) {
         if (stack == other) {
             return true;
@@ -123,6 +151,12 @@ public class SubstanceStack implements DataComponentHolder, MutableDataComponent
         }
     }
 
+    /**
+     * Checks if two SubstanceStacks have the same substance and components, ignoring amount and temperature.
+     * @param stack The first SubstanceStack to compare.
+     * @param other The second SubstanceStack to compare.
+     * @return True if the two SubstanceStacks have the same substance and components, false otherwise.
+     */
     public static boolean isSameSubstanceSameComponents(SubstanceStack stack, SubstanceStack other) {
         if (stack == other) {
             return true;
@@ -131,6 +165,12 @@ public class SubstanceStack implements DataComponentHolder, MutableDataComponent
         }
     }
 
+    /**
+     * Checks if two lists of SubstanceStacks are exactly the same, including order, amount, temperature, substance, and components.
+     * @param list The first list of SubstanceStacks to compare.
+     * @param other The second list of SubstanceStacks to compare.
+     * @return True if the two lists of SubstanceStacks are exactly the same, false otherwise.
+     */
     public static boolean listMatches(@NotNull List<SubstanceStack> list, @NotNull List<SubstanceStack> other) {
         if (list.size() != other.size()) {
             return false;
@@ -145,6 +185,11 @@ public class SubstanceStack implements DataComponentHolder, MutableDataComponent
         }
     }
 
+    /**
+     * Generates a hash code for a list of SubstanceStacks, considering substance and components only.
+     * @param list The list of SubstanceStacks to hash.
+     * @return The hash code of the list.
+     */
     public static int hashStackList(@NotNull List<SubstanceStack> list) {
         int i = 0;
 
@@ -155,6 +200,11 @@ public class SubstanceStack implements DataComponentHolder, MutableDataComponent
         return i;
     }
 
+    /**
+     * Generates a hash code for a SubstanceStack, considering substance and components only.
+     * @param stack The SubstanceStack to hash.
+     * @return The hash code of the SubstanceStack.
+     */
     public static int hashSubstanceAndComponents(@javax.annotation.Nullable SubstanceStack stack) {
         if (stack != null) {
             int i = 31 + stack.getSubstance().hashCode();

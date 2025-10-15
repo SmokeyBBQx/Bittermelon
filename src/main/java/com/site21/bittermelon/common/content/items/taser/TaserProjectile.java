@@ -12,7 +12,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
@@ -73,7 +72,7 @@ public class TaserProjectile extends Projectile {
 
         this.move(MoverType.SELF, movement);
         this.updateRotation();
-        this.checkInsideBlocks();
+//        this.checkInsideBlocks();
 
         Vec3 currentMovement = this.getDeltaMovement();
         this.setDeltaMovement(currentMovement.scale(0.99D).subtract(0, this.getDefaultGravity(), 0));
@@ -111,7 +110,7 @@ public class TaserProjectile extends Projectile {
 
             ClientboundStopSoundPacket stopSoundPacket = new ClientboundStopSoundPacket(BitterSounds.TASER.getKey().location(), SoundSource.PLAYERS);
             AABB stopSoundArea = new AABB(livingEntity.getOnPos()).inflate(15);
-            for (Player player : level().getNearbyPlayers(TargetingConditions.DEFAULT, livingEntity, stopSoundArea)) {
+            for (Player player : level().getEntitiesOfClass(Player.class, stopSoundArea)) {
                 if (player instanceof ServerPlayer serverPlayer) {
                     serverPlayer.connection.send(stopSoundPacket);
                 }

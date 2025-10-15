@@ -1,17 +1,17 @@
 package com.site21.bittermelon.common.content.items.substance;
 
-import com.site21.bittermelon.common.content.items.base.ItemWeight;
 import com.site21.bittermelon.common.content.items.base.FragileItem;
-import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class GlassFluidContainerItem extends FluidContainerItem implements FragileItem {
-    public GlassFluidContainerItem(Properties properties, int width, int height, ItemWeight itemWeight, boolean hasLid) {
-        super(properties, width, height, itemWeight, hasLid);
+    public GlassFluidContainerItem(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -22,17 +22,9 @@ public class GlassFluidContainerItem extends FluidContainerItem implements Fragi
     }
 
     @Override
-    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotId, boolean isSelected) {
-        super.inventoryTick(stack, level, entity, slotId, isSelected);
-        hasLanded(stack);
-    }
+    public void inventoryTick(@NotNull ItemStack stack, @NotNull ServerLevel level, @NotNull Entity entity, @Nullable EquipmentSlot slot) {
+        super.inventoryTick(stack, level, entity, slot);
 
-    public void projectileHitBlock(ItemStack stack, Level level, @NotNull BlockPos pos) {
-        if (!checkForBreakOnHit(stack, level, pos)) {
-            super.projectileHitBlock(stack, level, pos);
-        } else {
-            super.spill(stack, level, pos.above(), getTotalVolume(stack));
-            // Bug when hitting walls, it replaces it
-        }
+        hasLanded(stack);
     }
 }

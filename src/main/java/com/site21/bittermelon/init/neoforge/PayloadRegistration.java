@@ -5,7 +5,7 @@ import com.site21.bittermelon.client.render.screenshake.StartScreenshake;
 import com.site21.bittermelon.common.content.blocks.electronics.containmentpanel.networking.ContainmentNameUpdate;
 import com.site21.bittermelon.common.content.blocks.electronics.containmentpanel.networking.OpenContainmentPanelScreen;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.networking.*;
-import com.site21.bittermelon.common.content.items.wires.wire.networking.*;
+import com.site21.bittermelon.common.content.items.wire.networking.*;
 import com.site21.bittermelon.common.systems.atmosphere.networking.*;
 import com.site21.bittermelon.common.systems.character.networking.*;
 import com.site21.bittermelon.common.systems.medical.client.screen.networking.*;
@@ -269,12 +269,6 @@ public class PayloadRegistration {
                 UpdateHealthScreen.TYPE,
                 UpdateHealthScreen.STREAM_CODEC,
                 UpdateHealthScreen::handle
-        );
-
-        registrar.playToClient(
-                UpdateCompartmentHealth.TYPE,
-                UpdateCompartmentHealth.STREAM_CODEC,
-                UpdateCompartmentHealth::handle
         );
 
         registrar.playToClient(

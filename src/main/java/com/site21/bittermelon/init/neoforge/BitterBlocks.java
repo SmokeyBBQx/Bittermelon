@@ -1,26 +1,26 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.common.content.blocks.SmallPosterBlock;
+import com.site21.bittermelon.common.content.blocks.base.structuralblock.StructuralBlock;
+import com.site21.bittermelon.common.content.blocks.container.smallbox.SmallBox;
+import com.site21.bittermelon.common.content.blocks.dirtyfloor.DirtyFloorBlock;
+import com.site21.bittermelon.common.content.blocks.electronics.ATMBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.containmentalarm.ContainmentAlarm;
+import com.site21.bittermelon.common.content.blocks.electronics.containmentpanel.ContainmentPanelBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.detonator.DetonatorBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.environmentsensor.EnvironmentSensor;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.IntercomBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.keycardprinter.KeycardPrinter;
 import com.site21.bittermelon.common.content.blocks.electronics.keycardreader.KeycardReaderBlock;
+import com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.LargeSlidingDoorBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.personnelterminal.PersonnelTerminalBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.redstonedevice.RedstoneDeviceBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.securedoor.KeycardReaderSecureDoorBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.securedoor.SecureDoorBlock;
-import com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.LargeSlidingDoorBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.slidingdoor.SlidingDoorBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.speaker.SpeakerBlock;
-import com.site21.bittermelon.common.content.blocks.dirtyfloor.DirtyFloorBlock;
-import com.site21.bittermelon.common.content.blocks.base.structuralblock.StructuralBlock;
-import com.site21.bittermelon.common.content.blocks.container.smallbox.SmallBox;
-import com.site21.bittermelon.common.content.blocks.electronics.ATMBlock;
-import com.site21.bittermelon.common.content.blocks.electronics.containmentpanel.ContainmentPanelBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.thermometer.ThermometerBlock;
-import com.site21.bittermelon.common.content.blocks.SmallPosterBlock;
 import com.site21.bittermelon.common.content.blocks.powergrid.distributionboard.DistributionBoardBlock;
 import com.site21.bittermelon.common.content.blocks.scp.scp151.SCP151Block;
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlock;
@@ -31,138 +31,120 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.material.PushReaction;
+import net.neoforged.neoforge.common.util.DeferredSoundType;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class BitterBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Bittermelon.MOD_ID);
 
-    public static final DeferredBlock<FluidBlock> FLUID = BLOCKS.register("fluid", () -> new FluidBlock(BlockBehaviour.Properties.of()
+    public static final DeferredBlock<FluidBlock> FLUID = BLOCKS.registerBlock("fluid", FluidBlock::new, BlockBehaviour.Properties.of()
             .mapColor(MapColor.WATER)
             .noOcclusion()
             .destroyTime(-1)
-            .sound(
-                    new SoundType(
-                         1.0f,
-                            1.0f,
-                            BitterSounds.SPLATTER.get(),
-                            BitterSounds.SOGGY.get(),
-                            BitterSounds.SPLAT.get(),
-                            BitterSounds.SOGGY.get(),
-                            BitterSounds.SPLATTER.get()
-                    )
-            )
-            .pushReaction(PushReaction.NORMAL)
-    ));
+            .sound(new DeferredSoundType(1.0f,
+                    1.0f,
+                    BitterSounds.SPLATTER::value,
+                    BitterSounds.SOGGY::value,
+                    BitterSounds.SPLAT::value,
+                    BitterSounds.SOGGY::value,
+                    BitterSounds.SPLATTER::value
+            ))
+    );
 
-    public static final DeferredBlock<SmallBox> SMALL_CARDBOARD_BOX = BLOCKS.register("small_cardboard_box", () -> new SmallBox(BlockBehaviour.Properties.of()
+    public static final DeferredBlock<SmallBox> SMALL_CARDBOARD_BOX = BLOCKS.registerBlock("small_cardboard_box", SmallBox::new, BlockBehaviour.Properties.of()
             .destroyTime(-1)
             .sound(SoundType.WOOL)
-    ));
+    );
 
-    public static final DeferredBlock<StructuralBlock> STRUCTURAL_BLOCK = BLOCKS.register("structural_block", () -> new StructuralBlock(BlockBehaviour.Properties.of()
+    public static final DeferredBlock<StructuralBlock> STRUCTURAL_BLOCK = BLOCKS.registerBlock("structural_block", StructuralBlock::new, BlockBehaviour.Properties.of()
             .destroyTime(1.5f)
-    ));
+    );
 
-    public static final DeferredBlock<ATMBlock> ATM = BLOCKS.register("atm", () -> new ATMBlock(BlockBehaviour.Properties.of()
+    public static final DeferredBlock<ATMBlock> ATM = BLOCKS.registerBlock("atm", ATMBlock::new, BlockBehaviour.Properties.of()
             .noOcclusion()
-    ));
+    );
 
-    public static final DeferredBlock<ContainmentPanelBlock> CONTAINMENT_PANEL = BLOCKS.register("containment_panel",
-            () -> new ContainmentPanelBlock(BlockBehaviour.Properties.of().noOcclusion()
-    ));
+    public static final DeferredBlock<ContainmentPanelBlock> CONTAINMENT_PANEL = BLOCKS.registerBlock("containment_panel", ContainmentPanelBlock::new, BlockBehaviour.Properties.of()
+            .noOcclusion()
+    );
 
-    public static final DeferredBlock<DirtyFloorBlock> DIRTY_FLOOR = BLOCKS.register("dirty_floor",
-            () -> new DirtyFloorBlock(BlockBehaviour.Properties.of()
-                    .noOcclusion()
-                    .noCollission()
-                    .destroyTime(-1)
-                    .replaceable()
-            ));
+    public static final DeferredBlock<DirtyFloorBlock> DIRTY_FLOOR = BLOCKS.registerBlock("dirty_floor", DirtyFloorBlock::new, BlockBehaviour.Properties.of()
+            .noOcclusion()
+            .noCollission()
+            .destroyTime(-1)
+            .replaceable()
+    );
 
-    public static final DeferredBlock<ThermometerBlock> THERMOMETER = BLOCKS.register("thermometer",
-            () -> new ThermometerBlock(BlockBehaviour.Properties.of().noOcclusion()
-            ));
+    public static final DeferredBlock<ThermometerBlock> THERMOMETER = BLOCKS.registerBlock("thermometer", ThermometerBlock::new, BlockBehaviour.Properties.of()
+            .noOcclusion()
+    );
 
-    public static final DeferredBlock<IntercomBlock> INTERCOM = BLOCKS.register("intercom",
-            () -> new IntercomBlock(BlockBehaviour.Properties.of().noOcclusion()
-            ));
+    public static final DeferredBlock<IntercomBlock> INTERCOM = BLOCKS.registerBlock("intercom", IntercomBlock::new, BlockBehaviour.Properties.of()
+            .noOcclusion()
+    );
 
-    public static final DeferredBlock<EnvironmentSensor> ENVIRONMENT_SENSOR = BLOCKS.register("environment_sensor",
-            () -> new EnvironmentSensor(BlockBehaviour.Properties.of().noOcclusion()
-            ));
+    public static final DeferredBlock<EnvironmentSensor> ENVIRONMENT_SENSOR = BLOCKS.registerBlock("environment_sensor", EnvironmentSensor::new, BlockBehaviour.Properties.of()
+            .noOcclusion()
+    );
 
-    public static final DeferredBlock<ContainmentAlarm> CONTAINMENT_ALARM = BLOCKS.register("containment_alarm",
-            () -> new ContainmentAlarm(BlockBehaviour.Properties.of().noOcclusion()
-            ));
+    public static final DeferredBlock<ContainmentAlarm> CONTAINMENT_ALARM = BLOCKS.registerBlock("containment_alarm", ContainmentAlarm::new, BlockBehaviour.Properties.of()
+            .noOcclusion()
+    );
 
-    public static final DeferredBlock<DetonatorBlock> DETONATOR = BLOCKS.register("detonator",
-            () -> new DetonatorBlock(BlockBehaviour.Properties.of().noOcclusion()
-            ));
+    public static final DeferredBlock<DetonatorBlock> DETONATOR = BLOCKS.registerBlock("detonator", DetonatorBlock::new, BlockBehaviour.Properties.of()
+            .noOcclusion()
+    );
 
-    public static final DeferredBlock<SpeakerBlock> SPEAKER = BLOCKS.register("speaker",
-            () -> new SpeakerBlock(BlockBehaviour.Properties.of().noOcclusion()
-            ));
+    public static final DeferredBlock<SpeakerBlock> SPEAKER = BLOCKS.registerBlock("speaker", SpeakerBlock::new, BlockBehaviour.Properties.of()
+            .noOcclusion()
+    );
 
-    public static final DeferredBlock<SecureDoorBlock> SECURE_DOOR = BLOCKS.register("secure_door",
-            () -> new SecureDoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.of().noOcclusion()));
+    public static final DeferredBlock<SecureDoorBlock> SECURE_DOOR = BLOCKS.registerBlock("secure_door", props -> new SecureDoorBlock(BlockSetType.IRON, props), BlockBehaviour.Properties.of()
+            .noOcclusion()
+    );
 
-    public static final DeferredBlock<KeycardReaderSecureDoorBlock> KEYCARD_READER_SECURE_DOOR = BLOCKS.register("keycard_reader_secure_door",
-            () -> new KeycardReaderSecureDoorBlock(BlockSetType.IRON, BlockBehaviour.Properties.of().noOcclusion()));
+    public static final DeferredBlock<KeycardReaderSecureDoorBlock> KEYCARD_READER_SECURE_DOOR = BLOCKS.registerBlock("keycard_reader_secure_door", props -> new KeycardReaderSecureDoorBlock(BlockSetType.IRON, props), BlockBehaviour.Properties.of()
+            .noOcclusion()
+    );
 
-    public static final DeferredBlock<LargeSlidingDoorBlock> LARGE_SLIDING_DOOR = BLOCKS.register("large_sliding_door",
-            () -> new LargeSlidingDoorBlock(BlockBehaviour.Properties.of()));
+    public static final DeferredBlock<LargeSlidingDoorBlock> LARGE_SLIDING_DOOR = BLOCKS.registerBlock("large_sliding_door", LargeSlidingDoorBlock::new, BlockBehaviour.Properties.of());
 
-    public static final DeferredBlock<SmallPosterBlock> YELLOW_INSPECTION_POSTER = BLOCKS.register("yellow_inspection_poster",
-            () -> new SmallPosterBlock(BlockBehaviour.Properties.of()));
+    public static final DeferredBlock<SmallPosterBlock> YELLOW_INSPECTION_POSTER = BLOCKS.registerBlock("yellow_inspection_poster", SmallPosterBlock::new, BlockBehaviour.Properties.of());
 
-    public static final DeferredBlock<DistributionBoardBlock> DISTRIBUTION_BOARD = BLOCKS.register("distribution_board",
-            () -> new DistributionBoardBlock(BlockBehaviour.Properties.of()));
+    public static final DeferredBlock<DistributionBoardBlock> DISTRIBUTION_BOARD = BLOCKS.registerBlock("distribution_board", DistributionBoardBlock::new, BlockBehaviour.Properties.of());
 
-    public static final DeferredBlock<SCP151Block> SCP_151 = BLOCKS.register("scp_151",
-            () -> new SCP151Block(BlockBehaviour.Properties.of()));
+    public static final DeferredBlock<SCP151Block> SCP_151 = BLOCKS.registerBlock("scp_151", SCP151Block::new, BlockBehaviour.Properties.of());
 
-    public static final DeferredBlock<PersonnelTerminalBlock> PERSONNEL_TERMINAL = BLOCKS.register("personnel_terminal_block",
-            () -> new PersonnelTerminalBlock(BlockBehaviour.Properties.of()));
+    public static final DeferredBlock<PersonnelTerminalBlock> PERSONNEL_TERMINAL = BLOCKS.registerBlock("personnel_terminal_block", PersonnelTerminalBlock::new, BlockBehaviour.Properties.of());
 
-    public static final DeferredBlock<KeycardPrinter> KEYCARD_PRINTER = BLOCKS.register("keycard_printer",
-            () -> new KeycardPrinter(BlockBehaviour.Properties.of()));
+    public static final DeferredBlock<KeycardPrinter> KEYCARD_PRINTER = BLOCKS.registerBlock("keycard_printer", KeycardPrinter::new, BlockBehaviour.Properties.of());
 
-    public static final DeferredBlock<SlidingDoorBlock> SLIDING_DOOR = BLOCKS.register("sliding_door",
-            () -> new SlidingDoorBlock(BlockBehaviour.Properties.of().noOcclusion()));
+    public static final DeferredBlock<SlidingDoorBlock> SLIDING_DOOR = BLOCKS.registerBlock("sliding_door", SlidingDoorBlock::new, BlockBehaviour.Properties.of()
+            .noOcclusion()
+    );
 
-    public static final DeferredBlock<WallWritingBlock> WALL_WRITING = BLOCKS.register("wall_writing",
-            () -> new WallWritingBlock(BlockBehaviour.Properties.of()
-                    .noOcclusion()
-                    .noCollission()
-                    .replaceable()
-                    .destroyTime(-1)
-                    .sound(SoundType.SAND)
-            ));
+    public static final DeferredBlock<WallWritingBlock> WALL_WRITING = BLOCKS.registerBlock("wall_writing", WallWritingBlock::new, BlockBehaviour.Properties.of()
+            .noOcclusion()
+            .noCollission()
+            .replaceable()
+            .destroyTime(-1)
+            .sound(SoundType.SAND)
+    );
 
-    public static final DeferredBlock<StickyNoteBlock> STICKY_NOTE = BLOCKS.register("sticky_note",
-            () -> new StickyNoteBlock(BlockBehaviour.Properties.of()
-                    .noOcclusion()
-                    .noCollission()
-                    .sound(new SoundType(
-                            1.0f,
-                            1.0f,
-                            SoundEvents.BOOK_PUT,
-                            SoundEvents.BOOK_PUT,
-                            SoundEvents.BOOK_PUT,
-                            SoundEvents.BOOK_PUT,
-                            SoundEvents.BOOK_PUT
-                    ))
-            ));
+    public static final DeferredBlock<StickyNoteBlock> STICKY_NOTE = BLOCKS.registerBlock("sticky_note", StickyNoteBlock::new, BlockBehaviour.Properties.of()
+            .noOcclusion()
+            .noCollission()
+            .sound(new SoundType(1.0f, 1.0f, SoundEvents.BOOK_PUT, SoundEvents.BOOK_PUT, SoundEvents.BOOK_PUT, SoundEvents.BOOK_PUT, SoundEvents.BOOK_PUT))
+    );
 
-    public static final DeferredBlock<KeycardReaderBlock> KEYCARD_READER = BLOCKS.register("keycard_reader", () -> new KeycardReaderBlock(BlockBehaviour.Properties.of()
+    public static final DeferredBlock<KeycardReaderBlock> KEYCARD_READER = BLOCKS.registerBlock("keycard_reader", KeycardReaderBlock::new, BlockBehaviour.Properties.of()
             .sound(SoundType.METAL)
             .destroyTime(1.5f)
-    ));
+    );
 
-    public static final DeferredBlock<RedstoneDeviceBlock> REDSTONE_DEVICE = BLOCKS.register("redstone_device", () -> new RedstoneDeviceBlock(BlockBehaviour.Properties.of()
+    public static final DeferredBlock<RedstoneDeviceBlock> REDSTONE_DEVICE = BLOCKS.registerBlock("redstone_device", RedstoneDeviceBlock::new, BlockBehaviour.Properties.of()
             .sound(SoundType.METAL)
             .destroyTime(1.5f)
-    ));
+    );
 }

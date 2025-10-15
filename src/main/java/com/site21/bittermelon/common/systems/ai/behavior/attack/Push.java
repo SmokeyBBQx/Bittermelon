@@ -38,7 +38,7 @@ public class Push<E extends Mob> extends AnimatableMeleeAttack<E> {
         if (!entity.getSensing().hasLineOfSight(this.target) || !entity.isWithinMeleeAttackRange(this.target))
             return;
 
-        entity.level().playSound(null, entity.getOnPos(), WRESTLE.get(), SoundSource.AMBIENT);
+        entity.level().playSound(null, entity.getOnPos(), WRESTLE.value(), SoundSource.AMBIENT);
 
         CharacterManager characterManager = CharacterManager.get(entity.level());
         Character entityCharacter = characterManager.getActiveCharacter(entity);

@@ -3,7 +3,6 @@ package com.site21.bittermelon.common.content.blocks.electronics.containmentalar
 import com.site21.bittermelon.common.systems.electronics.ElectronicDevice;
 import com.site21.bittermelon.common.systems.electronics.ElectronicBlockEntity;
 import com.site21.bittermelon.common.systems.electronics.wiring.*;
-import com.site21.bittermelon.systems.electronics.wiring.*;
 import com.site21.bittermelon.common.systems.syncsound.SyncSoundEvent;
 import com.site21.bittermelon.common.systems.syncsound.SyncSoundType;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
@@ -62,7 +61,7 @@ public class ContainmentAlarmBlockEntity extends ElectronicBlockEntity implement
         if (isAlerted) {
             alertSoundCounter++;
             if (alertSoundCounter >= ALERT_SOUND_INTERVAL) {
-                level.playSound(null, worldPosition, BitterSounds.CONTAINMENT_ALERT.get(), SoundSource.NEUTRAL, 0.3f, 1);
+                level.playSound(null, worldPosition, BitterSounds.CONTAINMENT_ALERT.value(), SoundSource.NEUTRAL, 0.3f, 1);
                 NeoForge.EVENT_BUS.post(new SyncSoundEvent(level, getBlockPos(), SyncSoundType.SPEAKER, Component.literal("(alarm)").withStyle(ChatFormatting.ITALIC).withColor(0xFF808080), 16));
                 alertSoundCounter = 0;
             }

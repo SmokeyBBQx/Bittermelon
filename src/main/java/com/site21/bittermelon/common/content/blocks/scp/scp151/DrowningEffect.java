@@ -115,7 +115,7 @@ public class DrowningEffect extends MobEffect {
 
         if (amplifier < 9 && amplifier > 0) {
             if (player.level().getRandom().nextFloat() > 0.8f) {
-                player.level().playSound(null, player.getOnPos(), BitterSounds.MALE_COUGH.get(), SoundSource.PLAYERS);
+                player.level().playSound(null, player.getOnPos(), BitterSounds.MALE_COUGH.value(), SoundSource.PLAYERS);
                 if (character != null) {
                     message = character.getName() + " coughs!";
                 }
@@ -155,7 +155,7 @@ public class DrowningEffect extends MobEffect {
             fluid.updateSubstance(water);
         }
 
-        player.level().playSound(null, player.getOnPos(), BitterSounds.SPLAT.get(), SoundSource.PLAYERS);
+        player.level().playSound(null, player.getOnPos(), BitterSounds.SPLAT.value(), SoundSource.PLAYERS);
     }
 
     private void sendVomitParticles(@NotNull Player player) {

@@ -61,7 +61,7 @@ public class ContainmentPanelBlock extends IndentedSmallBlock implements EntityB
             BoundingBox boundingBox = BoundingBox.fromCorners(new Vec3i(pos1.getX(), pos1.getY(), pos1.getZ()), new Vec3i(pos2.getX(), pos2.getY(), pos2.getZ()));
             blockEntity.setBoundingBox(boundingBox);
 
-            player.level().playSound(null, player.getOnPos(), SCANNER_BEEP.get(), SoundSource.PLAYERS, 0.5f, 0.8f);
+            player.level().playSound(null, player.getOnPos(), SCANNER_BEEP.value(), SoundSource.PLAYERS, 0.5f, 0.8f);
         }
 
         return InteractionResult.SUCCESS;

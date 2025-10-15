@@ -1,35 +1,34 @@
 package com.site21.bittermelon.common.content.items.scps;
 
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlockEntity;
-import com.site21.bittermelon.common.content.items.base.ItemWeight;
 import com.site21.bittermelon.common.content.items.substance.FluidContainerItem;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 import static com.site21.bittermelon.init.custom.Substances.WATER;
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.CAN_SPILL;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.COOLDOWN;
 
 public class SCP109 extends FluidContainerItem {
     public SCP109(Properties properties) {
-        super(properties, 1, 1, ItemWeight.MEDIUM, true);
+        super(properties);
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
+    public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
         updateSubstance(player.getItemInHand(usedHand), new SubstanceStack(WATER.get(), 1000));
         return super.use(level, player, usedHand);
     }
@@ -69,8 +68,9 @@ public class SCP109 extends FluidContainerItem {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.literal("⇲" + getItemSize().description + " ⚖" + getItemWeight().description).withStyle(ChatFormatting.GRAY));
-        tooltipComponents.add(Component.literal("Contents: ∞/∞"));
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag flag) {
+        super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
+
+        tooltipAdder.accept(Component.literal("Contents: ∞/∞"));
     }
 }

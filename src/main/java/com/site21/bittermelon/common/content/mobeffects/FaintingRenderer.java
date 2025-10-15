@@ -21,7 +21,7 @@ public class FaintingRenderer {
     public static final ResourceLocation VIGNETTE_LOCATION = ResourceLocation.withDefaultNamespace("textures/misc/vignette.png");
 
     @SubscribeEvent
-    public static void onRenderLevelStage(@NotNull RenderLevelStageEvent event) {
+    public static void onRenderLevelStage(@NotNull RenderLevelStageEvent.AfterLevel event) {
 //        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_LEVEL) return;
 //
 //        Player player = Minecraft.getInstance().player;

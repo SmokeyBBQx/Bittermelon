@@ -27,7 +27,7 @@ public class Amnesticize<E extends SCP939> extends DelayedBehaviour<E> {
 
     @Override
     protected void start (@NotNull E entity) {
-        entity.playSound(BitterSounds.GHOSTLY_EXHALE.get(), 0.5f, 1.0f);
+        entity.playSound(BitterSounds.GHOSTLY_EXHALE.value(), 0.5f, 1.0f);
     }
 
     @Override

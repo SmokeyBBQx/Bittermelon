@@ -15,7 +15,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.InputEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class SubstanceContainerMouseScroll {
@@ -34,17 +34,17 @@ public class SubstanceContainerMouseScroll {
                         FluidContainerItem.getMaxTransferRate(heldItem));
                 FluidContainerItem.setTransferRate(heldItem, newRate);
 
-                PacketDistributor.sendToServer(new TransferRateUpdate(newRate, InteractionHand.MAIN_HAND));
+                ClientPacketDistributor.sendToServer(new TransferRateUpdate(newRate, InteractionHand.MAIN_HAND));
 
                 event.setCanceled(true);
             } else if (item instanceof GasContainerItem gasContainerItem) {
                 int currentReleasePressure = gasContainerItem.getReleasePressure(heldItem);
                 int newReleasePressure = Math.clamp(currentReleasePressure + (event.getScrollDeltaY() > 0 ? 5 : -5),
                         0,
-                        gasContainerItem.getMaxReleasePressure());
+                        gasContainerItem.getMaxReleasePressure(heldItem));
                 gasContainerItem.setReleasePressure(heldItem, newReleasePressure);
 
-                PacketDistributor.sendToServer(new ReleasePressureUpdate(newReleasePressure, InteractionHand.MAIN_HAND));
+                ClientPacketDistributor.sendToServer(new ReleasePressureUpdate(newReleasePressure, InteractionHand.MAIN_HAND));
 
                 event.setCanceled(true);
             }
