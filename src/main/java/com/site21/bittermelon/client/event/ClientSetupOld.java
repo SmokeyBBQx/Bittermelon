@@ -106,23 +106,7 @@ public class ClientSetupOld {
         );
     }
 
-    @SubscribeEvent
-    public static void onRegisterRenderers(EntityRenderersEvent.@NotNull RegisterRenderers event) {
-        event.registerEntityRenderer(SCP_939.get(), SCP939Renderer::new);
-        event.registerEntityRenderer(CHICKEN.get(), ChickenRenderer::new);
-        event.registerEntityRenderer(THROWN_ITEM_PROJECTILE.get(), ThrownItemRenderer::new);
-        event.registerEntityRenderer(SCP_2398_PROJECTILE.get(), ThrownItemRenderer::new);
-        event.registerEntityRenderer(SCP_650.get(), SCP650Renderer::new);
-        event.registerEntityRenderer(SCP_131.get(), SCP131Renderer::new);
-        event.registerEntityRenderer(SCP_1507.get(), SCP1507Renderer::new);
-        event.registerEntityRenderer(TASER_PROJECTILE.get(), TaserProjectileRenderer::new);
-        event.registerBlockEntityRenderer(BitterBlockEntities.STRUCTURAL_BLOCK_ENTITY.get(), StructuralBlockRenderer::new);
-        event.registerBlockEntityRenderer(BitterBlockEntities.THERMOMETER_BLOCK_ENTITY.get(), ThermometerRenderer::new);
-        event.registerBlockEntityRenderer(BitterBlockEntities.INTERCOM_BLOCK_ENTITY.get(), PhoneCordRenderer::new);
-        event.registerBlockEntityRenderer(BitterBlockEntities.LARGE_SLIDING_DOOR_BLOCK_ENTITY.get(), LargeSlidingDoorRenderer::new);
-        event.registerBlockEntityRenderer(BitterBlockEntities.SLIDING_DOOR_BLOCK_ENTITY.get(), SlidingDoorRenderer::new);
-        event.registerBlockEntityRenderer(BitterBlockEntities.WALL_WRITING_BLOCK_ENTITY.get(), WallWritingRenderer::new);
-    }
+
 
     @SubscribeEvent
     public static void onRegisterAdditional(ModelEvent.@NotNull RegisterAdditional event) {

@@ -1,4 +1,4 @@
-package com.site21.bittermelon.client;
+package com.site21.bittermelon.client.gui;
 
 import com.site21.bittermelon.common.systems.electronics.ElectronicDevice;
 import com.site21.bittermelon.common.content.blocks.electronics.containmentpanel.ContainmentPanelBlockEntity;
@@ -34,7 +34,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
-public class ClientHandler {
+public class ScreenHandler {
     public static void displayATMScreen(PersonnelEntry entry) {
         Minecraft.getInstance().setScreen(new ATMScreen(entry));
     }

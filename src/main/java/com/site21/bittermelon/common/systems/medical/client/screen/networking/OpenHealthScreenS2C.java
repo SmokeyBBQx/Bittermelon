@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.systems.medical.client.screen.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.client.ClientHandler;
+import com.site21.bittermelon.client.gui.ScreenHandler;
 import com.site21.bittermelon.common.systems.character.Character;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -31,7 +31,7 @@ public record OpenHealthScreenS2C(Character character, ItemStack stack) implemen
     public void handle(@NotNull IPayloadContext ctx) {
         Player player = ctx.player();
         if (character != null) {
-            ClientHandler.displayHealthScreen(character, player, stack);
+            ScreenHandler.displayHealthScreen(character, player, stack);
         }
     }
 }

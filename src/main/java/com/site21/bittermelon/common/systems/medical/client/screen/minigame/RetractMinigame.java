@@ -40,8 +40,8 @@ public class RetractMinigame extends MedicalMinigame {
         int centerY = height / 2 - 40;
         float scale = 4.0f;
 
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().scale(scale, scale, 1);
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().scale(scale, scale);
 
         if (!retracting) {
             guiGraphics.blit(
@@ -93,7 +93,7 @@ public class RetractMinigame extends MedicalMinigame {
             );
         }
 
-        guiGraphics.pose().popPose();
+        guiGraphics.pose().popMatrix();
 
         if (retractUp < height / 6) {
             isCompleting = true;

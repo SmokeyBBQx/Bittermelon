@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.content.blocks.powergrid.distributionboard.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.client.ClientHandler;
+import com.site21.bittermelon.client.gui.ScreenHandler;
 import com.site21.bittermelon.common.content.blocks.powergrid.distributionboard.DistributionBoardBlockEntity;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
@@ -27,7 +27,7 @@ public record OpenDistributionBoardScreen(BlockPos pos) implements CustomPacketP
 
     public void handle(@NotNull IPayloadContext ctx) {
         if (ctx.player().level().getBlockEntity(pos) instanceof DistributionBoardBlockEntity distributionBoard) {
-            ClientHandler.displayDistributionBoardScreen(distributionBoard);
+            ScreenHandler.displayDistributionBoardScreen(distributionBoard);
         }
     }
 }

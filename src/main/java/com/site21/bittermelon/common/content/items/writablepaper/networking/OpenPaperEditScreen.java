@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.content.items.writablepaper.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.client.ClientHandler;
+import com.site21.bittermelon.client.gui.ScreenHandler;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -25,6 +25,6 @@ public record OpenPaperEditScreen(ItemStack paper) implements CustomPacketPayloa
     );
 
     public void handle(@NotNull IPayloadContext ctx) {
-        ClientHandler.displayPaperEditScreen(paper);
+        ScreenHandler.displayPaperEditScreen(paper);
     }
 }

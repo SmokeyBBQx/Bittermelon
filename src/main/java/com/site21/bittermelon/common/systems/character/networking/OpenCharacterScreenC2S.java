@@ -34,7 +34,7 @@ public record OpenCharacterScreenC2S(UUID playerUUID) implements CustomPacketPay
             int playTimeHours = playTime / 72000;
             int maxCharacters = 1 + (playTimeHours / 20);
 
-            PacketDistributor.sendToPlayer(player, new OpenCharacterScreenS2C(5));
+            PacketDistributor.sendToPlayer(player, new OpenCharacterScreenS2C(maxCharacters));
         }
     }
 }

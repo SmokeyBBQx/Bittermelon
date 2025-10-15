@@ -12,8 +12,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.ENERGY_LOSS_ON_BOUNCE;
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.MAX_BOUNCES;
 import static com.site21.bittermelon.util.LocalMessageHelper.sendLocalMessage;
 
 public class ThrowItem {
@@ -34,10 +32,7 @@ public class ThrowItem {
     }
 
     private static void spawnProjectile(Level level, Player player, @NotNull ItemStack heldItem) {
-        ThrownItemProjectile projectile = new ThrownItemProjectile(level, player, heldItem.copy(),
-                heldItem.getOrDefault(ENERGY_LOSS_ON_BOUNCE, 0.7f),
-                heldItem.getOrDefault(MAX_BOUNCES, 50));
-
+        ThrownItemProjectile projectile = new ThrownItemProjectile(player, level, heldItem.copy());
         projectile.setPos(player.getX(), player.getEyeY() - 0.1, player.getZ());
         projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0f, 1f, 1.0f);
         level.addFreshEntity(projectile);

@@ -155,13 +155,11 @@ public class SCP2398 extends BaseItem {
             projectileStack.setCount(1);
 
             ThrownItemProjectile projectile = new ThrownItemProjectile(
-                    level,
                     target.getX(),
                     target.getY(),
                     target.getZ(),
-                    stack,
-                    0.7f,
-                    50
+                    level,
+                    stack
             );
 
             double angle = level.random.nextDouble() * Math.PI * 2;

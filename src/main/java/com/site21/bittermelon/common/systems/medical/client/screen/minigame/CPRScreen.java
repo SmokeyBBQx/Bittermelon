@@ -1,13 +1,10 @@
 package com.site21.bittermelon.common.systems.medical.client.screen.minigame;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -15,10 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
-
-import java.util.Objects;
 
 @OnlyIn(Dist.CLIENT)
 public class CPRScreen extends Screen {
@@ -125,61 +119,61 @@ public class CPRScreen extends Screen {
     }
 
     private void drawIndicator(@NotNull GuiGraphics guiGraphics, int centerX, int centerY) {
-        float radians = (float) Math.toRadians(currentAngle);
-        double indicatorX = centerX + (CIRCLE_RADIUS * Math.cos(radians));
-        double indicatorY = centerY + (CIRCLE_RADIUS * Math.sin(radians));
-
-        PoseStack poseStack = guiGraphics.pose();
-        poseStack.pushPose();
-
-        poseStack.translate(indicatorX, indicatorY, 0);
-        poseStack.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(currentAngle));
-        poseStack.translate(-ICON_SIZE / 2.0f, -ICON_SIZE /2.0f, 0);
-
-        guiGraphics.blit(INDICATOR_TEXTURE,
-                0, 0,
-                0, 0,
-                ICON_SIZE, ICON_SIZE,
-                ICON_SIZE, ICON_SIZE);
-
-        poseStack.popPose();
+//        float radians = (float) Math.toRadians(currentAngle);
+//        double indicatorX = centerX + (CIRCLE_RADIUS * Math.cos(radians));
+//        double indicatorY = centerY + (CIRCLE_RADIUS * Math.sin(radians));
+//
+//        Matrix3x2fStack poseStack = guiGraphics.pose();
+//        poseStack.pushMatrix();
+//
+//        poseStack.translate(indicatorX, indicatorY, 0);
+//        poseStack.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(currentAngle));
+//        poseStack.translate(-ICON_SIZE / 2.0f, -ICON_SIZE /2.0f, 0);
+//
+//        guiGraphics.blit(INDICATOR_TEXTURE,
+//                0, 0,
+//                0, 0,
+//                ICON_SIZE, ICON_SIZE,
+//                ICON_SIZE, ICON_SIZE);
+//
+//        poseStack.popPose();
     }
 
     private void drawArc(@NotNull GuiGraphics guiGraphics, int centerX, int centerY, float startAngle, float arcSize, float thickness, int color) {
-        PoseStack poseStack = guiGraphics.pose();
-        Matrix4f matrix = poseStack.last().pose();
-        thickness += thicknessIncrease;
-
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-
-        float a = (color >> 24 & 0xFF) / 255.0F;
-        float r = (color >> 16 & 0xFF) / 255.0F;
-        float g = (color >> 8 & 0xFF) / 255.0F;
-        float b = (color & 0xFF) / 255.0F;
-
-        BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
-        int segments = Math.max(1, (int)(arcSize * 360 / 360));
-
-        for (int i = 0; i <= segments; i++) {
-            float angle = (float) Math.toRadians(startAngle + (i * arcSize / segments));
-            float cos = (float) Math.cos(angle);
-            float sin = (float) Math.sin(angle);
-
-            float outerX = centerX + (CIRCLE_RADIUS + thickness/2) * cos;
-            float outerY = centerY + (CIRCLE_RADIUS + thickness/2) * sin;
-            bufferBuilder.addVertex(matrix, outerX, outerY, 0)
-                    .setColor(r, g, b, a);
-
-            float innerX = centerX + (CIRCLE_RADIUS - thickness/2) * cos;
-            float innerY = centerY + (CIRCLE_RADIUS - thickness/2) * sin;
-            bufferBuilder.addVertex(matrix, innerX, innerY, 0)
-                    .setColor(r, g, b, a);
-        }
-
-        BufferUploader.drawWithShader(Objects.requireNonNull(bufferBuilder.build()));
-        RenderSystem.disableBlend();
+//        PoseStack poseStack = guiGraphics.pose();
+//        Matrix4f matrix = poseStack.last().pose();
+//        thickness += thicknessIncrease;
+//
+//        RenderSystem.enableBlend();
+//        RenderSystem.defaultBlendFunc();
+//        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+//
+//        float a = (color >> 24 & 0xFF) / 255.0F;
+//        float r = (color >> 16 & 0xFF) / 255.0F;
+//        float g = (color >> 8 & 0xFF) / 255.0F;
+//        float b = (color & 0xFF) / 255.0F;
+//
+//        BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
+//        int segments = Math.max(1, (int)(arcSize * 360 / 360));
+//
+//        for (int i = 0; i <= segments; i++) {
+//            float angle = (float) Math.toRadians(startAngle + (i * arcSize / segments));
+//            float cos = (float) Math.cos(angle);
+//            float sin = (float) Math.sin(angle);
+//
+//            float outerX = centerX + (CIRCLE_RADIUS + thickness/2) * cos;
+//            float outerY = centerY + (CIRCLE_RADIUS + thickness/2) * sin;
+//            bufferBuilder.addVertex(matrix, outerX, outerY, 0)
+//                    .setColor(r, g, b, a);
+//
+//            float innerX = centerX + (CIRCLE_RADIUS - thickness/2) * cos;
+//            float innerY = centerY + (CIRCLE_RADIUS - thickness/2) * sin;
+//            bufferBuilder.addVertex(matrix, innerX, innerY, 0)
+//                    .setColor(r, g, b, a);
+//        }
+//
+//        BufferUploader.drawWithShader(Objects.requireNonNull(bufferBuilder.build()));
+//        RenderSystem.disableBlend();
     }
 
 
@@ -212,7 +206,7 @@ public class CPRScreen extends Screen {
             BPM = Math.min(BPM + BPM_INCREASE_GOOD, 100);
             player.playSound(SoundEvents.WOODEN_PRESSURE_PLATE_CLICK_ON);
         } else {
-            player.playSound(SoundEvents.ITEM_BREAK);
+            player.playSound(SoundEvents.ITEM_BREAK.value());
         }
     }
 

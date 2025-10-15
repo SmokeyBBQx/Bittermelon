@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.content.blocks.stickynote.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.client.ClientHandler;
+import com.site21.bittermelon.client.gui.ScreenHandler;
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlockEntity;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
@@ -30,7 +30,7 @@ public record OpenStickyNoteScreen(BlockPos pos, int noteIndex) implements Custo
 
     public void handle(@NotNull IPayloadContext ctx) {
         if (ctx.player().level().getBlockEntity(pos) instanceof StickyNoteBlockEntity stickyNote) {
-            ClientHandler.displayStickyNoteScreen(stickyNote, noteIndex);
+            ScreenHandler.displayStickyNoteScreen(stickyNote, noteIndex);
         }
     }
 }

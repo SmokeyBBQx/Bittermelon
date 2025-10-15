@@ -10,14 +10,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static com.site21.bittermelon.common.systems.medical.client.screen.HealthScreenKeyBind.openHealthScreen;
+import static com.site21.bittermelon.common.systems.medical.client.screen.HealthScreenV2.openHealthScreen;
 
 @OnlyIn(Dist.CLIENT)
 public class IncisionMinigame extends MedicalMinigame {
@@ -79,8 +79,8 @@ public class IncisionMinigame extends MedicalMinigame {
 
         drawDottedLine(guiGraphics, lineX + shakeX, startY + shakeY, endY + shakeY);
 
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(shakeXDraw, shakeYDraw, 0);
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().translate(shakeXDraw, shakeYDraw);
         if (drawnPoints.size() > 1) {
             for (int i = 1; i < drawnPoints.size(); i++) {
                 Point prev = drawnPoints.get(i - 1);
@@ -92,7 +92,7 @@ public class IncisionMinigame extends MedicalMinigame {
                 }
             }
         }
-        guiGraphics.pose().popPose();
+        guiGraphics.pose().popMatrix();
 
         guiGraphics.drawString(
                 this.minecraft.font,
@@ -148,7 +148,7 @@ public class IncisionMinigame extends MedicalMinigame {
     @Override
     protected void complete() {
         if (getMinecraft().player == null) return;
-        PacketDistributor.sendToServer(new CompleteMinigame(item,
+        ClientPacketDistributor.sendToServer(new CompleteMinigame(item,
                 compartment.getUUID(),
                 character.getUUID(),
                 getMinecraft().player.getUUID(),

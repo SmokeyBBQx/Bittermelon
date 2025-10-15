@@ -3,15 +3,22 @@ package com.site21.bittermelon.common.systems.medical.client.screen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
+import com.site21.bittermelon.common.systems.medical.client.screen.networking.OpenHealthScreenC2S;
 import com.site21.bittermelon.common.systems.medical.client.screen.widget.CompartmentSpaceWidget;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentData;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -84,21 +91,17 @@ public class HealthScreenV2 extends Screen {
             } else {
                 VisualData visualData = instance.getVisualData();
                 float scaleFactor = visualData.scale;
-                guiGraphics.pose().pushPose();
+                guiGraphics.pose().pushMatrix();
                 guiGraphics.pose().translate(
                         mouseX - (float) visualData.getWidth() * 2,
-                        mouseY - (float) visualData.getHeight() * 2,
-                        visualData.getZ()
-                );
-                guiGraphics.pose().scale(scaleFactor, scaleFactor, 0);
+                        mouseY - (float) visualData.getHeight() * 2);
+                guiGraphics.pose().scale(scaleFactor, scaleFactor);
 
                 int width = visualData.width;
                 int height = visualData.height;
-                RenderSystem.enableBlend();
-                guiGraphics.blit(visualData.icon, 0, 0, 0, 0, width, height, width, height);
-                RenderSystem.disableBlend();
+                guiGraphics.blit(RenderPipelines.GUI_TEXTURED, visualData.icon, 0, 0, 0, 0, width, height, width, height);
 
-                guiGraphics.pose().popPose();
+                guiGraphics.pose().popMatrix();
             }
         }
     }
@@ -167,6 +170,21 @@ public class HealthScreenV2 extends Screen {
 
             // TODO: Refresh specific widgets by mapping widgets to compartment UUIDs?
         }
+    }
+
+    public static void openHealthScreen() {
+        Minecraft mc = Minecraft.getInstance();
+        Player player = Minecraft.getInstance().player;
+        if (player == null) return;
+
+        HitResult hitResult = mc.hitResult;
+        if (hitResult != null && hitResult.getType() == HitResult.Type.ENTITY) {
+            EntityHitResult entityHit = (EntityHitResult) hitResult;
+            ClientPacketDistributor.sendToServer(new OpenHealthScreenC2S(player.getUUID(), entityHit.getEntity().getUUID()));
+        } else {
+            ClientPacketDistributor.sendToServer(new OpenHealthScreenC2S(player.getUUID(), UUID.randomUUID()));
+        }
+
     }
 }
 

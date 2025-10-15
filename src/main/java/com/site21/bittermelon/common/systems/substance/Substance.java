@@ -1,22 +1,34 @@
 package com.site21.bittermelon.common.systems.substance;
 
+import com.mojang.serialization.Codec;
 import com.site21.bittermelon.common.systems.medical.drug.Drug;
 import com.site21.bittermelon.common.systems.medical.drug.DrugHelper;
 import com.site21.bittermelon.common.systems.medical.drug.DrugInstance;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.neoforge.common.CommonHooks;
 import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.SUBSTANCE_REGISTRY;
+import static com.site21.bittermelon.init.neoforge.BitterRegistries.SUBSTANCE_REGISTRY_KEY;
 
 public class Substance {
+    public static final Codec<Holder<Substance>> CODEC = SUBSTANCE_REGISTRY.holderByNameCodec();
+    public static final StreamCodec<RegistryFriendlyByteBuf, Holder<Substance>> STREAM_CODEC = ByteBufCodecs.holderRegistry(SUBSTANCE_REGISTRY_KEY);
+
     private final String name;
     private final Substance.Properties properties;
+    private final DataComponentMap components;
 
-    public Substance(String name, Properties properties) {
+    public Substance(String name, @NotNull Properties properties) {
         this.name = name;
         this.properties = properties;
+        components = properties.components.build();
     }
 
     public void onTouch(SubstanceStack stack, LivingEntity entity) {
@@ -29,12 +41,20 @@ public class Substance {
         }
     }
 
+    /**
+     * Creates a SubstanceStack with 1 mole and temperature of 273.15K.
+     * @return A new SubstanceStack instance.
+     */
+    public SubstanceStack toStack() {
+        return new SubstanceStack(this, 1, 273.15f);
+    }
+
     public String getName() {
         return name;
     }
 
     public DataComponentMap components() {
-        return DataComponentMap.EMPTY;
+        return components;
     }
 
     /**
@@ -78,6 +98,7 @@ public class Substance {
         String flavor = "";
         String smell = "";
         Holder<Drug> drug;
+        private final DataComponentMap.Builder components = DataComponentMap.builder();
 
         public Properties molarMass(float molarMass) {
             this.molarMass = molarMass;
@@ -116,6 +137,12 @@ public class Substance {
 
         public Properties drug(Holder<Drug> drug) {
             this.drug = drug;
+            return this;
+        }
+
+        public <T> Properties component(DataComponentType<T> component, T value) {
+            CommonHooks.validateComponent(component);
+            components.set(component, value);
             return this;
         }
     }

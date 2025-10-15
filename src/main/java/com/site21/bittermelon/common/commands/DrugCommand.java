@@ -6,7 +6,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.common.systems.medical.drug.Drug;
 import com.site21.bittermelon.common.systems.medical.drug.DrugInstance;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import net.minecraft.commands.CommandBuildContext;
@@ -34,7 +33,7 @@ public class DrugCommand {
         Entity target = EntityArgument.getEntity(context, "target");
         CharacterManager characterManager = CharacterManager.get(target.level());
         Character targetCharacter = characterManager.getActiveCharacter(target);
-        Holder.Reference<Drug> drug = context.getArgument("drug", Holder.Reference.class);
+        Holder.Reference drug = context.getArgument("drug", Holder.Reference.class);
 
         float amount = FloatArgumentType.getFloat(context, "amount");
 
