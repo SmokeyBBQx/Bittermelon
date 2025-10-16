@@ -14,13 +14,21 @@ import com.site21.bittermelon.common.content.entities.scp1507.client.SCP1507Rend
 import com.site21.bittermelon.common.content.entities.scp650.client.SCP650Renderer;
 import com.site21.bittermelon.common.content.entities.scp939.client.SCP939Renderer;
 import com.site21.bittermelon.common.content.items.taser.TaserProjectileRenderer;
+import com.site21.bittermelon.common.systems.personnel.privilege.networking.*;
+import com.site21.bittermelon.common.systems.personnel.registry.networking.AddPersonnelEntry;
+import com.site21.bittermelon.common.systems.personnel.registry.networking.PersonnelClientPayloadHandler;
+import com.site21.bittermelon.common.systems.personnel.registry.networking.RemovePersonnelEntry;
+import com.site21.bittermelon.common.systems.personnel.registry.networking.UpdatePersonnelEntry;
 import com.site21.bittermelon.init.neoforge.BitterBlockEntities;
+import com.site21.bittermelon.networking.client.ClientPayloadHandler;
+import com.site21.bittermelon.networking.server.SetLastTypingTime;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
 import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
@@ -51,4 +59,68 @@ public class ClientSetup {
     public static void registerColorHandlers(RegisterColorHandlersEvent.@NotNull Block event) {
         event.register(new FluidBlockColor(), FLUID.get());
     }
+
+    @SubscribeEvent
+    public static void registerClientPayloadHandlers(@NotNull RegisterClientPayloadHandlersEvent event) {
+        event.register(
+                SetLastTypingTime.TYPE,
+                ClientPayloadHandler::setLastTypingTime
+        );
+
+        event.register(
+                AddPrivilege.TYPE,
+                PrivilegeClientPayloadHandler::handleAddPrivilege
+        );
+
+        event.register(
+                RemovePrivilege.TYPE,
+                PrivilegeClientPayloadHandler::handleRemovePrivilege
+        );
+
+        event.register(
+                AddPrivilegeGroup.TYPE,
+                PrivilegeClientPayloadHandler::handleAddPrivilegeGroup
+        );
+
+        event.register(
+                RemovePrivilegeGroup.TYPE,
+                PrivilegeClientPayloadHandler::handleRemovePrivilegeGroup
+        );
+
+        event.register(
+                SetPrivilegeForEntry.TYPE,
+                PrivilegeClientPayloadHandler::setPrivilegeForEntry
+        );
+
+        event.register(
+                RemovePrivilegeForEntry.TYPE,
+                PrivilegeClientPayloadHandler::removePrivilegeForEntry
+        );
+
+        event.register(
+                SetPrivilegeForGroup.TYPE,
+                PrivilegeClientPayloadHandler::setPrivilegeForGroup
+        );
+
+        event.register(
+                RemovePrivilegeForGroup.TYPE,
+                PrivilegeClientPayloadHandler::removePrivilegeForGroup
+        );
+
+        event.register(
+                AddPersonnelEntry.TYPE,
+                PersonnelClientPayloadHandler::addPersonnelEntry
+        );
+
+        event.register(
+                RemovePersonnelEntry.TYPE,
+                PersonnelClientPayloadHandler::removePersonnelEntry
+        );
+
+        event.register(
+                UpdatePersonnelEntry.TYPE,
+                PersonnelClientPayloadHandler::updatePersonnelEntry
+        );
+    }
+
 }

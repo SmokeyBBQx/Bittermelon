@@ -9,7 +9,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.common.content.entities.client.ModelLayers.SCP_939_LAYER;
+import static com.site21.bittermelon.client.event.LayerDefinitions.SCP_939_LAYER;
 
 @OnlyIn(Dist.CLIENT)
 public class SCP939Renderer extends MobRenderer<SCP939,SCP939RenderState, SCP939Model> {

@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.common.content.entities.client.ModelLayers.CHICKEN_LAYER;
+import static com.site21.bittermelon.client.event.LayerDefinitions.CHICKEN_LAYER;
 
 public class ChickenRenderer extends MobRenderer<Chicken, ChickenRenderState, ChickenModel> {
 

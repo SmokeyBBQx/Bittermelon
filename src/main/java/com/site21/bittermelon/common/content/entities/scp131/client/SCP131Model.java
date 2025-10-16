@@ -21,10 +21,14 @@ public class SCP131Model extends EntityModel<SCP131RenderState> {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition part = mesh.getRoot();
 
-        PartDefinition root = part.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
-
-        PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 14).addBox(-3.5F, 0.3019F, -4.284F, 7.0F, 7.0F, 7.0F, new CubeDeformation(0.2F))
-                .texOffs(0, 0).addBox(-3.5F, 0.3019F, -4.284F, 7.0F, 7.0F, 7.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -7.8019F, 1.284F));
+        PartDefinition body = part.addOrReplaceChild("body",
+                CubeListBuilder.create()
+                        .texOffs(0, 14)
+                        .addBox(-3.5F, 0.3019F, -4.284F, 7.0F, 7.0F, 7.0F, new CubeDeformation(0.2F))
+                        .texOffs(0, 0)
+                        .addBox(-3.5F, 0.3019F, -4.284F, 7.0F, 7.0F, 7.0F, new CubeDeformation(0.0F)),
+                PartPose.offset(0.0F, 24.0F, 0.0F)
+        );
 
         PartDefinition top_bit_top_r1 = body.addOrReplaceChild("top_bit_top_r1", CubeListBuilder.create().texOffs(0, 0).addBox(-0.5F, -1.0F, -0.5F, 1.0F, 2.0F, 1.0F, new CubeDeformation(0.1F)), PartPose.offsetAndRotation(0.0F, -4.2958F, 2.0039F, -0.9163F, 0.0F, 0.0F));
 
@@ -32,7 +36,7 @@ public class SCP131Model extends EntityModel<SCP131RenderState> {
 
         PartDefinition top_bit_bottom_r1 = body.addOrReplaceChild("top_bit_bottom_r1", CubeListBuilder.create().texOffs(21, 14).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -0.6527F, -0.652F, -0.2182F, 0.0F, 0.0F));
 
-        PartDefinition wheel = root.addOrReplaceChild("wheel", CubeListBuilder.create().texOffs(21, 0).addBox(-2.5F, -0.5F, -2.5F, 5.0F, 1.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -0.5F, 0.5F));
+        PartDefinition wheel = body.addOrReplaceChild("wheel", CubeListBuilder.create().texOffs(21, 0).addBox(-2.5F, -0.5F, -2.5F, 5.0F, 1.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -0.5F, 0.5F));
 
         return LayerDefinition.create(mesh, 64, 64);
     }
