@@ -23,6 +23,8 @@ import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 import static com.site21.bittermelon.init.neoforge.BitterSounds.*;
 
 public record Screwdriver(int screwDuration, Holder<SoundEvent> screwSound) {
@@ -80,6 +82,22 @@ public record Screwdriver(int screwDuration, Holder<SoundEvent> screwSound) {
     public void playScrewSound(@NotNull Level level, @NotNull LivingEntity entity, int remainingUseDuration) {
         if (remainingUseDuration % 20 == 0) {
             level.playSound(null, entity.getOnPos(), screwSound().value(), SoundSource.AMBIENT, 0.3f, 1f);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(screwDuration, screwSound);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        } else {
+            return obj instanceof Screwdriver(int duration, Holder<SoundEvent> sound) &&
+                    this.screwDuration == duration &&
+                    Objects.equals(this.screwSound, sound);
         }
     }
 

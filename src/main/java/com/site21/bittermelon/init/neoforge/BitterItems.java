@@ -22,6 +22,7 @@ import com.site21.bittermelon.common.content.items.wire.WireItem;
 import com.site21.bittermelon.common.content.items.writablepaper.WritablePaper;
 import com.site21.bittermelon.common.content.items.writingutensils.ChalkItem;
 import com.site21.bittermelon.common.content.items.writingutensils.HighlighterItem;
+import com.site21.bittermelon.common.systems.component.Screwdriver;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.food.FoodProperties;
@@ -190,7 +191,10 @@ public class BitterItems {
 
     public static final DeferredItem<Item> HANDHELD_SYSTEM_INTERFACE = ITEMS.registerSimpleItem("handheld_system_interface");
 
-    public static final DeferredItem<ScrewdriverItem> SCREWDRIVER = ITEMS.registerItem("screwdriver", ScrewdriverItem::new);
+    public static final DeferredItem<ScrewdriverItem> SCREWDRIVER = ITEMS.register("screwdriver", registryName ->
+            new ScrewdriverItem(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .component(BitterDataComponents.SCREWDRIVER, Screwdriver.DEFAULT)));
 
     public static final DeferredItem<ChalkItem> CHALK = ITEMS.registerItem("chalk", ChalkItem::new);
 
