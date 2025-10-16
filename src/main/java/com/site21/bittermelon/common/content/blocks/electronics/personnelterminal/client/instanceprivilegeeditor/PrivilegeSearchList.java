@@ -59,7 +59,7 @@ public class PrivilegeSearchList extends ListWidget<PrivilegeSearchList.Entry> {
             ResourceLocation icon = group ? ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/users")
                     : ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/keys");
 
-            guiGraphics.blitSprite(RenderPipelines.GUI, icon, left + 4, top, 16, 16);
+            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, icon, left + 4, top, 16, 16);
 
             int textColor = isFocused() ? 0xFFFFFFFF : 0xFF000000;
             guiGraphics.drawString(Minecraft.getInstance().font, privilege, left + 22, top + 2, textColor, false);

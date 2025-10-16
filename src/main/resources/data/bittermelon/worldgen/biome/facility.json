@@ -3,10 +3,10 @@
   "downfall": 0.0,
   "has_precipitation": false,
   "effects": {
-    "sky_color": 7907327,
-    "fog_color": 12638975,
+    "sky_color": 8103167,
     "water_color": 4159204,
     "water_fog_color": 329011,
+    "fog_color": 12638463,
     "ambient_sound": "bittermelon:ambient.facility_ambience",
     "additions_sound": {
       "sound": "bittermelon:ambient.ambient_noises",
@@ -15,6 +15,6 @@
   },
   "spawners": {},
   "spawn_costs": {},
-  "carvers": {},
+  "carvers": [],
   "features": []
 }

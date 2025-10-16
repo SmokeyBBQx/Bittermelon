@@ -24,7 +24,7 @@ public class SCP3771Screen extends Screen {
         int backgroundWidth = (int) (123 * 2.5);
         int backgroundHeight = (int) (23 * 2.5);
 
-        guiGraphics.blitSprite(RenderPipelines.GUI, FORTUNE_BACKGROUND, width / 2 - backgroundWidth / 2, height / 3, backgroundWidth, backgroundHeight);
+        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, FORTUNE_BACKGROUND, width / 2 - backgroundWidth / 2, height / 3, backgroundWidth, backgroundHeight);
         int textWidth = minecraft.font.width(fortune.getMessage());
 
         guiGraphics.drawString(minecraft.font, fortune.getMessage(), width / 2 - textWidth / 2, height / 3 + backgroundHeight / 2 - 5, 0, false);

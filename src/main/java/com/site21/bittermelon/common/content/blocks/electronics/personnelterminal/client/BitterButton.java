@@ -44,7 +44,7 @@ public class BitterButton extends Button {
 //        guiGraphics.setColor(1.0F, 1.0F, 1.0F, this.alpha);
 //        RenderSystem.enableBlend();
 //        RenderSystem.enableDepthTest();
-        guiGraphics.blitSprite(RenderPipelines.GUI, sprites.get(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprites.get(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
 //        guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         int i = this.getFGColor();
         this.renderString(guiGraphics, minecraft.font, i | Mth.ceil(this.alpha * 255.0F) << 24);

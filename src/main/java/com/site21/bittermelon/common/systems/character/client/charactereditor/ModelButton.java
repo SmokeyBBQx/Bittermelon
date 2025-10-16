@@ -29,9 +29,9 @@ public class ModelButton extends AbstractWidget {
     @Override
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (isHovered) {
-            guiGraphics.blitSprite(RenderPipelines.GUI, wide ? WIDE_ICON_HIGHLIGHTED : SLIM_ICON_HIGHLIGHTED, x, y, width, height);
+            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, wide ? WIDE_ICON_HIGHLIGHTED : SLIM_ICON_HIGHLIGHTED, x, y, width, height);
         } else {
-            guiGraphics.blitSprite(RenderPipelines.GUI, wide ? WIDE_ICON : SLIM_ICON, x, y, width, height);
+            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, wide ? WIDE_ICON : SLIM_ICON, x, y, width, height);
         }
     }
 

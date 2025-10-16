@@ -33,9 +33,9 @@ public class PortButton extends AbstractWidget {
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (wired) {
             boolean isInputPort = port instanceof InputPort;
-            guiGraphics.blitSprite(RenderPipelines.GUI, isInputPort ? WIRED_INPUT_PORT_SPRITE : WIRED_OUTPUT_PORT_SPRITE, isInputPort ? x - 64 : x, y, 89, 26);
+            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, isInputPort ? WIRED_INPUT_PORT_SPRITE : WIRED_OUTPUT_PORT_SPRITE, isInputPort ? x - 64 : x, y, 89, 26);
         } else {
-            guiGraphics.blitSprite(RenderPipelines.GUI, isMouseOver(mouseX, mouseY) ? PORT_HIGHLIGHTED_SPRITE : PORT_SPRITE, x, y, 26, 26);
+            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, isMouseOver(mouseX, mouseY) ? PORT_HIGHLIGHTED_SPRITE : PORT_SPRITE, x, y, 26, 26);
         }
     }
 

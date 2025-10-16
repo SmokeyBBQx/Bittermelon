@@ -92,12 +92,12 @@ public class DeletableListWidget<T extends DeletableListWidget.DeletableEntry> e
             }
 
             ResourceLocation icon = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, getIconPath());
-            guiGraphics.blitSprite(RenderPipelines.GUI, icon, left + 4, top, ICON_SIZE, ICON_SIZE);
+            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, icon, left + 4, top, ICON_SIZE, ICON_SIZE);
 
             if (hasDeleteButton()) {
                 ResourceLocation deleteIcon = getDeleteButtonIcon(mouseX, mouseY);
                 if (deleteIcon != null) {
-                    guiGraphics.blitSprite(RenderPipelines.GUI, deleteIcon, getDeleteButtonX(), getButtonY(), BUTTON_SIZE, BUTTON_SIZE);
+                    guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, deleteIcon, getDeleteButtonX(), getButtonY(), BUTTON_SIZE, BUTTON_SIZE);
                 }
             }
 

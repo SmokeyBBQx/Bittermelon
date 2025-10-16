@@ -97,7 +97,7 @@ public abstract class WiringScreen extends Screen {
             String id = port.getPort().id;
             int x = port.getX() + port.getWidth() + 10;
             int y = port.getY() + port.getHeight() / 2;
-            guiGraphics.drawString(minecraft.font, id, x, y, 0xFFFFFF);
+            guiGraphics.drawString(minecraft.font, id, x, y, 0xFFFFFFFF);
         }
 
         for (PortButton port : outputPorts) {
@@ -105,7 +105,7 @@ public abstract class WiringScreen extends Screen {
             int textWidth = minecraft.font.width(id);
             int x = port.getX() - textWidth - 4;
             int y = port.getY() + port.getHeight() / 2;
-            guiGraphics.drawString(minecraft.font, id, x, y, 0xFFFFFF);
+            guiGraphics.drawString(minecraft.font, id, x, y, 0xFFFFFFFF);
         }
     }
 
@@ -115,7 +115,7 @@ public abstract class WiringScreen extends Screen {
         super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         int margin = 4;
 
-        guiGraphics.blitSprite(RenderPipelines.GUI, BACKGROUND, leftX - margin, height / 6 - margin * 4, backgroundWidth + margin * 2, backgroundHeight);
+        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND, leftX - margin, height / 6 - margin * 4, backgroundWidth + margin * 2, backgroundHeight);
     }
 
     protected abstract void handleInputPortClick(@NotNull InputPort port);

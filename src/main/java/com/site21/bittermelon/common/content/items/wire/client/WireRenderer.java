@@ -53,8 +53,8 @@ public class WireRenderer {
                 int height = window.getGuiScaledHeight();
                 int x = width / 2;
                 int y = height - 45;
-                guiGraphics.drawCenteredString(minecraft.font, text, x, y, 0xFFFFFF);
-                guiGraphics.drawCenteredString(minecraft.font, portID, x, y + 10, 0xFFFFFF);
+                guiGraphics.drawCenteredString(minecraft.font, text, x, y, 0xFFFFFFFF);
+                guiGraphics.drawCenteredString(minecraft.font, portID, x, y + 10, 0xFFFFFFFF);
             }
         }
     }

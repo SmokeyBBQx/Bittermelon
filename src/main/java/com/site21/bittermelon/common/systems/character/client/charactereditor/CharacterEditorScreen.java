@@ -248,7 +248,7 @@ public class CharacterEditorScreen extends Screen {
     public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 
-        guiGraphics.blitSprite(RenderPipelines.GUI, BACKGROUND, screenX, screenY, SCREEN_WIDTH, SCREEN_HEIGHT);
+        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND, screenX, screenY, SCREEN_WIDTH, SCREEN_HEIGHT);
     }
 
     private void renderPlayer(@NotNull GuiGraphics guiGraphics) {

@@ -37,7 +37,7 @@ public class WireConnectionScreen extends WiringScreen {
 
         int spriteWidth = 26;
         int spriteHeight = 89;
-        guiGraphics.blitSprite(RenderPipelines.GUI, WIRE_TERMINAL_SPRITE,
+        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, WIRE_TERMINAL_SPRITE,
                 mouseX - spriteWidth / 2,
                 mouseY - spriteHeight / 7,
                 spriteWidth,

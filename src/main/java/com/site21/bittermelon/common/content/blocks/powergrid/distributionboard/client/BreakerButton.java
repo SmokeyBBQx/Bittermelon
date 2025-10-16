@@ -46,9 +46,9 @@ public class BreakerButton extends AbstractWidget {
     @Override
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (isHovered) {
-            guiGraphics.blitSprite(RenderPipelines.GUI, on ? onHighlightedIcon : offHighlightedIcon, x, y, width, height);
+            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, on ? onHighlightedIcon : offHighlightedIcon, x, y, width, height);
         } else {
-            guiGraphics.blitSprite(RenderPipelines.GUI, on ? onIcon : offIcon, x, y, width, height);
+            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, on ? onIcon : offIcon, x, y, width, height);
         }
     }
 

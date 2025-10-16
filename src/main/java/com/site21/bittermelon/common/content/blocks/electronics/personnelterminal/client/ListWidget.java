@@ -44,8 +44,8 @@ public class ListWidget<T extends ObjectSelectionList.Entry<T>> extends ObjectSe
 //            }
 //
 //            RenderSystem.enableBlend();
-//            guiGraphics.blitSprite(RenderPipelines.GUI, PersonnelTerminalScreen.SCROLLER_BACKGROUND_SPRITE, l, this.getY(), 12, this.getHeight());
-//            guiGraphics.blitSprite(RenderPipelines.GUI, PersonnelTerminalScreen.SCROLLER_SPRITE, l, k, 12, i1);
+//            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, PersonnelTerminalScreen.SCROLLER_BACKGROUND_SPRITE, l, this.getY(), 12, this.getHeight());
+//            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, PersonnelTerminalScreen.SCROLLER_SPRITE, l, k, 12, i1);
 //            RenderSystem.disableBlend();
 //        }
     }

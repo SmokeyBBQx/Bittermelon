@@ -184,7 +184,7 @@ public class IntercomScreen extends Screen {
         super.render(graphics, mouseX, mouseY, partialTick);
 
         graphics.blit(
-                RenderPipelines.GUI,
+                RenderPipelines.GUI_TEXTURED,
                 TEXTURE,
                 width / 2 - 125,
                 height / 7,
