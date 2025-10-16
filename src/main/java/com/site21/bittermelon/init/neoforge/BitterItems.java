@@ -22,6 +22,8 @@ import com.site21.bittermelon.common.content.items.wire.WireItem;
 import com.site21.bittermelon.common.content.items.writablepaper.WritablePaper;
 import com.site21.bittermelon.common.content.items.writingutensils.ChalkItem;
 import com.site21.bittermelon.common.content.items.writingutensils.HighlighterItem;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -37,7 +39,7 @@ public class BitterItems {
     public static final DeferredItem<BlockItem> SMALL_CARDBOARD_BOX = ITEMS.registerSimpleBlockItem(BitterBlocks.SMALL_CARDBOARD_BOX);
     public static final DeferredItem<BlockItem> ATM = ITEMS.registerSimpleBlockItem(BitterBlocks.ATM);
     public static final DeferredItem<BlockItem> CONTAINMENT_PANEL = ITEMS.registerSimpleBlockItem(BitterBlocks.CONTAINMENT_PANEL);
-    public static final DeferredItem<BlockItem> WALL_THERMOMETER = ITEMS.registerSimpleBlockItem("wall_thermometer", BitterBlocks.THERMOMETER);
+    public static final DeferredItem<BlockItem> THERMOMETER = ITEMS.registerSimpleBlockItem(BitterBlocks.THERMOMETER);
     public static final DeferredItem<BlockItem> INTERCOM = ITEMS.registerSimpleBlockItem(BitterBlocks.INTERCOM);
     public static final DeferredItem<BlockItem> ENVIRONMENT_SENSOR = ITEMS.registerSimpleBlockItem(BitterBlocks.ENVIRONMENT_SENSOR);
     public static final DeferredItem<BlockItem> CONTAINMENT_ALARM = ITEMS.registerSimpleBlockItem(BitterBlocks.CONTAINMENT_ALARM);
@@ -50,15 +52,59 @@ public class BitterItems {
     public static final DeferredItem<BlockItem> YELLOW_INSPECTION_POSTER = ITEMS.registerSimpleBlockItem(BitterBlocks.YELLOW_INSPECTION_POSTER);
     public static final DeferredItem<BlockItem> DISTRIBUTION_BOARD = ITEMS.registerSimpleBlockItem(BitterBlocks.DISTRIBUTION_BOARD);
     public static final DeferredItem<BlockItem> SCP_151 = ITEMS.registerSimpleBlockItem(BitterBlocks.SCP_151);
-    public static final DeferredItem<BlockItem> PERSONNEL_TERMINAL = ITEMS.registerSimpleBlockItem("personnel_terminal", BitterBlocks.PERSONNEL_TERMINAL);
+    public static final DeferredItem<BlockItem> PERSONNEL_TERMINAL = ITEMS.registerSimpleBlockItem(BitterBlocks.PERSONNEL_TERMINAL);
     public static final DeferredItem<BlockItem> KEYCARD_PRINTER = ITEMS.registerSimpleBlockItem(BitterBlocks.KEYCARD_PRINTER);
     public static final DeferredItem<BlockItem> SLIDING_DOOR = ITEMS.registerSimpleBlockItem(BitterBlocks.SLIDING_DOOR);
     public static final DeferredItem<BlockItem> KEYCARD_READER = ITEMS.registerSimpleBlockItem(BitterBlocks.KEYCARD_READER);
     public static final DeferredItem<BlockItem> REDSTONE_DEVICE = ITEMS.registerSimpleBlockItem(BitterBlocks.REDSTONE_DEVICE);
 
-    // Custom Items with Properties
-    public static final DeferredItem<FluidContainerItem> BEER_BOTTLE = ITEMS.registerItem("beer_bottle", GlassFluidContainerItem::new,
-            new Item.Properties().component(VOLUME.value(), 75.0f));
+    public static final DeferredItem<FluidContainerItem> BEER_BOTTLE = ITEMS.register("beer_bottle", registryName ->
+            new GlassFluidContainerItem(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .component(VOLUME, 75.0f)));
+
+    public static final DeferredItem<FluidContainerItem> WHISKEY_BOTTLE = ITEMS.register("whiskey_bottle", registryName ->
+            new FluidContainerItem(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .component(VOLUME, 100.0f)));
+
+    public static final DeferredItem<SCP109> SCP_109 = ITEMS.register("scp_109", registryName ->
+            new SCP109(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .component(VOLUME, 0.0f)));
+
+    public static final DeferredItem<Item> CIGARETTE = ITEMS.register("cigarette", registryName ->
+            new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .component(VOLUME, 20.0f)));
+
+    public static final DeferredItem<Item> SCP_018 = ITEMS.register("scp_018", registryName ->
+            new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .component(ENERGY_LOSS_ON_BOUNCE, 1.5f)
+                    .component(MAX_BOUNCES, 10000)));
+
+    public static final DeferredItem<SyringeItem> SYRINGE = ITEMS.register("syringe", registryName ->
+            new SyringeItem(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .component(VOLUME, 10.0f)));
+
+    public static final DeferredItem<MopItem> MOP = ITEMS.register("mop", registryName ->
+            new MopItem(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .component(VOLUME, 50.0f)
+                    .component(MAX_TRANSFER_RATE, 20)));
+
+    public static final DeferredItem<PowderedSubstanceItem> POWDER = ITEMS.register("powder", registryName ->
+            new PowderedSubstanceItem(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .component(VOLUME, 20.0f)));
+
+    public static final DeferredItem<PillItem> PILL = ITEMS.register("pill", registryName ->
+            new PillItem(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .component(VOLUME, 20.0f)));
+
 
     public static final DeferredItem<Item> SCALPEL = ITEMS.registerSimpleItem("scalpel",
             new Item.Properties().stacksTo(1));
@@ -104,17 +150,11 @@ public class BitterItems {
 
     public static final DeferredItem<GasContainerItem> GAS_CYLINDER = ITEMS.registerItem("gas_cylinder", GasContainerItem::new);
 
-    public static final DeferredItem<FluidContainerItem> WHISKEY_BOTTLE = ITEMS.registerItem("whiskey_bottle", FluidContainerItem::new,
-            new Item.Properties().component(VOLUME.value(), 100.0f));
-
     public static final DeferredItem<IntercomPhoneItem> INTERCOM_PHONE = ITEMS.registerItem("intercom_phone", IntercomPhoneItem::new);
 
     public static final DeferredItem<Item> NETWORK_CABLE = ITEMS.registerSimpleItem("network_cable");
 
     public static final DeferredItem<WireItem> WIRE = ITEMS.registerItem("wire", WireItem::new);
-
-    public static final DeferredItem<SCP109> SCP_109 = ITEMS.registerItem("scp_109", SCP109::new,
-            new Item.Properties().component(VOLUME.value(), 0.0f));
 
     public static final DeferredItem<Item> COLON = ITEMS.registerSimpleItem("colon",
             new Item.Properties().stacksTo(1));
@@ -125,9 +165,6 @@ public class BitterItems {
     public static final DeferredItem<Item> BASEBALL = ITEMS.registerSimpleItem("baseball");
 
     public static final DeferredItem<Item> CIGARETTE_BUTT = ITEMS.registerSimpleItem("cigarette_butt");
-
-    public static final DeferredItem<Item> CIGARETTE = ITEMS.registerSimpleItem("cigarette",
-            new Item.Properties().component(VOLUME.value(), 20.0f));
 
     public static final DeferredItem<Item> KEYCARD = ITEMS.registerSimpleItem("keycard");
 
@@ -141,21 +178,6 @@ public class BitterItems {
     public static final DeferredItem<Item> BODY_PART = ITEMS.registerSimpleItem("body_part");
 
     public static final DeferredItem<Item> BITTERMELON = ITEMS.registerSimpleItem("bittermelon");
-
-    public static final DeferredItem<Item> SCP_018 = ITEMS.registerSimpleItem("scp_018",
-            new Item.Properties().component(ENERGY_LOSS_ON_BOUNCE.value(), 1.5f).component(MAX_BOUNCES.value(), 10000));
-
-    public static final DeferredItem<SyringeItem> SYRINGE = ITEMS.registerItem("syringe", SyringeItem::new,
-            new Item.Properties().component(VOLUME, 10.0f));
-
-    public static final DeferredItem<MopItem> MOP = ITEMS.registerItem("mop", MopItem::new,
-            new Item.Properties().component(VOLUME.value(), 50.0f).component(MAX_TRANSFER_RATE.value(), 20));
-
-    public static final DeferredItem<PowderedSubstanceItem> POWDER = ITEMS.registerItem("powder", PowderedSubstanceItem::new,
-            new Item.Properties().component(VOLUME.value(), 20.0f));
-
-    public static final DeferredItem<PillItem> PILL = ITEMS.registerItem("pill", PillItem::new,
-            new Item.Properties().component(VOLUME.value(), 20.0f));
 
     public static final DeferredItem<SCP377> SCP_377 = ITEMS.registerItem("scp_377", SCP377::new);
 

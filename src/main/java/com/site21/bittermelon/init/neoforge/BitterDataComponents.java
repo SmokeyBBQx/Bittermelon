@@ -27,6 +27,11 @@ import java.util.UUID;
 public class BitterDataComponents {
     public static final DeferredRegister.DataComponents DATA_COMPONENTS = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, Bittermelon.MOD_ID);
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> VOLUME = DATA_COMPONENTS.registerComponentType(
+            "volume",
+            builder -> builder.persistent(Codec.FLOAT).networkSynchronized(ByteBufCodecs.FLOAT)
+    );
+
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<SubstanceContents>> SUBSTANCE_CONTENTS = DATA_COMPONENTS.registerComponentType(
             "substance_contents",
             builder -> builder.persistent(SubstanceContents.CODEC).networkSynchronized(SubstanceContents.STREAM_CODEC).cacheEncoding()
@@ -185,11 +190,6 @@ public class BitterDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> MESSAGE = DATA_COMPONENTS.registerComponentType(
             "message",
             builder -> builder.persistent(Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8)
-    );
-
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> VOLUME = DATA_COMPONENTS.registerComponentType(
-            "volume",
-            builder -> builder.persistent(Codec.FLOAT).networkSynchronized(ByteBufCodecs.FLOAT)
     );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> MAX_TRANSFER_RATE = DATA_COMPONENTS.registerComponentType(
