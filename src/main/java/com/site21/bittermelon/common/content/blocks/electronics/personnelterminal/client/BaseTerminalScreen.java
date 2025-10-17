@@ -81,17 +81,13 @@ public abstract class BaseTerminalScreen extends Screen {
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        renderBackground(guiGraphics, mouseX, mouseY, partialTick);
-
         guiGraphics.fill(x, y, screenWidth, screenHeight, 0xFFF9FDFF);
         guiGraphics.fill(x + 1, y + 1, screenWidth - 1, screenHeight - 1, 0xFFD6D6CE);
 
-//        RenderSystem.enableBlend();
         guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/scp_logo"),
                 widgetX + widgetX / 6, screenHeight / 4, 200, 200);
-//       RenderSystem.disableBlend();
 
-        for (Renderable renderable : this.renderables) {
+        for (Renderable renderable : renderables) {
             renderable.render(guiGraphics, mouseX, mouseY, partialTick);
         }
 

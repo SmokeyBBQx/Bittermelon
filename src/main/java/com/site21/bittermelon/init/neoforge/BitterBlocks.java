@@ -120,7 +120,7 @@ public class BitterBlocks {
 
     public static final DeferredBlock<KeycardPrinter> KEYCARD_PRINTER = BLOCKS.registerBlock("keycard_printer", KeycardPrinter::new, BlockBehaviour.Properties.of());
 
-    public static final DeferredBlock<SlidingDoorBlock> SLIDING_DOOR = BLOCKS.registerBlock("sliding_door", SlidingDoorBlock::new, BlockBehaviour.Properties.of()
+    public static final DeferredBlock<SlidingDoorBlock> WINDOWED_SLIDING_DOOR = BLOCKS.registerBlock("windowed_sliding_door", SlidingDoorBlock::new, BlockBehaviour.Properties.of()
             .noOcclusion()
     );
 

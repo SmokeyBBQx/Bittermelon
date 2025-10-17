@@ -1,4 +1,4 @@
-package com.site21.bittermelon.data;
+package com.site21.bittermelon.datagen;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.init.neoforge.BitterItems;

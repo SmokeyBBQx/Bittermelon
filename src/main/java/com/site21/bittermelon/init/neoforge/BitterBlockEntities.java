@@ -91,7 +91,7 @@ public class BitterBlockEntities {
 
     public static final Supplier<BlockEntityType<SlidingDoorBlockEntity>> SLIDING_DOOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
             "sliding_door_block_entity",
-            () -> new BlockEntityType<>(SlidingDoorBlockEntity::new, false, SLIDING_DOOR.get()));
+            () -> new BlockEntityType<>(SlidingDoorBlockEntity::new, false, WINDOWED_SLIDING_DOOR.get()));
 
     public static final Supplier<BlockEntityType<LargeSlidingDoorBlockEntity>> LARGE_SLIDING_DOOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
             "large_sliding_door_block_entity",

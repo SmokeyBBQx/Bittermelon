@@ -1,4 +1,4 @@
-package com.site21.bittermelon.data;
+package com.site21.bittermelon.datagen;
 
 public class BitterItemModelProvider {
 //    public BitterItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {

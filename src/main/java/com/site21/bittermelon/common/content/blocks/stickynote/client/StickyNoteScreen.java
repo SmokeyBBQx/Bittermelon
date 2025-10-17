@@ -49,7 +49,7 @@ public class StickyNoteScreen extends Screen {
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
-        guiGraphics.drawCenteredString(font, title, width / 2, height / 3 - 40, 0xFFFFFF);
+        guiGraphics.drawCenteredString(font, title, width / 2, height / 3 - 40, 0xFFFFFFFF);
 
         List<FormattedCharSequence> wrappedLines = font.split(Component.literal(message), LINE_WIDTH);
         int startY = height / 3 - LINE_HEIGHT / 2;
@@ -59,7 +59,7 @@ public class StickyNoteScreen extends Screen {
             int lineWidth = font.width(line);
             int x = width / 2 - lineWidth / 2;
             int y = startY + i * LINE_HEIGHT;
-            guiGraphics.drawString(font, line, x, y, 0xFFFFFF, false);
+            guiGraphics.drawString(font, line, x, y, 0xFFFFFFFF, false);
         }
     }
 

@@ -55,7 +55,7 @@ public class BitterItems {
     public static final DeferredItem<BlockItem> SCP_151 = ITEMS.registerSimpleBlockItem(BitterBlocks.SCP_151);
     public static final DeferredItem<BlockItem> PERSONNEL_TERMINAL = ITEMS.registerSimpleBlockItem(BitterBlocks.PERSONNEL_TERMINAL);
     public static final DeferredItem<BlockItem> KEYCARD_PRINTER = ITEMS.registerSimpleBlockItem(BitterBlocks.KEYCARD_PRINTER);
-    public static final DeferredItem<BlockItem> SLIDING_DOOR = ITEMS.registerSimpleBlockItem(BitterBlocks.SLIDING_DOOR);
+    public static final DeferredItem<BlockItem> WINDOWED_SLIDING_DOOR = ITEMS.registerSimpleBlockItem(BitterBlocks.WINDOWED_SLIDING_DOOR);
     public static final DeferredItem<BlockItem> KEYCARD_READER = ITEMS.registerSimpleBlockItem(BitterBlocks.KEYCARD_READER);
     public static final DeferredItem<BlockItem> REDSTONE_DEVICE = ITEMS.registerSimpleBlockItem(BitterBlocks.REDSTONE_DEVICE);
 

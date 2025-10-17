@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.phys.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -95,12 +96,12 @@ public class SCP151BlockEntity extends BlockEntity {
         }
 
         BlockState state = level.getBlockState(worldPosition);
-        SCP151Block.Type type = state.getValue(SCP151Block.TYPE);
+        AttachFace face = state.getValue(SCP151Block.FACE);
 
         Vec3 expectedDirection;
-        if (type == SCP151Block.Type.TOP) {
+        if (face == AttachFace.CEILING) {
             expectedDirection = new Vec3(0, 1, 0);
-        } else if (type == SCP151Block.Type.BOTTOM) {
+        } else if (face == AttachFace.FLOOR) {
             expectedDirection = new Vec3(0, -1, 0);
         } else {
             Direction facing = state.getValue(SCP151Block.FACING).getOpposite();

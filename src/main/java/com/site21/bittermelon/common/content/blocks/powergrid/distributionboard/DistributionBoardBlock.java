@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
@@ -32,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 public class DistributionBoardBlock extends Block implements EntityBlock {
-    public static final EnumProperty<Type> TYPE = EnumProperty.create("type", Type.class);
+    public static final EnumProperty<AttachFace> FACE = BlockStateProperties.ATTACH_FACE;
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     private static final Map<Direction, VoxelShape> SHAPES;
@@ -40,14 +41,14 @@ public class DistributionBoardBlock extends Block implements EntityBlock {
     public DistributionBoardBlock(Properties properties) {
         super(properties);
         registerDefaultState(defaultBlockState()
-                .setValue(TYPE, Type.SIDE)
+                .setValue(FACE, AttachFace.WALL)
                 .setValue(FACING, Direction.NORTH)
                 .setValue(WATERLOGGED, false));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
-        builder.add(TYPE, FACING, WATERLOGGED);
+        builder.add(FACE, FACING, WATERLOGGED);
     }
 
     @Override
@@ -65,14 +66,14 @@ public class DistributionBoardBlock extends Block implements EntityBlock {
         BlockState stateForPlacement = super.getStateForPlacement(context);
         if (stateForPlacement == null) return null;
 
-        Type type = switch (context.getClickedFace().getOpposite()) {
-            case UP -> Type.TOP;
-            case DOWN -> Type.BOTTOM;
-            default -> Type.SIDE;
+        AttachFace face = switch (context.getClickedFace().getOpposite()) {
+            case UP -> AttachFace.CEILING;
+            case DOWN -> AttachFace.FLOOR;
+            default -> AttachFace.WALL;
         };
 
         return stateForPlacement
-                .setValue(TYPE, type)
+                .setValue(FACE, face)
                 .setValue(FACING, context.getHorizontalDirection().getOpposite())
                 .setValue(WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER);
     }
@@ -90,8 +91,16 @@ public class DistributionBoardBlock extends Block implements EntityBlock {
 
     @Override
     public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter world, @NotNull BlockPos pos, @NotNull CollisionContext context) {
-        Direction direction = state.getValue(FACING);
-        return SHAPES.get(direction);
+        Direction facing = state.getValue(FACING);
+        AttachFace face = state.getValue(FACE);
+
+        if (face == AttachFace.FLOOR) {
+            return SHAPES.get(Direction.DOWN);
+        } else if (face == AttachFace.CEILING) {
+            return SHAPES.get(Direction.UP);
+        } else {
+            return SHAPES.get(facing);
+        }
     }
 
     @Override
@@ -110,27 +119,5 @@ public class DistributionBoardBlock extends Block implements EntityBlock {
                 Direction.UP, Block.box(0.0F, 13.0F, 0.0F, 16.0F, 16.0F, 16.0F),
                 Direction.DOWN, Block.box(0.0F, 0.0F, 0.0F, 16.0F, 3.0F, 16.0F)
         );
-    }
-
-    public enum Type implements StringRepresentable {
-        TOP("top"),
-        BOTTOM("bottom"),
-        SIDE("side");
-
-        private final String name;
-
-        Type(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public @NotNull String getSerializedName() {
-            return this.name;
-        }
-
-        @Override
-        public String toString() {
-            return this.name;
-        }
     }
 }
