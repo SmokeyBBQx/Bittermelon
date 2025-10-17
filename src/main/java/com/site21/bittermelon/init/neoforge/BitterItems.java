@@ -23,11 +23,16 @@ import com.site21.bittermelon.common.content.items.writablepaper.WritablePaper;
 import com.site21.bittermelon.common.content.items.writingutensils.ChalkItem;
 import com.site21.bittermelon.common.content.items.writingutensils.HighlighterItem;
 import com.site21.bittermelon.common.systems.component.Screwdriver;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.component.Consumable;
+import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -165,7 +170,12 @@ public class BitterItems {
             new Item.Properties().stacksTo(1));
     public static final DeferredItem<Item> BASEBALL = ITEMS.registerSimpleItem("baseball");
 
-    public static final DeferredItem<Item> CIGARETTE_BUTT = ITEMS.registerSimpleItem("cigarette_butt");
+    public static final DeferredItem<Item> CIGARETTE_BUTT = ITEMS.register("cigarette_butt", registryName ->
+            new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .component(DataComponents.CONSUMABLE, Consumable.builder()
+                            .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.NAUSEA, 100, 0)))
+                            .build())));
 
     public static final DeferredItem<Item> KEYCARD = ITEMS.registerSimpleItem("keycard");
 
@@ -178,7 +188,17 @@ public class BitterItems {
 
     public static final DeferredItem<Item> BODY_PART = ITEMS.registerSimpleItem("body_part");
 
-    public static final DeferredItem<Item> BITTERMELON = ITEMS.registerSimpleItem("bittermelon");
+    public static final DeferredItem<Item> BITTERMELON = ITEMS.register("bittermelon",
+            registryName -> new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .food(new FoodProperties.Builder()
+                            .nutrition(8)
+                            .saturationModifier(0.1f)
+                            .build())
+                    .component(DataComponents.CONSUMABLE, Consumable.builder()
+                            .onConsume(new ApplyStatusEffectsConsumeEffect(
+                                    new MobEffectInstance(MobEffects.HUNGER, 600, 0), 0.8f))
+                            .build())));
 
     public static final DeferredItem<SCP377> SCP_377 = ITEMS.registerItem("scp_377", SCP377::new);
 
@@ -196,7 +216,11 @@ public class BitterItems {
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
                     .component(BitterDataComponents.SCREWDRIVER, Screwdriver.DEFAULT)));
 
-    public static final DeferredItem<ChalkItem> CHALK = ITEMS.registerItem("chalk", ChalkItem::new);
+    public static final DeferredItem<ChalkItem> CHALK = ITEMS.register("chalk", registryName ->
+            new ChalkItem(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .stacksTo(16)
+                    .component(DataComponents.CONSUMABLE, Consumable.builder().build())));
 
     public static final DeferredItem<HighlighterItem> HIGHLIGHTER = ITEMS.registerItem("highlighter", HighlighterItem::new);
 
