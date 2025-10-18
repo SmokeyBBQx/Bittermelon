@@ -1,5 +1,6 @@
 package com.site21.bittermelon.mixin;
 
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlock;
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlockEntity;
@@ -8,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.GameType;
@@ -32,11 +34,11 @@ public class CrosshairMixin {
     @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
     private void renderCustomCrosshair(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.level == null) return;
 
         if (minecraft.hitResult != null && minecraft.hitResult.getType() == HitResult.Type.BLOCK) {
             BlockHitResult blockHitResult = (BlockHitResult) minecraft.hitResult;
             BlockPos pos = blockHitResult.getBlockPos();
-            if (minecraft.level == null) return;
             BlockState blockState = minecraft.level.getBlockState(pos);
 
             if (blockState.getBlock() instanceof StickyNoteBlock stickyNoteBlock
@@ -71,18 +73,18 @@ public class CrosshairMixin {
             return;
         }
 
-        ResourceLocation customCrosshairTexture = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/icon/inspect_crosshair.png");
+        ResourceLocation customCrosshairTexture = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "icon/inspect_crosshair");
         int crosshairSize = 12;
         int screenWidth = minecraft.getWindow().getGuiScaledWidth();
         int screenHeight = minecraft.getWindow().getGuiScaledHeight();
 
-        guiGraphics.blit(
+        guiGraphics.blitSprite(
+                RenderPipelines.GUI_TEXTURED,
                 customCrosshairTexture,
                 (screenWidth - crosshairSize) / 2,
                 (screenHeight - crosshairSize) / 2,
-                0, 0,
-                crosshairSize, crosshairSize,
-                crosshairSize, crosshairSize
+                crosshairSize,
+                crosshairSize
         );
     }
 
