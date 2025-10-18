@@ -3,7 +3,7 @@ package com.site21.bittermelon.common.content.blocks.electronics.securedoor;
 import com.site21.bittermelon.common.content.blocks.electronics.slidingdoor.SlidingDoorBlock;
 import com.site21.bittermelon.common.systems.electronics.ElectronicDevice;
 import com.site21.bittermelon.common.systems.electronics.NetworkDevice;
-import com.site21.bittermelon.common.systems.electronics.ElectronicBlockEntity;
+import com.site21.bittermelon.common.content.blocks.electronics.ElectronicBlockEntity;
 import com.site21.bittermelon.common.systems.electronics.PanelDevice;
 import com.site21.bittermelon.common.systems.electronics.wiring.InputPort;
 import com.site21.bittermelon.common.systems.electronics.wiring.OutputPort;

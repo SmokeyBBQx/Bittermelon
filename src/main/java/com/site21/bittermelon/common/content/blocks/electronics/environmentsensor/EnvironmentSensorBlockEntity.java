@@ -3,7 +3,7 @@ package com.site21.bittermelon.common.content.blocks.electronics.environmentsens
 import com.site21.bittermelon.common.systems.atmosphere.AtmosHandler;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosInstance;
 import com.site21.bittermelon.common.systems.electronics.ElectronicDevice;
-import com.site21.bittermelon.common.systems.electronics.ElectronicBlockEntity;
+import com.site21.bittermelon.common.content.blocks.electronics.ElectronicBlockEntity;
 import com.site21.bittermelon.common.systems.electronics.wiring.OutputPort;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import net.minecraft.core.BlockPos;

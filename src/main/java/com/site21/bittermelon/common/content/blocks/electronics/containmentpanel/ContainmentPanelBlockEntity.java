@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.content.blocks.electronics.containmentpane
 
 import com.site21.bittermelon.common.content.blocks.base.structuralblock.StructuralBlockEntity;
 import com.site21.bittermelon.common.systems.electronics.ContainmentDevice;
-import com.site21.bittermelon.common.systems.electronics.ElectronicBlockEntity;
+import com.site21.bittermelon.common.content.blocks.electronics.ElectronicBlockEntity;
 import com.site21.bittermelon.common.content.blocks.dirtyfloor.DirtyFloorBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;

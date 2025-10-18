@@ -1,6 +1,6 @@
 package com.site21.bittermelon.common.content.blocks.electronics.keycardreader;
 
-import com.site21.bittermelon.common.systems.electronics.ElectronicBlockEntity;
+import com.site21.bittermelon.common.content.blocks.electronics.ElectronicBlockEntity;
 import com.site21.bittermelon.common.systems.electronics.wiring.InputPort;
 import com.site21.bittermelon.common.systems.electronics.wiring.OutputPort;
 import com.site21.bittermelon.common.systems.electronics.wiring.Signal;

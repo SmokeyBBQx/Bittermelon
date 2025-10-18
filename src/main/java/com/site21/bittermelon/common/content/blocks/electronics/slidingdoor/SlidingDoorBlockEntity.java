@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.content.blocks.electronics.slidingdoor;
 
 import com.site21.bittermelon.client.util.LerpedFloat;
-import com.site21.bittermelon.common.systems.electronics.ElectronicBlockEntity;
+import com.site21.bittermelon.common.content.blocks.electronics.ElectronicBlockEntity;
 import com.site21.bittermelon.common.systems.electronics.PanelDevice;
 import com.site21.bittermelon.common.systems.electronics.wiring.InputPort;
 import com.site21.bittermelon.common.systems.electronics.wiring.OutputPort;
@@ -21,7 +21,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.LargeSlidingDoorBlock.MASTER;
 import static com.site21.bittermelon.common.content.blocks.electronics.slidingdoor.SlidingDoorBlock.OPEN;
 import static com.site21.bittermelon.common.content.blocks.electronics.slidingdoor.SlidingDoorBlock.VISIBLE;
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.SLIDING_DOOR_BLOCK_ENTITY;

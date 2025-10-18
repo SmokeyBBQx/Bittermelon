@@ -236,6 +236,13 @@ public interface ElectronicDevice {
         }
     }
 
+    /**
+     * Draws power from a connected PowerCell via the "POWER_SUPPLY" input port.
+     * Updates the device's supply and draw values based on the power drawn.
+     *
+     * @param level the world level for looking up block entities
+     * @param draw the amount of power to draw
+     */
     default void drawPower(Level level, float draw) {
         InputPort powerSupplyPort = getInputPorts().get("POWER_SUPPLY");
         if (powerSupplyPort == null) return;

@@ -1,5 +1,6 @@
 package com.site21.bittermelon.common.content.blocks.electronics.securedoor;
 
+import com.site21.bittermelon.common.content.blocks.DoorHelper;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import com.site21.bittermelon.util.LocalMessageHelper;
 import net.minecraft.core.BlockPos;
@@ -43,13 +44,7 @@ public class SecureDoorBlock extends DoorBlock implements EntityBlock {
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
-        if (level.isClientSide) return InteractionResult.PASS;
-
-        if (player.isShiftKeyDown()) {
-            level.playSound(null, pos, BitterSounds.KNOCK.value(), SoundSource.PLAYERS, 1.0f, 1.0f);
-            LocalMessageHelper.sendEmoteMessage(level, player, 10, "knocks on the door.");
-            return InteractionResult.SUCCESS;
-        }
+        if (DoorHelper.handleKnocking(level, player)) return InteractionResult.SUCCESS;
 
         if (level.getBlockEntity(pos) instanceof SecureDoorBlockEntity blockEntity) {
             if (blockEntity.isLocked()) return InteractionResult.PASS;

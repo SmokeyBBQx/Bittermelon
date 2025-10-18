@@ -1,5 +1,6 @@
-package com.site21.bittermelon.common.systems.electronics;
+package com.site21.bittermelon.common.content.blocks.electronics;
 
+import com.site21.bittermelon.common.systems.electronics.ElectronicDevice;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;

@@ -1,5 +1,6 @@
 package com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor;
 
+import com.site21.bittermelon.common.content.blocks.DoorHelper;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import com.site21.bittermelon.util.LocalMessageHelper;
 import io.netty.buffer.ByteBuf;
@@ -17,6 +18,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -203,15 +205,7 @@ public class LargeSlidingDoorBlock extends Block implements EntityBlock {
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
-        if (level.isClientSide) return InteractionResult.PASS;
-
-        if (player.isShiftKeyDown()) {
-            level.playSound(null, pos, BitterSounds.KNOCK.value(), SoundSource.PLAYERS, 1.0f, 1.0f);
-            LocalMessageHelper.sendEmoteMessage(level, player, 10, "knocks on the large sliding door.");
-            return InteractionResult.SUCCESS;
-        }
-
-        return InteractionResult.PASS;
+        return DoorHelper.handleKnocking(level, player) ? InteractionResult.SUCCESS : InteractionResult.PASS;
     }
 
     public void handleMoving(@NotNull BlockState state, Level level, BlockPos pos, boolean open) {
@@ -246,13 +240,16 @@ public class LargeSlidingDoorBlock extends Block implements EntityBlock {
         if (level.isClientSide) return InteractionResult.TRY_WITH_EMPTY_HAND;
 
         // FORCE OPEN LOGIC
+        if (player.getCooldowns().isOnCooldown(stack)) return InteractionResult.TRY_WITH_EMPTY_HAND;
         if (!stack.is(Items.IRON_AXE)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+
         if (!state.getValue(MASTER)) {
             pos = findMasterBlock(level, pos);
             if (pos == null) return InteractionResult.TRY_WITH_EMPTY_HAND;
             state = level.getBlockState(pos);
         }
         if (level.getBlockState(pos).getValue(STATE) == State.OPEN) return InteractionResult.FAIL;
+
         if (level.getBlockEntity(pos) instanceof LargeSlidingDoorBlockEntity door) {
             // Check if motors are on.
             if (door.isOn()) {
@@ -278,6 +275,9 @@ public class LargeSlidingDoorBlock extends Block implements EntityBlock {
             if (door.getDoorProgress() >= 1) {
                 level.setBlock(pos, state.setValue(STATE, State.OPEN), 3);
             }
+
+            player.getCooldowns().addCooldown(stack, 20);
+
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.TRY_WITH_EMPTY_HAND;

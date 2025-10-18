@@ -56,6 +56,8 @@ public class LocalMessageHelper {
      * @param message The emote message to send.
      */
     public static void sendEmoteMessage(@NotNull Level level, Entity entity, int range, String message) {
+        if (level.isClientSide) return;
+
         Character character = CharacterManager.get(level).getActiveCharacter(entity);
         if (character != null) {
             sendLocalMessage(level, entity.getOnPos(), range, Component.literal(character.getName() + " " + message).withColor(character.getEmoteColor()));

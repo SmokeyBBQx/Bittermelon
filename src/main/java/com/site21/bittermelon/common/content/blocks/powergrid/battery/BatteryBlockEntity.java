@@ -1,6 +1,6 @@
 package com.site21.bittermelon.common.content.blocks.powergrid.battery;
 
-import com.site21.bittermelon.common.systems.electronics.ElectronicBlockEntity;
+import com.site21.bittermelon.common.content.blocks.electronics.ElectronicBlockEntity;
 import com.site21.bittermelon.common.systems.electronics.wiring.InputPort;
 import com.site21.bittermelon.common.systems.electronics.wiring.OutputPort;
 import net.minecraft.core.BlockPos;
