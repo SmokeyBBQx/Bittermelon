@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.content.items.substance;
 
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlockEntity;
-import com.site21.bittermelon.common.content.items.substance.data.SubstanceContents;
+import com.site21.bittermelon.common.systems.component.SubstanceContents;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import net.minecraft.ChatFormatting;

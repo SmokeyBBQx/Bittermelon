@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.content.items.substance;
 
 import com.site21.bittermelon.common.content.items.base.BitterItem;
-import com.site21.bittermelon.common.content.items.substance.data.SubstanceContents;
+import com.site21.bittermelon.common.systems.component.SubstanceContents;
 import com.site21.bittermelon.common.systems.substance.Substance;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import com.site21.bittermelon.util.ColorUtil;
@@ -107,28 +107,6 @@ public class SubstanceContainerItem extends BitterItem {
         return stack;
     }
 
-    public int getColor(@NotNull ItemStack stack) {
-        int color = stack.getOrDefault(COLOR, -1);
-
-        if (color != -1) return color;
-
-        return updateColor(stack);
-    }
-
-    public int updateColor(ItemStack stack) {
-        int color;
-
-        Map<Integer, Float> colors = new HashMap<>();
-        for (SubstanceStack substance : getContents(stack)) {
-            colors.put(substance.getSubstance().getColor(), substance.getAmount());
-        }
-
-        color = colors.isEmpty() ? 0xFFFFFFFF : ColorUtil.mixColors(colors);
-        stack.set(COLOR, color);
-
-        return color;
-    }
-
     @Override
     public boolean isBarVisible(@NotNull ItemStack stack) {
         return true;
@@ -214,7 +192,6 @@ public class SubstanceContainerItem extends BitterItem {
     }
 
     private void updateVisuals(@NotNull ItemStack stack) {
-        updateColor(stack);
         stack.set(LAST_UPDATED.get(), System.currentTimeMillis());
     }
 }

@@ -16,6 +16,7 @@ import com.site21.bittermelon.common.content.items.substance.GasContainerItem;
 import com.site21.bittermelon.common.content.items.substance.GlassFluidContainerItem;
 import com.site21.bittermelon.common.content.items.substance.PowderedSubstanceItem;
 import com.site21.bittermelon.common.content.items.substance.pill.PillItem;
+import com.site21.bittermelon.common.content.items.substance.pill.PillShape;
 import com.site21.bittermelon.common.content.items.taser.TaserItem;
 import com.site21.bittermelon.common.content.items.wirecutters.WireCuttersItem;
 import com.site21.bittermelon.common.content.items.wire.WireItem;
@@ -32,6 +33,7 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.component.Consumable;
+import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -109,6 +111,8 @@ public class BitterItems {
     public static final DeferredItem<PillItem> PILL = ITEMS.register("pill", registryName ->
             new PillItem(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .component(PILL_SHAPE, PillShape.ROUND)
+                    .component(DataComponents.DYED_COLOR, new DyedItemColor(0xFFFFFF))
                     .component(VOLUME, 20.0f)));
 
 

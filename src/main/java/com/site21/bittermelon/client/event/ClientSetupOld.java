@@ -30,7 +30,7 @@ public class ClientSetupOld {
 //        ItemProperties.register(
 //                PILL.get(),
 //                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "pill_shape"),
-//                (stack, level, entity, seed) -> stack.getOrDefault(PILL_SHAPE, PillShape.ROUND).ordinal()
+//                (stack, level, entity, seed) -> stack.getOrDefault(PILL_SHAPE, StackPillShape.ROUND).ordinal()
 //        );
 //
 //        ItemProperties.register(

@@ -4,11 +4,8 @@ import com.mojang.serialization.Codec;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.items.base.ItemSize;
 import com.site21.bittermelon.common.content.items.scps.scp377.Fortune;
-import com.site21.bittermelon.common.content.items.substance.data.SubstanceContents;
+import com.site21.bittermelon.common.systems.component.*;
 import com.site21.bittermelon.common.content.items.substance.pill.PillShape;
-import com.site21.bittermelon.common.systems.component.Screwdriver;
-import com.site21.bittermelon.common.systems.component.Smokable;
-import com.site21.bittermelon.common.systems.component.WireCutter;
 import com.site21.bittermelon.common.systems.medical.blood.BloodData;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentData;
 import net.minecraft.core.BlockPos;
@@ -155,11 +152,6 @@ public class BitterDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<BloodData>> BLOOD_DATA = DATA_COMPONENTS.registerComponentType(
             "blood_data",
             builder -> builder.persistent(BloodData.CODEC).networkSynchronized(BloodData.STREAM_CODEC)
-    );
-
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> COLOR = DATA_COMPONENTS.registerComponentType(
-            "color",
-            builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
     );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<PillShape>> PILL_SHAPE = DATA_COMPONENTS.registerComponentType(

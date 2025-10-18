@@ -63,24 +63,6 @@ public class PowderedSubstanceItem extends SubstanceContainerItem {
         return false;
     }
 
-    public static int getTextureLevel(@NotNull ItemStack stack) {
-        if (stack.getItem() instanceof SubstanceContainerItem item) {
-            float volume = item.getTotalVolume(stack);
-
-            if (volume < 5) {
-                return 1;
-            } else if (volume < 10) {
-                return 2;
-            } else if (volume < 15) {
-                return 3;
-            } else if (volume > 15) {
-                return 4;
-            }
-        }
-
-        return 4;
-    }
-
     private void playSnortSound(@NotNull Level level, BlockPos pos) {
         level.playSound(null, pos,
                 BitterSounds.SNORT.value(), SoundSource.PLAYERS, 0.5F,

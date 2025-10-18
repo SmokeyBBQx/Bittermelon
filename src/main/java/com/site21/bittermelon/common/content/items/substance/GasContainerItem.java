@@ -1,6 +1,6 @@
 package com.site21.bittermelon.common.content.items.substance;
 
-import com.site21.bittermelon.common.content.items.substance.data.SubstanceContents;
+import com.site21.bittermelon.common.systems.component.SubstanceContents;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosHandler;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosInstance;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;

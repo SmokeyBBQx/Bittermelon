@@ -8,7 +8,13 @@ import com.site21.bittermelon.common.content.blocks.electronics.redstonedevice.R
 import com.site21.bittermelon.common.content.blocks.properties.Placement;
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlock;
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
+import com.site21.bittermelon.common.content.items.substance.pill.PillShape;
+import com.site21.bittermelon.datagen.property.BaseColor;
+import com.site21.bittermelon.datagen.property.StackPillShape;
+import com.site21.bittermelon.datagen.property.SubstanceColor;
+import com.site21.bittermelon.datagen.property.SubstanceVolume;
 import com.site21.bittermelon.init.neoforge.BitterBlocks;
+import net.minecraft.client.color.item.Dye;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ModelProvider;
@@ -19,9 +25,12 @@ import net.minecraft.client.data.models.blockstates.PropertyDispatch;
 import net.minecraft.client.data.models.model.*;
 import net.minecraft.client.renderer.block.model.VariantMutator;
 import net.minecraft.client.renderer.item.ItemModel;
+import net.minecraft.client.renderer.item.RangeSelectItemModel;
+import net.minecraft.client.renderer.item.SelectItemModel;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.AttachFace;
@@ -31,6 +40,7 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.DIRTY_FLOOR;
@@ -191,14 +201,16 @@ public class BitterModelProvider extends ModelProvider {
 
         // Writing Utensils
         itemModels.generateFlatItem(PEN.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
-        itemModels.generateFlatItem(CHALK.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
+        generateBaseColorItem(itemModels, CHALK.get(), DyeColor.WHITE);
+
         itemModels.generateFlatItem(HIGHLIGHTER.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
 
         // Consumables
         itemModels.generateFlatItem(CIGARETTE.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(CIGARETTE_BUTT.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(POWDER.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(PILL.get(), ModelTemplates.FLAT_ITEM);
+        generatePowderItem(itemModels);
+        generatePillItem(itemModels, PILL.get());
+
         itemModels.generateFlatItem(FORTUNE_COOKIE.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(CRACKED_FORTUNE_COOKIE.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(BITTERMELON.get(), ModelTemplates.FLAT_ITEM);
@@ -545,6 +557,118 @@ public class BitterModelProvider extends ModelProvider {
         ItemModel.Unbaked inventory = ItemModelUtils.plainModel(itemModels.createFlatItemModel(item, ModelTemplates.FLAT_ITEM));
         ItemModel.Unbaked holding = ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(item, "_in_hand"));
         itemModels.itemModelOutput.accept(item, ItemModelGenerators.createFlatModelDispatch(inventory, holding));
+    }
+
+    public void generateTintedSubstanceItem(@NotNull ItemModelGenerators itemModels, Item item) {
+        ResourceLocation model = itemModels.createFlatItemModel(item, ModelTemplates.FLAT_ITEM);
+        itemModels.itemModelOutput.accept(item, ItemModelUtils.tintedModel(model, new SubstanceColor()));
+    }
+
+    public void generatePowderItem(@NotNull ItemModelGenerators itemModels) {
+        itemModels.itemModelOutput.accept(
+                POWDER.get(),
+                new RangeSelectItemModel.Unbaked(
+                        new SubstanceVolume(),
+                        1,
+                        List.of(
+                                new RangeSelectItemModel.Entry(
+                                        0,
+                                        ItemModelUtils.tintedModel(
+                                                ModelTemplates.FLAT_ITEM.create(
+                                                        modLocation("item/powder_1"),
+                                                        TextureMapping.layer0(modLocation("item/powder_1")),
+                                                        itemModels.modelOutput
+                                                ),
+                                                new SubstanceColor()
+                                        )
+                                ),
+                                new RangeSelectItemModel.Entry(
+                                        5,
+                                        ItemModelUtils.tintedModel(
+                                                ModelTemplates.FLAT_ITEM.create(
+                                                        modLocation("item/powder_2"),
+                                                        TextureMapping.layer0(modLocation("item/powder_2")),
+                                                        itemModels.modelOutput
+                                                ),
+                                                new SubstanceColor()
+                                        )
+                                ),
+                                new RangeSelectItemModel.Entry(
+                                        10,
+                                        ItemModelUtils.tintedModel(
+                                                ModelTemplates.FLAT_ITEM.create(
+                                                        modLocation("item/powder_3"),
+                                                        TextureMapping.layer0(modLocation("item/powder_3")),
+                                                        itemModels.modelOutput
+                                                ),
+                                                new SubstanceColor()
+                                        )
+                                ),
+                                new RangeSelectItemModel.Entry(
+                                        15,
+                                        ItemModelUtils.tintedModel(mcLocation("item/sugar"), new SubstanceColor())
+                                )
+                        ),
+                        Optional.of(
+                                ItemModelUtils.plainModel(mcLocation("item/sugar"))
+                        )
+                )
+        );
+    }
+
+    public void generatePillItem(@NotNull ItemModelGenerators itemModels, Item item) {
+        itemModels.itemModelOutput.accept(
+                item,
+                new SelectItemModel.Unbaked(
+                        new SelectItemModel.UnbakedSwitch(
+                                new StackPillShape(),
+                                List.of(
+                                        new SelectItemModel.SwitchCase(
+                                                List.of(PillShape.ROUND),
+                                                ItemModelUtils.tintedModel(
+                                                        ModelTemplates.FLAT_ITEM.create(
+                                                                modLocation("item/pill_round"),
+                                                                TextureMapping.layer0(modLocation("item/pill_round")),
+                                                                itemModels.modelOutput
+                                                        ),
+                                                        new Dye(0xFFFFFF)
+                                                )
+                                        ),
+                                        new SelectItemModel.SwitchCase(
+                                                List.of(PillShape.CAPSULE),
+                                                ItemModelUtils.tintedModel(itemModels.generateLayeredItem(
+                                                                modLocation("item/pill_capsule"),
+                                                                modLocation("item/pill_capsule"),
+                                                                modLocation("item/pill_capsule_overlay")
+                                                        ),
+                                                        new Dye(0xFFFFFF),
+                                                        ItemModelUtils.constantTint(-1))
+                                        ),
+                                        new SelectItemModel.SwitchCase(
+                                                List.of(PillShape.OVAL),
+                                                ItemModelUtils.tintedModel(
+                                                        ModelTemplates.FLAT_ITEM.create(
+                                                                modLocation("item/pill_oval"),
+                                                                TextureMapping.layer0(modLocation("item/pill_oval")),
+                                                                itemModels.modelOutput
+                                                        ),
+                                                        new Dye(0xFFFFFF)
+                                                )
+                                        )
+                                )
+                        ),
+                        Optional.of(ItemModelUtils.plainModel(modLocation("item/pill_round"))))
+        );
+    }
+
+    public void generateBaseColorItem(@NotNull ItemModelGenerators itemModels, Item item, DyeColor defaultColor) {
+        itemModels.itemModelOutput.accept(
+                item,
+                ItemModelUtils.tintedModel(
+                        itemModels.createFlatItemModel(item, ModelTemplates.FLAT_ITEM),
+                        new BaseColor(defaultColor)
+                )
+        );
     }
 
     @Contract(pure = true)
