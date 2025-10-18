@@ -257,10 +257,10 @@ public class StickyNoteBlock extends Block implements EntityBlock {
                 case EAST -> floor ? 1 - relX : relX;
                 default -> floor ? relZ : 1 - relZ;
             };
-            if (vertical > 0.5) {
-                return horizontal > 0.5 ? Position.TOP_LEFT : Position.TOP_RIGHT;
+            if (floor ? vertical < 0.5 : vertical > 0.5) {
+                return horizontal < 0.5 ? Position.TOP_LEFT : Position.TOP_RIGHT;
             } else {
-                return horizontal > 0.5 ? Position.BOTTOM_LEFT : Position.BOTTOM_RIGHT;
+                return horizontal < 0.5 ? Position.BOTTOM_LEFT : Position.BOTTOM_RIGHT;
             }
         } else {
             if (relY > 0.5) {
@@ -336,10 +336,10 @@ public class StickyNoteBlock extends Block implements EntityBlock {
                         Position.BOTTOM_RIGHT, Block.box(15.9, 0.0, 8.0, 16.0, 8.0, 16.0)
                 ),
                 Direction.UP, Map.of(
-                        Position.TOP_LEFT, Block.box(0.0, 0.0, 0.0, 8.0, 0.1, 8.0),
-                        Position.TOP_RIGHT, Block.box(8.0, 0.0, 0.0, 16.0, 0.1, 8.0),
-                        Position.BOTTOM_LEFT, Block.box(0.0, 0.0, 8.0, 8.0, 0.1, 16.0),
-                        Position.BOTTOM_RIGHT, Block.box(8.0, 0.0, 8.0, 16.0, 0.1, 16.0)
+                        Position.TOP_LEFT, Block.box(8.0, 0.0, 8.0, 16.0, 0.1, 16.0),
+                        Position.TOP_RIGHT, Block.box(0.0, 0.0, 8.0, 8.0, 0.1, 16.0),
+                        Position.BOTTOM_LEFT, Block.box(8.0, 0.0, 0.0, 16.0, 0.1, 8.0),
+                        Position.BOTTOM_RIGHT, Block.box(0.0, 0.0, 0.0, 8.0, 0.1, 8.0)
                 ),
                 Direction.DOWN, Map.of(
                         Position.TOP_LEFT, Block.box(0.0, 15.9, 8.0, 8.0, 16.0, 16.0),

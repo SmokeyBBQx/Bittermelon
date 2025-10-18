@@ -186,3 +186,233 @@ idea {
         downloadJavadoc = true
     }
 }
+
+tasks.register("generateStickyNoteModels") {
+    group = "generation"
+    description = "Generates sticky note model JSON files"
+
+    def modelDir = layout.projectDirectory.dir("src/main/resources/assets/bittermelon/models/block/sticky_note")
+
+    doLast {
+        File modelDirFile = modelDir.asFile
+        modelDirFile.mkdirs()
+
+        // Wall models
+        def wallSegments = [
+                [ // 0: bottom-left
+                  from : [8, 0, 15.75],
+                  to   : [16, 8, 15.75],
+                  faces: [
+                          north: [uv: [0, 8, 8, 16], texture: "#texture"],
+                          south: [uv: [0, 8, 8, 16], texture: "#texture"]
+                  ]
+                ],
+                [ // 1: bottom-right
+                  from : [0, 0, 15.75],
+                  to   : [8, 8, 15.75],
+                  faces: [
+                          north: [uv: [8, 8, 16, 16], texture: "#texture"],
+                          south: [uv: [8, 8, 16, 16], texture: "#texture"]
+                  ]
+                ],
+                [ // 2: top-left
+                  from : [8, 8, 15.75],
+                  to   : [16, 16, 15.75],
+                  faces: [
+                          north: [uv: [0, 0, 8, 8], texture: "#texture"],
+                          south: [uv: [0, 0, 8, 8], texture: "#texture"]
+                  ]
+                ],
+                [ // 3: top-right
+                  from : [0, 8, 15.75],
+                  to   : [8, 16, 15.75],
+                  faces: [
+                          north: [uv: [8, 0, 16, 8], texture: "#texture"],
+                          south: [uv: [8, 0, 16, 8], texture: "#texture"]
+                  ]
+                ]
+        ]
+
+        // Floor models
+        def floorSegments = [
+                [ // 0: bottom-left
+                  from : [0, 0.25, 8],
+                  to   : [8, 0.25, 16],
+                  faces: [
+                          up  : [uv: [0, 8, 8, 16], texture: "#texture"],
+                          down: [uv: [0, 8, 8, 16], texture: "#texture"]
+                  ]
+                ],
+                [ // 1: bottom-right
+                  from : [8, 0.25, 8],
+                  to   : [16, 0.25, 16],
+                  faces: [
+                          up  : [uv: [8, 8, 16, 16], texture: "#texture"],
+                          down: [uv: [8, 8, 16, 16], texture: "#texture"]
+                  ]
+                ],
+                [ // 2: top-left
+                  from : [0, 0.25, 0],
+                  to   : [8, 0.25, 8],
+                  faces: [
+                          up  : [uv: [0, 0, 8, 8], texture: "#texture"],
+                          down: [uv: [0, 0, 8, 8], texture: "#texture"]
+                  ]
+                ],
+                [ // 3: top-right
+                  from : [8, 0.25, 0],
+                  to   : [16, 0.25, 8],
+                  faces: [
+                          up  : [uv: [8, 0, 16, 8], texture: "#texture"],
+                          down: [uv: [8, 0, 16, 8], texture: "#texture"]
+                  ]
+                ]
+        ]
+
+        // Ceiling models
+        def ceilingSegments = [
+                [ // 0: bottom-left
+                  from : [0, 15.75, 8],
+                  to   : [8, 15.75, 16],
+                  faces: [
+                          up  : [uv: [0, 8, 8, 16], texture: "#texture"],
+                          down: [uv: [0, 8, 8, 16], texture: "#texture"]
+                  ]
+                ],
+                [ // 1: bottom-right
+                  from : [8, 15.75, 8],
+                  to   : [16, 15.75, 16],
+                  faces: [
+                          up  : [uv: [8, 8, 16, 16], texture: "#texture"],
+                          down: [uv: [8, 8, 16, 16], texture: "#texture"]
+                  ]
+                ],
+                [ // 2: top-left
+                  from : [0, 15.75, 0],
+                  to   : [8, 15.75, 8],
+                  faces: [
+                          up  : [uv: [0, 0, 8, 8], texture: "#texture"],
+                          down: [uv: [0, 0, 8, 8], texture: "#texture"]
+                  ]
+                ],
+                [ // 3: top-right
+                  from : [8, 15.75, 0],
+                  to   : [16, 15.75, 8],
+                  faces: [
+                          up  : [uv: [8, 0, 16, 8], texture: "#texture"],
+                          down: [uv: [8, 0, 16, 8], texture: "#texture"]
+                  ]
+                ]
+        ]
+
+        for (int i = 0; i <= 15; i++) {
+            String binary = Integer.toBinaryString(i).padLeft(4, '0')
+            def activeWallElements = []
+            def activeFloorElements = []
+            def activeCeilingElements = []
+
+            if (binary[0] == '1') { // 1000: top-left
+                activeWallElements.add(wallSegments[2])
+                activeFloorElements.add(floorSegments[2])
+                activeCeilingElements.add(ceilingSegments[2])
+            }
+            if (binary[1] == '1') { // 0100: top-right
+                activeWallElements.add(wallSegments[3])
+                activeFloorElements.add(floorSegments[3])
+                activeCeilingElements.add(ceilingSegments[3])
+            }
+            if (binary[2] == '1') { // 0010: bottom-left
+                activeWallElements.add(wallSegments[0])
+                activeFloorElements.add(floorSegments[0])
+                activeCeilingElements.add(ceilingSegments[0])
+            }
+            if (binary[3] == '1') { // 0001: bottom-right
+                activeWallElements.add(wallSegments[1])
+                activeFloorElements.add(floorSegments[1])
+                activeCeilingElements.add(ceilingSegments[1])
+            }
+
+            // Wall model
+            def wallElementsJson = activeWallElements.collect { seg ->
+                """        {
+            "from": ${seg.from},
+            "to": ${seg.to},
+            "faces": {
+                "north": {"uv": ${seg.faces.north.uv}, "texture": "${seg.faces.north.texture}"},
+                "south": {"uv": ${seg.faces.south.uv}, "texture": "${seg.faces.south.texture}"}
+            }
+        }"""
+            }.join(',\n')
+
+            String wallModel = """{
+    "format_version": "1.21.6",
+    "credit": "Made with Blockbench",
+    "render_type": "minecraft:cutout",
+    "textures": {
+        "texture": "bittermelon:block/sticky_note",
+        "particle": "#texture"
+    },
+    "elements": [
+${wallElementsJson}
+    ]
+}"""
+            String wallFileName = "sticky_note_${binary}.json"
+            new File(modelDirFile, wallFileName).text = wallModel
+
+            // Floor model
+            def floorElementsJson = activeFloorElements.collect { seg ->
+                """        {
+            "from": ${seg.from},
+            "to": ${seg.to},
+            "faces": {
+                "up": {"uv": ${seg.faces.up.uv}, "texture": "${seg.faces.up.texture}"},
+                "down": {"uv": ${seg.faces.down.uv}, "texture": "${seg.faces.down.texture}"}
+            }
+        }"""
+            }.join(',\n')
+
+            String floorModel = """{
+    "format_version": "1.21.6",
+    "credit": "Made with Blockbench",
+    "render_type": "minecraft:cutout",
+    "textures": {
+        "texture": "bittermelon:block/sticky_note",
+        "particle": "#texture"
+    },
+    "elements": [
+${floorElementsJson}
+    ]
+}"""
+            String floorFileName = "sticky_note_floor_${binary}.json"
+            new File(modelDirFile, floorFileName).text = floorModel
+
+            // Ceiling model
+            def ceilingElementsJson = activeCeilingElements.collect { seg ->
+                """        {
+            "from": ${seg.from},
+            "to": ${seg.to},
+            "faces": {
+                "up": {"uv": ${seg.faces.up.uv}, "texture": "${seg.faces.up.texture}"},
+                "down": {"uv": ${seg.faces.down.uv}, "texture": "${seg.faces.down.texture}"}
+            }
+        }"""
+            }.join(',\n')
+
+            String ceilingModel = """{
+    "format_version": "1.21.6",
+    "credit": "Made with Blockbench",
+    "render_type": "minecraft:cutout",
+    "textures": {
+        "texture": "bittermelon:block/sticky_note",
+        "particle": "#texture"
+    },
+    "elements": [
+${ceilingElementsJson}
+    ]
+}"""
+            String ceilingFileName = "sticky_note_ceiling_${binary}.json"
+            new File(modelDirFile, ceilingFileName).text = ceilingModel
+        }
+        println("Generated 16 sticky note wall, 16 floor, and 16 ceiling model files.")
+    }
+}

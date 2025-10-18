@@ -2,8 +2,8 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
-		"texture": "bittermelon:item/taser",
-		"particle": "taser"
+		"texture": "bittermelon:item/taser_in_hand",
+		"particle": "#texture"
 	},
 	"elements": [
 		{

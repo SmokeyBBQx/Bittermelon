@@ -6,6 +6,7 @@ import com.site21.bittermelon.common.content.blocks.dirtyfloor.DirtyFloorBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.keycardreader.KeycardReaderBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.redstonedevice.RedstoneDeviceBlock;
 import com.site21.bittermelon.common.content.blocks.properties.Placement;
+import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlock;
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.init.neoforge.BitterBlocks;
 import net.minecraft.client.data.models.BlockModelGenerators;
@@ -16,13 +17,18 @@ import net.minecraft.client.data.models.blockstates.MultiPartGenerator;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
 import net.minecraft.client.data.models.model.*;
+import net.minecraft.client.renderer.block.model.VariantMutator;
+import net.minecraft.client.renderer.item.ItemModel;
+import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -141,7 +147,7 @@ public class BitterModelProvider extends ModelProvider {
         blockModels.createTrivialCube(BitterBlocks.PERSONNEL_TERMINAL.get());
         blockModels.createTrivialCube(BitterBlocks.KEYCARD_PRINTER.get());
         blockModels.createAirLikeBlock(BitterBlocks.WALL_WRITING.get(), ResourceLocation.withDefaultNamespace("white_concrete_powder"));
-        blockModels.createTrivialCube(BitterBlocks.STICKY_NOTE.get());
+        createStickyNote(blockModels);
         createKeycardReader(blockModels);
         createRedstoneDevice(blockModels, BitterBlocks.REDSTONE_DEVICE.get(), TexturedModel.ORIENTABLE);
 
@@ -176,11 +182,11 @@ public class BitterModelProvider extends ModelProvider {
         itemModels.generateFlatItem(SCP_2398.get(), ModelTemplates.FLAT_ITEM);
 
         // Tools and Equipment
-        itemModels.generateFlatItem(MOP.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         itemModels.generateFlatItem(LASER_DESIGNATOR.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
-        itemModels.generateFlatItem(TASER.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         itemModels.generateFlatItem(SCREWDRIVER.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         itemModels.generateFlatItem(WIRE_CUTTERS.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
+        generate3D2DItem(itemModels, MOP.get());
+        generate3D2DItem(itemModels, TASER.get());
 
         // Writing Utensils
         itemModels.generateFlatItem(PEN.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
@@ -207,7 +213,6 @@ public class BitterModelProvider extends ModelProvider {
         itemModels.generateFlatItem(KEYCARD.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(WRITABLE_PAPER.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TASER_CARTRIDGE.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(STICKY_NOTE.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(HANDHELD_SYSTEM_INTERFACE.get(), ModelTemplates.FLAT_ITEM);
     }
 
@@ -447,5 +452,107 @@ public class BitterModelProvider extends ModelProvider {
                                 .select(AttachFace.FLOOR, bottomVariant))
                         .with(ROTATION_HORIZONTAL_FACING)
         );
+    }
+
+    public void createStickyNote(@NotNull BlockModelGenerators blockModels) {
+        blockModels.registerSimpleFlatItemModel(STICKY_NOTE.get().asItem());
+        MultiPartGenerator multiPartGenerator = MultiPartGenerator.multiPart(BitterBlocks.STICKY_NOTE.get());
+
+        // Wall variants
+        for (Direction direction : Direction.values()) {
+            if (direction.getAxis() != Direction.Axis.Y) {
+                for (int i = 0; i <= 15; i++) {
+                    boolean topLeft = (i & 8) != 0;
+                    boolean topRight = (i & 4) != 0;
+                    boolean bottomLeft = (i & 2) != 0;
+                    boolean bottomRight = (i & 1) != 0;
+
+                    String modelName = "sticky_note_" + String.format("%04d", Integer.parseInt(Integer.toBinaryString(i)));
+                    ResourceLocation modelLocation = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/sticky_note/" + modelName);
+
+                    multiPartGenerator.with(
+                            BlockModelGenerators.condition()
+                                    .term(StickyNoteBlock.TOP_LEFT, topLeft)
+                                    .term(StickyNoteBlock.TOP_RIGHT, topRight)
+                                    .term(StickyNoteBlock.BOTTOM_LEFT, bottomLeft)
+                                    .term(StickyNoteBlock.BOTTOM_RIGHT, bottomRight)
+                                    .term(BlockStateProperties.ATTACH_FACE, AttachFace.WALL)
+                                    .term(BlockStateProperties.HORIZONTAL_FACING, direction),
+                            plainVariant(modelLocation).with(getRotationMutator(direction))
+                    );
+                }
+            }
+        }
+
+        // Floor variants
+        for (Direction direction : Direction.values()) {
+            if (direction.getAxis() != Direction.Axis.Y) {
+                for (int i = 0; i <= 15; i++) {
+                    boolean topLeft = (i & 8) != 0;
+                    boolean topRight = (i & 4) != 0;
+                    boolean bottomLeft = (i & 2) != 0;
+                    boolean bottomRight = (i & 1) != 0;
+
+                    String modelName = "sticky_note_floor_" + String.format("%04d", Integer.parseInt(Integer.toBinaryString(i)));
+                    ResourceLocation modelLocation = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/sticky_note/" + modelName);
+
+                    multiPartGenerator.with(
+                            BlockModelGenerators.condition()
+                                    .term(StickyNoteBlock.TOP_LEFT, topLeft)
+                                    .term(StickyNoteBlock.TOP_RIGHT, topRight)
+                                    .term(StickyNoteBlock.BOTTOM_LEFT, bottomLeft)
+                                    .term(StickyNoteBlock.BOTTOM_RIGHT, bottomRight)
+                                    .term(BlockStateProperties.ATTACH_FACE, AttachFace.FLOOR)
+                                    .term(BlockStateProperties.HORIZONTAL_FACING, direction),
+                            plainVariant(modelLocation).with(getRotationMutator(direction))
+                    );
+                }
+            }
+        }
+
+        // Ceiling variants
+        for (Direction direction : Direction.values()) {
+            if (direction.getAxis() != Direction.Axis.Y) {
+
+                for (int i = 0; i <= 15; i++) {
+                    boolean topLeft = (i & 8) != 0;
+                    boolean topRight = (i & 4) != 0;
+                    boolean bottomLeft = (i & 2) != 0;
+                    boolean bottomRight = (i & 1) != 0;
+
+                    String modelName = "sticky_note_ceiling_" + String.format("%04d", Integer.parseInt(Integer.toBinaryString(i)));
+                    ResourceLocation modelLocation = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/sticky_note/" + modelName);
+
+                    multiPartGenerator.with(
+                            BlockModelGenerators.condition()
+                                    .term(StickyNoteBlock.TOP_LEFT, topLeft)
+                                    .term(StickyNoteBlock.TOP_RIGHT, topRight)
+                                    .term(StickyNoteBlock.BOTTOM_LEFT, bottomLeft)
+                                    .term(StickyNoteBlock.BOTTOM_RIGHT, bottomRight)
+                                    .term(BlockStateProperties.ATTACH_FACE, AttachFace.CEILING)
+                                    .term(BlockStateProperties.HORIZONTAL_FACING, direction),
+                            plainVariant(modelLocation).with(getRotationMutator(direction))
+                    );
+                }
+            }
+        }
+
+        blockModels.blockStateOutput.accept(multiPartGenerator);
+    }
+
+    public void generate3D2DItem(@NotNull ItemModelGenerators itemModels, Item item) {
+        ItemModel.Unbaked inventory = ItemModelUtils.plainModel(itemModels.createFlatItemModel(item, ModelTemplates.FLAT_ITEM));
+        ItemModel.Unbaked holding = ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(item, "_in_hand"));
+        itemModels.itemModelOutput.accept(item, ItemModelGenerators.createFlatModelDispatch(inventory, holding));
+    }
+
+    @Contract(pure = true)
+    private VariantMutator getRotationMutator(@NotNull Direction direction) {
+        return switch (direction) {
+            case EAST -> Y_ROT_90;
+            case SOUTH -> Y_ROT_180;
+            case WEST -> Y_ROT_270;
+            default -> NOP;
+        };
     }
 }
