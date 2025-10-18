@@ -2,6 +2,7 @@ package com.site21.bittermelon.common.content.blocks.electronics.slidingdoor;
 
 import com.site21.bittermelon.common.content.blocks.properties.Placement;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
+import com.site21.bittermelon.util.LocalMessageHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -166,13 +167,18 @@ public class SlidingDoorBlock extends Block implements EntityBlock {
 
         if (level.getBlockEntity(pos) instanceof SlidingDoorBlockEntity blockEntity) {
             if (!blockEntity.isOn() && !state.getValue(OPEN)) {
-                level.gameEvent(player, GameEvent.BLOCK_OPEN, pos);
-                setOpen(level, pos, true);
+                if (player.isShiftKeyDown()) {
+                    level.playSound(null, pos, BitterSounds.KNOCK.value(), SoundSource.PLAYERS, 1.0f, 1.0f);
+                    LocalMessageHelper.sendEmoteMessage(level, player, 10, "knocks on the sliding door.");
+                } else {
+                    level.gameEvent(player, GameEvent.BLOCK_OPEN, pos);
+                    setOpen(level, pos, true);
+                }
                 return InteractionResult.SUCCESS;
             } else if (blockEntity.isOn()) {
                 player.displayClientMessage(Component.literal("The door's motors prevent you from opening it by hand.")
-                        .withStyle(ChatFormatting.ITALIC)
-                        .withStyle(ChatFormatting.GRAY),
+                                .withStyle(ChatFormatting.ITALIC)
+                                .withStyle(ChatFormatting.GRAY),
                         true);
                 return InteractionResult.PASS;
             }

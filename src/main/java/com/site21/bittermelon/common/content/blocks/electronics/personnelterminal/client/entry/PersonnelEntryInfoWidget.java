@@ -36,7 +36,6 @@ import java.util.List;
 
 import static com.site21.bittermelon.common.systems.character.skin.SkinUtil.getAbstractClientPlayer;
 
-@OnlyIn(Dist.CLIENT)
 public class PersonnelEntryInfoWidget extends AbstractWidget {
     private final PersonnelEntry entry;
     private final PersonnelTerminalScreen screen;

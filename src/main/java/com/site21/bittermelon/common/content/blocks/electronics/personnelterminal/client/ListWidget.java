@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-@OnlyIn(Dist.CLIENT)
 public class ListWidget<T extends ObjectSelectionList.Entry<T>> extends ObjectSelectionList<T> {
     public ListWidget(Minecraft minecraft, int width, int height, int y, int itemHeight) {
         super(minecraft, width, height, y, itemHeight);

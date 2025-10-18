@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.function.Function;
 
-@OnlyIn(Dist.CLIENT)
 public class BitterButton extends Button {
     protected WidgetSprites sprites;
     private Holder<SoundEvent> clickSound = BitterSounds.MOUSE_CLICK;
@@ -67,7 +66,6 @@ public class BitterButton extends Button {
         soundManager.play(SimpleSoundInstance.forUI(clickSound, 1f));
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static class Builder {
         private final Component message;
         private final OnPress onPress;

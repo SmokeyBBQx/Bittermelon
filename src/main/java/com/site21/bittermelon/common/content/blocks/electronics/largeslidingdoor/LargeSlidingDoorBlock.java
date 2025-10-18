@@ -1,9 +1,12 @@
 package com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor;
 
 import com.site21.bittermelon.init.neoforge.BitterSounds;
+import com.site21.bittermelon.util.LocalMessageHelper;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
@@ -181,24 +184,34 @@ public class LargeSlidingDoorBlock extends Block implements EntityBlock {
         return level.getEntitiesOfClass(LivingEntity.class, twoHighBox).isEmpty();
     }
 
+//    @Override
+//    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
+//        if (!level.isClientSide) {
+//            if (!state.getValue(MASTER)) {
+//                BlockPos masterPos = findMasterBlock(level, pos);
+//                if (masterPos != null) {
+//                    BlockState masterState = level.getBlockState(masterPos);
+//                    return masterState.useWithoutItem(level, player, new BlockHitResult(hitResult.getLocation(), hitResult.getDirection(), masterPos, hitResult.isInside()));
+//                }
+//                return InteractionResult.FAIL;
+//            }
+//
+//            handleMoving(state, level, pos, state.getValue(STATE) == State.CLOSED);
+//        }
+//        return InteractionResult.SUCCESS;
+//    }
+
     @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
-        if (!level.isClientSide) {
-            if (!state.getValue(MASTER)) {
-                BlockPos masterPos = findMasterBlock(level, pos);
-                if (masterPos != null) {
-                    BlockState masterState = level.getBlockState(masterPos);
-                    return masterState.useWithoutItem(level, player, new BlockHitResult(hitResult.getLocation(), hitResult.getDirection(), masterPos, hitResult.isInside()));
-                }
-                return InteractionResult.FAIL;
-            }
+        level.playSound(null, pos, BitterSounds.KNOCK.value(), SoundSource.PLAYERS, 1.0f, 1.0f);
+        LocalMessageHelper.sendEmoteMessage(level, player, 10, "knocks on the large sliding door.");
 
-            if (state.getValue(STATE) == State.OPEN && canClose(level, pos)) {
-                // Closing logic
+        return InteractionResult.SUCCESS;
+    }
 
-                level.setBlock(pos, state.setValue(STATE, State.CLOSING), 3);
-                level.playSound(null, pos, BitterSounds.LARGE_SLIDING_DOOR_CLOSE.value(), SoundSource.BLOCKS);
-            } else if (state.getValue(STATE) == State.CLOSED) {
+    public void handleMoving(@NotNull BlockState state, Level level, BlockPos pos, boolean open) {
+        if (open) {
+            if (state.getValue(STATE) == State.CLOSED) {
                 // Opening logic
 
                 level.setBlock(pos, state.setValue(STATE, State.OPENING), 3);
@@ -208,6 +221,13 @@ public class LargeSlidingDoorBlock extends Block implements EntityBlock {
                 removeDummyBlock(level, pos.below(2));
 
                 level.playSound(null, pos, BitterSounds.LARGE_SLIDING_DOOR_OPEN.value(), SoundSource.BLOCKS);
+            }
+        } else {
+            if (state.getValue(STATE) == State.OPEN && canClose(level, pos)) {
+                // Closing logic
+
+                level.setBlock(pos, state.setValue(STATE, State.CLOSING), 3);
+                level.playSound(null, pos, BitterSounds.LARGE_SLIDING_DOOR_CLOSE.value(), SoundSource.BLOCKS);
             } else if (!canClose(level, pos)) {
                 // Stuck logic
 
@@ -215,34 +235,42 @@ public class LargeSlidingDoorBlock extends Block implements EntityBlock {
                 level.playSound(null, pos, BitterSounds.LARGE_SLIDING_DOOR_OPEN.value(), SoundSource.BLOCKS);
             }
         }
-        return InteractionResult.SUCCESS;
     }
 
     protected @NotNull InteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
-        if (level.isClientSide) return InteractionResult.FAIL;
+        if (level.isClientSide) return InteractionResult.TRY_WITH_EMPTY_HAND;
 
         // FORCE OPEN LOGIC
         if (!stack.is(Items.IRON_AXE)) return InteractionResult.TRY_WITH_EMPTY_HAND;
         if (!state.getValue(MASTER)) {
             pos = findMasterBlock(level, pos);
-            if (pos == null) return InteractionResult.FAIL;
+            if (pos == null) return InteractionResult.TRY_WITH_EMPTY_HAND;
             state = level.getBlockState(pos);
         }
         if (level.getBlockState(pos).getValue(STATE) == State.OPEN) return InteractionResult.FAIL;
-        if (level.getBlockEntity(pos) instanceof LargeSlidingDoorBlockEntity blockEntity) {
+        if (level.getBlockEntity(pos) instanceof LargeSlidingDoorBlockEntity door) {
+            // Check if motors are on.
+            if (door.isOn()) {
+                player.displayClientMessage(Component.literal("The door's motors prevent you from opening it by hand.")
+                                .withStyle(ChatFormatting.ITALIC)
+                                .withStyle(ChatFormatting.GRAY),
+                        true);
+                return InteractionResult.FAIL;
+            }
+
             // Update gap size.
-            blockEntity.setDoorProgress(blockEntity.getDoorProgress() + 0.05f);
+            door.setDoorProgress(door.getDoorProgress() + 0.05f);
             // Placeholder sound
             level.playSound(null, pos, SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 0.3f, 0.1f);
 
             // Create opening if the gap is equal to a block.
-            if (blockEntity.getDoorProgress() >= 0.40f) {
+            if (door.getDoorProgress() >= 0.40f) {
                 removeDummyBlock(level, pos.below());
                 removeDummyBlock(level, pos.below(2));
             }
 
             // Handle the door being fully opened.
-            if (blockEntity.getDoorProgress() >= 1) {
+            if (door.getDoorProgress() >= 1) {
                 level.setBlock(pos, state.setValue(STATE, State.OPEN), 3);
             }
             return InteractionResult.SUCCESS;

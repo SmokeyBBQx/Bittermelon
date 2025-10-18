@@ -374,6 +374,12 @@
       "bittermelon:misc/zap"
     ]
   },
+  "misc.knock": {
+    "category": "players",
+    "sounds": [
+      "bittermelon:misc/knock"
+    ]
+  },
   "container.toolbox_open": {
     "category": "neutral",
     "sounds": [

@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.LargeSlidingDoorBlock.MASTER;
 import static com.site21.bittermelon.common.content.blocks.electronics.slidingdoor.SlidingDoorBlock.OPEN;
 import static com.site21.bittermelon.common.content.blocks.electronics.slidingdoor.SlidingDoorBlock.VISIBLE;
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.SLIDING_DOOR_BLOCK_ENTITY;
@@ -107,7 +108,6 @@ public class SlidingDoorBlockEntity extends ElectronicBlockEntity implements Pan
         if (blockState.getBlock() instanceof SlidingDoorBlock slidingDoorBlock) {
             slidingDoorBlock.setOpen(level, worldPosition, open);
             triggerMotorsActiveOutput();
-            runForOtherHalf(SlidingDoorBlockEntity::triggerMotorsActiveOutput);
         }
 
         sleep();
@@ -149,7 +149,14 @@ public class SlidingDoorBlockEntity extends ElectronicBlockEntity implements Pan
     }
 
     @Override
+    public boolean canOpenPanel() {
+        return getBlockState().getValue(SlidingDoorBlock.HALF) == DoubleBlockHalf.UPPER;
+    }
+
+    @Override
     protected void saveAdditional(@NotNull ValueOutput output) {
+        if (getBlockState().getValue(SlidingDoorBlock.HALF) == DoubleBlockHalf.LOWER) return;
+
         super.saveAdditional(output);
 
         output.putBoolean("isPanelOpen", isPanelOpen);
@@ -159,6 +166,8 @@ public class SlidingDoorBlockEntity extends ElectronicBlockEntity implements Pan
 
     @Override
     protected void loadAdditional(@NotNull ValueInput input) {
+        if (getBlockState().getValue(SlidingDoorBlock.HALF) == DoubleBlockHalf.LOWER) return;
+
         super.loadAdditional(input);
 
         isPanelOpen = input.getBooleanOr("isPanelOpen", false);

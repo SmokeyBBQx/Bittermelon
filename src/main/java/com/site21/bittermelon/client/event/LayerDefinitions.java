@@ -1,6 +1,7 @@
 package com.site21.bittermelon.client.event;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.client.LargeSlidingDoorModel;
 import com.site21.bittermelon.common.content.entities.chicken.client.ChickenModel;
 import com.site21.bittermelon.common.content.entities.scp131.client.SCP131Model;
 import com.site21.bittermelon.common.content.entities.scp1507.client.SCP1507Model;
@@ -40,6 +41,11 @@ public class LayerDefinitions {
             "main"
     );
 
+    public static final ModelLayerLocation LARGE_SLIDING_DOOR_LAYER = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "large_sliding_door"),
+            "main"
+    );
+
     @SubscribeEvent
     public static void registerLayerDefinitions(EntityRenderersEvent.@NotNull RegisterLayerDefinitions event) {
         event.registerLayerDefinition(SCP_131_LAYER, SCP131Model::createBodyLayer);
@@ -47,5 +53,6 @@ public class LayerDefinitions {
         event.registerLayerDefinition(SCP_1507_LAYER, SCP1507Model::createBodyLayer);
         event.registerLayerDefinition(SCP_939_LAYER, SCP939Model::createBodyLayer);
         event.registerLayerDefinition(CHICKEN_LAYER, ChickenModel::createBodyLayer);
+        event.registerLayerDefinition(LARGE_SLIDING_DOOR_LAYER, LargeSlidingDoorModel::createBodyLayer);
     }
 }

@@ -1,5 +1,6 @@
 package com.site21.bittermelon.common.content.blocks.electronics.securedoor;
 
+import com.site21.bittermelon.common.content.blocks.electronics.slidingdoor.SlidingDoorBlock;
 import com.site21.bittermelon.common.systems.electronics.ElectronicDevice;
 import com.site21.bittermelon.common.systems.electronics.NetworkDevice;
 import com.site21.bittermelon.common.systems.electronics.ElectronicBlockEntity;
@@ -112,7 +113,6 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
             if (isLocked && !secureDoorBlock.isOpen(blockState)) return;
             secureDoorBlock.setOpen(null, level, blockState, worldPosition, open);
             triggerMotorsActiveOutput();
-            runForOtherHalf(SecureDoorBlockEntity::triggerMotorsActiveOutput);
         }
 
         sleep();
@@ -191,6 +191,11 @@ public class SecureDoorBlockEntity extends ElectronicBlockEntity implements Elec
         isPanelOpen = !isPanelOpen;
         runForOtherHalf(otherHalf -> otherHalf.isPanelOpen = isPanelOpen);
         setChanged();
+    }
+
+    @Override
+    public boolean canOpenPanel() {
+        return getBlockState().getValue(SlidingDoorBlock.HALF) == DoubleBlockHalf.UPPER;
     }
 
     @Override

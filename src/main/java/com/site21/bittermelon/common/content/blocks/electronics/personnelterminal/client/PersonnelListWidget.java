@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-@OnlyIn(Dist.CLIENT)
 public class PersonnelListWidget extends ListWidget<PersonnelListWidget.Entry> {
     private final PersonnelTerminalScreen screen;
 

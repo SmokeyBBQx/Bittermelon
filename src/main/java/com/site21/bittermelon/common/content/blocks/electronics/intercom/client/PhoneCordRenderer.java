@@ -23,7 +23,6 @@ import org.joml.Matrix4f;
 /**
  * Adapted from net.minecraft.client.renderer.entity.EntityRenderer#renderLeash()
  */
-@OnlyIn(Dist.CLIENT)
 public class PhoneCordRenderer implements BlockEntityRenderer<IntercomBlockEntity> {
     public PhoneCordRenderer(BlockEntityRendererProvider.Context context) {
         super();

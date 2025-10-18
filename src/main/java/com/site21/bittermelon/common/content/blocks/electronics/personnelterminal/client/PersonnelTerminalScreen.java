@@ -22,7 +22,6 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@OnlyIn(Dist.CLIENT)
 public class PersonnelTerminalScreen extends BaseTerminalScreen {
     public static final WidgetSprites BUTTON_SPRITES = new WidgetSprites(
             ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/button"),

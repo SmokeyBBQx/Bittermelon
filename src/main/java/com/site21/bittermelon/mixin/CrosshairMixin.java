@@ -1,6 +1,5 @@
 package com.site21.bittermelon.mixin;
 
-import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlock;
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlockEntity;

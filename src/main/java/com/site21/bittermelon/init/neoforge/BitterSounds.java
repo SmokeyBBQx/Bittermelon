@@ -69,4 +69,5 @@ public class BitterSounds {
     public static final Holder<SoundEvent> SCREWDRIVER_OPEN = SOUND_EVENTS.register("item.screwdriver_open", SoundEvent::createVariableRangeEvent);
     public static final Holder<SoundEvent> SCREWDRIVER_CLOSE = SOUND_EVENTS.register("item.screwdriver_close", SoundEvent::createVariableRangeEvent);
     public static final Holder<SoundEvent> ZAP = SOUND_EVENTS.register("misc.zap", SoundEvent::createVariableRangeEvent);
+    public static final Holder<SoundEvent> KNOCK = SOUND_EVENTS.register("misc.knock", SoundEvent::createVariableRangeEvent);
 }

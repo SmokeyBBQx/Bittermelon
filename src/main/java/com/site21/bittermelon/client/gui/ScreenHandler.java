@@ -33,7 +33,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-@OnlyIn(Dist.CLIENT)
 public class ScreenHandler {
     public static void displayATMScreen(PersonnelEntry entry) {
         Minecraft.getInstance().setScreen(new ATMScreen(entry));

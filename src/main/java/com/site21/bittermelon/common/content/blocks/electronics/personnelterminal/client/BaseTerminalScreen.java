@@ -13,7 +13,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-@OnlyIn(Dist.CLIENT)
 public abstract class BaseTerminalScreen extends Screen {
     protected int x, y, screenWidth, screenHeight;
     protected int widgetX, widgetY, widgetWidth, widgetHeight;

@@ -131,7 +131,8 @@ public class BitterModelProvider extends ModelProvider {
         createIndentedSmallBlock(blockModels, BitterBlocks.CONTAINMENT_PANEL.get());
         blockModels.createDoor(BitterBlocks.SECURE_DOOR.get());
         blockModels.createDoor(BitterBlocks.KEYCARD_READER_SECURE_DOOR.get());
-        blockModels.createTrivialCube(LARGE_SLIDING_DOOR.get());
+        blockModels.registerSimpleFlatItemModel(LARGE_SLIDING_DOOR.asItem());
+        blockModels.createParticleOnlyBlock(LARGE_SLIDING_DOOR.get());
         createSlidingDoor(blockModels, BitterBlocks.WINDOWED_SLIDING_DOOR.get());
         createTrapdoorShaped(blockModels, BitterBlocks.DISTRIBUTION_BOARD.get());
         blockModels.registerSimpleFlatItemModel(BitterBlocks.DISTRIBUTION_BOARD.get());
