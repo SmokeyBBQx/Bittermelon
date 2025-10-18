@@ -17,7 +17,6 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.UUID;
 
-@OnlyIn(Dist.CLIENT)
 public class SkinUtil {
     public static @Nullable @Unmodifiable AbstractClientPlayer getAbstractClientPlayer(@NotNull Character character) {
          if (character.getPlayerInfo().isPresent()) {

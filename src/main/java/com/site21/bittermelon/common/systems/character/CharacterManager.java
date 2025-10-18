@@ -153,7 +153,7 @@ public class CharacterManager extends SavedData {
 //            player.load(newPlayerData);
 //            player.teleportTo(player.getX(), player.getY(), player.getZ());
 //            player.getInventory().setChanged();
-//            setActiveCharacter(player, switchedTo.getUUID());
+            setActiveCharacter(player, switchedTo.getUUID());
 //        }
 
         switchedTo.getPlayerInfo().ifPresent(info -> SkinOverrideSystem.setSkinOverride(player.getUUID(), switchedTo.getUUID(), info.getSkinURL(), info.getModel().toMinecraftModel()));

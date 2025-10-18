@@ -1,125 +1,65 @@
 package com.site21.bittermelon.common.systems.character.skin;
 
+import com.mojang.blaze3d.platform.NativeImage;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.SimpleTexture;
+import net.minecraft.client.renderer.texture.TextureContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
+import java.io.*;
 
-@OnlyIn(Dist.CLIENT)
 public class SkinTexture extends SimpleTexture {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final File cacheFile;
     private final String imageUrl;
     private final Runnable onLoadCallback;
-    private CompletableFuture<?> downloadFuture;
-    private boolean textureUploaded;
+    private final SkinDownloader downloader;
+    private boolean downloaded;
 
     public SkinTexture(ResourceLocation location, File cacheFile, String imageUrl, Runnable onLoadCallback) {
         super(location);
         this.cacheFile = cacheFile;
         this.imageUrl = imageUrl;
         this.onLoadCallback = onLoadCallback;
+        downloader = new SkinDownloader();
     }
 
-    public void load(@NotNull ResourceManager manager) throws IOException {
-//        Minecraft.getInstance().execute(() -> {
-//            if (!textureUploaded) {
-//                try {
-//                    super.load(manager);
-//                } catch (IOException e) {
-//                    LOGGER.warn("Failed to load fallback texture: {}", location, e);
-//                }
-//                textureUploaded = true;
-//            }
-//        });
+    @Override
+    public @NotNull TextureContents loadContents(@NotNull ResourceManager resourceManager) throws IOException {
+        // Try cache first
+        if (cacheFile != null && cacheFile.isFile()) {
+            try (FileInputStream fis = new FileInputStream(cacheFile)) {
+                downloaded = true;
+                return new TextureContents(NativeImage.read(fis), null);
+            } catch (IOException e) {
+                LOGGER.warn("Failed to load cached skin, will download", e);
+            }
+        }
 
-//        if (downloadFuture == null) {
-//            NativeImage cachedImage = null;
-//
-//            if (cacheFile != null && cacheFile.isFile()) {
-//                LOGGER.debug("Loading cached image from {}", cacheFile);
-//                try (FileInputStream fis = new FileInputStream(cacheFile)) {
-//                    cachedImage = NativeImage.read(fis);
-//                } catch (IOException e) {
-//                    LOGGER.warn("Failed to load cached image", e);
-//                }
-//            }
-//
-//            if (cachedImage != null) {
-//                uploadImage(cachedImage);
-//            } else {
-//                startDownload();
-//            }
-//        }
+        if (!downloaded) {
+            downloader.download(imageUrl, cacheFile).thenAcceptAsync(this::handleDownload, Minecraft.getInstance());
+        }
+
+        return TextureContents.createMissing();
     }
 
-    private void startDownload() {
-//        this.downloadFuture = CompletableFuture.runAsync(() -> {
-//            HttpURLConnection connection = null;
-//            LOGGER.debug("Downloading image from {} to {}", imageUrl, cacheFile);
-//
-//            try {
-//                connection = (HttpURLConnection) new URL(this.imageUrl).openConnection(Minecraft.getInstance().getProxy());
-//                connection.setDoInput(true);
-//                connection.setDoOutput(false);
-//                connection.setRequestProperty("Accept", "image/png");
-//                connection.setConnectTimeout(10000);
-//                connection.setReadTimeout(10000);
-//                connection.connect();
-//
-//                if (connection.getResponseCode() != 200) {
-//                    LOGGER.warn("HTTP error {} downloading image from {}", connection.getResponseCode(), imageUrl);
-//                    return;
-//                }
-//
-//                InputStream inputStream;
-//                if (cacheFile != null) {
-//                    FileUtils.copyInputStreamToFile(connection.getInputStream(), cacheFile);
-//                    inputStream = new FileInputStream(cacheFile);
-//                } else {
-//                    inputStream = connection.getInputStream();
-//                }
-//
-//                try (inputStream) {
-//                    NativeImage image = NativeImage.read(inputStream);
-//                    uploadImage(image);
-//                }
-//            } catch (Exception e) {
-//                LOGGER.error("Failed to download image from {}", imageUrl, e);
-//            } finally {
-//                if (connection != null) {
-//                    connection.disconnect();
-//                }
-//            }
-//        }, Util.backgroundExecutor());
+    private void handleDownload(NativeImage image) {
+        if (image != null) {
+            try {
+                downloaded = true;
+                apply(new TextureContents(image, null));
+                if (onLoadCallback != null) {
+                    onLoadCallback.run();
+                }
+            } catch (Exception e) {
+                LOGGER.error("Failed to upload skin texture", e);
+                image.close();
+            }
+        }
     }
-
-//    private void uploadImage(NativeImage image) {
-//        if (onLoadCallback != null) {
-//            onLoadCallback.run();
-//        }
-//
-//        Minecraft.getInstance().execute(() -> {
-//            textureUploaded = true;
-//            if (!RenderSystem.isOnRenderThread()) {
-//                RenderSystem.recordRenderCall(() -> doUpload(image));
-//            } else {
-//                doUpload(image);
-//            }
-//        });
-//    }
-//
-//    private void doUpload(@NotNull NativeImage image) {
-//        TextureUtil.prepareImage(this.getId(), image.getWidth(), image.getHeight());
-//        image.upload(0, 0, 0, true);
-//    }
 }

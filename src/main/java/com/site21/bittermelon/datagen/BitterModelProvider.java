@@ -202,8 +202,7 @@ public class BitterModelProvider extends ModelProvider {
         // Writing Utensils
         itemModels.generateFlatItem(PEN.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         generateBaseColorItem(itemModels, CHALK.get(), DyeColor.WHITE);
-
-        itemModels.generateFlatItem(HIGHLIGHTER.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
+        generateHighlighterItem(itemModels, HIGHLIGHTER.get());
 
         // Consumables
         itemModels.generateFlatItem(CIGARETTE.get(), ModelTemplates.FLAT_ITEM);
@@ -667,6 +666,19 @@ public class BitterModelProvider extends ModelProvider {
                 ItemModelUtils.tintedModel(
                         itemModels.createFlatItemModel(item, ModelTemplates.FLAT_ITEM),
                         new BaseColor(defaultColor)
+                )
+        );
+    }
+
+    public void generateHighlighterItem(@NotNull ItemModelGenerators itemModels, Item item) {
+        itemModels.itemModelOutput.accept(
+                item,
+                ItemModelUtils.tintedModel(
+                        itemModels.generateLayeredItem(item,
+                                modLocation("item/highlighter_tip"),
+                                modLocation("item/highlighter")),
+                        ItemModelUtils.constantTint(-1),
+                        new BaseColor(DyeColor.WHITE)
                 )
         );
     }

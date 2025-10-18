@@ -188,10 +188,8 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
         guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/generic_background"),
                 getX(), getY(), getWidth(), getHeight());
 
-//        RenderSystem.enableBlend();
         guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/scp_logo"),
                 x + width - 100, y, 100, 100);
-//        RenderSystem.disableBlend();
 
         Font font = Minecraft.getInstance().font;
 
@@ -200,8 +198,7 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
         int pictureStartY = getY() + 10;
         float pictureScale = 4;
 
-//        guiGraphics.pose().scale(pictureScale, pictureScale, 0);
-        guiGraphics.pose().scale(pictureScale, pictureScale, new Matrix3x2f());
+        guiGraphics.pose().scale(pictureScale, pictureScale);
 
         int playerWidth = 13;
         int playerHeight = 19;
@@ -211,7 +208,7 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
         int bgHeight = playerHeight + 2;
 
         ResourceLocation texture = ResourceLocation.withDefaultNamespace("textures/block/light_gray_concrete_powder.png");
-        guiGraphics.blit(texture, bgX, bgY, 0, 0, bgWidth, bgHeight, 16, 16);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, bgX, bgY, 0, 0, bgWidth, bgHeight, 16, 16);
 
         renderPlayer(guiGraphics, (int) (pictureStartX / pictureScale), (int) (pictureStartY / pictureScale));
         guiGraphics.pose().popMatrix();
@@ -225,10 +222,9 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
         int titleStartY = getY() + 10;
         float scale = 1.5f;
 
-//        guiGraphics.pose().scale(scale, scale, 0);
-        guiGraphics.pose().scale(scale, scale, new Matrix3x2f());
+        guiGraphics.pose().scale(scale, scale);
 
-        guiGraphics.drawString(font, entry.getName(), (int) (titleStartX / scale), (int) (titleStartY / scale), 0xFFFFFF);
+        guiGraphics.drawString(font, entry.getName(), (int) (titleStartX / scale), (int) (titleStartY / scale), 0xFFFFFFFF);
         guiGraphics.pose().popMatrix();
 
         String[] labels = {"ID: ", "Name:", "Position:", "Department:", "Notes:"};
@@ -237,7 +233,7 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
             maxLabelWidth = Math.max(maxLabelWidth, font.width(label));
         }
         int fieldX = startX + maxLabelWidth + 5;
-        int color = 0x545454;
+        int color = 0xFF545454;
 
         guiGraphics.drawString(font, "ID: " + entry.getId(), titleStartX, titleStartY + 20, color, false);
         guiGraphics.drawString(font, "Name:", startX, startY, color, false);
@@ -280,22 +276,22 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
 
         int headSize = 8;
 
-        guiGraphics.blit(texture, startX, startY, 8, 8, headSize, headSize, textureSize, textureSize);
-        guiGraphics.blit(texture, startX, startY, 40, 8, headSize, headSize, textureSize, textureSize);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX, startY, 8, 8, headSize, headSize, textureSize, textureSize);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX, startY, 40, 8, headSize, headSize, textureSize, textureSize);
 
         int bodyWidth = 8;
         int bodyHeight = 12;
 
-        guiGraphics.blit(texture, startX, lowerBodyStartY, 20, 20, bodyWidth, bodyHeight, textureSize, textureSize);
-        guiGraphics.blit(texture, startX, lowerBodyStartY, 20, 36, bodyWidth, bodyHeight, textureSize, textureSize);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX, lowerBodyStartY, 20, 20, bodyWidth, bodyHeight, textureSize, textureSize);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX, lowerBodyStartY, 20, 36, bodyWidth, bodyHeight, textureSize, textureSize);
 
         int armWidth = 4;
         int armHeight = 12;
 
-        guiGraphics.blit(texture, startX - 4, lowerBodyStartY, 44, 20, armWidth, armHeight, textureSize, textureSize);
-        guiGraphics.blit(texture, startX - 4, lowerBodyStartY, 44, 36, armWidth, armHeight, textureSize, textureSize);
-        guiGraphics.blit(texture, startX + 8, lowerBodyStartY, 36, 52, armWidth, armHeight, textureSize, textureSize);
-        guiGraphics.blit(texture, startX + 8, lowerBodyStartY, 52, 52, armWidth, armHeight, textureSize, textureSize);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX - 4, lowerBodyStartY, 44, 20, armWidth, armHeight, textureSize, textureSize);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX - 4, lowerBodyStartY, 44, 36, armWidth, armHeight, textureSize, textureSize);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX + 8, lowerBodyStartY, 36, 52, armWidth, armHeight, textureSize, textureSize);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX + 8, lowerBodyStartY, 52, 52, armWidth, armHeight, textureSize, textureSize);
     }
 
     private void renderPlayerOld(GuiGraphics guiGraphics) {

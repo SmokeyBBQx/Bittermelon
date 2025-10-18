@@ -120,8 +120,8 @@ public class RoleSelectionScreen extends Screen {
 
         guiGraphics.fill(x - 2, y - 2, x + listWidget.getWidth(), y + descriptionHeight + font.lineHeight + 12, 0x44000000);
 
-        guiGraphics.drawString(font, role.name, x, y, 0xFFFFFF);
-        guiGraphics.drawWordWrap(font, Component.literal(role.description), x, y + 15, listWidget.getWidth(), 0xFFFFFF);
+        guiGraphics.drawString(font, role.name, x, y, 0xFFFFFFFF);
+        guiGraphics.drawWordWrap(font, Component.literal(role.description), x, y + 15, listWidget.getWidth(), 0xFFFFFFFF);
     }
 
     public Character getCharacter() {

@@ -203,6 +203,8 @@ public class LargeSlidingDoorBlock extends Block implements EntityBlock {
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
+        if (level.isClientSide) return InteractionResult.PASS;
+
         if (player.isShiftKeyDown()) {
             level.playSound(null, pos, BitterSounds.KNOCK.value(), SoundSource.PLAYERS, 1.0f, 1.0f);
             LocalMessageHelper.sendEmoteMessage(level, player, 10, "knocks on the large sliding door.");

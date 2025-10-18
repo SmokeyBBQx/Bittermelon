@@ -9,7 +9,6 @@ import net.neoforged.api.distmarker.OnlyIn;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@OnlyIn(Dist.CLIENT)
 public class SkinOverrideSystem {
     private static final ConcurrentHashMap<UUID, ResourceLocation> skinOverrides = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<UUID, String> pendingSkins = new ConcurrentHashMap<>();
@@ -20,8 +19,7 @@ public class SkinOverrideSystem {
         modelOverrides.put(playerUUID, modelType);
 
         SkinManager.loadSkin(skinUrl, String.valueOf(characterUUID), () -> {
-            ResourceLocation skinTexture = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID,
-                    "skins/" + characterUUID);
+            ResourceLocation skinTexture = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + characterUUID);
             skinOverrides.put(playerUUID, skinTexture);
             pendingSkins.remove(playerUUID);
         });

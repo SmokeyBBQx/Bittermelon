@@ -6,6 +6,7 @@ import com.site21.bittermelon.common.systems.roles.Role;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
@@ -87,8 +88,8 @@ public class RoleListWidget extends ObjectSelectionList<RoleListWidget.Entry> {
                 quote = minecraft.font.plainSubstrByWidth(quote, maxWidth - minecraft.font.width("...")) + "...";
             }
 
-            guiGraphics.drawString(minecraft.font, role.name, x, y, 0xFFFFFF);
-            guiGraphics.drawString(minecraft.font, quote, x, y + 16, 0xFFFFFF, false);
+            guiGraphics.drawString(minecraft.font, role.name, x, y, 0xFFFFFFFF);
+            guiGraphics.drawString(minecraft.font, quote, x, y + 16, 0xFFFFFFFF, false);
         }
 
         private void renderPlayer(@NotNull GuiGraphics guiGraphics, int startX, int startY) {
@@ -107,30 +108,30 @@ public class RoleListWidget extends ObjectSelectionList<RoleListWidget.Entry> {
 
             int headSize = 8;
 
-            guiGraphics.blit(playerTexture, startX, startY, 8, 8, headSize, headSize, textureSize, textureSize);
-            guiGraphics.blit(playerTexture, startX, startY, 40, 8, headSize, headSize, textureSize, textureSize);
-            guiGraphics.blit(texture, startX, startY, 8, 8, headSize, headSize, textureSize, textureSize);
-            guiGraphics.blit(texture, startX, startY, 40, 8, headSize, headSize, textureSize, textureSize);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, playerTexture, startX, startY, 8, 8, headSize, headSize, textureSize, textureSize);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, playerTexture, startX, startY, 40, 8, headSize, headSize, textureSize, textureSize);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX, startY, 8, 8, headSize, headSize, textureSize, textureSize);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX, startY, 40, 8, headSize, headSize, textureSize, textureSize);
 
             int bodyWidth = 8;
             int bodyHeight = 12;
 
-            guiGraphics.blit(playerTexture, startX, lowerBodyStartY, 20, 20, bodyWidth, bodyHeight, textureSize, textureSize);
-            guiGraphics.blit(playerTexture, startX, lowerBodyStartY, 20, 36, bodyWidth, bodyHeight, textureSize, textureSize);
-            guiGraphics.blit(texture, startX, lowerBodyStartY, 20, 20, bodyWidth, bodyHeight, textureSize, textureSize);
-            guiGraphics.blit(texture, startX, lowerBodyStartY, 20, 36, bodyWidth, bodyHeight, textureSize, textureSize);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, playerTexture, startX, lowerBodyStartY, 20, 20, bodyWidth, bodyHeight, textureSize, textureSize);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, playerTexture, startX, lowerBodyStartY, 20, 36, bodyWidth, bodyHeight, textureSize, textureSize);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX, lowerBodyStartY, 20, 20, bodyWidth, bodyHeight, textureSize, textureSize);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX, lowerBodyStartY, 20, 36, bodyWidth, bodyHeight, textureSize, textureSize);
 
             int armWidth = 4;
             int armHeight = 12;
 
-            guiGraphics.blit(playerTexture, startX - 4, lowerBodyStartY, 44, 20, armWidth, armHeight, textureSize, textureSize);
-            guiGraphics.blit(playerTexture, startX - 4, lowerBodyStartY, 44, 36, armWidth, armHeight, textureSize, textureSize);
-            guiGraphics.blit(playerTexture, startX + 8, lowerBodyStartY, 36, 52, armWidth, armHeight, textureSize, textureSize);
-            guiGraphics.blit(playerTexture, startX + 8, lowerBodyStartY, 52, 52, armWidth, armHeight, textureSize, textureSize);
-            guiGraphics.blit(texture, startX - 4, lowerBodyStartY, 44, 20, armWidth, armHeight, textureSize, textureSize);
-            guiGraphics.blit(texture, startX - 4, lowerBodyStartY, 44, 36, armWidth, armHeight, textureSize, textureSize);
-            guiGraphics.blit(texture, startX + 8, lowerBodyStartY, 36, 52, armWidth, armHeight, textureSize, textureSize);
-            guiGraphics.blit(texture, startX + 8, lowerBodyStartY, 52, 52, armWidth, armHeight, textureSize, textureSize);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, playerTexture, startX - 4, lowerBodyStartY, 44, 20, armWidth, armHeight, textureSize, textureSize);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, playerTexture, startX - 4, lowerBodyStartY, 44, 36, armWidth, armHeight, textureSize, textureSize);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, playerTexture, startX + 8, lowerBodyStartY, 36, 52, armWidth, armHeight, textureSize, textureSize);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, playerTexture, startX + 8, lowerBodyStartY, 52, 52, armWidth, armHeight, textureSize, textureSize);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX - 4, lowerBodyStartY, 44, 20, armWidth, armHeight, textureSize, textureSize);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX - 4, lowerBodyStartY, 44, 36, armWidth, armHeight, textureSize, textureSize);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX + 8, lowerBodyStartY, 36, 52, armWidth, armHeight, textureSize, textureSize);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX + 8, lowerBodyStartY, 52, 52, armWidth, armHeight, textureSize, textureSize);
         }
 
         private int brightenColor(int color) {

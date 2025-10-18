@@ -3,8 +3,6 @@ package com.site21.bittermelon.common.systems.character.skin;
 import com.site21.bittermelon.Bittermelon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 
-@OnlyIn(Dist.CLIENT)
 public class SkinManager {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final File CACHE_DIR = new File(Minecraft.getInstance().gameDirectory, "cache/skins");
@@ -33,9 +30,11 @@ public class SkinManager {
         ResourceLocation location = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + imageName);
 
         File cacheFile = new File(CACHE_DIR, imageName + ".png");
-        SkinTexture texture = new SkinTexture(location, cacheFile, url, callback);
 
-        Minecraft.getInstance().getTextureManager().register(location, texture);
+        Minecraft.getInstance().execute(() -> {
+            SkinTexture texture = new SkinTexture(location, cacheFile, url, callback);
+            Minecraft.getInstance().getTextureManager().registerAndLoad(location, texture);
+        });
         return location;
     }
 

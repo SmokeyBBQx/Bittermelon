@@ -62,8 +62,8 @@ public class PersonnelListWidget extends ListWidget<PersonnelListWidget.Entry> {
 
             Component name = Component.literal(entry.getName());
             Component occupation = Component.literal(entry.getOccupation());
-            int nameColor = isFocused() ? 0xFFFFFF : 0;
-            int occupationColor = 8421504;
+            int nameColor = isFocused() ? 0xFFFFFFFF : 0xFF000000;
+            int occupationColor = 0xFF808080;
 
             int leftX = left + 5;
             int y = top + 2;
@@ -72,7 +72,7 @@ public class PersonnelListWidget extends ListWidget<PersonnelListWidget.Entry> {
 
             String idString = "ID: " + entry.getId();
             int idWidth = mc.font.width(idString);
-            int idColor = 11184810;
+            int idColor = 0xFFAAAAAA;
 
             int idX = left + entryWidth - idWidth - 5;
             guiGraphics.drawString(mc.font, idString, idX, y, idColor, false);
