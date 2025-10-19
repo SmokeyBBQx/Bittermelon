@@ -37,8 +37,13 @@ public record HeatBehavior(float meltingPoint, float flashPoint, float ignitionP
         float temperature = stack.getOrDefault(TEMPERATURE, 273f);
         long gameTime = level.getGameTime();
 
-        if (temperature > 273 && gameTime % 100 == 0) {
-            stack.set(TEMPERATURE, temperature - 5);
+        if (temperature > 273) {
+            if (gameTime % 100 == 0) {
+                stack.set(TEMPERATURE, temperature - 5);
+            } else if (temperature > 323.0f && gameTime % 20 == 0) {
+                // TODO: Probably a bad idea to have particles spawn for every item
+                spawnSmokeParticles(level, entity);
+            }
         }
 
         if (temperature > harmfulTemperature && gameTime % 20 == 0) {
@@ -67,16 +72,18 @@ public record HeatBehavior(float meltingPoint, float flashPoint, float ignitionP
         if (burnTime != null) {
             handleBurning(stack, level, entity, burnTime);
             entity.setRemainingFireTicks(100);
-
             return;
         }
 
         float temperature = stack.getOrDefault(TEMPERATURE, 273f);
-
         long gameTime = level.getGameTime();
 
-        if (temperature > 273 && gameTime % 100 == 0) {
-            stack.set(TEMPERATURE, temperature - 5);
+        if (temperature > 273) {
+            if (gameTime % 100 == 0) {
+                stack.set(TEMPERATURE, temperature - 5);
+            } else if (temperature > 323.0f && gameTime % 20 == 0) {
+                spawnSmokeParticles(level, entity);
+            }
         }
 
         tryIgnite(stack, level, entity, temperature);
@@ -127,6 +134,22 @@ public record HeatBehavior(float meltingPoint, float flashPoint, float ignitionP
             }
         }
         return false;
+    }
+
+    private void spawnSmokeParticles(@NotNull Level level, @NotNull Entity entity) {
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(
+                    net.minecraft.core.particles.ParticleTypes.SMOKE,
+                    entity.getX(),
+                    entity.getY() + 0.5,
+                    entity.getZ(),
+                    5,
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.01
+            );
+        }
     }
 
     @Override

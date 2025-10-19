@@ -1,18 +1,20 @@
 package com.site21.bittermelon.mixin;
 
 import com.site21.bittermelon.common.systems.component.temperature.HeatBehavior;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.extensions.IItemExtension;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.HEAT_BEHAVIOR;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 
 @Mixin(ItemEntity.class)
 public abstract class ItemEntityMixin {
@@ -21,8 +23,21 @@ public abstract class ItemEntityMixin {
 
     @Inject(method = "fireImmune", at = @At("HEAD"), cancellable = true)
     private void onFireImmune(@NotNull CallbackInfoReturnable<Boolean> cir) {
-        // TODO: Temporary: make all items fire immune until we have a better system
-         cir.setReturnValue(true);
+        cir.setReturnValue(getItem().get(BURN_TIME) == null);
+    }
+
+    @ModifyVariable(
+            method = "hurtServer",
+            at = @At("HEAD"),
+            argsOnly = true,
+            ordinal = 0
+    )
+    private float modifyDamageAmount(float amount, ServerLevel level, DamageSource damageSource) {
+        ItemEntity self = (ItemEntity) (Object) this;
+        if (self.isOnFire()) {
+            return 0.0f;
+        }
+        return amount;
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
