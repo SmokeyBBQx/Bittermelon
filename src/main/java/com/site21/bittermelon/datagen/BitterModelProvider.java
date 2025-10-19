@@ -9,10 +9,7 @@ import com.site21.bittermelon.common.content.blocks.properties.Placement;
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlock;
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.common.content.items.substance.pill.PillShape;
-import com.site21.bittermelon.datagen.property.BaseColor;
-import com.site21.bittermelon.datagen.property.StackPillShape;
-import com.site21.bittermelon.datagen.property.SubstanceColor;
-import com.site21.bittermelon.datagen.property.SubstanceVolume;
+import com.site21.bittermelon.datagen.property.*;
 import com.site21.bittermelon.init.neoforge.BitterBlocks;
 import net.minecraft.client.color.item.Dye;
 import net.minecraft.client.data.models.BlockModelGenerators;
@@ -24,6 +21,7 @@ import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
 import net.minecraft.client.data.models.model.*;
 import net.minecraft.client.renderer.block.model.VariantMutator;
+import net.minecraft.client.renderer.item.ConditionalItemModel;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.item.RangeSelectItemModel;
 import net.minecraft.client.renderer.item.SelectItemModel;
@@ -37,6 +35,7 @@ import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -128,6 +127,12 @@ public class BitterModelProvider extends ModelProvider {
             TextureSlot.TEXTURE
     );
 
+    public static final ModelTemplate SMOKABLE = new ModelTemplate(
+            Optional.of(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "item/smokable")),
+            Optional.empty(),
+            TextureSlot.LAYER0
+    );
+
     public BitterModelProvider(PackOutput output) {
         super(output, Bittermelon.MOD_ID);
     }
@@ -205,7 +210,7 @@ public class BitterModelProvider extends ModelProvider {
         generateHighlighterItem(itemModels, HIGHLIGHTER.get());
 
         // Consumables
-        itemModels.generateFlatItem(CIGARETTE.get(), ModelTemplates.FLAT_ITEM);
+        generateSmokableItem(itemModels, CIGARETTE.get());
         itemModels.generateFlatItem(CIGARETTE_BUTT.get(), ModelTemplates.FLAT_ITEM);
         generatePowderItem(itemModels);
         generatePillItem(itemModels, PILL.get());
@@ -679,6 +684,20 @@ public class BitterModelProvider extends ModelProvider {
                                 modLocation("item/highlighter")),
                         ItemModelUtils.constantTint(-1),
                         new BaseColor(DyeColor.WHITE)
+                )
+        );
+    }
+
+    public void generateSmokableItem(@NotNull ItemModelGenerators itemModels, Item item) {
+        ItemModel.Unbaked model = ItemModelUtils.plainModel(itemModels.createFlatItemModel(item, SMOKABLE));
+        ItemModel.Unbaked litModel = ItemModelUtils.plainModel(itemModels.createFlatItemModel(item, "_lit", SMOKABLE));
+
+        itemModels.itemModelOutput.accept(
+                item,
+                new ConditionalItemModel.Unbaked(
+                        new SmokableLit(),
+                        litModel,
+                        model
                 )
         );
     }

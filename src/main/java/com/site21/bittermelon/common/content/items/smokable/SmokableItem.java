@@ -33,9 +33,6 @@ import static com.site21.bittermelon.init.neoforge.BitterItemTags.LIGHTER;
 import static com.site21.bittermelon.util.LocalMessageHelper.sendLocalMessage;
 
 public class SmokableItem extends SubstanceContainerItem {
-    private static final int SMOKE_TICK_INTERVAL = 200;
-    private static final double PARTICLE_OFFSET_DISTANCE = 0.3;
-    private static final double PARTICLE_OFFSET_HEIGHT = 1.6;
 
     public SmokableItem(Properties properties) {
         super(properties);
@@ -43,207 +40,45 @@ public class SmokableItem extends SubstanceContainerItem {
 
     @Override
     public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
-        if (level.isClientSide) return super.use(level, player, hand);
-
-        // Determine the other hand
-        InteractionHand otherHand = player.getUsedItemHand() == InteractionHand.MAIN_HAND
-                ? InteractionHand.OFF_HAND
-                : InteractionHand.MAIN_HAND;
-
-        ItemStack smokableItem = player.getItemInHand(hand);
-        ItemStack otherItem = player.getItemInHand(otherHand);
-
-        if (!smokableItem.getOrDefault(LIT, false)) {
-            return handleLightingOrSwallowing(level, player, smokableItem, otherItem);
-        }
-
-        return ItemUtils.startUsingInstantly(level, player, hand);
-    }
-
-    private @NotNull InteractionResult handleLightingOrSwallowing(Level level, Player player, ItemStack stack, @NotNull ItemStack otherStack) {
-        // Try to light the smokable item
-        if (otherStack.is(LIGHTER) || otherStack.is(Items.FLINT_AND_STEEL)) {
-            playLightingSound(level, player.getOnPos());
-            stack.set(LIT, true);
-
-            if (otherStack.isStackable()) {
-                otherStack.consume(1, player);
-            } else {
-                otherStack.hurtAndBreak(1, player, player.getEquipmentSlotForItem(otherStack));
-            }
-        } else {
-            // Swallow the smokable item
-            sendSwallowMessage(player, stack);
-            playSwallowSound(level, player.getOnPos());
-            stack.consume(1, player);
-        }
-
-        return InteractionResult.SUCCESS;
-    }
-
-    private void sendSwallowMessage(@NotNull Player player, ItemStack smokableItem) {
-        Character character = CharacterManager.get(player.level()).getActiveCharacter(player);
-        if (character != null) {
-            Component message = Component.literal(
-                            character.getName() + " swallows " + smokableItem.getHoverName().getString() + ".")
-                    .withColor(character.getEmoteColor());
-            sendLocalMessage(player, 5, message);
-        }
+        return getSmokable(player.getItemInHand(hand)).use(level, player, hand);
     }
 
     @Override
     public @NotNull InteractionResult useOn(@NotNull UseOnContext context) {
-        Level level = context.getLevel();
-        if (level.isClientSide) return InteractionResult.PASS;
-
-        Player player = context.getPlayer();
-        ItemStack stack = context.getItemInHand();
-        BlockPos pos = context.getClickedPos().relative(context.getClickedFace());
-
-        if (player == null || !player.isShiftKeyDown()) return InteractionResult.PASS;
-
-        stack.consume(1, player);
-        ItemEntity smokableButt = new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), getButtItem(stack));
-        playExtinguishSound(level, player.getOnPos());
-        addExtinguishParticles(level, pos);
-        level.addFreshEntity(smokableButt);
-
-        return InteractionResult.SUCCESS;
+        return getSmokable(context.getItemInHand()).useOn(context);
     }
 
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
-        if (level.isClientSide || !stack.getOrDefault(LIT, false)) return stack;
-
-        playSmokeSound(level, entity.getOnPos(), stack);
-        addSmokeParticles(level, entity);
-        consumeSubstances(stack, 1, entity);
-
-        if (getTotalAmount(stack) < 0.1f) {
-            return getButtItem(stack);
-        }
-
-        return stack;
+        return getSmokable(stack).finishUsingItem(stack, level, entity);
     }
-
 
     @Override
     public boolean releaseUsing(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity, int timeLeft) {
-        if (timeLeft > getUseDuration(stack, entity) / 4) return false;
-        if (level.isClientSide || !stack.getOrDefault(LIT, false)) return false;
-
-        playSmokeSound(level, entity.getOnPos(), stack);
-        addSmokeParticles(level, entity);
-        consumeSubstances(stack, 1 * ((float) (getUseDuration(stack, entity) - timeLeft) / getUseDuration(stack, entity)), entity);
-
-        if (getTotalAmount(stack) < 0.1f && entity instanceof ServerPlayer player) {
-            int slot = player.getInventory().findSlotMatchingItem(stack);
-            stack.consume(1, entity);
-            player.getInventory().add(slot, getButtItem(stack));
-        }
-
-        return true;
+        return getSmokable(stack).releaseUsing(stack, level, entity, timeLeft);
     }
 
     @Override
     public int getUseDuration(@NotNull ItemStack stack, @NotNull LivingEntity entity) {
-        return stack.getOrDefault(SMOKABLE, Smokable.DEFAULT).smokeDuration();
+        return getSmokable(stack).getUseDuration(stack, entity);
     }
 
     @Override
     public @NotNull ItemUseAnimation getUseAnimation(@NotNull ItemStack stack) {
-        return ItemUseAnimation.TOOT_HORN;
+        return getSmokable(stack).getUseAnimation(stack);
     }
 
     @Override
     public boolean onEntityItemUpdate(@NotNull ItemStack stack, @NotNull ItemEntity entity) {
-        if (entity.isUnderWater()) {
-            entity.setItem(getButtItem(stack));
-            playExtinguishSound(entity.level(), entity.getOnPos());
-            return true;
-        }
-        return false;
+        return getSmokable(stack).onEntityItemUpdate(stack, entity);
     }
 
     @Override
     public void inventoryTick(@NotNull ItemStack stack, @NotNull ServerLevel level, @NotNull Entity entity, @Nullable EquipmentSlot slot) {
-        if (level.isClientSide) return;
-        if (slot != EquipmentSlot.HEAD || !stack.getOrDefault(LIT, false)) return;
-
-        if (level.getGameTime() % SMOKE_TICK_INTERVAL == 0) {
-            playSmokeSound(level, entity.getOnPos(), stack);
-            addSmokeParticles(level, entity);
-            consumeSubstances(stack, 1, (LivingEntity) entity);
-
-            if (getTotalAmount(stack) < 0.1f) {
-                ((LivingEntity) entity).setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
-
-                if (entity instanceof Player player) {
-                    player.addItem(getButtItem(stack));
-                }
-            }
-        }
+        getSmokable(stack).inventoryTick(stack, level, entity, slot);
     }
 
-    private ItemStack getButtItem(@NotNull ItemStack stack) {
-        Smokable smokable = stack.get(SMOKABLE);
-        return smokable != null ? smokable.buttItem().value().getDefaultInstance() : ItemStack.EMPTY;
-    }
-
-    private void playLightingSound(@NotNull Level level, @NotNull BlockPos pos) {
-        level.playSound(null, pos, SoundEvents.FLINTANDSTEEL_USE,
-                SoundSource.PLAYERS, 0.5F, level.getRandom().nextFloat() * 0.1F + 0.9F);
-    }
-
-    private void playSwallowSound(@NotNull Level level, @NotNull BlockPos pos) {
-        level.playSound(null, pos, SoundEvents.PLAYER_BURP,
-                SoundSource.PLAYERS, 0.5F, level.getRandom().nextFloat() * 0.1F + 0.9F);
-    }
-
-    public void playExtinguishSound(@NotNull Level level, @NotNull BlockPos pos) {
-        level.playSound(
-                null,
-                pos,
-                SoundEvents.CANDLE_EXTINGUISH,
-                SoundSource.PLAYERS,
-                0.5f,
-                level.getRandom().nextFloat() * 0.1F + 0.9f
-        );
-    }
-
-    public void playSmokeSound(@NotNull Level level, @NotNull BlockPos pos, @NotNull ItemStack stack) {
-        level.playSound(
-                null,
-                pos,
-                stack.getOrDefault(SMOKABLE, Smokable.DEFAULT).smokeSound().value(),
-                SoundSource.PLAYERS,
-                0.5f,
-                2
-        );
-    }
-
-    private void addSmokeParticles(@NotNull Level level, @NotNull Entity entity) {
-        if (level instanceof ServerLevel serverLevel && entity instanceof Player player) {
-            float yRot = player.getYRot();
-            double offsetX = -Math.sin(Math.toRadians(yRot)) * PARTICLE_OFFSET_DISTANCE;
-            double offsetZ = Math.cos(Math.toRadians(yRot)) * PARTICLE_OFFSET_DISTANCE;
-
-            serverLevel.sendParticles(
-                    ParticleTypes.CAMPFIRE_COSY_SMOKE,
-                    entity.getX() + offsetX,
-                    entity.getY() + PARTICLE_OFFSET_HEIGHT,
-                    entity.getZ() + offsetZ,
-                    1, 0.1, 0.1, 0.1, 0.01
-            );
-        }
-    }
-
-    private void addExtinguishParticles(Level level, BlockPos pos) {
-        if (level instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ParticleTypes.FLAME,
-                    pos.getX(), pos.getY(), pos.getZ(), 1, 0, 0, 0, 0.01);
-            serverLevel.sendParticles(ParticleTypes.SMOKE,
-                    pos.getX(), pos.getY(), pos.getZ(), 1, 0, 0, 0, 0.01);
-        }
+    public Smokable getSmokable(@NotNull ItemStack stack) {
+        return stack.getOrDefault(SMOKABLE, Smokable.DEFAULT);
     }
 }

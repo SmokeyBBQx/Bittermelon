@@ -11,6 +11,7 @@ import com.site21.bittermelon.common.content.items.scps.scp377.SCP377;
 import com.site21.bittermelon.common.content.items.scps.scp377.SCP3771;
 import com.site21.bittermelon.common.content.items.scps.scp377.SCP377Cookie;
 import com.site21.bittermelon.common.content.items.screwdriver.ScrewdriverItem;
+import com.site21.bittermelon.common.content.items.smokable.SmokableItem;
 import com.site21.bittermelon.common.content.items.substance.FluidContainerItem;
 import com.site21.bittermelon.common.content.items.substance.GasContainerItem;
 import com.site21.bittermelon.common.content.items.substance.GlassFluidContainerItem;
@@ -24,6 +25,7 @@ import com.site21.bittermelon.common.content.items.writablepaper.WritablePaper;
 import com.site21.bittermelon.common.content.items.writingutensils.ChalkItem;
 import com.site21.bittermelon.common.content.items.writingutensils.HighlighterItem;
 import com.site21.bittermelon.common.systems.component.Screwdriver;
+import com.site21.bittermelon.common.systems.component.Smokable;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -81,9 +83,10 @@ public class BitterItems {
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
                     .component(VOLUME, 0.0f)));
 
-    public static final DeferredItem<Item> CIGARETTE = ITEMS.register("cigarette", registryName ->
-            new Item(new Item.Properties()
+    public static final DeferredItem<SmokableItem> CIGARETTE = ITEMS.register("cigarette", registryName ->
+            new SmokableItem(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .component(SMOKABLE, Smokable.DEFAULT)
                     .component(VOLUME, 20.0f)));
 
     public static final DeferredItem<Item> SCP_018 = ITEMS.register("scp_018", registryName ->
@@ -178,6 +181,7 @@ public class BitterItems {
             new Item(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
                     .component(DataComponents.CONSUMABLE, Consumable.builder()
+                            .consumeSeconds(0.5f)
                             .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.NAUSEA, 100, 0)))
                             .build())));
 

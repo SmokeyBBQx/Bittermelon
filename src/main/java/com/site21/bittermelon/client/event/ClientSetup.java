@@ -19,10 +19,7 @@ import com.site21.bittermelon.common.systems.personnel.registry.networking.AddPe
 import com.site21.bittermelon.common.systems.personnel.registry.networking.PersonnelClientPayloadHandler;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.RemovePersonnelEntry;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.UpdatePersonnelEntry;
-import com.site21.bittermelon.datagen.property.BaseColor;
-import com.site21.bittermelon.datagen.property.StackPillShape;
-import com.site21.bittermelon.datagen.property.SubstanceColor;
-import com.site21.bittermelon.datagen.property.SubstanceVolume;
+import com.site21.bittermelon.datagen.property.*;
 import com.site21.bittermelon.init.neoforge.BitterBlockEntities;
 import com.site21.bittermelon.networking.client.ClientPayloadHandler;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
@@ -31,10 +28,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
-import net.neoforged.neoforge.client.event.RegisterRangeSelectItemModelPropertyEvent;
-import net.neoforged.neoforge.client.event.RegisterSelectItemModelPropertyEvent;
+import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -93,6 +87,14 @@ public class ClientSetup {
         event.register(
                 ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "pill_shape"),
                 StackPillShape.TYPE
+        );
+    }
+
+    @SubscribeEvent
+    public static void registerConditionalProperties(@NotNull RegisterConditionalItemModelPropertyEvent event) {
+        event.register(
+                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "smokable_lit"),
+                SmokableLit.MAP_CODEC
         );
     }
 

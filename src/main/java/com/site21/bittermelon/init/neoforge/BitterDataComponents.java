@@ -49,11 +49,6 @@ public class BitterDataComponents {
             builder -> builder.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG)
     );
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> CAN_SMOKE = DATA_COMPONENTS.registerComponentType(
-            "can_smoke",
-            builder -> builder.persistent(Codec.BOOL)
-    );
-
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> HAS_LANDED = DATA_COMPONENTS.registerComponentType(
             "has_landed",
             builder -> builder.persistent(Codec.BOOL)
