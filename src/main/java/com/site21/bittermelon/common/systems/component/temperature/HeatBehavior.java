@@ -32,12 +32,16 @@ public record HeatBehavior(float meltingPoint, float flashPoint, float ignitionP
     public static final HeatBehavior DEFAULT = new HeatBehavior(Float.MAX_VALUE, 473f, 506f, 5, Items.COAL.builtInRegistryHolder());
     public static final float harmfulTemperature = 317f;
 
-    // TODO: Move ignition to when temperature is set, not every tick?
     public void inventoryTick(@NotNull ItemStack stack, @NotNull ServerLevel level, @NotNull Entity entity, @Nullable EquipmentSlot slot) {
         Long burnTime = stack.get(BURN_TIME);
         float temperature = stack.getOrDefault(TEMPERATURE, 273f);
+        long gameTime = level.getGameTime();
 
-        if (temperature > harmfulTemperature && level.getGameTime() % 20 == 0) {
+        if (temperature > 273 && gameTime % 100 == 0) {
+            stack.set(TEMPERATURE, temperature - 5);
+        }
+
+        if (temperature > harmfulTemperature && gameTime % 20 == 0) {
             if (slot != null && slot.isArmor() && burnTime != null) {
                 entity.setRemainingFireTicks(entity.getRemainingFireTicks() + 100);
             } else {
@@ -68,6 +72,13 @@ public record HeatBehavior(float meltingPoint, float flashPoint, float ignitionP
         }
 
         float temperature = stack.getOrDefault(TEMPERATURE, 273f);
+
+        long gameTime = level.getGameTime();
+
+        if (temperature > 273 && gameTime % 100 == 0) {
+            stack.set(TEMPERATURE, temperature - 5);
+        }
+
         tryIgnite(stack, level, entity, temperature);
     }
 
@@ -102,8 +113,8 @@ public record HeatBehavior(float meltingPoint, float flashPoint, float ignitionP
     private void tryIgnite(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, float temperature) {
         if (temperature >= ignitionPoint || (temperature >= flashPoint && canIgnite(entity))) {
             stack.set(BURN_TIME, level.getGameTime() + (long) (burnSeconds * 20));
-        } else if (canIgnite(entity)) {
-            stack.set(TEMPERATURE, temperature + 1);
+        } else if (canIgnite(entity) && level.getGameTime() % 20 == 0) {
+            stack.set(TEMPERATURE, temperature + 5);
         }
     }
 
@@ -115,8 +126,6 @@ public record HeatBehavior(float meltingPoint, float flashPoint, float ignitionP
                 if (itemStack.has(BURN_TIME)) return true;
             }
         }
-
-
         return false;
     }
 
