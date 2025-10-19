@@ -6,6 +6,7 @@ import com.site21.bittermelon.common.content.items.base.ItemSize;
 import com.site21.bittermelon.common.content.items.scps.scp377.Fortune;
 import com.site21.bittermelon.common.systems.component.*;
 import com.site21.bittermelon.common.content.items.substance.pill.PillShape;
+import com.site21.bittermelon.common.systems.component.temperature.HeatBehavior;
 import com.site21.bittermelon.common.systems.medical.blood.BloodData;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentData;
 import net.minecraft.core.BlockPos;
@@ -212,5 +213,15 @@ public class BitterDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Screwdriver>> SCREWDRIVER = DATA_COMPONENTS.registerComponentType(
             "screwdriver",
             builder -> builder.persistent(Screwdriver.CODEC)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> BURN_TIME = DATA_COMPONENTS.registerComponentType(
+            "burn_time",
+            builder -> builder.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.LONG)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<HeatBehavior>> HEAT_BEHAVIOR = DATA_COMPONENTS.registerComponentType(
+            "heat_behavior",
+            builder -> builder.persistent(HeatBehavior.CODEC)
     );
 }

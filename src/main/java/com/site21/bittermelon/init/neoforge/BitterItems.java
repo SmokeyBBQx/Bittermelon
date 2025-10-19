@@ -3,6 +3,7 @@ package com.site21.bittermelon.init.neoforge;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.items.IntercomPhoneItem;
 import com.site21.bittermelon.common.content.items.StickyNote;
+import com.site21.bittermelon.common.content.items.TestHeatedItem;
 import com.site21.bittermelon.common.content.items.laserdesignator.LaserDesignatorItem;
 import com.site21.bittermelon.common.content.items.medical.tools.*;
 import com.site21.bittermelon.common.content.items.mop.MopItem;
@@ -26,6 +27,7 @@ import com.site21.bittermelon.common.content.items.writingutensils.ChalkItem;
 import com.site21.bittermelon.common.content.items.writingutensils.HighlighterItem;
 import com.site21.bittermelon.common.systems.component.Screwdriver;
 import com.site21.bittermelon.common.systems.component.Smokable;
+import com.site21.bittermelon.common.systems.component.temperature.HeatBehavior;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -179,13 +181,14 @@ public class BitterItems {
             new Item.Properties().stacksTo(1));
     public static final DeferredItem<Item> BASEBALL = ITEMS.registerSimpleItem("baseball");
 
-    public static final DeferredItem<Item> CIGARETTE_BUTT = ITEMS.register("cigarette_butt", registryName ->
-            new Item(new Item.Properties()
+    public static final DeferredItem<TestHeatedItem> CIGARETTE_BUTT = ITEMS.register("cigarette_butt", registryName ->
+            new TestHeatedItem(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
                     .component(DataComponents.CONSUMABLE, Consumable.builder()
                             .consumeSeconds(0.5f)
                             .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.NAUSEA, 100, 0)))
-                            .build())));
+                            .build())
+                    .component(HEAT_BEHAVIOR, HeatBehavior.DEFAULT)));
 
     public static final DeferredItem<Item> KEYCARD = ITEMS.registerSimpleItem("keycard");
 

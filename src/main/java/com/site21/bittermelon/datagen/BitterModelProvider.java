@@ -711,8 +711,8 @@ public class BitterModelProvider extends ModelProvider {
                 SCP_377.get(),
                 new ConditionalItemModel.Unbaked(
                         new Empty377(),
-                        emptyModel,
-                        model
+                        model,
+                        emptyModel
                 )
         );
     }

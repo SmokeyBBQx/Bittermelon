@@ -147,7 +147,7 @@ public record Smokable(Holder<Item> buttItem, int smokeDuration, Holder<SoundEve
     }
 
     public boolean onEntityItemUpdate(@NotNull ItemStack stack, @NotNull ItemEntity entity) {
-        if (entity.isUnderWater()) {
+        if (entity.isInWaterOrRain()) {
             entity.setItem(getButtItem(stack));
             playExtinguishSound(entity.level(), entity.getOnPos());
             return true;
@@ -243,10 +243,10 @@ public record Smokable(Holder<Item> buttItem, int smokeDuration, Holder<SoundEve
         if (obj == this) {
             return true;
         } else {
-            return obj instanceof Smokable(Holder<Item> buttItem, int smokeDuration, Holder<SoundEvent> smokeSound) &&
-                    this.buttItem.equals(buttItem) &&
-                    this.smokeDuration == smokeDuration &&
-                    Objects.equals(this.smokeSound, smokeSound);
+            return obj instanceof Smokable(Holder<Item> buttItem1, int smokeDuration1, Holder<SoundEvent> smokeSound1) &&
+                    this.buttItem.equals(buttItem1) &&
+                    this.smokeDuration == smokeDuration1 &&
+                    Objects.equals(this.smokeSound, smokeSound1);
         }
     }
 
