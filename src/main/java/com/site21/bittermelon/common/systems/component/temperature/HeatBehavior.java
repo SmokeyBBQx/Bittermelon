@@ -158,7 +158,7 @@ public record HeatBehavior(float smokingPoint, float meltingPoint, float flashPo
 
     @Override
     public int hashCode() {
-        return Objects.hash(meltingPoint, flashPoint, ignitionPoint, burnSeconds, residueItem);
+        return Objects.hash(smokingPoint, meltingPoint, flashPoint, ignitionPoint, burnSeconds, residueItem);
     }
 
     @Override
