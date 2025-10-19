@@ -2,6 +2,7 @@ package com.site21.bittermelon.client.event;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.client.render.TypingIndicatorRenderer;
+import com.site21.bittermelon.common.content.items.keycard.KeycardDecorator;
 import com.site21.bittermelon.common.systems.atmosphere.client.AtmosFogRenderer;
 import com.site21.bittermelon.common.systems.atmosphere.data.AtmosLevelData;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
@@ -10,6 +11,7 @@ import com.site21.bittermelon.common.systems.economy.bank.AccountRegistry;
 import com.site21.bittermelon.common.systems.personnel.privilege.PrivilegeManager;
 import com.site21.bittermelon.common.systems.personnel.registry.PersonnelRegistry;
 import com.site21.bittermelon.common.systems.telecomms.intercom.IntercomManager;
+import com.site21.bittermelon.init.neoforge.BitterItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -81,6 +83,8 @@ public class ClientEvents {
         for (Item item : BuiltInRegistries.ITEM.stream().toList()) {
             event.register(item, heatDecorator);
         }
+
+        event.register(BitterItems.KEYCARD, new KeycardDecorator());
     }
 
 }
