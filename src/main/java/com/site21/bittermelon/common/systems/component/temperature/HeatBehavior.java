@@ -35,6 +35,9 @@ public record HeatBehavior(float smokingPoint, float meltingPoint, float flashPo
 
     public void inventoryTick(@NotNull ItemStack stack, @NotNull ServerLevel level, @NotNull Entity entity, @Nullable EquipmentSlot slot) {
         float temperature = stack.getOrDefault(TEMPERATURE, 273f);
+        if (canIgnite(entity) && level.getGameTime() % 20 == 0) {
+            stack.set(TEMPERATURE, temperature + 5);
+        }
         if (temperature <= 273f) return;
 
         Long burnTime = stack.get(BURN_TIME);
@@ -63,9 +66,13 @@ public record HeatBehavior(float smokingPoint, float meltingPoint, float flashPo
     }
 
     public void onEntityItemUpdate(@NotNull ItemStack stack, @NotNull ItemEntity entity, @NotNull Level level) {
-        float temperature = stack.getOrDefault(TEMPERATURE, 273f);
-        if (temperature <= 273f) return;
         if (level.isClientSide) return;
+
+        float temperature = stack.getOrDefault(TEMPERATURE, 273f);
+        if (canIgnite(entity) && level.getGameTime() % 20 == 0) {
+            stack.set(TEMPERATURE, temperature + 5);
+        }
+        if (temperature <= 273f) return;
 
         Long burnTime = stack.get(BURN_TIME);
         if (burnTime != null) {
@@ -111,8 +118,6 @@ public record HeatBehavior(float smokingPoint, float meltingPoint, float flashPo
     private void tryIgnite(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, float temperature) {
         if (temperature >= ignitionPoint || (temperature >= flashPoint && canIgnite(entity))) {
             stack.set(BURN_TIME, level.getGameTime() + (long) (burnSeconds * 20));
-        } else if (canIgnite(entity) && level.getGameTime() % 20 == 0) {
-            stack.set(TEMPERATURE, temperature + 5);
         }
     }
 
