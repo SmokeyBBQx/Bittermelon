@@ -31,6 +31,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -87,6 +88,7 @@ public class BitterItems {
             new SmokableItem(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
                     .component(SMOKABLE, Smokable.DEFAULT)
+                    .equippable(EquipmentSlot.HEAD)
                     .component(VOLUME, 20.0f)));
 
     public static final DeferredItem<Item> SCP_018 = ITEMS.register("scp_018", registryName ->

@@ -96,6 +96,11 @@ public class ClientSetup {
                 ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "smokable_lit"),
                 SmokableLit.MAP_CODEC
         );
+
+        event.register(
+                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "empty_377"),
+                Empty377.MAP_CODEC
+        );
     }
 
     @SubscribeEvent

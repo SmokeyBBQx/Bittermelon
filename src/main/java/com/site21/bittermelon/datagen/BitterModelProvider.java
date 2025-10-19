@@ -193,7 +193,7 @@ public class BitterModelProvider extends ModelProvider {
 
         // SCPs
         itemModels.generateFlatItem(SCP_018.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(SCP_377.get(), ModelTemplates.FLAT_ITEM);
+        generateSCP377(itemModels);
         itemModels.generateFlatItem(SCP_377_1.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(SCP_2398.get(), ModelTemplates.FLAT_ITEM);
 
@@ -697,6 +697,21 @@ public class BitterModelProvider extends ModelProvider {
                 new ConditionalItemModel.Unbaked(
                         new SmokableLit(),
                         litModel,
+                        model
+                )
+        );
+    }
+
+    public void generateSCP377(@NotNull ItemModelGenerators itemModels) {
+        ItemModel.Unbaked model = ItemModelUtils.plainModel(itemModels.createFlatItemModel(SCP_377.get(), ModelTemplates.FLAT_ITEM));
+        ItemModel.Unbaked emptyModel = ItemModelUtils.plainModel(
+                itemModels.createFlatItemModel(SCP_377.get(), "_empty", ModelTemplates.FLAT_ITEM));
+
+        itemModels.itemModelOutput.accept(
+                SCP_377.get(),
+                new ConditionalItemModel.Unbaked(
+                        new Empty377(),
+                        emptyModel,
                         model
                 )
         );

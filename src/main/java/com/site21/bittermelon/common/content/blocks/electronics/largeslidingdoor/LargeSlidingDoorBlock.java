@@ -205,6 +205,7 @@ public class LargeSlidingDoorBlock extends Block implements EntityBlock {
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
+        if (state.getValue(STATE) != State.CLOSED) return InteractionResult.PASS;
         return DoorHelper.handleKnocking(level, player) ? InteractionResult.SUCCESS : InteractionResult.PASS;
     }
 
@@ -237,7 +238,7 @@ public class LargeSlidingDoorBlock extends Block implements EntityBlock {
     }
 
     protected @NotNull InteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
-        if (level.isClientSide) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (level.isClientSide) return InteractionResult.PASS;
 
         // FORCE OPEN LOGIC
         if (player.getCooldowns().isOnCooldown(stack)) return InteractionResult.TRY_WITH_EMPTY_HAND;
@@ -280,6 +281,7 @@ public class LargeSlidingDoorBlock extends Block implements EntityBlock {
 
             return InteractionResult.SUCCESS;
         }
+
         return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 

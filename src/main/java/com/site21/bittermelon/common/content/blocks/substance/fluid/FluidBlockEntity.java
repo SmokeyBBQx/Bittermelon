@@ -634,7 +634,7 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
 
     public String getContentsDescription() {
         if (substances.isEmpty()) {
-            return "Empty";
+            return "Empty377";
         }
 
         return substances.stream()
