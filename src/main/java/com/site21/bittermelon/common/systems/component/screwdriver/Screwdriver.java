@@ -2,21 +2,28 @@ package com.site21.bittermelon.common.systems.component.screwdriver;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.site21.bittermelon.common.systems.character.Character;
+import com.site21.bittermelon.common.systems.character.CharacterManager;
+import com.site21.bittermelon.common.systems.character.skills.Skill;
 import com.site21.bittermelon.common.systems.electronics.PanelDevice;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.component.UseCooldown;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
@@ -39,6 +46,8 @@ public record Screwdriver(int screwDuration, Holder<SoundEvent> screwSound) {
         BlockPos clickedPos = context.getClickedPos();
 
         if (level.isClientSide || player == null) return InteractionResult.PASS;
+
+        if (handleFumbling(player, level, clickedPos, context.getItemInHand())) return InteractionResult.PASS;
 
         if (level.getBlockEntity(clickedPos) instanceof PanelDevice) {
             player.startUsingItem(context.getHand());
@@ -66,6 +75,11 @@ public record Screwdriver(int screwDuration, Holder<SoundEvent> screwSound) {
             }
         }
 
+        handleExperienceGain(entity);
+        if (entity instanceof Player player) {
+            player.getCooldowns().addCooldown(stack, 20);
+        }
+
         return stack;
     }
 
@@ -75,6 +89,33 @@ public record Screwdriver(int screwDuration, Holder<SoundEvent> screwSound) {
             return ((BlockHitResult) hitResult).getBlockPos();
         }
         return null;
+    }
+
+    private boolean handleFumbling(@NotNull Player player, @NotNull Level level, @NotNull BlockPos pos, ItemStack stack) {
+        Character character = CharacterManager.get(level).getActiveCharacter(player);
+        if (character == null) return false;
+
+        float electricalSkill = character.getSkill(Skill.ELECTRICAL);
+
+        if (player.getRandom().nextFloat() > 0.5f + electricalSkill / 10) {
+            player.getCooldowns().addCooldown(stack, 20);
+            player.displayClientMessage(Component.literal("You fumble with the screwdriver.")
+                            .withStyle(ChatFormatting.ITALIC)
+                            .withStyle(ChatFormatting.RED),
+                    true);
+            level.playSound(null, pos, SoundEvents.ITEM_BREAK.value(), SoundSource.PLAYERS, 0.2f, 2.0f);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private void handleExperienceGain(@NotNull Entity player) {
+        Character character = CharacterManager.get(player.level()).getActiveCharacter(player);
+        if (character == null) return;
+
+        character.modifySkill(Skill.ELECTRICAL, 0.001f);
     }
 
     private void playPanelSound(@NotNull Level level, BlockPos pos, boolean open) {
