@@ -4,6 +4,7 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.items.IntercomPhoneItem;
 import com.site21.bittermelon.common.content.items.StickyNote;
 import com.site21.bittermelon.common.content.items.TestHeatedItem;
+import com.site21.bittermelon.common.content.items.handheldsysteminterface.HandheldSystemInterface;
 import com.site21.bittermelon.common.content.items.laserdesignator.LaserDesignatorItem;
 import com.site21.bittermelon.common.content.items.medical.tools.*;
 import com.site21.bittermelon.common.content.items.mop.MopItem;
@@ -222,7 +223,7 @@ public class BitterItems {
     public static final DeferredItem<Item> CRACKED_FORTUNE_COOKIE = ITEMS.registerSimpleItem("cracked_fortune_cookie",
             new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationModifier(1).alwaysEdible().build()));
 
-    public static final DeferredItem<Item> HANDHELD_SYSTEM_INTERFACE = ITEMS.registerSimpleItem("handheld_system_interface");
+    public static final DeferredItem<HandheldSystemInterface> HANDHELD_SYSTEM_INTERFACE = ITEMS.registerItem("handheld_system_interface", HandheldSystemInterface::new);
 
     public static final DeferredItem<ScrewdriverItem> SCREWDRIVER = ITEMS.register("screwdriver", registryName ->
             new ScrewdriverItem(new Item.Properties()
