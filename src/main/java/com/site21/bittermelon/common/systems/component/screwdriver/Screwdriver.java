@@ -1,4 +1,4 @@
-package com.site21.bittermelon.common.systems.component;
+package com.site21.bittermelon.common.systems.component.screwdriver;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -16,6 +16,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
@@ -30,6 +31,7 @@ import static com.site21.bittermelon.init.neoforge.BitterSounds.*;
 public record Screwdriver(int screwDuration, Holder<SoundEvent> screwSound) {
     public static final Codec<Screwdriver> CODEC;
     public static final Screwdriver DEFAULT = new Screwdriver(60, BitterSounds.SCREWDRIVER);
+    public static final ItemUseAnimation SCREW_ANIMATION = ItemUseAnimation.valueOf("BITTERMELON_SCREW");
 
     public @NotNull InteractionResult useOn(@NotNull UseOnContext context) {
         Player player = context.getPlayer();

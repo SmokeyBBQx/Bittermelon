@@ -1,0 +1,22 @@
+{
+  "entries": [
+    {
+      "enum": "net/minecraft/world/item/ItemUseAnimation",
+      "name": "BITTERMELON_SCREW",
+      "constructor": "(ILjava/lang/String;)V",
+      "parameters": [
+        -1,
+        "bittermelon:screw"
+      ]
+    },
+    {
+      "enum": "net/minecraft/client/model/HumanoidModel$ArmPose",
+      "name": "BITTERMELON_SCREW_POSE",
+      "constructor": "(ZLnet/neoforged/neoforge/client/IArmPoseTransformer;)V",
+      "parameters": {
+        "class": "com/site21/bittermelon/common/systems/component/screwdriver/ScrewdriverPose",
+        "field": "SCREW_POSE"
+      }
+    }
+  ]
+}

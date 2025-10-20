@@ -76,15 +76,4 @@ public class ClientEvents {
                 event.getPackedLight()
         );
     }
-
-    @SubscribeEvent
-    public static void onRenderInventorySlot(@NotNull RegisterItemDecorationsEvent event) {
-        HeatDecorator heatDecorator = new HeatDecorator();
-        for (Item item : BuiltInRegistries.ITEM.stream().toList()) {
-            event.register(item, heatDecorator);
-        }
-
-        event.register(BitterItems.KEYCARD, new KeycardDecorator());
-    }
-
 }

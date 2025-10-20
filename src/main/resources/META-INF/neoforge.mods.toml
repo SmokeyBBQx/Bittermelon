@@ -18,6 +18,7 @@ license="MIT"
 
 # A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]] #mandatory
+enumExtensions="META-INF/enumextensions.json"
 
 # The modid of the mod
 modId="bittermelon" #mandatory

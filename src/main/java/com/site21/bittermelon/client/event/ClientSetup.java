@@ -13,7 +13,10 @@ import com.site21.bittermelon.common.content.entities.scp131.client.SCP131Render
 import com.site21.bittermelon.common.content.entities.scp1507.client.SCP1507Renderer;
 import com.site21.bittermelon.common.content.entities.scp650.client.SCP650Renderer;
 import com.site21.bittermelon.common.content.entities.scp939.client.SCP939Renderer;
+import com.site21.bittermelon.common.content.items.keycard.KeycardDecorator;
 import com.site21.bittermelon.common.content.items.taser.TaserProjectileRenderer;
+import com.site21.bittermelon.common.systems.component.screwdriver.ScrewdriverUseAnimation;
+import com.site21.bittermelon.common.systems.component.temperature.HeatDecorator;
 import com.site21.bittermelon.common.systems.personnel.privilege.networking.*;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.AddPersonnelEntry;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.PersonnelClientPayloadHandler;
@@ -21,14 +24,18 @@ import com.site21.bittermelon.common.systems.personnel.registry.networking.Remov
 import com.site21.bittermelon.common.systems.personnel.registry.networking.UpdatePersonnelEntry;
 import com.site21.bittermelon.datagen.property.*;
 import com.site21.bittermelon.init.neoforge.BitterBlockEntities;
+import com.site21.bittermelon.init.neoforge.BitterItems;
 import com.site21.bittermelon.networking.client.ClientPayloadHandler;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -101,6 +108,24 @@ public class ClientSetup {
                 ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "empty_377"),
                 Empty377.MAP_CODEC
         );
+    }
+
+    @SubscribeEvent
+    public static void registerClientExtensions(@NotNull RegisterClientExtensionsEvent event) {
+        event.registerItem(
+                new ScrewdriverUseAnimation(),
+                BitterItems.SCREWDRIVER
+        );
+    }
+
+    @SubscribeEvent
+    public static void onRenderInventorySlot(@NotNull RegisterItemDecorationsEvent event) {
+        HeatDecorator heatDecorator = new HeatDecorator();
+        for (Item item : BuiltInRegistries.ITEM.stream().toList()) {
+            event.register(item, heatDecorator);
+        }
+
+        event.register(BitterItems.KEYCARD, new KeycardDecorator());
     }
 
     @SubscribeEvent

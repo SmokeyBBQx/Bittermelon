@@ -1,6 +1,6 @@
 package com.site21.bittermelon.common.content.items.screwdriver;
 
-import com.site21.bittermelon.common.systems.component.Screwdriver;
+import com.site21.bittermelon.common.systems.component.screwdriver.Screwdriver;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -36,7 +36,7 @@ public class ScrewdriverItem extends Item {
 
     @Override
     public @NotNull ItemUseAnimation getUseAnimation(@NotNull ItemStack stack) {
-        return ItemUseAnimation.BOW;
+        return Screwdriver.SCREW_ANIMATION;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class ScrewdriverItem extends Item {
     }
 
     @Override
-    public void onUseTick(@NotNull Level level, @NotNull LivingEntity entity, ItemStack stack, int remainingUseDuration) {
+    public void onUseTick(@NotNull Level level, @NotNull LivingEntity entity, @NotNull ItemStack stack, int remainingUseDuration) {
        getScrewdriver(stack).playScrewSound(level, entity, remainingUseDuration);
     }
 

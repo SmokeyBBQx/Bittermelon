@@ -25,7 +25,7 @@ import com.site21.bittermelon.common.content.items.wire.WireItem;
 import com.site21.bittermelon.common.content.items.writablepaper.WritablePaper;
 import com.site21.bittermelon.common.content.items.writingutensils.ChalkItem;
 import com.site21.bittermelon.common.content.items.writingutensils.HighlighterItem;
-import com.site21.bittermelon.common.systems.component.Screwdriver;
+import com.site21.bittermelon.common.systems.component.screwdriver.Screwdriver;
 import com.site21.bittermelon.common.systems.component.Smokable;
 import com.site21.bittermelon.common.systems.component.temperature.HeatBehavior;
 import net.minecraft.core.component.DataComponents;
