@@ -2,6 +2,7 @@ package com.site21.bittermelon.common.systems.fluid;
 
 import com.site21.bittermelon.Bittermelon;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.material.FluidState;
@@ -39,7 +40,21 @@ public class ClientSubstanceFluid implements IClientFluidTypeExtensions {
     @Override
     public int getTintColor(@NotNull FluidState state, @NotNull BlockAndTintGetter getter, @NotNull BlockPos pos) {
         if (getter.getBlockEntity(pos) instanceof SubstanceFluidBlockEntity fluidBE) {
-            return fluidBE.getColor();
+            int color = fluidBE.getColor();
+            if (color == 0xFFAAD5DB) {
+                for (Direction dir : Direction.values()) {
+                    BlockPos neighborPos = pos.relative(dir);
+                    if (getter.getBlockEntity(neighborPos) instanceof SubstanceFluidBlockEntity neighborBE) {
+                        int neighborColor = neighborBE.getColor();
+                        if (neighborColor != 0xFFAAD5DB) {
+                            color = neighborBE.getColor();
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return color;
         }
         return this.getTintColor();
     }

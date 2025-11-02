@@ -146,7 +146,6 @@ public class SubstanceFluid extends Fluid {
         }
     }
 
-
     private @NotNull List<SubstanceStack> getSubstancesForSpread(@NotNull SubstanceFluidBlockEntity fluidBE, float volume) {
         List<SubstanceStack> originalSubstances = fluidBE.getSubstances();
         List<SubstanceStack> spreadSubstances = new ArrayList<>();
