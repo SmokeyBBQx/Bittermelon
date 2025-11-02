@@ -117,12 +117,10 @@ public class SubstanceFluid extends Fluid {
     }
 
     private @NotNull List<BlockPos> getSpreadPositions(@NotNull Level level, @NotNull BlockPos pos, SubstanceFluidBlockEntity fluidBE) {
-        List<BlockPos> neighbors = new ArrayList<>();
+        List<BlockPos> neighbors;
 
         // Try to spread downwards first
-        if (!level.getFluidState(pos.below()).is(this)) {
-            neighbors = findNeighbors(level, pos.below(), fluidBE);
-        }
+        neighbors = findNeighbors(level, pos.below(), fluidBE);
 
         // If no downward spread positions, try horizontally
         if (neighbors.isEmpty()) {
@@ -139,12 +137,13 @@ public class SubstanceFluid extends Fluid {
         BlockPos abovePos = pos.above();
 
         // Check if we can spread upwards
-        if (!canSpreadTo(level, abovePos, fluidBE)) return;
-        List<SubstanceStack> substancesToSpread = getSubstancesForSpread(fluidBE, spreadVolume);
-        spreadTo(level, abovePos, substancesToSpread);
+        if (level.getFluidState(abovePos).is(this) || level.getBlockState(abovePos).canBeReplaced()) {
+            List<SubstanceStack> substancesToSpread = getSubstancesForSpread(fluidBE, spreadVolume);
+            spreadTo(level, abovePos, substancesToSpread);
 
-        for (SubstanceStack spreadStack : substancesToSpread) {
-            fluidBE.removeSubstance(spreadStack, spreadStack.getAmount());
+            for (SubstanceStack spreadStack : substancesToSpread) {
+                fluidBE.removeSubstance(spreadStack, spreadStack.getAmount());
+            }
         }
     }
 
@@ -199,7 +198,7 @@ public class SubstanceFluid extends Fluid {
     private void equalizeSubstances(@NotNull Level level, BlockPos worldPosition, SubstanceFluidBlockEntity fluidBE) {
         // TODO: Doesn't handle data components yet
 
-        List<SubstanceFluidBlockEntity> fluids = new ArrayList<>();
+        List<SubstanceFluidBlockEntity> fluids = new ArrayList<>(5);
         fluids.add(fluidBE);
 
         for (Direction direction : Direction.Plane.HORIZONTAL) {

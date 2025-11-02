@@ -1,6 +1,8 @@
 package com.site21.bittermelon.common.systems.fluid;
 
 import com.site21.bittermelon.Bittermelon;
+import net.minecraft.client.Camera;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -8,6 +10,7 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector4f;
 
 public class ClientSubstanceFluid implements IClientFluidTypeExtensions {
     @Override
@@ -59,5 +62,16 @@ public class ClientSubstanceFluid implements IClientFluidTypeExtensions {
         return this.getTintColor();
     }
 
+    @Override
+    public @NotNull Vector4f modifyFogColor(@NotNull Camera camera, float partialTick, @NotNull ClientLevel level, int renderDistance, float darkenWorldAmount, Vector4f fluidFogColor) {
+        if (level.getBlockEntity(camera.getBlockPosition()) instanceof SubstanceFluidBlockEntity fluidBE) {
+            int color = fluidBE.getColor();
+            float r = ((color >> 16) & 0xFF) / 255f;
+            float g = ((color >> 8) & 0xFF) / 255f;
+            float b = (color & 0xFF) / 255f;
+            return new Vector4f(r, g, b, 255f);
+        }
+        return fluidFogColor;
+    }
 
 }
