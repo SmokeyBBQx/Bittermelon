@@ -117,15 +117,29 @@ public class SubstanceFluid extends Fluid {
     }
 
     private @NotNull List<BlockPos> getSpreadPositions(@NotNull Level level, @NotNull BlockPos pos, SubstanceFluidBlockEntity fluidBE) {
-        List<BlockPos> neighbors;
+        List<BlockPos> neighbors = new ArrayList<>();
 
         // Try to spread downwards first
-        neighbors = findNeighbors(level, pos.below(), fluidBE);
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            BlockPos neighborPos = pos.relative(direction);
+            // Check if there is a block in the way to spread downwards
+            if (canSpreadTo(level, neighborPos, fluidBE)) {
+                if (canSpreadTo(level, neighborPos.below(), fluidBE)) {
+                    neighbors.add(neighborPos.below());
+                }
+            }
+        }
 
         // If no downward spread positions, try horizontally
         if (neighbors.isEmpty()) {
-            return findNeighbors(level, pos, fluidBE);
+            for (Direction direction : Direction.Plane.HORIZONTAL) {
+                if (canSpreadTo(level, pos.relative(direction), fluidBE)) {
+                    neighbors.add(pos.relative(direction));
+                }
+            }
         }
+
+        Collections.shuffle(neighbors);
 
         return neighbors;
     }
@@ -163,20 +177,6 @@ public class SubstanceFluid extends Fluid {
         }
 
         return spreadSubstances;
-    }
-
-    private @NotNull @Unmodifiable List<BlockPos> findNeighbors(Level level, BlockPos pos, SubstanceFluidBlockEntity fluidBE) {
-        List<BlockPos> spreadPositions = new ArrayList<>();
-
-        for (Direction direction : Direction.Plane.HORIZONTAL) {
-            if (canSpreadTo(level, pos.relative(direction), fluidBE)) {
-                spreadPositions.add(pos.relative(direction));
-            }
-        }
-
-        Collections.shuffle(spreadPositions);
-
-        return spreadPositions;
     }
 
     private boolean canSpreadTo(@NotNull Level level, @NotNull BlockPos pos, SubstanceFluidBlockEntity fluidBE) {
