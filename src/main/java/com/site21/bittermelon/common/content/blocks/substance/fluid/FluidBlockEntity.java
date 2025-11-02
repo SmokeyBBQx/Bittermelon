@@ -283,7 +283,7 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
 
 
     /**
-     * ---------Fluid Behavior---------
+     * ---------SubstanceFluid Behavior---------
      */
 
     private void applyGravity() {
@@ -634,7 +634,7 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
 
     public String getContentsDescription() {
         if (substances.isEmpty()) {
-            return "Empty377";
+            return "Empty";
         }
 
         return substances.stream()

@@ -167,7 +167,7 @@ public class BitterModelProvider extends ModelProvider {
         createKeycardReader(blockModels);
         createRedstoneDevice(blockModels, BitterBlocks.REDSTONE_DEVICE.get(), TexturedModel.ORIENTABLE);
 
-        // Fluid Containers
+        // SubstanceFluid Containers
         itemModels.generateFlatItem(BEER_BOTTLE.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(WHISKEY_BOTTLE.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(SCP_109.get(), ModelTemplates.FLAT_ITEM);

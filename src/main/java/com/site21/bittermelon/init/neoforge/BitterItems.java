@@ -37,6 +37,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.component.Consumable;
 import net.minecraft.world.item.component.DyedItemColor;
@@ -245,4 +246,9 @@ public class BitterItems {
     public static final DeferredItem<Item> PEN = ITEMS.registerSimpleItem("pen");
 
     public static final DeferredItem<WireCuttersItem> WIRE_CUTTERS = ITEMS.registerItem("wire_cutters", WireCuttersItem::new);
+
+    public static final DeferredItem<BucketItem> SUBSTANCE_FLUID_BUCKET = ITEMS.registerItem("substance_fluid_bucket", registryName ->
+            new BucketItem(BitterFluids.SUBSTANCE_FLUID.get(), new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, registryName.effectiveModel()))
+                    .stacksTo(1)));
 }

@@ -26,6 +26,7 @@ import com.site21.bittermelon.common.content.blocks.scp.scp151.SCP151Block;
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlock;
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.common.content.blocks.wallwriting.WallWritingBlock;
+import com.site21.bittermelon.common.systems.fluid.SubstanceFluidBlock;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -146,5 +147,19 @@ public class BitterBlocks {
     public static final DeferredBlock<RedstoneDeviceBlock> REDSTONE_DEVICE = BLOCKS.registerBlock("redstone_device", RedstoneDeviceBlock::new, BlockBehaviour.Properties.of()
             .sound(SoundType.METAL)
             .destroyTime(1.5f)
+    );
+
+    public static final DeferredBlock<SubstanceFluidBlock> SUBSTANCE_FLUID_BLOCK = BLOCKS.registerBlock("substance_fluid_block", SubstanceFluidBlock::new, BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WATER)
+            .noOcclusion()
+            .destroyTime(-1)
+            .sound(new DeferredSoundType(1.0f,
+                    1.0f,
+                    BitterSounds.SPLATTER::value,
+                    BitterSounds.SOGGY::value,
+                    BitterSounds.SPLAT::value,
+                    BitterSounds.SOGGY::value,
+                    BitterSounds.SPLATTER::value
+            ))
     );
 }

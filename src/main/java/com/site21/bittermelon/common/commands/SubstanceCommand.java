@@ -7,6 +7,7 @@ import com.site21.bittermelon.common.systems.atmosphere.AtmosHandler;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosInstance;
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.common.content.items.substance.SubstanceContainerItem;
+import com.site21.bittermelon.common.systems.fluid.SubstanceFluidBlockEntity;
 import com.site21.bittermelon.common.systems.substance.Substance;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import com.site21.bittermelon.init.custom.Substances;
@@ -207,14 +208,14 @@ public class SubstanceCommand {
         BlockPos pos = BlockPos.containing(source.getPosition());
         BlockEntity blockEntity = source.getLevel().getBlockEntity(pos);
 
-        if (!(blockEntity instanceof FluidBlockEntity fluidBlockEntity)) {
+        if (!(blockEntity instanceof SubstanceFluidBlockEntity fluidBlockEntity)) {
             source.sendFailure(Component.literal("You must be standing on a puddle block to use this command."));
             return 0;
         }
 
         source.sendSuccess(() -> Component.literal(fluidBlockEntity.getContentsDescription()), true);
-        source.sendSuccess(() -> Component.literal("Temperature: " + fluidBlockEntity.getTemperature()), true);
-        source.sendSuccess(() -> Component.literal("Volume: " + fluidBlockEntity.getTotalVolume()), true);
+//        source.sendSuccess(() -> Component.literal("Temperature: " + fluidBlockEntity.getTemperature()), true);
+        source.sendSuccess(() -> Component.literal("Volume: " + fluidBlockEntity.getVolume()), true);
         return 1;
     }
 
@@ -222,7 +223,7 @@ public class SubstanceCommand {
         BlockPos pos = BlockPos.containing(source.getPosition());
         BlockEntity blockEntity = source.getLevel().getBlockEntity(pos);
 
-        if (!(blockEntity instanceof FluidBlockEntity fluidBlockEntity)) {
+        if (!(blockEntity instanceof SubstanceFluidBlockEntity fluidBlockEntity)) {
             source.sendFailure(Component.literal("You must be standing on a fluid block to use this command."));
             return 0;
         }

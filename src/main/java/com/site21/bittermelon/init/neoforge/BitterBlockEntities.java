@@ -22,6 +22,7 @@ import com.site21.bittermelon.common.content.blocks.scp.scp151.SCP151BlockEntity
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlockEntity;
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.common.content.blocks.wallwriting.WallWritingBlockEntity;
+import com.site21.bittermelon.common.systems.fluid.SubstanceFluidBlockEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -116,4 +117,8 @@ public class BitterBlockEntities {
     public static final Supplier<BlockEntityType<StickyNoteBlockEntity>> STICKY_NOTE_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
             "sticky_note_block_entity",
             () -> new BlockEntityType<>(StickyNoteBlockEntity::new, false, STICKY_NOTE.get()));
+
+    public static final Supplier<BlockEntityType<SubstanceFluidBlockEntity>> SUBSTANCE_FLUID_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "substance_fluid_block_entity",
+            () -> new BlockEntityType<>(SubstanceFluidBlockEntity::new, false, SUBSTANCE_FLUID_BLOCK.get()));
 }

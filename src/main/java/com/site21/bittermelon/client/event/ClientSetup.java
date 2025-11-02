@@ -17,6 +17,7 @@ import com.site21.bittermelon.common.content.items.keycard.KeycardDecorator;
 import com.site21.bittermelon.common.content.items.taser.TaserProjectileRenderer;
 import com.site21.bittermelon.common.systems.component.screwdriver.ScrewdriverUseAnimation;
 import com.site21.bittermelon.common.systems.component.temperature.HeatDecorator;
+import com.site21.bittermelon.common.systems.fluid.ClientSubstanceFluid;
 import com.site21.bittermelon.common.systems.personnel.privilege.networking.*;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.AddPersonnelEntry;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.PersonnelClientPayloadHandler;
@@ -41,6 +42,8 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
 import static com.site21.bittermelon.init.neoforge.BitterEntities.*;
+import static com.site21.bittermelon.init.neoforge.BitterFluidTypes.SUBSTANCE_FLUID_TYPE;
+import static com.site21.bittermelon.init.neoforge.BitterFluids.SUBSTANCE_FLUID;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class ClientSetup {
@@ -126,6 +129,11 @@ public class ClientSetup {
         }
 
         event.register(BitterItems.KEYCARD, new KeycardDecorator());
+    }
+
+    @SubscribeEvent
+    public static void onRegisterFluidTypeExtensions(@NotNull RegisterClientExtensionsEvent event) {
+        event.registerFluidType(new ClientSubstanceFluid(), SUBSTANCE_FLUID_TYPE.get());
     }
 
     @SubscribeEvent
