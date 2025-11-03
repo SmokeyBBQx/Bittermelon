@@ -52,8 +52,8 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
 
         // Otherwise, add as a new substance
         substances.add(substance);
-        updateFluidState();
         setChanged();
+        updateFluidState();
     }
 
     public void transferSubstances(@NotNull List<SubstanceStack> substances) {
@@ -69,8 +69,8 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
                 if (stack.getAmount() <= 0) {
                     substances.remove(stack);
                 }
-                updateFluidState();
                 setChanged();
+                updateFluidState();
                 return;
             }
         }
@@ -83,8 +83,8 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
     public void setSubstances(List<SubstanceStack> newSubstances) {
         substances.clear();
         substances.addAll(newSubstances);
-        updateFluidState();
         setChanged();
+        updateFluidState();
     }
 
     public void mergeSubstances(@NotNull List<SubstanceStack> substances, SubstanceStack stack) {
@@ -126,7 +126,9 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
                 cachedColor = 0xFFAAD5DB; // Default color if no substances
             } else {
                 Map<Integer, Float> colors = new HashMap<>();
-                for (SubstanceStack stack : substances) {
+                // Create a copy to avoid concurrent modification
+                List<SubstanceStack> substancesCopy = new ArrayList<>(substances);
+                for (SubstanceStack stack : substancesCopy) {
                     colors.put(stack.getSubstance().getColor(), stack.getVolume());
                 }
                 cachedColor = ColorUtil.mixColors(colors);

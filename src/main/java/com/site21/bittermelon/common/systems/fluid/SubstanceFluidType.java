@@ -17,7 +17,9 @@ public class SubstanceFluidType extends FluidType {
 
     @Override
     public double motionScale(@NotNull Entity entity) {
-        if (entity.getFluidTypeHeight(SUBSTANCE_FLUID_TYPE.get()) <= 15) {
+        // TODO: Doesn't work
+
+        if (entity.getFluidTypeHeight(SUBSTANCE_FLUID_TYPE.get()) <= 0.4) {
             return 5;
         }
         return super.motionScale(entity);

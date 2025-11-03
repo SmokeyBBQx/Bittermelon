@@ -8,6 +8,7 @@ import com.site21.bittermelon.init.neoforge.BitterFluidTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
@@ -39,6 +40,7 @@ public class SubstanceFluid extends Fluid {
     public static final IntegerProperty LEVEL = BitterStateProperties.LEVEL;
     private static final float SPREAD_THRESHOLD = 2.0f;
     private static final float OVERFLOW_THRESHOLD = 15.5f;
+    private static final float EQUALIZATION_THRESHOLD = 0.1f;
 
     private final Map<FluidState, VoxelShape> shapes = Maps.newIdentityHashMap();
 
@@ -73,8 +75,6 @@ public class SubstanceFluid extends Fluid {
                     }
                 }
             }
-
-            equalizeSubstances(level, pos, fluidBE);
         }
     }
 
@@ -112,6 +112,8 @@ public class SubstanceFluid extends Fluid {
             float totalRemoved = spreadStack.getAmount() * spreadPositions.size();
             fluidBE.removeSubstance(spreadStack, totalRemoved);
         }
+
+        equalizeSubstances(level, pos, fluidBE);
 
         return true;
     }
@@ -180,12 +182,14 @@ public class SubstanceFluid extends Fluid {
     }
 
     private boolean canSpreadTo(@NotNull Level level, @NotNull BlockPos pos, SubstanceFluidBlockEntity fluidBE) {
+        // Check if the neighbor fluid state is empty or same type
         FluidState neighborFluidState = level.getFluidState(pos);
         if (!neighborFluidState.isEmpty() && !neighborFluidState.is(this)) return false;
         if (level.getBlockEntity(pos) instanceof SubstanceFluidBlockEntity neighborBE) {
             if (neighborBE.getVolume() >= 15f) return false;
         }
 
+        // Check if the block can be replaced by this fluid
         BlockState blockState = level.getBlockState(pos);
         Block block = blockState.getBlock();
         if (block instanceof LiquidBlockContainer liquidBlockContainer) {
@@ -210,6 +214,20 @@ public class SubstanceFluid extends Fluid {
 
         if (fluids.size() < 2) return;
 
+        // Calculate average volume and max deviation
+        float totalVolume = fluids.stream().map(SubstanceFluidBlockEntity::getVolume).reduce(Float::sum).orElse(0f);
+        float averageVolume = totalVolume / fluids.size();
+        float maxDeviation = fluids.stream()
+                .map(SubstanceFluidBlockEntity::getVolume)
+                .map(vol -> Math.abs(vol - averageVolume))
+                .max(Float::compare)
+                .orElse(0f);
+
+        // If max deviation is below threshold, return
+        // to avoid constant small adjustments
+        if (maxDeviation < EQUALIZATION_THRESHOLD) return;
+
+        // Calculate total amounts by substance type
         Map<Substance, Float> totalsByType = new HashMap<>();
         for (SubstanceFluidBlockEntity be : fluids) {
             for (SubstanceStack stack : be.getSubstances()) {
@@ -218,6 +236,7 @@ public class SubstanceFluid extends Fluid {
             }
         }
 
+        // Create equalized stacks
         List<SubstanceStack> equalizedStacks = new ArrayList<>();
         for (var entry : totalsByType.entrySet()) {
             float equalizedAmount = entry.getValue() / fluids.size();
