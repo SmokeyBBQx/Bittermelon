@@ -42,6 +42,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Optional;
 
+import static com.site21.bittermelon.datagen.BitterModelTemplates.*;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.DIRTY_FLOOR;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.LARGE_SLIDING_DOOR;
@@ -49,89 +50,6 @@ import static com.site21.bittermelon.init.neoforge.BitterItems.*;
 import static net.minecraft.client.data.models.BlockModelGenerators.*;
 
 public class BitterModelProvider extends ModelProvider {
-    public static final ModelTemplate SLIDING_DOOR_BOTTOM_LEFT = new ModelTemplate(
-            Optional.of(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/sliding_door_bottom_left")),
-            Optional.of("_bottom_left"),
-            TextureSlot.TOP, TextureSlot.BOTTOM
-    );
-
-    public static final ModelTemplate SLIDING_DOOR_BOTTOM_RIGHT = new ModelTemplate(
-            Optional.of(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/sliding_door_bottom_right")),
-            Optional.of("_bottom_right"),
-            TextureSlot.TOP, TextureSlot.BOTTOM
-    );
-
-    public static final ModelTemplate SLIDING_DOOR_TOP_LEFT = new ModelTemplate(
-            Optional.of(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/sliding_door_top_left")),
-            Optional.of("_top_left"),
-            TextureSlot.TOP, TextureSlot.BOTTOM
-    );
-
-    public static final ModelTemplate SLIDING_DOOR_TOP_RIGHT = new ModelTemplate(
-            Optional.of(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/sliding_door_top_right")),
-            Optional.of("_top_right"),
-            TextureSlot.TOP, TextureSlot.BOTTOM
-    );
-
-    public static final ModelTemplate BUTTON_LIKE = new ModelTemplate(
-            Optional.of(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/button")),
-            Optional.of(""),
-            TextureSlot.TEXTURE
-    );
-
-    public static final ModelTemplate SMALL_POSTER_LEFT = new ModelTemplate(
-            Optional.of(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/small_poster_left")),
-            Optional.of("_left"),
-            TextureSlot.TEXTURE
-    );
-
-    public static final ModelTemplate SMALL_POSTER_RIGHT = new ModelTemplate(
-            Optional.of(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/small_poster_right")),
-            Optional.of("_right"),
-            TextureSlot.TEXTURE
-    );
-
-    public static final ModelTemplate PAINTING_SIDE = new ModelTemplate(
-            Optional.of(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/painting_side")),
-            Optional.of("_side"),
-            TextureSlot.TEXTURE
-    );
-
-    public static final ModelTemplate PAINTING_TOP = new ModelTemplate(
-            Optional.of(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/painting_top")),
-            Optional.of("_top"),
-            TextureSlot.TEXTURE
-    );
-
-    public static final ModelTemplate PAINTING_BOTTOM = new ModelTemplate(
-            Optional.of(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/painting_bottom")),
-            Optional.of("_bottom"),
-            TextureSlot.TEXTURE
-    );
-
-    public static final ModelTemplate TRAPDOOR_SHAPED_SIDE = new ModelTemplate(
-            Optional.of(ResourceLocation.withDefaultNamespace("block/template_orientable_trapdoor_open")),
-            Optional.of("_side"),
-            TextureSlot.TEXTURE
-    );
-
-    public static final ModelTemplate TRAPDOOR_SHAPED_TOP = new ModelTemplate(
-            Optional.of(ResourceLocation.withDefaultNamespace("block/template_orientable_trapdoor_top")),
-            Optional.of("_top"),
-            TextureSlot.TEXTURE
-    );
-
-    public static final ModelTemplate TRAPDOOR_SHAPED_BOTTOM = new ModelTemplate(
-            Optional.of(ResourceLocation.withDefaultNamespace("block/template_orientable_trapdoor_bottom")),
-            Optional.of("_bottom"),
-            TextureSlot.TEXTURE
-    );
-
-    public static final ModelTemplate SMOKABLE = new ModelTemplate(
-            Optional.of(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "item/smokable")),
-            Optional.empty(),
-            TextureSlot.LAYER0
-    );
 
     public BitterModelProvider(PackOutput output) {
         super(output, Bittermelon.MOD_ID);
@@ -166,11 +84,14 @@ public class BitterModelProvider extends ModelProvider {
         createStickyNote(blockModels);
         createKeycardReader(blockModels);
         createRedstoneDevice(blockModels, BitterBlocks.REDSTONE_DEVICE.get(), TexturedModel.ORIENTABLE);
+        createCageLamp(blockModels, BitterBlocks.EMERGENCY_EXIT_LAMP.get());
+        blockModels.createParticleOnlyBlock(BitterBlocks.SUBSTANCE_FLUID_BLOCK.get());
 
         // SubstanceFluid Containers
         itemModels.generateFlatItem(BEER_BOTTLE.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(WHISKEY_BOTTLE.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(SCP_109.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(SUBSTANCE_FLUID_BUCKET.get(), ModelTemplates.FLAT_ITEM);
 
         // Medical Items
         itemModels.generateFlatItem(SYRINGE.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
@@ -715,6 +636,33 @@ public class BitterModelProvider extends ModelProvider {
                         emptyModel
                 )
         );
+    }
+
+    public void createCageLamp(@NotNull BlockModelGenerators blockModels, Block block) {
+        TextureMapping textureMapping = TextureMapping.defaultTexture(block);
+        ResourceLocation onLocation = TextureMapping.getBlockTexture(block, "_on");
+        TextureMapping onTextureMapping = textureMapping.copyAndUpdate(TextureSlot.TEXTURE, onLocation);
+
+        MultiVariant sideOn = plainVariant(CAGE_LAMP_SIDE_ON.create(block, onTextureMapping, blockModels.modelOutput));
+        MultiVariant sideOff = plainVariant(CAGE_LAMP_SIDE_OFF.create(block, textureMapping, blockModels.modelOutput));
+        MultiVariant topOn = plainVariant(CAGE_LAMP_TOP_ON.create(block, onTextureMapping, blockModels.modelOutput));
+        MultiVariant topOff = plainVariant(CAGE_LAMP_TOP_OFF.create(block, textureMapping, blockModels.modelOutput));
+        MultiVariant bottomOn = plainVariant(CAGE_LAMP_BOTTOM_ON.create(block, onTextureMapping, blockModels.modelOutput));
+        MultiVariant bottomOff = plainVariant(CAGE_LAMP_BOTTOM_OFF.create(block, textureMapping, blockModels.modelOutput));
+
+        blockModels.blockStateOutput.accept(
+                MultiVariantGenerator.dispatch(block)
+                        .with(PropertyDispatch.initial(BlockStateProperties.ATTACH_FACE, BlockStateProperties.LIT)
+                                .select(AttachFace.WALL, true, sideOn)
+                                .select(AttachFace.WALL, false, sideOff)
+                                .select(AttachFace.CEILING, true, topOn)
+                                .select(AttachFace.CEILING, false, topOff)
+                                .select(AttachFace.FLOOR, true, bottomOn)
+                                .select(AttachFace.FLOOR, false, bottomOff))
+                        .with(ROTATION_HORIZONTAL_FACING)
+        );
+
+        blockModels.registerSimpleItemModel(block, ModelLocationUtils.getModelLocation(block, "_side_off"));
     }
 
     @Contract(pure = true)

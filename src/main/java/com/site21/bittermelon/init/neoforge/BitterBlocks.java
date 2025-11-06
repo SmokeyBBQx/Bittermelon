@@ -21,6 +21,8 @@ import com.site21.bittermelon.common.content.blocks.electronics.securedoor.Secur
 import com.site21.bittermelon.common.content.blocks.electronics.slidingdoor.SlidingDoorBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.speaker.SpeakerBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.thermometer.ThermometerBlock;
+import com.site21.bittermelon.common.content.blocks.lights.CageLampBlock;
+import com.site21.bittermelon.common.content.blocks.lights.emergencyexitlight.EmergencyExitLampBlock;
 import com.site21.bittermelon.common.content.blocks.powergrid.distributionboard.DistributionBoardBlock;
 import com.site21.bittermelon.common.content.blocks.scp.scp151.SCP151Block;
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlock;
@@ -30,14 +32,25 @@ import com.site21.bittermelon.common.systems.fluid.SubstanceFluidBlock;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.neoforge.common.util.DeferredSoundType;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.function.ToIntFunction;
 
 public class BitterBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Bittermelon.MOD_ID);
+
+    @Contract(pure = true)
+    private static @NotNull ToIntFunction<BlockState> litBlockEmission(int lightValue) {
+        return (state) -> (Boolean) state.getValue(BlockStateProperties.LIT) ? lightValue : 0;
+    }
 
     public static final DeferredBlock<FluidBlock> FLUID = BLOCKS.registerBlock("fluid", FluidBlock::new, BlockBehaviour.Properties.of()
             .mapColor(MapColor.WATER)
@@ -161,5 +174,11 @@ public class BitterBlocks {
                     BitterSounds.SOGGY::value,
                     BitterSounds.SPLATTER::value
             ))
+    );
+
+    public static final DeferredBlock<EmergencyExitLampBlock> EMERGENCY_EXIT_LAMP = BLOCKS.registerBlock("emergency_exit_lamp", EmergencyExitLampBlock::new, BlockBehaviour.Properties.of()
+            .lightLevel(litBlockEmission(10))
+            .destroyTime(1.5f)
+            .sound(SoundType.METAL)
     );
 }

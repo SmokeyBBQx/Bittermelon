@@ -17,6 +17,7 @@ import com.site21.bittermelon.common.content.blocks.electronics.securedoor.Secur
 import com.site21.bittermelon.common.content.blocks.electronics.slidingdoor.SlidingDoorBlockEntity;
 import com.site21.bittermelon.common.content.blocks.electronics.speaker.SpeakerBlockEntity;
 import com.site21.bittermelon.common.content.blocks.electronics.thermometer.ThermometerBlockEntity;
+import com.site21.bittermelon.common.content.blocks.lights.emergencyexitlight.EmergencyExitLampBlockEntity;
 import com.site21.bittermelon.common.content.blocks.powergrid.distributionboard.DistributionBoardBlockEntity;
 import com.site21.bittermelon.common.content.blocks.scp.scp151.SCP151BlockEntity;
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlockEntity;
@@ -121,4 +122,8 @@ public class BitterBlockEntities {
     public static final Supplier<BlockEntityType<SubstanceFluidBlockEntity>> SUBSTANCE_FLUID_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
             "substance_fluid_block_entity",
             () -> new BlockEntityType<>(SubstanceFluidBlockEntity::new, false, SUBSTANCE_FLUID_BLOCK.get()));
+
+    public static final Supplier<BlockEntityType<EmergencyExitLampBlockEntity>> EMERGENCY_EXIT_LAMP_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "emergency_exit_lamp_block_entity",
+            () -> new BlockEntityType<>(EmergencyExitLampBlockEntity::new, false, EMERGENCY_EXIT_LAMP.get()));
 }

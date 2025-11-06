@@ -56,7 +56,7 @@ public class StickyNoteBlock extends Block implements EntityBlock {
 
     public StickyNoteBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any()
+        registerDefaultState(stateDefinition.any()
                 .setValue(FACE, AttachFace.WALL)
                 .setValue(FACING, Direction.NORTH)
                 .setValue(TOP_LEFT, false)

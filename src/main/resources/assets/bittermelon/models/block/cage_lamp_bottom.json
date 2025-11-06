@@ -1,0 +1,38 @@
+{
+	"format_version": "1.21.6",
+	"render_type": "minecraft:cutout",
+	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
+	"textures": {
+		"texture": "#texture",
+		"particle": "#texture"
+	},
+	"elements": [
+		{
+			"from": [4, 0, 4],
+			"to": [12, 8, 12],
+			"rotation": {"angle": 0, "axis": "x", "origin": [4, 0, 4]},
+			"faces": {
+				"north": {"uv": [4, 12, 8, 8], "texture": "#texture"},
+				"east": {"uv": [0, 16, 4, 12], "rotation": 270, "texture": "#texture"},
+				"south": {"uv": [8, 12, 12, 8], "texture": "#texture"},
+				"west": {"uv": [8, 16, 12, 12], "rotation": 90, "texture": "#texture"},
+				"up": {"uv": [8, 16, 4, 12], "texture": "#texture"},
+				"down": {"uv": [16, 12, 12, 16], "texture": "#texture"}
+			}
+		},
+		{
+			"from": [3.5, -0.5, 3.5],
+			"to": [12.5, 8.5, 12.5],
+			"rotation": {"angle": 0, "axis": "x", "origin": [4, 0, 4]},
+			"faces": {
+				"north": {"uv": [4, 4, 8, 0], "texture": "#texture"},
+				"east": {"uv": [0, 8, 4, 4], "rotation": 270, "texture": "#texture"},
+				"south": {"uv": [8, 4, 12, 0], "texture": "#texture"},
+				"west": {"uv": [8, 8, 12, 4], "rotation": 90, "texture": "#texture"},
+				"up": {"uv": [8, 8, 4, 4], "texture": "#texture"},
+				"down": {"uv": [16, 4, 12, 8], "texture": "#texture"}
+			}
+		}
+	]
+}
