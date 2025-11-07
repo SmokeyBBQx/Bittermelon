@@ -181,4 +181,76 @@ public class BitterBlocks {
             .destroyTime(1.5f)
             .sound(SoundType.METAL)
     );
+
+    public static final DeferredBlock<CageLampBlock> RED_CAGE_LAMP = BLOCKS.registerBlock("red_cage_lamp", CageLampBlock::new, BlockBehaviour.Properties.of()
+            .lightLevel(litBlockEmission(14))
+            .destroyTime(1.5f)
+            .sound(SoundType.METAL)
+    );
+
+    public static final DeferredBlock<CageLampBlock> BLUE_CAGE_LAMP = BLOCKS.registerBlock("blue_cage_lamp", CageLampBlock::new, BlockBehaviour.Properties.of()
+            .lightLevel(litBlockEmission(14))
+            .destroyTime(1.5f)
+            .sound(SoundType.METAL)
+    );
+
+    public static final DeferredBlock<CageLampBlock> GREEN_CAGE_LAMP = BLOCKS.registerBlock("green_cage_lamp", CageLampBlock::new, BlockBehaviour.Properties.of()
+            .lightLevel(litBlockEmission(14))
+            .destroyTime(1.5f)
+            .sound(SoundType.METAL)
+    );
+
+    public static final DeferredBlock<CageLampBlock> ORANGE_CAGE_LAMP = BLOCKS.registerBlock("orange_cage_lamp", CageLampBlock::new, BlockBehaviour.Properties.of()
+            .lightLevel(litBlockEmission(14))
+            .destroyTime(1.5f)
+            .sound(SoundType.METAL)
+    );
+
+    public static final DeferredBlock<CageLampBlock> YELLOW_CAGE_LAMP = BLOCKS.registerBlock("yellow_cage_lamp", CageLampBlock::new, BlockBehaviour.Properties.of()
+            .lightLevel(litBlockEmission(14))
+            .destroyTime(1.5f)
+            .sound(SoundType.METAL)
+    );
+
+    public static final DeferredBlock<CageLampBlock> PURPLE_CAGE_LAMP = BLOCKS.registerBlock("purple_cage_lamp", CageLampBlock::new, BlockBehaviour.Properties.of()
+            .lightLevel(litBlockEmission(14))
+            .destroyTime(1.5f)
+            .sound(SoundType.METAL)
+    );
+
+    public static final DeferredBlock<CageLampBlock> LIME_CAGE_LAMP = BLOCKS.registerBlock("lime_cage_lamp", CageLampBlock::new, BlockBehaviour.Properties.of()
+            .lightLevel(litBlockEmission(14))
+            .destroyTime(1.5f)
+            .sound(SoundType.METAL)
+    );
+
+    public static final DeferredBlock<CageLampBlock> PINK_CAGE_LAMP = BLOCKS.registerBlock("pink_cage_lamp", CageLampBlock::new, BlockBehaviour.Properties.of()
+            .lightLevel(litBlockEmission(14))
+            .destroyTime(1.5f)
+            .sound(SoundType.METAL)
+    );
+
+    public static final DeferredBlock<CageLampBlock> MAGENTA_CAGE_LAMP = BLOCKS.registerBlock("magenta_cage_lamp", CageLampBlock::new, BlockBehaviour.Properties.of()
+            .lightLevel(litBlockEmission(14))
+            .destroyTime(1.5f)
+            .sound(SoundType.METAL)
+    );
+
+    public static final DeferredBlock<CageLampBlock> CYAN_CAGE_LAMP = BLOCKS.registerBlock("cyan_cage_lamp", CageLampBlock::new, BlockBehaviour.Properties.of()
+            .lightLevel(litBlockEmission(14))
+            .destroyTime(1.5f)
+            .sound(SoundType.METAL)
+    );
+
+    public static final DeferredBlock<CageLampBlock> LIGHT_BLUE_CAGE_LAMP = BLOCKS.registerBlock("light_blue_cage_lamp", CageLampBlock::new, BlockBehaviour.Properties.of()
+            .lightLevel(litBlockEmission(14))
+            .destroyTime(1.5f)
+            .sound(SoundType.METAL)
+    );
+
+    public static final DeferredBlock<CageLampBlock> CAGE_LAMP = BLOCKS.registerBlock("cage_lamp", CageLampBlock::new, BlockBehaviour.Properties.of()
+            .lightLevel(litBlockEmission(14))
+            .destroyTime(1.5f)
+            .sound(SoundType.METAL)
+    );
 }

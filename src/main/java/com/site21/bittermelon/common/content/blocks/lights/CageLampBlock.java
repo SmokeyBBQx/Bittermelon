@@ -67,7 +67,8 @@ public class CageLampBlock extends Block implements SimpleWaterloggedBlock {
 
         return defaultBlockState()
                 .setValue(FACE, face)
-                .setValue(FACING, context.getHorizontalDirection().getOpposite());
+                .setValue(FACING, context.getHorizontalDirection().getOpposite())
+                .setValue(WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER);
     }
 
     @Override

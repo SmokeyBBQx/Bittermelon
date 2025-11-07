@@ -73,6 +73,18 @@ public class BitterItems {
     public static final DeferredItem<BlockItem> KEYCARD_READER = ITEMS.registerSimpleBlockItem(BitterBlocks.KEYCARD_READER);
     public static final DeferredItem<BlockItem> REDSTONE_DEVICE = ITEMS.registerSimpleBlockItem(BitterBlocks.REDSTONE_DEVICE);
     public static final DeferredItem<BlockItem> EMERGENCY_EXIT_LAMP = ITEMS.registerSimpleBlockItem(BitterBlocks.EMERGENCY_EXIT_LAMP);
+    public static final DeferredItem<BlockItem> RED_CAGE_LAMP = ITEMS.registerSimpleBlockItem(BitterBlocks.RED_CAGE_LAMP);
+    public static final DeferredItem<BlockItem> BLUE_CAGE_LAMP = ITEMS.registerSimpleBlockItem(BitterBlocks.BLUE_CAGE_LAMP);
+    public static final DeferredItem<BlockItem> GREEN_CAGE_LAMP = ITEMS.registerSimpleBlockItem(BitterBlocks.GREEN_CAGE_LAMP);
+    public static final DeferredItem<BlockItem> ORANGE_CAGE_LAMP = ITEMS.registerSimpleBlockItem(BitterBlocks.ORANGE_CAGE_LAMP);
+    public static final DeferredItem<BlockItem> YELLOW_CAGE_LAMP = ITEMS.registerSimpleBlockItem(BitterBlocks.YELLOW_CAGE_LAMP);
+    public static final DeferredItem<BlockItem> PURPLE_CAGE_LAMP = ITEMS.registerSimpleBlockItem(BitterBlocks.PURPLE_CAGE_LAMP);
+    public static final DeferredItem<BlockItem> LIME_CAGE_LAMP = ITEMS.registerSimpleBlockItem(BitterBlocks.LIME_CAGE_LAMP);
+    public static final DeferredItem<BlockItem> PINK_CAGE_LAMP = ITEMS.registerSimpleBlockItem(BitterBlocks.PINK_CAGE_LAMP);
+    public static final DeferredItem<BlockItem> MAGENTA_CAGE_LAMP = ITEMS.registerSimpleBlockItem(BitterBlocks.MAGENTA_CAGE_LAMP);
+    public static final DeferredItem<BlockItem> CYAN_CAGE_LAMP = ITEMS.registerSimpleBlockItem(BitterBlocks.CYAN_CAGE_LAMP);
+    public static final DeferredItem<BlockItem> LIGHT_BLUE_CAGE_LAMP = ITEMS.registerSimpleBlockItem(BitterBlocks.LIGHT_BLUE_CAGE_LAMP);
+    public static final DeferredItem<BlockItem> CAGE_LAMP = ITEMS.registerSimpleBlockItem(BitterBlocks.CAGE_LAMP);
 
     public static final DeferredItem<FluidContainerItem> BEER_BOTTLE = ITEMS.register("beer_bottle", registryName ->
             new GlassFluidContainerItem(new Item.Properties()
@@ -252,4 +264,5 @@ public class BitterItems {
             new BucketItem(BitterFluids.SUBSTANCE_FLUID.get(), new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, registryName.effectiveModel()))
                     .stacksTo(1)));
+
 }

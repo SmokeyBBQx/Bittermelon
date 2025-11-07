@@ -85,6 +85,18 @@ public class BitterModelProvider extends ModelProvider {
         createKeycardReader(blockModels);
         createRedstoneDevice(blockModels, BitterBlocks.REDSTONE_DEVICE.get(), TexturedModel.ORIENTABLE);
         createCageLamp(blockModels, BitterBlocks.EMERGENCY_EXIT_LAMP.get());
+        createDefaultCageLamp(blockModels, BitterBlocks.RED_CAGE_LAMP.get());
+        createDefaultCageLamp(blockModels, BitterBlocks.GREEN_CAGE_LAMP.get());
+        createDefaultCageLamp(blockModels, BitterBlocks.BLUE_CAGE_LAMP.get());
+        createDefaultCageLamp(blockModels, BitterBlocks.ORANGE_CAGE_LAMP.get());
+        createDefaultCageLamp(blockModels, BitterBlocks.YELLOW_CAGE_LAMP.get());
+        createDefaultCageLamp(blockModels, BitterBlocks.PURPLE_CAGE_LAMP.get());
+        createDefaultCageLamp(blockModels, BitterBlocks.LIME_CAGE_LAMP.get());
+        createDefaultCageLamp(blockModels, BitterBlocks.PINK_CAGE_LAMP.get());
+        createDefaultCageLamp(blockModels, BitterBlocks.MAGENTA_CAGE_LAMP.get());
+        createDefaultCageLamp(blockModels, BitterBlocks.CYAN_CAGE_LAMP.get());
+        createDefaultCageLamp(blockModels, BitterBlocks.LIGHT_BLUE_CAGE_LAMP.get());
+        createDefaultCageLamp(blockModels, BitterBlocks.CAGE_LAMP.get());
         blockModels.createParticleOnlyBlock(BitterBlocks.SUBSTANCE_FLUID_BLOCK.get());
 
         // SubstanceFluid Containers
@@ -639,16 +651,28 @@ public class BitterModelProvider extends ModelProvider {
     }
 
     public void createCageLamp(@NotNull BlockModelGenerators blockModels, Block block) {
-        TextureMapping textureMapping = TextureMapping.defaultTexture(block);
+        TextureMapping offTextureMapping = TextureMapping.defaultTexture(block);
         ResourceLocation onLocation = TextureMapping.getBlockTexture(block, "_on");
-        TextureMapping onTextureMapping = textureMapping.copyAndUpdate(TextureSlot.TEXTURE, onLocation);
+        TextureMapping onTextureMapping = offTextureMapping.copyAndUpdate(TextureSlot.TEXTURE, onLocation);
 
-        MultiVariant sideOn = plainVariant(CAGE_LAMP_SIDE_ON.create(block, onTextureMapping, blockModels.modelOutput));
-        MultiVariant sideOff = plainVariant(CAGE_LAMP_SIDE_OFF.create(block, textureMapping, blockModels.modelOutput));
-        MultiVariant topOn = plainVariant(CAGE_LAMP_TOP_ON.create(block, onTextureMapping, blockModels.modelOutput));
-        MultiVariant topOff = plainVariant(CAGE_LAMP_TOP_OFF.create(block, textureMapping, blockModels.modelOutput));
-        MultiVariant bottomOn = plainVariant(CAGE_LAMP_BOTTOM_ON.create(block, onTextureMapping, blockModels.modelOutput));
-        MultiVariant bottomOff = plainVariant(CAGE_LAMP_BOTTOM_OFF.create(block, textureMapping, blockModels.modelOutput));
+        createCageLamp(blockModels, block, offTextureMapping, onTextureMapping);
+    }
+
+    public void createDefaultCageLamp(@NotNull BlockModelGenerators blockModels, Block block) {
+        TextureMapping offTextureMapping = TextureMapping.defaultTexture(modLocation("block/cage_lamp"));
+        ResourceLocation onLocation = TextureMapping.getBlockTexture(block, "_on");
+        TextureMapping onTextureMapping = offTextureMapping.copyAndUpdate(TextureSlot.TEXTURE, onLocation);
+
+        createCageLamp(blockModels, block, offTextureMapping, onTextureMapping);
+    }
+
+    public void createCageLamp(@NotNull BlockModelGenerators blockModels, Block block, TextureMapping offMapping, TextureMapping onMapping) {
+        MultiVariant sideOn = plainVariant(CAGE_LAMP_SIDE_ON.create(block, onMapping, blockModels.modelOutput));
+        MultiVariant sideOff = plainVariant(CAGE_LAMP_SIDE_OFF.create(block, offMapping, blockModels.modelOutput));
+        MultiVariant topOn = plainVariant(CAGE_LAMP_TOP_ON.create(block, onMapping, blockModels.modelOutput));
+        MultiVariant topOff = plainVariant(CAGE_LAMP_TOP_OFF.create(block, offMapping, blockModels.modelOutput));
+        MultiVariant bottomOn = plainVariant(CAGE_LAMP_BOTTOM_ON.create(block, onMapping, blockModels.modelOutput));
+        MultiVariant bottomOff = plainVariant(CAGE_LAMP_BOTTOM_OFF.create(block, offMapping, blockModels.modelOutput));
 
         blockModels.blockStateOutput.accept(
                 MultiVariantGenerator.dispatch(block)
@@ -662,7 +686,7 @@ public class BitterModelProvider extends ModelProvider {
                         .with(ROTATION_HORIZONTAL_FACING)
         );
 
-        blockModels.registerSimpleItemModel(block, ModelLocationUtils.getModelLocation(block, "_side_off"));
+        blockModels.registerSimpleItemModel(block, ModelLocationUtils.getModelLocation(block, "_bottom_on"));
     }
 
     @Contract(pure = true)
