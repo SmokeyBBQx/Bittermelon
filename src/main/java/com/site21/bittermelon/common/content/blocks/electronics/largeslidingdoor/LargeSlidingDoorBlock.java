@@ -237,6 +237,7 @@ public class LargeSlidingDoorBlock extends Block implements EntityBlock {
         }
     }
 
+    @Override
     protected @NotNull InteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
         if (level.isClientSide) return InteractionResult.PASS;
 

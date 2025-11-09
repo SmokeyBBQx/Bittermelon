@@ -1,4 +1,4 @@
-package com.site21.bittermelon.common.content.blocks;
+package com.site21.bittermelon.common.content.blocks.poster;
 
 import com.site21.bittermelon.common.content.blocks.properties.BitterStateProperties;
 import com.site21.bittermelon.common.content.blocks.properties.Placement;

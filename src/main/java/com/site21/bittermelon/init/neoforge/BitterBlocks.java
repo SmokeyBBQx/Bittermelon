@@ -1,7 +1,7 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.content.blocks.SmallPosterBlock;
+import com.site21.bittermelon.common.content.blocks.poster.SmallPosterBlock;
 import com.site21.bittermelon.common.content.blocks.base.structuralblock.StructuralBlock;
 import com.site21.bittermelon.common.content.blocks.container.smallbox.SmallBox;
 import com.site21.bittermelon.common.content.blocks.dirtyfloor.DirtyFloorBlock;

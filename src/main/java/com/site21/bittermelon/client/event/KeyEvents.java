@@ -13,7 +13,7 @@ import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import static com.site21.bittermelon.init.neoforge.BitterKeyBindings.*;
 
-@EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class KeyEvents {
     @SubscribeEvent
     public static void onKeyInput(InputEvent.Key event) {

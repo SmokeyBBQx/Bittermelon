@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-import static com.site21.bittermelon.common.content.blocks.SmallPosterBlock.getPlacement;
+import static com.site21.bittermelon.common.content.blocks.poster.SmallPosterBlock.getPlacement;
 import static com.site21.bittermelon.init.neoforge.BitterItems.KEYCARD;
 
 public class KeycardReaderBlock extends Block implements EntityBlock {

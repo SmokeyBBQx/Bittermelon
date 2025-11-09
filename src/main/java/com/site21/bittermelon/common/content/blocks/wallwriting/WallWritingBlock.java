@@ -37,7 +37,7 @@ public class WallWritingBlock extends Block implements EntityBlock, SimpleWaterl
     public static final EnumProperty<AttachFace> FACE = BlockStateProperties.ATTACH_FACE;
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-    private static final Map<Direction, VoxelShape> AABBS;
+    private static final Map<Direction, VoxelShape> SHAPES;
 
     public WallWritingBlock(Properties properties) {
         super(properties);
@@ -61,11 +61,11 @@ public class WallWritingBlock extends Block implements EntityBlock, SimpleWaterl
     protected @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         AttachFace face = state.getValue(FACE);
         if (face == AttachFace.FLOOR) {
-            return AABBS.get(Direction.UP);
+            return SHAPES.get(Direction.UP);
         } else if (face == AttachFace.CEILING) {
-            return AABBS.get(Direction.DOWN);
+            return SHAPES.get(Direction.DOWN);
         } else {
-            return AABBS.get(state.getValue(FACING));
+            return SHAPES.get(state.getValue(FACING));
         }
     }
 
@@ -146,7 +146,7 @@ public class WallWritingBlock extends Block implements EntityBlock, SimpleWaterl
     }
 
     static {
-        AABBS = Maps.newEnumMap(ImmutableMap.<Direction, VoxelShape>builder()
+        SHAPES = Maps.newEnumMap(ImmutableMap.<Direction, VoxelShape>builder()
                 .put(Direction.NORTH, Block.box(0.0F, 4.5F, 15.9F, 16.0F, 12.5F, 16.0F))
                 .put(Direction.SOUTH, Block.box(0.0F, 4.5F, 0.0F, 16.0F, 12.5F, 0.1F))
                 .put(Direction.EAST, Block.box(0.0F, 4.5F, 0.0F, 0.1F, 12.5F, 16.0F))

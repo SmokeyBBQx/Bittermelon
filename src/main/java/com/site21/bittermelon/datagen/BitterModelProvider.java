@@ -1,7 +1,7 @@
 package com.site21.bittermelon.datagen;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.content.blocks.SmallPosterBlock;
+import com.site21.bittermelon.common.content.blocks.poster.SmallPosterBlock;
 import com.site21.bittermelon.common.content.blocks.dirtyfloor.DirtyFloorBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.keycardreader.KeycardReaderBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.redstonedevice.RedstoneDeviceBlock;
@@ -35,7 +35,6 @@ import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
