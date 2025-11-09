@@ -1,6 +1,7 @@
 package com.site21.bittermelon.datagen;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.init.neoforge.BitterBlocks;
 import com.site21.bittermelon.init.neoforge.BitterItems;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
@@ -9,11 +10,12 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
-import static com.site21.bittermelon.init.neoforge.BitterItems.YELLOW_INSPECTION_POSTER;
+import static com.site21.bittermelon.init.neoforge.BitterItems.*;
 
 public class BitterItemModelProvider extends ItemModelProvider {
     public BitterItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
@@ -22,6 +24,7 @@ public class BitterItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
+        // Items
         basicItem(BitterItems.BITTERMELON.get());
         basicItem(BitterItems.TASER_CARTRIDGE.get());
         basicItem(BitterItems.SCP_018.get());
@@ -40,8 +43,33 @@ public class BitterItemModelProvider extends ItemModelProvider {
         basicItem(BitterItems.WIRE_CUTTERS.get());
         basicItem(BitterItems.SCP_151.get());
         basicItem(YELLOW_INSPECTION_POSTER.get());
+        basicItem(SCP_2398.get());
+        basicItem(SCP_109.get());
 
+        // Block Items
         generateBlockItemModels();
+
+        // Special Cases
+        cageLampItem(BitterBlocks.EMERGENCY_EXIT_LAMP.get());
+        cageLampItem(BitterBlocks.CAGE_LAMP.get());
+        cageLampItem(BitterBlocks.RED_CAGE_LAMP.get());
+        cageLampItem(BitterBlocks.BLUE_CAGE_LAMP.get());
+        cageLampItem(BitterBlocks.GREEN_CAGE_LAMP.get());
+        cageLampItem(BitterBlocks.ORANGE_CAGE_LAMP.get());
+        cageLampItem(BitterBlocks.YELLOW_CAGE_LAMP.get());
+        cageLampItem(BitterBlocks.PURPLE_CAGE_LAMP.get());
+        cageLampItem(BitterBlocks.LIME_CAGE_LAMP.get());
+        cageLampItem(BitterBlocks.PINK_CAGE_LAMP.get());
+        cageLampItem(BitterBlocks.MAGENTA_CAGE_LAMP.get());
+        cageLampItem(BitterBlocks.CYAN_CAGE_LAMP.get());
+        cageLampItem(BitterBlocks.LIME_CAGE_LAMP.get());
+        cageLampItem(BitterBlocks.LIGHT_BLUE_CAGE_LAMP.get());
+        simpleBlockItem(BitterBlocks.KEYCARD_READER.get(), "_right");
+        simpleBlockItem(BitterBlocks.REDSTONE_DEVICE.get(), "_off");
+        simpleBlockItem(BitterBlocks.DISTRIBUTION_BOARD.get(), "_bottom");
+        simpleBlockItem(BitterBlocks.INTERCOM.get());
+        simpleBlockItem(BitterBlocks.CONTAINMENT_PANEL.get());
+
     }
 
     private void generateBlockItemModels() {
@@ -56,5 +84,14 @@ public class BitterItemModelProvider extends ItemModelProvider {
                 spawnEggItem(item);
             }
         }
+    }
+
+    public void simpleBlockItem(Block block, String suffix) {
+        ResourceLocation location = BuiltInRegistries.BLOCK.getKey(block);
+        withExistingParent(location.toString(), ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/" + location.getPath() + suffix));
+    }
+
+    public void cageLampItem(Block block) {
+        simpleBlockItem(block, "_bottom_on");
     }
 }
