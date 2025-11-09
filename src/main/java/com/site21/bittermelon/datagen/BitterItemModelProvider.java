@@ -69,7 +69,6 @@ public class BitterItemModelProvider extends ItemModelProvider {
         simpleBlockItem(BitterBlocks.DISTRIBUTION_BOARD.get(), "_bottom");
         simpleBlockItem(BitterBlocks.INTERCOM.get());
         simpleBlockItem(BitterBlocks.CONTAINMENT_PANEL.get());
-
     }
 
     private void generateBlockItemModels() {

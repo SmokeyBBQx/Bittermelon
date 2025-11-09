@@ -8,6 +8,7 @@ import com.site21.bittermelon.common.content.entities.implementations.scp650.cli
 import com.site21.bittermelon.common.content.entities.implementations.scp939.client.SCP939Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
@@ -17,7 +18,7 @@ import static com.site21.bittermelon.common.content.entities.implementations.scp
 import static com.site21.bittermelon.common.content.entities.implementations.scp1507.client.SCP1507Renderer.SCP1507_LAYER;
 import static com.site21.bittermelon.common.content.entities.implementations.scp650.client.SCP650Model.SCP650_LAYER;
 
-@EventBusSubscriber(modid = Bittermelon.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Bittermelon.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class LayerDefinitions {
     public static final ModelLayerLocation SCP939_LAYER = new ModelLayerLocation(
             ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp939_layer"), "main");
