@@ -1,13 +1,15 @@
 package com.site21.bittermelon.datagen;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.devices.implementations.redstonedevice.RedstoneDeviceBlock;
-import com.site21.bittermelon.content.blocks.poster.SmallPosterBlock;
-import com.site21.bittermelon.content.blocks.powergrid.distributionboard.DistributionBoardBlock;
-import com.site21.bittermelon.content.blocks.properties.Placement;
-import com.site21.bittermelon.content.blocks.scp.scp151.SCP151Block;
-import com.site21.bittermelon.content.blocks.stickynote.StickyNoteBlock;
+import com.site21.bittermelon.common.content.blocks.electronics.redstonedevice.RedstoneDeviceBlock;
+import com.site21.bittermelon.common.content.blocks.lights.CageLampBlock;
+import com.site21.bittermelon.common.content.blocks.poster.SmallPosterBlock;
+import com.site21.bittermelon.common.content.blocks.powergrid.distributionboard.DistributionBoardBlock;
+import com.site21.bittermelon.common.content.blocks.properties.Placement;
+import com.site21.bittermelon.common.content.blocks.scp.scp151.SCP151Block;
+import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlock;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -42,7 +44,6 @@ public class BitterBlockStateProvider extends BlockStateProvider {
         createSmallPosterBlockState(YELLOW_INSPECTION_POSTER.get(), "block/yellow_inspection_poster");
         createCustomTrapdoorBlockState(DISTRIBUTION_BOARD.get(), "block/distribution_board");
         createPaintingBlockState(SCP_151.get(), "block/scp_151");
-        createStickyNoteBlock(STICKY_NOTE.get());
         createKeycardReader();
         createRedstoneDevice();
     }
@@ -86,7 +87,7 @@ public class BitterBlockStateProvider extends BlockStateProvider {
                         .texture("texture", path);
 
                 variantBuilder.partialState()
-                        .with(DistributionBoardBlock.TYPE, DistributionBoardBlock.Type.TOP)
+                        .with(DistributionBoardBlock.FACE, AttachFace.CEILING)
                         .with(DistributionBoardBlock.FACING, direction)
                         .modelForState()
                         .modelFile(topModel)
@@ -94,7 +95,7 @@ public class BitterBlockStateProvider extends BlockStateProvider {
                         .addModel();
 
                 variantBuilder.partialState()
-                        .with(DistributionBoardBlock.TYPE, DistributionBoardBlock.Type.BOTTOM)
+                        .with(DistributionBoardBlock.FACE, AttachFace.FLOOR)
                         .with(DistributionBoardBlock.FACING, direction)
                         .modelForState()
                         .modelFile(bottomModel)
@@ -102,7 +103,7 @@ public class BitterBlockStateProvider extends BlockStateProvider {
                         .addModel();
 
                 variantBuilder.partialState()
-                        .with(DistributionBoardBlock.TYPE, DistributionBoardBlock.Type.SIDE)
+                        .with(DistributionBoardBlock.FACE, AttachFace.WALL)
                         .with(DistributionBoardBlock.FACING, direction)
                         .modelForState()
                         .modelFile(sideModel)

@@ -1,0 +1,14 @@
+{
+  "bittermelon:emergency_exit_lamp": "green",
+  "bittermelon:red_cage_lamp": "red",
+  "bittermelon:blue_cage_lamp": "blue",
+  "bittermelon:green_cage_lamp": "green",
+  "bittermelon:orange_cage_lamp": "orange",
+  "bittermelon:yellow_cage_lamp": "yellow",
+  "bittermelon:purple_cage_lamp": "purple",
+  "bittermelon:lime_cage_lamp": "lime",
+  "bittermelon:pink_cage_lamp": "pink",
+  "bittermelon:magenta_cage_lamp": "magenta",
+  "bittermelon:cyan_cage_lamp": "cyan",
+  "bittermelon:light_blue_cage_lamp": "light_blue"
+}

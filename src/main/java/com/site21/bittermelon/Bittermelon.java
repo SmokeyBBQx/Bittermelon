@@ -1,14 +1,14 @@
 package com.site21.bittermelon;
 
-import com.site21.bittermelon.content.atmosphere.data.AtmosLevelData;
-import com.site21.bittermelon.content.character.Character;
-import com.site21.bittermelon.content.character.CharacterManager;
-import com.site21.bittermelon.client.gui.loreopening.LoreOpeningOverlay;
-import com.site21.bittermelon.content.character.networking.SyncActiveCharacter;
-import com.site21.bittermelon.content.character.networking.SyncCharacters;
-import com.site21.bittermelon.content.telecomms.intercom.IntercomManager;
-import com.site21.bittermelon.content.telecomms.intercom.networking.SyncIntercomList;
-import com.site21.bittermelon.content.substance.reactions.Reactions;
+import com.site21.bittermelon.common.systems.atmosphere.data.AtmosLevelData;
+import com.site21.bittermelon.common.systems.character.Character;
+import com.site21.bittermelon.common.systems.character.CharacterManager;
+import com.site21.bittermelon.client.render.LoreOpeningOverlay;
+import com.site21.bittermelon.common.systems.character.networking.SyncActiveCharacter;
+import com.site21.bittermelon.common.systems.character.networking.SyncCharacters;
+import com.site21.bittermelon.common.systems.telecomms.intercom.IntercomManager;
+import com.site21.bittermelon.common.systems.telecomms.intercom.networking.SyncIntercomList;
+import com.site21.bittermelon.common.systems.substance.reactions.Reactions;
 import com.site21.bittermelon.init.neoforge.BitterEntities;
 import com.site21.bittermelon.init.neoforge.BitterRegistries;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
@@ -28,7 +28,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -60,8 +59,6 @@ public class Bittermelon {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public Bittermelon(IEventBus modEventBus, @NotNull ModContainer modContainer) {
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
-
         NeoForge.EVENT_BUS.register(this);
 
         BLOCKS.register(modEventBus);

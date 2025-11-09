@@ -71,6 +71,7 @@ public class BitterSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> SCREWDRIVER_OPEN = register("item.screwdriver_open");
     public static final DeferredHolder<SoundEvent, SoundEvent> SCREWDRIVER_CLOSE = register("item.screwdriver_close");
     public static final DeferredHolder<SoundEvent, SoundEvent> ZAP = register("misc.zap");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KNOCK = register("misc.knock");
 
     private static @NotNull DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return SOUND_EVENTS.register(name, () ->

@@ -1,31 +1,33 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.devices.implementations.containmentalarm.ContainmentAlarm;
-import com.site21.bittermelon.content.blocks.devices.implementations.detonator.DetonatorBlock;
-import com.site21.bittermelon.content.blocks.devices.implementations.environmentsensor.EnvironmentSensor;
-import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlock;
-import com.site21.bittermelon.content.blocks.devices.implementations.keycardprinter.KeycardPrinter;
-import com.site21.bittermelon.content.blocks.devices.implementations.keycardreader.KeycardReaderBlock;
-import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.PersonnelTerminalBlock;
-import com.site21.bittermelon.content.blocks.devices.implementations.redstonedevice.RedstoneDeviceBlock;
-import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.KeycardReaderSecureDoorBlock;
-import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.SecureDoorBlock;
-import com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.LargeSlidingDoorBlock;
-import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.SlidingDoorBlock;
-import com.site21.bittermelon.content.blocks.devices.implementations.speaker.SpeakerBlock;
-import com.site21.bittermelon.content.blocks.dirtyfloor.DirtyFloorBlock;
-import com.site21.bittermelon.content.blocks.base.structuralblock.StructuralBlock;
-import com.site21.bittermelon.content.blocks.container.smallbox.SmallBox;
-import com.site21.bittermelon.content.blocks.devices.implementations.ATMBlock;
-import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.ContainmentPanelBlock;
-import com.site21.bittermelon.content.blocks.devices.implementations.thermometer.ThermometerBlock;
-import com.site21.bittermelon.content.blocks.poster.SmallPosterBlock;
-import com.site21.bittermelon.content.blocks.powergrid.distributionboard.DistributionBoardBlock;
-import com.site21.bittermelon.content.blocks.scp.scp151.SCP151Block;
-import com.site21.bittermelon.content.blocks.stickynote.StickyNoteBlock;
-import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlock;
-import com.site21.bittermelon.content.blocks.wallwriting.WallWritingBlock;
+import com.site21.bittermelon.common.content.blocks.electronics.containmentalarm.ContainmentAlarm;
+import com.site21.bittermelon.common.content.blocks.electronics.detonator.DetonatorBlock;
+import com.site21.bittermelon.common.content.blocks.electronics.environmentsensor.EnvironmentSensor;
+import com.site21.bittermelon.common.content.blocks.electronics.intercom.IntercomBlock;
+import com.site21.bittermelon.common.content.blocks.electronics.keycardprinter.KeycardPrinter;
+import com.site21.bittermelon.common.content.blocks.electronics.keycardreader.KeycardReaderBlock;
+import com.site21.bittermelon.common.content.blocks.electronics.personnelterminal.PersonnelTerminalBlock;
+import com.site21.bittermelon.common.content.blocks.electronics.redstonedevice.RedstoneDeviceBlock;
+import com.site21.bittermelon.common.content.blocks.electronics.securedoor.KeycardReaderSecureDoorBlock;
+import com.site21.bittermelon.common.content.blocks.electronics.securedoor.SecureDoorBlock;
+import com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.LargeSlidingDoorBlock;
+import com.site21.bittermelon.common.content.blocks.electronics.slidingdoor.SlidingDoorBlock;
+import com.site21.bittermelon.common.content.blocks.electronics.speaker.SpeakerBlock;
+import com.site21.bittermelon.common.content.blocks.dirtyfloor.DirtyFloorBlock;
+import com.site21.bittermelon.common.content.blocks.base.structuralblock.StructuralBlock;
+import com.site21.bittermelon.common.content.blocks.container.smallbox.SmallBox;
+import com.site21.bittermelon.common.content.blocks.electronics.ATMBlock;
+import com.site21.bittermelon.common.content.blocks.electronics.containmentpanel.ContainmentPanelBlock;
+import com.site21.bittermelon.common.content.blocks.electronics.thermometer.ThermometerBlock;
+import com.site21.bittermelon.common.content.blocks.lights.CageLampBlock;
+import com.site21.bittermelon.common.content.blocks.lights.emergencyexitlight.EmergencyExitLampBlock;
+import com.site21.bittermelon.common.content.blocks.poster.SmallPosterBlock;
+import com.site21.bittermelon.common.content.blocks.powergrid.distributionboard.DistributionBoardBlock;
+import com.site21.bittermelon.common.content.blocks.scp.scp151.SCP151Block;
+import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlock;
+import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
+import com.site21.bittermelon.common.content.blocks.wallwriting.WallWritingBlock;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -162,6 +164,84 @@ public class BitterBlocks {
     ));
 
     public static final DeferredBlock<RedstoneDeviceBlock> REDSTONE_DEVICE = BLOCKS.register("redstone_device", () -> new RedstoneDeviceBlock(BlockBehaviour.Properties.of()
+            .sound(SoundType.METAL)
+            .destroyTime(1.5f)
+    ));
+
+    public static final DeferredBlock<EmergencyExitLampBlock> EMERGENCY_EXIT_LAMP = BLOCKS.register("emergency_exit_lamp", () -> new EmergencyExitLampBlock(BlockBehaviour.Properties.of()
+            .lightLevel(state -> state.getValue(EmergencyExitLampBlock.LIT) ? 10 : 0)
+            .sound(SoundType.METAL)
+            .destroyTime(1.5f)
+    ));
+
+    public static final DeferredBlock<CageLampBlock> CAGE_LAMP = BLOCKS.register("cage_lamp", () -> new CageLampBlock(BlockBehaviour.Properties.of()
+            .lightLevel(state -> state.getValue(CageLampBlock.LIT) ? 14 : 0)
+            .sound(SoundType.METAL)
+            .destroyTime(1.5f)
+    ));
+
+    public static final DeferredBlock<CageLampBlock> RED_CAGE_LAMP = BLOCKS.register("red_cage_lamp", () -> new CageLampBlock(BlockBehaviour.Properties.of()
+            .lightLevel(state -> state.getValue(CageLampBlock.LIT) ? 14 : 0)
+            .sound(SoundType.METAL)
+            .destroyTime(1.5f)
+    ));
+
+    public static final DeferredBlock<CageLampBlock> BLUE_CAGE_LAMP = BLOCKS.register("blue_cage_lamp", () -> new CageLampBlock(BlockBehaviour.Properties.of()
+            .lightLevel(state -> state.getValue(CageLampBlock.LIT) ? 14 : 0)
+            .sound(SoundType.METAL)
+            .destroyTime(1.5f)
+    ));
+
+    public static final DeferredBlock<CageLampBlock> GREEN_CAGE_LAMP = BLOCKS.register("green_cage_lamp", () -> new CageLampBlock(BlockBehaviour.Properties.of()
+            .lightLevel(state -> state.getValue(CageLampBlock.LIT) ? 14 : 0)
+            .sound(SoundType.METAL)
+            .destroyTime(1.5f)
+    ));
+
+    public static final DeferredBlock<CageLampBlock> ORANGE_CAGE_LAMP = BLOCKS.register("orange_cage_lamp", () -> new CageLampBlock(BlockBehaviour.Properties.of()
+            .lightLevel(state -> state.getValue(CageLampBlock.LIT) ? 14 : 0)
+            .sound(SoundType.METAL)
+            .destroyTime(1.5f)
+    ));
+
+    public static final DeferredBlock<CageLampBlock> YELLOW_CAGE_LAMP = BLOCKS.register("yellow_cage_lamp", () -> new CageLampBlock(BlockBehaviour.Properties.of()
+            .lightLevel(state -> state.getValue(CageLampBlock.LIT) ? 14 : 0)
+            .sound(SoundType.METAL)
+            .destroyTime(1.5f)
+    ));
+
+    public static final DeferredBlock<CageLampBlock> PURPLE_CAGE_LAMP = BLOCKS.register("purple_cage_lamp", () -> new CageLampBlock(BlockBehaviour.Properties.of()
+            .lightLevel(state -> state.getValue(CageLampBlock.LIT) ? 14 : 0)
+            .sound(SoundType.METAL)
+            .destroyTime(1.5f)
+    ));
+
+    public static final DeferredBlock<CageLampBlock> LIME_CAGE_LAMP = BLOCKS.register("lime_cage_lamp", () -> new CageLampBlock(BlockBehaviour.Properties.of()
+            .lightLevel(state -> state.getValue(CageLampBlock.LIT) ? 14 : 0)
+            .sound(SoundType.METAL)
+            .destroyTime(1.5f)
+    ));
+
+    public static final DeferredBlock<CageLampBlock> PINK_CAGE_LAMP = BLOCKS.register("pink_cage_lamp", () -> new CageLampBlock(BlockBehaviour.Properties.of()
+            .lightLevel(state -> state.getValue(CageLampBlock.LIT) ? 14 : 0)
+            .sound(SoundType.METAL)
+            .destroyTime(1.5f)
+    ));
+
+    public static final DeferredBlock<CageLampBlock> MAGENTA_CAGE_LAMP = BLOCKS.register("magenta_cage_lamp", () -> new CageLampBlock(BlockBehaviour.Properties.of()
+            .lightLevel(state -> state.getValue(CageLampBlock.LIT) ? 14 : 0)
+            .sound(SoundType.METAL)
+            .destroyTime(1.5f)
+    ));
+
+    public static final DeferredBlock<CageLampBlock> CYAN_CAGE_LAMP = BLOCKS.register("cyan_cage_lamp", () -> new CageLampBlock(BlockBehaviour.Properties.of()
+            .lightLevel(state -> state.getValue(CageLampBlock.LIT) ? 14 : 0)
+            .sound(SoundType.METAL)
+            .destroyTime(1.5f)
+    ));
+
+    public static final DeferredBlock<CageLampBlock> LIGHT_BLUE_CAGE_LAMP = BLOCKS.register("light_blue_cage_lamp", () -> new CageLampBlock(BlockBehaviour.Properties.of()
+            .lightLevel(state -> state.getValue(CageLampBlock.LIT) ? 14 : 0)
             .sound(SoundType.METAL)
             .destroyTime(1.5f)
     ));

@@ -1,0 +1,27 @@
+{
+    "format_version": "1.21.6",
+    "credit": "Made with Blockbench",
+    "render_type": "minecraft:cutout",
+    "textures": {
+        "texture": "bittermelon:block/sticky_note",
+        "particle": "#texture"
+    },
+    "elements": [
+        {
+            "from": [8, 8, 15.75],
+            "to": [16, 16, 15.75],
+            "faces": {
+                "north": {"uv": [0, 0, 8, 8], "texture": "#texture"},
+                "south": {"uv": [0, 0, 8, 8], "texture": "#texture"}
+            }
+        },
+        {
+            "from": [0, 0, 15.75],
+            "to": [8, 8, 15.75],
+            "faces": {
+                "north": {"uv": [8, 8, 16, 16], "texture": "#texture"},
+                "south": {"uv": [8, 8, 16, 16], "texture": "#texture"}
+            }
+        }
+    ]
+}

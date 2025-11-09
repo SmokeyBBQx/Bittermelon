@@ -1,7 +1,7 @@
 package com.site21.bittermelon.init.custom;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.medical.compartments.*;
+import com.site21.bittermelon.common.systems.medical.compartments.*;
 import com.site21.bittermelon.init.neoforge.BitterItems;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.registries.DeferredHolder;

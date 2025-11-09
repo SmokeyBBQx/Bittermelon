@@ -2,13 +2,12 @@ package com.site21.bittermelon.init.neoforge;
 
 import com.mojang.serialization.Codec;
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.items.base.ItemSize;
-import com.site21.bittermelon.content.items.itemcontainers.client.ItemContainerContents;
-import com.site21.bittermelon.content.items.scps.scp377.Fortune;
-import com.site21.bittermelon.content.items.substance.data.SubstanceContents;
-import com.site21.bittermelon.content.items.substance.pill.PillShape;
-import com.site21.bittermelon.content.medical.blood.BloodData;
-import com.site21.bittermelon.content.medical.compartments.CompartmentData;
+import com.site21.bittermelon.common.content.items.base.ItemSize;
+import com.site21.bittermelon.common.content.items.scps.scp377.Fortune;
+import com.site21.bittermelon.common.content.items.substance.data.SubstanceContents;
+import com.site21.bittermelon.common.content.items.substance.pill.PillShape;
+import com.site21.bittermelon.common.systems.medical.blood.BloodData;
+import com.site21.bittermelon.common.systems.medical.compartments.CompartmentData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentType;
@@ -57,11 +56,6 @@ public class BitterDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> IS_WRAPPED = DATA_COMPONENTS.registerComponentType(
             "is_wrapped",
             builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL)
-    );
-
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemContainerContents>> ITEM_CONTAINER_CONTENTS = DATA_COMPONENTS.registerComponentType(
-            "item_container_contents",
-            builder -> builder.persistent(ItemContainerContents.CODEC).networkSynchronized(ItemContainerContents.STREAM_CODEC).cacheEncoding()
     );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<UUID>>> GERMS = DATA_COMPONENTS.registerComponentType(

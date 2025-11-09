@@ -1,10 +1,10 @@
 package com.site21.bittermelon.init.custom;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.medical.compartments.MedicalAttribute;
-import com.site21.bittermelon.content.medical.drugs.Drug;
-import com.site21.bittermelon.content.medical.drugs.implementations.CyanideDrug;
-import com.site21.bittermelon.content.medical.drugs.implementations.SpaceMirageDrug;
+import com.site21.bittermelon.common.systems.medical.compartments.MedicalAttribute;
+import com.site21.bittermelon.common.systems.medical.drugs.Drug;
+import com.site21.bittermelon.common.systems.medical.drugs.implementations.CyanideDrug;
+import com.site21.bittermelon.common.systems.medical.drugs.implementations.SpaceMirageDrug;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 

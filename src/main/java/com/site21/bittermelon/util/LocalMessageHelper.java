@@ -1,5 +1,7 @@
 package com.site21.bittermelon.util;
 
+import com.site21.bittermelon.common.systems.character.Character;
+import com.site21.bittermelon.common.systems.character.CharacterManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -42,6 +44,23 @@ public class LocalMessageHelper {
             if (pos.distToCenterSqr(serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ()) <= rangeSq) {
                 serverPlayer.sendSystemMessage(messageComponent);
             }
+        }
+    }
+
+    /**
+     * Sends an emote message from a character associated with an entity to all players within a certain range.
+     *
+     * @param level   The level where the entity is located.
+     * @param entity  The entity whose character will send the emote message.
+     * @param range   The range within which players will receive the message.
+     * @param message The emote message to send.
+     */
+    public static void sendEmoteMessage(@NotNull Level level, Entity entity, int range, String message) {
+        if (level.isClientSide) return;
+
+        Character character = CharacterManager.get(level).getActiveCharacter(entity);
+        if (character != null) {
+            sendLocalMessage(level, entity.getOnPos(), range, Component.literal(character.getName() + " " + message).withColor(character.getEmoteColor()));
         }
     }
 }

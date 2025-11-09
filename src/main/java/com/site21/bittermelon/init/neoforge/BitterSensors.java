@@ -1,10 +1,10 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.entities.ai.sensors.NearbyDrinkableFluidsSensor;
-import com.site21.bittermelon.content.entities.ai.sensors.NearbyFoodSensor;
-import com.site21.bittermelon.content.entities.ai.sensors.ObserversSensor;
-import com.site21.bittermelon.content.entities.ai.sensors.VisionConeLivingEntitySensor;
+import com.site21.bittermelon.common.systems.ai.sensors.NearbyDrinkableFluidsSensor;
+import com.site21.bittermelon.common.systems.ai.sensors.NearbyFoodSensor;
+import com.site21.bittermelon.common.systems.ai.sensors.ObserversSensor;
+import com.site21.bittermelon.common.systems.ai.sensors.VisionConeLivingEntitySensor;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.sensing.SensorType;

@@ -1,6 +1,6 @@
 package com.site21.bittermelon.mixin;
 
-import com.site21.bittermelon.content.character.skin.SkinOverrideSystem;
+import com.site21.bittermelon.common.systems.character.skin.SkinOverrideSystem;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.resources.ResourceLocation;

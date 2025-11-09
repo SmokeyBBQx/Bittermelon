@@ -1,0 +1,38 @@
+{
+	"format_version": "1.21.6",
+	"render_type": "minecraft:cutout",
+	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
+	"textures": {
+		"texture": "bittermelon:block/cage_lamp",
+		"particle": "#texture"
+	},
+	"elements": [
+		{
+			"from": [4, 4, 8],
+			"to": [12, 12, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [4, 4, 8]},
+			"faces": {
+				"north": {"uv": [4, 12, 8, 16], "texture": "#texture"},
+				"east": {"uv": [0, 12, 4, 16], "texture": "#texture"},
+				"south": {"uv": [12, 12, 16, 16], "texture": "#texture"},
+				"west": {"uv": [8, 12, 12, 16], "texture": "#texture"},
+				"up": {"uv": [8, 12, 4, 8], "texture": "#texture"},
+				"down": {"uv": [12, 8, 8, 12], "texture": "#texture"}
+			}
+		},
+		{
+			"from": [3.5, 3.5, 7.5],
+			"to": [12.5, 12.5, 16.5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [4, 4, 8]},
+			"faces": {
+				"north": {"uv": [4, 4, 8, 8], "texture": "#texture"},
+				"east": {"uv": [0, 4, 4, 8], "texture": "#texture"},
+				"south": {"uv": [12, 4, 16, 8], "texture": "#texture"},
+				"west": {"uv": [8, 4, 12, 8], "texture": "#texture"},
+				"up": {"uv": [8, 4, 4, 0], "texture": "#texture"},
+				"down": {"uv": [12, 0, 8, 4], "texture": "#texture"}
+			}
+		}
+	]
+}

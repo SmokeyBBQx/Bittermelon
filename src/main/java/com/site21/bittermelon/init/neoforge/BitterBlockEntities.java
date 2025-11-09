@@ -1,27 +1,28 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.content.blocks.base.structuralblock.StructuralBlockEntity;
-import com.site21.bittermelon.content.blocks.container.smallbox.BoxBlockEntity;
-import com.site21.bittermelon.content.blocks.devices.implementations.containmentalarm.ContainmentAlarmBlockEntity;
-import com.site21.bittermelon.content.blocks.devices.implementations.containmentpanel.ContainmentPanelBlockEntity;
-import com.site21.bittermelon.content.blocks.devices.implementations.detonator.DetonatorBlockEntity;
-import com.site21.bittermelon.content.blocks.devices.implementations.environmentsensor.EnvironmentSensorBlockEntity;
-import com.site21.bittermelon.content.blocks.devices.implementations.intercom.IntercomBlockEntity;
-import com.site21.bittermelon.content.blocks.devices.implementations.keycardreader.KeycardReaderBlockEntity;
-import com.site21.bittermelon.content.blocks.devices.implementations.personnelterminal.PersonnelTerminalBlockEntity;
-import com.site21.bittermelon.content.blocks.devices.implementations.redstonedevice.RedstoneDeviceBlockEntity;
-import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.KeycardReaderSecureDoorBlockEntity;
-import com.site21.bittermelon.content.blocks.devices.implementations.securedoor.SecureDoorBlockEntity;
-import com.site21.bittermelon.content.blocks.devices.implementations.largeslidingdoor.LargeSlidingDoorBlockEntity;
-import com.site21.bittermelon.content.blocks.devices.implementations.slidingdoor.SlidingDoorBlockEntity;
-import com.site21.bittermelon.content.blocks.devices.implementations.speaker.SpeakerBlockEntity;
-import com.site21.bittermelon.content.blocks.devices.implementations.thermometer.ThermometerBlockEntity;
-import com.site21.bittermelon.content.blocks.powergrid.distributionboard.DistributionBoardBlockEntity;
-import com.site21.bittermelon.content.blocks.scp.scp151.SCP151BlockEntity;
-import com.site21.bittermelon.content.blocks.stickynote.StickyNoteBlockEntity;
-import com.site21.bittermelon.content.blocks.substance.fluid.FluidBlockEntity;
-import com.site21.bittermelon.content.blocks.wallwriting.WallWritingBlockEntity;
+import com.site21.bittermelon.common.content.blocks.base.structuralblock.StructuralBlockEntity;
+import com.site21.bittermelon.common.content.blocks.container.smallbox.BoxBlockEntity;
+import com.site21.bittermelon.common.content.blocks.electronics.containmentalarm.ContainmentAlarmBlockEntity;
+import com.site21.bittermelon.common.content.blocks.electronics.containmentpanel.ContainmentPanelBlockEntity;
+import com.site21.bittermelon.common.content.blocks.electronics.detonator.DetonatorBlockEntity;
+import com.site21.bittermelon.common.content.blocks.electronics.environmentsensor.EnvironmentSensorBlockEntity;
+import com.site21.bittermelon.common.content.blocks.electronics.intercom.IntercomBlockEntity;
+import com.site21.bittermelon.common.content.blocks.electronics.keycardreader.KeycardReaderBlockEntity;
+import com.site21.bittermelon.common.content.blocks.electronics.personnelterminal.PersonnelTerminalBlockEntity;
+import com.site21.bittermelon.common.content.blocks.electronics.redstonedevice.RedstoneDeviceBlockEntity;
+import com.site21.bittermelon.common.content.blocks.electronics.securedoor.KeycardReaderSecureDoorBlockEntity;
+import com.site21.bittermelon.common.content.blocks.electronics.securedoor.SecureDoorBlockEntity;
+import com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.LargeSlidingDoorBlockEntity;
+import com.site21.bittermelon.common.content.blocks.electronics.slidingdoor.SlidingDoorBlockEntity;
+import com.site21.bittermelon.common.content.blocks.electronics.speaker.SpeakerBlockEntity;
+import com.site21.bittermelon.common.content.blocks.electronics.thermometer.ThermometerBlockEntity;
+import com.site21.bittermelon.common.content.blocks.lights.emergencyexitlight.EmergencyExitLampBlockEntity;
+import com.site21.bittermelon.common.content.blocks.powergrid.distributionboard.DistributionBoardBlockEntity;
+import com.site21.bittermelon.common.content.blocks.scp.scp151.SCP151BlockEntity;
+import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlockEntity;
+import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlockEntity;
+import com.site21.bittermelon.common.content.blocks.wallwriting.WallWritingBlockEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -97,6 +98,9 @@ public class BitterBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StickyNoteBlockEntity>> STICKY_NOTE_BLOCK_ENTITY =
             register("sticky_note", StickyNoteBlockEntity::new, STICKY_NOTE);
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EmergencyExitLampBlockEntity>> EMERGENCY_EXIT_LAMP_BLOCK_ENTITY =
+            register("emergency_exit_lamp", EmergencyExitLampBlockEntity::new, EMERGENCY_EXIT_LAMP);
 
     private static <T extends BlockEntity> @NotNull DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> register(
             String name,
