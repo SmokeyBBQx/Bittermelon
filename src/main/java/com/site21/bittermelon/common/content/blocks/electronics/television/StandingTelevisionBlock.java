@@ -10,12 +10,13 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.block.state.properties.RotationSegment;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
 public class StandingTelevisionBlock extends TelevisionBlock {
     public static final IntegerProperty ROTATION = BlockStateProperties.ROTATION_16;
-    private static final VoxelShape SHAPE = Block.box(1.0, 0.0, 3.0, 15.0, 14.0, 13.0);
+    private static final VoxelShape SHAPE = Shapes.box(0.125, 0, 0.125, 0.875, 0.75, 0.875);
 
     public StandingTelevisionBlock(Properties properties) {
         super(properties);
@@ -40,6 +41,6 @@ public class StandingTelevisionBlock extends TelevisionBlock {
         BlockState state = super.getStateForPlacement(context);
         if (state == null) return null;
 
-        return state.setValue(ROTATION, RotationSegment.convertToSegment(context.getRotation() + 180.0F));
+        return state.setValue(ROTATION, RotationSegment.convertToSegment(context.getRotation()));
     }
 }
