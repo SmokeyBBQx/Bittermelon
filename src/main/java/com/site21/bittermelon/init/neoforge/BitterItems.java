@@ -29,6 +29,7 @@ import com.site21.bittermelon.common.content.items.writingutensils.HighlighterIt
 import com.site21.bittermelon.common.systems.component.screwdriver.Screwdriver;
 import com.site21.bittermelon.common.systems.component.Smokable;
 import com.site21.bittermelon.common.systems.component.temperature.HeatBehavior;
+import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -39,6 +40,7 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.StandingAndWallBlockItem;
 import net.minecraft.world.item.component.Consumable;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
@@ -85,6 +87,9 @@ public class BitterItems {
     public static final DeferredItem<BlockItem> CYAN_CAGE_LAMP = ITEMS.registerSimpleBlockItem(BitterBlocks.CYAN_CAGE_LAMP);
     public static final DeferredItem<BlockItem> LIGHT_BLUE_CAGE_LAMP = ITEMS.registerSimpleBlockItem(BitterBlocks.LIGHT_BLUE_CAGE_LAMP);
     public static final DeferredItem<BlockItem> CAGE_LAMP = ITEMS.registerSimpleBlockItem(BitterBlocks.CAGE_LAMP);
+    public static final DeferredItem<BlockItem> LIGHT_GRAY_TELEVISION = ITEMS.register("light_gray_television", registryName ->
+            new StandingAndWallBlockItem(BitterBlocks.LIGHT_GRAY_TELEVISION.get(), BitterBlocks.LIGHT_GRAY_WALL_TELEVISION.get(), Direction.NORTH,
+            new Item.Properties().setId(ResourceKey.create(Registries.ITEM, registryName))));
 
     public static final DeferredItem<FluidContainerItem> BEER_BOTTLE = ITEMS.register("beer_bottle", registryName ->
             new GlassFluidContainerItem(new Item.Properties()
@@ -264,5 +269,4 @@ public class BitterItems {
             new BucketItem(BitterFluids.SUBSTANCE_FLUID.get(), new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, registryName.effectiveModel()))
                     .stacksTo(1)));
-
 }

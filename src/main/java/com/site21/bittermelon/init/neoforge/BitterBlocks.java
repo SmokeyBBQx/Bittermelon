@@ -1,6 +1,8 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.common.content.blocks.electronics.television.StandingTelevisionBlock;
+import com.site21.bittermelon.common.content.blocks.electronics.television.WallTelevisionBlock;
 import com.site21.bittermelon.common.content.blocks.poster.SmallPosterBlock;
 import com.site21.bittermelon.common.content.blocks.base.structuralblock.StructuralBlock;
 import com.site21.bittermelon.common.content.blocks.container.smallbox.SmallBox;
@@ -30,6 +32,7 @@ import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.common.content.blocks.wallwriting.WallWritingBlock;
 import com.site21.bittermelon.common.systems.fluid.SubstanceFluidBlock;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -50,6 +53,15 @@ public class BitterBlocks {
     @Contract(pure = true)
     private static @NotNull ToIntFunction<BlockState> litBlockEmission(int lightValue) {
         return (state) -> (Boolean) state.getValue(BlockStateProperties.LIT) ? lightValue : 0;
+    }
+
+    private static BlockBehaviour.Properties wallVariant(@NotNull Block baseBlock, boolean overrideDescription) {
+        BlockBehaviour.Properties properties = BlockBehaviour.Properties.of().overrideLootTable(baseBlock.getLootTable());
+        if (overrideDescription) {
+            properties = properties.overrideDescription(baseBlock.getDescriptionId());
+        }
+
+        return properties;
     }
 
     public static final DeferredBlock<FluidBlock> FLUID = BLOCKS.registerBlock("fluid", FluidBlock::new, BlockBehaviour.Properties.of()
@@ -253,4 +265,14 @@ public class BitterBlocks {
             .destroyTime(1.5f)
             .sound(SoundType.METAL)
     );
+
+    public static final DeferredBlock<StandingTelevisionBlock> LIGHT_GRAY_TELEVISION = BLOCKS.registerBlock("light_gray_television", StandingTelevisionBlock::new, BlockBehaviour.Properties.of()
+            .noOcclusion()
+    );
+
+    public static final DeferredBlock<WallTelevisionBlock> LIGHT_GRAY_WALL_TELEVISION = BLOCKS.registerBlock("light_gray_wall_television",
+            WallTelevisionBlock::new, BlockBehaviour.Properties.of()
+                    .noOcclusion()
+    );
+
 }

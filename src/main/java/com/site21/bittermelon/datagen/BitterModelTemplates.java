@@ -127,4 +127,34 @@ public class BitterModelTemplates {
             Optional.of("_bottom_off"),
             TextureSlot.TEXTURE
     );
+
+    public static final ModelTemplate TELEVISION = new ModelTemplate(
+            Optional.of(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/television")),
+            Optional.empty(),
+            TextureSlot.TEXTURE
+    );
+
+    public static final ModelTemplate TELEVISION_WALL = new ModelTemplate(
+            Optional.of(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/television_wall")),
+            Optional.of("_wall"),
+            TextureSlot.TEXTURE
+    );
+
+    public static final ModelTemplate TELEVISION_25 = new ModelTemplate(
+            Optional.of(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/television_25")),
+            Optional.of("_25"),
+            TextureSlot.TEXTURE
+    );
+
+    public static final ModelTemplate TELEVISION_45 = new ModelTemplate(
+            Optional.of(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/television_45")),
+            Optional.of("_45"),
+            TextureSlot.TEXTURE
+    );
+
+    public static final ModelTemplate TELEVISION_70 = new ModelTemplate(
+            Optional.of(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/television_70")),
+            Optional.of("_70"),
+            TextureSlot.TEXTURE
+    );
 }
