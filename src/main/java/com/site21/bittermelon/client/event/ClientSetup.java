@@ -5,6 +5,8 @@ import com.site21.bittermelon.common.content.blocks.base.structuralblock.Structu
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.client.PhoneCordRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.client.LargeSlidingDoorRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.slidingdoor.client.SlidingDoorRenderer;
+import com.site21.bittermelon.common.content.blocks.electronics.television.MediaSheets;
+import com.site21.bittermelon.common.content.blocks.electronics.television.client.TelevisionRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.thermometer.client.ThermometerRenderer;
 import com.site21.bittermelon.common.content.blocks.substance.fluid.client.FluidBlockColor;
 import com.site21.bittermelon.common.content.blocks.wallwriting.client.WallWritingRenderer;
@@ -43,7 +45,6 @@ import org.jetbrains.annotations.NotNull;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
 import static com.site21.bittermelon.init.neoforge.BitterEntities.*;
 import static com.site21.bittermelon.init.neoforge.BitterFluidTypes.SUBSTANCE_FLUID_TYPE;
-import static com.site21.bittermelon.init.neoforge.BitterFluids.SUBSTANCE_FLUID;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class ClientSetup {
@@ -64,6 +65,7 @@ public class ClientSetup {
         event.registerBlockEntityRenderer(BitterBlockEntities.LARGE_SLIDING_DOOR_BLOCK_ENTITY.get(), LargeSlidingDoorRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.SLIDING_DOOR_BLOCK_ENTITY.get(), SlidingDoorRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.WALL_WRITING_BLOCK_ENTITY.get(), WallWritingRenderer::new);
+        event.registerBlockEntityRenderer(BitterBlockEntities.TELEVISION_BLOCK_ENTITY.get(), TelevisionRenderer::new);
     }
 
     @SubscribeEvent
@@ -134,6 +136,11 @@ public class ClientSetup {
     @SubscribeEvent
     public static void onRegisterFluidTypeExtensions(@NotNull RegisterClientExtensionsEvent event) {
         event.registerFluidType(new ClientSubstanceFluid(), SUBSTANCE_FLUID_TYPE.get());
+    }
+
+    @SubscribeEvent
+    public static void registerAtlases(@NotNull RegisterMaterialAtlasesEvent event) {
+        event.register(MediaSheets.ATLAS_LOCATION, MediaSheets.ATLAS_INFO_LOCATION);
     }
 
     @SubscribeEvent

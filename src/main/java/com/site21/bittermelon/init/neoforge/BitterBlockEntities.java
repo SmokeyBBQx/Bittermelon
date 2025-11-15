@@ -16,6 +16,7 @@ import com.site21.bittermelon.common.content.blocks.electronics.securedoor.Keyca
 import com.site21.bittermelon.common.content.blocks.electronics.securedoor.SecureDoorBlockEntity;
 import com.site21.bittermelon.common.content.blocks.electronics.slidingdoor.SlidingDoorBlockEntity;
 import com.site21.bittermelon.common.content.blocks.electronics.speaker.SpeakerBlockEntity;
+import com.site21.bittermelon.common.content.blocks.electronics.television.TelevisionBlockEntity;
 import com.site21.bittermelon.common.content.blocks.electronics.thermometer.ThermometerBlockEntity;
 import com.site21.bittermelon.common.content.blocks.lights.emergencyexitlight.EmergencyExitLampBlockEntity;
 import com.site21.bittermelon.common.content.blocks.powergrid.distributionboard.DistributionBoardBlockEntity;
@@ -30,6 +31,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;
 
+import static com.site21.bittermelon.datagen.BitterModelTemplates.TELEVISION;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.*;
 
 public class BitterBlockEntities {
@@ -126,4 +128,8 @@ public class BitterBlockEntities {
     public static final Supplier<BlockEntityType<EmergencyExitLampBlockEntity>> EMERGENCY_EXIT_LAMP_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
             "emergency_exit_lamp_block_entity",
             () -> new BlockEntityType<>(EmergencyExitLampBlockEntity::new, false, EMERGENCY_EXIT_LAMP.get()));
+
+    public static final Supplier<BlockEntityType<TelevisionBlockEntity>> TELEVISION_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "television_block_entity",
+            () -> new BlockEntityType<>(TelevisionBlockEntity::new, false, LIGHT_GRAY_TELEVISION.get(), LIGHT_GRAY_WALL_TELEVISION.get()));
 }

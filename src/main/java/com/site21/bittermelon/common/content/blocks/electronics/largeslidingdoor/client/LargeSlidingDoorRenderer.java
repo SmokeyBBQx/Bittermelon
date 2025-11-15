@@ -46,7 +46,8 @@ public class LargeSlidingDoorRenderer implements BlockEntityRenderer<LargeSlidin
 
         poseStack.mulPose(Axis.XP.rotationDegrees(180));
 
-        Material material = new Material(TextureAtlas.LOCATION_BLOCKS, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/large_sliding_door"));
+        Material material = new Material(TextureAtlas.LOCATION_BLOCKS,
+                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/large_sliding_door"));
         VertexConsumer vertexConsumer = material.buffer(buffer, RenderType::entityCutout);
 
         model.setupAnim(smoothProgress);
@@ -61,7 +62,6 @@ public class LargeSlidingDoorRenderer implements BlockEntityRenderer<LargeSlidin
         BlockPos pos = blockEntity.getBlockPos();
         boolean zAxis = blockEntity.getBlockState().getValue(LargeSlidingDoorBlock.Z_AXIS);
 
-        // Rotate according to axis.
         if (zAxis) {
             return new AABB(pos.getX(), pos.getY() - 3, pos.getZ() - 1.3,
                     pos.getX() + 1, pos.getY() + 2, pos.getZ() + 2.3);

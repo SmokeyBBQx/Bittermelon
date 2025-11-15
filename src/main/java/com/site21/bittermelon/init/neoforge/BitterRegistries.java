@@ -1,6 +1,7 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.common.content.blocks.electronics.television.Media;
 import com.site21.bittermelon.common.systems.electronics.wiring.Signal;
 import com.site21.bittermelon.common.systems.chat.VerbSet;
 import com.site21.bittermelon.common.systems.medical.compartment.Compartment;
@@ -46,6 +47,11 @@ public class BitterRegistries {
             .sync(true)
             .create();
 
+    public static final ResourceKey<Registry<Media>> MEDIA_REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "media"));
+    public static final Registry<Media> MEDIA_REGISTRY = new RegistryBuilder<>(MEDIA_REGISTRY_KEY)
+            .sync(true)
+            .create();
+
     @SubscribeEvent
     public static void registerRegistries(@NotNull NewRegistryEvent event) {
        event.register(SUBSTANCE_REGISTRY);
@@ -54,5 +60,6 @@ public class BitterRegistries {
        event.register(COMPARTMENT_REGISTRY);
        event.register(DRUG_REGISTRY);
        event.register(ROLE_REGISTRY);
+       event.register(MEDIA_REGISTRY);
     }
 }

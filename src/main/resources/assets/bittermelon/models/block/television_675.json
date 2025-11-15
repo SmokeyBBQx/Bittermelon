@@ -4,13 +4,13 @@
 	"render_type": "minecraft:cutout",
 	"texture_size": [64, 64],
 	"textures": {
-		"texture": "#texture"
+		"particle": "#texture"
 	},
 	"elements": [
 		{
 			"from": [2, 0, 2],
 			"to": [14, 12, 14],
-			"rotation": {"angle": 20, "axis": "y", "origin": [8, 6, 8]},
+			"rotation": {"angle": 22.5, "axis": "y", "origin": [8, 6, 8]},
 			"faces": {
 				"north": {"uv": [6, 9, 9, 12], "texture": "#texture"},
 				"east": {"uv": [3, 9, 6, 12], "texture": "#texture"},
@@ -23,7 +23,7 @@
 		{
 			"from": [1.8, -0.2, 1.8],
 			"to": [14.2, 12.2, 14.2],
-			"rotation": {"angle": 20, "axis": "y", "origin": [8, 6, 8]},
+			"rotation": {"angle": 22.5, "axis": "y", "origin": [8, 6, 8]},
 			"faces": {
 				"north": {"uv": [6, 3, 9, 6], "texture": "#texture"},
 				"east": {"uv": [3, 3, 6, 6], "texture": "#texture"},

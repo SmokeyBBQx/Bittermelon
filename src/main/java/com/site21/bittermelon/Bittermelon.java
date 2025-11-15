@@ -12,6 +12,7 @@ import com.site21.bittermelon.common.systems.telecomms.intercom.networking.SyncI
 import com.site21.bittermelon.init.neoforge.BitterEntities;
 import com.site21.bittermelon.init.neoforge.BitterRegistries;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -24,12 +25,14 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import static com.site21.bittermelon.init.custom.Compartments.COMPARTMENTS;
 import static com.site21.bittermelon.init.custom.Drugs.DRUGS;
 import static com.site21.bittermelon.init.custom.LogicalOperators.LOGICAL_OPERATORS;
+import static com.site21.bittermelon.init.custom.Medias.MEDIA;
 import static com.site21.bittermelon.init.custom.Roles.ROLES;
 import static com.site21.bittermelon.init.custom.Substances.SUBSTANCES;
 import static com.site21.bittermelon.init.custom.VerbSets.VERB_SETS;
@@ -79,6 +82,7 @@ public class Bittermelon {
         ROLES.register(modEventBus);
         FLUIDS.register(modEventBus);
         FLUID_TYPES.register(modEventBus);
+        MEDIA.register(modEventBus);
 
         modEventBus.addListener(BitterRegistries::registerRegistries);
         modEventBus.addListener(this::commonSetup);
@@ -131,5 +135,10 @@ public class Bittermelon {
                 PacketDistributor.sendToPlayer(serverPlayer, new SyncActiveCharacter(activeCharacter.getUUID()));
             }
         }
+    }
+
+    @Contract("_ -> new")
+    public static @NotNull ResourceLocation resource(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 }

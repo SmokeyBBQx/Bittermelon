@@ -699,29 +699,29 @@ public class BitterModelProvider extends ModelProvider {
 
     public void createStandingTelevision(@NotNull BlockModelGenerators blockModels, @NotNull Block block, TextureMapping textureMapping) {
         MultiVariant normalVariant = plainVariant(TELEVISION.create(block, textureMapping, blockModels.modelOutput));
-        MultiVariant angle25Variant = plainVariant(TELEVISION_25.create(block, textureMapping, blockModels.modelOutput));
+        MultiVariant angle225Variant = plainVariant(TELEVISION_225.create(block, textureMapping, blockModels.modelOutput));
         MultiVariant angle45Variant = plainVariant(TELEVISION_45.create(block, textureMapping, blockModels.modelOutput));
-        MultiVariant angle70Variant = plainVariant(TELEVISION_70.create(block, textureMapping, blockModels.modelOutput));
+        MultiVariant angle675Variant = plainVariant(TELEVISION_675.create(block, textureMapping, blockModels.modelOutput));
 
         blockModels.blockStateOutput.accept(
                 MultiVariantGenerator.dispatch(block)
                         .with(PropertyDispatch.initial(StandingTelevisionBlock.ROTATION)
                                 .select(0, normalVariant)
-                                .select(1, angle25Variant)
+                                .select(1, angle225Variant)
                                 .select(2, angle45Variant)
-                                .select(3, angle70Variant)
+                                .select(3, angle675Variant)
                                 .select(4, normalVariant.with(Y_ROT_90))
-                                .select(5, angle25Variant.with(Y_ROT_90))
+                                .select(5, angle225Variant.with(Y_ROT_90))
                                 .select(6, angle45Variant.with(Y_ROT_90))
-                                .select(7, angle70Variant.with(Y_ROT_90))
+                                .select(7, angle675Variant.with(Y_ROT_90))
                                 .select(8, normalVariant.with(Y_ROT_180))
-                                .select(9, angle25Variant.with(Y_ROT_180))
+                                .select(9, angle225Variant.with(Y_ROT_180))
                                 .select(10, angle45Variant.with(Y_ROT_180))
-                                .select(11, angle70Variant.with(Y_ROT_180))
+                                .select(11, angle675Variant.with(Y_ROT_180))
                                 .select(12, normalVariant.with(Y_ROT_270))
-                                .select(13, angle25Variant.with(Y_ROT_270))
+                                .select(13, angle225Variant.with(Y_ROT_270))
                                 .select(14, angle45Variant.with(Y_ROT_270))
-                                .select(15, angle70Variant.with(Y_ROT_270)))
+                                .select(15, angle675Variant.with(Y_ROT_270)))
         );
 
         blockModels.registerSimpleItemModel(block.asItem(), ModelLocationUtils.getModelLocation(block, "_45"));

@@ -140,9 +140,9 @@ public class BitterModelTemplates {
             TextureSlot.TEXTURE
     );
 
-    public static final ModelTemplate TELEVISION_25 = new ModelTemplate(
-            Optional.of(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/television_25")),
-            Optional.of("_25"),
+    public static final ModelTemplate TELEVISION_225 = new ModelTemplate(
+            Optional.of(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/television_225")),
+            Optional.of("_225"),
             TextureSlot.TEXTURE
     );
 
@@ -152,9 +152,9 @@ public class BitterModelTemplates {
             TextureSlot.TEXTURE
     );
 
-    public static final ModelTemplate TELEVISION_70 = new ModelTemplate(
-            Optional.of(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/television_70")),
-            Optional.of("_70"),
+    public static final ModelTemplate TELEVISION_675 = new ModelTemplate(
+            Optional.of(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/television_675")),
+            Optional.of("_675"),
             TextureSlot.TEXTURE
     );
 }
