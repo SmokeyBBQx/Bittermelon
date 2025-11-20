@@ -26,4 +26,12 @@ public class SCP1507Renderer extends MobRenderer<SCP1507, SCP1507RenderState, SC
     public @NotNull ResourceLocation getTextureLocation(@NotNull SCP1507RenderState renderState) {
         return ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/entity/scp_1507.png");
     }
+
+    @Override
+    public void extractRenderState(@NotNull SCP1507 entity, @NotNull SCP1507RenderState reusedState, float partialTick) {
+        super.extractRenderState(entity, reusedState, partialTick);
+        reusedState.attackTime = entity.getAttackTime() > 0 ? entity.getAttackTime() - partialTick : 0.0f;
+//        reusedState.attackTime = 10;
+        reusedState.onGround = entity.onGround();
+    }
 }

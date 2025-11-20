@@ -432,7 +432,6 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
                         new YankItem<>(10),
                         new Pull<>(10)
                 ).cooldownFor(scp939 -> 120)
-
         );
     }
 

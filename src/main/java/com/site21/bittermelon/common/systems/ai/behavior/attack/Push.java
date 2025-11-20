@@ -30,12 +30,12 @@ public class Push<E extends Mob> extends AnimatableMeleeAttack<E> {
 
     @Override
     protected void doDelayedAction(@NotNull E entity) {
-        BrainUtil.setForgettableMemory(entity, MemoryModuleType.ATTACK_COOLING_DOWN, true, this.attackIntervalSupplier.applyAsInt(entity));
+        BrainUtil.setForgettableMemory(entity, MemoryModuleType.ATTACK_COOLING_DOWN, true, attackIntervalSupplier.applyAsInt(entity));
 
-        if (this.target == null)
+        if (target == null)
             return;
 
-        if (!entity.getSensing().hasLineOfSight(this.target) || !entity.isWithinMeleeAttackRange(this.target))
+        if (!entity.getSensing().hasLineOfSight(target) || !entity.isWithinMeleeAttackRange(target))
             return;
 
         entity.level().playSound(null, entity.getOnPos(), WRESTLE.value(), SoundSource.AMBIENT);

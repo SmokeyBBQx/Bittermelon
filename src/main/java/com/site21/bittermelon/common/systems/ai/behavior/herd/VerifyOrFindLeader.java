@@ -1,0 +1,69 @@
+package com.site21.bittermelon.common.systems.ai.behavior.herd;
+
+import com.mojang.datafixers.util.Pair;
+import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.memory.MemoryStatus;
+import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
+import net.tslat.smartbrainlib.object.MemoryTest;
+import net.tslat.smartbrainlib.util.BrainUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.site21.bittermelon.init.neoforge.BitterMemoryTypes.LEADER;
+
+public class VerifyOrFindLeader<E extends LivingEntity> extends ExtendedBehaviour<E> {
+    private List<LivingEntity> allies = new ArrayList<>();
+
+    @Override
+    protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
+        return MemoryTest.builder()
+                .usesMemory(LEADER.get())
+                .hasMemory(MemoryModuleType.NEAREST_LIVING_ENTITIES);
+    }
+
+    @Override
+    protected boolean checkExtraStartConditions(ServerLevel level, E entity) {
+        return verifyLeader(entity);
+    }
+
+    @Override
+    protected void start(E entity) {
+        List<LivingEntity> nearbyEntities = BrainUtil.getMemory(entity, MemoryModuleType.NEAREST_LIVING_ENTITIES);
+
+        // Filter nearby entities to only include allies of the same type
+        allies = nearbyEntities.stream().filter(e -> e.getType() == entity.getType()).toList();
+
+        // First check if any nearby allies have a leader
+        for (LivingEntity ally : allies) {
+            LivingEntity allyLeader = BrainUtil.getMemory(ally, LEADER.get());
+            if (allyLeader != null && verifyLeader(allyLeader)) {
+                setLeader(entity, allyLeader);
+                return;
+            }
+        }
+
+        // If no nearby allies have a leader, pick one of the allies as the leader
+        if (!allies.isEmpty()) {
+            LivingEntity newLeader = allies.getFirst();
+            setLeader(entity, newLeader);
+        }
+    }
+
+    private boolean verifyLeader(LivingEntity entity) {
+        LivingEntity leader = BrainUtil.getMemory(entity, LEADER.get());
+        return leader == null;
+    }
+
+    private void setLeader(E entity, LivingEntity leader) {
+        BrainUtil.setMemory(entity, LEADER.get(), leader);
+        for (LivingEntity otherAlly : allies) {
+            if (otherAlly != entity) {
+                BrainUtil.setMemory(otherAlly, LEADER.get(), leader);
+            }
+        }
+    }
+}

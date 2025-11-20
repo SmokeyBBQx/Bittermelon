@@ -26,17 +26,18 @@ import java.util.stream.Collectors;
 public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob implements SmartBrainOwner<T>, NeedsUser {
     private Map<Need, NeedInstance> needs;
     private final int behaviorRandomness;
+    private List<Activity> cachedActivityPriorities = null;
 
     protected BitterMob(EntityType<? extends PathfinderMob> entityType, Level level, int behaviorRandomness) {
         super(entityType, level);
 
         this.behaviorRandomness = behaviorRandomness;
-
-        if (!level.isClientSide) {
-            Character character = initializeCharacter();
-            CharacterManager.get(level).addCharacter(character);
-            CharacterManager.get(level).setActiveCharacter(this, character.getUUID());
-        }
+//
+//        if (!level.isClientSide) {
+//            Character character = initializeCharacter();
+//            CharacterManager.get(level).addCharacter(character);
+//            CharacterManager.get(level).setActiveCharacter(this, character.getUUID());
+//        }
     }
 
     protected BitterMob(EntityType<? extends PathfinderMob> entityType, Level level) {
@@ -49,9 +50,14 @@ public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob im
 
     @Override
     public List<Activity> getActivityPriorities() {
+        if (cachedActivityPriorities != null) return cachedActivityPriorities;
+
         List<NeedInstance> needs = new ArrayList<>(getNeeds().values());
 
-        if (needs.isEmpty()) return ObjectArrayList.of(Activity.FIGHT, Activity.IDLE);
+        if (needs.isEmpty()) {
+            cachedActivityPriorities = ObjectArrayList.of(Activity.FIGHT, Activity.IDLE);
+            return cachedActivityPriorities;
+        }
 
         needs.sort((n1, n2) -> Double.compare(n2.evaluatePriority(), n1.evaluatePriority()));
 
@@ -60,9 +66,13 @@ public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob im
             Collections.shuffle(randomizedBehaviour);
         }
 
-        return needs.stream()
-                .map(NeedInstance::getActivity)
-                .collect(Collectors.toList());
+        List<Activity> activities = new ArrayList<>();
+        activities.add(Activity.FIGHT);
+        activities.addAll(needs.stream().map(NeedInstance::getActivity).toList());
+        activities.add(Activity.IDLE);
+
+        cachedActivityPriorities = activities;
+        return cachedActivityPriorities;
     }
 
     @Override
@@ -91,14 +101,20 @@ public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob im
     @Override
     public void setNeed(@NotNull Need stat, float value) {
         getNeeds().get(stat).setValue(Mth.clamp(value, 0, 100));
+        invalidateActivityCache();
+    }
+
+    private void invalidateActivityCache() {
+        cachedActivityPriorities = null;
     }
 
     @Override
     public void tick() {
         super.tick();
 
-        getNeeds().values().forEach(NeedInstance::decay);
-        updateStress();
+//        if (level().getGameTime() % 0 != 0) return;
+//        getNeeds().values().forEach(NeedInstance::decay);
+//        updateStress();
     }
 
     @Override
@@ -139,5 +155,9 @@ public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob im
     @Override
     protected @NotNull SmartBrainProvider<T> brainProvider() {
         return new SmartBrainProvider<>((T) this);
+    }
+
+    @Override
+    protected void registerGoals() {
     }
 }
