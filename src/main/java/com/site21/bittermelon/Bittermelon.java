@@ -49,6 +49,7 @@ import static com.site21.bittermelon.init.neoforge.BitterItems.ITEMS;
 import static com.site21.bittermelon.init.neoforge.BitterMemoryTypes.MEMORY_MODULE_TYPES;
 import static com.site21.bittermelon.init.neoforge.BitterMenus.MENUS;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.MOB_EFFECTS;
+import static com.site21.bittermelon.init.neoforge.BitterParticles.PARTICLES;
 import static com.site21.bittermelon.init.neoforge.BitterSensors.SENSOR_TYPES;
 import static com.site21.bittermelon.init.neoforge.BitterSounds.SOUND_EVENTS;
 
@@ -83,6 +84,7 @@ public class Bittermelon {
         FLUIDS.register(modEventBus);
         FLUID_TYPES.register(modEventBus);
         MEDIA.register(modEventBus);
+        PARTICLES.register(modEventBus);
 
         modEventBus.addListener(BitterRegistries::registerRegistries);
         modEventBus.addListener(this::commonSetup);

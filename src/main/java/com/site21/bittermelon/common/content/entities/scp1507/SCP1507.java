@@ -1,34 +1,40 @@
 package com.site21.bittermelon.common.content.entities.scp1507;
 
 import com.mojang.datafixers.util.Pair;
+import com.site21.bittermelon.common.content.entities.scp1507.behavior.StopMovingWhenLookedAt;
+import com.site21.bittermelon.common.content.entities.scp1507.behavior.TryToBecomeActive;
+import com.site21.bittermelon.common.systems.ai.base.BitterMob;
+import com.site21.bittermelon.common.systems.ai.base.Need;
+import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
 import com.site21.bittermelon.common.systems.ai.behavior.attack.CollectivePush;
 import com.site21.bittermelon.common.systems.ai.behavior.herd.VerifyOrFindLeader;
 import com.site21.bittermelon.common.systems.ai.behavior.target.InvalidateAttackTarget;
 import com.site21.bittermelon.common.systems.character.Character;
-import com.site21.bittermelon.common.systems.ai.base.BitterMob;
-import com.site21.bittermelon.common.systems.ai.base.Need;
-import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
 import com.site21.bittermelon.common.systems.medical.factory.Anatomy;
 import com.site21.bittermelon.init.neoforge.BitterActivity;
 import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
-import net.minecraft.core.particles.ParticleTypes;
+import com.site21.bittermelon.init.neoforge.BitterParticles;
+import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.*;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
-import net.tslat.smartbrainlib.api.core.behaviour.AllApplicableBehaviours;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.LeapAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
@@ -42,12 +48,11 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("unchecked")
 public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP1507> {
     private static final EntityDataAccessor<Integer> ATTACK_TIME = SynchedEntityData.defineId(SCP1507.class, EntityDataSerializers.INT);
 
@@ -71,7 +76,10 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     }
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 20).add(Attributes.MOVEMENT_SPEED, 0.23f).add(Attributes.ATTACK_DAMAGE, 4.0f);
+        return Mob.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, 5)
+                .add(Attributes.MOVEMENT_SPEED, 0.23f)
+                .add(Attributes.ATTACK_DAMAGE, 4.0f);
     }
 
     @Override
@@ -82,12 +90,6 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
         );
     }
 
-    public Map<Activity, BrainActivityGroup<? extends SCP1507>> getAdditionalTasks() {
-        Map<Activity, BrainActivityGroup<? extends SCP1507>> tasks = new HashMap<>();
-        tasks.put(BitterActivity.EXPLORE.get(), getExploreTasks());
-        return tasks;
-    }
-
     @Override
     public BrainActivityGroup<? extends SCP1507> getCoreTasks() {
         return BrainActivityGroup.coreTasks(
@@ -96,7 +98,6 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
                 new TargetOrRetaliate<>()
                         .attackablePredicate(target -> !(target instanceof SCP1507))
                         .alertAlliesWhen((owner, attacker) -> true)
-                        .whenStarting((entity) -> BrainUtil.setForgettableMemory(entity, BitterMemoryTypes.ACTIVE.get(), true, 240))
         );
     }
 
@@ -104,13 +105,15 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     public BrainActivityGroup<? extends SCP1507> getIdleTasks() {
         return BrainActivityGroup.idleTasks(
                 new VerifyOrFindLeader<>(),
+                new TryToBecomeActive().cooldownForBetween(600, 1200),
+                new StopMovingWhenLookedAt(),
                 new OneRandomBehaviour<>(
                         new FirstApplicableBehaviour<>(
                                 new FollowEntity<>()
                                         .following((entity) -> BrainUtil.getMemory(entity, BitterMemoryTypes.LEADER.get()))
-                                        .stopFollowingWithin(5),
-                                new SetRandomWalkTarget<>()
-                        ).startCondition((entity) -> Boolean.TRUE.equals(BrainUtil.getMemory(entity, BitterMemoryTypes.ACTIVE.get()))),
+                                        .stopFollowingWithin((entity, target) -> getFollowDistance(entity)),
+                                new SetRandomWalkTarget<>().startCondition((SCP1507::isActive))
+                        ),
                         new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))
                 )
         );
@@ -122,33 +125,14 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
                 new InvalidateAttackTarget<>(),
                 new SetWalkTargetToAttackTarget<>(),
                 new OneRandomBehaviour<>(
-                        Pair.of(new FirstApplicableBehaviour<>(
-                                new LeapAtTarget<SCP1507>(0)
+                        Pair.of(new LeapAtTarget<SCP1507>(0)
                                         .whenStarting(SCP1507::resetAttackTime)
-                                        .startCondition((entity) -> BrainUtil.getTargetOfEntity(entity).distanceTo( entity) < 4)
-                        ), 10),
+                                        .startCondition((entity) ->
+                                                BrainUtil.getTargetOfEntity(entity).distanceTo(entity) < 4),
+                                10),
                         Pair.of(new CollectivePush<>(10, 5.0, 0), 1)
-                )
+                ).whenStopping(SCP1507::setActive)
         );
-    }
-
-    public BrainActivityGroup<? extends SCP1507> getExploreTasks() {
-        return new BrainActivityGroup<SCP1507>(BitterActivity.EXPLORE.get()).behaviours(
-                new OneRandomBehaviour<>(
-                        new SetRandomWalkTarget<>()
-                                .setRadius(getRandom().nextInt(5, 15)),
-                        new Idle<>().runFor(entity -> 30)
-                ).whenStarting(entity -> {
-                    if (entity instanceof SCP1507 scp1507) {
-                        scp1507.modifyNeed(Need.MOVEMENT, -10.0f);
-                    }
-                })
-        );
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
     }
 
     @Override
@@ -161,7 +145,7 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(ATTACK_TIME, 0);
     }
@@ -178,28 +162,60 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     protected void tickDeath() {
         super.tickDeath();
         if (tickCount <= 1) {
-            makeDeathParticles();
+            makeShatterParticles(30);
         }
-    }
-
-    private void makeDeathParticles() {
-        if (!(level() instanceof ServerLevel level)) return;
-        level.sendParticles(
-                ParticleTypes.CHERRY_LEAVES,
-                getX(),
-                getY(),
-                getZ(),
-                30,
-                0.4,
-                0.5,
-                0.4,
-                5
-        );
     }
 
     @Override
     public void onDamageTaken(@NotNull DamageContainer damageContainer) {
         super.onDamageTaken(damageContainer);
-        makeDeathParticles();
+        makeShatterParticles(10);
+    }
+
+    private void makeShatterParticles(int count) {
+        if (!(level() instanceof ServerLevel level)) return;
+        level.sendParticles(
+                ColorParticleOption.create(BitterParticles.PLASTIC.get(), 0xFFF8748D),
+                getX(),
+                getY() + 0.4,
+                getZ(),
+                count,
+                0.2,
+                0.1,
+                0.2,
+                0.2
+        );
+    }
+
+    private static float getFollowDistance(LivingEntity entity) {
+        return isActive(entity) ? 4.0f : (float) entity.getAttributeValue(Attributes.FOLLOW_RANGE) / 2;
+    }
+
+    public static boolean isActive(LivingEntity entity) {
+        return Boolean.TRUE.equals(BrainUtil.getMemory(entity, BitterMemoryTypes.ACTIVE.get()));
+    }
+
+    public static void setActive(LivingEntity entity) {
+        BrainUtil.setForgettableMemory(entity, BitterMemoryTypes.ACTIVE.get(), true, 1200);
+    }
+
+    @Override
+    protected @Nullable SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
+        return SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR;
+    }
+
+    @Override
+    protected @Nullable SoundEvent getDeathSound() {
+        return SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR;
+    }
+
+    @Override
+    public float getVoicePitch() {
+        return random.nextFloat() * 0.2f + 1.5f;
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 0.2f;
     }
 }

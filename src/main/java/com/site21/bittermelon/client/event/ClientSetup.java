@@ -1,6 +1,7 @@
 package com.site21.bittermelon.client.event;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.client.particles.PlasticParticle;
 import com.site21.bittermelon.common.content.blocks.base.structuralblock.StructuralBlockRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.client.PhoneCordRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.client.LargeSlidingDoorRenderer;
@@ -28,6 +29,7 @@ import com.site21.bittermelon.common.systems.personnel.registry.networking.Updat
 import com.site21.bittermelon.datagen.property.*;
 import com.site21.bittermelon.init.neoforge.BitterBlockEntities;
 import com.site21.bittermelon.init.neoforge.BitterItems;
+import com.site21.bittermelon.init.neoforge.BitterParticles;
 import com.site21.bittermelon.networking.client.ClientPayloadHandler;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
@@ -141,6 +143,11 @@ public class ClientSetup {
     @SubscribeEvent
     public static void registerAtlases(@NotNull RegisterMaterialAtlasesEvent event) {
         event.register(MediaSheets.ATLAS_LOCATION, MediaSheets.ATLAS_INFO_LOCATION);
+    }
+
+    @SubscribeEvent
+    public static void registerParticleProviders(@NotNull RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(BitterParticles.PLASTIC.get(), PlasticParticle.Provider::new);
     }
 
     @SubscribeEvent
