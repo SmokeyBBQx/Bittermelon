@@ -1,4 +1,4 @@
-package com.site21.bittermelon.common.systems.ai.behavior.interactions;
+package com.site21.bittermelon.common.systems.ai.behavior.blockinteraction;
 
 import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.common.systems.blockdamage.BlockDamageHelper;
@@ -10,6 +10,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.core.behaviour.DelayedBehaviour;
 import net.tslat.smartbrainlib.object.MemoryTest;
@@ -61,6 +63,7 @@ public class LeapAndHurtBlock<E extends Mob> extends DelayedBehaviour<E> {
 
         entity.level().playSound(null, breakTarget, level.getBlockState(breakTarget).getSoundType().getBreakSound(),
                 entity.getSoundSource(), 1.0f, entity.getRandom().nextFloat() * 0.4f + 0.8f);
+        entity.level().levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, breakTarget, Block.getId(entity.level().getBlockState(breakTarget)));
     }
 
     private void leapAtTarget(@NotNull E entity, @NotNull BlockPos target) {

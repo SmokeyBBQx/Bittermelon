@@ -8,8 +8,9 @@ import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
 import com.site21.bittermelon.common.systems.ai.behavior.attack.CollectivePush;
 import com.site21.bittermelon.common.systems.ai.behavior.herd.VerifyOrFindLeader;
-import com.site21.bittermelon.common.systems.ai.behavior.interactions.LeapAndHurtBlock;
-import com.site21.bittermelon.common.systems.ai.behavior.mentalbreak.Berserk;
+import com.site21.bittermelon.common.systems.ai.behavior.blockinteraction.FindBlockingBlock;
+import com.site21.bittermelon.common.systems.ai.behavior.blockinteraction.LeapAndHurtBlock;
+import com.site21.bittermelon.common.systems.ai.behavior.blockinteraction.FindRandomBreakTarget;
 import com.site21.bittermelon.common.systems.ai.behavior.mentalbreak.MurderousRage;
 import com.site21.bittermelon.common.systems.ai.behavior.target.InvalidateAttackTarget;
 import com.site21.bittermelon.common.systems.character.Character;
@@ -31,6 +32,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
@@ -46,6 +48,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.TargetOrRetaliate;
+import net.tslat.smartbrainlib.api.core.navigation.SmoothGroundNavigation;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.NearbyBlocksSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
@@ -97,12 +100,18 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     }
 
     @Override
+    protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
+        return new SmoothGroundNavigation(this, level);
+    }
+
+    @Override
     public BrainActivityGroup<? extends SCP1507> getCoreTasks() {
         return BrainActivityGroup.coreTasks(
                 new LookAtTarget<>(),
                 new MoveToWalkTarget<>(),
-                new Berserk<>()
+                new FindRandomBreakTarget<>()
                         .cooldownForBetween(60, 120),
+                new FindBlockingBlock<>(),
                 new LeapAndHurtBlock<SCP1507>(0)
                         .whenStarting(SCP1507::resetAttackTime)
                         .startCondition((entity) ->

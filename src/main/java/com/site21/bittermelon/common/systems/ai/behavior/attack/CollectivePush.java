@@ -10,6 +10,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
 import net.tslat.smartbrainlib.util.BrainUtil;
@@ -116,8 +117,9 @@ public class CollectivePush<E extends Mob> extends AnimatableMeleeAttack<E> {
     }
 
     private boolean isValidAccomplice(@NotNull LivingEntity entity, @NotNull E self) {
+        AABB aabb = target.getBoundingBox().inflate(maxDistance, 0, maxDistance);
         return entity.getType() == self.getType()
-                && self.distanceTo(entity) <= maxDistance
+                && aabb.intersects(entity.getOnPos())
                 && !StumbleHandler.isStumbled(entity)
                 && !BrainUtil.hasMemory(entity, BitterMemoryTypes.COLLECTIVE_PUSH_COOLDOWN.get());
     }

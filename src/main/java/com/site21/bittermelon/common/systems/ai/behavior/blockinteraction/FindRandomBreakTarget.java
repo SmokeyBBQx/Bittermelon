@@ -1,10 +1,8 @@
-package com.site21.bittermelon.common.systems.ai.behavior.mentalbreak;
+package com.site21.bittermelon.common.systems.ai.behavior.blockinteraction;
 
 import com.mojang.datafixers.util.Pair;
-import com.site21.bittermelon.common.systems.ai.base.NeedsUser;
 import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -19,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class Berserk<E extends PathfinderMob> extends ExtendedBehaviour<E> {
+public class FindRandomBreakTarget<E extends PathfinderMob> extends ExtendedBehaviour<E> {
     @Override
     protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
         return MemoryTest.builder()

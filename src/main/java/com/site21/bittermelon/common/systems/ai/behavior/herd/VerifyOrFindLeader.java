@@ -1,7 +1,6 @@
 package com.site21.bittermelon.common.systems.ai.behavior.herd;
 
 import com.mojang.datafixers.util.Pair;
-import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
