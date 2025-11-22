@@ -13,6 +13,7 @@ import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
+import net.tslat.smartbrainlib.object.MemoryTest;
 import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,6 +25,10 @@ import static com.site21.bittermelon.init.neoforge.BitterSounds.WRESTLE;
 import static net.minecraft.world.entity.ai.memory.MemoryModuleType.NEAREST_LIVING_ENTITIES;
 
 public class CollectivePush<E extends Mob> extends AnimatableMeleeAttack<E> {
+    private static final MemoryTest MEMORY_REQUIREMENTS = MemoryTest.builder()
+            .hasMemories(MemoryModuleType.ATTACK_TARGET, NEAREST_LIVING_ENTITIES)
+            .hasNoMemories(BitterMemoryTypes.COLLECTIVE_PUSH_COOLDOWN.get(), MemoryModuleType.ATTACK_COOLING_DOWN);
+
     protected final int minAccomplices;
     protected final double maxDistance;
 
@@ -42,11 +47,7 @@ public class CollectivePush<E extends Mob> extends AnimatableMeleeAttack<E> {
 
     @Override
     protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
-        return ObjectArrayList.of(
-                Pair.of(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_PRESENT),
-                Pair.of(MemoryModuleType.ATTACK_COOLING_DOWN, MemoryStatus.VALUE_ABSENT),
-                Pair.of(NEAREST_LIVING_ENTITIES, MemoryStatus.VALUE_PRESENT),
-                Pair.of(BitterMemoryTypes.COLLECTIVE_PUSH_COOLDOWN.get(), MemoryStatus.VALUE_ABSENT));
+        return MEMORY_REQUIREMENTS;
     }
 
     /**

@@ -23,6 +23,10 @@ import java.util.function.BiFunction;
 import java.util.function.ToIntFunction;
 
 public class LeapAndHurtBlock<E extends Mob> extends DelayedBehaviour<E> {
+    private static final MemoryTest MEMORY_REQUIREMENTS = MemoryTest.builder()
+            .hasMemory(BitterMemoryTypes.BREAK_TARGET.get())
+            .noMemory(MemoryModuleType.ATTACK_COOLING_DOWN);
+
     protected BiFunction<E, BlockPos, Float> verticalJumpStrength = (entity, target) -> 0.3f;
     protected BiFunction<E, BlockPos, Float> jumpStrength = (entity, target) -> 0.4f;
     protected BiFunction<E, BlockPos, Float> moveSpeedContribution = (entity, target) -> 0.2f;
@@ -35,9 +39,7 @@ public class LeapAndHurtBlock<E extends Mob> extends DelayedBehaviour<E> {
 
     @Override
     protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
-        return MemoryTest.builder()
-                .hasMemory(BitterMemoryTypes.BREAK_TARGET.get())
-                .noMemory(MemoryModuleType.ATTACK_COOLING_DOWN);
+        return MEMORY_REQUIREMENTS;
     }
 
     @Override

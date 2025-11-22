@@ -18,9 +18,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class FindBlockingBlock<E extends PathfinderMob> extends ExtendedBehaviour<E> {
+    private static final MemoryTest MEMORY_REQUIREMENTS = MemoryTest.builder()
+            .hasMemory(MemoryModuleType.PATH)
+            .noMemory(BitterMemoryTypes.BREAK_TARGET.get());
+
     @Override
     protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
-        return MemoryTest.builder().hasMemory(MemoryModuleType.PATH).noMemory(BitterMemoryTypes.BREAK_TARGET.get());
+        return MEMORY_REQUIREMENTS;
     }
 
     @Override

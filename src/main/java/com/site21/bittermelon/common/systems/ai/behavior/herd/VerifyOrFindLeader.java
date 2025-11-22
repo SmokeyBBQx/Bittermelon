@@ -15,13 +15,15 @@ import java.util.List;
 import static com.site21.bittermelon.init.neoforge.BitterMemoryTypes.LEADER;
 
 public class VerifyOrFindLeader<E extends LivingEntity> extends ExtendedBehaviour<E> {
+    private static final MemoryTest MEMORY_REQUIREMENTS = MemoryTest.builder()
+            .usesMemory(LEADER.get())
+            .hasMemory(MemoryModuleType.NEAREST_LIVING_ENTITIES);
+
     private List<LivingEntity> allies = new ArrayList<>();
 
     @Override
     protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
-        return MemoryTest.builder()
-                .usesMemory(LEADER.get())
-                .hasMemory(MemoryModuleType.NEAREST_LIVING_ENTITIES);
+        return MEMORY_REQUIREMENTS;
     }
 
     @Override

@@ -13,9 +13,12 @@ import net.tslat.smartbrainlib.util.BrainUtil;
 import java.util.List;
 
 public class TryToBecomeActive extends ExtendedBehaviour<SCP1507> {
+    private static final MemoryTest MEMORY_REQUIREMENTS = MemoryTest.builder()
+            .hasMemory(MemoryModuleType.NEAREST_LIVING_ENTITIES);
+
     @Override
     protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
-        return MemoryTest.builder().hasMemory(MemoryModuleType.NEAREST_LIVING_ENTITIES);
+        return MEMORY_REQUIREMENTS;
     }
 
     @Override

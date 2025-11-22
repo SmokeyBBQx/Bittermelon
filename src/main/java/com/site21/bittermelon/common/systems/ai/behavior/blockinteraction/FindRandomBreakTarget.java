@@ -18,11 +18,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class FindRandomBreakTarget<E extends PathfinderMob> extends ExtendedBehaviour<E> {
+    private static final MemoryTest MEMORY_REQUIREMENTS = MemoryTest.builder()
+            .hasMemory(SBLMemoryTypes.NEARBY_BLOCKS.get())
+            .noMemory(BitterMemoryTypes.BREAK_TARGET.get())
+            .usesMemory(MemoryModuleType.WALK_TARGET);
+
     @Override
     protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
-        return MemoryTest.builder()
-                .hasMemory(SBLMemoryTypes.NEARBY_BLOCKS.get())
-                .noMemory(BitterMemoryTypes.BREAK_TARGET.get());
+        return MEMORY_REQUIREMENTS;
     }
 
     @Override
