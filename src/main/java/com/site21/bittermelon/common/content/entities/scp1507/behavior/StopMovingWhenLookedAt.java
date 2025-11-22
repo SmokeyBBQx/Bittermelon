@@ -26,7 +26,7 @@ public class StopMovingWhenLookedAt extends ExtendedBehaviour<SCP1507> {
     @Override
     protected void start(SCP1507 entity) {
         List<LivingEntity> nearbyEntities = BrainUtil.getMemory(entity, MemoryModuleType.NEAREST_LIVING_ENTITIES);
-        if (nearbyEntities.stream().anyMatch(nearbyEntity -> nearbyEntity instanceof Player))
+        if (nearbyEntities.stream().anyMatch(nearbyEntity -> nearbyEntity instanceof Player player && !player.isSpectator()))
             BrainUtil.setMemory(entity, BitterMemoryTypes.ACTIVE.get(), false);
     }
 }

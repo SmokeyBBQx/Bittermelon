@@ -7,12 +7,13 @@ import com.site21.bittermelon.common.systems.ai.base.BitterMob;
 import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
 import com.site21.bittermelon.common.systems.ai.behavior.attack.CollectivePush;
+import com.site21.bittermelon.common.systems.ai.behavior.blockinteraction.InvalidateBreakTarget;
 import com.site21.bittermelon.common.systems.ai.behavior.herd.VerifyOrFindLeader;
 import com.site21.bittermelon.common.systems.ai.behavior.blockinteraction.FindBlockingBlock;
 import com.site21.bittermelon.common.systems.ai.behavior.blockinteraction.LeapAndHurtBlock;
 import com.site21.bittermelon.common.systems.ai.behavior.blockinteraction.FindRandomBreakTarget;
-import com.site21.bittermelon.common.systems.ai.behavior.mentalbreak.MurderousRage;
 import com.site21.bittermelon.common.systems.ai.behavior.target.InvalidateAttackTarget;
+import com.site21.bittermelon.common.systems.ai.pathing.BreakBlockNavigation;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.medical.factory.Anatomy;
 import com.site21.bittermelon.init.neoforge.BitterActivity;
@@ -42,6 +43,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.LeapAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.BreakBlock;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.FollowEntity;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
@@ -60,7 +62,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("unchecked")
 public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP1507> {
     private static final EntityDataAccessor<Integer> ATTACK_TIME = SynchedEntityData.defineId(SCP1507.class, EntityDataSerializers.INT);
 
@@ -78,7 +79,6 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
         return Map.of(
                 Need.SOCIALIZATION, new NeedInstance(0.001f, value -> Math.pow(value, 1.2), BitterActivity.SOCIALIZE.get()),
 //                Need.MOVEMENT, new NeedInstance(0.001f, value -> Math.pow(value, 1.5), BitterActivity.EXPLORE.get()),
-                Need.STRESS, new NeedInstance(-0.0005f, value -> Math.pow(value, 0.8), BitterActivity.MENTAL_BREAK.get()),
                 Need.ANGER, new NeedInstance(0f, value -> Math.pow(value, 2.0), Activity.FIGHT)
         );
     }
@@ -101,7 +101,7 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
 
     @Override
     protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
-        return new SmoothGroundNavigation(this, level);
+        return new SmoothGroundNavigation( this, level);
     }
 
     @Override
@@ -109,14 +109,12 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
         return BrainActivityGroup.coreTasks(
                 new LookAtTarget<>(),
                 new MoveToWalkTarget<>(),
-                new FindRandomBreakTarget<>()
-                        .cooldownForBetween(60, 120),
+                new InvalidateBreakTarget<>(),
                 new FindBlockingBlock<>(),
                 new LeapAndHurtBlock<SCP1507>(0)
-                        .whenStarting(SCP1507::resetAttackTime)
-                        .startCondition((entity) ->
-                                BrainUtil.getMemory(entity, BitterMemoryTypes.BREAK_TARGET.get())
-                                        .distSqr(entity.getOnPos()) <= 4),
+                        .whenStarting(SCP1507::resetAttackTime),
+//                        .startCondition((entity) ->
+//                                BrainUtil.getMemory(entity, BitterMemoryTypes.BREAK_TARGET.get()).distSqr(entity.getOnPos()) <= 4),
                 new TargetOrRetaliate<>()
                         .attackablePredicate(target -> !(target instanceof SCP1507))
                         .alertAlliesWhen((owner, attacker) -> true)
@@ -129,6 +127,8 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
                 new VerifyOrFindLeader<>(),
                 new TryToBecomeActive().cooldownForBetween(600, 1200),
                 new StopMovingWhenLookedAt(),
+                new FindRandomBreakTarget<>()
+                        .cooldownForBetween(60, 120),
                 new OneRandomBehaviour<>(
                         new FirstApplicableBehaviour<>(
                                 new FollowEntity<>()
@@ -154,17 +154,6 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
                                 10),
                         Pair.of(new CollectivePush<>(10, 5.0, 0), 1)
                 ).whenStopping(SCP1507::setActive)
-        );
-    }
-
-    public BrainActivityGroup<? extends SCP1507> getMentalBreakTasks() {
-        return new BrainActivityGroup<SCP1507>(BitterActivity.MENTAL_BREAK.get()).behaviours(
-                new OneRandomBehaviour<>(
-                        new MurderousRage<>(true),
-                        new SetRandomWalkTarget<>()
-                                .setRadius(getRandom().nextInt(1, 10)),
-                        new Idle<>().runFor(entity -> 30)
-                )
         );
     }
 
@@ -202,7 +191,7 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     @Override
     public void onDamageTaken(@NotNull DamageContainer damageContainer) {
         super.onDamageTaken(damageContainer);
-        makeShatterParticles((int) (damageContainer.getNewDamage() * 5));
+        makeShatterParticles(Math.min(100, (int) (damageContainer.getNewDamage() * 5)));
     }
 
     private void makeShatterParticles(int count) {
