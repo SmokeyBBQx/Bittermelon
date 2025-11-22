@@ -1,4 +1,4 @@
-package com.site21.bittermelon.common.systems.ai.behavior.mood.mentalbreak;
+package com.site21.bittermelon.common.systems.ai.behavior.mentalbreak;
 
 import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.common.systems.ai.base.NeedsUser;
@@ -12,7 +12,7 @@ import net.tslat.smartbrainlib.util.BrainUtil;
 
 import java.util.List;
 
-public class MentalBreak<E extends LivingEntity & NeedsUser> extends ExtendedBehaviour<E> {
+public abstract class MentalBreak<E extends LivingEntity & NeedsUser> extends ExtendedBehaviour<E> {
     private static final List<Pair<MemoryModuleType<?>, MemoryStatus>> MEMORY_REQUIREMENTS = ObjectArrayList.of(
             Pair.of(BitterMemoryTypes.HAS_MENTAL_BREAK.get(), MemoryStatus.VALUE_ABSENT)
     );

@@ -8,8 +8,8 @@ import com.site21.bittermelon.common.systems.ai.behavior.attack.Attack;
 import com.site21.bittermelon.common.systems.ai.behavior.attack.Pull;
 import com.site21.bittermelon.common.systems.ai.behavior.attack.Push;
 import com.site21.bittermelon.common.systems.ai.behavior.attack.YankItem;
-import com.site21.bittermelon.common.systems.ai.behavior.mood.mentalbreak.MurderousRage;
-import com.site21.bittermelon.common.systems.ai.behavior.mood.mentalbreak.WarnHighStress;
+import com.site21.bittermelon.common.systems.ai.behavior.mentalbreak.MurderousRage;
+import com.site21.bittermelon.common.systems.ai.behavior.mentalbreak.WarnHighStress;
 import com.site21.bittermelon.common.systems.ai.behavior.movement.FindDarkness;
 import com.site21.bittermelon.common.systems.ai.behavior.movement.SearchArea;
 import com.site21.bittermelon.common.systems.ai.behavior.movement.SeekNearestPlayer;
@@ -455,8 +455,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
     public BrainActivityGroup<? extends SCP939> getInvestigationTasks() {
         return new BrainActivityGroup<SCP939>(Activity.INVESTIGATE).requireAndWipeMemoriesOnUse(
                         MemoryModuleType.DISTURBANCE_LOCATION
-                )
-                .behaviours(
+                ).behaviours(
                         new FirstApplicableBehaviour<>(
                                 new AllApplicableBehaviours<>(
                                         new MoveToWalkTarget<>(),

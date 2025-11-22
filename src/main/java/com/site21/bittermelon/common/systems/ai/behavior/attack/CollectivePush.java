@@ -33,7 +33,6 @@ public class CollectivePush<E extends Mob> extends AnimatableMeleeAttack<E> {
 
     protected List<LivingEntity> nearbyAccomplices;
 
-
     public CollectivePush(int minAccomplices, double maxDistance, int delayTicks) {
         super(delayTicks);
         this.minAccomplices = minAccomplices;
@@ -88,6 +87,12 @@ public class CollectivePush<E extends Mob> extends AnimatableMeleeAttack<E> {
         return this;
     }
 
+    /**
+     * Set the cooldown interval after performing the collective push
+     *
+     * @param function The cooldown interval function
+     * @return this
+     */
     public CollectivePush<E> pushInterval(ToIntFunction<E> function) {
         this.pushIntervalSupplier = function;
 
@@ -118,10 +123,8 @@ public class CollectivePush<E extends Mob> extends AnimatableMeleeAttack<E> {
     }
 
     @Override
-    protected void start(E entity) {
-        if (target == null) return;
-
-        if (!entity.getSensing().hasLineOfSight(target) || !entity.isWithinMeleeAttackRange(target)) return;
+    protected void doDelayedAction(E entity) {
+        super.doDelayedAction(entity);
 
         applyMemoriesAndLeap(entity);
         nearbyAccomplices.forEach(accomplice -> applyMemoriesAndLeap((E) accomplice));

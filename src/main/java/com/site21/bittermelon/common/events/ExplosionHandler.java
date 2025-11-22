@@ -3,6 +3,7 @@ package com.site21.bittermelon.common.events;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.blocks.base.structuralblock.StructuralBlockEntity;
 import com.site21.bittermelon.common.content.items.scps.scp2398.SCP2398;
+import com.site21.bittermelon.common.systems.blockdamage.BlockDamageHelper;
 import com.site21.bittermelon.common.systems.syncsound.SyncSoundEvent;
 import com.site21.bittermelon.common.systems.syncsound.SyncSoundType;
 import net.minecraft.ChatFormatting;
@@ -34,10 +35,8 @@ public class ExplosionHandler {
         Level level = event.getLevel();
 
         for (BlockPos pos : affectedBlocks) {
-            if (level.getBlockEntity(pos) instanceof StructuralBlockEntity structuralBlock) {
-                double breakProgress = calculateBreakProgress(explosion.center(), pos, explosion.radius());
-                structuralBlock.setBreakProgress((float) breakProgress + structuralBlock.getBreakProgress());
-            }
+            int breakProgress = calculateBreakProgress(explosion.center(), pos, explosion.radius());
+            BlockDamageHelper.addDamage(level, pos, breakProgress);
         }
 
         List<Entity> affectedEntities = event.getAffectedEntities();
@@ -64,10 +63,10 @@ public class ExplosionHandler {
         }
     }
 
-    private static double calculateBreakProgress(@NotNull Vec3 center, BlockPos pos, float radius) {
+    private static int calculateBreakProgress(@NotNull Vec3 center, BlockPos pos, float radius) {
         double distance = Math.sqrt(center.distanceToSqr(Vec3.atCenterOf(pos)));
         double breakProgress = Math.max(0, 1.0 - (distance / radius));
 
-        return Math.min(1.0, breakProgress);
+        return (int) Math.min(100, breakProgress * 100);
     }
 }

@@ -5,6 +5,7 @@ import com.site21.bittermelon.client.render.TypingIndicatorRenderer;
 import com.site21.bittermelon.common.content.items.keycard.KeycardDecorator;
 import com.site21.bittermelon.common.systems.atmosphere.client.AtmosFogRenderer;
 import com.site21.bittermelon.common.systems.atmosphere.data.AtmosLevelData;
+import com.site21.bittermelon.common.systems.blockdamage.client.BlockDamageRenderer;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.component.temperature.HeatDecorator;
 import com.site21.bittermelon.common.systems.economy.bank.AccountRegistry;
@@ -38,6 +39,11 @@ public class ClientEvents {
         AtmosLevelData.clearClientData();
         IntercomManager.clearClientData();
         PrivilegeManager.clearClientData();
+    }
+
+    @SubscribeEvent
+    public static void onRenderLevelAfterTranslucent(RenderLevelStageEvent.@NotNull AfterTranslucentBlocks event) {
+        BlockDamageRenderer.renderDamaged(event.getLevel(), event.getPoseStack(), event.getCamera(), event.getRenderableSections());
     }
 
     @SubscribeEvent

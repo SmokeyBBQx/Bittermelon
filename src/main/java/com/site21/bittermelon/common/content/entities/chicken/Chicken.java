@@ -10,8 +10,8 @@ import com.site21.bittermelon.common.systems.ai.behavior.basicneeds.HasBasicNeed
 import com.site21.bittermelon.common.systems.ai.behavior.basicneeds.Preen;
 import com.site21.bittermelon.common.systems.ai.behavior.misc.Defecate;
 import com.site21.bittermelon.common.systems.ai.behavior.misc.FeelsPain;
-import com.site21.bittermelon.common.systems.ai.behavior.mood.mentalbreak.MurderousRage;
-import com.site21.bittermelon.common.systems.ai.behavior.mood.mentalbreak.WarnHighStress;
+import com.site21.bittermelon.common.systems.ai.behavior.mentalbreak.MurderousRage;
+import com.site21.bittermelon.common.systems.ai.behavior.mentalbreak.WarnHighStress;
 import com.site21.bittermelon.common.systems.ai.behavior.social.Relationship;
 import com.site21.bittermelon.common.systems.ai.behavior.social.Socializable;
 import com.site21.bittermelon.common.systems.ai.behavior.social.interactions.GenericInteraction;

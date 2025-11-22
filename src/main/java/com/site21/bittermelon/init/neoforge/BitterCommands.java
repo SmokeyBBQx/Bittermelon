@@ -20,5 +20,6 @@ public class BitterCommands {
         MedicalStatsCommand.register(event.getDispatcher());
         DrugCommand.register(event.getDispatcher(), event.getBuildContext());
         PrivilegeCommand.register(event.getDispatcher());
+        BlockDamageCommand.register(event.getDispatcher());
     }
 }

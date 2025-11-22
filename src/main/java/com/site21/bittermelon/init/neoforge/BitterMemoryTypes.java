@@ -3,6 +3,7 @@ package com.site21.bittermelon.init.neoforge;
 import com.mojang.serialization.Codec;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlockEntity;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -52,4 +53,7 @@ public class BitterMemoryTypes {
 
     public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<LivingEntity>> LEADER = MEMORY_MODULE_TYPES.register("leader",
             () -> new MemoryModuleType<>(Optional.empty()));
+
+    public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<BlockPos>> BREAK_TARGET = MEMORY_MODULE_TYPES.register("break_target",
+            () -> new MemoryModuleType<>(Optional.of(BlockPos.CODEC)));
 }

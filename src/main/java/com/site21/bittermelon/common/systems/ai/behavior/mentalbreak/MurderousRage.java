@@ -1,4 +1,4 @@
-package com.site21.bittermelon.common.systems.ai.behavior.mood.mentalbreak;
+package com.site21.bittermelon.common.systems.ai.behavior.mentalbreak;
 
 import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.common.systems.ai.base.NeedsUser;

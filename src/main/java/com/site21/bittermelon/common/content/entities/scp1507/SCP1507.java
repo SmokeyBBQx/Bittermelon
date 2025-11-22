@@ -8,6 +8,9 @@ import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
 import com.site21.bittermelon.common.systems.ai.behavior.attack.CollectivePush;
 import com.site21.bittermelon.common.systems.ai.behavior.herd.VerifyOrFindLeader;
+import com.site21.bittermelon.common.systems.ai.behavior.interactions.LeapAndHurtBlock;
+import com.site21.bittermelon.common.systems.ai.behavior.mentalbreak.Berserk;
+import com.site21.bittermelon.common.systems.ai.behavior.mentalbreak.MurderousRage;
 import com.site21.bittermelon.common.systems.ai.behavior.target.InvalidateAttackTarget;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.medical.factory.Anatomy;
@@ -44,6 +47,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarge
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.TargetOrRetaliate;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
+import net.tslat.smartbrainlib.api.core.sensor.custom.NearbyBlocksSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.util.BrainUtil;
@@ -53,6 +57,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("unchecked")
 public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP1507> {
     private static final EntityDataAccessor<Integer> ATTACK_TIME = SynchedEntityData.defineId(SCP1507.class, EntityDataSerializers.INT);
 
@@ -86,7 +91,8 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     public List<? extends ExtendedSensor<? extends SCP1507>> getSensors() {
         return List.of(
                 new NearbyLivingEntitySensor<>(),
-                new HurtBySensor<>()
+                new HurtBySensor<>(),
+                new NearbyBlocksSensor<SCP1507>().setRadius(10, 2)
         );
     }
 
@@ -95,6 +101,13 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
         return BrainActivityGroup.coreTasks(
                 new LookAtTarget<>(),
                 new MoveToWalkTarget<>(),
+                new Berserk<>()
+                        .cooldownForBetween(60, 120),
+                new LeapAndHurtBlock<SCP1507>(0)
+                        .whenStarting(SCP1507::resetAttackTime)
+                        .startCondition((entity) ->
+                                BrainUtil.getMemory(entity, BitterMemoryTypes.BREAK_TARGET.get())
+                                        .distSqr(entity.getOnPos()) <= 4),
                 new TargetOrRetaliate<>()
                         .attackablePredicate(target -> !(target instanceof SCP1507))
                         .alertAlliesWhen((owner, attacker) -> true)
@@ -135,6 +148,17 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
         );
     }
 
+    public BrainActivityGroup<? extends SCP1507> getMentalBreakTasks() {
+        return new BrainActivityGroup<SCP1507>(BitterActivity.MENTAL_BREAK.get()).behaviours(
+                new OneRandomBehaviour<>(
+                        new MurderousRage<>(true),
+                        new SetRandomWalkTarget<>()
+                                .setRadius(getRandom().nextInt(1, 10)),
+                        new Idle<>().runFor(entity -> 30)
+                )
+        );
+    }
+
     @Override
     public void aiStep() {
         super.aiStep();
@@ -169,7 +193,7 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     @Override
     public void onDamageTaken(@NotNull DamageContainer damageContainer) {
         super.onDamageTaken(damageContainer);
-        makeShatterParticles(10);
+        makeShatterParticles((int) (damageContainer.getNewDamage() * 5));
     }
 
     private void makeShatterParticles(int count) {
@@ -188,7 +212,7 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     }
 
     private static float getFollowDistance(LivingEntity entity) {
-        return isActive(entity) ? 4.0f : (float) entity.getAttributeValue(Attributes.FOLLOW_RANGE) / 2;
+        return isActive(entity) ? 4.0f : (float) entity.getAttributeValue(Attributes.FOLLOW_RANGE) / 1.5f;
     }
 
     public static boolean isActive(LivingEntity entity) {

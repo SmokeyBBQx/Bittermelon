@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.atmosphere.data.AtmosBlockData;
 import com.site21.bittermelon.common.content.items.scps.scp377.FortuneInstance;
+import com.site21.bittermelon.common.systems.blockdamage.BlockDamageData;
 import net.minecraft.core.UUIDUtil;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -56,5 +57,12 @@ public class BitterAttachmentTypes {
 
     public static final Supplier<AttachmentType<String>> LORE_OPENING = ATTACHMENT_TYPES.register(
             "lore_opening", () -> AttachmentType.builder(() -> "").serialize(Codec.STRING.fieldOf("lore_opening")).build()
+    );
+
+    public static final Supplier<AttachmentType<BlockDamageData>> BLOCK_DAMAGE = ATTACHMENT_TYPES.register(
+            "block_damage", () -> AttachmentType.builder(BlockDamageData::new)
+                    .serialize(BlockDamageData.CODEC.fieldOf("block_damage"))
+                    .sync(BlockDamageData.STREAM_CODEC)
+                    .build()
     );
 }
