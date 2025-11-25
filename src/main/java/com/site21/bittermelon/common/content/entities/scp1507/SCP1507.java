@@ -36,6 +36,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
@@ -110,11 +111,10 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
                 new LookAtTarget<>(),
                 new MoveToWalkTarget<>(),
                 new InvalidateBreakTarget<>(),
-                new FindBlockingBlock<>(),
                 new LeapAndHurtBlock<SCP1507>(0)
-                        .whenStarting(SCP1507::resetAttackTime),
-//                        .startCondition((entity) ->
-//                                BrainUtil.getMemory(entity, BitterMemoryTypes.BREAK_TARGET.get()).distSqr(entity.getOnPos()) <= 4),
+                        .whenStarting(SCP1507::resetAttackTime)
+                        .startCondition((entity) ->
+                                BrainUtil.getMemory(entity, BitterMemoryTypes.BREAK_TARGET.get()).distSqr(entity.getOnPos()) <= 4),
                 new TargetOrRetaliate<>()
                         .attackablePredicate(target -> !(target instanceof SCP1507))
                         .alertAlliesWhen((owner, attacker) -> true)
@@ -208,6 +208,10 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
                 0.2
         );
     }
+
+//    private static int getBlockBreakTime(@NotNull SCP1507 entity) {
+//        return entity.getMood() >=
+//    }
 
     private static float getFollowDistance(LivingEntity entity) {
         return isActive(entity) ? 4.0f : (float) entity.getAttributeValue(Attributes.FOLLOW_RANGE) / 1.5f;

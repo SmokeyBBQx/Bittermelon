@@ -7,11 +7,13 @@ import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import org.jetbrains.annotations.NotNull;
 
 public class BreakBlockEvaluator extends WalkNodeEvaluator {
-    public @NotNull PathType getPathType(@NotNull PathfindingContext context, int x, int y, int z) {
-        PathType pathType = getPathTypeStatic(context, new BlockPos.MutableBlockPos(x, y, z));
-        if (pathType == PathType.BLOCKED) {
-            return PathType.WALKABLE;
-        }
-        return pathType;
-    }
+//    public @NotNull PathType getPathType(@NotNull PathfindingContext context, int x, int y, int z) {
+//        PathType pathType = getPathTypeStatic(context, new BlockPos.MutableBlockPos(x, y, z));
+//        if (pathType == PathType.BLOCKED) {
+//            return PathType.DAMAGE_OTHER;
+//        }
+//        return pathType;
+//    }
+
+
 }

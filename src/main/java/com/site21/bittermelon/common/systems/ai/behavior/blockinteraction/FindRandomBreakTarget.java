@@ -53,8 +53,8 @@ public class FindRandomBreakTarget<E extends PathfinderMob> extends ExtendedBeha
         if (blocks.isEmpty()) return;
         int target = entity.getRandom().nextIntBetweenInclusive(0, blocks.size() - 1);
         BlockPos targetPos = blocks.get(target).getFirst();
-        BrainUtil.setMemory(entity, BitterMemoryTypes.BREAK_TARGET.get(), targetPos);
-        BrainUtil.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(targetPos, 1, 2));
+//        BrainUtil.setMemory(entity, BitterMemoryTypes.BREAK_TARGET.get(), targetPos);
+//        BrainUtil.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(targetPos, 1, 2));
     }
 
     private boolean isValidBlock(@NotNull E entity, @NotNull BlockPos pos, @NotNull BlockState state) {
