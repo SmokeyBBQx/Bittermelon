@@ -52,7 +52,7 @@ public class SCP131 extends BitterMob<SCP131> {
 
     @Override
     protected Character initializeCharacter() {
-        return new Character(this.uuid, "SCP-131", Anatomy.HUMAN);
+        return new Character(uuid, "SCP-131", Anatomy.HUMAN);
     }
 
     @Override

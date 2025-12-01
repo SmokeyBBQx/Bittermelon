@@ -13,7 +13,6 @@ import com.site21.bittermelon.common.systems.ai.behavior.blockinteraction.FindBl
 import com.site21.bittermelon.common.systems.ai.behavior.blockinteraction.LeapAndHurtBlock;
 import com.site21.bittermelon.common.systems.ai.behavior.blockinteraction.FindRandomBreakTarget;
 import com.site21.bittermelon.common.systems.ai.behavior.target.InvalidateAttackTarget;
-import com.site21.bittermelon.common.systems.ai.pathing.BreakBlockNavigation;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.medical.factory.Anatomy;
 import com.site21.bittermelon.init.neoforge.BitterActivity;
@@ -36,7 +35,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.pathfinder.PathType;
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
@@ -44,8 +42,8 @@ import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.LeapAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.BreakBlock;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.ReactToUnreachableTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.FollowEntity;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
@@ -111,6 +109,8 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
                 new LookAtTarget<>(),
                 new MoveToWalkTarget<>(),
                 new InvalidateBreakTarget<>(),
+                new ReactToUnreachableTarget<>()
+                        .reaction((entity, towering) -> new FindBlockingBlock<>()),
                 new LeapAndHurtBlock<SCP1507>(0)
                         .whenStarting(SCP1507::resetAttackTime)
                         .startCondition((entity) ->

@@ -9,11 +9,13 @@ import com.site21.bittermelon.common.content.blocks.electronics.slidingdoor.clie
 import com.site21.bittermelon.common.content.blocks.electronics.television.MediaSheets;
 import com.site21.bittermelon.common.content.blocks.electronics.television.client.TelevisionRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.thermometer.client.ThermometerRenderer;
+import com.site21.bittermelon.common.content.blocks.flamingo.FlamingoBlockRenderer;
 import com.site21.bittermelon.common.content.blocks.substance.fluid.client.FluidBlockColor;
 import com.site21.bittermelon.common.content.blocks.wallwriting.client.WallWritingRenderer;
 import com.site21.bittermelon.common.content.entities.chicken.client.ChickenRenderer;
 import com.site21.bittermelon.common.content.entities.scp131.client.SCP131Renderer;
 import com.site21.bittermelon.common.content.entities.scp1507.client.SCP1507Renderer;
+import com.site21.bittermelon.common.content.entities.scp548.client.SCP548Renderer;
 import com.site21.bittermelon.common.content.entities.scp650.client.SCP650Renderer;
 import com.site21.bittermelon.common.content.entities.scp939.client.SCP939Renderer;
 import com.site21.bittermelon.common.content.items.keycard.KeycardDecorator;
@@ -61,6 +63,7 @@ public class ClientSetup {
         event.registerEntityRenderer(SCP_131.get(), SCP131Renderer::new);
         event.registerEntityRenderer(SCP_1507.get(), SCP1507Renderer::new);
         event.registerEntityRenderer(TASER_PROJECTILE.get(), TaserProjectileRenderer::new);
+        event.registerEntityRenderer(SCP_548.get(), SCP548Renderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.STRUCTURAL_BLOCK_ENTITY.get(), StructuralBlockRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.THERMOMETER_BLOCK_ENTITY.get(), ThermometerRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.INTERCOM_BLOCK_ENTITY.get(), PhoneCordRenderer::new);
@@ -68,6 +71,7 @@ public class ClientSetup {
         event.registerBlockEntityRenderer(BitterBlockEntities.SLIDING_DOOR_BLOCK_ENTITY.get(), SlidingDoorRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.WALL_WRITING_BLOCK_ENTITY.get(), WallWritingRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.TELEVISION_BLOCK_ENTITY.get(), TelevisionRenderer::new);
+        event.registerBlockEntityRenderer(BitterBlockEntities.PLASTIC_FLAMINGO_BLOCK_ENTITY.get(), FlamingoBlockRenderer::new);
     }
 
     @SubscribeEvent

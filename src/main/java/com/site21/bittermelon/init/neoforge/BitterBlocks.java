@@ -3,6 +3,7 @@ package com.site21.bittermelon.init.neoforge;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.blocks.electronics.television.StandingTelevisionBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.television.WallTelevisionBlock;
+import com.site21.bittermelon.common.content.blocks.flamingo.FlamingoBlock;
 import com.site21.bittermelon.common.content.blocks.poster.SmallPosterBlock;
 import com.site21.bittermelon.common.content.blocks.base.structuralblock.StructuralBlock;
 import com.site21.bittermelon.common.content.blocks.container.smallbox.SmallBox;
@@ -275,4 +276,7 @@ public class BitterBlocks {
                     .noOcclusion()
     );
 
+    public static final DeferredBlock<FlamingoBlock> PLASTIC_FLAMINGO = BLOCKS.registerBlock("plastic_flamingo", FlamingoBlock::new, BlockBehaviour.Properties.of()
+            .noOcclusion()
+    );
 }

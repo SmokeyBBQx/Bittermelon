@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.client.event.LayerDefinitions.SCP_1507_LAYER;
 
-@OnlyIn(Dist.CLIENT)
 public class SCP1507Renderer extends MobRenderer<SCP1507, SCP1507RenderState, SCP1507Model> {
     public SCP1507Renderer(EntityRendererProvider.Context context) {
         super(context, new SCP1507Model(context.bakeLayer(SCP_1507_LAYER)), 0.2f);

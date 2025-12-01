@@ -97,6 +97,7 @@ public class Compartment {
         Holder<Item> item = BODY_PART;
         float defaultHealth = 0;
         VisualData visualData = VisualData.empty().width(200).height(200);
+        String modelPart = "";
 
         public Properties defaultTags(EnumSet<CompartmentTag> defaultTags) {
             this.defaultTags = defaultTags;
@@ -140,6 +141,11 @@ public class Compartment {
 
         public Properties visualData(VisualData visualData) {
             this.visualData = visualData;
+            return this;
+        }
+
+        public Properties modelPart(String modelPart) {
+            this.modelPart = modelPart;
             return this;
         }
     }

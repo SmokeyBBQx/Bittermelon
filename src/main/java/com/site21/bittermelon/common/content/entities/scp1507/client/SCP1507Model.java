@@ -9,7 +9,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-@OnlyIn(Dist.CLIENT)
 public class SCP1507Model extends EntityModel<SCP1507RenderState> {
 
     public SCP1507Model(@NotNull ModelPart root) {
@@ -28,11 +27,11 @@ public class SCP1507Model extends EntityModel<SCP1507RenderState> {
                 .texOffs(22, 23).addBox(0.5F, -1.0F, -1.0F, 0.0F, 6.0F, 1.0F, new CubeDeformation(0.0F))
                 .texOffs(20, 23).addBox(-1.5F, -1.0F, -1.0F, 0.0F, 6.0F, 1.0F, new CubeDeformation(0.0F))
                 .texOffs(0, 11).addBox(-2.0F, -6.0F, 3.0F, 3.0F, 3.0F, 4.0F, new CubeDeformation(0.0F))
-                .texOffs(0, 0).addBox(-2.0F, -1.5F, -1.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.5F, 19.0F, 0.0F));
+                .texOffs(0, 0).addBox(-2.0F, -1.5F, -1.0F, 1.0F, 1.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.5F, 19.0F, 0.75F));
 
-        body.addOrReplaceChild("Beak_r1", CubeListBuilder.create().texOffs(16, 0).addBox(-1.5F, -4.0F, -1.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -7.5F, -8.75F, -0.6545F, 0.0F, 0.0F));
+        PartDefinition Beak_r1 = body.addOrReplaceChild("Beak_r1", CubeListBuilder.create().texOffs(16, 0).addBox(-1.5F, -4.0F, -1.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -7.5F, -8.75F, -0.6545F, 0.0F, 0.0F));
 
-        body.addOrReplaceChild("UpperNeck_r1", CubeListBuilder.create().texOffs(12, 21).addBox(-0.5F, -6.0F, -1.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.0F))
+        PartDefinition UpperNeck_r1 = body.addOrReplaceChild("UpperNeck_r1", CubeListBuilder.create().texOffs(12, 21).addBox(-0.5F, -6.0F, -1.0F, 2.0F, 4.0F, 2.0F, new CubeDeformation(0.0F))
                 .texOffs(17, 6).addBox(-0.5F, -2.0F, -1.0F, 2.0F, 2.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-1.0F, -2.75F, -6.0F, -0.1745F, 0.0F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 32, 32);

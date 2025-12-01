@@ -7,7 +7,6 @@ import net.minecraft.client.animation.KeyframeAnimations;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class SCP650Animation {
     public static final AnimationDefinition DEFAULT = AnimationDefinition.Builder.withLength(0.0F)
             .addAnimation("left_leg", new AnimationChannel(AnimationChannel.Targets.ROTATION,

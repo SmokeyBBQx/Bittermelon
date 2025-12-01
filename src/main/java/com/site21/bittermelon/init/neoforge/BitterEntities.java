@@ -3,6 +3,7 @@ package com.site21.bittermelon.init.neoforge;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.entities.scp131.SCP131;
 import com.site21.bittermelon.common.content.entities.scp1507.SCP1507;
+import com.site21.bittermelon.common.content.entities.scp548.SCP548;
 import com.site21.bittermelon.common.content.entities.scp650.SCP650;
 import com.site21.bittermelon.common.content.entities.scp939.SCP939;
 import com.site21.bittermelon.common.content.entities.ThrownItemProjectile;
@@ -63,6 +64,11 @@ public class BitterEntities {
                     .sized(0.5f, 0.5f)
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_1507"))));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<SCP548>> SCP_548 = ENTITY_TYPES.register("scp_548",
+            () -> EntityType.Builder.of(SCP548::new, MobCategory.MONSTER)
+                    .sized(0.5f, 0.2f)
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_548"))));
+
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
         eventBus.addListener(BitterEntities::registerAttributes);
@@ -74,5 +80,6 @@ public class BitterEntities {
         event.put(SCP_650.get(), SCP650.createAttributes().build());
         event.put(SCP_131.get(), SCP131.createAttributes().build());
         event.put(SCP_1507.get(), SCP1507.createAttributes().build());
+        event.put(SCP_548.get(), SCP548.createAttributes().build());
     }
 }

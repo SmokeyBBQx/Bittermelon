@@ -2,25 +2,18 @@ package com.site21.bittermelon.client.event;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.client.render.TypingIndicatorRenderer;
-import com.site21.bittermelon.common.content.items.keycard.KeycardDecorator;
 import com.site21.bittermelon.common.systems.atmosphere.client.AtmosFogRenderer;
 import com.site21.bittermelon.common.systems.atmosphere.data.AtmosLevelData;
 import com.site21.bittermelon.common.systems.blockdamage.client.BlockDamageRenderer;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.common.systems.component.temperature.HeatDecorator;
 import com.site21.bittermelon.common.systems.economy.bank.AccountRegistry;
 import com.site21.bittermelon.common.systems.personnel.privilege.PrivilegeManager;
 import com.site21.bittermelon.common.systems.personnel.registry.PersonnelRegistry;
+import com.site21.bittermelon.common.systems.stumble.client.RiseKeyHandler;
+import com.site21.bittermelon.common.systems.stumble.client.RiseProgressBar;
 import com.site21.bittermelon.common.systems.telecomms.intercom.IntercomManager;
-import com.site21.bittermelon.init.neoforge.BitterItems;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.TriState;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -47,12 +40,17 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public static void onRenderOverlay(RenderGuiLayerEvent.@NotNull Pre event) {
+    public static void onRenderOverlayPre(RenderGuiLayerEvent.@NotNull Pre event) {
         if (event.getName() == VanillaGuiLayers.EXPERIENCE_LEVEL
                 || event.getName() == VanillaGuiLayers.PLAYER_HEALTH
                 || event.getName() == VanillaGuiLayers.FOOD_LEVEL) {
             event.setCanceled(true);
         }
+    }
+
+    @SubscribeEvent
+    public static void onRenderOverlayPost(RenderGuiLayerEvent.@NotNull Post event) {
+        RiseProgressBar.render(event.getGuiGraphics());
     }
 
     @SubscribeEvent
@@ -81,5 +79,10 @@ public class ClientEvents {
                 event.getMultiBufferSource(),
                 event.getPackedLight()
         );
+    }
+
+    @SubscribeEvent
+    public static void onClientTick(ClientTickEvent event) {
+        RiseKeyHandler.tick();
     }
 }

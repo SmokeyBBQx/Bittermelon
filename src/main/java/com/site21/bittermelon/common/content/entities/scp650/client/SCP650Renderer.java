@@ -10,11 +10,10 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-@OnlyIn(Dist.CLIENT)
 public class SCP650Renderer extends LivingEntityRenderer<SCP650, SCP650RenderState, SCP650Model> {
 
     public SCP650Renderer(EntityRendererProvider.Context context) {
-        super(context, new SCP650Model(context.bakeLayer(LayerDefinitions.SCP_131_LAYER)), 0.25f);
+        super(context, new SCP650Model(context.bakeLayer(LayerDefinitions.SCP_650_LAYER)), 0.25f);
     }
 
     @Override
