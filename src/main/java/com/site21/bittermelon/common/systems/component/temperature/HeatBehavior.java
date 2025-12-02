@@ -25,20 +25,20 @@ import java.util.Objects;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.BURN_TIME;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.TEMPERATURE;
 
-public record HeatBehavior(float smokingPoint, float meltingPoint, float flashPoint, float ignitionPoint,
-                           float burnSeconds,
+public record HeatBehavior(int smokingPoint, int meltingPoint, int flashPoint, int ignitionPoint,
+                           int burnSeconds,
                            Holder<Item> residueItem) {
     public static final Codec<HeatBehavior> CODEC;
     public static final StreamCodec<RegistryFriendlyByteBuf, HeatBehavior> STREAM_CODEC;
-    public static final HeatBehavior DEFAULT = new HeatBehavior(323f, Float.MAX_VALUE, 473f, 506f, 5, Items.COAL.builtInRegistryHolder());
-    public static final float harmfulTemperature = 317f;
+    public static final HeatBehavior DEFAULT = new HeatBehavior(323, Integer.MAX_VALUE, 473, 506, 5, Items.COAL.builtInRegistryHolder());
+    public static final float harmfulTemperature = 317;
 
     public void inventoryTick(@NotNull ItemStack stack, @NotNull ServerLevel level, @NotNull Entity entity, @Nullable EquipmentSlot slot) {
-        float temperature = stack.getOrDefault(TEMPERATURE, 273f);
+        int temperature = stack.getOrDefault(TEMPERATURE, 273);
         if (canIgnite(entity) && level.getGameTime() % 20 == 0) {
             stack.set(TEMPERATURE, temperature + 5);
         }
-        if (temperature <= 273f) return;
+        if (temperature <= 273) return;
 
         Long burnTime = stack.get(BURN_TIME);
         long gameTime = level.getGameTime();
@@ -68,7 +68,7 @@ public record HeatBehavior(float smokingPoint, float meltingPoint, float flashPo
     public void onEntityItemUpdate(@NotNull ItemStack stack, @NotNull ItemEntity entity, @NotNull Level level) {
         if (level.isClientSide) return;
 
-        float temperature = stack.getOrDefault(TEMPERATURE, 273f);
+        int temperature = stack.getOrDefault(TEMPERATURE, 273);
         if (canIgnite(entity) && level.getGameTime() % 20 == 0) {
             stack.set(TEMPERATURE, temperature + 5);
         }
@@ -88,7 +88,7 @@ public record HeatBehavior(float smokingPoint, float meltingPoint, float flashPo
     private void handleBurning(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, long burnTime) {
         if (entity.isInWaterOrRain()) {
             stack.remove(BURN_TIME);
-            stack.set(TEMPERATURE, 273f);
+            stack.set(TEMPERATURE, 273);
             level.playSound(null, entity.getOnPos(), SoundEvents.GENERIC_EXTINGUISH_FIRE, entity.getSoundSource(), 0.1f, 1f);
             return;
         }
@@ -132,7 +132,7 @@ public record HeatBehavior(float smokingPoint, float meltingPoint, float flashPo
         return false;
     }
 
-    private void coolAndSmoke(long gameTime, Level level, Entity entity, ItemStack stack, float temperature) {
+    private void coolAndSmoke(long gameTime, Level level, Entity entity, ItemStack stack, int temperature) {
         if (gameTime % 100 == 0) {
             stack.set(TEMPERATURE, temperature - 5);
         } else if (temperature > smokingPoint && gameTime % 20 == 0) {
@@ -167,8 +167,8 @@ public record HeatBehavior(float smokingPoint, float meltingPoint, float flashPo
             return true;
         } else {
             return obj instanceof HeatBehavior(
-                    float smokingPoint1, float meltingPoint1, float flashPoint1, float ignitionPoint1,
-                    float burnDuration1,
+                    int smokingPoint1, int meltingPoint1, int flashPoint1, int ignitionPoint1,
+                    int burnDuration1,
                     Holder<Item> residueItem1
             ) &&
                     this.smokingPoint == smokingPoint1 &&
@@ -182,24 +182,24 @@ public record HeatBehavior(float smokingPoint, float meltingPoint, float flashPo
 
     static {
         CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Codec.FLOAT.optionalFieldOf("smoking_point", 323f).forGetter(HeatBehavior::smokingPoint),
-                Codec.FLOAT.optionalFieldOf("melting_point", Float.MAX_VALUE).forGetter(HeatBehavior::meltingPoint),
-                Codec.FLOAT.optionalFieldOf("flash_point", 473f).forGetter(HeatBehavior::flashPoint),
-                Codec.FLOAT.optionalFieldOf("ignition_point", 506f).forGetter(HeatBehavior::ignitionPoint),
-                Codec.FLOAT.optionalFieldOf("burn_duration", 5f).forGetter(HeatBehavior::burnSeconds),
+                Codec.INT.optionalFieldOf("smoking_point", 323).forGetter(HeatBehavior::smokingPoint),
+                Codec.INT.optionalFieldOf("melting_point", Integer.MAX_VALUE).forGetter(HeatBehavior::meltingPoint),
+                Codec.INT.optionalFieldOf("flash_point", 473).forGetter(HeatBehavior::flashPoint),
+                Codec.INT.optionalFieldOf("ignition_point", 506).forGetter(HeatBehavior::ignitionPoint),
+                Codec.INT.optionalFieldOf("burn_duration", 5).forGetter(HeatBehavior::burnSeconds),
                 Item.CODEC.optionalFieldOf("residue_item", Items.AIR.builtInRegistryHolder()).forGetter(HeatBehavior::residueItem)
         ).apply(instance, HeatBehavior::new));
 
         STREAM_CODEC = StreamCodec.composite(
-                ByteBufCodecs.FLOAT,
+                ByteBufCodecs.INT,
                 HeatBehavior::smokingPoint,
-                ByteBufCodecs.FLOAT,
+                ByteBufCodecs.INT,
                 HeatBehavior::meltingPoint,
-                ByteBufCodecs.FLOAT,
+                ByteBufCodecs.INT,
                 HeatBehavior::flashPoint,
-                ByteBufCodecs.FLOAT,
+                ByteBufCodecs.INT,
                 HeatBehavior::ignitionPoint,
-                ByteBufCodecs.FLOAT,
+                ByteBufCodecs.INT,
                 HeatBehavior::burnSeconds,
                 Item.STREAM_CODEC,
                 HeatBehavior::residueItem,

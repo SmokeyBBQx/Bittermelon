@@ -13,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -355,7 +356,8 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
 
         for (CompartmentNodeWidget widget : sortedWidgets) {
             CompartmentNodeWidget hoveredWidget = getHoveredWidget(mouseX, mouseY);
-            if (hoveredWidget != null && hoveredWidget.equals(widget)
+            if (hoveredWidget != null
+                    && hoveredWidget.equals(widget)
                     && isWithinRevealedArea(revealingCompartments, mouseX, mouseY, contentX, contentY))
                 continue;
             widget.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
@@ -404,14 +406,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         guiGraphics.pose().pushMatrix();
 //        guiGraphics.pose().translate(0, 0, 50);
 
-        float pulse = (float) (Math.sin(System.currentTimeMillis() / 500.0) * 0.4f + 0.95f);
-//        RenderSystem.enableBlend();
-//        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, pulse);
-
         hoveredWidget.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
-
-//        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-//        RenderSystem.disableBlend();
         guiGraphics.disableScissor();
         guiGraphics.pose().popMatrix();
 
@@ -428,14 +423,14 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
             if (layerIndex == i) {
                 if (isLayerInjured(i)) {
                     guiGraphics.blit(
-                            INJURED_SELECTED_LAYER_TEXTURE, indicatorX, indicatorY, 0, 0, 11, 5, 11, 5);
+                            RenderPipelines.GUI_TEXTURED, INJURED_SELECTED_LAYER_TEXTURE, indicatorX, indicatorY, 0, 0, 11, 5, 11, 5);
                 } else {
-                    guiGraphics.blit(SELECTED_LAYER_TEXTURE, indicatorX, indicatorY, 0, 0, 11, 5, 11, 5);
+                    guiGraphics.blit(RenderPipelines.GUI_TEXTURED, SELECTED_LAYER_TEXTURE, indicatorX, indicatorY, 0, 0, 11, 5, 11, 5);
                 }
             } else if (isLayerInjured(i)) {
-                guiGraphics.blit(INJURED_LAYER_TEXTURE, indicatorX, indicatorY, 0, 0, 11, 5, 11, 5);
+                guiGraphics.blit(RenderPipelines.GUI_TEXTURED, INJURED_LAYER_TEXTURE, indicatorX, indicatorY, 0, 0, 11, 5, 11, 5);
             } else {
-                guiGraphics.blit(LAYER_TEXTURE, indicatorX, indicatorY, 0, 0, 11, 5, 11, 5);
+                guiGraphics.blit(RenderPipelines.GUI_TEXTURED, LAYER_TEXTURE, indicatorX, indicatorY, 0, 0, 11, 5, 11, 5);
             }
         }
     }
@@ -455,8 +450,6 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         int startX = (startTileX * TILE_SIZE) - tileOffsetX;
         int startY = (startTileY * TILE_SIZE) - tileOffsetY;
 
-//        RenderSystem.setShaderTexture(0, backgroundTexture);
-
         for (int i = startTileX; i <= endTileX; i++) {
             int x = startX + ((i - startTileX) * TILE_SIZE);
             for (int j = startTileY; j <= endTileY; j++) {
@@ -464,6 +457,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
 
                 if (x + TILE_SIZE >= 0 && x <= contentWidth && y + TILE_SIZE >= 0 && y <= contentHeight) {
                     guiGraphics.blit(
+                            RenderPipelines.GUI_TEXTURED,
                             backgroundTexture,
                             x, y,
                             0, 0,
@@ -478,18 +472,14 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     }
 
     private void drawWindowFrame(@NotNull GuiGraphics guiGraphics) {
-//        RenderSystem.enableBlend();
-//        guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-//
-//        guiGraphics.blit(WINDOW_TEXTURE, x, y, 0, 0, width / 2, 23);
-//        guiGraphics.blit(WINDOW_TEXTURE, x + width / 2, y, 252 - width / 2, 0, width / 2, 23);
-//
-//        guiGraphics.blit(WINDOW_SIDES_TEXTURE, x, y + 23, 0, 23, width / 2, height - 48);
-//        guiGraphics.blit(WINDOW_SIDES_TEXTURE, x + width / 2, y + 23, 256 - width / 2, 23, width / 2, height - 48);
-//
-//        guiGraphics.blit(WINDOW_TEXTURE, x, y + height - 25, 0, 130 - 5, width / 2, 15);
-//        guiGraphics.blit(WINDOW_TEXTURE, x + width / 2, y + height - 25, 252 - width / 2, 130 - 5, width / 2, 15);
-//        RenderSystem.disableBlend();
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, x, y, 0, 0, width / 2, 23, 256, 256);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, x + width / 2, y, 252 - width / 2, 0, width / 2, 23, 256, 256);
+
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_SIDES_TEXTURE, x, y + 23, 0, 23, width / 2, height - 48, 256, 256);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_SIDES_TEXTURE, x + width / 2, y + 23, 256 - width / 2, 23, width / 2, height - 48, 256, 256);
+
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, x, y + height - 25, 0, 130 - 5, width / 2, 15, 256, 256);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, x + width / 2, y + height - 25, 252 - width / 2, 130 - 5, width / 2, 15, 256, 256);
     }
 
     private void renderFog(@NotNull GuiGraphics guiGraphics, int contentX, int contentY, int contentWidth, int contentHeight, @NotNull List<VisualData> revealingCompartments) {
