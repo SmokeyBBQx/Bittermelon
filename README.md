@@ -8,13 +8,6 @@
 [image-url]: https://i.imgur.com/YP28cx6.png
 
 # Bittermelon #
-## Site-21's Codebase ##
-
----
-
-[![discord-shield]][discord-url]
-
-I appreciate all contributions and see anyone who wishes to work on the project as my equal. The procedure is quite loose; however, anything that might alter the server's concept should be discussed on Discord first. _- SmokeyBBQ, owner of Site-21_
 
 ![image-url]
 
