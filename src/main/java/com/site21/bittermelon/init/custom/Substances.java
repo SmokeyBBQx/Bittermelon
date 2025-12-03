@@ -22,7 +22,6 @@ public class Substances {
             new Substance.Properties()
     ));
 
-
     public static final Supplier<Substance> HYDROGEN_PEROXIDE = SUBSTANCES.register("hydrogen_peroxide", () -> new Substance(
             "Hydrogen Peroxide",
             new Substance.Properties()

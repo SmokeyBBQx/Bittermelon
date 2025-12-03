@@ -43,7 +43,7 @@ public class GasContainerItem extends SubstanceContainerItem {
     }
 
     public float getPressure(ItemStack stack) {
-        return SubstanceUtils.getPressure(getSubstanceData(stack).substances(), getMaxPressure(stack), stack.getOrDefault(TEMPERATURE, 293.15f));
+        return SubstanceUtils.getPressure(getSubstanceData(stack).substances(), getMaxPressure(stack), stack.getOrDefault(TEMPERATURE, 293));
     }
 
     @Override

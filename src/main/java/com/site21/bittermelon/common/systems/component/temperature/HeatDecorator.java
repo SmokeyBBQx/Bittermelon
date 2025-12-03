@@ -17,12 +17,12 @@ import static com.site21.bittermelon.init.neoforge.BitterDataComponents.TEMPERAT
 public class HeatDecorator implements IItemDecorator {
     @Override
     public boolean render(@NotNull GuiGraphics guiGraphics, @NotNull Font font, @NotNull ItemStack stack, int x, int y) {
-        if (stack.getOrDefault(TEMPERATURE, 0.0f) <= 273) return false;
-        float temperature = stack.get(TEMPERATURE);
+        if (stack.getOrDefault(TEMPERATURE, 0) <= 273) return false;
+        int temperature = stack.get(TEMPERATURE);
 
-        float minTemp = 273f;
-        float maxTemp = 506f;
-        float intensity = Mth.clamp((temperature - minTemp) / (maxTemp - minTemp), 0f, 1f);
+        int minTemp = 273;
+        int maxTemp = 506;
+        float intensity = Mth.clamp((float) (temperature - minTemp) / (maxTemp - minTemp), 0f, 1f);
 
         int red = (int) (255 * intensity);
         int color = 0x55000000 | (red << 16);

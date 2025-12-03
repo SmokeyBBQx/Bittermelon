@@ -49,7 +49,7 @@ public record HeatBehavior(int smokingPoint, int meltingPoint, int flashPoint, i
                 entity.setRemainingFireTicks(entity.getRemainingFireTicks() + 100);
             } else {
                 // Hurt entity if holding or carrying burning item
-                entity.hurtServer(level, entity.damageSources().onFire(), temperature / 1000);
+                entity.hurtServer(level, entity.damageSources().onFire(), (float) temperature / 1000);
             }
         }
 
@@ -97,7 +97,7 @@ public record HeatBehavior(int smokingPoint, int meltingPoint, int flashPoint, i
         if (burnTime <= level.getGameTime()) {
             stack.shrink(1);
             // Start burning again if more items are present
-            stack.set(BURN_TIME, (long) (level.getGameTime() + burnSeconds * 20));
+            stack.set(BURN_TIME, level.getGameTime() + burnSeconds * 20L);
 
             if (residueItem != null) {
                 addResidue(level, entity);
@@ -117,7 +117,7 @@ public record HeatBehavior(int smokingPoint, int meltingPoint, int flashPoint, i
 
     private void tryIgnite(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, float temperature) {
         if (temperature >= ignitionPoint || (temperature >= flashPoint && canIgnite(entity))) {
-            stack.set(BURN_TIME, level.getGameTime() + (long) (burnSeconds * 20));
+            stack.set(BURN_TIME, level.getGameTime() + (burnSeconds * 20L));
         }
     }
 

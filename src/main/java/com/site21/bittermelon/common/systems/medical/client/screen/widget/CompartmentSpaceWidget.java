@@ -45,8 +45,6 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     private Button increaseLayerButton;
     private Button decreaseLayerButton;
     private Button recenterButton;
-    private Button zoomInButton;
-    private Button zoomOutButton;
 
     private final int CLOSE_RIGHT_MARGIN = 15;
     private final int COLLAPSE_RIGHT_MARGIN = 28;
@@ -58,11 +56,6 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     private double scrollX = 0;
     private double scrollY = 0;
     private boolean isContentDragging = false;
-
-    private float zoomLevel = 1.0f;
-    private static final float MIN_ZOOM = 0.5f;
-    private static final float MAX_ZOOM = 2.0f;
-    private static final float ZOOM_STEP = 0.25f;
 
     private CompartmentInstance compartment;
     private final HealthScreenV2 healthScreen;
@@ -81,8 +74,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         this.compartmentWidgets = new ArrayList<>();
         this.layers = compartment.getCompartment().getLayers();
         initializeButtons();
-        buttons = new Button[]{closeWidgetButton, collapseWidgetButton, increaseLayerButton, decreaseLayerButton,
-                recenterButton, zoomInButton, zoomOutButton};
+        buttons = new Button[]{closeWidgetButton, collapseWidgetButton, increaseLayerButton, decreaseLayerButton, recenterButton};
         refreshCompartmentNodes();
         backgroundTexture = layers[0].backgroundTexture();
     }
@@ -122,20 +114,6 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
                 .pos(x + 12, y + INCREASE_TOP_MARGIN)
                 .size(10, 10)
                 .build();
-
-        zoomInButton = Button.builder(
-                        Component.literal("+"),
-                        (button) -> zoomIn())
-                .pos(x + width - LAYER_RIGHT_MARGIN - 12, y + height - 30)
-                .size(10, 10)
-                .build();
-
-        zoomOutButton = Button.builder(
-                        Component.literal("-"),
-                        (button) -> zoomOut())
-                .pos(x + width - LAYER_RIGHT_MARGIN, y + height - 30)
-                .size(10, 10)
-                .build();
     }
 
     private void updateButtons() {
@@ -154,12 +132,6 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
 
         recenterButton.setX(x + 12);
         recenterButton.setY(y + INCREASE_TOP_MARGIN);
-
-        zoomInButton.setX(x + width - LAYER_RIGHT_MARGIN - 12);
-        zoomInButton.setY(y + height - 30);
-
-        zoomOutButton.setX(x + width - LAYER_RIGHT_MARGIN);
-        zoomOutButton.setY(y + height - 30);
     }
 
     private void increaseLayer() {
@@ -186,20 +158,6 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         scrollX = 0;
         scrollY = 0;
         updateCompartmentWidgetPositions();
-    }
-
-    private void zoomIn() {
-        if (zoomLevel < MAX_ZOOM) {
-            zoomLevel += ZOOM_STEP;
-            refreshCompartmentNodes();
-        }
-    }
-
-    private void zoomOut() {
-        if (zoomLevel > MIN_ZOOM) {
-            zoomLevel -= ZOOM_STEP;
-            refreshCompartmentNodes();
-        }
     }
 
     public void refreshCompartmentNodes() {
@@ -281,7 +239,6 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         List<VisualData> revealingCompartments = findRevealingCompartments();
 
         drawContents(guiGraphics, contentX, contentY, contentWidth, contentHeight, mouseX, mouseY, partialTick, revealingCompartments);
-        drawHoveredWidget(guiGraphics, contentX, contentY, contentWidth, contentHeight, mouseX, mouseY, partialTick, revealingCompartments);
     }
 
     private @NotNull List<VisualData> findRevealingCompartments() {
@@ -303,25 +260,13 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
                               int contentHeight, int mouseX, int mouseY, float partialTick, List<VisualData> revealingCompartments) {
         if (isOpen) {
             guiGraphics.enableScissor(contentX, contentY, contentX + contentWidth, contentY + contentHeight);
-//            RenderSystem.enableBlend();
-//            GL11.glEnable(GL11.GL_BLEND);
-//            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
             drawTiledBackground(guiGraphics, contentX, contentY, contentWidth, contentHeight);
             renderWidgets(guiGraphics, contentX, contentY, mouseX, mouseY, partialTick, revealingCompartments);
+            drawHoveredWidget(guiGraphics, contentX, contentY, contentWidth, contentHeight, mouseX, mouseY, partialTick, revealingCompartments);
 //            renderFog(guiGraphics, contentX, contentY, contentWidth, contentHeight, revealingCompartments);
-
-//            RenderSystem.disableBlend();
-
-            GL11.glEnable(GL11.GL_DEPTH_TEST);
-            GL11.glDepthMask(false);
-
-            guiGraphics.pose().pushMatrix();
-//            guiGraphics.pose().translate(0, 0, 100);
 
             renderLayerIndicators(guiGraphics);
             renderButtons(guiGraphics, mouseX, mouseY, partialTick);
-            drawZoomComponents(guiGraphics);
 
             guiGraphics.disableScissor();
         }
@@ -336,18 +281,19 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
                 getMessage(),
                 x + 8,
                 y + 6,
-                0xFFFFFF
+                0xFFFFFFFF
         );
 
-        guiGraphics.pose().popMatrix();
+        CompartmentNodeWidget hoveredWidget = getHoveredWidget(mouseX, mouseY);
+        if (hoveredWidget != null && hoveredWidget.visible && isOpen) {
+            hoveredWidget.drawHover(guiGraphics, mouseX, mouseY, partialTick, width, height);
+        }
     }
 
     private void renderButtons(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         increaseLayerButton.render(guiGraphics, mouseX, mouseY, partialTick);
         decreaseLayerButton.render(guiGraphics, mouseX, mouseY, partialTick);
         recenterButton.render(guiGraphics, mouseX, mouseY, partialTick);
-        zoomInButton.render(guiGraphics, mouseX, mouseY, partialTick);
-        zoomOutButton.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 
     private void renderWidgets(GuiGraphics guiGraphics, int contentX, int contentY, int mouseX, int mouseY,
@@ -372,20 +318,6 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         }
     }
 
-    private void drawZoomComponents(@NotNull GuiGraphics guiGraphics) {
-        String zoomPercentage = String.format("%.0f%%", zoomLevel * 100);
-        int zoomTextLength = Minecraft.getInstance().font.width(zoomPercentage);
-
-        guiGraphics.drawString(
-                Minecraft.getInstance().font,
-                Component.literal(zoomPercentage),
-                x + width - LAYER_RIGHT_MARGIN - zoomTextLength - 15,
-                y + height - 29,
-                0xFFFFFF
-        );
-
-    }
-
     private void drawHoveredWidget(@NotNull GuiGraphics guiGraphics, int contentX, int contentY, int contentWidth,
                                    int contentHeight, int mouseX, int mouseY, float partialTick, List<VisualData> revealingCompartments) {
         if (!isOpen || !isMouseInContentArea(mouseX, mouseY, contentX, contentY, contentWidth, contentHeight)) return;
@@ -401,18 +333,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         if (hoveredWidget == null || isMouseOverButton ||
                 !isWithinRevealedArea(revealingCompartments, mouseX, mouseY, contentX, contentY)) return;
 
-        guiGraphics.enableScissor(contentX, contentY, contentX + contentWidth, contentY + contentHeight);
-
-        guiGraphics.pose().pushMatrix();
-//        guiGraphics.pose().translate(0, 0, 50);
-
         hoveredWidget.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
-        guiGraphics.disableScissor();
-        guiGraphics.pose().popMatrix();
-
-        if (hoveredWidget.visible) {
-            hoveredWidget.drawHover(guiGraphics, mouseX, mouseY, partialTick, width, height);
-        }
     }
 
     private void renderLayerIndicators(GuiGraphics guiGraphics) {

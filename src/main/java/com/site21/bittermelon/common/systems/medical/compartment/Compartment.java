@@ -8,6 +8,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -94,7 +95,7 @@ public class Compartment {
         EnumSet<CompartmentTag> defaultTags = EnumSet.noneOf(CompartmentTag.class);
         EnumMap<MedicalAttribute, Float> defaultAttributes = new EnumMap<>(MedicalAttribute.class);
         LayerData[] layers = new LayerData[]{new LayerData(ResourceLocation.withDefaultNamespace("textures/block/stone.png"), "Compartment", 0, 0)};
-        Holder<Item> item = BODY_PART;
+        Holder<Item> item = Items.AIR.builtInRegistryHolder();
         float defaultHealth = 0;
         VisualData visualData = VisualData.empty().width(200).height(200);
         String modelPart = "";

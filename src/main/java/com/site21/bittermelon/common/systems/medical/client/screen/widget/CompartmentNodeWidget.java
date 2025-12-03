@@ -16,12 +16,11 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ColorRGBA;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,112 +66,98 @@ public class CompartmentNodeWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
+    protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         VisualData visualData = compartment.getVisualData();
+        if (visualData.isHidden) return;
 
-        if (!visualData.isHidden) {
-//            ResourceLocation frameSprite = getFrameSpriteForHealth();
-//            guiGraphics.blitSprite(frameSprite, this.getX() + 3, this.getY(), 26, 26);
-
-            float scaleFactor = visualData.scale;
-
-            guiGraphics.pose().pushMatrix();
-
-//            guiGraphics.pose().translate(this.getX(), this.getY(), visualData.getZ());
-            guiGraphics.pose().translate(this.getX(), this.getY());
-
-            guiGraphics.pose().scale(scaleFactor, scaleFactor);
-
-            if (visualData.icon != null) {
-                int width = visualData.width;
-                int height = visualData.height;
-                float pulse = (float) (Math.sin(System.currentTimeMillis() / 500.0) * 0.4f + 0.95f);
-
-                guiGraphics.blit(RenderPipelines.GUI_TEXTURED, visualData.icon, 0, 0, 0, 0, width, height, width, height);
-            } else {
-                guiGraphics.renderFakeItem(new ItemStack(compartment.getItem()), 0, 0);
-            }
-
-            guiGraphics.pose().popMatrix();
-        }
-    }
-
-    public void drawHover(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float fade, int screenWidth, int screenHeight) {
         guiGraphics.pose().pushMatrix();
 
-//        guiGraphics.pose().translate(
-//                0,
-//                0,
-//                100
-//        );
-        guiGraphics.pose().translate(
-                0,
-                0
-        );
+        guiGraphics.pose().translate(getX(), getY());
+        guiGraphics.pose().scale(visualData.scale, visualData.scale);
 
-        boolean isRightSide = screenWidth + mouseX + this.getX() + 200 >= healthScreen.width;
+        if (visualData.icon != null) {
+            int width = visualData.width;
+            int height = visualData.height;
+            float pulse = (float) (Math.sin(System.currentTimeMillis() / 500.0) * 0.4f + 0.95f);
+            int color = isHovered ? ((int) (pulse * 255) << 24) | 0x00FFFFFF : 0xFFFFFFFF;
 
-        List<Component> tooltipLines = new ArrayList<>();
-        tooltipLines.add(Component.literal(compartment.getHealth() + "/" + compartment.getMaxHealth()));
-        tooltipLines.add(Component.literal("\uE002 Inspect").withStyle(style -> style.withFont(
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "default"))));
-
-        int tooltipWidth = 0;
-        for (Component line : tooltipLines) {
-            int lineWidth = Minecraft.getInstance().font.width(line);
-            if (lineWidth > tooltipWidth) {
-                tooltipWidth = lineWidth;
-            }
-        }
-        tooltipWidth += 40;
-
-        int nameLength = Minecraft.getInstance().font.width(compartment.getName());
-
-        if (nameLength + 40 > tooltipWidth) {
-            tooltipWidth = nameLength + 40;
-        }
-
-        int tooltipX = isRightSide ? this.getX() - tooltipWidth + 36 : this.getX() + 29;
-        int tooltipY = this.getY() + 5;
-
-        int y1 = this.getY();
-        int x1;
-        if (isRightSide) {
-            x1 = this.getX() - tooltipWidth + 32;
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, visualData.icon, 0, 0, 0, 0, width, height, width, height, color);
         } else {
-            x1 = this.getX();
-        }
-
-        int boxHeight = 32 + tooltipLines.size() * 9;
-        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, TITLE_BOX_SPRITE, x1, tooltipY, tooltipWidth, boxHeight);
-
-        float healthRatio = compartment.getHealth() / compartment.getMaxHealth();
-        int progressWidth = Mth.floor(healthRatio * tooltipWidth);
-        int remainingWidth = tooltipWidth - progressWidth;
-
-        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, BOX_OBTAINED, 200, 26, 0, 0, x1, y1, progressWidth - 2, 26);
-        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, BOX_UNOBTAINED, 200, 26, 200 - remainingWidth - 2, 0, x1 + progressWidth - 2, y1, remainingWidth + 2, 26);
-        if (healthRatio == 1) {
-            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, BOX_OBTAINED, 200, 26, 198, 0, x1 + progressWidth - 2, y1, 2, 26);
-        }
-
-        ResourceLocation frameSprite = getFrameSpriteForHealth();
-        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, frameSprite, this.getX() + 3, this.getY(), 26, 26);
-
-        guiGraphics.drawString(Minecraft.getInstance().font, compartment.getName(), tooltipX + 5, tooltipY + 3, -1);
-        for (int i = 0; i < tooltipLines.size(); i++) {
-            guiGraphics.drawString(Minecraft.getInstance().font, tooltipLines.get(i), tooltipX + 5, tooltipY + 20 + (i * 12), -1);
-        }
-
-        if (compartment.getVisualData().icon != null && compartment.getItem() != null) {
-            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, compartment.getVisualData().icon, this.getX() + 8, this.getY() + 5, 16, 16);
-        } else {
-            guiGraphics.renderFakeItem(new ItemStack(compartment.getItem()), this.getX() + 8, this.getY() + 5);
+            guiGraphics.renderFakeItem(new ItemStack(compartment.getItem()), 0, 0);
         }
 
         guiGraphics.pose().popMatrix();
     }
 
+    public void drawHover(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float fade, int screenWidth, int screenHeight) {
+        boolean isRightSide = screenWidth + mouseX + getX() + 200 >= healthScreen.width;
+
+        // Calculate tooltip dimensions
+        List<Component> tooltipLines = buildTooltipLines();
+        int tooltipWidth = calculateTooltipWidth(tooltipLines);
+
+        // Calculate positions
+        int tooltipX = isRightSide ? getX() - tooltipWidth + 36 : getX() + 29;
+        int tooltipY = getY() + 5;
+        int boxX = isRightSide ? getX() - tooltipWidth + 32 : getX();
+
+        // Render background box
+        int boxHeight = 32 + tooltipLines.size() * 9;
+        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, TITLE_BOX_SPRITE, boxX, tooltipY, tooltipWidth, boxHeight);
+
+        // Render health progress bar
+        renderHealthBar(guiGraphics, boxX, getY(), tooltipWidth);
+
+        // Render text
+        renderTooltipText(guiGraphics, tooltipX, tooltipY, tooltipLines);
+
+        // Render icon
+        if (compartment.getItem() != Items.AIR) {
+            ResourceLocation frameSprite = getFrameSpriteForHealth();
+            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, frameSprite, getX() + 3, getY(), 26, 26);
+            guiGraphics.renderFakeItem(new ItemStack(compartment.getItem()), getX() + 8, getY() + 5);
+        }
+    }
+
+    private @NotNull List<Component> buildTooltipLines() {
+        List<Component> lines = new ArrayList<>();
+        lines.add(Component.literal(compartment.getHealth() + "/" + compartment.getMaxHealth()));
+        lines.add(Component.literal("\uE002 Inspect")
+                .withStyle(style -> style.withFont(Bittermelon.resource("default"))));
+        return lines;
+    }
+
+    private int calculateTooltipWidth(@NotNull List<Component> tooltipLines) {
+        int tooltipWidth = 0;
+        for (Component line : tooltipLines) {
+            int lineWidth = Minecraft.getInstance().font.width(line);
+            tooltipWidth = Math.max(tooltipWidth, lineWidth);
+        }
+
+        int nameLength = Minecraft.getInstance().font.width(compartment.getName());
+        return Math.max(tooltipWidth, nameLength) + 40;
+    }
+
+    private void renderHealthBar(@NotNull GuiGraphics guiGraphics, int x, int y, int width) {
+        float healthRatio = compartment.getHealth() / compartment.getMaxHealth();
+        int progressWidth = Mth.floor(healthRatio * width);
+        int remainingWidth = width - progressWidth;
+
+        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, BOX_OBTAINED, 200, 26, 0, 0, x, y, progressWidth - 2, 26);
+        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, BOX_UNOBTAINED, 200, 26, 200 - remainingWidth - 2, 0, x + progressWidth - 2, y, remainingWidth + 2, 26);
+
+        if (healthRatio == 1) {
+            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, BOX_OBTAINED, 200, 26, 198, 0, x + progressWidth - 2, y, 2, 26);
+        }
+    }
+
+    private void renderTooltipText(@NotNull GuiGraphics guiGraphics, int x, int y, @NotNull List<Component> tooltipLines) {
+        guiGraphics.drawString(Minecraft.getInstance().font, compartment.getName(), x + 5, y + 3, -1);
+
+        for (int i = 0; i < tooltipLines.size(); i++) {
+            guiGraphics.drawString(Minecraft.getInstance().font, tooltipLines.get(i), x + 5, y + 20 + (i * 12), -1);
+        }
+    }
 
     private ResourceLocation getFrameSpriteForHealth() {
         float healthPercent = compartment.getHealth() / compartment.getMaxHealth();
@@ -182,15 +167,6 @@ public class CompartmentNodeWidget extends AbstractWidget {
             return FRAME_GOAL;
         } else {
             return FRAME_CHALLENGE;
-        }
-    }
-
-    private ResourceLocation getBoxSpriteForHealth() {
-        float healthPercent = compartment.getHealth() / compartment.getMaxHealth();
-        if (healthPercent > 0.5f) {
-            return BOX_OBTAINED;
-        } else {
-            return BOX_UNOBTAINED;
         }
     }
 
