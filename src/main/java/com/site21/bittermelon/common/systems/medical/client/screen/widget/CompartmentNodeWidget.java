@@ -16,6 +16,7 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -79,7 +80,7 @@ public class CompartmentNodeWidget extends AbstractWidget {
             int width = visualData.width;
             int height = visualData.height;
             float pulse = (float) (Math.sin(System.currentTimeMillis() / 500.0) * 0.4f + 0.95f);
-            int color = isHovered ? ((int) (pulse * 255) << 24) | 0x00FFFFFF : 0xFFFFFFFF;
+            int color = isHoveredOrFocused() ? ARGB.color(pulse, 0x00FFFFFF) : 0xFFFFFFFF;
 
             guiGraphics.blit(RenderPipelines.GUI_TEXTURED, visualData.icon, 0, 0, 0, 0, width, height, width, height, color);
         } else {
@@ -121,7 +122,7 @@ public class CompartmentNodeWidget extends AbstractWidget {
 
     private @NotNull List<Component> buildTooltipLines() {
         List<Component> lines = new ArrayList<>();
-        lines.add(Component.literal(compartment.getHealth() + "/" + compartment.getMaxHealth()));
+        lines.add(Component.literal(Math.round(compartment.getHealth()) + "/" + Math.round(compartment.getMaxHealth())));
         lines.add(Component.literal("\uE002 Inspect")
                 .withStyle(style -> style.withFont(Bittermelon.resource("default"))));
         return lines;
@@ -195,8 +196,8 @@ public class CompartmentNodeWidget extends AbstractWidget {
         VisualData visualData = compartment.getVisualData();
         float scaleFactor = visualData.scale;
 
-        int centerX = this.getX() + 8;
-        int centerY = this.getY() + 8;
+        int centerX = getX() + 8;
+        int centerY = getY() + 8;
 
         double relX = mouseX - centerX;
         double relY = mouseY - centerY;
@@ -207,11 +208,8 @@ public class CompartmentNodeWidget extends AbstractWidget {
             return distance <= hitboxRadius;
         }
 
-        double unscaledRelX = relX / scaleFactor;
-        double unscaledRelY = relY / scaleFactor;
-
-        int texX = (int) Math.round(unscaledRelX);
-        int texY = (int) Math.round(unscaledRelY);
+        int texX = (int) Math.round(relX / scaleFactor);
+        int texY = (int) Math.round(relY / scaleFactor);
 
         if (texX >= 0 && texX < visualData.width && texY >= 0 && texY < visualData.height) {
             return getAlphaAtPixel(compartment.getVisualData().icon, texX, texY) >= 1;
@@ -236,11 +234,11 @@ public class CompartmentNodeWidget extends AbstractWidget {
 
         if (x >= 0 && x < cachedImage.getWidth() && y >= 0 && y < cachedImage.getHeight()) {
             int rgba = cachedImage.getPixel(x, y);
-            int alpha = (rgba >> 24) & 0xFF;
-            return alpha / 255.0f;
+            // System.out.println("Alpha at (" + x + ", " + y + "): " + ARGB.alphaFloat(rgba) + "from compartment " + compartment.getName());
+            return ARGB.alphaFloat(rgba);
         }
 
-        return 0.5f;
+        return 0;
     }
 
     public void cleanup() {

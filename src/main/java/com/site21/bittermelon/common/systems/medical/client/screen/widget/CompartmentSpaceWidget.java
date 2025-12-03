@@ -1,5 +1,8 @@
 package com.site21.bittermelon.common.systems.medical.client.screen.widget;
 
+import com.mojang.blaze3d.opengl.GlConst;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.medical.client.screen.HealthScreenV2;
 import com.site21.bittermelon.common.systems.medical.client.screen.HeldItemData;
@@ -8,6 +11,7 @@ import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInst
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentTag;
 import com.site21.bittermelon.common.systems.medical.compartment.LayerData;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
+import com.site21.bittermelon.init.custom.Compartments;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -16,8 +20,14 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import net.neoforged.neoforge.client.stencil.StencilFunction;
+import net.neoforged.neoforge.client.stencil.StencilOperation;
+import net.neoforged.neoforge.client.stencil.StencilPerFaceTest;
+import net.neoforged.neoforge.client.stencil.StencilTest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
@@ -26,6 +36,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import static net.minecraft.client.renderer.RenderPipelines.GUI_SNIPPET;
+import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED_SNIPPET;
 
 public class CompartmentSpaceWidget extends MovableResizableWidget {
     public static final ResourceLocation WINDOW_TEXTURE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/healthscreen/surgery_window.png");
@@ -229,26 +242,24 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
 
     @Override
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-//        Minecraft.getInstance().getMainRenderTarget().enableStencil();
-
         int contentX = x + 8;
         int contentY = y + 15 - 11;
         int contentWidth = width - 17;
         int contentHeight = height - 18;
 
-        List<VisualData> revealingCompartments = findRevealingCompartments();
+        List<CompartmentInstance> revealingCompartments = findRevealingCompartments();
 
         drawContents(guiGraphics, contentX, contentY, contentWidth, contentHeight, mouseX, mouseY, partialTick, revealingCompartments);
     }
 
-    private @NotNull List<VisualData> findRevealingCompartments() {
-        List<VisualData> revealingCompartments = new ArrayList<>();
+    private @NotNull List<CompartmentInstance> findRevealingCompartments() {
+        List<CompartmentInstance> revealingCompartments = new ArrayList<>();
 
         if (layerIndex > 0) {
             for (UUID uuid : compartment.getLayer(layerIndex - 1)) {
                 CompartmentInstance instance = healthScreen.getMedicalStats().getCompartment(uuid);
-                if (instance.hasTag(CompartmentTag.CUT)) {
-                    revealingCompartments.add(instance.getVisualData());
+                if (instance.hasTag(CompartmentTag.CUT) || instance.getCompartment().equals(Compartments.LIVER.get()) || instance.getCompartment().equals(Compartments.COLON.get())) {
+                    revealingCompartments.add(instance);
                 }
             }
         }
@@ -257,13 +268,19 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     }
 
     private void drawContents(@NotNull GuiGraphics guiGraphics, int contentX, int contentY, int contentWidth,
-                              int contentHeight, int mouseX, int mouseY, float partialTick, List<VisualData> revealingCompartments) {
+                              int contentHeight, int mouseX, int mouseY, float partialTick, List<CompartmentInstance> revealingCompartments) {
+        CompartmentNodeWidget hoveredWidget = null;
+
         if (isOpen) {
+            hoveredWidget = getHoveredWidget(revealingCompartments, mouseX, mouseY, contentX, contentY);
+
+            // Render only within content area
             guiGraphics.enableScissor(contentX, contentY, contentX + contentWidth, contentY + contentHeight);
-            drawTiledBackground(guiGraphics, contentX, contentY, contentWidth, contentHeight);
-            renderWidgets(guiGraphics, contentX, contentY, mouseX, mouseY, partialTick, revealingCompartments);
-            drawHoveredWidget(guiGraphics, contentX, contentY, contentWidth, contentHeight, mouseX, mouseY, partialTick, revealingCompartments);
-//            renderFog(guiGraphics, contentX, contentY, contentWidth, contentHeight, revealingCompartments);
+
+            drawTiledBackground(guiGraphics, contentX, contentY, contentWidth, contentHeight, RenderPipelines.GUI_TEXTURED, backgroundTexture);
+            renderWidgets(guiGraphics, mouseX, mouseY, partialTick, hoveredWidget);
+            drawHoveredWidget(guiGraphics, mouseX, mouseY, partialTick, hoveredWidget);
+            renderFog(guiGraphics, contentX, contentY, contentWidth, contentHeight, revealingCompartments);
 
             renderLayerIndicators(guiGraphics);
             renderButtons(guiGraphics, mouseX, mouseY, partialTick);
@@ -284,7 +301,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
                 0xFFFFFFFF
         );
 
-        CompartmentNodeWidget hoveredWidget = getHoveredWidget(mouseX, mouseY);
+        // Draw hovered widget tooltip
         if (hoveredWidget != null && hoveredWidget.visible && isOpen) {
             hoveredWidget.drawHover(guiGraphics, mouseX, mouseY, partialTick, width, height);
         }
@@ -296,16 +313,13 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         recenterButton.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 
-    private void renderWidgets(GuiGraphics guiGraphics, int contentX, int contentY, int mouseX, int mouseY,
-                               float partialTick, List<VisualData> revealingCompartments) {
+    private void renderWidgets(GuiGraphics guiGraphics, int mouseX, int mouseY,
+                               float partialTick, CompartmentNodeWidget hoveredWidget) {
         sortWidgets();
 
         for (CompartmentNodeWidget widget : sortedWidgets) {
-            CompartmentNodeWidget hoveredWidget = getHoveredWidget(mouseX, mouseY);
-            if (hoveredWidget != null
-                    && hoveredWidget.equals(widget)
-                    && isWithinRevealedArea(revealingCompartments, mouseX, mouseY, contentX, contentY))
-                continue;
+            // Skip hovered widget to render it on top later
+            if (hoveredWidget != null && hoveredWidget.equals(widget)) continue;
             widget.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
         }
     }
@@ -318,20 +332,16 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         }
     }
 
-    private void drawHoveredWidget(@NotNull GuiGraphics guiGraphics, int contentX, int contentY, int contentWidth,
-                                   int contentHeight, int mouseX, int mouseY, float partialTick, List<VisualData> revealingCompartments) {
-        if (!isOpen || !isMouseInContentArea(mouseX, mouseY, contentX, contentY, contentWidth, contentHeight)) return;
-
-        boolean isMouseOverButton = false;
+    private void drawHoveredWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CompartmentNodeWidget hoveredWidget) {
         for (Button button : buttons) {
             if (button.isMouseOver(mouseX, mouseY)) {
-                isMouseOverButton = true;
+                return;
             }
         }
 
-        CompartmentNodeWidget hoveredWidget = getHoveredWidget(mouseX, mouseY);
-        if (hoveredWidget == null || isMouseOverButton ||
-                !isWithinRevealedArea(revealingCompartments, mouseX, mouseY, contentX, contentY)) return;
+        if (hoveredWidget == null || !hoveredWidget.visible) {
+            return;
+        }
 
         hoveredWidget.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
     }
@@ -356,7 +366,8 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         }
     }
 
-    private void drawTiledBackground(@NotNull GuiGraphics guiGraphics, int contentX, int contentY, int contentWidth, int contentHeight) {
+    private void drawTiledBackground(@NotNull GuiGraphics guiGraphics, int contentX, int contentY, int contentWidth,
+                                     int contentHeight, RenderPipeline pipeline, ResourceLocation texture) {
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(contentX, contentY);
 
@@ -378,8 +389,8 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
 
                 if (x + TILE_SIZE >= 0 && x <= contentWidth && y + TILE_SIZE >= 0 && y <= contentHeight) {
                     guiGraphics.blit(
-                            RenderPipelines.GUI_TEXTURED,
-                            backgroundTexture,
+                            pipeline,
+                            texture,
                             x, y,
                             0, 0,
                             TILE_SIZE, TILE_SIZE,
@@ -403,43 +414,62 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, x + width / 2, y + height - 25, 252 - width / 2, 130 - 5, width / 2, 15, 256, 256);
     }
 
-    private void renderFog(@NotNull GuiGraphics guiGraphics, int contentX, int contentY, int contentWidth, int contentHeight, @NotNull List<VisualData> revealingCompartments) {
-//        final int fogColor = 0xF2000000;
-//        RenderSystem.enableBlend();
-//        RenderSystem.defaultBlendFunc();
-//
-//        if (revealingCompartments.isEmpty()) {
-//            guiGraphics.fill(contentX, contentY, contentX + contentWidth, contentY + contentHeight, fogColor);
-//            return;
-//        }
-//
-//        GL11.glEnable(GL11.GL_STENCIL_TEST);
-//        RenderSystem.stencilMask(0xFF);
-//        RenderSystem.clearStencil(0);
-//        GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
-//
-//        RenderSystem.stencilFunc(GL11.GL_ALWAYS, 1, 0xFF);
-//        RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
-//        RenderSystem.colorMask(false, false, false, false);
-//
-//        for (VisualData visualData : revealingCompartments) {
-//            float scaleFactor = visualData.getScale();
-//            int minRevealX = (int) (contentX + visualData.getX() - scrollX);
-//            int minRevealY = (int) (contentY + visualData.getY() - scrollY);
-//            int revealWidth = (int) (visualData.getWidth() * scaleFactor);
-//            int revealHeight = (int) (visualData.getHeight() * scaleFactor);
-//
-//            guiGraphics.fill(minRevealX, minRevealY, minRevealX + revealWidth, minRevealY + revealHeight, 0xFFFFFFFF);
-//        }
-//
-//        RenderSystem.stencilFunc(GL11.GL_NOTEQUAL, 1, 0xFF);
-//        RenderSystem.stencilMask(0x00);
-//        RenderSystem.colorMask(true, true, true, true);
-//
-//        guiGraphics.fill(contentX, contentY, contentX + contentWidth, contentY + contentHeight, fogColor);
-//
-//        GL11.glDisable(GL11.GL_STENCIL_TEST);
-//        RenderSystem.disableBlend();
+    private void renderFog(@NotNull GuiGraphics guiGraphics, int contentX, int contentY, int contentWidth, int contentHeight, @NotNull List<CompartmentInstance> revealingCompartments) {
+        final int fogColor = 0xF2000000;
+
+        if (revealingCompartments.isEmpty()) {
+            guiGraphics.fill(contentX, contentY, contentX + contentWidth, contentY + contentHeight, fogColor);
+            return;
+        }
+
+        StencilTest writeTest = new StencilTest(
+                new StencilPerFaceTest(
+                        StencilOperation.KEEP,
+                        StencilOperation.KEEP,
+                        StencilOperation.REPLACE,
+                        StencilFunction.ALWAYS
+                ),
+                StencilTest.DEFAULT_READ_MASK,
+                StencilTest.DEFAULT_WRITE_MASK,
+                1
+        );
+
+        RenderPipeline pipeline = RenderPipeline.builder(GUI_SNIPPET)
+                .withLocation(Bittermelon.resource("pipeline/stencil_test"))
+                .withStencilTest(writeTest)
+                .build();
+
+        for (CompartmentInstance instance : revealingCompartments) {
+            VisualData visualData = instance.getVisualData();
+            float scaleFactor = visualData.getScale();
+            int minRevealX = (int) (contentX + visualData.getX() - scrollX);
+            int minRevealY = (int) (contentY + visualData.getY() - scrollY);
+            int revealWidth = (int) (visualData.getWidth() * scaleFactor);
+            int revealHeight = (int) (visualData.getHeight() * scaleFactor);
+
+            guiGraphics.fill(pipeline, minRevealX, minRevealY, minRevealX + revealWidth, minRevealY + revealHeight, 0x01FFFFFF);
+        }
+
+        StencilTest renderFogTest = new StencilTest(
+                new StencilPerFaceTest(
+                        StencilOperation.REPLACE,
+                        StencilOperation.REPLACE,
+                        StencilOperation.REPLACE,
+                        StencilFunction.EQUAL
+                ),
+                StencilTest.DEFAULT_READ_MASK,
+                StencilTest.DEFAULT_WRITE_MASK,
+                0
+        );
+
+        RenderPipeline fogPipeline = RenderPipeline.builder(GUI_SNIPPET)
+                .withLocation(Bittermelon.resource("pipeline/stencil_fog"))
+                .withStencilTest(renderFogTest)
+                .build();
+
+        guiGraphics.fill(fogPipeline, contentX, contentY, contentX + contentWidth, contentY + contentHeight, fogColor);
+//        ResourceLocation texture = layerIndex > 0 ? layers[layerIndex - 1].backgroundTexture() : layers[0].backgroundTexture();
+//        drawTiledBackground(guiGraphics, contentX, contentY, contentWidth, contentHeight, fogPipeline, texture);
     }
 
     private boolean isLayerInjured(int layerIndex) {
@@ -606,9 +636,9 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         return super.isInResizeArea(mouseX, mouseY);
     }
 
-    private @Nullable CompartmentNodeWidget getHoveredWidget(int mouseX, int mouseY) {
-        for (CompartmentNodeWidget widget : compartmentWidgets.reversed()) {
-            if (widget.isMouseOver(mouseX, mouseY)) {
+    private @Nullable CompartmentNodeWidget getHoveredWidget(List<CompartmentInstance> revealingCompartments, int mouseX, int mouseY, int contentX, int contentY) {
+        for (CompartmentNodeWidget widget : compartmentWidgets) {
+            if (widget.isMouseOver(mouseX, mouseY) && isWithinRevealedArea(revealingCompartments, mouseX, mouseY, contentX, contentY)) {
                 return widget;
             }
         }
@@ -649,13 +679,14 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         updateButtons();
     }
 
-    private boolean isWithinRevealedArea(@NotNull List<VisualData> revealingCompartments, double mouseX, double mouseY,
+    private boolean isWithinRevealedArea(@NotNull List<CompartmentInstance> revealingCompartments, double mouseX, double mouseY,
                                          int contentX, int contentY) {
         if (revealingCompartments.isEmpty()) {
             return true;
         }
 
-        for (VisualData visualData : revealingCompartments) {
+        for (CompartmentInstance instance : revealingCompartments) {
+            VisualData visualData = instance.getVisualData();
             int revealX = (int) (contentX + visualData.getX() - scrollX);
             int revealY = (int) (contentY + visualData.getY() - scrollY);
             int revealWidth = (int) (visualData.getWidth() * visualData.getScale());

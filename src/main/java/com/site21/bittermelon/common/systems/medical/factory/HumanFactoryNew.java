@@ -4,6 +4,7 @@ import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.medical.blood.BloodType;
 import com.site21.bittermelon.common.systems.medical.compartment.Compartment;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
+import com.site21.bittermelon.common.systems.medical.compartment.CompartmentTag;
 import com.site21.bittermelon.common.systems.medical.medicalstats.AnimalMedicalStats;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -41,6 +42,9 @@ public class HumanFactoryNew implements AnatomyFactory {
     private void buildAbdomen() {
         CompartmentInstance abdomen = addCompartment(ABDOMEN, wholeBody, 0);
         abdomen.getVisualData().x(50).y(30);
+        CompartmentInstance cut = addCompartment(CUT, abdomen, 3);
+        cut.getVisualData().x(20).y(0).z(1).width(20).height(20).scale(5).isHidden(false);
+        cut.addTag(CompartmentTag.CUT);
         addCompartment(STOMACH, abdomen, 4);
         addCompartment(SMALL_INTESTINE, abdomen, 4);
         addCompartment(COLON, abdomen, 4);

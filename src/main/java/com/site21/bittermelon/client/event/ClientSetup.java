@@ -217,4 +217,8 @@ public class ClientSetup {
         );
     }
 
+    @SubscribeEvent
+    public static void onConfigureRenderTarget(@NotNull ConfigureMainRenderTargetEvent event) {
+        event.enableStencil();
+    }
 }
