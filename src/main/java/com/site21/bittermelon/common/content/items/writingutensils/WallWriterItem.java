@@ -4,8 +4,6 @@ import com.site21.bittermelon.common.content.blocks.wallwriting.WallWritingBlock
 import com.site21.bittermelon.common.content.blocks.wallwriting.networking.OpenWallWritingScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -42,7 +40,7 @@ public abstract class WallWriterItem extends BlockItem implements WallWriter {
 
         if (level.getBlockEntity(pos) instanceof WallWritingBlockEntity wallWriting) {
             if (tryApplyToWall(level, wallWriting, player, context.getItemInHand())) {
-                level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
+                level.sendBlockUpdated(pos, state, state, UPDATE_CLIENTS);
                 return InteractionResult.SUCCESS;
             }
         }
@@ -57,9 +55,11 @@ public abstract class WallWriterItem extends BlockItem implements WallWriter {
         if (!level.isClientSide && !shouldUpdate && player != null) {
             if (level.getBlockEntity(pos) instanceof WallWritingBlockEntity wallWriting) {
                 if (player instanceof ServerPlayer serverPlayer) {
-                    PacketDistributor.sendToPlayer(serverPlayer, new OpenWallWritingScreen(wallWriting.getBlockPos()));
                     formatText(wallWriting, stack);
-                    level.sendBlockUpdated(pos, state, state, UPDATE_CLIENTS);
+                    PacketDistributor.sendToPlayer(serverPlayer, new OpenWallWritingScreen(wallWriting.getBlockPos(),
+                            wallWriting.getText().getColor().getId(),
+                            wallWriting.getText().hasGlowingText()
+                            ));
                 }
             }
         }
@@ -72,13 +72,15 @@ public abstract class WallWriterItem extends BlockItem implements WallWriter {
     // Apply the text to the wall writing block entity and open the writing screen
     @Override
     public boolean tryApplyToWall(@NotNull Level level, @NotNull WallWritingBlockEntity wallWriting, @NotNull Player player, ItemStack stack) {
-        if (player.isShiftKeyDown() && player instanceof ServerPlayer serverPlayer) {
-            PacketDistributor.sendToPlayer(serverPlayer, new OpenWallWritingScreen(wallWriting.getBlockPos()));
-        } else {
-            level.playSound(null, wallWriting.getBlockPos(), SoundEvents.VILLAGER_WORK_CARTOGRAPHER, SoundSource.BLOCKS, 1.0f, 1.0f);
+        if (player.isShiftKeyDown()) {
+            formatText(wallWriting, stack);
+            if (player instanceof ServerPlayer serverPlayer) {
+                PacketDistributor.sendToPlayer(serverPlayer, new OpenWallWritingScreen(wallWriting.getBlockPos(),
+                        wallWriting.getText().getColor().getId(),
+                        wallWriting.getText().hasGlowingText()
+                        ));
+            }
         }
-
-        formatText(wallWriting, stack);
 
         return true;
     }
