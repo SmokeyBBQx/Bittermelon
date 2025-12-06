@@ -404,6 +404,8 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     }
 
     private void drawWindowFrame(@NotNull GuiGraphics guiGraphics) {
+        // TODO: Ugly code but works
+
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, x, y, 0, 0, width / 2, 23, 256, 256);
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, x + width / 2, y, 252 - width / 2, 0, width / 2, 23, 256, 256);
 
@@ -415,13 +417,16 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     }
 
     private void renderFog(@NotNull GuiGraphics guiGraphics, int contentX, int contentY, int contentWidth, int contentHeight, @NotNull List<CompartmentInstance> revealingCompartments) {
-        final int fogColor = 0xF2000000;
+        if (layerIndex == 0) return;
+
+        int fogColor = 0xF2000000;
 
         if (revealingCompartments.isEmpty()) {
             guiGraphics.fill(contentX, contentY, contentX + contentWidth, contentY + contentHeight, fogColor);
             return;
         }
 
+        // Configure stencil to write 1s where revealing compartments are drawn
         StencilTest writeTest = new StencilTest(
                 new StencilPerFaceTest(
                         StencilOperation.KEEP,
@@ -439,6 +444,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
                 .withStencilTest(writeTest)
                 .build();
 
+        // Draw revealing compartments to stencil buffer
         for (CompartmentInstance instance : revealingCompartments) {
             VisualData visualData = instance.getVisualData();
             float scaleFactor = visualData.getScale();
@@ -450,6 +456,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
             guiGraphics.fill(pipeline, minRevealX, minRevealY, minRevealX + revealWidth, minRevealY + revealHeight, 0x01FFFFFF);
         }
 
+        // Configure stencil to only render where stencil value is 0 (i.e., not revealing compartments)
         StencilTest renderFogTest = new StencilTest(
                 new StencilPerFaceTest(
                         StencilOperation.REPLACE,
@@ -467,7 +474,10 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
                 .withStencilTest(renderFogTest)
                 .build();
 
+        // Render fog where stencil is 0
         guiGraphics.fill(fogPipeline, contentX, contentY, contentX + contentWidth, contentY + contentHeight, fogColor);
+
+        // Alternatively, using previous layer's tiled background for fog
 //        ResourceLocation texture = layerIndex > 0 ? layers[layerIndex - 1].backgroundTexture() : layers[0].backgroundTexture();
 //        drawTiledBackground(guiGraphics, contentX, contentY, contentWidth, contentHeight, fogPipeline, texture);
     }
@@ -551,12 +561,14 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        // Check buttons first
         for (Button uiButton : buttons) {
             if (uiButton.isMouseOver(mouseX, mouseY)) {
                 return uiButton.mouseClicked(mouseX, mouseY, button);
             }
         }
 
+        // Check header for dragging
         if (mouseY >= getY() && mouseY < getY() + HEADER_HEIGHT &&
                 mouseX >= getX() && mouseX < getX() + width) {
             isDragging = true;
@@ -565,10 +577,12 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
             return true;
         }
 
+        // Check resize area
         if (super.mouseClicked(mouseX, mouseY, button)) {
             return true;
         }
 
+        // Check content area
         if (isOpen &&
                 mouseX >= getX() && mouseX < getX() + width &&
                 mouseY >= getY() + HEADER_HEIGHT && mouseY < getY() + height) {
@@ -579,12 +593,19 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     }
 
     protected boolean onContentAreaClicked(double mouseX, double mouseY, int button) {
+        // TODO: Replace with constants
+        int contentX = x + 8;
+        int contentY = y + 15 - 11;
+        List<CompartmentInstance> revealingCompartments = findRevealingCompartments();
+
+        // Check compartment widgets
         for (CompartmentNodeWidget widget : compartmentWidgets) {
-            if (widget.isMouseOver(mouseX, mouseY)) {
+            if (widget.isMouseOver(mouseX, mouseY) && isWithinRevealedArea(revealingCompartments, mouseX, mouseY, contentX, contentY)) {
                 return widget.mouseClicked(mouseX, mouseY, button, this);
             }
         }
 
+        // Start dragging content
         if (button == 0) {
             isContentDragging = true;
         }
