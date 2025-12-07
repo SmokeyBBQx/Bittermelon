@@ -2,6 +2,7 @@ package com.site21.bittermelon.common.content.blocks.wallwriting.networking;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.blocks.wallwriting.WallWritingBlockEntity;
+import com.site21.bittermelon.common.content.items.writingutensils.WallWriterItem;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -11,6 +12,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
@@ -50,13 +52,19 @@ public record UpdateWallWriting(BlockPos pos, String[] text, boolean is_final) i
                         valid = true;
                         break;
                     }
-
-
-
                 }
                 if (!valid) {
                     wallWriting.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), UPDATE_CLIENTS);
                 } else {
+                    // consume item if out of durability on window close
+                    ItemStack mainHandItem = ctx.player().getMainHandItem();
+                    ItemStack offHandItem = ctx.player().getOffhandItem();
+                    if (mainHandItem.getItem() instanceof WallWriterItem & mainHandItem.getDamageValue() == mainHandItem.getMaxDamage()) {
+                        mainHandItem.consume(1, ctx.player());
+                    } else if (offHandItem.getItem() instanceof WallWriterItem & offHandItem.getDamageValue() == offHandItem.getMaxDamage()) {
+                        offHandItem.consume(1, ctx.player());
+                    }
+
                     wallWriting.getLevel().playSound(null, wallWriting.getBlockPos(), SoundEvents.VILLAGER_WORK_CARTOGRAPHER, SoundSource.BLOCKS, 1.0f, 1.0f);
                 }
             }
