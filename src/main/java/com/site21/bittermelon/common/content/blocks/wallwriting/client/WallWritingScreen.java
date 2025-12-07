@@ -172,6 +172,7 @@ public class WallWritingScreen extends Screen {
         messages[this.line] = message;
         text = text.setMessage(line, Component.literal(message));
         wallWriting.setText(text);
+        ClientPacketDistributor.sendToServer(new UpdateWallWriting(wallWriting.getBlockPos(), messages, false));
     }
 
     @Override
@@ -197,6 +198,6 @@ public class WallWritingScreen extends Screen {
 
     @Override
     public void removed() {
-        ClientPacketDistributor.sendToServer(new UpdateWallWriting(wallWriting.getBlockPos(), messages));
+        ClientPacketDistributor.sendToServer(new UpdateWallWriting(wallWriting.getBlockPos(), messages, true));
     }
 }

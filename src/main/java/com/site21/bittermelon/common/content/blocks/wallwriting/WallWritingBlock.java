@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -55,6 +56,13 @@ public class WallWritingBlock extends Block implements EntityBlock, SimpleWaterl
     @Override
     public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos blockPos, @NotNull BlockState blockState) {
         return new WallWritingBlockEntity(blockPos, blockState);
+    }
+
+    @Override
+    protected void neighborChanged(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Block neighborBlock, @Nullable Orientation orientation, boolean movedByPiston) {
+        if (!canSurvive(state, level, pos)) {
+            level.removeBlock(pos, false);
+        }
     }
 
     @Override
@@ -116,7 +124,13 @@ public class WallWritingBlock extends Block implements EntityBlock, SimpleWaterl
     @Override
     protected @NotNull InteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
         if (stack.is(SPONGE)) {
-            level.setBlock(pos, Blocks.AIR.defaultBlockState(), UPDATE_ALL);
+            BlockState newState;
+            if (state.getValue(BlockStateProperties.WATERLOGGED)) {
+                newState = Blocks.WATER.defaultBlockState();
+            } else {
+                newState = Blocks.AIR.defaultBlockState();
+            }
+            level.setBlock(pos, newState, UPDATE_ALL);
             level.playSound(null, pos, SoundEvents.SPONGE_HIT, SoundSource.BLOCKS, 1.0f, level.getRandom().nextFloat() * 0.1f + 0.9f);
             return InteractionResult.SUCCESS;
         }

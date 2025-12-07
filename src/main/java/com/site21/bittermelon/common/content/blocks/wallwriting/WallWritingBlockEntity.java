@@ -6,8 +6,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SignText;
@@ -47,7 +45,6 @@ public class WallWritingBlockEntity extends BlockEntity {
             this.text = this.text.setMessage(i, Component.literal(text[i]).withStyle(style));
         }
         setChanged();
-        level.playSound(null, worldPosition, SoundEvents.VILLAGER_WORK_CARTOGRAPHER, SoundSource.BLOCKS, 1.0f, 1.0f);
     }
 
     public boolean playerIsTooFarAwayToEdit(UUID uuid) {

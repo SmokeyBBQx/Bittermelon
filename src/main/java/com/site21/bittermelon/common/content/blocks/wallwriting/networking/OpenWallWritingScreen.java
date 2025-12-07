@@ -5,13 +5,15 @@ import com.site21.bittermelon.client.gui.ScreenHandler;
 import com.site21.bittermelon.common.content.blocks.wallwriting.WallWritingBlockEntity;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.DyeColor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-public record OpenWallWritingScreen(BlockPos pos) implements CustomPacketPayload {
+public record OpenWallWritingScreen(BlockPos pos, int color_id, boolean has_glowing) implements CustomPacketPayload {
     public static final Type<OpenWallWritingScreen> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "open_wall_writing_screen"));
 
     @Override
@@ -20,13 +22,15 @@ public record OpenWallWritingScreen(BlockPos pos) implements CustomPacketPayload
     }
 
     public static final StreamCodec<ByteBuf, OpenWallWritingScreen> STREAM_CODEC = StreamCodec.composite(
-            BlockPos.STREAM_CODEC,
-            OpenWallWritingScreen::pos,
+            BlockPos.STREAM_CODEC, OpenWallWritingScreen::pos,
+            ByteBufCodecs.INT, OpenWallWritingScreen::color_id,
+            ByteBufCodecs.BOOL, OpenWallWritingScreen::has_glowing,
             OpenWallWritingScreen::new
     );
 
     public void handle(@NotNull IPayloadContext ctx) {
         if (ctx.player().level().getBlockEntity(pos) instanceof WallWritingBlockEntity wallWriting) {
+            wallWriting.setText(wallWriting.getText().setColor(DyeColor.byId(color_id)).setHasGlowingText(has_glowing));
             ScreenHandler.displayWallWritingScreen(wallWriting);
         }
     }
