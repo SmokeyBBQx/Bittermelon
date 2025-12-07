@@ -2,16 +2,24 @@ package com.site21.bittermelon.common.content.items.writingutensils;
 
 import com.site21.bittermelon.common.content.blocks.wallwriting.WallWritingBlockEntity;
 import com.site21.bittermelon.common.content.blocks.wallwriting.networking.OpenWallWritingScreen;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.BlockItemStateProperties;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,17 +40,22 @@ public abstract class WallWriterItem extends BlockItem implements WallWriter {
         BlockPos pos = context.getClickedPos();
         Player player = context.getPlayer();
 
-        if (player == null || !player.isShiftKeyDown()) return super.useOn(context);
+        if (player == null) return super.useOn(context);
         BlockState state = level.getBlockState(pos);
 
-        if (!state.is(WALL_WRITING)) return super.useOn(context);
-        if (level.isClientSide) return InteractionResult.CONSUME;
+        if (!state.is(WALL_WRITING)) {
+            return super.useOn(context);
+        }
 
         if (level.getBlockEntity(pos) instanceof WallWritingBlockEntity wallWriting) {
-            if (tryApplyToWall(level, wallWriting, player, context.getItemInHand())) {
-                level.sendBlockUpdated(pos, state, state, UPDATE_CLIENTS);
-                return InteractionResult.SUCCESS;
+            if (!level.isClientSide) {
+                if (tryApplyToWall(level, wallWriting, player, context.getItemInHand())) {
+                    level.sendBlockUpdated(pos, state, state, UPDATE_CLIENTS);
+                }
+            } else if (!player.isShiftKeyDown()) {
+                return InteractionResult.PASS;
             }
+            return InteractionResult.SUCCESS;
         }
 
         return super.useOn(context);
@@ -80,8 +93,87 @@ public abstract class WallWriterItem extends BlockItem implements WallWriter {
                         wallWriting.getText().hasGlowingText()
                         ));
             }
+            return true;
         }
 
         return true;
+    }
+
+    /**
+     *  Same as in BlockItem, except it takes durability instead of consuming the item
+     */
+    @Override
+    public @NotNull InteractionResult place(BlockPlaceContext context) {
+        if (!this.getBlock().isEnabled(context.getLevel().enabledFeatures())) {
+            return InteractionResult.FAIL;
+        } else if (!context.canPlace()) {
+            return InteractionResult.FAIL;
+        } else {
+            BlockPlaceContext blockplacecontext = this.updatePlacementContext(context);
+            if (blockplacecontext == null) {
+                return InteractionResult.FAIL;
+            } else {
+                BlockState blockstate = this.getPlacementState(blockplacecontext);
+                if (blockstate == null) {
+                    return InteractionResult.FAIL;
+                } else if (!this.placeBlock(blockplacecontext, blockstate)) {
+                    return InteractionResult.FAIL;
+                } else {
+                    BlockPos blockpos = blockplacecontext.getClickedPos();
+                    Level level = blockplacecontext.getLevel();
+                    Player player = blockplacecontext.getPlayer();
+                    ItemStack itemstack = blockplacecontext.getItemInHand();
+                    BlockState blockstate1 = level.getBlockState(blockpos);
+                    if (blockstate1.is(blockstate.getBlock())) {
+                        blockstate1 = this.updateBlockStateFromTag(blockpos, level, itemstack, blockstate1);
+                        this.updateCustomBlockEntityTag(blockpos, level, player, itemstack, blockstate1);
+                        updateBlockEntityComponents(level, blockpos, itemstack);
+                        blockstate1.getBlock().setPlacedBy(level, blockpos, blockstate1, player, itemstack);
+                        if (player instanceof ServerPlayer) {
+                            CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer)player, blockpos, itemstack);
+                        }
+                    }
+
+                    SoundType soundtype = blockstate1.getSoundType(level, blockpos, context.getPlayer());
+                    level.playSound(
+                            player,
+                            blockpos,
+                            this.getPlaceSound(blockstate1, level, blockpos, context.getPlayer()),
+                            SoundSource.BLOCKS,
+                            (soundtype.getVolume() + 1.0F) / 2.0F,
+                            soundtype.getPitch() * 0.8F
+                    );
+                    level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(player, blockstate1));
+                    if (!player.hasInfiniteMaterials()) {
+                        context.getItemInHand().setDamageValue(context.getItemInHand().getDamageValue() + 1);
+                    }
+                    return InteractionResult.SUCCESS;
+                }
+            }
+        }
+    }
+
+    // Clone from BlockItem so place override works
+    private BlockState updateBlockStateFromTag(BlockPos pos, Level level, ItemStack stack, BlockState state) {
+        BlockItemStateProperties blockitemstateproperties = stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY);
+        if (blockitemstateproperties.isEmpty()) {
+            return state;
+        } else {
+            BlockState blockstate = blockitemstateproperties.apply(state);
+            if (blockstate != state) {
+                level.setBlock(pos, blockstate, 2);
+            }
+
+            return blockstate;
+        }
+    }
+
+    // Clone from BlockItem so place override works
+    private static void updateBlockEntityComponents(Level level, BlockPos poa, ItemStack stack) {
+        BlockEntity blockentity = level.getBlockEntity(poa);
+        if (blockentity != null) {
+            blockentity.applyComponentsFromItemStack(stack);
+            blockentity.setChanged();
+        }
     }
 }
