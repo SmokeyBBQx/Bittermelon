@@ -42,9 +42,18 @@ public class HumanFactoryNew implements AnatomyFactory {
     private void buildAbdomen() {
         CompartmentInstance abdomen = addCompartment(ABDOMEN, wholeBody, 0);
         abdomen.getVisualData().x(50).y(30);
-        CompartmentInstance cut = addCompartment(CUT, abdomen, 3);
-        cut.getVisualData().x(20).y(0).z(1).width(20).height(20).scale(5).isHidden(false);
+        CompartmentInstance cut = addCompartment(CUT, abdomen, 0);
+        cut.getVisualData().x(20).y(0).z(1).width(20).height(20).scale(2).isHidden(false);
+        CompartmentInstance cut1 = addCompartment(CUT, abdomen, 1);
+        cut1.getVisualData().x(20).y(0).z(1).width(20).height(20).scale(2).isHidden(false);
+        CompartmentInstance cut2 = addCompartment(CUT, abdomen, 2);
+        cut2.getVisualData().x(20).y(0).z(1).width(20).height(20).scale(2).isHidden(false);
+        CompartmentInstance cut3 = addCompartment(CUT, abdomen, 3);
+        cut3.getVisualData().x(20).y(0).z(1).width(20).height(20).scale(2).isHidden(false);
         cut.addTag(CompartmentTag.CUT);
+        cut1.addTag(CompartmentTag.CUT);
+        cut2.addTag(CompartmentTag.CUT);
+        cut3.addTag(CompartmentTag.CUT);
         addCompartment(STOMACH, abdomen, 4);
         addCompartment(SMALL_INTESTINE, abdomen, 4);
         addCompartment(COLON, abdomen, 4);

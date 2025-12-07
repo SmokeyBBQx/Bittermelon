@@ -79,10 +79,13 @@ public class CompartmentNodeWidget extends AbstractWidget {
         if (visualData.icon != null) {
             int width = visualData.width;
             int height = visualData.height;
-            float pulse = (float) (Math.sin(System.currentTimeMillis() / 500.0) * 0.4f + 0.95f);
-            int color = isHoveredOrFocused() ? ARGB.color(pulse, 0x00FFFFFF) : 0xFFFFFFFF;
+            int color = visualData.color;
 
-            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, visualData.icon, 0, 0, 0, 0, width, height, width, height, color);
+            float pulse = (float) (Math.sin(System.currentTimeMillis() / 500.0) * 0.4f + 0.95f);
+            color = isHoveredOrFocused() ? ARGB.color(pulse, color) : color;
+
+            // Apparently the positions need to be offset by 1 for proper collision detection?
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, visualData.icon, 1, 1, 0, 0, width, height, width, height, color);
         } else {
             guiGraphics.renderFakeItem(new ItemStack(compartment.getItem()), 0, 0);
         }

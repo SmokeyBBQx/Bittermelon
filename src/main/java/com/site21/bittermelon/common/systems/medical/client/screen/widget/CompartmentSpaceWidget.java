@@ -277,7 +277,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
             // Render only within content area
             guiGraphics.enableScissor(contentX, contentY, contentX + contentWidth, contentY + contentHeight);
 
-            drawTiledBackground(guiGraphics, contentX, contentY, contentWidth, contentHeight, RenderPipelines.GUI_TEXTURED, backgroundTexture);
+            drawTiledBackground(guiGraphics, contentX, contentY, contentWidth, contentHeight, RenderPipelines.GUI_TEXTURED, backgroundTexture, 0xFFFFFFFF);
             renderWidgets(guiGraphics, mouseX, mouseY, partialTick, hoveredWidget);
             drawHoveredWidget(guiGraphics, mouseX, mouseY, partialTick, hoveredWidget);
             renderFog(guiGraphics, contentX, contentY, contentWidth, contentHeight, revealingCompartments);
@@ -367,7 +367,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     }
 
     private void drawTiledBackground(@NotNull GuiGraphics guiGraphics, int contentX, int contentY, int contentWidth,
-                                     int contentHeight, RenderPipeline pipeline, ResourceLocation texture) {
+                                     int contentHeight, RenderPipeline pipeline, ResourceLocation texture, int color) {
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(contentX, contentY);
 
@@ -394,7 +394,8 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
                             x, y,
                             0, 0,
                             TILE_SIZE, TILE_SIZE,
-                            TILE_SIZE, TILE_SIZE
+                            TILE_SIZE, TILE_SIZE,
+                            color
                     );
                 }
             }
@@ -419,10 +420,11 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     private void renderFog(@NotNull GuiGraphics guiGraphics, int contentX, int contentY, int contentWidth, int contentHeight, @NotNull List<CompartmentInstance> revealingCompartments) {
         if (layerIndex == 0) return;
 
-        int fogColor = 0xF2000000;
+        int lightFogColor = 0xAA000000;
+        int darkFogColor = 0xF2000000;
 
         if (revealingCompartments.isEmpty()) {
-            guiGraphics.fill(contentX, contentY, contentX + contentWidth, contentY + contentHeight, fogColor);
+            guiGraphics.fill(contentX, contentY, contentX + contentWidth, contentY + contentHeight, darkFogColor);
             return;
         }
 
@@ -439,25 +441,38 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
                 1
         );
 
-        RenderPipeline pipeline = RenderPipeline.builder(GUI_SNIPPET)
+        RenderPipeline texturedPipeline = RenderPipeline.builder(GUI_TEXTURED_SNIPPET)
                 .withLocation(Bittermelon.resource("pipeline/stencil_test"))
                 .withStencilTest(writeTest)
                 .build();
 
-        // Draw revealing compartments to stencil buffer
+        // Draw revealing compartments to stencil buffer (value = 1)
         for (CompartmentInstance instance : revealingCompartments) {
             VisualData visualData = instance.getVisualData();
             float scaleFactor = visualData.getScale();
-            int minRevealX = (int) (contentX + visualData.getX() - scrollX);
-            int minRevealY = (int) (contentY + visualData.getY() - scrollY);
-            int revealWidth = (int) (visualData.getWidth() * scaleFactor);
-            int revealHeight = (int) (visualData.getHeight() * scaleFactor);
+            // Why these offsets? I have no idea, but it works
+            int minRevealX = contentX + visualData.getX() - Mth.floor(scrollX) - 3;
+            int minRevealY = contentY + visualData.getY() - Mth.floor(scrollY) + 1;
 
-            guiGraphics.fill(pipeline, minRevealX, minRevealY, minRevealX + revealWidth, minRevealY + revealHeight, 0x01FFFFFF);
+            guiGraphics.pose().pushMatrix();
+            guiGraphics.pose().translate(minRevealX, minRevealY);
+            guiGraphics.pose().scale(scaleFactor, scaleFactor);
+
+            guiGraphics.blit(
+                    texturedPipeline,
+                    visualData.icon,
+                    0, 0,
+                    0, 0,
+                    visualData.getWidth(), visualData.getHeight(),
+                    visualData.getWidth(), visualData.getHeight(),
+                    0x01FFFFFF
+            );
+
+            guiGraphics.pose().popMatrix();
         }
 
-        // Configure stencil to only render where stencil value is 0 (i.e., not revealing compartments)
-        StencilTest renderFogTest = new StencilTest(
+        // Render dark fog where stencil is 0 (everywhere else)
+        StencilTest darkFogTest = new StencilTest(
                 new StencilPerFaceTest(
                         StencilOperation.REPLACE,
                         StencilOperation.REPLACE,
@@ -469,17 +484,71 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
                 0
         );
 
-        RenderPipeline fogPipeline = RenderPipeline.builder(GUI_SNIPPET)
+        RenderPipeline darkFogPipeline = RenderPipeline.builder(GUI_SNIPPET)
                 .withLocation(Bittermelon.resource("pipeline/stencil_fog"))
-                .withStencilTest(renderFogTest)
+                .withStencilTest(darkFogTest)
                 .build();
 
-        // Render fog where stencil is 0
-        guiGraphics.fill(fogPipeline, contentX, contentY, contentX + contentWidth, contentY + contentHeight, fogColor);
+        guiGraphics.fill(darkFogPipeline, contentX, contentY, contentX + contentWidth, contentY + contentHeight, lightFogColor);
+
+        // Configure stencil to write 2s for expanded area (around revealing compartments)
+        StencilTest expandedAreaTest = new StencilTest(
+                new StencilPerFaceTest(
+                        StencilOperation.REPLACE,
+                        StencilOperation.REPLACE,
+                        StencilOperation.REPLACE,
+                        StencilFunction.GREATER
+                ),
+                StencilTest.DEFAULT_READ_MASK,
+                StencilTest.DEFAULT_WRITE_MASK,
+                2
+        );
+
+        RenderPipeline expandedPipeline = RenderPipeline.builder(GUI_SNIPPET)
+                .withLocation(Bittermelon.resource("pipeline/stencil_test_2"))
+                .withStencilTest(expandedAreaTest)
+                .build();
+
+        // Draw expanded areas around revealing compartments
+        for (CompartmentInstance instance : revealingCompartments) {
+            VisualData visualData = instance.getVisualData();
+            float scaleFactor = visualData.getScale();
+            int minRevealX = contentX + visualData.getX() - Mth.floor(scrollX) - 3;
+            int minRevealY = contentY + visualData.getY() - Mth.floor(scrollY) + 1;
+            int revealWidth = (int) (visualData.getWidth() * scaleFactor);
+            int revealHeight = (int) (visualData.getHeight() * scaleFactor);
+
+            guiGraphics.fill(expandedPipeline,
+                    minRevealX,
+                    minRevealY,
+                    minRevealX + revealWidth,
+                    minRevealY + revealHeight,
+                    0x01000000);
+        }
+
+        // Render light fog where stencil is 2 (expanded area)
+        StencilTest lightFogTest = new StencilTest(
+                new StencilPerFaceTest(
+                        StencilOperation.REPLACE,
+                        StencilOperation.REPLACE,
+                        StencilOperation.REPLACE,
+                        StencilFunction.EQUAL
+                ),
+                StencilTest.DEFAULT_READ_MASK,
+                StencilTest.DEFAULT_WRITE_MASK,
+                0
+        );
+
+        RenderPipeline lightFogPipeline = RenderPipeline.builder(GUI_SNIPPET)
+                .withLocation(Bittermelon.resource("pipeline/stencil_fog_2"))
+                .withStencilTest(lightFogTest)
+                .build();
+
+        guiGraphics.fill(lightFogPipeline, contentX, contentY, contentX + contentWidth, contentY + contentHeight, lightFogColor);
 
         // Alternatively, using previous layer's tiled background for fog
 //        ResourceLocation texture = layerIndex > 0 ? layers[layerIndex - 1].backgroundTexture() : layers[0].backgroundTexture();
-//        drawTiledBackground(guiGraphics, contentX, contentY, contentWidth, contentHeight, fogPipeline, texture);
+//        drawTiledBackground(guiGraphics, contentX, contentY, contentWidth, contentHeight, lightFogPipeline, texture, 0x55FFFFFF);
     }
 
     private boolean isLayerInjured(int layerIndex) {

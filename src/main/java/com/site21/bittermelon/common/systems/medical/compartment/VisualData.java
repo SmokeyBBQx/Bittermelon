@@ -15,6 +15,7 @@ import java.util.Optional;
 public class VisualData {
     public static final Codec<VisualData> CODEC;
     public static final StreamCodec<ByteBuf, VisualData> STREAM_CODEC;
+    public static final int DEFAULT_COLOR = 0xFFFFFFFF;
 
     public int x;
     public int y;
@@ -23,9 +24,10 @@ public class VisualData {
     public int width;
     public int height;
     public ResourceLocation icon;
+    public int color;
     public boolean isHidden = false;
 
-    public VisualData(int x, int y, int z, float scale, int width, int height, ResourceLocation icon) {
+    public VisualData(int x, int y, int z, float scale, int width, int height, ResourceLocation icon, int color) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -33,16 +35,21 @@ public class VisualData {
         this.width = width;
         this.height = height;
         this.icon = icon;
+        this.color = color;
     }
 
     @SuppressWarnings({"OptionalUsedAsFieldOrParameterType"})
     @Contract(pure = true)
-    public VisualData(int x, int y, int z, float scale, int width, int height, @NotNull Optional<ResourceLocation> icon) {
-        this(x, y, z, scale, width, height, icon.orElse(null));
+    public VisualData(int x, int y, int z, float scale, int width, int height, @NotNull Optional<ResourceLocation> icon, int color) {
+        this(x, y, z, scale, width, height, icon.orElse(null), color);
+    }
+
+    public VisualData(int x, int y, int z, float scale, int width, int height, ResourceLocation icon) {
+        this(x, y, z, scale, width, height, icon, DEFAULT_COLOR);
     }
 
     public VisualData(int x, int y, int z, float scale, int width, int height) {
-        this(x, y, z, scale, width, height, Optional.empty());
+        this(x, y, z, scale, width, height, Optional.empty(), DEFAULT_COLOR);
     }
 
     public VisualData(int x, int y, int z, int width, int height) {
@@ -98,6 +105,10 @@ public class VisualData {
         return icon;
     }
 
+    public int getColor() {
+        return color;
+    }
+
     public VisualData x(int x) {
         this.x = x;
         return this;
@@ -138,6 +149,11 @@ public class VisualData {
         return this;
     }
 
+    public VisualData color(int color) {
+        this.color = color;
+        return this;
+    }
+
     public VisualData isHidden(boolean isHidden) {
         this.isHidden = isHidden;
         return this;
@@ -151,7 +167,8 @@ public class VisualData {
                 Codec.FLOAT.fieldOf("scale").forGetter(VisualData::getScale),
                 Codec.INT.fieldOf("width").forGetter(VisualData::getWidth),
                 Codec.INT.fieldOf("height").forGetter(VisualData::getHeight),
-                ResourceLocation.CODEC.optionalFieldOf("icon").forGetter(VisualData::getOptionalIcon)
+                ResourceLocation.CODEC.optionalFieldOf("icon").forGetter(VisualData::getOptionalIcon),
+                Codec.INT.fieldOf("color").forGetter(VisualData::getColor)
         ).apply(instance, VisualData::new));
 
         STREAM_CODEC = new StreamCodec<>() {
@@ -165,7 +182,8 @@ public class VisualData {
                 int height = ByteBufCodecs.INT.decode(buf);
                 boolean hasIcon = ByteBufCodecs.BOOL.decode(buf);
                 ResourceLocation icon = hasIcon ? ResourceLocation.STREAM_CODEC.decode(buf) : null;
-                return new VisualData(x, y, z, scale, width, height, icon);
+                int color = ByteBufCodecs.INT.decode(buf);
+                return new VisualData(x, y, z, scale, width, height, icon, color);
             }
 
             @Override
@@ -181,6 +199,7 @@ public class VisualData {
                 if (hasIcon) {
                     ResourceLocation.STREAM_CODEC.encode(buf, value.getIcon());
                 }
+                ByteBufCodecs.INT.encode(buf, value.getColor());
             }
         };
     }
