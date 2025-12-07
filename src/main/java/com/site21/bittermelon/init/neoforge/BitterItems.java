@@ -29,7 +29,11 @@ import com.site21.bittermelon.common.content.items.writingutensils.HighlighterIt
 import com.site21.bittermelon.common.systems.component.screwdriver.Screwdriver;
 import com.site21.bittermelon.common.systems.component.Smokable;
 import com.site21.bittermelon.common.systems.component.temperature.HeatBehavior;
+import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.critereon.DataComponentMatchers;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -37,16 +41,18 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.BucketItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.StandingAndWallBlockItem;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.Consumable;
 import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Optional;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 
 public class BitterItems {
@@ -258,14 +264,42 @@ public class BitterItems {
                             // TODO: find a way to make particles the right color in context
                             DataComponents.CONSUMABLE,
                             Consumable.builder().build()
+                    ).component(
+                            DataComponents.CAN_PLACE_ON,
+                            new AdventureModePredicate(List.of(
+                                    new BlockPredicate(
+                                            Optional.of(HolderSet.direct(BitterBlocks.WALL_WRITING.getDelegate())),
+                                            Optional.empty(),
+                                            Optional.empty(),
+                                            DataComponentMatchers.ANY)))
+                    ).component(
+                            DataComponents.TOOLTIP_DISPLAY,
+                            new TooltipDisplay(false, new LinkedHashSet<DataComponentType<?>>(Arrays.asList(DataComponents.CAN_PLACE_ON)))
                     )
                     .durability(64)));
 
     public static final DeferredItem<HighlighterItem> HIGHLIGHTER = ITEMS.registerItem(
             "highlighter",
             HighlighterItem::new,
+
+            /*
+                For the HolderSet call to work during registration, the argument is from DeferredHolder#getDelegate()
+                The equivalent argument during gameplay is BuiltInRegistries.BLOCK.wrapAsHolder(WALL_WRITING.get())
+             */
             new Item.Properties()
                     .setNoCombineRepair()
+                    .component(
+                        DataComponents.CAN_PLACE_ON,
+                        new AdventureModePredicate(List.of(
+                            new BlockPredicate(
+                                    Optional.of(HolderSet.direct(BitterBlocks.WALL_WRITING.getDelegate())),
+                                    Optional.empty(),
+                                    Optional.empty(),
+                                    DataComponentMatchers.ANY)))
+                    ).component(
+                            DataComponents.TOOLTIP_DISPLAY,
+                            new TooltipDisplay(false, new LinkedHashSet<DataComponentType<?>>(Arrays.asList(DataComponents.CAN_PLACE_ON)))
+                    )
                     .durability(64));
 
     public static final DeferredItem<StickyNote> STICKY_NOTE = ITEMS.registerItem("sticky_note",
