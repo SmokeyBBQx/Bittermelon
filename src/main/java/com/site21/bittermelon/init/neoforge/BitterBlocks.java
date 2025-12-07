@@ -156,7 +156,8 @@ public class BitterBlocks {
             .noCollission()
             .replaceable()
             .destroyTime(-1)
-            .sound(SoundType.SAND)
+            .sound(SoundType.EMPTY)
+            .noTerrainParticles()
     );
 
     public static final DeferredBlock<StickyNoteBlock> STICKY_NOTE = BLOCKS.registerBlock("sticky_note", StickyNoteBlock::new, BlockBehaviour.Properties.of()
