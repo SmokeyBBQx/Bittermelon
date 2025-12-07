@@ -124,7 +124,13 @@ public class WallWritingBlock extends Block implements EntityBlock, SimpleWaterl
     @Override
     protected @NotNull InteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
         if (stack.is(SPONGE)) {
-            level.setBlock(pos, Blocks.AIR.defaultBlockState(), UPDATE_ALL);
+            BlockState newState;
+            if (state.getValue(BlockStateProperties.WATERLOGGED)) {
+                newState = Blocks.WATER.defaultBlockState();
+            } else {
+                newState = Blocks.AIR.defaultBlockState();
+            }
+            level.setBlock(pos, newState, UPDATE_ALL);
             level.playSound(null, pos, SoundEvents.SPONGE_HIT, SoundSource.BLOCKS, 1.0f, level.getRandom().nextFloat() * 0.1f + 0.9f);
             return InteractionResult.SUCCESS;
         }
