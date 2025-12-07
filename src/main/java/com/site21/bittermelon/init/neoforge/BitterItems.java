@@ -253,10 +253,20 @@ public class BitterItems {
     public static final DeferredItem<ChalkItem> CHALK = ITEMS.register("chalk", registryName ->
             new ChalkItem(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
-                    .stacksTo(16)
-                    .component(DataComponents.CONSUMABLE, Consumable.builder().build())));
+                    .setNoCombineRepair()
+                    .component(
+                            // TODO: find a way to make particles the right color in context
+                            DataComponents.CONSUMABLE,
+                            Consumable.builder().build()
+                    )
+                    .durability(64)));
 
-    public static final DeferredItem<HighlighterItem> HIGHLIGHTER = ITEMS.registerItem("highlighter", HighlighterItem::new);
+    public static final DeferredItem<HighlighterItem> HIGHLIGHTER = ITEMS.registerItem(
+            "highlighter",
+            HighlighterItem::new,
+            new Item.Properties()
+                    .setNoCombineRepair()
+                    .durability(64));
 
     public static final DeferredItem<StickyNote> STICKY_NOTE = ITEMS.registerItem("sticky_note",
             props -> new StickyNote(BitterBlocks.STICKY_NOTE.get(), props),
