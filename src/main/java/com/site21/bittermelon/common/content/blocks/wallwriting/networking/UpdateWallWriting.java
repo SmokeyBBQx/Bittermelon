@@ -21,7 +21,7 @@ import java.util.List;
 
 import static net.minecraft.world.level.block.Block.UPDATE_CLIENTS;
 
-public record UpdateWallWriting(BlockPos pos, String[] text, boolean is_final) implements CustomPacketPayload {
+public record UpdateWallWriting(BlockPos pos, String[] text, boolean isFinal) implements CustomPacketPayload {
     public static final Type<UpdateWallWriting> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "update_wall_writing"));
 
     @Override
@@ -37,7 +37,7 @@ public record UpdateWallWriting(BlockPos pos, String[] text, boolean is_final) i
                     List::of
             ),
             UpdateWallWriting::text,
-            ByteBufCodecs.BOOL, UpdateWallWriting::is_final,
+            ByteBufCodecs.BOOL, UpdateWallWriting::isFinal,
             UpdateWallWriting::new
     );
 
@@ -45,7 +45,7 @@ public record UpdateWallWriting(BlockPos pos, String[] text, boolean is_final) i
         if (ctx.player().level().getBlockEntity(pos) instanceof WallWritingBlockEntity wallWriting) {
             wallWriting.updateText(text);
             wallWriting.getLevel().sendBlockUpdated(pos, wallWriting.getBlockState(), wallWriting.getBlockState(), UPDATE_CLIENTS);
-            if (is_final) {
+            if (isFinal) {
                 boolean valid = false;
                 for (Component component : wallWriting.getText().getMessages(false)) {
                     if (!component.toString().equals("empty") & !component.getString().isBlank()) {

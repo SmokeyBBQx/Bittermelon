@@ -13,7 +13,7 @@ import net.minecraft.world.item.DyeColor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
-public record OpenWallWritingScreen(BlockPos pos, int color_id, boolean has_glowing) implements CustomPacketPayload {
+public record OpenWallWritingScreen(BlockPos pos, int colorId, boolean isGlowing) implements CustomPacketPayload {
     public static final Type<OpenWallWritingScreen> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "open_wall_writing_screen"));
 
     @Override
@@ -23,14 +23,14 @@ public record OpenWallWritingScreen(BlockPos pos, int color_id, boolean has_glow
 
     public static final StreamCodec<ByteBuf, OpenWallWritingScreen> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC, OpenWallWritingScreen::pos,
-            ByteBufCodecs.INT, OpenWallWritingScreen::color_id,
-            ByteBufCodecs.BOOL, OpenWallWritingScreen::has_glowing,
+            ByteBufCodecs.INT, OpenWallWritingScreen::colorId,
+            ByteBufCodecs.BOOL, OpenWallWritingScreen::isGlowing,
             OpenWallWritingScreen::new
     );
 
     public void handle(@NotNull IPayloadContext ctx) {
         if (ctx.player().level().getBlockEntity(pos) instanceof WallWritingBlockEntity wallWriting) {
-            wallWriting.setText(wallWriting.getText().setColor(DyeColor.byId(color_id)).setHasGlowingText(has_glowing));
+            wallWriting.setText(wallWriting.getText().setColor(DyeColor.byId(colorId)).setHasGlowingText(isGlowing));
             ScreenHandler.displayWallWritingScreen(wallWriting);
         }
     }
