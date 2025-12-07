@@ -1,8 +1,6 @@
 package com.site21.bittermelon.common.systems.medical.client.screen.widget;
 
-import com.mojang.blaze3d.opengl.GlConst;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.medical.client.screen.HealthScreenV2;
 import com.site21.bittermelon.common.systems.medical.client.screen.HeldItemData;
@@ -20,9 +18,7 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.client.stencil.StencilFunction;
 import net.neoforged.neoforge.client.stencil.StencilOperation;
@@ -30,7 +26,6 @@ import net.neoforged.neoforge.client.stencil.StencilPerFaceTest;
 import net.neoforged.neoforge.client.stencil.StencilTest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +60,10 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     private final int TOP_MARGIN = 5;
     private final int INCREASE_TOP_MARGIN = 20;
     private final int DECREASE_TOP_MARGIN = 32;
+
+    private static final int CONTENT_SIDE_PADDING = 8;
+    private static final int CONTENT_TOP_PADDING = 16;
+    private static final int CONTENT_BOTTOM_PADDING = 8;
 
     private double scrollX = 0;
     private double scrollY = 0;
@@ -196,10 +195,14 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
 
     private @NotNull CompartmentNodeWidget getCompartmentNodeWidget(@NotNull CompartmentInstance compartment) {
         VisualData visualData = compartment.getVisualData();
+        int contentX = x + 8;
+        int contentY = y + CONTENT_TOP_PADDING + 2;
+        int contentWidth = width - 8 * 2 - 2;
+        int contentHeight = height - CONTENT_TOP_PADDING * 2 - 4;
 
         CompartmentNodeWidget widget = new CompartmentNodeWidget(
-                x + visualData.x,
-                y + visualData.y,
+                contentX + visualData.x,
+                contentY + visualData.y,
                 26, 26,
                 Component.literal(compartment.getName()),
                 healthScreen,
@@ -209,8 +212,8 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         widget.setRelativeX(visualData.x);
         widget.setRelativeY(visualData.y);
 
-        widget.setX(x + widget.getRelativeX() - Mth.floor(scrollX));
-        widget.setY(y + widget.getRelativeY() - Mth.floor(scrollY));
+        widget.setX(contentX + widget.getRelativeX() - Mth.floor(scrollX));
+        widget.setY(contentY + widget.getRelativeY() - Mth.floor(scrollY));
 
         return widget;
     }
@@ -243,9 +246,9 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     @Override
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         int contentX = x + 8;
-        int contentY = y + 15 - 11;
-        int contentWidth = width - 17;
-        int contentHeight = height - 18;
+        int contentY = y + CONTENT_TOP_PADDING + 2;
+        int contentWidth = width - 8 * 2 - 2;
+        int contentHeight = height - CONTENT_TOP_PADDING * 2 - 4;
 
         List<CompartmentInstance> revealingCompartments = findRevealingCompartments();
 
@@ -450,9 +453,8 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         for (CompartmentInstance instance : revealingCompartments) {
             VisualData visualData = instance.getVisualData();
             float scaleFactor = visualData.getScale();
-            // Why these offsets? I have no idea, but it works
-            int minRevealX = contentX + visualData.getX() - Mth.floor(scrollX) - 3;
-            int minRevealY = contentY + visualData.getY() - Mth.floor(scrollY) + 1;
+            float minRevealX = (float) (contentX + visualData.getX() - scrollX);
+            float minRevealY = (float) (contentY + visualData.getY() - scrollY);
 
             guiGraphics.pose().pushMatrix();
             guiGraphics.pose().translate(minRevealX, minRevealY);
@@ -513,8 +515,8 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         for (CompartmentInstance instance : revealingCompartments) {
             VisualData visualData = instance.getVisualData();
             float scaleFactor = visualData.getScale();
-            int minRevealX = contentX + visualData.getX() - Mth.floor(scrollX) - 3;
-            int minRevealY = contentY + visualData.getY() - Mth.floor(scrollY) + 1;
+            int minRevealX = contentX + visualData.getX() - Mth.floor(scrollX);
+            int minRevealY = contentY + visualData.getY() - Mth.floor(scrollY);
             int revealWidth = (int) (visualData.getWidth() * scaleFactor);
             int revealHeight = (int) (visualData.getHeight() * scaleFactor);
 
@@ -662,9 +664,8 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     }
 
     protected boolean onContentAreaClicked(double mouseX, double mouseY, int button) {
-        // TODO: Replace with constants
         int contentX = x + 8;
-        int contentY = y + 15 - 11;
+        int contentY = y + CONTENT_TOP_PADDING + 2;
         List<CompartmentInstance> revealingCompartments = findRevealingCompartments();
 
         // Check compartment widgets
@@ -769,18 +770,18 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         updateButtons();
     }
 
-    private boolean isWithinRevealedArea(@NotNull List<CompartmentInstance> revealingCompartments, double mouseX, double mouseY,
-                                         int contentX, int contentY) {
+    private boolean isWithinRevealedArea(@NotNull List<CompartmentInstance> revealingCompartments, double mouseX,
+                                         double mouseY, int contentX, int contentY) {
         if (revealingCompartments.isEmpty()) {
             return true;
         }
 
         for (CompartmentInstance instance : revealingCompartments) {
             VisualData visualData = instance.getVisualData();
-            int revealX = (int) (contentX + visualData.getX() - scrollX);
-            int revealY = (int) (contentY + visualData.getY() - scrollY);
-            int revealWidth = (int) (visualData.getWidth() * visualData.getScale());
-            int revealHeight = (int) (visualData.getHeight() * visualData.getScale());
+            double revealX = contentX + visualData.getX() - scrollX;
+            double revealY = contentY + visualData.getY() - scrollY;
+            double revealWidth = visualData.getWidth() * visualData.getScale();
+            double revealHeight = visualData.getHeight() * visualData.getScale();
 
             boolean withinX = mouseX >= revealX && mouseX <= revealX + revealWidth;
             boolean withinY = mouseY >= revealY && mouseY <= revealY + revealHeight;
