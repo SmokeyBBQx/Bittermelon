@@ -48,7 +48,7 @@ public record UpdateWallWriting(BlockPos pos, String[] text, boolean isFinal) im
             if (isFinal) {
                 boolean valid = false;
                 for (Component component : wallWriting.getText().getMessages(false)) {
-                    if (!component.toString().equals("empty") & !component.getString().isBlank()) {
+                    if (!component.toString().equals("empty") && !component.getString().isBlank()) {
                         valid = true;
                         break;
                     }
@@ -56,12 +56,12 @@ public record UpdateWallWriting(BlockPos pos, String[] text, boolean isFinal) im
                 if (!valid) {
                     wallWriting.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), UPDATE_CLIENTS);
                 } else {
-                    // consume item if out of durability on window close
+                    // Consume item if out of durability on window close
                     ItemStack mainHandItem = ctx.player().getMainHandItem();
                     ItemStack offHandItem = ctx.player().getOffhandItem();
-                    if (mainHandItem.getItem() instanceof WallWriterItem & mainHandItem.getDamageValue() == mainHandItem.getMaxDamage()) {
+                    if (mainHandItem.getItem() instanceof WallWriterItem && mainHandItem.getDamageValue() >= mainHandItem.getMaxDamage()) {
                         mainHandItem.consume(1, ctx.player());
-                    } else if (offHandItem.getItem() instanceof WallWriterItem & offHandItem.getDamageValue() == offHandItem.getMaxDamage()) {
+                    } else if (offHandItem.getItem() instanceof WallWriterItem && offHandItem.getDamageValue() >= offHandItem.getMaxDamage()) {
                         offHandItem.consume(1, ctx.player());
                     }
 
