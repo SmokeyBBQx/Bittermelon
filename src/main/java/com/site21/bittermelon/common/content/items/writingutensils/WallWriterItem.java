@@ -96,7 +96,7 @@ public abstract class WallWriterItem extends BlockItem implements WallWriter {
             return true;
         }
 
-        return true;
+        return false;
     }
 
     /**
@@ -169,8 +169,8 @@ public abstract class WallWriterItem extends BlockItem implements WallWriter {
     }
 
     // Clone from BlockItem so place override works
-    private static void updateBlockEntityComponents(Level level, BlockPos poa, ItemStack stack) {
-        BlockEntity blockentity = level.getBlockEntity(poa);
+    private static void updateBlockEntityComponents(Level level, BlockPos pos, ItemStack stack) {
+        BlockEntity blockentity = level.getBlockEntity(pos);
         if (blockentity != null) {
             blockentity.applyComponentsFromItemStack(stack);
             blockentity.setChanged();

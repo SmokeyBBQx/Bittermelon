@@ -3,6 +3,9 @@ package com.site21.bittermelon.common.content.blocks.wallwriting;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.site21.bittermelon.common.content.items.writingutensils.WallWriter;
+import com.site21.bittermelon.common.content.items.writingutensils.WallWriterItem;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -67,14 +70,21 @@ public class WallWritingBlock extends Block implements EntityBlock, SimpleWaterl
 
     @Override
     protected @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
-        AttachFace face = state.getValue(FACE);
-        if (face == AttachFace.FLOOR) {
-            return SHAPES.get(Direction.UP);
-        } else if (face == AttachFace.CEILING) {
-            return SHAPES.get(Direction.DOWN);
-        } else {
-            return SHAPES.get(state.getValue(FACING));
+        // Not checking the instance causes a crash during startup
+        if (Minecraft.getInstance() != null) {
+            LocalPlayer player = Minecraft.getInstance().player;
+            if (player != null && (player.gameMode().isCreative() || player.getMainHandItem().is(SPONGE) || (player.getMainHandItem().getItem() instanceof WallWriterItem))) {
+                AttachFace face = state.getValue(FACE);
+                if (face == AttachFace.FLOOR) {
+                    return SHAPES.get(Direction.UP);
+                } else if (face == AttachFace.CEILING) {
+                    return SHAPES.get(Direction.DOWN);
+                } else {
+                    return SHAPES.get(state.getValue(FACING));
+                }
+            }
         }
+        return Block.box(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
     }
 
     @Override
