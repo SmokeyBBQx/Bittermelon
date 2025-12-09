@@ -56,16 +56,15 @@ public record UpdateWallWriting(BlockPos pos, String[] text, boolean isFinal) im
                 if (!valid) {
                     wallWriting.getLevel().setBlock(pos, Blocks.AIR.defaultBlockState(), UPDATE_CLIENTS);
                 } else {
-                    // Consume item if out of durability on window close
-                    ItemStack mainHandItem = ctx.player().getMainHandItem();
-                    ItemStack offHandItem = ctx.player().getOffhandItem();
-                    if (mainHandItem.getItem() instanceof WallWriterItem && mainHandItem.getDamageValue() >= mainHandItem.getMaxDamage()) {
-                        mainHandItem.consume(1, ctx.player());
-                    } else if (offHandItem.getItem() instanceof WallWriterItem && offHandItem.getDamageValue() >= offHandItem.getMaxDamage()) {
-                        offHandItem.consume(1, ctx.player());
-                    }
-
                     wallWriting.getLevel().playSound(null, wallWriting.getBlockPos(), SoundEvents.VILLAGER_WORK_CARTOGRAPHER, SoundSource.BLOCKS, 1.0f, 1.0f);
+                }
+                // Consume item if out of durability on window close
+                ItemStack mainHandItem = ctx.player().getMainHandItem();
+                ItemStack offHandItem = ctx.player().getOffhandItem();
+                if (mainHandItem.getItem() instanceof WallWriterItem && mainHandItem.getDamageValue() >= mainHandItem.getMaxDamage()) {
+                    mainHandItem.consume(1, ctx.player());
+                } else if (offHandItem.getItem() instanceof WallWriterItem && offHandItem.getDamageValue() >= offHandItem.getMaxDamage()) {
+                    offHandItem.consume(1, ctx.player());
                 }
             }
         }
