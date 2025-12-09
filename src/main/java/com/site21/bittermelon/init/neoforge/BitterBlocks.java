@@ -42,7 +42,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.neoforge.common.util.DeferredSoundType;
 import net.neoforged.neoforge.registries.DeferredBlock;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -152,7 +151,7 @@ public class BitterBlocks {
             .noOcclusion()
     );
 
-    public static final DeferredHolder<Block, WallWritingBlock> WALL_WRITING = BLOCKS.registerBlock("wall_writing", WallWritingBlock::new, BlockBehaviour.Properties.of()
+    public static final DeferredBlock<WallWritingBlock> WALL_WRITING = BLOCKS.registerBlock("wall_writing", WallWritingBlock::new, BlockBehaviour.Properties.of()
             .noOcclusion()
             .noCollission()
             .replaceable()

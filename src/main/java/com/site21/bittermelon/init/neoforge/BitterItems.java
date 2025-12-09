@@ -268,37 +268,32 @@ public class BitterItems {
                             DataComponents.CAN_PLACE_ON,
                             new AdventureModePredicate(List.of(
                                     new BlockPredicate(
-                                            Optional.of(HolderSet.direct(BitterBlocks.WALL_WRITING.getDelegate())),
+                                            Optional.of(HolderSet.direct(BitterBlocks.WALL_WRITING)),
                                             Optional.empty(),
                                             Optional.empty(),
                                             DataComponentMatchers.ANY)))
                     ).component(
                             DataComponents.TOOLTIP_DISPLAY,
-                            new TooltipDisplay(false, new LinkedHashSet<DataComponentType<?>>(Arrays.asList(DataComponents.CAN_PLACE_ON)))
+                            new TooltipDisplay(false, new LinkedHashSet<DataComponentType<?>>(List.of(DataComponents.CAN_PLACE_ON)))
                     )
                     .durability(64)));
 
     public static final DeferredItem<HighlighterItem> HIGHLIGHTER = ITEMS.registerItem(
             "highlighter",
             HighlighterItem::new,
-
-            /*
-                For the HolderSet call to work during registration, the argument is from DeferredHolder#getDelegate()
-                The equivalent argument during gameplay is BuiltInRegistries.BLOCK.wrapAsHolder(WALL_WRITING.get())
-             */
             new Item.Properties()
                     .setNoCombineRepair()
                     .component(
                         DataComponents.CAN_PLACE_ON,
                         new AdventureModePredicate(List.of(
                             new BlockPredicate(
-                                    Optional.of(HolderSet.direct(BitterBlocks.WALL_WRITING.getDelegate())),
+                                    Optional.of(HolderSet.direct(BitterBlocks.WALL_WRITING)),
                                     Optional.empty(),
                                     Optional.empty(),
                                     DataComponentMatchers.ANY)))
                     ).component(
                             DataComponents.TOOLTIP_DISPLAY,
-                            new TooltipDisplay(false, new LinkedHashSet<DataComponentType<?>>(Arrays.asList(DataComponents.CAN_PLACE_ON)))
+                            new TooltipDisplay(false, new LinkedHashSet<DataComponentType<?>>(List.of(DataComponents.CAN_PLACE_ON)))
                     )
                     .durability(64));
 
