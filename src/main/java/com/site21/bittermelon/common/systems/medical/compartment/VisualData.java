@@ -23,33 +23,35 @@ public class VisualData {
     public float scale;
     public int width;
     public int height;
+    public float rotation; // in radians
     public ResourceLocation icon;
     public int color;
     public boolean isHidden = false;
 
-    public VisualData(int x, int y, int z, float scale, int width, int height, ResourceLocation icon, int color) {
+    public VisualData(int x, int y, int z, float scale, int width, int height, float rotation, ResourceLocation icon, int color) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.scale = scale;
         this.width = width;
         this.height = height;
+        this.rotation = rotation;
         this.icon = icon;
         this.color = color;
     }
 
     @SuppressWarnings({"OptionalUsedAsFieldOrParameterType"})
     @Contract(pure = true)
-    public VisualData(int x, int y, int z, float scale, int width, int height, @NotNull Optional<ResourceLocation> icon, int color) {
-        this(x, y, z, scale, width, height, icon.orElse(null), color);
+    public VisualData(int x, int y, int z, float scale, int width, int height, float rotation, @NotNull Optional<ResourceLocation> icon, int color) {
+        this(x, y, z, scale, width, height, rotation, icon.orElse(null), color);
     }
 
     public VisualData(int x, int y, int z, float scale, int width, int height, ResourceLocation icon) {
-        this(x, y, z, scale, width, height, icon, DEFAULT_COLOR);
+        this(x, y, z, scale, width, height, 0, icon, DEFAULT_COLOR);
     }
 
     public VisualData(int x, int y, int z, float scale, int width, int height) {
-        this(x, y, z, scale, width, height, Optional.empty(), DEFAULT_COLOR);
+        this(x, y, z, scale, width, height, 0, Optional.empty(), DEFAULT_COLOR);
     }
 
     public VisualData(int x, int y, int z, int width, int height) {
@@ -97,6 +99,14 @@ public class VisualData {
         return height;
     }
 
+    /**
+     * Gets rotation in radians
+     * @return rotation in radians
+     */
+    public float getRotation() {
+        return rotation;
+    }
+
     public Optional<ResourceLocation> getOptionalIcon() {
         return Optional.ofNullable(icon);
     }
@@ -139,6 +149,16 @@ public class VisualData {
         return this;
     }
 
+    /**
+     * Sets rotation in radians
+     * @param rotation rotation in radians
+     * @return this
+     */
+    public VisualData rotation(float rotation) {
+        this.rotation = rotation;
+        return this;
+    }
+
     public VisualData icon(ResourceLocation icon) {
         this.icon = icon;
         return this;
@@ -167,6 +187,7 @@ public class VisualData {
                 Codec.FLOAT.fieldOf("scale").forGetter(VisualData::getScale),
                 Codec.INT.fieldOf("width").forGetter(VisualData::getWidth),
                 Codec.INT.fieldOf("height").forGetter(VisualData::getHeight),
+                Codec.FLOAT.fieldOf("rotation").forGetter(VisualData::getRotation),
                 ResourceLocation.CODEC.optionalFieldOf("icon").forGetter(VisualData::getOptionalIcon),
                 Codec.INT.fieldOf("color").forGetter(VisualData::getColor)
         ).apply(instance, VisualData::new));
@@ -180,10 +201,11 @@ public class VisualData {
                 float scale = ByteBufCodecs.FLOAT.decode(buf);
                 int width = ByteBufCodecs.INT.decode(buf);
                 int height = ByteBufCodecs.INT.decode(buf);
+                float rotation = ByteBufCodecs.FLOAT.decode(buf);
                 boolean hasIcon = ByteBufCodecs.BOOL.decode(buf);
                 ResourceLocation icon = hasIcon ? ResourceLocation.STREAM_CODEC.decode(buf) : null;
                 int color = ByteBufCodecs.INT.decode(buf);
-                return new VisualData(x, y, z, scale, width, height, icon, color);
+                return new VisualData(x, y, z, scale, width, height, rotation, icon, color);
             }
 
             @Override
@@ -194,6 +216,7 @@ public class VisualData {
                 ByteBufCodecs.FLOAT.encode(buf, value.getScale());
                 ByteBufCodecs.INT.encode(buf, value.getWidth());
                 ByteBufCodecs.INT.encode(buf, value.getHeight());
+                ByteBufCodecs.FLOAT.encode(buf, value.getRotation());
                 boolean hasIcon = value.getIcon() != null;
                 ByteBufCodecs.BOOL.encode(buf, hasIcon);
                 if (hasIcon) {

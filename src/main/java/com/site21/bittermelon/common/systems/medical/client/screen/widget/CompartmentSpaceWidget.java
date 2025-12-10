@@ -32,8 +32,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.site21.bittermelon.client.render.BitterRenderPipelines.*;
 import static net.minecraft.client.renderer.RenderPipelines.GUI_SNIPPET;
-import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED_SNIPPET;
 
 public class CompartmentSpaceWidget extends MovableResizableWidget {
     public static final ResourceLocation WINDOW_TEXTURE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/healthscreen/surgery_window.png");
@@ -61,9 +61,11 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     private final int INCREASE_TOP_MARGIN = 20;
     private final int DECREASE_TOP_MARGIN = 32;
 
-    private static final int CONTENT_SIDE_PADDING = 8;
+    private int contentX = 0;
+    private int contentY = 0;
+    private int contentWidth = 0;
+    private int contentHeight = 0;
     private static final int CONTENT_TOP_PADDING = 16;
-    private static final int CONTENT_BOTTOM_PADDING = 8;
 
     private double scrollX = 0;
     private double scrollY = 0;
@@ -89,6 +91,11 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         buttons = new Button[]{closeWidgetButton, collapseWidgetButton, increaseLayerButton, decreaseLayerButton, recenterButton};
         refreshCompartmentNodes();
         backgroundTexture = layers[0].backgroundTexture();
+
+        setContentX(x);
+        setContentY(y);
+        setContentWidth(width);
+        setContentHeight(height);
     }
 
     private void initializeButtons() {
@@ -195,10 +202,6 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
 
     private @NotNull CompartmentNodeWidget getCompartmentNodeWidget(@NotNull CompartmentInstance compartment) {
         VisualData visualData = compartment.getVisualData();
-        int contentX = x + 8;
-        int contentY = y + CONTENT_TOP_PADDING + 2;
-        int contentWidth = width - 8 * 2 - 2;
-        int contentHeight = height - CONTENT_TOP_PADDING * 2 - 4;
 
         CompartmentNodeWidget widget = new CompartmentNodeWidget(
                 contentX + visualData.x,
@@ -245,33 +248,8 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
 
     @Override
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        int contentX = x + 8;
-        int contentY = y + CONTENT_TOP_PADDING + 2;
-        int contentWidth = width - 8 * 2 - 2;
-        int contentHeight = height - CONTENT_TOP_PADDING * 2 - 4;
-
         List<CompartmentInstance> revealingCompartments = findRevealingCompartments();
 
-        drawContents(guiGraphics, contentX, contentY, contentWidth, contentHeight, mouseX, mouseY, partialTick, revealingCompartments);
-    }
-
-    private @NotNull List<CompartmentInstance> findRevealingCompartments() {
-        List<CompartmentInstance> revealingCompartments = new ArrayList<>();
-
-        if (layerIndex > 0) {
-            for (UUID uuid : compartment.getLayer(layerIndex - 1)) {
-                CompartmentInstance instance = healthScreen.getMedicalStats().getCompartment(uuid);
-                if (instance.hasTag(CompartmentTag.CUT) || instance.getCompartment().equals(Compartments.LIVER.get()) || instance.getCompartment().equals(Compartments.COLON.get())) {
-                    revealingCompartments.add(instance);
-                }
-            }
-        }
-
-        return revealingCompartments;
-    }
-
-    private void drawContents(@NotNull GuiGraphics guiGraphics, int contentX, int contentY, int contentWidth,
-                              int contentHeight, int mouseX, int mouseY, float partialTick, List<CompartmentInstance> revealingCompartments) {
         CompartmentNodeWidget hoveredWidget = null;
 
         if (isOpen) {
@@ -280,10 +258,10 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
             // Render only within content area
             guiGraphics.enableScissor(contentX, contentY, contentX + contentWidth, contentY + contentHeight);
 
-            drawTiledBackground(guiGraphics, contentX, contentY, contentWidth, contentHeight, RenderPipelines.GUI_TEXTURED, backgroundTexture, 0xFFFFFFFF);
+            drawTiledBackground(guiGraphics, RenderPipelines.GUI_TEXTURED, backgroundTexture, 0xFFFFFFFF);
             renderWidgets(guiGraphics, mouseX, mouseY, partialTick, hoveredWidget);
             drawHoveredWidget(guiGraphics, mouseX, mouseY, partialTick, hoveredWidget);
-            renderFog(guiGraphics, contentX, contentY, contentWidth, contentHeight, revealingCompartments);
+            renderFog(guiGraphics, revealingCompartments);
 
             renderLayerIndicators(guiGraphics);
             renderButtons(guiGraphics, mouseX, mouseY, partialTick);
@@ -308,6 +286,21 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         if (hoveredWidget != null && hoveredWidget.visible && isOpen) {
             hoveredWidget.drawHover(guiGraphics, mouseX, mouseY, partialTick, width, height);
         }
+    }
+
+    private @NotNull List<CompartmentInstance> findRevealingCompartments() {
+        List<CompartmentInstance> revealingCompartments = new ArrayList<>();
+
+        if (layerIndex > 0) {
+            for (UUID uuid : compartment.getLayer(layerIndex - 1)) {
+                CompartmentInstance instance = healthScreen.getMedicalStats().getCompartment(uuid);
+                if (instance.hasTag(CompartmentTag.CUT) || instance.getCompartment().equals(Compartments.LIVER.get()) || instance.getCompartment().equals(Compartments.COLON.get())) {
+                    revealingCompartments.add(instance);
+                }
+            }
+        }
+
+        return revealingCompartments;
     }
 
     private void renderButtons(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
@@ -336,14 +329,12 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     }
 
     private void drawHoveredWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CompartmentNodeWidget hoveredWidget) {
+        if (hoveredWidget == null || !hoveredWidget.visible) return;
+
         for (Button button : buttons) {
             if (button.isMouseOver(mouseX, mouseY)) {
                 return;
             }
-        }
-
-        if (hoveredWidget == null || !hoveredWidget.visible) {
-            return;
         }
 
         hoveredWidget.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
@@ -369,8 +360,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         }
     }
 
-    private void drawTiledBackground(@NotNull GuiGraphics guiGraphics, int contentX, int contentY, int contentWidth,
-                                     int contentHeight, RenderPipeline pipeline, ResourceLocation texture, int color) {
+    private void drawTiledBackground(@NotNull GuiGraphics guiGraphics, RenderPipeline pipeline, ResourceLocation texture, int color) {
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(contentX, contentY);
 
@@ -420,7 +410,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, x + width / 2, y + height - 25, 252 - width / 2, 130 - 5, width / 2, 15, 256, 256);
     }
 
-    private void renderFog(@NotNull GuiGraphics guiGraphics, int contentX, int contentY, int contentWidth, int contentHeight, @NotNull List<CompartmentInstance> revealingCompartments) {
+    private void renderFog(@NotNull GuiGraphics guiGraphics, @NotNull List<CompartmentInstance> revealingCompartments) {
         if (layerIndex == 0) return;
 
         int lightFogColor = 0xAA000000;
@@ -431,24 +421,6 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
             return;
         }
 
-        // Configure stencil to write 1s where revealing compartments are drawn
-        StencilTest writeTest = new StencilTest(
-                new StencilPerFaceTest(
-                        StencilOperation.KEEP,
-                        StencilOperation.KEEP,
-                        StencilOperation.REPLACE,
-                        StencilFunction.ALWAYS
-                ),
-                StencilTest.DEFAULT_READ_MASK,
-                StencilTest.DEFAULT_WRITE_MASK,
-                1
-        );
-
-        RenderPipeline texturedPipeline = RenderPipeline.builder(GUI_TEXTURED_SNIPPET)
-                .withLocation(Bittermelon.resource("pipeline/stencil_test"))
-                .withStencilTest(writeTest)
-                .build();
-
         // Draw revealing compartments to stencil buffer (value = 1)
         for (CompartmentInstance instance : revealingCompartments) {
             VisualData visualData = instance.getVisualData();
@@ -458,12 +430,13 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
 
             guiGraphics.pose().pushMatrix();
             guiGraphics.pose().translate(minRevealX, minRevealY);
+            guiGraphics.pose().rotate(visualData.rotation);
             guiGraphics.pose().scale(scaleFactor, scaleFactor);
 
             guiGraphics.blit(
-                    texturedPipeline,
+                    STENCIL_TEST_TEXTURED,
                     visualData.icon,
-                    0, 0,
+                    1, 1,
                     0, 0,
                     visualData.getWidth(), visualData.getHeight(),
                     visualData.getWidth(), visualData.getHeight(),
@@ -474,42 +447,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         }
 
         // Render dark fog where stencil is 0 (everywhere else)
-        StencilTest darkFogTest = new StencilTest(
-                new StencilPerFaceTest(
-                        StencilOperation.REPLACE,
-                        StencilOperation.REPLACE,
-                        StencilOperation.REPLACE,
-                        StencilFunction.EQUAL
-                ),
-                StencilTest.DEFAULT_READ_MASK,
-                StencilTest.DEFAULT_WRITE_MASK,
-                0
-        );
-
-        RenderPipeline darkFogPipeline = RenderPipeline.builder(GUI_SNIPPET)
-                .withLocation(Bittermelon.resource("pipeline/stencil_fog"))
-                .withStencilTest(darkFogTest)
-                .build();
-
-        guiGraphics.fill(darkFogPipeline, contentX, contentY, contentX + contentWidth, contentY + contentHeight, lightFogColor);
-
-        // Configure stencil to write 2s for expanded area (around revealing compartments)
-        StencilTest expandedAreaTest = new StencilTest(
-                new StencilPerFaceTest(
-                        StencilOperation.REPLACE,
-                        StencilOperation.REPLACE,
-                        StencilOperation.REPLACE,
-                        StencilFunction.GREATER
-                ),
-                StencilTest.DEFAULT_READ_MASK,
-                StencilTest.DEFAULT_WRITE_MASK,
-                2
-        );
-
-        RenderPipeline expandedPipeline = RenderPipeline.builder(GUI_SNIPPET)
-                .withLocation(Bittermelon.resource("pipeline/stencil_test_2"))
-                .withStencilTest(expandedAreaTest)
-                .build();
+        guiGraphics.fill(STENCIL_FOG, contentX, contentY, contentX + contentWidth, contentY + contentHeight, lightFogColor);
 
         // Draw expanded areas around revealing compartments
         for (CompartmentInstance instance : revealingCompartments) {
@@ -520,7 +458,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
             int revealWidth = (int) (visualData.getWidth() * scaleFactor);
             int revealHeight = (int) (visualData.getHeight() * scaleFactor);
 
-            guiGraphics.fill(expandedPipeline,
+            guiGraphics.fill(STENCIL_TEST,
                     minRevealX,
                     minRevealY,
                     minRevealX + revealWidth,
@@ -529,24 +467,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         }
 
         // Render light fog where stencil is 2 (expanded area)
-        StencilTest lightFogTest = new StencilTest(
-                new StencilPerFaceTest(
-                        StencilOperation.REPLACE,
-                        StencilOperation.REPLACE,
-                        StencilOperation.REPLACE,
-                        StencilFunction.EQUAL
-                ),
-                StencilTest.DEFAULT_READ_MASK,
-                StencilTest.DEFAULT_WRITE_MASK,
-                0
-        );
-
-        RenderPipeline lightFogPipeline = RenderPipeline.builder(GUI_SNIPPET)
-                .withLocation(Bittermelon.resource("pipeline/stencil_fog_2"))
-                .withStencilTest(lightFogTest)
-                .build();
-
-        guiGraphics.fill(lightFogPipeline, contentX, contentY, contentX + contentWidth, contentY + contentHeight, lightFogColor);
+        guiGraphics.fill(STENCIL_FOG, contentX, contentY, contentX + contentWidth, contentY + contentHeight, lightFogColor);
 
         // Alternatively, using previous layer's tiled background for fog
 //        ResourceLocation texture = layerIndex > 0 ? layers[layerIndex - 1].backgroundTexture() : layers[0].backgroundTexture();
@@ -614,9 +535,12 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     }
 
     private void updateCompartmentWidgetPositions() {
+        int contentX = x + 8;
+        int contentY = y + CONTENT_TOP_PADDING + 2;
+
         for (CompartmentNodeWidget widget : compartmentWidgets) {
-            widget.setX(x + widget.getRelativeX() - Mth.floor(scrollX));
-            widget.setY(y + widget.getRelativeY() - Mth.floor(scrollY));
+            widget.setX(contentX + widget.getRelativeX() - Mth.floor(scrollX));
+            widget.setY(contentY + widget.getRelativeY() - Mth.floor(scrollY));
         }
     }
 
@@ -739,18 +663,21 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     @Override
     public void setWidth(int width) {
         super.setWidth(width);
+        setContentWidth(width);
         updateButtons();
     }
 
     @Override
     public void setHeight(int height) {
         super.setHeight(height);
+        setContentHeight(height);
         updateButtons();
     }
 
     @Override
     public void setX(int x) {
         super.setX(x);
+        setContentX(x);
 
         for (CompartmentNodeWidget widget : compartmentWidgets) {
             widget.setX(x + widget.getRelativeX() - (int) scrollX);
@@ -762,6 +689,7 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     @Override
     public void setY(int y) {
         super.setY(y);
+        setContentY(y);
 
         for (CompartmentNodeWidget widget : compartmentWidgets) {
             widget.setY(y + widget.getRelativeY() - (int) scrollY);
@@ -811,6 +739,22 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
 
     public HealthScreenV2 getHealthScreen() {
         return healthScreen;
+    }
+
+    private void setContentX(int x) {
+        this.contentX = x + 8;
+    }
+
+    private void setContentY(int y) {
+        this.contentY = y + CONTENT_TOP_PADDING + 2;
+    }
+
+    private void setContentWidth(int width) {
+        this.contentWidth = width - 8 * 2 - 2;
+    }
+
+    private void setContentHeight(int height) {
+        this.contentHeight = height - CONTENT_TOP_PADDING * 2 - 4;
     }
 
     @Override

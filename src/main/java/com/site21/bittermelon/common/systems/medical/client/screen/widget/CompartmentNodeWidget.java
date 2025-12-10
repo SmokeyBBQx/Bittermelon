@@ -74,6 +74,7 @@ public class CompartmentNodeWidget extends AbstractWidget {
         guiGraphics.pose().pushMatrix();
 
         guiGraphics.pose().translate(getX(), getY());
+        guiGraphics.pose().rotate(visualData.rotation);
         guiGraphics.pose().scale(visualData.scale, visualData.scale);
 
         if (visualData.icon != null) {
@@ -93,7 +94,7 @@ public class CompartmentNodeWidget extends AbstractWidget {
         guiGraphics.pose().popMatrix();
     }
 
-    public void drawHover(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float fade, int screenWidth, int screenHeight) {
+    public void drawHover(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, int screenWidth, int screenHeight) {
         boolean isRightSide = screenWidth + mouseX + getX() + 200 >= healthScreen.width;
 
         // Calculate tooltip dimensions
@@ -198,21 +199,27 @@ public class CompartmentNodeWidget extends AbstractWidget {
 
         VisualData visualData = compartment.getVisualData();
         float scaleFactor = visualData.scale;
+        float rotation = visualData.rotation;
 
-        int centerX = getX() + 8;
-        int centerY = getY() + 8;
+        double localX = mouseX - getX();
+        double localY = mouseY - getY();
 
-        double relX = mouseX - centerX;
-        double relY = mouseY - centerY;
+        double inverseRotation = -rotation;
+        double cosTheta = Math.cos(inverseRotation);
+        double sinTheta = Math.sin(inverseRotation);
+
+        double rotatedX = localX * cosTheta - localY * sinTheta;
+        double rotatedY = localX * sinTheta + localY * cosTheta;
+
+        double unscaledX = rotatedX / scaleFactor;
+        double unscaledY = rotatedY / scaleFactor;
 
         if (compartment.getVisualData().icon == null) {
-            float distance = (float) Math.sqrt(relX * relX + relY * relY);
-            float hitboxRadius = 8 + (2 * (float) Math.sqrt(scaleFactor));
-            return distance <= hitboxRadius;
+            return unscaledX >= 0 && unscaledX <= 16 && unscaledY >= 0 && unscaledY <= 16;
         }
 
-        int texX = (int) Math.round(relX / scaleFactor);
-        int texY = (int) Math.round(relY / scaleFactor);
+        int texX = (int) Math.floor(unscaledX - 1);
+        int texY = (int) Math.floor(unscaledY - 1);
 
         if (texX >= 0 && texX < visualData.width && texY >= 0 && texY < visualData.height) {
             return getAlphaAtPixel(compartment.getVisualData().icon, texX, texY) >= 1;

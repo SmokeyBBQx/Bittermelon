@@ -274,7 +274,7 @@ public class BitterItems {
                                             DataComponentMatchers.ANY)))
                     ).component(
                             DataComponents.TOOLTIP_DISPLAY,
-                            new TooltipDisplay(false, new LinkedHashSet<DataComponentType<?>>(List.of(DataComponents.CAN_PLACE_ON)))
+                            new TooltipDisplay(false, new LinkedHashSet<>(List.of(DataComponents.CAN_PLACE_ON)))
                     )
                     .durability(64)));
 
@@ -293,7 +293,7 @@ public class BitterItems {
                                     DataComponentMatchers.ANY)))
                     ).component(
                             DataComponents.TOOLTIP_DISPLAY,
-                            new TooltipDisplay(false, new LinkedHashSet<DataComponentType<?>>(List.of(DataComponents.CAN_PLACE_ON)))
+                            new TooltipDisplay(false, new LinkedHashSet<>(List.of(DataComponents.CAN_PLACE_ON)))
                     )
                     .durability(64));
 
