@@ -232,7 +232,7 @@ public class StickyNoteBlock extends Block implements EntityBlock {
     }
 
     @Contract(pure = true)
-    public @NotNull Position getPosition(@NotNull BlockState state, @NotNull Vec3 hitPos, @NotNull BlockPos blockPos) {
+    public static @NotNull Position getPosition(@NotNull BlockState state, @NotNull Vec3 hitPos, @NotNull BlockPos blockPos) {
         Direction facing = state.getValue(FACING);
         AttachFace face = state.getValue(FACE);
         double relX = hitPos.x - blockPos.getX();
