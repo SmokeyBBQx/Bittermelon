@@ -3,7 +3,7 @@ package com.site21.bittermelon.init.custom;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.compartments.SharpObject;
 import com.site21.bittermelon.common.systems.medical.compartment.Compartment;
-import com.site21.bittermelon.common.systems.medical.compartment.LayerData;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
 import com.site21.bittermelon.init.neoforge.BitterItems;

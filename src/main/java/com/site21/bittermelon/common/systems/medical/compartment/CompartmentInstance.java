@@ -2,6 +2,7 @@ package com.site21.bittermelon.common.systems.medical.compartment;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import net.minecraft.core.Holder;
 import net.minecraft.core.UUIDUtil;
@@ -11,10 +12,14 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_REGISTRY;
@@ -27,7 +32,8 @@ public class CompartmentInstance {
 
     private final Compartment compartment;
     private final UUID uuid;
-    private final List<HashSet<UUID>> layers;
+    private final List<LayerData> layers;
+    private final List<Point> shape;
     private final float maxHealth;
     private final EnumMap<MedicalAttribute, Float> attributes;
     private final EnumSet<CompartmentTag> tags;
@@ -40,12 +46,13 @@ public class CompartmentInstance {
     private Set<CompartmentInstance> cachedCompartments;
     private boolean compartmentsCacheDirty = true;
 
-    public CompartmentInstance(@NotNull Compartment compartment, UUID uuid, List<HashSet<UUID>> layers, float health,
+    public CompartmentInstance(@NotNull Compartment compartment, UUID uuid, List<LayerData> layers, List<Point> shape, float health,
                                float maxHealth, EnumMap<MedicalAttribute, Float> attributes, EnumSet<CompartmentTag> tags,
                                String name, VisualData visualData) {
         this.compartment = compartment;
         this.uuid = uuid;
         this.layers = layers;
+        this.shape = shape;
         this.health = health;
         this.maxHealth = maxHealth;
         this.attributes = attributes;
@@ -55,9 +62,9 @@ public class CompartmentInstance {
         dirty = true;
     }
 
-    public CompartmentInstance(@NotNull Holder<Compartment> compartment, UUID uuid, List<HashSet<UUID>> layers, float health, float maxHealth,
+    public CompartmentInstance(@NotNull Holder<Compartment> compartment, UUID uuid, List<LayerData> layers, List<Point> shape, float health, float maxHealth,
                                EnumMap<MedicalAttribute, Float> attributes, EnumSet<CompartmentTag> tags, String name, VisualData visualData) {
-        this(compartment.value(), uuid, layers, health, maxHealth, attributes, tags, name, visualData);
+        this(compartment.value(), uuid, layers, shape, health, maxHealth, attributes, tags, name, visualData);
     }
 
     public void tick(MedicalStats medicalStats) {
@@ -74,29 +81,6 @@ public class CompartmentInstance {
         return attributes.getOrDefault(attribute, 0f) * function;
     }
 
-    public void updateFunction(MedicalStats medicalStats) {
-        float functionMultiplier = 1;
-        int count = 0;
-
-        for (CompartmentInstance instance : getAllCompartments(medicalStats)) {
-            functionMultiplier += instance.getAttribute(MedicalAttribute.FUNCTION);
-            count++;
-        }
-
-        function = health / maxHealth * functionMultiplier / count;
-    }
-
-    public Set<CompartmentInstance> getAllCompartments(MedicalStats medicalStats) {
-        if (compartmentsCacheDirty || cachedCompartments == null) {
-            cachedCompartments = layers.stream()
-                    .flatMap(Set::stream)
-                    .map(medicalStats::getCompartment)
-                    .collect(Collectors.toSet());
-            compartmentsCacheDirty = false;
-        }
-        return cachedCompartments;
-    }
-
     public Compartment getCompartment() {
         return compartment;
     }
@@ -109,11 +93,11 @@ public class CompartmentInstance {
         return uuid;
     }
 
-    public List<HashSet<UUID>> getLayers() {
+    public List<LayerData> getLayers() {
         return layers;
     }
 
-    public Set<UUID> getLayer(int index) {
+    public LayerData getLayer(int index) {
         return layers.get(index);
     }
 
@@ -157,16 +141,16 @@ public class CompartmentInstance {
         return getCompartment().tryToInsert(this, instance, layer);
     }
 
-    protected void addCompartment(int layer, @NotNull CompartmentInstance instance) {
-        layers.get(layer).add(instance.uuid);
+    protected void addCompartment(int layer, int x, int y, @NotNull CompartmentInstance instance) {
+        layers.get(layer).attemptToPlace(x, y, instance.uuid, instance.shape);
     }
 
     public void removeCompartment(int layer, @NotNull CompartmentInstance instance) {
-        layers.get(layer).remove(instance.uuid);
+        layers.get(layer).removeInstance(instance.uuid);
     }
 
     public void removeCompartment(CompartmentInstance instance) {
-        layers.forEach(set -> set.remove(instance.uuid));
+        layers.forEach(set -> set.removeInstance(instance.uuid));
     }
 
     public void setAttribute(MedicalAttribute attribute, float value) {
@@ -202,10 +186,7 @@ public class CompartmentInstance {
         CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 COMPARTMENT_REGISTRY.byNameCodec().fieldOf("compartment").forGetter(CompartmentInstance::getCompartment),
                 UUIDUtil.CODEC.fieldOf("uuid").forGetter(CompartmentInstance::getId),
-                Codec.list(Codec.list(UUIDUtil.CODEC).xmap(
-                        HashSet::new,
-                        ArrayList::new
-                )).fieldOf("layers").forGetter(CompartmentInstance::getLayers),
+                Codec.list(),
                 Codec.FLOAT.fieldOf("health").forGetter(CompartmentInstance::getHealth),
                 Codec.FLOAT.fieldOf("max_health").forGetter(CompartmentInstance::getMaxHealth),
                 Codec.unboundedMap(MedicalAttribute.CODEC, Codec.FLOAT).xmap(

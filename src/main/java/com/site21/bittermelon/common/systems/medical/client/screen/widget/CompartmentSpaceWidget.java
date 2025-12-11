@@ -7,7 +7,7 @@ import com.site21.bittermelon.common.systems.medical.client.screen.HeldItemData;
 import com.site21.bittermelon.common.systems.medical.client.screen.networking.MoveCompartment;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentTag;
-import com.site21.bittermelon.common.systems.medical.compartment.LayerData;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
 import com.site21.bittermelon.init.custom.Compartments;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
@@ -30,7 +30,7 @@ import java.util.UUID;
 
 import static com.site21.bittermelon.client.render.BitterRenderPipelines.*;
 
-public class CompartmentSpaceWidget extends MovableResizableWidget {
+public class CompartmentSpaceWidget extends MovableWidget {
     public static final ResourceLocation WINDOW_TEXTURE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/healthscreen/surgery_window.png");
     public static final ResourceLocation WINDOW_SIDES_TEXTURE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/healthscreen/surgery_window_sides.png");
 
@@ -47,7 +47,6 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     private Button collapseWidgetButton;
     private Button increaseLayerButton;
     private Button decreaseLayerButton;
-    private Button recenterButton;
 
     private final int CLOSE_RIGHT_MARGIN = 15;
     private final int COLLAPSE_RIGHT_MARGIN = 28;
@@ -62,8 +61,6 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
     private int contentHeight = 0;
     private static final int CONTENT_TOP_PADDING = 16;
 
-    private double scrollX = 0;
-    private double scrollY = 0;
     private boolean isContentDragging = false;
 
     private CompartmentInstance compartment;
@@ -121,13 +118,6 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
                 .pos(x + width - LAYER_RIGHT_MARGIN, y + DECREASE_TOP_MARGIN)
                 .size(10, 10)
                 .build();
-
-        recenterButton = Button.builder(
-                        Component.literal("⊕"),
-                        (button) -> recenterView())
-                .pos(x + 12, y + INCREASE_TOP_MARGIN)
-                .size(10, 10)
-                .build();
     }
 
     private void updateButtons() {
@@ -143,9 +133,6 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
 
         decreaseLayerButton.setX(x + width - LAYER_RIGHT_MARGIN);
         decreaseLayerButton.setY(y + DECREASE_TOP_MARGIN);
-
-        recenterButton.setX(x + 12);
-        recenterButton.setY(y + INCREASE_TOP_MARGIN);
     }
 
     private void increaseLayer() {
@@ -166,12 +153,6 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
         }
         layerIndex++;
         refreshCompartmentNodes();
-    }
-
-    private void recenterView() {
-        scrollX = 0;
-        scrollY = 0;
-        updateCompartmentWidgetPositions();
     }
 
     public void refreshCompartmentNodes() {

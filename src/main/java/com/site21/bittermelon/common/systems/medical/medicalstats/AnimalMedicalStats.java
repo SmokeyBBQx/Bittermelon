@@ -30,8 +30,8 @@ public class AnimalMedicalStats extends MedicalStats {
     private static final float HYPOXIA_DAMAGE = 0.01f;
     private static final float ASPHYXIATION_RATE = 0.05f;
 
-    public AnimalMedicalStats(List<CompartmentInstance> compartments, UUID mainCompartmentID, UUID characterID) {
-        super(compartments, mainCompartmentID, characterID);
+    public AnimalMedicalStats(int version, List<CompartmentInstance> compartments, UUID mainCompartmentID, UUID characterID) {
+        super(version, compartments, mainCompartmentID, characterID);
     }
 
     @Override

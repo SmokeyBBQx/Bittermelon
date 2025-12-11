@@ -2,6 +2,7 @@ package com.site21.bittermelon.common.systems.medical.compartment;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.medical.client.screen.widget.CompartmentSpaceWidget;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.core.Holder;
@@ -15,7 +16,6 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-import static com.site21.bittermelon.init.neoforge.BitterItems.BODY_PART;
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_REGISTRY;
 
 public class Compartment {
@@ -44,7 +44,7 @@ public class Compartment {
                 properties.defaultAttributes,
                 properties.defaultTags,
                 id,
-                new VisualData(visualData.x, visualData.y, visualData.z, visualData.scale, visualData.width, visualData.height, visualData.icon)
+                new VisualData(visualData.x, visualData.y, visualData.scale, visualData.icon)
         );
     }
 
@@ -96,7 +96,7 @@ public class Compartment {
     public static class Properties {
         EnumSet<CompartmentTag> defaultTags = EnumSet.noneOf(CompartmentTag.class);
         EnumMap<MedicalAttribute, Float> defaultAttributes = new EnumMap<>(MedicalAttribute.class);
-        LayerData[] layers = new LayerData[]{new LayerData(1, 1)};
+        LayerData[] layers = new LayerData[]{};
         Holder<Item> item = Items.AIR.builtInRegistryHolder();
         float defaultHealth = 0;
         List<Point> shape = new ArrayList<>();

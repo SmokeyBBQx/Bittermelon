@@ -18,6 +18,7 @@ import static com.site21.bittermelon.init.custom.Compartments.*;
 public class HumanFactoryNew implements AnatomyFactory {
     private CompartmentInstance wholeBody;
     private List<CompartmentInstance> compartments;
+    private static final int version = 0;
 
     @Override
     public MedicalStats build(BloodType bloodType, @NotNull Character character) {
@@ -27,7 +28,7 @@ public class HumanFactoryNew implements AnatomyFactory {
         buildAbdomen();
         addCompartment(SCALPEL, wholeBody, 0).getVisualData().x(50).y(60);
 
-        return new AnimalMedicalStats(compartments, wholeBody.getId(), character.getUUID());
+        return new AnimalMedicalStats(version, compartments, wholeBody.getId(), character.getUUID());
     }
 
     private void buildHead() {
