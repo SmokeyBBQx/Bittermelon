@@ -44,13 +44,13 @@ public class HumanFactoryNew implements AnatomyFactory {
         CompartmentInstance abdomen = addCompartment(ABDOMEN, wholeBody, 0);
         abdomen.getVisualData().x(50).y(30);
         CompartmentInstance cut = addCompartment(CUT, abdomen, 0);
-        cut.getVisualData().x(20).y(0).z(1).width(20).height(20).scale(2).isHidden(false);
+        cut.getVisualData().x(20).y(0).scale(2);
         CompartmentInstance cut1 = addCompartment(CUT, abdomen, 1);
-        cut1.getVisualData().x(20).y(0).z(1).width(20).height(20).scale(2).isHidden(false);
+        cut1.getVisualData().x(20).y(0);
         CompartmentInstance cut2 = addCompartment(CUT, abdomen, 2);
-        cut2.getVisualData().x(20).y(0).z(1).width(20).height(20).scale(5).isHidden(false);
+        cut2.getVisualData().x(20).y(0);
         CompartmentInstance cut3 = addCompartment(CUT, abdomen, 3);
-        cut3.getVisualData().x(20).y(0).z(1).width(20).height(20).scale(5).isHidden(false);
+        cut3.getVisualData().x(20).y(0);
         cut.addTag(CompartmentTag.CUT);
         cut1.addTag(CompartmentTag.CUT);
         cut2.addTag(CompartmentTag.CUT);
@@ -71,7 +71,7 @@ public class HumanFactoryNew implements AnatomyFactory {
     private CompartmentInstance addCompartment(@NotNull DeferredHolder<Compartment, Compartment> holder, @NotNull CompartmentInstance parent, int layer) {
         CompartmentInstance instance = holder.get().toInstance();
         compartments.add(instance);
-        parent.tryToInsert(layer, instance);
+//        parent.tryToInsert(layer, instance);
         return instance;
     }
 }

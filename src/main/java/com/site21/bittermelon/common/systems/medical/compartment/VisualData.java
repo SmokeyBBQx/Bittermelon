@@ -88,7 +88,7 @@ public class VisualData {
     }
 
     public VisualData icon(String name) {
-        this.icon = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/" + name + ".png");
+        this.icon = Bittermelon.resource("textures/gui/organs/" + name + ".png");
         return this;
     }
 

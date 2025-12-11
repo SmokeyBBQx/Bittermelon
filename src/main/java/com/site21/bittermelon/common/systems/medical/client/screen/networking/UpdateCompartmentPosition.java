@@ -45,23 +45,23 @@ public record UpdateCompartmentPosition(UUID characterID, VisualData visualData,
     );
 
     public void handle(@NotNull IPayloadContext ctx) {
-        CharacterManager characterManager = CharacterManager.get(ctx.player().level());
-        Character character = characterManager.getCharacter(characterID);
-        if (character == null) return;
-
-        MedicalStats medicalStats = character.getMedicalStats();
-        CompartmentInstance sender = medicalStats.getCompartment(senderID);
-        CompartmentInstance target = medicalStats.getCompartment(targetID);
-        CompartmentInstance receiver = medicalStats.getCompartment(receiverID);
-
-        sender.removeCompartment(layer, target);
-        target.getVisualData().x(visualData().x).y(visualData().y).isHidden(false);
-        receiver.tryToInsert(layer, target);
-
-        if (Minecraft.getInstance().screen instanceof HealthScreenV2 screen) {
-            screen.refresh();
-        }
-
-        characterManager.setDirty();
+//        CharacterManager characterManager = CharacterManager.get(ctx.player().level());
+//        Character character = characterManager.getCharacter(characterID);
+//        if (character == null) return;
+//
+//        MedicalStats medicalStats = character.getMedicalStats();
+//        CompartmentInstance sender = medicalStats.getCompartment(senderID);
+//        CompartmentInstance target = medicalStats.getCompartment(targetID);
+//        CompartmentInstance receiver = medicalStats.getCompartment(receiverID);
+//
+//        sender.removeCompartment(layer, target);
+//        target.getVisualData().x(visualData().x).y(visualData().y).isHidden(false);
+//        receiver.tryToInsert(layer, target);
+//
+//        if (Minecraft.getInstance().screen instanceof HealthScreenV2 screen) {
+//            screen.refresh();
+//        }
+//
+//        characterManager.setDirty();
     }
 }

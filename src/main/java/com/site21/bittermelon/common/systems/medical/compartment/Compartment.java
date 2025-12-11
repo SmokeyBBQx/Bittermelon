@@ -1,7 +1,6 @@
 package com.site21.bittermelon.common.systems.medical.compartment;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.systems.medical.client.screen.widget.CompartmentSpaceWidget;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
@@ -56,14 +55,14 @@ public class Compartment {
         stack.set(BitterDataComponents.COMPARTMENT, instance.toData());
         return stack;
     }
-
-    public void performAction(@NotNull CompartmentSpaceWidget widget, double mouseX, double mouseY, int button) {
-        widget.handleCompartmentPlacement(mouseX, mouseY);
-    }
-
-    public void performActionOn(@NotNull CompartmentSpaceWidget widget, CompartmentInstance target, CompartmentInstance instance, double mouseX, double mouseY, int button) {
-        widget.handleCompartmentPlacement(mouseX, mouseY);
-    }
+//
+//    public void performAction(@NotNull CompartmentSpaceWidget widget, double mouseX, double mouseY, int button) {
+//        widget.handleCompartmentPlacement(mouseX, mouseY);
+//    }
+//
+//    public void performActionOn(@NotNull CompartmentSpaceWidget widget, CompartmentInstance target, CompartmentInstance instance, double mouseX, double mouseY, int button) {
+//        widget.handleCompartmentPlacement(mouseX, mouseY);
+//    }
 
     public Holder<Compartment> builtInRegistryHolder() {
         return COMPARTMENT_REGISTRY.get(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, id)).orElseThrow();

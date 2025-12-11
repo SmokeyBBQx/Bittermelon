@@ -1,13 +1,19 @@
 package com.site21.bittermelon.common.systems.medical.compartment.layer;
 
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ARGB;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.List;
 
@@ -38,6 +44,17 @@ public class LayerData {
         for (SlotData sd : slotData) {
             grid[sd.y()][sd.x()] = sd.slot();
         }
+    }
+
+    @Contract("_, _, _, _ -> new")
+    public static @NotNull LayerData fromRegularShape(String name, int width, int height, SlotType type) {
+        LayerSlot[][] grid = new LayerSlot[height][width];
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; ++x) {
+                grid[y][x] = new LayerSlot(type);
+            }
+        }
+        return new LayerData(name, width, height, grid);
     }
 
     public String getName() {

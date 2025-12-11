@@ -44,29 +44,29 @@ public record MoveCompartment(UUID characterID, UUID receiverID, UUID targetID, 
     );
 
     public void handle(@NotNull IPayloadContext ctx) {
-        CharacterManager characterManager = CharacterManager.get(ctx.player().level());
-        Character character = characterManager.getCharacter(characterID);
-        if (character == null) return;
-
-        MedicalStats medicalStats = character.getMedicalStats();
-        CompartmentInstance target = medicalStats.getCompartment(targetID);
-        if (target == null) return;
-
-        target.getVisualData().x(visualData().x).y(visualData().y).isHidden(false);
-
-        CompartmentInstance receiver = medicalStats.getCompartment(receiverID);
-        if (receiver == null) return;
-
-        if (receiver.tryToInsert(layer, target)) {
-            System.out.println("Insertion succeeded server-side");
-
-            CompartmentInstance sender = medicalStats.getCompartment(senderID);
-            if (sender != null && !(sender.equals(receiver))) {
-                sender.removeCompartment(target);
-            }
-
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(medicalStats.getEntity(),
-                    new UpdateCompartments(List.of(receiver, target, sender)));
-        }
+//        CharacterManager characterManager = CharacterManager.get(ctx.player().level());
+//        Character character = characterManager.getCharacter(characterID);
+//        if (character == null) return;
+//
+//        MedicalStats medicalStats = character.getMedicalStats();
+//        CompartmentInstance target = medicalStats.getCompartment(targetID);
+//        if (target == null) return;
+//
+//        target.getVisualData().x(visualData().x).y(visualData().y).isHidden(false);
+//
+//        CompartmentInstance receiver = medicalStats.getCompartment(receiverID);
+//        if (receiver == null) return;
+//
+//        if (receiver.tryToInsert(layer, target)) {
+//            System.out.println("Insertion succeeded server-side");
+//
+//            CompartmentInstance sender = medicalStats.getCompartment(senderID);
+//            if (sender != null && !(sender.equals(receiver))) {
+//                sender.removeCompartment(target);
+//            }
+//
+//            PacketDistributor.sendToPlayersTrackingEntityAndSelf(medicalStats.getEntity(),
+//                    new UpdateCompartments(List.of(receiver, target, sender)));
+//        }
     }
 }

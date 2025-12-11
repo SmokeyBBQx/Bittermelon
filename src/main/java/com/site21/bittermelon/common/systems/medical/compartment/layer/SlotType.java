@@ -14,7 +14,9 @@ public enum SlotType implements StringRepresentable {
     MUSCLE(ResourceLocation.withDefaultNamespace("textures/block/netherrack.png")),
     FAT(ResourceLocation.withDefaultNamespace("textures/block/horn_coral_block.png")),
     MEMBRANE(ResourceLocation.withDefaultNamespace("textures/block/dead_brain_coral_block.png")),
-    BONE(ResourceLocation.withDefaultNamespace("textures/block/bone_block_side.png"));
+    BONE(ResourceLocation.withDefaultNamespace("textures/block/bone_block_side.png")),
+    BRAIN_TISSUE(ResourceLocation.withDefaultNamespace("textures/block/brain_coral_block.png")),
+    ORGAN(ResourceLocation.withDefaultNamespace("textures/block/brown_terracotta.png")),;
 
     private final ResourceLocation texture;
 

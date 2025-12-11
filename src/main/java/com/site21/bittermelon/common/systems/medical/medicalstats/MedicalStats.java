@@ -237,20 +237,6 @@ public class MedicalStats {
         compartmentRelations.put(child, parent);
     }
 
-    public CompartmentInstance getParent(CompartmentInstance child) {
-        return compartmentRelations.computeIfAbsent(child, this::findParent);
-    }
-
-    private CompartmentInstance findParent(@NotNull CompartmentInstance child) {
-        UUID childId = child.getId();
-
-        return compartments.values().stream()
-                .filter(parent -> parent.getLayers().stream()
-                        .anyMatch(layer -> layer.contains(childId)))
-                .findFirst()
-                .orElse(null);
-    }
-
     public Map<CompartmentInstance, CompartmentInstance> getCompartmentRelations() {
         return compartmentRelations;
     }
