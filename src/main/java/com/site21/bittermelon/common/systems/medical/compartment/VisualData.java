@@ -9,6 +9,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -23,7 +24,7 @@ public class VisualData {
     public ResourceLocation icon;
     public int color;
 
-    public VisualData(int x, int y, float scale, ResourceLocation icon, int color) {
+    public VisualData(int x, int y, float scale, @Nullable ResourceLocation icon, int color) {
         this.x = x;
         this.y = y;
         this.scale = scale;
@@ -43,7 +44,7 @@ public class VisualData {
 
     @Contract(" -> new")
     public static @NotNull VisualData empty() {
-        return new VisualData(0, 0, 1, 0, 0);
+        return new VisualData(0, 0, 1f, Optional.empty(), DEFAULT_COLOR);
     }
 
     public int getX() {
@@ -52,10 +53,6 @@ public class VisualData {
 
     public int getY() {
         return y;
-    }
-
-    public int getZ() {
-        return z;
     }
 
     public Optional<ResourceLocation> getOptionalIcon() {
@@ -77,11 +74,6 @@ public class VisualData {
 
     public VisualData y(int y) {
         this.y = y;
-        return this;
-    }
-
-    public VisualData z(int z) {
-        this.z = z;
         return this;
     }
 
@@ -109,36 +101,23 @@ public class VisualData {
         CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.INT.fieldOf("x").forGetter(VisualData::getX),
                 Codec.INT.fieldOf("y").forGetter(VisualData::getY),
-                Codec.INT.fieldOf("z").forGetter(VisualData::getZ),
+                Codec.FLOAT.fieldOf("scale").forGetter(visualData -> visualData.scale),
                 ResourceLocation.CODEC.optionalFieldOf("icon").forGetter(VisualData::getOptionalIcon),
                 Codec.INT.fieldOf("color").forGetter(VisualData::getColor)
         ).apply(instance, VisualData::new));
 
-        STREAM_CODEC = new StreamCodec<>() {
-            @Override
-            public @NotNull VisualData decode(@NotNull ByteBuf buf) {
-                int x = ByteBufCodecs.INT.decode(buf);
-                int y = ByteBufCodecs.INT.decode(buf);
-                int z = ByteBufCodecs.INT.decode(buf);
-                float scale = ByteBufCodecs.FLOAT.decode(buf);
-                boolean hasIcon = ByteBufCodecs.BOOL.decode(buf);
-                ResourceLocation icon = hasIcon ? ResourceLocation.STREAM_CODEC.decode(buf) : null;
-                int color = ByteBufCodecs.INT.decode(buf);
-                return new VisualData(x, y, z, scale, icon, color);
-            }
-
-            @Override
-            public void encode(@NotNull ByteBuf buf, @NotNull VisualData value) {
-                ByteBufCodecs.INT.encode(buf, value.getX());
-                ByteBufCodecs.INT.encode(buf, value.getY());
-                ByteBufCodecs.INT.encode(buf, value.getZ());
-                boolean hasIcon = value.getIcon() != null;
-                ByteBufCodecs.BOOL.encode(buf, hasIcon);
-                if (hasIcon) {
-                    ResourceLocation.STREAM_CODEC.encode(buf, value.getIcon());
-                }
-                ByteBufCodecs.INT.encode(buf, value.getColor());
-            }
-        };
+        STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.INT,
+                VisualData::getX,
+                ByteBufCodecs.INT,
+                VisualData::getY,
+                ByteBufCodecs.FLOAT,
+                visualData -> visualData.scale,
+                ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC),
+                VisualData::getOptionalIcon,
+                ByteBufCodecs.INT,
+                VisualData::getColor,
+                VisualData::new
+        );
     }
 }
