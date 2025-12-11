@@ -79,7 +79,7 @@ public class LayerData {
         return true;
     }
 
-    public boolean attemptToPlace(int x, int y, @NotNull UUID instanceId, @NotNull List<Point> shape) {
+    public boolean tryToPlace(int x, int y, @NotNull UUID instanceId, @NotNull List<Point> shape) {
         if (!canFit(x, y, shape)) return false;
 
         for (Point p : shape) {

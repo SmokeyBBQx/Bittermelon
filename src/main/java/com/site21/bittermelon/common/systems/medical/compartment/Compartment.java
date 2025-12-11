@@ -28,17 +28,12 @@ public class Compartment {
     }
 
     public CompartmentInstance toInstance() {
-        List<HashSet<UUID>> layers = new ArrayList<>();
-        for (int i = 0; i < properties.layers.length; ++i) {
-            layers.add(new HashSet<>());
-        }
-
         VisualData visualData = properties.visualData;
 
         return new CompartmentInstance(
                 this,
                 UUID.randomUUID(),
-                layers,
+                List.of(properties.layers),
                 properties.defaultHealth,
                 properties.defaultHealth,
                 properties.defaultAttributes,
@@ -54,13 +49,6 @@ public class Compartment {
 
     public boolean canExtract(CompartmentInstance instance, MedicalStats medicalStats) {
         return false;
-    }
-
-    public boolean tryToInsert(@NotNull CompartmentInstance instance, CompartmentInstance input, int layer) {
-        if (properties.layers == null || properties.layers[layer] == null) return false;
-
-        instance.addCompartment(layer, input);
-        return true;
     }
 
     public ItemStack createItemStack(@NotNull CompartmentInstance instance) {
@@ -97,9 +85,9 @@ public class Compartment {
         EnumSet<CompartmentTag> defaultTags = EnumSet.noneOf(CompartmentTag.class);
         EnumMap<MedicalAttribute, Float> defaultAttributes = new EnumMap<>(MedicalAttribute.class);
         LayerData[] layers = new LayerData[]{};
+        List<Point> shape = new ArrayList<>();
         Holder<Item> item = Items.AIR.builtInRegistryHolder();
         float defaultHealth = 0;
-        List<Point> shape = new ArrayList<>();
         VisualData visualData = VisualData.empty();
         String modelPart = "";
 
@@ -130,6 +118,11 @@ public class Compartment {
 
         public Properties layers(LayerData... layers) {
             this.layers = layers;
+            return this;
+        }
+
+        public Properties shape(List<Point> shape) {
+            this.shape = shape;
             return this;
         }
 

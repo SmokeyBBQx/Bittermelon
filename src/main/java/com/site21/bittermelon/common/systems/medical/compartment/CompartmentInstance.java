@@ -12,15 +12,11 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_REGISTRY;
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_REGISTRY_KEY;
@@ -31,9 +27,8 @@ public class CompartmentInstance {
     private static final StreamCodec<RegistryFriendlyByteBuf, Holder<Compartment>> COMPARTMENT_STREAM_CODEC;
 
     private final Compartment compartment;
-    private final UUID uuid;
+    private final UUID id;
     private final List<LayerData> layers;
-    private final List<Point> shape;
     private final float maxHealth;
     private final EnumMap<MedicalAttribute, Float> attributes;
     private final EnumSet<CompartmentTag> tags;
@@ -46,13 +41,12 @@ public class CompartmentInstance {
     private Set<CompartmentInstance> cachedCompartments;
     private boolean compartmentsCacheDirty = true;
 
-    public CompartmentInstance(@NotNull Compartment compartment, UUID uuid, List<LayerData> layers, List<Point> shape, float health,
+    public CompartmentInstance(@NotNull Compartment compartment, UUID id, List<LayerData> layers, float health,
                                float maxHealth, EnumMap<MedicalAttribute, Float> attributes, EnumSet<CompartmentTag> tags,
                                String name, VisualData visualData) {
         this.compartment = compartment;
-        this.uuid = uuid;
+        this.id = id;
         this.layers = layers;
-        this.shape = shape;
         this.health = health;
         this.maxHealth = maxHealth;
         this.attributes = attributes;
@@ -62,9 +56,28 @@ public class CompartmentInstance {
         dirty = true;
     }
 
-    public CompartmentInstance(@NotNull Holder<Compartment> compartment, UUID uuid, List<LayerData> layers, List<Point> shape, float health, float maxHealth,
-                               EnumMap<MedicalAttribute, Float> attributes, EnumSet<CompartmentTag> tags, String name, VisualData visualData) {
-        this(compartment.value(), uuid, layers, shape, health, maxHealth, attributes, tags, name, visualData);
+    public CompartmentInstance(@NotNull Holder<Compartment> compartment, UUID id, List<LayerData> layers, float health,
+                               float maxHealth, EnumMap<MedicalAttribute, Float> attributes, EnumSet<CompartmentTag> tags,
+                               String name, VisualData visualData) {
+        this(compartment.value(), id, layers, health, maxHealth, attributes, tags, name, visualData);
+    }
+
+    /**
+     * Convenience constructor for stream codec
+     */
+    public CompartmentInstance(@NotNull Holder<Compartment> compartmentHolder, UUID uuid, List<LayerData> layerData,
+                               Float health, Float maxHealth, Map<MedicalAttribute, Float> attributes, Collection<CompartmentTag> tags,
+                               String string, VisualData visualData) {
+        this(compartmentHolder.value(), uuid, layerData, health, maxHealth, new EnumMap<>(attributes), EnumSet.copyOf(tags), string, visualData);
+    }
+
+    /**
+     * Convenience constructor for codec
+     */
+    public CompartmentInstance(@NotNull Compartment compartment, UUID id, List<LayerData> layers,
+                               float health, float maxHealth, Map<MedicalAttribute, Float> attributes,
+                               List<CompartmentTag> tags, String name, VisualData visualData) {
+        this(compartment, id, layers, health, maxHealth, new EnumMap<>(attributes), EnumSet.copyOf(tags), name, visualData);
     }
 
     public void tick(MedicalStats medicalStats) {
@@ -90,7 +103,7 @@ public class CompartmentInstance {
     }
 
     public UUID getId() {
-        return uuid;
+        return id;
     }
 
     public List<LayerData> getLayers() {
@@ -117,6 +130,10 @@ public class CompartmentInstance {
         return tags;
     }
 
+    public List<CompartmentTag> getTagsAsList() {
+        return new ArrayList<>(tags);
+    }
+
     public boolean hasTag(CompartmentTag tag) {
         return tags.contains(tag);
     }
@@ -137,20 +154,16 @@ public class CompartmentInstance {
         return dirty;
     }
 
-    public boolean tryToInsert(int layer, CompartmentInstance instance) {
-        return getCompartment().tryToInsert(this, instance, layer);
-    }
-
-    protected void addCompartment(int layer, int x, int y, @NotNull CompartmentInstance instance) {
-        layers.get(layer).attemptToPlace(x, y, instance.uuid, instance.shape);
+    protected boolean tryToInsert(int layer, int x, int y, @NotNull CompartmentInstance instance) {
+        return layers.get(layer).tryToPlace(x, y, instance.id, instance.getCompartment().properties.shape);
     }
 
     public void removeCompartment(int layer, @NotNull CompartmentInstance instance) {
-        layers.get(layer).removeInstance(instance.uuid);
+        layers.get(layer).removeInstance(instance.id);
     }
 
     public void removeCompartment(CompartmentInstance instance) {
-        layers.forEach(set -> set.removeInstance(instance.uuid));
+        layers.forEach(set -> set.removeInstance(instance.id));
     }
 
     public void setAttribute(MedicalAttribute attribute, float value) {
@@ -183,70 +196,49 @@ public class CompartmentInstance {
     }
 
     static {
+        COMPARTMENT_STREAM_CODEC = ByteBufCodecs.holderRegistry(COMPARTMENT_REGISTRY_KEY);
+
         CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 COMPARTMENT_REGISTRY.byNameCodec().fieldOf("compartment").forGetter(CompartmentInstance::getCompartment),
-                UUIDUtil.CODEC.fieldOf("uuid").forGetter(CompartmentInstance::getId),
-                Codec.list(),
+                UUIDUtil.CODEC.fieldOf("id").forGetter(CompartmentInstance::getId),
+                Codec.list(LayerData.CODEC).fieldOf("layers").forGetter(CompartmentInstance::getLayers),
                 Codec.FLOAT.fieldOf("health").forGetter(CompartmentInstance::getHealth),
                 Codec.FLOAT.fieldOf("max_health").forGetter(CompartmentInstance::getMaxHealth),
-                Codec.unboundedMap(MedicalAttribute.CODEC, Codec.FLOAT).xmap(
-                        map -> {
-                            EnumMap<MedicalAttribute, Float> em = new EnumMap<>(MedicalAttribute.class);
-                            em.putAll(map);
-                            return em;
-                        },
-                        em -> em
-                ).fieldOf("attributes").forGetter(CompartmentInstance::getAttributes),
-                CompartmentTag.CODEC.listOf().xmap(
-                        list -> list.isEmpty() ? EnumSet.noneOf(CompartmentTag.class) : EnumSet.copyOf(list),
-                        ArrayList::new
-                ).fieldOf("tags").forGetter(CompartmentInstance::getTags),
+                Codec.unboundedMap(MedicalAttribute.CODEC, Codec.FLOAT).fieldOf("attributes").forGetter(CompartmentInstance::getAttributes),
+                Codec.list(CompartmentTag.CODEC).fieldOf("tags").forGetter(CompartmentInstance::getTagsAsList),
                 Codec.STRING.fieldOf("name").forGetter(CompartmentInstance::getName),
                 VisualData.CODEC.fieldOf("visual_data").forGetter(CompartmentInstance::getVisualData)
         ).apply(instance, CompartmentInstance::new));
 
-        STREAM_CODEC = new StreamCodec<>() {
-            @Override
-            public void encode(@NotNull RegistryFriendlyByteBuf buf, @NotNull CompartmentInstance value) {
-                COMPARTMENT_STREAM_CODEC.encode(buf, value.getCompartmentHolder());
-                buf.writeUUID(value.getId());
-                ByteBufCodecs.collection(HashSet::new, UUIDUtil.STREAM_CODEC)
-                        .apply(ByteBufCodecs.list()).encode(buf, value.getLayers());
-                buf.writeFloat(value.getHealth());
-                buf.writeFloat(value.getMaxHealth());
-                buf.writeMap(value.getAttributes(),
-                        FriendlyByteBuf::writeEnum,
-                        FriendlyByteBuf::writeFloat
-                );
-                buf.writeEnumSet(value.getTags(), CompartmentTag.class);
-                buf.writeUtf(value.getName());
-                VisualData.STREAM_CODEC.encode(buf, value.getVisualData());
-            }
-
-            @Override
-            public @NotNull CompartmentInstance decode(@NotNull RegistryFriendlyByteBuf buf) {
-                Holder<Compartment> compartmentHolder = COMPARTMENT_STREAM_CODEC.decode(buf);
-                UUID uuid = buf.readUUID();
-                List<HashSet<UUID>> layers = buf.readList(byteBuf ->
-                        byteBuf.readCollection(HashSet::new, byteBuf1 -> byteBuf1.readUUID()));
-                float health = buf.readFloat();
-                float maxHealth = buf.readFloat();
-                EnumMap<MedicalAttribute, Float> attributes = new EnumMap<>(MedicalAttribute.class);
-                Map<MedicalAttribute, Float> tempMap = buf.readMap(
-                        byteBuf -> byteBuf.readEnum(MedicalAttribute.class),
-                        FriendlyByteBuf::readFloat
-                );
-                attributes.putAll(tempMap);
-                EnumSet<CompartmentTag> tags = buf.readEnumSet(CompartmentTag.class);
-                String displayName = buf.readUtf();
-                VisualData visualData = VisualData.STREAM_CODEC.decode(buf);
-
-                return new CompartmentInstance(
-                        compartmentHolder, uuid, layers, health, maxHealth, attributes, tags, displayName, visualData
-                );
-            }
-        };
-
-        COMPARTMENT_STREAM_CODEC = ByteBufCodecs.holderRegistry(COMPARTMENT_REGISTRY_KEY);
+        STREAM_CODEC = StreamCodec.composite(
+                COMPARTMENT_STREAM_CODEC,
+                CompartmentInstance::getCompartmentHolder,
+                UUIDUtil.STREAM_CODEC,
+                CompartmentInstance::getId,
+                LayerData.STREAM_CODEC.apply(ByteBufCodecs.list()),
+                CompartmentInstance::getLayers,
+                ByteBufCodecs.FLOAT,
+                CompartmentInstance::getHealth,
+                ByteBufCodecs.FLOAT,
+                CompartmentInstance::getMaxHealth,
+                ByteBufCodecs.map(
+                        HashMap::new,
+                        MedicalAttribute.STREAM_CODEC,
+                        ByteBufCodecs.FLOAT,
+                        MedicalAttribute.values().length
+                ),
+                CompartmentInstance::getAttributes,
+                ByteBufCodecs.collection(
+                        HashSet::new,
+                        CompartmentTag.STREAM_CODEC,
+                        CompartmentTag.values().length
+                ),
+                CompartmentInstance::getTags,
+                ByteBufCodecs.STRING_UTF8,
+                CompartmentInstance::getName,
+                VisualData.STREAM_CODEC,
+                CompartmentInstance::getVisualData,
+                CompartmentInstance::new
+        );
     }
 }

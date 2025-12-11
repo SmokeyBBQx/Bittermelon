@@ -2,6 +2,7 @@ package com.site21.bittermelon.common.systems.medical.compartment;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
 import net.minecraft.core.Holder;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.FriendlyByteBuf;
@@ -19,7 +20,7 @@ import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_
 public record CompartmentData(
         Holder<Compartment> compartment,
         UUID uuid,
-        List<HashSet<UUID>> layers,
+        List<LayerData> layers,
         float health,
         float maxHealth,
         EnumMap<MedicalAttribute, Float> attributes,
@@ -71,10 +72,6 @@ public record CompartmentData(
         return compartment;
     }
 
-    public Set<UUID> getLayer(int index) {
-        return layers.get(index);
-    }
-
     public VisualData getVisualData() {
         return visualData;
     }
@@ -83,7 +80,7 @@ public record CompartmentData(
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof CompartmentData(
-                Holder<Compartment> compartment1, UUID uuid1, List<HashSet<UUID>> layers1, float health1, float maxHealth1,
+                Holder<Compartment> compartment1, UUID uuid1, List<LayerData> layers1, float health1, float maxHealth1,
                 EnumMap<MedicalAttribute, Float> attributes1, EnumSet<CompartmentTag> tags1, String name1,
                 VisualData data
         ))) return false;
@@ -108,10 +105,7 @@ public record CompartmentData(
         CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 COMPARTMENT_REGISTRY.holderByNameCodec().fieldOf("compartment").forGetter(CompartmentData::compartment),
                 UUIDUtil.CODEC.fieldOf("uuid").forGetter(CompartmentData::uuid),
-                Codec.list(Codec.list(UUIDUtil.CODEC).xmap(
-                        HashSet::new,
-                        ArrayList::new
-                )).fieldOf("layers").forGetter(CompartmentData::layers),
+                Codec.list(LayerData.CODEC).fieldOf("layers").forGetter(CompartmentData::layers),
                 Codec.FLOAT.fieldOf("health").forGetter(CompartmentData::health),
                 Codec.FLOAT.fieldOf("max_health").forGetter(CompartmentData::maxHealth),
                 Codec.unboundedMap(MedicalAttribute.CODEC, Codec.FLOAT).fieldOf("attributes").forGetter(CompartmentData::attributes),
@@ -133,8 +127,7 @@ public record CompartmentData(
             public void encode(@NotNull RegistryFriendlyByteBuf buf, @NotNull CompartmentData value) {
                 COMPARTMENT_STREAM_CODEC.encode(buf, value.getCompartmentHolder());
                 buf.writeUUID(value.uuid());
-                ByteBufCodecs.collection(HashSet::new, UUIDUtil.STREAM_CODEC)
-                        .apply(ByteBufCodecs.list()).encode(buf, value.layers());
+                LayerData.STREAM_CODEC.apply(ByteBufCodecs.list()).encode(buf, value.layers());
                 buf.writeFloat(value.health());
                 buf.writeFloat(value.maxHealth());
                 buf.writeMap(value.attributes(),
@@ -150,8 +143,7 @@ public record CompartmentData(
             public @NotNull CompartmentData decode(@NotNull RegistryFriendlyByteBuf buf) {
                 Holder<Compartment> compartmentHolder = COMPARTMENT_STREAM_CODEC.decode(buf);
                 UUID uuid = buf.readUUID();
-                List<HashSet<UUID>> layers = buf.readList(byteBuf ->
-                        byteBuf.readCollection(HashSet::new, byteBuf1 -> byteBuf1.readUUID()));
+                List<LayerData> layers = LayerData.STREAM_CODEC.apply(ByteBufCodecs.list()).decode(buf);
                 float health = buf.readFloat();
                 float maxHealth = buf.readFloat();
                 EnumMap<MedicalAttribute, Float> attributes = new EnumMap<>(MedicalAttribute.class);
