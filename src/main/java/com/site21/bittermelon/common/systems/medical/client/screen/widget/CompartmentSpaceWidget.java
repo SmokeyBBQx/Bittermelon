@@ -20,10 +20,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
-import net.neoforged.neoforge.client.stencil.StencilFunction;
-import net.neoforged.neoforge.client.stencil.StencilOperation;
-import net.neoforged.neoforge.client.stencil.StencilPerFaceTest;
-import net.neoforged.neoforge.client.stencil.StencilTest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,7 +29,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.site21.bittermelon.client.render.BitterRenderPipelines.*;
-import static net.minecraft.client.renderer.RenderPipelines.GUI_SNIPPET;
 
 public class CompartmentSpaceWidget extends MovableResizableWidget {
     public static final ResourceLocation WINDOW_TEXTURE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/healthscreen/surgery_window.png");
@@ -345,18 +340,12 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
             int indicatorX = x + width - 24;
             int indicatorY = y + 50 + i * 6;
 
-            if (layerIndex == i) {
-                if (isLayerInjured(i)) {
-                    guiGraphics.blit(
-                            RenderPipelines.GUI_TEXTURED, INJURED_SELECTED_LAYER_TEXTURE, indicatorX, indicatorY, 0, 0, 11, 5, 11, 5);
-                } else {
-                    guiGraphics.blit(RenderPipelines.GUI_TEXTURED, SELECTED_LAYER_TEXTURE, indicatorX, indicatorY, 0, 0, 11, 5, 11, 5);
-                }
-            } else if (isLayerInjured(i)) {
-                guiGraphics.blit(RenderPipelines.GUI_TEXTURED, INJURED_LAYER_TEXTURE, indicatorX, indicatorY, 0, 0, 11, 5, 11, 5);
-            } else {
-                guiGraphics.blit(RenderPipelines.GUI_TEXTURED, LAYER_TEXTURE, indicatorX, indicatorY, 0, 0, 11, 5, 11, 5);
-            }
+            ResourceLocation sprite = layerIndex == i ?
+                    isLayerInjured(i) ? INJURED_SELECTED_LAYER_TEXTURE : SELECTED_LAYER_TEXTURE :
+                    isLayerInjured(i) ? INJURED_LAYER_TEXTURE : LAYER_TEXTURE;
+
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, sprite, indicatorX, indicatorY, 0, 0,
+                    11, 5, 11, 5);
         }
     }
 
@@ -458,7 +447,8 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
             int revealWidth = (int) (visualData.getWidth() * scaleFactor);
             int revealHeight = (int) (visualData.getHeight() * scaleFactor);
 
-            guiGraphics.fill(STENCIL_TEST,
+            guiGraphics.fill(
+                    STENCIL_TEST,
                     minRevealX,
                     minRevealY,
                     minRevealX + revealWidth,
@@ -635,9 +625,9 @@ public class CompartmentSpaceWidget extends MovableResizableWidget {
 
         ClientPacketDistributor.sendToServer(new MoveCompartment(
                 healthScreen.getMedicalStats().getCharacterID(),
-                compartment.getUUID(),
-                target.getUUID(),
-                heldItem.parent().compartment.getUUID(),
+                compartment.getId(),
+                target.getId(),
+                heldItem.parent().compartment.getId(),
                 layerIndex,
                 visualData
         ));

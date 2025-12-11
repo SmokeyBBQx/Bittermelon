@@ -105,7 +105,7 @@ public class CompartmentInstance {
         return compartment.builtInRegistryHolder();
     }
 
-    public UUID getUUID() {
+    public UUID getId() {
         return uuid;
     }
 
@@ -201,7 +201,7 @@ public class CompartmentInstance {
     static {
         CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 COMPARTMENT_REGISTRY.byNameCodec().fieldOf("compartment").forGetter(CompartmentInstance::getCompartment),
-                UUIDUtil.CODEC.fieldOf("uuid").forGetter(CompartmentInstance::getUUID),
+                UUIDUtil.CODEC.fieldOf("uuid").forGetter(CompartmentInstance::getId),
                 Codec.list(Codec.list(UUIDUtil.CODEC).xmap(
                         HashSet::new,
                         ArrayList::new
@@ -228,7 +228,7 @@ public class CompartmentInstance {
             @Override
             public void encode(@NotNull RegistryFriendlyByteBuf buf, @NotNull CompartmentInstance value) {
                 COMPARTMENT_STREAM_CODEC.encode(buf, value.getCompartmentHolder());
-                buf.writeUUID(value.getUUID());
+                buf.writeUUID(value.getId());
                 ByteBufCodecs.collection(HashSet::new, UUIDUtil.STREAM_CODEC)
                         .apply(ByteBufCodecs.list()).encode(buf, value.getLayers());
                 buf.writeFloat(value.getHealth());

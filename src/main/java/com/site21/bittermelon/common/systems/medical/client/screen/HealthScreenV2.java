@@ -1,6 +1,5 @@
 package com.site21.bittermelon.common.systems.medical.client.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.medical.client.screen.networking.OpenHealthScreenC2S;
@@ -164,7 +163,7 @@ public class HealthScreenV2 extends Screen {
 
     public void refresh() {
         for (CompartmentSpaceWidget widget : renderedCompartmentSpaces) {
-            CompartmentInstance updated = medicalStats.getCompartment(widget.getCompartment().getUUID());
+            CompartmentInstance updated = medicalStats.getCompartment(widget.getCompartment().getId());
             widget.setCompartment(updated);
             widget.refreshCompartmentNodes();
 

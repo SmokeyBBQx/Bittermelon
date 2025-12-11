@@ -11,7 +11,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 import static com.site21.bittermelon.init.neoforge.BitterItems.BODY_PART;
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_REGISTRY;
@@ -94,10 +96,11 @@ public class Compartment {
     public static class Properties {
         EnumSet<CompartmentTag> defaultTags = EnumSet.noneOf(CompartmentTag.class);
         EnumMap<MedicalAttribute, Float> defaultAttributes = new EnumMap<>(MedicalAttribute.class);
-        LayerData[] layers = new LayerData[]{new LayerData(ResourceLocation.withDefaultNamespace("textures/block/stone.png"), "Compartment", 0, 0)};
+        LayerData[] layers = new LayerData[]{new LayerData(1, 1)};
         Holder<Item> item = Items.AIR.builtInRegistryHolder();
         float defaultHealth = 0;
-        VisualData visualData = VisualData.empty().width(200).height(200);
+        List<Point> shape = new ArrayList<>();
+        VisualData visualData = VisualData.empty();
         String modelPart = "";
 
         public Properties defaultTags(EnumSet<CompartmentTag> defaultTags) {

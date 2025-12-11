@@ -149,7 +149,7 @@ public class IncisionMinigame extends MedicalMinigame {
     protected void complete() {
         if (getMinecraft().player == null) return;
         ClientPacketDistributor.sendToServer(new CompleteMinigame(item,
-                compartment.getUUID(),
+                compartment.getId(),
                 character.getUUID(),
                 getMinecraft().player.getUUID(),
                 calculateAccuracy()));

@@ -27,7 +27,7 @@ public class HumanFactoryNew implements AnatomyFactory {
         buildAbdomen();
         addCompartment(SCALPEL, wholeBody, 0).getVisualData().x(50).y(60);
 
-        return new AnimalMedicalStats(compartments, wholeBody.getUUID(), character.getUUID());
+        return new AnimalMedicalStats(compartments, wholeBody.getId(), character.getUUID());
     }
 
     private void buildHead() {

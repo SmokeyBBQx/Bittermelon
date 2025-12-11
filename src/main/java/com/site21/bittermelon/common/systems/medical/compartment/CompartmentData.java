@@ -35,7 +35,7 @@ public record CompartmentData(
     public static @NotNull CompartmentData fromInstance(@NotNull CompartmentInstance instance) {
         return new CompartmentData(
                 instance.getCompartmentHolder(),
-                instance.getUUID(),
+                instance.getId(),
                 instance.getLayers(),
                 instance.getHealth(),
                 instance.getMaxHealth(),

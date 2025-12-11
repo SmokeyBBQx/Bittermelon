@@ -31,7 +31,7 @@ public record UpdateCompartments(List<CompartmentInstance> compartments) impleme
     public void handle(@NotNull IPayloadContext ctx) {
         if (Minecraft.getInstance().screen instanceof HealthScreenV2 screen) {
             for (CompartmentInstance instance : compartments) {
-                screen.getMedicalStats().getCompartments().put(instance.getUUID(), instance);
+                screen.getMedicalStats().getCompartments().put(instance.getId(), instance);
             }
             screen.refresh();
         }

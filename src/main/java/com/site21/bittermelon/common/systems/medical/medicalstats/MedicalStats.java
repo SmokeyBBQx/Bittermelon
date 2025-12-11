@@ -76,7 +76,7 @@ public class MedicalStats {
         this.mainCompartmentID = mainCompartmentID;
         this.compartments = new ConcurrentHashMap<>();
         for (CompartmentInstance instance : compartments) {
-            this.compartments.put(instance.getUUID(), instance);
+            this.compartments.put(instance.getId(), instance);
         }
         this.characterID = characterID;
         this.activeDrugs = new ArrayList<>(activeDrugs);
@@ -131,7 +131,7 @@ public class MedicalStats {
                 for (MedicalAttribute attribute : compartment.getAttributes().keySet()) {
                     MedicalAttributeInstance instance = medicalAttributes.computeIfAbsent(attribute,
                             (k) -> new MedicalAttributeInstance());
-                    instance.updateModifier(compartment.getUUID(), compartment.getAttribute(attribute));
+                    instance.updateModifier(compartment.getId(), compartment.getAttribute(attribute));
                 }
                 compartment.setDirty(false);
             }
@@ -221,7 +221,7 @@ public class MedicalStats {
     }
 
     public void addCompartment(CompartmentInstance compartment) {
-        compartments.put(compartment.getUUID(), compartment);
+        compartments.put(compartment.getId(), compartment);
 
         if (entity != null) {
             PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new UpdateHealthScreen(characterID, this));
@@ -237,7 +237,7 @@ public class MedicalStats {
     }
 
     private CompartmentInstance findParent(@NotNull CompartmentInstance child) {
-        UUID childId = child.getUUID();
+        UUID childId = child.getId();
 
         return compartments.values().stream()
                 .filter(parent -> parent.getLayers().stream()
