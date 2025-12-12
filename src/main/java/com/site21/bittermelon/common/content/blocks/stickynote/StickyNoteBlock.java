@@ -1,5 +1,6 @@
 package com.site21.bittermelon.common.content.blocks.stickynote;
 
+import com.mojang.math.OctahedralGroup;
 import com.site21.bittermelon.common.content.blocks.stickynote.networking.OpenStickyNoteScreen;
 import com.site21.bittermelon.init.neoforge.BitterItems;
 import net.minecraft.ChatFormatting;
@@ -27,6 +28,7 @@ import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -52,7 +54,7 @@ public class StickyNoteBlock extends Block implements EntityBlock {
     public static final BooleanProperty TOP_RIGHT;
     public static final BooleanProperty BOTTOM_LEFT;
     public static final BooleanProperty BOTTOM_RIGHT;
-    private static final Map<Direction, Map<Position, VoxelShape>> NOTE_SHAPES;
+    private static final Map<@NotNull Position, @NotNull Map<AttachFace, Map<Direction, VoxelShape>>> NOTE_SHAPES;
 
     public StickyNoteBlock(Properties properties) {
         super(properties);
@@ -81,29 +83,15 @@ public class StickyNoteBlock extends Block implements EntityBlock {
         AttachFace face = state.getValue(FACE);
         Direction facing = state.getValue(FACING);
 
-        Direction shapeDir = switch (face) {
-            case FLOOR -> Direction.UP;
-            case CEILING -> Direction.DOWN;
-            default -> facing;
-        };
-
         VoxelShape combinedShape = Shapes.empty();
-        Map<Position, VoxelShape> shapes = NOTE_SHAPES.get(shapeDir);
 
-        if (state.getValue(TOP_LEFT)) {
-            combinedShape = Shapes.or(combinedShape, shapes.get(Position.TOP_LEFT));
-        }
-        if (state.getValue(TOP_RIGHT)) {
-            combinedShape = Shapes.or(combinedShape, shapes.get(Position.TOP_RIGHT));
-        }
-        if (state.getValue(BOTTOM_LEFT)) {
-            combinedShape = Shapes.or(combinedShape, shapes.get(Position.BOTTOM_LEFT));
-        }
-        if (state.getValue(BOTTOM_RIGHT)) {
-            combinedShape = Shapes.or(combinedShape, shapes.get(Position.BOTTOM_RIGHT));
+        for (Position corner : Position.values()) {
+            if (state.getValue(corner.getProperty())) {
+                combinedShape = Shapes.or(combinedShape, NOTE_SHAPES.get(corner).get(face).get(facing));
+            }
         }
 
-        return combinedShape.isEmpty() ? shapes.get(Position.TOP_LEFT) : combinedShape;
+        return combinedShape.isEmpty() ? NOTE_SHAPES.get(Position.TOP_LEFT).get(face).get(facing) : combinedShape;
     }
 
     @Override
@@ -154,6 +142,13 @@ public class StickyNoteBlock extends Block implements EntityBlock {
     @Override
     protected boolean canSurvive(@NotNull BlockState state, @NotNull LevelReader level, @NotNull BlockPos pos) {
         return canAttach(level, pos, getConnectedDirection(state).getOpposite());
+    }
+
+    @Override
+    protected void neighborChanged(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Block neighborBlock, @Nullable Orientation orientation, boolean movedByPiston) {
+        if (!canSurvive(state, level, pos) || areAllPositionsEmpty(state)) {
+            level.removeBlock(pos, false);
+        }
     }
 
     protected static Direction getConnectedDirection(@NotNull BlockState state) {
@@ -237,7 +232,7 @@ public class StickyNoteBlock extends Block implements EntityBlock {
     }
 
     @Contract(pure = true)
-    public @NotNull Position getPosition(@NotNull BlockState state, @NotNull Vec3 hitPos, @NotNull BlockPos blockPos) {
+    public static @NotNull Position getPosition(@NotNull BlockState state, @NotNull Vec3 hitPos, @NotNull BlockPos blockPos) {
         Direction facing = state.getValue(FACING);
         AttachFace face = state.getValue(FACE);
         double relX = hitPos.x - blockPos.getX();
@@ -303,6 +298,15 @@ public class StickyNoteBlock extends Block implements EntityBlock {
         }
     }
 
+    // Modification of Shapes#rotateAttachFace that works for this case, should work generally for similar custom blocks
+    public static Map<AttachFace, Map<Direction, VoxelShape>> rotateAttachFace(VoxelShape shape) {
+        return Map.of(
+                AttachFace.WALL, Shapes.rotateHorizontal(shape),
+                AttachFace.FLOOR, Shapes.rotateHorizontal(Shapes.rotate(shape, OctahedralGroup.ROT_180_EDGE_YZ_NEG)),
+                AttachFace.CEILING, Shapes.rotateHorizontal(Shapes.rotate(shape, OctahedralGroup.ROT_90_REF_X_NEG))
+        );
+    }
+
     static {
         FACE = BlockStateProperties.ATTACH_FACE;
         FACING = HorizontalDirectionalBlock.FACING;
@@ -311,42 +315,10 @@ public class StickyNoteBlock extends Block implements EntityBlock {
         BOTTOM_LEFT = BooleanProperty.create("bottom_left");
         BOTTOM_RIGHT = BooleanProperty.create("bottom_right");
         NOTE_SHAPES = Map.of(
-                Direction.NORTH, Map.of(
-                        Position.TOP_LEFT, Block.box(8.0, 8.0, 15.9, 16.0, 16.0, 16.0),
-                        Position.TOP_RIGHT, Block.box(0.0, 8.0, 15.9, 8.0, 16.0, 16.0),
-                        Position.BOTTOM_LEFT, Block.box(8.0, 0.0, 15.9, 16.0, 8.0, 16.0),
-                        Position.BOTTOM_RIGHT, Block.box(0.0, 0.0, 15.9, 8.0, 8.0, 16.0)
-                ),
-                Direction.SOUTH, Map.of(
-                        Position.TOP_LEFT, Block.box(0.0, 8.0, 0.0, 8.0, 16.0, 0.1),
-                        Position.TOP_RIGHT, Block.box(8.0, 8.0, 0.0, 16.0, 16.0, 0.1),
-                        Position.BOTTOM_LEFT, Block.box(0.0, 0.0, 0.0, 8.0, 8.0, 0.1),
-                        Position.BOTTOM_RIGHT, Block.box(8.0, 0.0, 0.0, 16.0, 8.0, 0.1)
-                ),
-                Direction.EAST, Map.of(
-                        Position.TOP_LEFT, Block.box(0.0, 8.0, 8.0, 0.1, 16.0, 16.0),
-                        Position.TOP_RIGHT, Block.box(0.0, 8.0, 0.0, 0.1, 16.0, 8.0),
-                        Position.BOTTOM_LEFT, Block.box(0.0, 0.0, 8.0, 0.1, 8.0, 16.0),
-                        Position.BOTTOM_RIGHT, Block.box(0.0, 0.0, 0.0, 0.1, 8.0, 8.0)
-                ),
-                Direction.WEST, Map.of(
-                        Position.TOP_LEFT, Block.box(15.9, 8.0, 0.0, 16.0, 16.0, 8.0),
-                        Position.TOP_RIGHT, Block.box(15.9, 8.0, 8.0, 16.0, 16.0, 16.0),
-                        Position.BOTTOM_LEFT, Block.box(15.9, 0.0, 0.0, 16.0, 8.0, 8.0),
-                        Position.BOTTOM_RIGHT, Block.box(15.9, 0.0, 8.0, 16.0, 8.0, 16.0)
-                ),
-                Direction.UP, Map.of(
-                        Position.TOP_LEFT, Block.box(8.0, 0.0, 8.0, 16.0, 0.1, 16.0),
-                        Position.TOP_RIGHT, Block.box(0.0, 0.0, 8.0, 8.0, 0.1, 16.0),
-                        Position.BOTTOM_LEFT, Block.box(8.0, 0.0, 0.0, 16.0, 0.1, 8.0),
-                        Position.BOTTOM_RIGHT, Block.box(0.0, 0.0, 0.0, 8.0, 0.1, 8.0)
-                ),
-                Direction.DOWN, Map.of(
-                        Position.TOP_LEFT, Block.box(0.0, 15.9, 8.0, 8.0, 16.0, 16.0),
-                        Position.TOP_RIGHT, Block.box(8.0, 15.9, 8.0, 16.0, 16.0, 16.0),
-                        Position.BOTTOM_LEFT, Block.box(0.0, 15.9, 0.0, 8.0, 16.0, 8.0),
-                        Position.BOTTOM_RIGHT, Block.box(8.0, 15.9, 0.0, 16.0, 16.0, 8.0)
-                )
+                Position.TOP_LEFT, rotateAttachFace(Block.box(8.0, 8.0, 15.9, 16.0, 16.0, 16.0)),
+                Position.TOP_RIGHT, rotateAttachFace(Block.box(0.0, 8.0, 15.9, 8.0, 16.0, 16.0)),
+                Position.BOTTOM_LEFT, rotateAttachFace(Block.box(8.0, 0.0, 15.9, 16.0, 8.0, 16.0)),
+                Position.BOTTOM_RIGHT, rotateAttachFace(Block.box(0.0, 0.0, 15.9, 8.0, 8.0, 16.0))
         );
     }
 }
