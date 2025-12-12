@@ -1,23 +1,28 @@
 package com.site21.bittermelon.common.systems.character;
 
+import com.mojang.logging.LogUtils;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.site21.bittermelon.common.systems.character.skin.SkinOverrideSystem;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ACTIVE_CHARACTER;
@@ -143,20 +148,30 @@ public class CharacterManager extends SavedData {
      * @param switchedTo        The character to switch to.
      */
     public void switchCharacter(@NotNull Player player, @Nullable Character previousCharacter, @NotNull Character switchedTo) {
-//        if (previousCharacter != null) {
-//            CompoundTag playerData = player.saveWithoutId();
-//            previousCharacter.savePlayerData(playerData, (ServerLevel) player.level());
-//        }
-//
-//        CompoundTag newPlayerData = switchedTo.getPlayerData((ServerLevel) player.level());
-//        if (newPlayerData != null) {
-//            player.load(newPlayerData);
-//            player.teleportTo(player.getX(), player.getY(), player.getZ());
-//            player.getInventory().setChanged();
-            setActiveCharacter(player, switchedTo.getUUID());
-//        }
+        // If this fails, the error should be sent to the person using the command
+        try (ProblemReporter.ScopedCollector problemreporter$scopedcollector = new ProblemReporter.ScopedCollector(player.problemPath(), LogUtils.getLogger())) {
+            if (previousCharacter != null) {
+                TagValueOutput tagvalueoutput = TagValueOutput.createWithContext(problemreporter$scopedcollector, player.registryAccess());
+                player.saveWithoutId(tagvalueoutput);
+                previousCharacter.savePlayerData(tagvalueoutput.buildResult(), (ServerLevel) player.level());
+            }
 
-        switchedTo.getPlayerInfo().ifPresent(info -> SkinOverrideSystem.setSkinOverride(player.getUUID(), switchedTo.getUUID(), info.getSkinURL(), info.getModel().toMinecraftModel()));
+            CompoundTag newPlayerData = switchedTo.getPlayerData((ServerLevel) player.level());
+            if (newPlayerData != null) {
+                player.load(TagValueInput.create(problemreporter$scopedcollector, player.registryAccess(), newPlayerData));
+
+                // Get target dimension from new playerData
+                ResourceKey<Level> dimensionKey = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(newPlayerData.get("Dimension").asString().get()));
+                // Only teleport if dimension is valid
+                if (player.getServer().levelKeys().contains(dimensionKey)) {
+                    ServerLevel dimension = player.getServer().getLevel(dimensionKey);
+                    player.teleportTo(dimension, player.getX(), player.getY(), player.getZ(), Set.of(), player.getYRot(), player.getXRot(), false);
+                }
+                player.getInventory().setChanged();
+                setActiveCharacter(player, switchedTo.getUUID());
+            }
+            switchedTo.getPlayerInfo().ifPresent(info -> SkinOverrideSystem.setSkinOverride(player.getUUID(), switchedTo.getUUID(), info.getSkinURL(), info.getModel().toMinecraftModel()));
+        }
     }
 
     static {
