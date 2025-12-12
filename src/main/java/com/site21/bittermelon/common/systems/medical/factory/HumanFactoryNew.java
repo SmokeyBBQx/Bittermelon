@@ -23,7 +23,7 @@ public class HumanFactoryNew implements AnatomyFactory {
     @Override
     public MedicalStats build(BloodType bloodType, @NotNull Character character) {
         compartments = new ArrayList<>();
-        wholeBody = addCompartment(WHOLE_BODY);
+        wholeBody = addCompartment(LIVER);
         buildHead();
         buildAbdomen();
         addCompartment(SCALPEL, wholeBody, 0).getVisualData().x(50).y(60);

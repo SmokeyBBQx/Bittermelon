@@ -27,7 +27,7 @@ public class SCP3771Screen extends Screen {
         guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, FORTUNE_BACKGROUND, width / 2 - backgroundWidth / 2, height / 3, backgroundWidth, backgroundHeight);
         int textWidth = minecraft.font.width(fortune.getMessage());
 
-        guiGraphics.drawString(minecraft.font, fortune.getMessage(), width / 2 - textWidth / 2, height / 3 + backgroundHeight / 2 - 5, 0, false);
+        guiGraphics.drawString(minecraft.font, fortune.getMessage(), width / 2 - textWidth / 2, height / 3 + backgroundHeight / 2 - 5, 0xFF000000, false);
     }
 
     public boolean isPauseScreen() {

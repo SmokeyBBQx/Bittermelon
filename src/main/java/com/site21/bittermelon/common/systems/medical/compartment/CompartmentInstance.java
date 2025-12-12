@@ -65,19 +65,25 @@ public class CompartmentInstance {
     /**
      * Convenience constructor for stream codec
      */
-    public CompartmentInstance(@NotNull Holder<Compartment> compartmentHolder, UUID uuid, List<LayerData> layerData,
-                               Float health, Float maxHealth, Map<MedicalAttribute, Float> attributes, Collection<CompartmentTag> tags,
-                               String string, VisualData visualData) {
-        this(compartmentHolder.value(), uuid, layerData, health, maxHealth, new EnumMap<>(attributes), EnumSet.copyOf(tags), string, visualData);
+    public CompartmentInstance(@NotNull Holder<Compartment> compartmentHolder, UUID id, List<LayerData> layers,
+                               Float health, Float maxHealth, @NotNull Map<MedicalAttribute, Float> attributes, Collection<CompartmentTag> tags,
+                               String name, VisualData visualData) {
+        this(compartmentHolder.value(), id, layers, health, maxHealth, new EnumMap<>(MedicalAttribute.class),
+                EnumSet.noneOf(CompartmentTag.class), name, visualData);
+        this.attributes.putAll(attributes);
+        this.tags.addAll(tags);
     }
 
     /**
      * Convenience constructor for codec
      */
     public CompartmentInstance(@NotNull Compartment compartment, UUID id, List<LayerData> layers,
-                               float health, float maxHealth, Map<MedicalAttribute, Float> attributes,
+                               float health, float maxHealth, @NotNull Map<MedicalAttribute, Float> attributes,
                                List<CompartmentTag> tags, String name, VisualData visualData) {
-        this(compartment, id, layers, health, maxHealth, new EnumMap<>(attributes), EnumSet.copyOf(tags), name, visualData);
+        this(compartment, id, layers, health, maxHealth, new EnumMap<>(MedicalAttribute.class),
+                EnumSet.noneOf(CompartmentTag.class), name, visualData);
+        this.attributes.putAll(attributes);
+        this.tags.addAll(tags);
     }
 
     public void tick(MedicalStats medicalStats) {
