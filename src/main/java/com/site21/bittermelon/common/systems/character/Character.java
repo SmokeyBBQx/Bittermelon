@@ -45,13 +45,13 @@ public class Character {
     /** Full constructor for deserialization purposes.
      * Use other constructors for creating new characters.
      */
-    public Character(UUID uuid, UUID entityUUID, String name, String description, int emoteColor, MedicalStats medicalStats, EnumMap<Skill, Float> skills, int willpower) {
+    public Character(UUID uuid, UUID entityUUID, String name, String description, int emoteColor, /*MedicalStats medicalStats,*/ EnumMap<Skill, Float> skills, int willpower) {
         this.uuid = uuid;
         this.entityUUID = entityUUID;
         this.name = name;
         this.description = description;
         this.emoteColor = emoteColor;
-        this.medicalStats = medicalStats;
+//        this.medicalStats = medicalStats;
         this.skills = skills;
         this.willpower = willpower;
     }
@@ -223,14 +223,14 @@ public class Character {
                 Codec.STRING.fieldOf("name").forGetter(Character::getName),
                 Codec.STRING.fieldOf("description").forGetter(Character::getDescription),
                 Codec.INT.fieldOf("emoteColor").forGetter(Character::getEmoteColor),
-                MedicalStats.CODEC.fieldOf("medicalStats").forGetter(Character::getMedicalStats),
+//                MedicalStats.CODEC.fieldOf("medicalStats").forGetter(Character::getMedicalStats),
                 Codec.unboundedMap(Skill.CODEC, Codec.FLOAT).fieldOf("skills").forGetter(Character::getSkills),
                 Codec.INT.fieldOf("willpower").forGetter(Character::getWillpower),
                 PlayerInfo.CODEC.optionalFieldOf("playerInfo").forGetter(Character::getPlayerInfo)
         ).apply(instance, (uuid, entityUUID, name, description, emoteColor,
-                           medicalStats, skills, willpower, playerInfo) -> {
+                           /*medicalStats,*/ skills, willpower, playerInfo) -> {
             EnumMap<Skill, Float> skillMap = new EnumMap<>(Skill.class);
-            Character character = new Character(uuid, entityUUID, name, description, emoteColor, medicalStats, skillMap, willpower);
+            Character character = new Character(uuid, entityUUID, name, description, emoteColor, /*medicalStats,*/ skillMap, willpower);
             playerInfo.ifPresent(character::setPlayerInfo);
             return character;
         }));
@@ -242,7 +242,7 @@ public class Character {
                     ByteBufCodecs.STRING_UTF8.encode(buf, character.getName());
                     ByteBufCodecs.STRING_UTF8.encode(buf, character.getDescription());
                     ByteBufCodecs.INT.encode(buf, character.getEmoteColor());
-                    MedicalStats.STREAM_CODEC.encode(buf, character.getMedicalStats());
+//                    MedicalStats.STREAM_CODEC.encode(buf, character.getMedicalStats());
                     buf.writeMap(character.getSkills(),
                             FriendlyByteBuf::writeEnum,
                             FriendlyByteBuf::writeFloat
@@ -256,7 +256,7 @@ public class Character {
                     String name = ByteBufCodecs.STRING_UTF8.decode(buf);
                     String description = ByteBufCodecs.STRING_UTF8.decode(buf);
                     int emoteColor = ByteBufCodecs.INT.decode(buf);
-                    MedicalStats medicalStats = MedicalStats.STREAM_CODEC.decode(buf);
+//                    MedicalStats medicalStats = MedicalStats.STREAM_CODEC.decode(buf);
 
                     EnumMap<Skill, Float> skills = new EnumMap<>(Skill.class);
                     Map<Skill, Float> tempMap = buf.readMap(
@@ -267,7 +267,7 @@ public class Character {
                     int willpower = ByteBufCodecs.INT.decode(buf);
                     Optional<PlayerInfo> playerInfo = PlayerInfo.STREAM_CODEC.apply(ByteBufCodecs::optional).decode(buf);
 
-                    Character character = new Character(uuid, entityUUID, name, description, emoteColor, medicalStats, skills, willpower);
+                    Character character = new Character(uuid, entityUUID, name, description, emoteColor, /*medicalStats,*/ skills, willpower);
                     playerInfo.ifPresent(character::setPlayerInfo);
                     return character;
                 }
