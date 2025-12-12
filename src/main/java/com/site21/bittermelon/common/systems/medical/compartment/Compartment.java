@@ -80,6 +80,10 @@ public class Compartment {
         return properties.item.value();
     }
 
+    public List<Point> getShape() {
+        return properties.shape;
+    }
+
     public static class Properties {
         EnumSet<CompartmentTag> defaultTags = EnumSet.noneOf(CompartmentTag.class);
         EnumMap<MedicalAttribute, Float> defaultAttributes = new EnumMap<>(MedicalAttribute.class);
