@@ -102,6 +102,10 @@ public class BitterModelProvider extends ModelProvider {
         createDefaultCageLamp(blockModels, BitterBlocks.CAGE_LAMP.get());
         blockModels.createParticleOnlyBlock(BitterBlocks.SUBSTANCE_FLUID_BLOCK.get());
         createTelevision(blockModels, BitterBlocks.LIGHT_GRAY_TELEVISION.get(), BitterBlocks.LIGHT_GRAY_WALL_TELEVISION.get());
+        blockModels.blockStateOutput.accept(
+                MultiVariantGenerator.dispatch(BitterBlocks.SCP_330.get(), plainVariant(modLocation("block/scp_330")))
+                        .with(ROTATION_HORIZONTAL_FACING)
+        );
 
         // SubstanceFluid Containers
         itemModels.generateFlatItem(BEER_BOTTLE.get(), ModelTemplates.FLAT_ITEM);
@@ -329,7 +333,6 @@ public class BitterModelProvider extends ModelProvider {
                                 plainVariant(BUTTON_LIKE.create(block, TextureMapping.defaultTexture(block), blockModels.modelOutput)))
                         .with(ROTATION_HORIZONTAL_FACING));
     }
-
 
     public void createIndentedSmallBlock(@NotNull BlockModelGenerators blockModels, Block block) {
         blockModels.blockStateOutput.accept(

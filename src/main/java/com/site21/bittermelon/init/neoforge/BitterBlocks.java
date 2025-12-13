@@ -28,6 +28,7 @@ import com.site21.bittermelon.common.content.blocks.lights.CageLampBlock;
 import com.site21.bittermelon.common.content.blocks.lights.emergencyexitlight.EmergencyExitLampBlock;
 import com.site21.bittermelon.common.content.blocks.powergrid.distributionboard.DistributionBoardBlock;
 import com.site21.bittermelon.common.content.blocks.scp.scp151.SCP151Block;
+import com.site21.bittermelon.common.content.blocks.scp.scp330.SCP330Block;
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlock;
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.common.content.blocks.wallwriting.WallWritingBlock;
@@ -280,4 +281,6 @@ public class BitterBlocks {
     public static final DeferredBlock<FlamingoBlock> PLASTIC_FLAMINGO = BLOCKS.registerBlock("plastic_flamingo", FlamingoBlock::new, BlockBehaviour.Properties.of()
             .noOcclusion()
     );
+
+    public static final DeferredBlock<SCP330Block> SCP_330 = BLOCKS.registerBlock("scp_330", SCP330Block::new, BlockBehaviour.Properties.of());
 }
