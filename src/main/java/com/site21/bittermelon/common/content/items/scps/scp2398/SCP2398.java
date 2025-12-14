@@ -99,7 +99,7 @@ public class SCP2398 extends Item {
 
                 if (otherHandStack.is(BitterItemTags.BASEBALL) || otherHandStack.is(BitterItems.BASEBALL.get())) {
                     SCP2398Projectile projectile = new SCP2398Projectile(player, level, otherHandStack.copy());
-                    float powerFactor = (float)(getUseDuration(stack, livingEntity) - timeLeft) / USE_DURATION_TICKS;
+                    float powerFactor = (float) (getUseDuration(stack, livingEntity) - timeLeft) / USE_DURATION_TICKS;
                     projectile.setPos(player.getX(), player.getEyeY() - 0.1, player.getZ());
                     projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 4.5F * powerFactor, 1.0F);
                     player.level().addFreshEntity(projectile);
