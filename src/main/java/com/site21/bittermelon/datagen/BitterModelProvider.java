@@ -22,10 +22,7 @@ import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
 import net.minecraft.client.data.models.model.*;
 import net.minecraft.client.renderer.block.model.VariantMutator;
-import net.minecraft.client.renderer.item.ConditionalItemModel;
-import net.minecraft.client.renderer.item.ItemModel;
-import net.minecraft.client.renderer.item.RangeSelectItemModel;
-import net.minecraft.client.renderer.item.SelectItemModel;
+import net.minecraft.client.renderer.item.*;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -42,6 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Optional;
 
+import static com.site21.bittermelon.common.content.items.scps.scp005.SCP_005;
 import static com.site21.bittermelon.datagen.BitterModelTemplates.*;
 import static com.site21.bittermelon.datagen.BitterModelTemplates.TELEVISION;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.DIRTY_FLOOR;
@@ -133,6 +131,7 @@ public class BitterModelProvider extends ModelProvider {
         itemModels.generateFlatItem(BODY_PART.get(), ModelTemplates.FLAT_ITEM);
 
         // SCPs
+        itemModels.generateFlatItem(SCP_005.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(SCP_018.get(), ModelTemplates.FLAT_ITEM);
         generateSCP377(itemModels);
         itemModels.generateFlatItem(SCP_377_1.get(), ModelTemplates.FLAT_ITEM);
