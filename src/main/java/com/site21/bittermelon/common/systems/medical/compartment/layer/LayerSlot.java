@@ -3,37 +3,35 @@ package com.site21.bittermelon.common.systems.medical.compartment.layer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
-import java.util.UUID;
 
 public class LayerSlot {
     public static final Codec<LayerSlot> CODEC;
     public static final StreamCodec<ByteBuf, LayerSlot> STREAM_CODEC;
 
     private final SlotType type;
-    private UUID instanceId;
+    private Point pivot;
     private float visibility;
     private float bloodLevel;
 
-    public LayerSlot(SlotType type, @Nullable UUID instanceId, float visibility, float bloodLevel) {
+    public LayerSlot(SlotType type, @Nullable Point pivot, float visibility, float bloodLevel) {
         this.type = type;
-        this.instanceId = instanceId;
+        this.pivot = pivot;
         this.visibility = visibility;
         this.bloodLevel = bloodLevel;
     }
 
-    public LayerSlot(SlotType type, @NotNull Optional<UUID> instanceId, Float visibility, Float bloodLevel) {
-        this(type, instanceId.orElse(null), visibility, bloodLevel);
+    public LayerSlot(SlotType type, @NotNull Optional<Point> point, float visibility, float bloodLevel) {
+        this(type, point.orElse(null), visibility, bloodLevel);
     }
 
     public LayerSlot(SlotType type) {
-        this(type, null, 0f, 0f);
+        this(type, Optional.empty(), 1.0f, 0f);
     }
 
     public SlotType getType() {
@@ -41,16 +39,16 @@ public class LayerSlot {
     }
 
     @Nullable
-    public UUID getInstanceId() {
-        return instanceId;
+    public Point getPivot() {
+        return pivot;
     }
 
-    public Optional<UUID> getInstanceIdOpt() {
-        return Optional.ofNullable(instanceId);
+    public Optional<Point> getPivotOpt() {
+        return Optional.ofNullable(pivot);
     }
 
-    public void setInstanceId(UUID instanceId) {
-        this.instanceId = instanceId;
+    public void setPivot(Point pivot) {
+        this.pivot = pivot;
     }
 
     public float getVisibility() {
@@ -70,13 +68,13 @@ public class LayerSlot {
     }
 
     public boolean isOccupied() {
-        return instanceId != null;
+        return getPivot() != null;
     }
 
     static {
         CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 SlotType.CODEC.fieldOf("type").forGetter(LayerSlot::getType),
-                UUIDUtil.CODEC.optionalFieldOf("instance_id").forGetter(LayerSlot::getInstanceIdOpt),
+                Point.CODEC.optionalFieldOf("pivot").forGetter(LayerSlot::getPivotOpt),
                 Codec.FLOAT.fieldOf("visibility").forGetter(LayerSlot::getVisibility),
                 Codec.FLOAT.fieldOf("blood_level").forGetter(LayerSlot::getBloodLevel)
         ).apply(instance, LayerSlot::new));
@@ -84,8 +82,8 @@ public class LayerSlot {
         STREAM_CODEC = StreamCodec.composite(
                 SlotType.STREAM_CODEC,
                 LayerSlot::getType,
-                ByteBufCodecs.optional(UUIDUtil.STREAM_CODEC),
-                LayerSlot::getInstanceIdOpt,
+                ByteBufCodecs.optional(Point.STREAM_CODEC),
+                LayerSlot::getPivotOpt,
                 ByteBufCodecs.FLOAT,
                 LayerSlot::getVisibility,
                 ByteBufCodecs.FLOAT,

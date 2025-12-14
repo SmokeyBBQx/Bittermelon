@@ -160,8 +160,8 @@ public class CompartmentInstance {
         return dirty;
     }
 
-    protected boolean tryToInsert(int layer, int x, int y, @NotNull CompartmentInstance instance) {
-        return layers.get(layer).tryToPlace(x, y, instance.id, instance.getCompartment().properties.shape);
+    public boolean tryToInsert(int layer, int x, int y, @NotNull CompartmentInstance instance) {
+        return layers.get(layer).tryToPlace(x, y, instance, instance.getCompartment().properties.shape);
     }
 
     public void removeCompartment(int layer, @NotNull CompartmentInstance instance) {

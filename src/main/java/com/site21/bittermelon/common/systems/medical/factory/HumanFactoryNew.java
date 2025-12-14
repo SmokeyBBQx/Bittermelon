@@ -24,42 +24,44 @@ public class HumanFactoryNew implements AnatomyFactory {
     public MedicalStats build(BloodType bloodType, @NotNull Character character) {
         compartments = new ArrayList<>();
         wholeBody = addCompartment(LIVER);
-        buildHead();
-        buildAbdomen();
-        addCompartment(SCALPEL, wholeBody, 0).getVisualData().x(50).y(60);
+        addCompartment(GALLBLADDER, wholeBody, 10, 1, 0);
+//
+//        buildHead();
+//        buildAbdomen();
+//        addCompartment(SCALPEL, wholeBody, 0).getVisualData().x(50).y(60);
 
         return new AnimalMedicalStats(version, compartments, wholeBody.getId(), character.getUUID());
     }
 
     private void buildHead() {
-        CompartmentInstance head = addCompartment(HEAD, wholeBody, 0);
-        head.getVisualData().x(20).y(30);
-        CompartmentInstance brain = addCompartment(BRAIN, head, 3);
-        addCompartment(FRONTAL_LOBE, brain, 1);
-        addCompartment(PARIETAL_LOBE, brain, 1);
-        addCompartment(BRAINSTEM, brain, 1);
+//        CompartmentInstance head = addCompartment(HEAD, wholeBody, 0);
+//        head.getVisualData().x(20).y(30);
+//        CompartmentInstance brain = addCompartment(BRAIN, head, 3);
+//        addCompartment(FRONTAL_LOBE, brain, 1);
+//        addCompartment(PARIETAL_LOBE, brain, 1);
+//        addCompartment(BRAINSTEM, brain, 1);
     }
 
     private void buildAbdomen() {
-        CompartmentInstance abdomen = addCompartment(ABDOMEN, wholeBody, 0);
-        abdomen.getVisualData().x(50).y(30);
-        CompartmentInstance cut = addCompartment(CUT, abdomen, 0);
-        cut.getVisualData().x(20).y(0).scale(2);
-        CompartmentInstance cut1 = addCompartment(CUT, abdomen, 1);
-        cut1.getVisualData().x(20).y(0);
-        CompartmentInstance cut2 = addCompartment(CUT, abdomen, 2);
-        cut2.getVisualData().x(20).y(0);
-        CompartmentInstance cut3 = addCompartment(CUT, abdomen, 3);
-        cut3.getVisualData().x(20).y(0);
-        cut.addTag(CompartmentTag.CUT);
-        cut1.addTag(CompartmentTag.CUT);
-        cut2.addTag(CompartmentTag.CUT);
-        cut3.addTag(CompartmentTag.CUT);
-        addCompartment(STOMACH, abdomen, 4);
-        addCompartment(SMALL_INTESTINE, abdomen, 4);
-        addCompartment(COLON, abdomen, 4);
-        addCompartment(LIVER, abdomen, 4);
-        addCompartment(GALLBLADDER, abdomen, 4);
+//        CompartmentInstance abdomen = addCompartment(ABDOMEN, wholeBody, 0);
+//        abdomen.getVisualData().x(50).y(30);
+//        CompartmentInstance cut = addCompartment(CUT, abdomen, 0);
+//        cut.getVisualData().x(20).y(0).scale(2);
+//        CompartmentInstance cut1 = addCompartment(CUT, abdomen, 1);
+//        cut1.getVisualData().x(20).y(0);
+//        CompartmentInstance cut2 = addCompartment(CUT, abdomen, 2);
+//        cut2.getVisualData().x(20).y(0);
+//        CompartmentInstance cut3 = addCompartment(CUT, abdomen, 3);
+//        cut3.getVisualData().x(20).y(0);
+//        cut.addTag(CompartmentTag.CUT);
+//        cut1.addTag(CompartmentTag.CUT);
+//        cut2.addTag(CompartmentTag.CUT);
+//        cut3.addTag(CompartmentTag.CUT);
+//        addCompartment(STOMACH, abdomen, 4);
+//        addCompartment(SMALL_INTESTINE, abdomen, 4);
+//        addCompartment(COLON, abdomen, 4);
+//        addCompartment(LIVER, abdomen, 4);
+//        addCompartment(GALLBLADDER, abdomen, 4);
     }
 
     private CompartmentInstance addCompartment(@NotNull DeferredHolder<Compartment, Compartment> holder) {
@@ -68,10 +70,10 @@ public class HumanFactoryNew implements AnatomyFactory {
         return instance;
     }
 
-    private CompartmentInstance addCompartment(@NotNull DeferredHolder<Compartment, Compartment> holder, @NotNull CompartmentInstance parent, int layer) {
+    private CompartmentInstance addCompartment(@NotNull DeferredHolder<Compartment, Compartment> holder, @NotNull CompartmentInstance parent, int x, int y, int layer) {
         CompartmentInstance instance = holder.get().toInstance();
         compartments.add(instance);
-//        parent.tryToInsert(layer, instance);
+        parent.tryToInsert(layer, x, y, instance);
         return instance;
     }
 }

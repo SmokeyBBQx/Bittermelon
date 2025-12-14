@@ -6,6 +6,7 @@ import com.site21.bittermelon.common.systems.medical.compartment.Compartment;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.SlotPoint;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.SlotType;
 import com.site21.bittermelon.init.neoforge.BitterItems;
@@ -368,6 +369,14 @@ public class Compartments {
             () -> new Compartment("gallbladder", new Compartment.Properties()
                     .defaultHealth(40)
                     .item(BitterItems.GALLBLADDER)
+                    .shape(List.of(
+                            new Point(1, 0),
+                            new Point(2, 0),
+                            new Point(0, 1),
+                            new Point(1, 1),
+                            new Point(2, 1),
+                            new Point(1, 2)
+                    ))
                     .visualData(VisualData.empty()
                             .icon("anatomical_gallbladder"))
             )

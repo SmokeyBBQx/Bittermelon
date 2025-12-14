@@ -2,6 +2,7 @@ package com.site21.bittermelon.common.systems.medical.compartment;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.core.Holder;
@@ -11,7 +12,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
@@ -55,14 +55,6 @@ public class Compartment {
         stack.set(BitterDataComponents.COMPARTMENT, instance.toData());
         return stack;
     }
-//
-//    public void performAction(@NotNull CompartmentSpaceWidget widget, double mouseX, double mouseY, int button) {
-//        widget.handleCompartmentPlacement(mouseX, mouseY);
-//    }
-//
-//    public void performActionOn(@NotNull CompartmentSpaceWidget widget, CompartmentInstance target, CompartmentInstance instance, double mouseX, double mouseY, int button) {
-//        widget.handleCompartmentPlacement(mouseX, mouseY);
-//    }
 
     public Holder<Compartment> builtInRegistryHolder() {
         return COMPARTMENT_REGISTRY.get(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, id)).orElseThrow();
@@ -84,11 +76,16 @@ public class Compartment {
         return properties.shape;
     }
 
+    public Point getPivot() {
+        return properties.pivot;
+    }
+
     public static class Properties {
         EnumSet<CompartmentTag> defaultTags = EnumSet.noneOf(CompartmentTag.class);
         EnumMap<MedicalAttribute, Float> defaultAttributes = new EnumMap<>(MedicalAttribute.class);
         LayerData[] layers = new LayerData[]{};
         List<Point> shape = new ArrayList<>();
+        Point pivot = new Point(0, 0);
         Holder<Item> item = Items.AIR.builtInRegistryHolder();
         float defaultHealth = 0;
         VisualData visualData = VisualData.empty();
@@ -126,6 +123,11 @@ public class Compartment {
 
         public Properties shape(List<Point> shape) {
             this.shape = shape;
+            return this;
+        }
+
+        public Properties pivot(Point pivot) {
+            this.pivot = pivot;
             return this;
         }
 
