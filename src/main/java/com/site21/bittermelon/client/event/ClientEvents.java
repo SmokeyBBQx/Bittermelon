@@ -1,6 +1,7 @@
 package com.site21.bittermelon.client.event;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.client.render.ShaderManager;
 import com.site21.bittermelon.client.render.TypingIndicatorRenderer;
 import com.site21.bittermelon.common.systems.atmosphere.client.AtmosFogRenderer;
 import com.site21.bittermelon.common.systems.atmosphere.data.AtmosLevelData;
@@ -13,6 +14,7 @@ import com.site21.bittermelon.common.systems.stumble.client.RiseKeyHandler;
 import com.site21.bittermelon.common.systems.stumble.client.RiseProgressBar;
 import com.site21.bittermelon.common.systems.telecomms.intercom.IntercomManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.PostChain;
 import net.minecraft.util.TriState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -84,5 +86,10 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         RiseKeyHandler.tick();
+    }
+
+    @SubscribeEvent
+    public static void onClientTickPre(ClientTickEvent.Pre event) {
+        ShaderManager.updatePostEffects();
     }
 }
