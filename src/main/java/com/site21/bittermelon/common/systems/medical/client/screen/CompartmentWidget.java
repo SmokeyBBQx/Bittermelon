@@ -119,7 +119,7 @@ public class CompartmentWidget extends MovableWidget {
                 int slotY = contentY + row * SLOT_SIZE;
 
                 if (slot != null) {
-                    renderSlot(slotX, slotY, slot, guiGraphics);
+                    renderSlot(slotX, slotY, col, row, slot, guiGraphics);
                 } else {
                     guiGraphics.fill(slotX, slotY, slotX + SLOT_SIZE, slotY + SLOT_SIZE, 0xDD000000);
                 }
@@ -129,16 +129,10 @@ public class CompartmentWidget extends MovableWidget {
         renderPlacementIndicator(guiGraphics, mouseX, mouseY);
     }
 
-    private void renderSlot(int x, int y, @NotNull LayerSlot slot, @NotNull GuiGraphics guiGraphics) {
-        // Shaded background for occupied slots
-        if (slot.isOccupied()) {
-            guiGraphics.fill(x, y, x + SLOT_SIZE, y + SLOT_SIZE, 0xAA000000);
-        }
-
+    private void renderSlot(int x, int y, int u, int v, @NotNull LayerSlot slot, @NotNull GuiGraphics guiGraphics) {
         // Slot texture
         ResourceLocation texture = slot.getType().getTexture();
-        // TODO: Find a way to render a single pixel of the sprite per slot
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, 0, 0, SLOT_SIZE, SLOT_SIZE, SLOT_SIZE, SLOT_SIZE, SLOT_SIZE, SLOT_SIZE);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, u, v, SLOT_SIZE, SLOT_SIZE, 1, 1, SLOT_SIZE, SLOT_SIZE);
 
         // Blood level overlay
         int bloodColor = ARGB.color(slot.getBloodLevel(), 0x900000);
