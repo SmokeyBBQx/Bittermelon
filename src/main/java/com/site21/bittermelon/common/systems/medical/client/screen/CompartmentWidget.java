@@ -4,6 +4,7 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.medical.client.screen.widget.MovableWidget;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerSlot;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
@@ -29,13 +30,14 @@ public class CompartmentWidget extends MovableWidget {
     private static final int EDGE_MARGIN = 2;
     private static final int BUTTON_SIZE = 10;
     private static final int BUTTON_SPACING = 5;
-    private static final int SLOT_SIZE = 16;
+//    private static final int SLOT_SIZE = 16;
 
     private final CompartmentInstance compartment;
     private final HealthScreenV2 screen;
     private int layerIndex = 0;
     private int contentX;
     private int contentY;
+    private int slotSize = 16;
 
     private Button closeWidgetButton;
     private Button collapseWidgetButton;
@@ -52,6 +54,7 @@ public class CompartmentWidget extends MovableWidget {
         initializeButtons();
         buttons = new Button[]{closeWidgetButton, collapseWidgetButton, increaseLayerButton, decreaseLayerButton};
         grid = compartment.getLayers().getFirst().getGrid();
+        slotSize = calculateSlotSize();
     }
 
     private void initializeButtons() {
@@ -115,13 +118,13 @@ public class CompartmentWidget extends MovableWidget {
         for (int row = 0; row < grid.length; row++) {
             for (int col = 0; col < grid[row].length; col++) {
                 LayerSlot slot = grid[row][col];
-                int slotX = contentX + col * SLOT_SIZE;
-                int slotY = contentY + row * SLOT_SIZE;
+                int slotX = contentX + col * slotSize;
+                int slotY = contentY + row * slotSize;
 
                 if (slot != null) {
                     renderSlot(slotX, slotY, col, row, slot, guiGraphics);
                 } else {
-                    guiGraphics.fill(slotX, slotY, slotX + SLOT_SIZE, slotY + SLOT_SIZE, 0xDD000000);
+                    guiGraphics.fill(slotX, slotY, slotX + slotSize, slotY + slotSize, 0xDD000000);
                 }
             }
         }
@@ -132,23 +135,23 @@ public class CompartmentWidget extends MovableWidget {
     private void renderSlot(int x, int y, int u, int v, @NotNull LayerSlot slot, @NotNull GuiGraphics guiGraphics) {
         // Slot texture
         ResourceLocation texture = slot.getType().getTexture();
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, u, v, SLOT_SIZE, SLOT_SIZE, 1, 1, SLOT_SIZE, SLOT_SIZE);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, u, v, slotSize, slotSize, 1, 1, slotSize, slotSize);
 
         // Blood level overlay
         int bloodColor = ARGB.color(slot.getBloodLevel(), 0x900000);
-        guiGraphics.fill(x, y, x + SLOT_SIZE, y + SLOT_SIZE, bloodColor);
+        guiGraphics.fill(x, y, x + slotSize, y + slotSize, bloodColor);
 
         // Fog of war overlay
         int fogColor = ARGB.color(1 - slot.getVisibility(), 0xDD000000);
-        guiGraphics.fill(x, y, x + SLOT_SIZE, y + SLOT_SIZE, fogColor);
+        guiGraphics.fill(x, y, x + slotSize, y + slotSize, fogColor);
     }
 
     private void renderHoveredSlot(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
         Point hoveredSlot = getHoveredSlot(mouseX, mouseY);
         if (hoveredSlot != null) {
-            int slotX = contentX + hoveredSlot.x() * SLOT_SIZE;
-            int slotY = contentY + hoveredSlot.y() * SLOT_SIZE;
-            guiGraphics.fill(slotX, slotY, slotX + SLOT_SIZE, slotY + SLOT_SIZE, 0x80FFFFFF);
+            int slotX = contentX + hoveredSlot.x() * slotSize;
+            int slotY = contentY + hoveredSlot.y() * slotSize;
+            guiGraphics.fill(slotX, slotY, slotX + slotSize, slotY + slotSize, 0x80FFFFFF);
         }
     }
 
@@ -165,10 +168,10 @@ public class CompartmentWidget extends MovableWidget {
         for (Point p : shape) {
             int targetX = hoveredSlot.x() + p.x();
             int targetY = hoveredSlot.y() + p.y();
-            int slotX = contentX + targetX * SLOT_SIZE;
-            int slotY = contentY + targetY * SLOT_SIZE;
-            int color = compartment.getLayer(layerIndex).canFit(hoveredSlot.x(), hoveredSlot.y(), shape) ? 0x800000FF : 0x80FF0000;
-            guiGraphics.fill(slotX, slotY, slotX + SLOT_SIZE, slotY + SLOT_SIZE, color);
+            int slotX = contentX + targetX * slotSize;
+            int slotY = contentY + targetY * slotSize;
+            int color = getLayer().canFit(hoveredSlot.x(), hoveredSlot.y(), shape) ? 0x800000FF : 0x80FF0000;
+            guiGraphics.fill(slotX, slotY, slotX + slotSize, slotY + slotSize, color);
         }
     }
 
@@ -176,15 +179,15 @@ public class CompartmentWidget extends MovableWidget {
         MedicalStats medicalStats = screen.getMedicalStats();
         UUID hoveredCompartmentId = getHoveredCompartment(mouseX, mouseY);
 
-        for (Map.Entry<Point, UUID> entry : compartment.getLayer(layerIndex).getCompartments().entrySet()) {
+        for (Map.Entry<Point, UUID> entry : getLayer().getCompartments().entrySet()) {
             Point slotPos = entry.getKey();
             UUID compartmentId = entry.getValue();
             CompartmentInstance instance = medicalStats.getCompartment(compartmentId);
 
             VisualData visualData = instance.getVisualData();
 
-            int slotX = contentX + slotPos.x() * SLOT_SIZE;
-            int slotY = contentY + slotPos.y() * SLOT_SIZE;
+            int slotX = contentX + slotPos.x() * slotSize;
+            int slotY = contentY + slotPos.y() * slotSize;
             int color = visualData.color;
 
             // TODO: Buggy
@@ -193,7 +196,7 @@ public class CompartmentWidget extends MovableWidget {
 
             ResourceLocation icon = visualData.getIcon();
             if (icon != null) {
-                guiGraphics.blit(RenderPipelines.GUI_TEXTURED, icon, slotX, slotY, 0, 0, 3 * SLOT_SIZE, 3 * SLOT_SIZE, 3 * SLOT_SIZE, 3 * SLOT_SIZE, color);
+                guiGraphics.blit(RenderPipelines.GUI_TEXTURED, icon, slotX, slotY, 0, 0, 3 * slotSize, 3 * slotSize, 3 * slotSize, 3 * slotSize, color);
             }
         }
     }
@@ -226,17 +229,27 @@ public class CompartmentWidget extends MovableWidget {
                 if (slot == null) continue;
                 if (slot.getVisibility() < 0.5f) continue;
 
-                int slotX = contentX + col * SLOT_SIZE;
-                int slotY = contentY + row * SLOT_SIZE;
+                int slotX = contentX + col * slotSize;
+                int slotY = contentY + row * slotSize;
 
-                if (mouseX >= slotX && mouseX < slotX + SLOT_SIZE &&
-                        mouseY >= slotY && mouseY < slotY + SLOT_SIZE) {
+                if (mouseX >= slotX && mouseX < slotX + slotSize &&
+                        mouseY >= slotY && mouseY < slotY + slotSize) {
                     return new Point(col, row);
                 }
             }
         }
 
         return null;
+    }
+
+    private int calculateSlotSize() {
+        int availableWidth = width - (2 * EDGE_MARGIN);
+        int columns = getLayer().getWidth();
+        return availableWidth / columns;
+    }
+
+    private LayerData getLayer() {
+        return compartment.getLayer(layerIndex);
     }
 
     @Override
@@ -259,6 +272,12 @@ public class CompartmentWidget extends MovableWidget {
     public void setY(int y) {
         super.setY(y);
         contentY = y + getHeaderHeight() + EDGE_MARGIN;
+    }
+
+    @Override
+    public void setWidth(int width) {
+        super.setWidth(width);
+        slotSize = calculateSlotSize();
     }
 
     @Override
