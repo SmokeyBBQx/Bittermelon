@@ -9,7 +9,7 @@ import com.site21.bittermelon.common.content.items.laserdesignator.LaserDesignat
 import com.site21.bittermelon.common.content.items.medical.tools.*;
 import com.site21.bittermelon.common.content.items.mop.MopItem;
 import com.site21.bittermelon.common.content.items.scps.SCP109;
-import com.site21.bittermelon.common.content.items.scps.scp005;
+import com.site21.bittermelon.common.content.items.scps.SCP005Item;
 import com.site21.bittermelon.common.content.items.scps.scp377.SCP377;
 import com.site21.bittermelon.common.content.items.scps.scp377.SCP3771;
 import com.site21.bittermelon.common.content.items.scps.scp377.SCP377Cookie;
@@ -128,10 +128,9 @@ public class BitterItems {
                     .component(ENERGY_LOSS_ON_BOUNCE, 1.5f)
                     .component(MAX_BOUNCES, 10000)));
 
-    public static final DeferredItem<Item> scp005 = ITEMS.register("scp_005", registryName ->
-            new scp005.SCP005Item(new Item.Properties()
+    public static final DeferredItem<Item> SCP_005 = ITEMS.register("scp_005", registryName ->
+            new SCP005Item(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, registryName))));
-
 
     public static final DeferredItem<SyringeItem> SYRINGE = ITEMS.register("syringe", registryName ->
             new SyringeItem(new Item.Properties()
