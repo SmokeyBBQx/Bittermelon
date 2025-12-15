@@ -43,10 +43,10 @@ public class HealthScreenV2 extends Screen {
     @Override
     protected void init() {
         renderedCompartmentSpaces.add(new CompartmentWidget(
-                        10,
-                        10,
+                        20,
+                        20,
                         160,
-                        150,
+                        140,
                         medicalStats.getMainCompartment(),
                 this
                 )

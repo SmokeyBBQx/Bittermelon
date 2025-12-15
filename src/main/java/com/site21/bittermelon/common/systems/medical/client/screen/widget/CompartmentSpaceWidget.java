@@ -30,7 +30,7 @@
 //
 //import static com.site21.bittermelon.client.render.BitterRenderPipelines.*;
 //
-//public class CompartmentSpaceWidget extends MovableWidget {
+//public class CompartmentSpaceWidget extends MovableResizableWidget {
 //    public static final ResourceLocation WINDOW_TEXTURE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/healthscreen/surgery_window.png");
 //    public static final ResourceLocation WINDOW_SIDES_TEXTURE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/healthscreen/surgery_window_sides.png");
 //

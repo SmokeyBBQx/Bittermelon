@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.systems.medical.client.screen;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.systems.medical.client.screen.widget.MovableWidget;
+import com.site21.bittermelon.common.systems.medical.client.screen.widget.MovableResizableWidget;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
@@ -19,12 +19,11 @@ import net.minecraft.util.ARGB;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class CompartmentWidget extends MovableWidget {
+public class CompartmentWidget extends MovableResizableWidget {
     private static final ResourceLocation WINDOW_TEXTURE = Bittermelon.resource("textures/gui/healthscreen/surgery_window.png");
     private static final ResourceLocation WINDOW_SIDES_TEXTURE = Bittermelon.resource("textures/gui/healthscreen/surgery_window_sides.png");
     private static final int EDGE_MARGIN = 2;
@@ -55,6 +54,8 @@ public class CompartmentWidget extends MovableWidget {
         buttons = new Button[]{closeWidgetButton, collapseWidgetButton, increaseLayerButton, decreaseLayerButton};
         grid = compartment.getLayers().getFirst().getGrid();
         slotSize = calculateSlotSize();
+        contentX = x + EDGE_MARGIN;
+        contentY = y + getHeaderHeight() + EDGE_MARGIN;
     }
 
     private void initializeButtons() {
@@ -105,10 +106,13 @@ public class CompartmentWidget extends MovableWidget {
 
     @Override
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        guiGraphics.fill(x, y, getRight(), getBottom(), 0xDD000000);
         renderSlots(guiGraphics, mouseX, mouseY);
         renderCompartments(guiGraphics, mouseX, mouseY);
         renderHoveredSlot(guiGraphics, mouseX, mouseY);
         renderFrame(guiGraphics);
+        renderResizeHandle(guiGraphics, mouseX, mouseY, partialTick);
+        renderDragHandle(guiGraphics, mouseX, mouseY, partialTick);
         for (Button button : buttons) {
             button.render(guiGraphics, mouseX, mouseY, partialTick);
         }
@@ -118,14 +122,11 @@ public class CompartmentWidget extends MovableWidget {
         for (int row = 0; row < grid.length; row++) {
             for (int col = 0; col < grid[row].length; col++) {
                 LayerSlot slot = grid[row][col];
+                if (slot == null) continue;
                 int slotX = contentX + col * slotSize;
                 int slotY = contentY + row * slotSize;
 
-                if (slot != null) {
-                    renderSlot(slotX, slotY, col, row, slot, guiGraphics);
-                } else {
-                    guiGraphics.fill(slotX, slotY, slotX + slotSize, slotY + slotSize, 0xDD000000);
-                }
+                renderSlot(slotX, slotY, col, row, slot, guiGraphics);
             }
         }
 
@@ -135,7 +136,7 @@ public class CompartmentWidget extends MovableWidget {
     private void renderSlot(int x, int y, int u, int v, @NotNull LayerSlot slot, @NotNull GuiGraphics guiGraphics) {
         // Slot texture
         ResourceLocation texture = slot.getType().getTexture();
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, u, v, slotSize, slotSize, 1, 1, slotSize, slotSize);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, u, v, slotSize, slotSize, 1, 1, 16, 16);
 
         // Blood level overlay
         int bloodColor = ARGB.color(slot.getBloodLevel(), 0x900000);
@@ -243,9 +244,10 @@ public class CompartmentWidget extends MovableWidget {
     }
 
     private int calculateSlotSize() {
-        int availableWidth = width - (2 * EDGE_MARGIN);
+        int availableWidth = width;
         int columns = getLayer().getWidth();
-        return availableWidth / columns;
+        int rows = getLayer().getHeight();
+        return Math.min(width / columns, (height - getHeaderHeight() - EDGE_MARGIN * 2) / rows);
     }
 
     private LayerData getLayer() {
