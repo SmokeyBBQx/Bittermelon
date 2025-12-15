@@ -24,6 +24,7 @@ public class BitterLanguageProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
+        addCustomItem(scp005, "SCP-005");
         addCustomItem(SCP_109, "SCP-109");
         addCustomItem(SCP_2398, "SCP-2398");
         addCustomItem(SCP_018, "SCP-018");
