@@ -1,36 +1,34 @@
 package com.site21.bittermelon.client.gui;
 
-import com.site21.bittermelon.common.systems.electronics.ElectronicDevice;
 import com.site21.bittermelon.common.content.blocks.electronics.containmentpanel.ContainmentPanelBlockEntity;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.IntercomBlockEntity;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.client.IntercomScreen;
 import com.site21.bittermelon.common.content.blocks.electronics.personnelterminal.PersonnelTerminalBlockEntity;
 import com.site21.bittermelon.common.content.blocks.electronics.personnelterminal.client.PersonnelTerminalScreen;
-import com.site21.bittermelon.common.systems.electronics.privilege.client.PrivilegeEditorScreen;
 import com.site21.bittermelon.common.content.blocks.powergrid.distributionboard.DistributionBoardBlockEntity;
 import com.site21.bittermelon.common.content.blocks.powergrid.distributionboard.client.DistributionBoardScreen;
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlockEntity;
 import com.site21.bittermelon.common.content.blocks.stickynote.client.StickyNoteScreen;
 import com.site21.bittermelon.common.content.blocks.wallwriting.WallWritingBlockEntity;
 import com.site21.bittermelon.common.content.blocks.wallwriting.client.WallWritingScreen;
+import com.site21.bittermelon.common.content.items.scps.scp377.Fortune;
+import com.site21.bittermelon.common.content.items.scps.scp377.client.SCP3771Screen;
+import com.site21.bittermelon.common.content.items.wire.client.WireConnectionScreen;
+import com.site21.bittermelon.common.content.items.wirecutters.client.WireCutterScreen;
+import com.site21.bittermelon.common.content.items.writablepaper.client.PaperEditScreen;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.client.characterselection.CharacterSelectionScreen;
 import com.site21.bittermelon.common.systems.containment.client.ContainmentPanelScreen;
 import com.site21.bittermelon.common.systems.economy.bank.client.ATMScreen;
-import com.site21.bittermelon.common.content.items.scps.scp377.Fortune;
-import com.site21.bittermelon.common.content.items.scps.scp377.client.SCP3771Screen;
-import com.site21.bittermelon.common.content.items.wirecutters.client.WireCutterScreen;
-import com.site21.bittermelon.common.content.items.wire.client.WireConnectionScreen;
-import com.site21.bittermelon.common.content.items.writablepaper.client.PaperEditScreen;
-import com.site21.bittermelon.common.systems.medical.client.screen.HealthScreenV2;
+import com.site21.bittermelon.common.systems.electronics.ElectronicDevice;
+import com.site21.bittermelon.common.systems.electronics.privilege.client.PrivilegeEditorScreen;
+import com.site21.bittermelon.common.systems.medical.client.HealthScreen;
 import com.site21.bittermelon.common.systems.personnel.registry.PersonnelEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 public class ScreenHandler {
@@ -51,7 +49,7 @@ public class ScreenHandler {
     }
 
     public static void displayHealthScreen(@NotNull Character character, Player player, ItemStack heldItem) {
-        Minecraft.getInstance().setScreen(new HealthScreenV2(character));
+        Minecraft.getInstance().setScreen(new HealthScreen(character));
     }
 
     public static void displayPaperEditScreen(ItemStack paper) {

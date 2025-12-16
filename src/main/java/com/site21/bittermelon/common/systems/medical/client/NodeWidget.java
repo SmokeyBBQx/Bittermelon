@@ -1,19 +1,18 @@
-package com.site21.bittermelon.common.systems.medical.client.screen.widget;
+package com.site21.bittermelon.common.systems.medical.client;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
 
-public class HandWidget extends AbstractWidget {
-    
-
-    public HandWidget(int x, int y, int width, int height, Component message) {
+public class NodeWidget extends AbstractWidget {
+    public NodeWidget(int x, int y, int width, int height, Component message) {
         super(x, y, width, height, message);
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int i, int i1, float v) {
+    protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 
     }
 

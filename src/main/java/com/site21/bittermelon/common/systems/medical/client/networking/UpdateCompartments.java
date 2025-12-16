@@ -1,9 +1,7 @@
-package com.site21.bittermelon.common.systems.medical.client.screen.networking;
+package com.site21.bittermelon.common.systems.medical.client.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.systems.medical.client.screen.HealthScreenV2;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -29,11 +27,11 @@ public record UpdateCompartments(List<CompartmentInstance> compartments) impleme
     );
 
     public void handle(@NotNull IPayloadContext ctx) {
-        if (Minecraft.getInstance().screen instanceof HealthScreenV2 screen) {
-            for (CompartmentInstance instance : compartments) {
-                screen.getMedicalStats().getCompartments().put(instance.getUUID(), instance);
-            }
-            screen.refresh();
-        }
+//        if (Minecraft.getInstance().screen instanceof HealthScreen screen) {
+//            for (CompartmentInstance instance : compartments) {
+//                screen.getMedicalStats().getCompartments().put(instance.getId(), instance);
+//            }
+//            screen.refresh();
+//        }
     }
 }

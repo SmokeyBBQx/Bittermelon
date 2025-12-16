@@ -1,7 +1,7 @@
-package com.site21.bittermelon.common.systems.medical.client.screen.minigame;
+package com.site21.bittermelon.common.systems.medical.client.minigame;
 
 import com.site21.bittermelon.common.systems.character.Character;
-import com.site21.bittermelon.common.systems.medical.client.screen.networking.CompleteMinigame;
+import com.site21.bittermelon.common.systems.medical.client.networking.CompleteMinigame;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static com.site21.bittermelon.common.systems.medical.client.screen.HealthScreenV2.openHealthScreen;
+import static com.site21.bittermelon.common.systems.medical.client.HealthScreen.openHealthScreen;
 
 @OnlyIn(Dist.CLIENT)
 public class IncisionMinigame extends MedicalMinigame {
@@ -149,7 +149,7 @@ public class IncisionMinigame extends MedicalMinigame {
     protected void complete() {
         if (getMinecraft().player == null) return;
         ClientPacketDistributor.sendToServer(new CompleteMinigame(item,
-                compartment.getUUID(),
+                compartment.getId(),
                 character.getUUID(),
                 getMinecraft().player.getUUID(),
                 calculateAccuracy()));

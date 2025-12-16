@@ -1,14 +1,8 @@
-package com.site21.bittermelon.common.systems.medical.client.screen.networking;
+package com.site21.bittermelon.common.systems.medical.client.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.systems.character.Character;
-import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.common.systems.medical.client.screen.HealthScreenV2;
-import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
-import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -45,23 +39,23 @@ public record UpdateCompartmentPosition(UUID characterID, VisualData visualData,
     );
 
     public void handle(@NotNull IPayloadContext ctx) {
-        CharacterManager characterManager = CharacterManager.get(ctx.player().level());
-        Character character = characterManager.getCharacter(characterID);
-        if (character == null) return;
-
-        MedicalStats medicalStats = character.getMedicalStats();
-        CompartmentInstance sender = medicalStats.getCompartment(senderID);
-        CompartmentInstance target = medicalStats.getCompartment(targetID);
-        CompartmentInstance receiver = medicalStats.getCompartment(receiverID);
-
-        sender.removeCompartment(layer, target);
-        target.getVisualData().x(visualData().x).y(visualData().y).isHidden(false);
-        receiver.tryToInsert(layer, target);
-
-        if (Minecraft.getInstance().screen instanceof HealthScreenV2 screen) {
-            screen.refresh();
-        }
-
-        characterManager.setDirty();
+//        CharacterManager characterManager = CharacterManager.get(ctx.player().level());
+//        Character character = characterManager.getCharacter(characterID);
+//        if (character == null) return;
+//
+//        MedicalStats medicalStats = character.getMedicalStats();
+//        CompartmentInstance sender = medicalStats.getCompartment(senderID);
+//        CompartmentInstance target = medicalStats.getCompartment(targetID);
+//        CompartmentInstance receiver = medicalStats.getCompartment(receiverID);
+//
+//        sender.removeCompartment(layer, target);
+//        target.getVisualData().x(visualData().x).y(visualData().y).isHidden(false);
+//        receiver.tryToInsert(layer, target);
+//
+//        if (Minecraft.getInstance().screen instanceof HealthScreen screen) {
+//            screen.refresh();
+//        }
+//
+//        characterManager.setDirty();
     }
 }

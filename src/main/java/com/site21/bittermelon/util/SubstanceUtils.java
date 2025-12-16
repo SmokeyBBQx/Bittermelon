@@ -20,7 +20,7 @@ public final class SubstanceUtils {
     }
 
     /**
-     * Calculate the pressure of an ideal gas using the Ideal Gas Law: P = nRT/V
+     * Calculate the pressure of an ideal gas using the Ideal Gas Law: Point = nRT/V
      * @param substances the list of SubstanceStacks
      * @param volume the volume in liters
      * @param temperature the temperature in Kelvin

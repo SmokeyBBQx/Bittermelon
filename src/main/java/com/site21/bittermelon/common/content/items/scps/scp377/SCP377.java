@@ -40,6 +40,7 @@ public class SCP377 extends Item {
             if (cookieCount == 0) {
                 stack.set(EMPTY_TIME, level.getGameTime());
             }
+            player.getCooldowns().addCooldown(stack, 10);
             return InteractionResult.SUCCESS;
         }
 

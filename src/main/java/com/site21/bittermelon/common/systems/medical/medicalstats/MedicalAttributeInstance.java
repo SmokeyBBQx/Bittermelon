@@ -100,7 +100,7 @@ public class MedicalAttributeInstance {
 
     static {
         CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Codec.unboundedMap(UUIDUtil.CODEC, MedicalAttributeModifier.CODEC).fieldOf("modifiers").forGetter(MedicalAttributeInstance::getModifiers),
+                Codec.unboundedMap(UUIDUtil.STRING_CODEC, MedicalAttributeModifier.CODEC).fieldOf("modifiers").forGetter(MedicalAttributeInstance::getModifiers),
                 Codec.FLOAT.fieldOf("value").forGetter(MedicalAttributeInstance::getValue)
                 ).apply(instance, MedicalAttributeInstance::new)
         );

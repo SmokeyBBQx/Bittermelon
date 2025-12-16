@@ -3,14 +3,18 @@ package com.site21.bittermelon.init.custom;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.compartments.SharpObject;
 import com.site21.bittermelon.common.systems.medical.compartment.Compartment;
-import com.site21.bittermelon.common.systems.medical.compartment.LayerData;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.SlotPoint;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.SlotType;
 import com.site21.bittermelon.init.neoforge.BitterItems;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.List;
 
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_REGISTRY_KEY;
 import static net.minecraft.world.item.Items.RED_WOOL;
@@ -18,11 +22,174 @@ import static net.minecraft.world.item.Items.RED_WOOL;
 public class Compartments {
     public static final DeferredRegister<Compartment> COMPARTMENTS = DeferredRegister.create(COMPARTMENT_REGISTRY_KEY, Bittermelon.MOD_ID);
 
+    /**
+     * Debug compartment used for testing purposes. Has all necessary attributes.
+     */
+    public static final DeferredHolder<Compartment, Compartment> DEBUG_COMPARTMENT = COMPARTMENTS.register("debug_compartment",
+            () -> new Compartment("liver", new Compartment.Properties()
+                    .defaultHealth(40)
+                    .item(BitterItems.LIVER)
+                    .addAttribute(MedicalAttribute.ELIMINATION)
+                    .addAttribute(MedicalAttribute.BRAIN_MOTOR_ABILITY)
+                    .addAttribute(MedicalAttribute.BRAIN_CONSCIOUSNESS)
+                    .addAttribute(MedicalAttribute.CIRCULATION)
+                    .addAttribute(MedicalAttribute.MOVEMENT)
+                    .addAttribute(MedicalAttribute.MANIPULATION)
+                    .addAttribute(MedicalAttribute.RESPIRATION)
+                    .layers(
+                            new LayerData("Liver Tissue", 18, 13, List.of(
+                                    new SlotPoint(5, 0, SlotType.ORGAN),
+                                    new SlotPoint(6, 0, SlotType.ORGAN),
+                                    new SlotPoint(7, 0, SlotType.ORGAN),
+                                    new SlotPoint(8, 0, SlotType.ORGAN),
+                                    new SlotPoint(9, 0, SlotType.ORGAN),
+                                    new SlotPoint(10, 0, SlotType.ORGAN),
+                                    new SlotPoint(11, 0, SlotType.ORGAN),
+                                    new SlotPoint(12, 0, SlotType.ORGAN),
+                                    new SlotPoint(13, 0, SlotType.ORGAN),
+                                    new SlotPoint(14, 0, SlotType.ORGAN),
+                                    new SlotPoint(15, 0, SlotType.ORGAN),
+                                    new SlotPoint(16, 0, SlotType.ORGAN),
+                                    new SlotPoint(17, 0, SlotType.ORGAN),
+                                    new SlotPoint(3, 1, SlotType.ORGAN),
+                                    new SlotPoint(4, 1, SlotType.ORGAN),
+                                    new SlotPoint(5, 1, SlotType.ORGAN),
+                                    new SlotPoint(6, 1, SlotType.FAT),
+                                    new SlotPoint(7, 1, SlotType.ORGAN),
+                                    new SlotPoint(8, 1, SlotType.ORGAN),
+                                    new SlotPoint(9, 1, SlotType.ORGAN),
+                                    new SlotPoint(10, 1, SlotType.BRAIN_TISSUE),
+                                    new SlotPoint(11, 1, SlotType.BRAIN_TISSUE),
+                                    new SlotPoint(12, 1, SlotType.BRAIN_TISSUE),
+                                    new SlotPoint(13, 1, SlotType.ORGAN),
+                                    new SlotPoint(14, 1, SlotType.MUSCLE),
+                                    new SlotPoint(15, 1, SlotType.ORGAN),
+                                    new SlotPoint(16, 1, SlotType.MUSCLE),
+                                    new SlotPoint(17, 1, SlotType.ORGAN),
+                                    new SlotPoint(2, 2, SlotType.ORGAN),
+                                    new SlotPoint(3, 2, SlotType.FAT),
+                                    new SlotPoint(4, 2, SlotType.FAT),
+                                    new SlotPoint(5, 2, SlotType.FAT),
+                                    new SlotPoint(6, 2, SlotType.FAT),
+                                    new SlotPoint(7, 2, SlotType.ORGAN),
+                                    new SlotPoint(8, 2, SlotType.ORGAN),
+                                    new SlotPoint(9, 2, SlotType.BRAIN_TISSUE),
+                                    new SlotPoint(10, 2, SlotType.BRAIN_TISSUE),
+                                    new SlotPoint(11, 2, SlotType.BRAIN_TISSUE),
+                                    new SlotPoint(12, 2, SlotType.ORGAN),
+                                    new SlotPoint(13, 2, SlotType.ORGAN),
+                                    new SlotPoint(14, 2, SlotType.ORGAN),
+                                    new SlotPoint(15, 2, SlotType.ORGAN),
+                                    new SlotPoint(16, 2, SlotType.ORGAN),
+                                    new SlotPoint(17, 2, SlotType.ORGAN),
+                                    new SlotPoint(2, 3, SlotType.ORGAN),
+                                    new SlotPoint(3, 3, SlotType.FAT),
+                                    new SlotPoint(4, 3, SlotType.FAT),
+                                    new SlotPoint(5, 3, SlotType.FAT),
+                                    new SlotPoint(6, 3, SlotType.ORGAN),
+                                    new SlotPoint(7, 3, SlotType.ORGAN),
+                                    new SlotPoint(8, 3, SlotType.BRAIN_TISSUE),
+                                    new SlotPoint(9, 3, SlotType.BRAIN_TISSUE),
+                                    new SlotPoint(10, 3, SlotType.BRAIN_TISSUE),
+                                    new SlotPoint(11, 3, SlotType.ORGAN),
+                                    new SlotPoint(12, 3, SlotType.ORGAN),
+                                    new SlotPoint(13, 3, SlotType.ORGAN),
+                                    new SlotPoint(14, 3, SlotType.MUSCLE),
+                                    new SlotPoint(15, 3, SlotType.ORGAN),
+                                    new SlotPoint(16, 3, SlotType.MUSCLE),
+                                    new SlotPoint(1, 4, SlotType.ORGAN),
+                                    new SlotPoint(2, 4, SlotType.ORGAN),
+                                    new SlotPoint(3, 4, SlotType.SKIN),
+                                    new SlotPoint(4, 4, SlotType.SKIN),
+                                    new SlotPoint(5, 4, SlotType.SKIN),
+                                    new SlotPoint(6, 4, SlotType.ORGAN),
+                                    new SlotPoint(7, 4, SlotType.BRAIN_TISSUE),
+                                    new SlotPoint(8, 4, SlotType.BRAIN_TISSUE),
+                                    new SlotPoint(9, 4, SlotType.BRAIN_TISSUE),
+                                    new SlotPoint(10, 4, SlotType.MEMBRANE),
+                                    new SlotPoint(11, 4, SlotType.MEMBRANE),
+                                    new SlotPoint(12, 4, SlotType.MEMBRANE),
+                                    new SlotPoint(13, 4, SlotType.ORGAN),
+                                    new SlotPoint(14, 4, SlotType.ORGAN),
+                                    new SlotPoint(15, 4, SlotType.MUSCLE),
+                                    new SlotPoint(0, 5, SlotType.ORGAN),
+                                    new SlotPoint(1, 5, SlotType.ORGAN),
+                                    new SlotPoint(2, 5, SlotType.ORGAN),
+                                    new SlotPoint(3, 5, SlotType.SKIN),
+                                    new SlotPoint(4, 5, SlotType.SKIN),
+                                    new SlotPoint(5, 5, SlotType.BRAIN_TISSUE),
+                                    new SlotPoint(6, 5, SlotType.BRAIN_TISSUE),
+                                    new SlotPoint(7, 5, SlotType.BRAIN_TISSUE),
+                                    new SlotPoint(8, 5, SlotType.ORGAN),
+                                    new SlotPoint(9, 5, SlotType.MEMBRANE),
+                                    new SlotPoint(10, 5, SlotType.MEMBRANE),
+                                    new SlotPoint(11, 5, SlotType.MEMBRANE),
+                                    new SlotPoint(12, 5, SlotType.MEMBRANE),
+                                    new SlotPoint(13, 5, SlotType.ORGAN),
+                                    new SlotPoint(14, 5, SlotType.ORGAN),
+                                    new SlotPoint(0, 6, SlotType.ORGAN),
+                                    new SlotPoint(1, 6, SlotType.ORGAN),
+                                    new SlotPoint(2, 6, SlotType.ORGAN),
+                                    new SlotPoint(3, 6, SlotType.ORGAN),
+                                    new SlotPoint(4, 6, SlotType.BRAIN_TISSUE),
+                                    new SlotPoint(5, 6, SlotType.BRAIN_TISSUE),
+                                    new SlotPoint(6, 6, SlotType.ORGAN),
+                                    new SlotPoint(7, 6, SlotType.ORGAN),
+                                    new SlotPoint(8, 6, SlotType.ORGAN),
+                                    new SlotPoint(9, 6, SlotType.ORGAN),
+                                    new SlotPoint(10, 6, SlotType.MEMBRANE),
+                                    new SlotPoint(11, 6, SlotType.MEMBRANE),
+                                    new SlotPoint(0, 7, SlotType.ORGAN),
+                                    new SlotPoint(1, 7, SlotType.ORGAN),
+                                    new SlotPoint(2, 7, SlotType.BRAIN_TISSUE),
+                                    new SlotPoint(3, 7, SlotType.BRAIN_TISSUE),
+                                    new SlotPoint(4, 7, SlotType.BRAIN_TISSUE),
+                                    new SlotPoint(5, 7, SlotType.BONE),
+                                    new SlotPoint(6, 7, SlotType.BONE),
+                                    new SlotPoint(7, 7, SlotType.ORGAN),
+                                    new SlotPoint(8, 7, SlotType.ORGAN),
+                                    new SlotPoint(9, 7, SlotType.MEMBRANE),
+                                    new SlotPoint(10, 7, SlotType.MEMBRANE),
+                                    new SlotPoint(0, 8, SlotType.ORGAN),
+                                    new SlotPoint(1, 8, SlotType.ORGAN),
+                                    new SlotPoint(2, 8, SlotType.ORGAN),
+                                    new SlotPoint(3, 8, SlotType.BONE),
+                                    new SlotPoint(4, 8, SlotType.BONE),
+                                    new SlotPoint(5, 8, SlotType.BONE),
+                                    new SlotPoint(6, 8, SlotType.ORGAN),
+                                    new SlotPoint(7, 8, SlotType.ORGAN),
+                                    new SlotPoint(8, 8, SlotType.ORGAN),
+                                    new SlotPoint(0, 9, SlotType.ORGAN),
+                                    new SlotPoint(1, 9, SlotType.ORGAN),
+                                    new SlotPoint(2, 9, SlotType.ORGAN),
+                                    new SlotPoint(3, 9, SlotType.BONE),
+                                    new SlotPoint(4, 9, SlotType.BONE),
+                                    new SlotPoint(5, 9, SlotType.ORGAN),
+                                    new SlotPoint(6, 9, SlotType.ORGAN),
+                                    new SlotPoint(7, 9, SlotType.ORGAN),
+                                    new SlotPoint(0, 10, SlotType.ORGAN),
+                                    new SlotPoint(1, 10, SlotType.ORGAN),
+                                    new SlotPoint(2, 10, SlotType.ORGAN),
+                                    new SlotPoint(3, 10, SlotType.ORGAN),
+                                    new SlotPoint(4, 10, SlotType.ORGAN),
+                                    new SlotPoint(5, 10, SlotType.ORGAN),
+                                    new SlotPoint(0, 11, SlotType.ORGAN),
+                                    new SlotPoint(1, 11, SlotType.ORGAN),
+                                    new SlotPoint(2, 11, SlotType.ORGAN),
+                                    new SlotPoint(0, 12, SlotType.ORGAN),
+                                    new SlotPoint(1, 12, SlotType.ORGAN)
+                            ))
+                    )
+                    .visualData(VisualData.empty()
+                            .icon("anatomical_liver"))
+            )
+    );
+
     public static final DeferredHolder<Compartment, Compartment> WHOLE_BODY = COMPARTMENTS.register("whole_body",
             () -> new Compartment("whole_body", new Compartment.Properties()
                     .defaultHealth(100)
                     .layers(
-                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/stone.png"), "Body")
+                            LayerData.fromRegularShape("Body", 64, 128, SlotType.CAVITY)
                     )
                     .item(BitterItems.BODY_PART)
             )
@@ -32,10 +199,9 @@ public class Compartments {
             () -> new Compartment("head", new Compartment.Properties()
                     .defaultHealth(100)
                     .layers(
-                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/white_terracotta.png"), "Scalp"),
-                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/bone_block_side.png"), "Skull"),
-                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/black_concrete.png"), "Brain Cavity"),
-                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/smooth_stone.png"), "Facial Structure")
+                            LayerData.fromRegularShape("Scalp", 32, 32, SlotType.SKIN),
+                            LayerData.fromRegularShape("Skull", 32, 32, SlotType.BONE),
+                            LayerData.fromRegularShape("Brain Cavity", 32, 32, SlotType.CAVITY)
                     )
                     .item(Holder.direct(RED_WOOL))
             )
@@ -45,9 +211,9 @@ public class Compartments {
             () -> new Compartment("torso", new Compartment.Properties()
                     .defaultHealth(150)
                     .layers(
-                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/white_terracotta.png"), "Skin"),
-                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/bone_block_side.png"), "Ribcage"),
-                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/red_concrete.png"), "Thoracic Cavity")
+                            LayerData.fromRegularShape("Skin", 48, 64, SlotType.SKIN),
+                            LayerData.fromRegularShape("Ribcage", 48, 64, SlotType.BONE),
+                            LayerData.fromRegularShape("Thoracic Cavity", 48, 64, SlotType.CAVITY)
                     )
                     .item(Holder.direct(RED_WOOL))
             )
@@ -57,12 +223,12 @@ public class Compartments {
             () -> new Compartment("abdomen", new Compartment.Properties()
                     .defaultHealth(100)
                     .layers(
-                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/white_terracotta.png"), "Skin"),
-                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/horn_coral_block.png"), "Fat"),
-                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/netherrack.png"), "Muscle"),
-                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/dead_brain_coral_block.png"), "Peritoneum"),
-                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/netherrack.png"), "Abdominal Cavity"),
-                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/brown_concrete.png"), "Retroperitoneal Space")
+                            LayerData.fromRegularShape("Skin", 48, 48, SlotType.SKIN),
+                            LayerData.fromRegularShape("Fat", 48, 48, SlotType.FAT),
+                            LayerData.fromRegularShape("Muscle", 48, 48, SlotType.MUSCLE),
+                            LayerData.fromRegularShape("Peritoneum", 48, 48, SlotType.MEMBRANE),
+                            LayerData.fromRegularShape("Abdominal Cavity", 48, 48, SlotType.CAVITY),
+                            LayerData.fromRegularShape("Retroperitoneal Space", 48, 48, SlotType.CAVITY)
                     )
                     .item(Holder.direct(RED_WOOL))
             )
@@ -72,9 +238,9 @@ public class Compartments {
             () -> new Compartment("limb", new Compartment.Properties()
                     .defaultHealth(80)
                     .layers(
-                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/white_terracotta.png"), "Skin", 0, 0),
-                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/netherrack.png"), "Muscle", 0, 0),
-                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/bone_block_side.png"), "Bone", 0, 0)
+                            LayerData.fromRegularShape("Skin", 16, 48, SlotType.SKIN),
+                            LayerData.fromRegularShape("Muscle", 16, 48, SlotType.MUSCLE),
+                            LayerData.fromRegularShape("Bone", 16, 48, SlotType.BONE)
                     )
                     .item(BitterItems.BODY_PART)
             )
@@ -125,8 +291,8 @@ public class Compartments {
             () -> new Compartment("brain", new Compartment.Properties()
                     .defaultHealth(20)
                     .layers(
-                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/dead_brain_coral_block.png"), "Meninges"),
-                            LayerData.defaultSize(ResourceLocation.withDefaultNamespace("textures/block/brain_coral_block.png"), "Brain")
+                            LayerData.fromRegularShape("Meninges", 16, 16, SlotType.MEMBRANE),
+                            LayerData.fromRegularShape("Brain", 16, 16, SlotType.BRAIN_TISSUE)
                     )
             )
     );
@@ -157,8 +323,8 @@ public class Compartments {
             () -> new Compartment("heart", new Compartment.Properties()
                     .defaultHealth(40)
                     .layers(
-                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/pink_terracotta.png"), "Pericardium", 0, 0),
-                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/red_concrete.png"), "Cardiac Chambers", 0, 0)
+                            LayerData.fromRegularShape("Pericardium", 16, 16, SlotType.MEMBRANE),
+                            LayerData.fromRegularShape("Cardiac Chambers", 16, 16, SlotType.MUSCLE)
                     )
             )
     );
@@ -182,12 +348,6 @@ public class Compartments {
                     .item(BitterItems.STOMACH)
                     .addAttribute(MedicalAttribute.DIGESTION)
                     .visualData(VisualData.empty()
-                            .x(20)
-                            .y(0)
-                            .z(2)
-                            .width(15)
-                            .height(14)
-                            .scale(5)
                             .icon("anatomical_stomach"))
             )
     );
@@ -196,12 +356,6 @@ public class Compartments {
             () -> new Compartment("small_intestine", new Compartment.Properties()
                     .defaultHealth(40)
                     .visualData(VisualData.empty()
-                            .x(5)
-                            .y(40)
-                            .z(0)
-                            .width(17)
-                            .height(19)
-                            .scale(5)
                             .icon("anatomical_small_intestine"))
                     .addAttribute(MedicalAttribute.CIRCULATION)
                     .addAttribute(MedicalAttribute.MOVEMENT)
@@ -215,12 +369,6 @@ public class Compartments {
                     .defaultHealth(40)
                     .item(BitterItems.COLON)
                     .visualData(VisualData.empty()
-                            .x(-5)
-                            .y(45)
-                            .z(1)
-                            .width(22)
-                            .height(19)
-                            .scale(5)
                             .icon("anatomical_colon"))
             )
     );
@@ -230,13 +378,151 @@ public class Compartments {
                     .defaultHealth(40)
                     .item(BitterItems.LIVER)
                     .addAttribute(MedicalAttribute.ELIMINATION)
+                    .layers(
+                            new LayerData("Liver Tissue", 19, 14, List.of(
+                                    new SlotPoint(5, 0, SlotType.ORGAN),
+                                    new SlotPoint(6, 0, SlotType.ORGAN),
+                                    new SlotPoint(7, 0, SlotType.ORGAN),
+                                    new SlotPoint(8, 0, SlotType.ORGAN),
+                                    new SlotPoint(9, 0, SlotType.ORGAN),
+                                    new SlotPoint(10, 0, SlotType.ORGAN),
+                                    new SlotPoint(11, 0, SlotType.ORGAN),
+                                    new SlotPoint(12, 0, SlotType.ORGAN),
+                                    new SlotPoint(13, 0, SlotType.ORGAN),
+                                    new SlotPoint(14, 0, SlotType.ORGAN),
+                                    new SlotPoint(15, 0, SlotType.ORGAN),
+                                    new SlotPoint(16, 0, SlotType.ORGAN),
+                                    new SlotPoint(17, 0, SlotType.ORGAN),
+                                    new SlotPoint(3, 1, SlotType.ORGAN),
+                                    new SlotPoint(4, 1, SlotType.ORGAN),
+                                    new SlotPoint(5, 1, SlotType.ORGAN),
+                                    new SlotPoint(6, 1, SlotType.ORGAN),
+                                    new SlotPoint(7, 1, SlotType.ORGAN),
+                                    new SlotPoint(8, 1, SlotType.ORGAN),
+                                    new SlotPoint(9, 1, SlotType.ORGAN),
+                                    new SlotPoint(10, 1, SlotType.ORGAN),
+                                    new SlotPoint(11, 1, SlotType.ORGAN),
+                                    new SlotPoint(12, 1, SlotType.ORGAN),
+                                    new SlotPoint(13, 1, SlotType.ORGAN),
+                                    new SlotPoint(14, 1, SlotType.ORGAN),
+                                    new SlotPoint(15, 1, SlotType.ORGAN),
+                                    new SlotPoint(16, 1, SlotType.ORGAN),
+                                    new SlotPoint(17, 1, SlotType.ORGAN),
+                                    new SlotPoint(2, 2, SlotType.ORGAN),
+                                    new SlotPoint(3, 2, SlotType.ORGAN),
+                                    new SlotPoint(4, 2, SlotType.ORGAN),
+                                    new SlotPoint(5, 2, SlotType.ORGAN),
+                                    new SlotPoint(6, 2, SlotType.ORGAN),
+                                    new SlotPoint(7, 2, SlotType.ORGAN),
+                                    new SlotPoint(8, 2, SlotType.ORGAN),
+                                    new SlotPoint(9, 2, SlotType.ORGAN),
+                                    new SlotPoint(10, 2, SlotType.ORGAN),
+                                    new SlotPoint(11, 2, SlotType.ORGAN),
+                                    new SlotPoint(12, 2, SlotType.ORGAN),
+                                    new SlotPoint(13, 2, SlotType.ORGAN),
+                                    new SlotPoint(14, 2, SlotType.ORGAN),
+                                    new SlotPoint(15, 2, SlotType.ORGAN),
+                                    new SlotPoint(16, 2, SlotType.ORGAN),
+                                    new SlotPoint(17, 2, SlotType.ORGAN),
+                                    new SlotPoint(2, 3, SlotType.ORGAN),
+                                    new SlotPoint(3, 3, SlotType.ORGAN),
+                                    new SlotPoint(4, 3, SlotType.ORGAN),
+                                    new SlotPoint(5, 3, SlotType.ORGAN),
+                                    new SlotPoint(6, 3, SlotType.ORGAN),
+                                    new SlotPoint(7, 3, SlotType.ORGAN),
+                                    new SlotPoint(8, 3, SlotType.ORGAN),
+                                    new SlotPoint(9, 3, SlotType.ORGAN),
+                                    new SlotPoint(10, 3, SlotType.ORGAN),
+                                    new SlotPoint(11, 3, SlotType.ORGAN),
+                                    new SlotPoint(12, 3, SlotType.ORGAN),
+                                    new SlotPoint(13, 3, SlotType.ORGAN),
+                                    new SlotPoint(14, 3, SlotType.ORGAN),
+                                    new SlotPoint(15, 3, SlotType.ORGAN),
+                                    new SlotPoint(16, 3, SlotType.ORGAN),
+                                    new SlotPoint(1, 4, SlotType.ORGAN),
+                                    new SlotPoint(2, 4, SlotType.ORGAN),
+                                    new SlotPoint(3, 4, SlotType.ORGAN),
+                                    new SlotPoint(4, 4, SlotType.ORGAN),
+                                    new SlotPoint(5, 4, SlotType.ORGAN),
+                                    new SlotPoint(6, 4, SlotType.ORGAN),
+                                    new SlotPoint(7, 4, SlotType.ORGAN),
+                                    new SlotPoint(8, 4, SlotType.ORGAN),
+                                    new SlotPoint(9, 4, SlotType.ORGAN),
+                                    new SlotPoint(10, 4, SlotType.ORGAN),
+                                    new SlotPoint(11, 4, SlotType.ORGAN),
+                                    new SlotPoint(12, 4, SlotType.ORGAN),
+                                    new SlotPoint(13, 4, SlotType.ORGAN),
+                                    new SlotPoint(14, 4, SlotType.ORGAN),
+                                    new SlotPoint(15, 4, SlotType.ORGAN),
+                                    new SlotPoint(0, 5, SlotType.ORGAN),
+                                    new SlotPoint(1, 5, SlotType.ORGAN),
+                                    new SlotPoint(2, 5, SlotType.ORGAN),
+                                    new SlotPoint(3, 5, SlotType.ORGAN),
+                                    new SlotPoint(4, 5, SlotType.ORGAN),
+                                    new SlotPoint(5, 5, SlotType.ORGAN),
+                                    new SlotPoint(6, 5, SlotType.ORGAN),
+                                    new SlotPoint(7, 5, SlotType.ORGAN),
+                                    new SlotPoint(8, 5, SlotType.ORGAN),
+                                    new SlotPoint(9, 5, SlotType.ORGAN),
+                                    new SlotPoint(10, 5, SlotType.ORGAN),
+                                    new SlotPoint(11, 5, SlotType.ORGAN),
+                                    new SlotPoint(12, 5, SlotType.ORGAN),
+                                    new SlotPoint(13, 5, SlotType.ORGAN),
+                                    new SlotPoint(14, 5, SlotType.ORGAN),
+                                    new SlotPoint(0, 6, SlotType.ORGAN),
+                                    new SlotPoint(1, 6, SlotType.ORGAN),
+                                    new SlotPoint(2, 6, SlotType.ORGAN),
+                                    new SlotPoint(3, 6, SlotType.ORGAN),
+                                    new SlotPoint(4, 6, SlotType.ORGAN),
+                                    new SlotPoint(5, 6, SlotType.ORGAN),
+                                    new SlotPoint(6, 6, SlotType.ORGAN),
+                                    new SlotPoint(7, 6, SlotType.ORGAN),
+                                    new SlotPoint(8, 6, SlotType.ORGAN),
+                                    new SlotPoint(9, 6, SlotType.ORGAN),
+                                    new SlotPoint(10, 6, SlotType.ORGAN),
+                                    new SlotPoint(11, 6, SlotType.ORGAN),
+                                    new SlotPoint(0, 7, SlotType.ORGAN),
+                                    new SlotPoint(1, 7, SlotType.ORGAN),
+                                    new SlotPoint(2, 7, SlotType.ORGAN),
+                                    new SlotPoint(3, 7, SlotType.ORGAN),
+                                    new SlotPoint(4, 7, SlotType.ORGAN),
+                                    new SlotPoint(5, 7, SlotType.ORGAN),
+                                    new SlotPoint(6, 7, SlotType.ORGAN),
+                                    new SlotPoint(7, 7, SlotType.ORGAN),
+                                    new SlotPoint(8, 7, SlotType.ORGAN),
+                                    new SlotPoint(9, 7, SlotType.ORGAN),
+                                    new SlotPoint(10, 7, SlotType.ORGAN),
+                                    new SlotPoint(0, 8, SlotType.ORGAN),
+                                    new SlotPoint(1, 8, SlotType.ORGAN),
+                                    new SlotPoint(2, 8, SlotType.ORGAN),
+                                    new SlotPoint(3, 8, SlotType.ORGAN),
+                                    new SlotPoint(4, 8, SlotType.ORGAN),
+                                    new SlotPoint(5, 8, SlotType.ORGAN),
+                                    new SlotPoint(6, 8, SlotType.ORGAN),
+                                    new SlotPoint(7, 8, SlotType.ORGAN),
+                                    new SlotPoint(8, 8, SlotType.ORGAN),
+                                    new SlotPoint(0, 9, SlotType.ORGAN),
+                                    new SlotPoint(1, 9, SlotType.ORGAN),
+                                    new SlotPoint(2, 9, SlotType.ORGAN),
+                                    new SlotPoint(3, 9, SlotType.ORGAN),
+                                    new SlotPoint(4, 9, SlotType.ORGAN),
+                                    new SlotPoint(5, 9, SlotType.ORGAN),
+                                    new SlotPoint(6, 9, SlotType.ORGAN),
+                                    new SlotPoint(7, 9, SlotType.ORGAN),
+                                    new SlotPoint(0, 10, SlotType.ORGAN),
+                                    new SlotPoint(1, 10, SlotType.ORGAN),
+                                    new SlotPoint(2, 10, SlotType.ORGAN),
+                                    new SlotPoint(3, 10, SlotType.ORGAN),
+                                    new SlotPoint(4, 10, SlotType.ORGAN),
+                                    new SlotPoint(5, 10, SlotType.ORGAN),
+                                    new SlotPoint(0, 11, SlotType.ORGAN),
+                                    new SlotPoint(1, 11, SlotType.ORGAN),
+                                    new SlotPoint(2, 11, SlotType.ORGAN),
+                                    new SlotPoint(0, 12, SlotType.ORGAN),
+                                    new SlotPoint(1, 12, SlotType.ORGAN)
+                            ))
+                    )
                     .visualData(VisualData.empty()
-                            .x(0)
-                            .y(0)
-                            .z(4)
-                            .width(19)
-                            .height(14)
-                            .scale(5)
                             .icon("anatomical_liver"))
             )
     );
@@ -245,13 +531,23 @@ public class Compartments {
             () -> new Compartment("gallbladder", new Compartment.Properties()
                     .defaultHealth(40)
                     .item(BitterItems.GALLBLADDER)
+                    .layers(new LayerData("Gallbladder Tissue", 3, 3, List.of(
+                            new SlotPoint(1, 0, SlotType.ORGAN),
+                            new SlotPoint(2, 0, SlotType.ORGAN),
+                            new SlotPoint(0, 1, SlotType.ORGAN),
+                            new SlotPoint(1, 1, SlotType.ORGAN),
+                            new SlotPoint(2, 1, SlotType.ORGAN),
+                            new SlotPoint(1, 2, SlotType.ORGAN)
+                    )))
+                    .shape(List.of(
+                            new Point(1, 0),
+                            new Point(2, 0),
+                            new Point(0, 1),
+                            new Point(1, 1),
+                            new Point(2, 1),
+                            new Point(1, 2)
+                    ))
                     .visualData(VisualData.empty()
-                            .x(25)
-                            .y(50)
-                            .z(3)
-                            .width(3)
-                            .height(3)
-                            .scale(5)
                             .icon("anatomical_gallbladder"))
             )
     );
@@ -273,13 +569,6 @@ public class Compartments {
                     .defaultHealth(10)
             )
     );
-
-    public static final DeferredHolder<Compartment, Compartment> TRAY = COMPARTMENTS.register("tray",
-            () -> new Compartment("tray", new Compartment.Properties()
-                    .layers(
-                            new LayerData(ResourceLocation.withDefaultNamespace("textures/block/iron_block.png"), "Surgical Tray", 100, 80)
-                    )
-            ));
 
     public static final DeferredHolder<Compartment, Compartment> SCALPEL = COMPARTMENTS.register("scalpel",
             () -> new SharpObject("scalpel", new Compartment.Properties().item(BitterItems.SCALPEL)));

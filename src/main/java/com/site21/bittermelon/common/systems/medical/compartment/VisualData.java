@@ -9,6 +9,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -19,60 +20,31 @@ public class VisualData {
 
     public int x;
     public int y;
-    public int z;
     public float scale;
-    public int width;
-    public int height;
-    public float rotation; // in radians
     public ResourceLocation icon;
     public int color;
-    public boolean isHidden = false;
 
-    public VisualData(int x, int y, int z, float scale, int width, int height, float rotation, ResourceLocation icon, int color) {
+    public VisualData(int x, int y, float scale, @Nullable ResourceLocation icon, int color) {
         this.x = x;
         this.y = y;
-        this.z = z;
         this.scale = scale;
-        this.width = width;
-        this.height = height;
-        this.rotation = rotation;
         this.icon = icon;
         this.color = color;
     }
 
     @SuppressWarnings({"OptionalUsedAsFieldOrParameterType"})
     @Contract(pure = true)
-    public VisualData(int x, int y, int z, float scale, int width, int height, float rotation, @NotNull Optional<ResourceLocation> icon, int color) {
-        this(x, y, z, scale, width, height, rotation, icon.orElse(null), color);
+    public VisualData(int x, int y, float scale, @NotNull Optional<ResourceLocation> icon, int color) {
+        this(x, y, scale, icon.orElse(null), color);
     }
 
-    public VisualData(int x, int y, int z, float scale, int width, int height, ResourceLocation icon) {
-        this(x, y, z, scale, width, height, 0, icon, DEFAULT_COLOR);
-    }
-
-    public VisualData(int x, int y, int z, float scale, int width, int height) {
-        this(x, y, z, scale, width, height, 0, Optional.empty(), DEFAULT_COLOR);
-    }
-
-    public VisualData(int x, int y, int z, int width, int height) {
-       this(x, y, z, 1, width, height);
-    }
-
-    public VisualData(int x, int y, int width, int height) {
-        this(x, y, 0, 1, width, height);
-    }
-
-    public VisualData(int x, int y, float scale) {
-       this(x, y, 0, scale, 0, 0);
-    }
-
-    public VisualData(int x, int y) {
-        this(x, y, 0, 1, 0, 0);
+    public VisualData(int x, int y, float scale, ResourceLocation icon) {
+        this(x, y, scale, icon, DEFAULT_COLOR);
     }
 
     @Contract(" -> new")
     public static @NotNull VisualData empty() {
-        return new VisualData(0, 0, 0, 1, 0, 0);
+        return new VisualData(0, 0, 1f, Optional.empty(), DEFAULT_COLOR);
     }
 
     public int getX() {
@@ -81,30 +53,6 @@ public class VisualData {
 
     public int getY() {
         return y;
-    }
-
-    public int getZ() {
-        return z;
-    }
-
-    public float getScale() {
-        return scale;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    /**
-     * Gets rotation in radians
-     * @return rotation in radians
-     */
-    public float getRotation() {
-        return rotation;
     }
 
     public Optional<ResourceLocation> getOptionalIcon() {
@@ -129,33 +77,8 @@ public class VisualData {
         return this;
     }
 
-    public VisualData z(int z) {
-        this.z = z;
-        return this;
-    }
-
     public VisualData scale(float scale) {
         this.scale = scale;
-        return this;
-    }
-
-    public VisualData width(int width) {
-        this.width = width;
-        return this;
-    }
-
-    public VisualData height(int height) {
-        this.height = height;
-        return this;
-    }
-
-    /**
-     * Sets rotation in radians
-     * @param rotation rotation in radians
-     * @return this
-     */
-    public VisualData rotation(float rotation) {
-        this.rotation = rotation;
         return this;
     }
 
@@ -165,7 +88,7 @@ public class VisualData {
     }
 
     public VisualData icon(String name) {
-        this.icon = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/organs/" + name + ".png");
+        this.icon = Bittermelon.resource("textures/gui/organs/" + name + ".png");
         return this;
     }
 
@@ -174,56 +97,27 @@ public class VisualData {
         return this;
     }
 
-    public VisualData isHidden(boolean isHidden) {
-        this.isHidden = isHidden;
-        return this;
-    }
-
     static {
         CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.INT.fieldOf("x").forGetter(VisualData::getX),
                 Codec.INT.fieldOf("y").forGetter(VisualData::getY),
-                Codec.INT.fieldOf("z").forGetter(VisualData::getZ),
-                Codec.FLOAT.fieldOf("scale").forGetter(VisualData::getScale),
-                Codec.INT.fieldOf("width").forGetter(VisualData::getWidth),
-                Codec.INT.fieldOf("height").forGetter(VisualData::getHeight),
-                Codec.FLOAT.fieldOf("rotation").forGetter(VisualData::getRotation),
+                Codec.FLOAT.fieldOf("scale").forGetter(visualData -> visualData.scale),
                 ResourceLocation.CODEC.optionalFieldOf("icon").forGetter(VisualData::getOptionalIcon),
                 Codec.INT.fieldOf("color").forGetter(VisualData::getColor)
         ).apply(instance, VisualData::new));
 
-        STREAM_CODEC = new StreamCodec<>() {
-            @Override
-            public @NotNull VisualData decode(@NotNull ByteBuf buf) {
-                int x = ByteBufCodecs.INT.decode(buf);
-                int y = ByteBufCodecs.INT.decode(buf);
-                int z = ByteBufCodecs.INT.decode(buf);
-                float scale = ByteBufCodecs.FLOAT.decode(buf);
-                int width = ByteBufCodecs.INT.decode(buf);
-                int height = ByteBufCodecs.INT.decode(buf);
-                float rotation = ByteBufCodecs.FLOAT.decode(buf);
-                boolean hasIcon = ByteBufCodecs.BOOL.decode(buf);
-                ResourceLocation icon = hasIcon ? ResourceLocation.STREAM_CODEC.decode(buf) : null;
-                int color = ByteBufCodecs.INT.decode(buf);
-                return new VisualData(x, y, z, scale, width, height, rotation, icon, color);
-            }
-
-            @Override
-            public void encode(@NotNull ByteBuf buf, @NotNull VisualData value) {
-                ByteBufCodecs.INT.encode(buf, value.getX());
-                ByteBufCodecs.INT.encode(buf, value.getY());
-                ByteBufCodecs.INT.encode(buf, value.getZ());
-                ByteBufCodecs.FLOAT.encode(buf, value.getScale());
-                ByteBufCodecs.INT.encode(buf, value.getWidth());
-                ByteBufCodecs.INT.encode(buf, value.getHeight());
-                ByteBufCodecs.FLOAT.encode(buf, value.getRotation());
-                boolean hasIcon = value.getIcon() != null;
-                ByteBufCodecs.BOOL.encode(buf, hasIcon);
-                if (hasIcon) {
-                    ResourceLocation.STREAM_CODEC.encode(buf, value.getIcon());
-                }
-                ByteBufCodecs.INT.encode(buf, value.getColor());
-            }
-        };
+        STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.INT,
+                VisualData::getX,
+                ByteBufCodecs.INT,
+                VisualData::getY,
+                ByteBufCodecs.FLOAT,
+                visualData -> visualData.scale,
+                ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC),
+                VisualData::getOptionalIcon,
+                ByteBufCodecs.INT,
+                VisualData::getColor,
+                VisualData::new
+        );
     }
 }

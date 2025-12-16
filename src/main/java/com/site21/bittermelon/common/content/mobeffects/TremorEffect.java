@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.content.mobeffects;
 
 import com.site21.bittermelon.client.render.screenshake.StartScreenshake;
-import com.site21.bittermelon.common.systems.medical.client.screen.networking.UpdateTremor;
+import com.site21.bittermelon.common.systems.medical.client.networking.UpdateTremor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.InstantenousMobEffect;

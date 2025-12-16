@@ -1,7 +1,8 @@
 package com.site21.bittermelon.common.systems.medical.compartment;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.systems.medical.client.screen.widget.CompartmentSpaceWidget;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.core.Holder;
@@ -12,8 +13,8 @@ import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.List;
 
-import static com.site21.bittermelon.init.neoforge.BitterItems.BODY_PART;
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_REGISTRY;
 
 public class Compartment {
@@ -26,23 +27,18 @@ public class Compartment {
     }
 
     public CompartmentInstance toInstance() {
-        List<HashSet<UUID>> layers = new ArrayList<>();
-        for (int i = 0; i < properties.layers.length; ++i) {
-            layers.add(new HashSet<>());
-        }
-
         VisualData visualData = properties.visualData;
 
         return new CompartmentInstance(
                 this,
                 UUID.randomUUID(),
-                layers,
+                List.of(properties.layers),
                 properties.defaultHealth,
                 properties.defaultHealth,
                 properties.defaultAttributes,
                 properties.defaultTags,
                 id,
-                new VisualData(visualData.x, visualData.y, visualData.z, visualData.scale, visualData.width, visualData.height, visualData.icon)
+                new VisualData(visualData.x, visualData.y, visualData.scale, visualData.icon)
         );
     }
 
@@ -54,25 +50,10 @@ public class Compartment {
         return false;
     }
 
-    public boolean tryToInsert(@NotNull CompartmentInstance instance, CompartmentInstance input, int layer) {
-        if (properties.layers == null || properties.layers[layer] == null) return false;
-
-        instance.addCompartment(layer, input);
-        return true;
-    }
-
     public ItemStack createItemStack(@NotNull CompartmentInstance instance) {
         ItemStack stack = properties.item.value().getDefaultInstance();
         stack.set(BitterDataComponents.COMPARTMENT, instance.toData());
         return stack;
-    }
-
-    public void performAction(@NotNull CompartmentSpaceWidget widget, double mouseX, double mouseY, int button) {
-        widget.handleCompartmentPlacement(mouseX, mouseY);
-    }
-
-    public void performActionOn(@NotNull CompartmentSpaceWidget widget, CompartmentInstance target, CompartmentInstance instance, double mouseX, double mouseY, int button) {
-        widget.handleCompartmentPlacement(mouseX, mouseY);
     }
 
     public Holder<Compartment> builtInRegistryHolder() {
@@ -91,13 +72,23 @@ public class Compartment {
         return properties.item.value();
     }
 
+    public List<Point> getShape() {
+        return properties.shape;
+    }
+
+    public Point getPivot() {
+        return properties.pivot;
+    }
+
     public static class Properties {
         EnumSet<CompartmentTag> defaultTags = EnumSet.noneOf(CompartmentTag.class);
         EnumMap<MedicalAttribute, Float> defaultAttributes = new EnumMap<>(MedicalAttribute.class);
-        LayerData[] layers = new LayerData[]{new LayerData(ResourceLocation.withDefaultNamespace("textures/block/stone.png"), "Compartment", 0, 0)};
+        LayerData[] layers = new LayerData[]{};
+        List<Point> shape = new ArrayList<>();
+        Point pivot = new Point(0, 0);
         Holder<Item> item = Items.AIR.builtInRegistryHolder();
         float defaultHealth = 0;
-        VisualData visualData = VisualData.empty().width(200).height(200);
+        VisualData visualData = VisualData.empty();
         String modelPart = "";
 
         public Properties defaultTags(EnumSet<CompartmentTag> defaultTags) {
@@ -127,6 +118,16 @@ public class Compartment {
 
         public Properties layers(LayerData... layers) {
             this.layers = layers;
+            return this;
+        }
+
+        public Properties shape(List<Point> shape) {
+            this.shape = shape;
+            return this;
+        }
+
+        public Properties pivot(Point pivot) {
+            this.pivot = pivot;
             return this;
         }
 

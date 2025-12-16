@@ -8,7 +8,7 @@ import com.site21.bittermelon.common.content.blocks.electronics.intercom.network
 import com.site21.bittermelon.common.content.items.wire.networking.*;
 import com.site21.bittermelon.common.systems.atmosphere.networking.*;
 import com.site21.bittermelon.common.systems.character.networking.*;
-import com.site21.bittermelon.common.systems.medical.client.screen.networking.*;
+import com.site21.bittermelon.common.systems.medical.client.networking.*;
 import com.site21.bittermelon.common.systems.personnel.privilege.networking.*;
 import com.site21.bittermelon.common.systems.electronics.privilege.networking.OpenPrivilegeEditorScreen;
 import com.site21.bittermelon.common.systems.electronics.privilege.networking.RemovePrivilegeForBE;

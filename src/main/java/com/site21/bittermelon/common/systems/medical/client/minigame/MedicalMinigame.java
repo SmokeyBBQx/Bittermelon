@@ -1,8 +1,8 @@
-package com.site21.bittermelon.common.systems.medical.client.screen.minigame;
+package com.site21.bittermelon.common.systems.medical.client.minigame;
 
 import com.site21.bittermelon.common.systems.character.Character;
-import com.site21.bittermelon.common.systems.medical.client.screen.HealthScreenV2;
-import com.site21.bittermelon.common.systems.medical.client.screen.networking.CompleteMinigame;
+import com.site21.bittermelon.common.systems.medical.client.HealthScreen;
+import com.site21.bittermelon.common.systems.medical.client.networking.CompleteMinigame;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import net.minecraft.client.Minecraft;
@@ -45,13 +45,13 @@ public abstract class MedicalMinigame extends Screen {
     protected void complete() {
         if (getMinecraft().player == null) return;
         ClientPacketDistributor.sendToServer(new CompleteMinigame(item,
-                compartment.getUUID(),
+                compartment.getId(),
                 character.getUUID(),
                 getMinecraft().player.getUUID(),
                 1));
 
         this.onClose();
-        HealthScreenV2.openHealthScreen();
+        HealthScreen.openHealthScreen();
     }
 
     @Override

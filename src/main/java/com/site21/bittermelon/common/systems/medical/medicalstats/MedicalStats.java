@@ -5,7 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.character.skills.Skill;
-import com.site21.bittermelon.common.systems.medical.client.screen.networking.UpdateHealthScreen;
+import com.site21.bittermelon.common.systems.medical.client.networking.UpdateHealthScreen;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
 import com.site21.bittermelon.common.systems.medical.drug.DrugInstance;
@@ -31,6 +31,7 @@ import static com.site21.bittermelon.init.neoforge.BitterMobEffects.*;
 public class MedicalStats {
     public static final Codec<MedicalStats> CODEC = RecordCodecBuilder.create(
             instance -> instance.group(
+                    Codec.INT.fieldOf("version").orElse(1).forGetter(MedicalStats::getVersion),
                     Codec.list(CompartmentInstance.CODEC).fieldOf("compartments").forGetter(
                             stats -> new ArrayList<>(stats.compartments.values())
                     ),
@@ -42,6 +43,8 @@ public class MedicalStats {
     );
 
     public static final StreamCodec<RegistryFriendlyByteBuf, MedicalStats> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT,
+            MedicalStats::getVersion,
             CompartmentInstance.STREAM_CODEC.apply(
                     ByteBufCodecs.collection(ArrayList::new)
             ),
@@ -61,6 +64,7 @@ public class MedicalStats {
             MedicalStats::new
     );
 
+    private final int version;
     protected final Map<UUID, CompartmentInstance> compartments;
     protected final UUID mainCompartmentID;
     protected final UUID characterID;
@@ -72,11 +76,12 @@ public class MedicalStats {
     protected LivingEntity entity;
     protected Character character;
 
-    public MedicalStats(@NotNull Collection<CompartmentInstance> compartments, UUID mainCompartmentID, UUID characterID, Map<MedicalAttribute, MedicalAttributeInstance> attributes, List<DrugInstance> activeDrugs) {
+    public MedicalStats(int version, @NotNull Collection<CompartmentInstance> compartments, UUID mainCompartmentID, UUID characterID, Map<MedicalAttribute, MedicalAttributeInstance> attributes, List<DrugInstance> activeDrugs) {
+        this.version = version;
         this.mainCompartmentID = mainCompartmentID;
         this.compartments = new ConcurrentHashMap<>();
         for (CompartmentInstance instance : compartments) {
-            this.compartments.put(instance.getUUID(), instance);
+            this.compartments.put(instance.getId(), instance);
         }
         this.characterID = characterID;
         this.activeDrugs = new ArrayList<>(activeDrugs);
@@ -86,8 +91,8 @@ public class MedicalStats {
         this.compartmentRelations = new HashMap<>();
     }
 
-    public MedicalStats(@NotNull List<CompartmentInstance> compartments, UUID mainCompartmentID, UUID characterID) {
-        this(compartments, mainCompartmentID, characterID, new EnumMap<>(MedicalAttribute.class), new ArrayList<>());
+    public MedicalStats(int version, @NotNull List<CompartmentInstance> compartments, UUID mainCompartmentID, UUID characterID) {
+        this(version, compartments, mainCompartmentID, characterID, new EnumMap<>(MedicalAttribute.class), new ArrayList<>());
     }
 
     @SuppressWarnings("unchecked")
@@ -131,7 +136,7 @@ public class MedicalStats {
                 for (MedicalAttribute attribute : compartment.getAttributes().keySet()) {
                     MedicalAttributeInstance instance = medicalAttributes.computeIfAbsent(attribute,
                             (k) -> new MedicalAttributeInstance());
-                    instance.updateModifier(compartment.getUUID(), compartment.getAttribute(attribute));
+                    instance.updateModifier(compartment.getId(), compartment.getAttribute(attribute));
                 }
                 compartment.setDirty(false);
             }
@@ -221,7 +226,7 @@ public class MedicalStats {
     }
 
     public void addCompartment(CompartmentInstance compartment) {
-        compartments.put(compartment.getUUID(), compartment);
+        compartments.put(compartment.getId(), compartment);
 
         if (entity != null) {
             PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new UpdateHealthScreen(characterID, this));
@@ -230,20 +235,6 @@ public class MedicalStats {
 
     public void addRelation(CompartmentInstance child, CompartmentInstance parent) {
         compartmentRelations.put(child, parent);
-    }
-
-    public CompartmentInstance getParent(CompartmentInstance child) {
-        return compartmentRelations.computeIfAbsent(child, this::findParent);
-    }
-
-    private CompartmentInstance findParent(@NotNull CompartmentInstance child) {
-        UUID childId = child.getUUID();
-
-        return compartments.values().stream()
-                .filter(parent -> parent.getLayers().stream()
-                        .anyMatch(layer -> layer.contains(childId)))
-                .findFirst()
-                .orElse(null);
     }
 
     public Map<CompartmentInstance, CompartmentInstance> getCompartmentRelations() {
@@ -345,5 +336,9 @@ public class MedicalStats {
 
     public LivingEntity getEntity() {
         return entity;
+    }
+
+    public int getVersion() {
+        return version;
     }
 }
