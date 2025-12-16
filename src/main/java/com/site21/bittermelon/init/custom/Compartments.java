@@ -3,15 +3,14 @@ package com.site21.bittermelon.init.custom;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.compartments.SharpObject;
 import com.site21.bittermelon.common.systems.medical.compartment.Compartment;
-import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.SlotPoint;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.SlotType;
 import com.site21.bittermelon.init.neoforge.BitterItems;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -532,6 +531,14 @@ public class Compartments {
             () -> new Compartment("gallbladder", new Compartment.Properties()
                     .defaultHealth(40)
                     .item(BitterItems.GALLBLADDER)
+                    .layers(new LayerData("Gallbladder Tissue", 3, 3, List.of(
+                            new SlotPoint(1, 0, SlotType.ORGAN),
+                            new SlotPoint(2, 0, SlotType.ORGAN),
+                            new SlotPoint(0, 1, SlotType.ORGAN),
+                            new SlotPoint(1, 1, SlotType.ORGAN),
+                            new SlotPoint(2, 1, SlotType.ORGAN),
+                            new SlotPoint(1, 2, SlotType.ORGAN)
+                    )))
                     .shape(List.of(
                             new Point(1, 0),
                             new Point(2, 0),

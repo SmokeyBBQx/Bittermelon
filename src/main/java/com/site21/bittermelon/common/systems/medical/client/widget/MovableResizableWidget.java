@@ -156,6 +156,7 @@ public abstract class MovableResizableWidget extends AbstractWidget {
         boolean isHovering = isInDragArea(mouseX, mouseY);
         int borderColor = isHovering || isDragging ? 0xFFFFFFFF : 0xFF888888;
 
+        guiGraphics.fill(getX(), getY(), getX() + width, getY() + getHeaderHeight(), 0xDD000000);
         guiGraphics.fill(getX(), getY(), getX() + width, getY() + 1, borderColor); // Top
         guiGraphics.fill(getX(), getY(), getX() + 1, getY() + headerHeight, borderColor); // Left
         guiGraphics.fill(getX() + width - 1, getY(), getX() + width, getY() + headerHeight, borderColor); // Right

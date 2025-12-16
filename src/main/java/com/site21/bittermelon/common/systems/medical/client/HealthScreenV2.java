@@ -45,20 +45,24 @@ public class HealthScreenV2 extends Screen {
         renderedCompartmentSpaces.add(new CompartmentWidget(
                         20,
                         20,
-                        160,
-                        140,
+                        200,
+                200,
                         medicalStats.getMainCompartment(),
                 this
                 )
         );
     }
 
-    public void addCompartmentSpace(CompartmentInstance instance) {
+    public void addCompartmentSpace(@NotNull CompartmentInstance instance) {
+        // Only open compartments that have layers
+        if (instance.getLayers().isEmpty()) return;
+        if (renderedCompartmentSpaces.stream().anyMatch(widget -> widget.getCompartment().equals(instance))) return;
+
         renderedCompartmentSpaces.add(new CompartmentWidget(
                 20,
                 20,
-                100,
-                100,
+                200,
+                200,
                 instance,
                 this
         ));

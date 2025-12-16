@@ -52,16 +52,14 @@ public class CompartmentWidget extends MovableResizableWidget {
         initializeButtons();
         buttons = new Button[]{closeWidgetButton, collapseWidgetButton, increaseLayerButton, decreaseLayerButton};
         grid = compartment.getLayers().getFirst().getGrid();
-        slotSize = calculateSlotSize();
-        contentX = x + EDGE_MARGIN;
-        contentY = y + getHeaderHeight() + EDGE_MARGIN;
+        updatePositions();
     }
 
     private void initializeButtons() {
         closeWidgetButton = Button.builder(
                         Component.literal("X"),
                         (button) -> screen.removeCompartmentSpace(this))
-                .pos(getRight() - BUTTON_SIZE, y + BUTTON_SIZE)
+                .pos(getRight() - BUTTON_SIZE - EDGE_MARGIN, y + BUTTON_SIZE)
                 .size(BUTTON_SIZE, BUTTON_SIZE)
                 .build();
 
@@ -105,16 +103,19 @@ public class CompartmentWidget extends MovableResizableWidget {
 
     @Override
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        guiGraphics.fill(x, y, getRight(), getBottom(), 0xDD000000);
-        renderSlots(guiGraphics, mouseX, mouseY);
-        renderCompartments(guiGraphics, mouseX, mouseY);
-        renderHoveredSlot(guiGraphics, mouseX, mouseY);
-        renderFrame(guiGraphics);
-        renderResizeHandle(guiGraphics, mouseX, mouseY, partialTick);
-        renderDragHandle(guiGraphics, mouseX, mouseY, partialTick);
-        for (Button button : buttons) {
-            button.render(guiGraphics, mouseX, mouseY, partialTick);
+        if (isOpen) {
+            guiGraphics.fill(x, y + getHeaderHeight(), getRight(), getBottom(), 0xDD000000);
+            renderSlots(guiGraphics, mouseX, mouseY);
+            renderCompartments(guiGraphics, mouseX, mouseY);
+            renderHoveredSlot(guiGraphics, mouseX, mouseY);
+            renderFrame(guiGraphics);
+            renderResizeHandle(guiGraphics, mouseX, mouseY, partialTick);
+            increaseLayerButton.render(guiGraphics, mouseX, mouseY, partialTick);
+            decreaseLayerButton.render(guiGraphics, mouseX, mouseY, partialTick);
         }
+        renderDragHandle(guiGraphics, mouseX, mouseY, partialTick);
+        collapseWidgetButton.render(guiGraphics, mouseX, mouseY, partialTick);
+        closeWidgetButton.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 
     private void renderSlots(GuiGraphics guiGraphics, int mouseX, int mouseY) {
@@ -242,13 +243,6 @@ public class CompartmentWidget extends MovableResizableWidget {
         return null;
     }
 
-    private int calculateSlotSize() {
-        int availableWidth = width;
-        int columns = getLayer().getWidth();
-        int rows = getLayer().getHeight();
-        return Math.min(width / columns, (height - getHeaderHeight() - EDGE_MARGIN * 2) / rows);
-    }
-
     private LayerData getLayer() {
         return compartment.getLayer(layerIndex);
     }
@@ -261,24 +255,74 @@ public class CompartmentWidget extends MovableResizableWidget {
             }
         }
 
+        CompartmentInstance hoveredCompartment = screen.getMedicalStats().getCompartment(getHoveredCompartment((int) mouseX, (int) mouseY));
+        if (button == 1 && hoveredCompartment != null) {
+            screen.addCompartmentSpace(hoveredCompartment);
+            return true;
+        }
+
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
     public void setX(int x) {
         super.setX(x);
-        contentX = x + EDGE_MARGIN;
+        updatePositions();
     }
 
     public void setY(int y) {
         super.setY(y);
-        contentY = y + getHeaderHeight() + EDGE_MARGIN;
+        updatePositions();
     }
 
     @Override
     public void setWidth(int width) {
         super.setWidth(width);
-        slotSize = calculateSlotSize();
+        updatePositions();
+    }
+
+    @Override
+    public void setHeight(int height) {
+        super.setHeight(height);
+        updatePositions();
+    }
+
+    private void updatePositions() {
+        updateSlotSize();
+        updateContentPosition();
+        updateButtonPositions();
+    }
+
+    private void updateContentPosition() {
+        contentX = x + (width - getLayer().getWidth() * slotSize) / 2;
+        contentY = y + getHeaderHeight() + (height - getHeaderHeight() - getLayer().getHeight() * slotSize) / 2;
+    }
+
+    private void updateSlotSize() {
+        int availableWidth = width - 10;
+        int availableHeight = height - 10;
+        LayerData layer = getLayer();
+        slotSize = Math.min(availableWidth / layer.getWidth(), availableHeight / layer.getHeight());
+    }
+
+    private void updateButtonPositions() {
+        int x = getRight() - BUTTON_SIZE - EDGE_MARGIN;
+
+        closeWidgetButton.setX(x);
+        closeWidgetButton.setY(y + EDGE_MARGIN);
+
+        collapseWidgetButton.setX(getRight() - BUTTON_SIZE * 2 - 4);
+        collapseWidgetButton.setY(y + EDGE_MARGIN);
+
+        increaseLayerButton.setX(x);
+        increaseLayerButton.setY(y + 18);
+
+        decreaseLayerButton.setX(x);
+        decreaseLayerButton.setY(y + 30);
+    }
+
+    public CompartmentInstance getCompartment() {
+        return compartment;
     }
 
     @Override
