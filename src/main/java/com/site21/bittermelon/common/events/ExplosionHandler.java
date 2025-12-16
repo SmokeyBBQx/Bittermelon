@@ -1,8 +1,7 @@
 package com.site21.bittermelon.common.events;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.content.blocks.base.structuralblock.StructuralBlockEntity;
-import com.site21.bittermelon.common.content.items.scps.scp2398.SCP2398;
+import com.site21.bittermelon.common.content.items.scps.scp2398.SCP2398Item;
 import com.site21.bittermelon.common.systems.blockdamage.BlockDamageHelper;
 import com.site21.bittermelon.common.systems.syncsound.SyncSoundEvent;
 import com.site21.bittermelon.common.systems.syncsound.SyncSoundType;
@@ -43,7 +42,7 @@ public class ExplosionHandler {
         affectedEntities.removeIf(entity -> {
             if (entity instanceof ItemEntity itemEntity) {
                 ItemStack stack = itemEntity.getItem();
-                return stack.getItem() instanceof SCP2398;
+                return stack.getItem() instanceof SCP2398Item;
             }
             return false;
         });

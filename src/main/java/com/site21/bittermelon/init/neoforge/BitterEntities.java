@@ -1,14 +1,14 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.common.content.entities.ThrownItemProjectile;
+import com.site21.bittermelon.common.content.entities.chicken.Chicken;
 import com.site21.bittermelon.common.content.entities.scp131.SCP131;
 import com.site21.bittermelon.common.content.entities.scp1507.SCP1507;
 import com.site21.bittermelon.common.content.entities.scp548.SCP548;
 import com.site21.bittermelon.common.content.entities.scp650.SCP650;
 import com.site21.bittermelon.common.content.entities.scp939.SCP939;
-import com.site21.bittermelon.common.content.entities.ThrownItemProjectile;
-import com.site21.bittermelon.common.content.entities.chicken.Chicken;
-import com.site21.bittermelon.common.content.items.scps.scp2398.SCP2398Projectile;
+import com.site21.bittermelon.common.content.items.scps.scp2398.SCP2398ProjectileItem;
 import com.site21.bittermelon.common.content.items.taser.TaserProjectile;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -29,8 +29,8 @@ public class BitterEntities {
                     .sized(0.5f, 0.5f)
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "thrown_item_projectile"))));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<SCP2398Projectile>> SCP_2398_PROJECTILE = ENTITY_TYPES.register("scp_2398_projectile",
-            () -> EntityType.Builder.<SCP2398Projectile>of(SCP2398Projectile::new, MobCategory.MISC)
+    public static final DeferredHolder<EntityType<?>, EntityType<SCP2398ProjectileItem>> SCP_2398_PROJECTILE = ENTITY_TYPES.register("scp_2398_projectile",
+            () -> EntityType.Builder.<SCP2398ProjectileItem>of(SCP2398ProjectileItem::new, MobCategory.MISC)
                     .sized(0.5f, 0.5f)
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_2398_projectile"))));
 

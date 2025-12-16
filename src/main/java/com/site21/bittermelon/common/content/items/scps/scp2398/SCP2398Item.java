@@ -20,11 +20,11 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.neoforge.BitterSounds.BAT_IMPACT;
 
-public class SCP2398 extends Item {
+public class SCP2398Item extends Item {
     private static final int COOLDOWN_TICKS = 40;
     private static final int USE_DURATION_TICKS = 20;
 
-    public SCP2398(Properties properties) {
+    public SCP2398Item(Properties properties) {
         super(properties);
     }
 
@@ -73,7 +73,7 @@ public class SCP2398 extends Item {
             ItemStack otherHandStack = player.getItemInHand(otherHand);
 
             if (otherHandStack.is(BitterItemTags.BASEBALL) || otherHandStack.is(BitterItems.BASEBALL.get())) {
-                SCP2398Projectile projectile = new SCP2398Projectile(player, level, otherHandStack.copy());
+                SCP2398ProjectileItem projectile = new SCP2398ProjectileItem(player, level, otherHandStack.copy());
                 projectile.setPos(player.getX(), player.getEyeY() - 0.1, player.getZ());
                 projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 4.5F, 1.0F);
                 player.level().addFreshEntity(projectile);
@@ -98,7 +98,7 @@ public class SCP2398 extends Item {
                 ItemStack otherHandStack = player.getItemInHand(otherHand);
 
                 if (otherHandStack.is(BitterItemTags.BASEBALL) || otherHandStack.is(BitterItems.BASEBALL.get())) {
-                    SCP2398Projectile projectile = new SCP2398Projectile(player, level, otherHandStack.copy());
+                    SCP2398ProjectileItem projectile = new SCP2398ProjectileItem(player, level, otherHandStack.copy());
                     float powerFactor = (float) (getUseDuration(stack, livingEntity) - timeLeft) / USE_DURATION_TICKS;
                     projectile.setPos(player.getX(), player.getEyeY() - 0.1, player.getZ());
                     projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 4.5F * powerFactor, 1.0F);

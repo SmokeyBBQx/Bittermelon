@@ -18,11 +18,11 @@ import static com.site21.bittermelon.init.neoforge.BitterDataComponents.COOKIE_C
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.EMPTY_TIME;
 import static com.site21.bittermelon.init.neoforge.BitterItems.FORTUNE_COOKIE;
 
-public class SCP377 extends Item {
+public class SCP377Item extends Item {
     private static final long REFILL_DELAY = 2000;
     private static final int DEFAULT_COOKIE_COUNT = 20;
 
-    public SCP377(Properties properties) {
+    public SCP377Item(Properties properties) {
         super(properties);
     }
 

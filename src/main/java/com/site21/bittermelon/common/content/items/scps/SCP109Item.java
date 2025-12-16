@@ -22,8 +22,8 @@ import static com.site21.bittermelon.init.custom.Substances.WATER;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.CAN_SPILL;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.COOLDOWN;
 
-public class SCP109 extends FluidContainerItem {
-    public SCP109(Properties properties) {
+public class SCP109Item extends FluidContainerItem {
+    public SCP109Item(Properties properties) {
         super(properties);
     }
 

@@ -12,8 +12,8 @@ import static com.site21.bittermelon.init.neoforge.BitterDataComponents.FORTUNE;
 import static com.site21.bittermelon.init.neoforge.BitterItems.CRACKED_FORTUNE_COOKIE;
 import static com.site21.bittermelon.init.neoforge.BitterItems.SCP_377_1;
 
-public class SCP377Cookie extends Item {
-    public SCP377Cookie(Properties properties) {
+public class SCP377CookieItem extends Item {
+    public SCP377CookieItem(Properties properties) {
         super(properties);
     }
 

@@ -18,8 +18,8 @@ import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.FORTUNE
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.FORTUNE;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.FORTUNE_READ;
 
-public class SCP3771 extends Item {
-    public SCP3771(Properties properties) {
+public class SCP3771Item extends Item {
+    public SCP3771Item(Properties properties) {
         super(properties);
     }
 

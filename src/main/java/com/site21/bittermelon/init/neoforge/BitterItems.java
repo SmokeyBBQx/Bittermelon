@@ -6,13 +6,13 @@ import com.site21.bittermelon.common.content.items.StickyNote;
 import com.site21.bittermelon.common.content.items.TestHeatedItem;
 import com.site21.bittermelon.common.content.items.handheldsysteminterface.HandheldSystemInterface;
 import com.site21.bittermelon.common.content.items.laserdesignator.LaserDesignatorItem;
-import com.site21.bittermelon.common.content.items.medical.tools.*;
+import com.site21.bittermelon.common.content.items.medical.tools.SyringeItem;
 import com.site21.bittermelon.common.content.items.mop.MopItem;
-import com.site21.bittermelon.common.content.items.scps.SCP109;
 import com.site21.bittermelon.common.content.items.scps.SCP005Item;
-import com.site21.bittermelon.common.content.items.scps.scp377.SCP377;
-import com.site21.bittermelon.common.content.items.scps.scp377.SCP3771;
-import com.site21.bittermelon.common.content.items.scps.scp377.SCP377Cookie;
+import com.site21.bittermelon.common.content.items.scps.SCP109Item;
+import com.site21.bittermelon.common.content.items.scps.scp377.SCP3771Item;
+import com.site21.bittermelon.common.content.items.scps.scp377.SCP377CookieItem;
+import com.site21.bittermelon.common.content.items.scps.scp377.SCP377Item;
 import com.site21.bittermelon.common.content.items.screwdriver.ScrewdriverItem;
 import com.site21.bittermelon.common.content.items.smokable.SmokableItem;
 import com.site21.bittermelon.common.content.items.substance.FluidContainerItem;
@@ -22,19 +22,18 @@ import com.site21.bittermelon.common.content.items.substance.PowderedSubstanceIt
 import com.site21.bittermelon.common.content.items.substance.pill.PillItem;
 import com.site21.bittermelon.common.content.items.substance.pill.PillShape;
 import com.site21.bittermelon.common.content.items.taser.TaserItem;
-import com.site21.bittermelon.common.content.items.wirecutters.WireCuttersItem;
 import com.site21.bittermelon.common.content.items.wire.WireItem;
+import com.site21.bittermelon.common.content.items.wirecutters.WireCuttersItem;
 import com.site21.bittermelon.common.content.items.writablepaper.WritablePaper;
 import com.site21.bittermelon.common.content.items.writingutensils.ChalkItem;
 import com.site21.bittermelon.common.content.items.writingutensils.HighlighterItem;
-import com.site21.bittermelon.common.systems.component.screwdriver.Screwdriver;
 import com.site21.bittermelon.common.systems.component.Smokable;
+import com.site21.bittermelon.common.systems.component.screwdriver.Screwdriver;
 import com.site21.bittermelon.common.systems.component.temperature.HeatBehavior;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.DataComponentMatchers;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderSet;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -50,10 +49,10 @@ import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 
 public class BitterItems {
@@ -110,8 +109,8 @@ public class BitterItems {
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
                     .component(VOLUME, 100.0f)));
 
-    public static final DeferredItem<SCP109> SCP_109 = ITEMS.register("scp_109", registryName ->
-            new SCP109(new Item.Properties()
+    public static final DeferredItem<SCP109Item> SCP_109 = ITEMS.register("scp_109", registryName ->
+            new SCP109Item(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
                     .component(VOLUME, 0.0f)));
 
@@ -246,11 +245,11 @@ public class BitterItems {
                                     new MobEffectInstance(MobEffects.HUNGER, 600, 0), 0.8f))
                             .build())));
 
-    public static final DeferredItem<SCP377> SCP_377 = ITEMS.registerItem("scp_377", SCP377::new);
+    public static final DeferredItem<SCP377Item> SCP_377 = ITEMS.registerItem("scp_377", SCP377Item::new);
 
-    public static final DeferredItem<SCP3771> SCP_377_1 = ITEMS.registerItem("scp_377_1", SCP3771::new);
+    public static final DeferredItem<SCP3771Item> SCP_377_1 = ITEMS.registerItem("scp_377_1", SCP3771Item::new);
 
-    public static final DeferredItem<SCP377Cookie> FORTUNE_COOKIE = ITEMS.registerItem("fortune_cookie", SCP377Cookie::new);
+    public static final DeferredItem<SCP377CookieItem> FORTUNE_COOKIE = ITEMS.registerItem("fortune_cookie", SCP377CookieItem::new);
 
     public static final DeferredItem<Item> CRACKED_FORTUNE_COOKIE = ITEMS.registerSimpleItem("cracked_fortune_cookie",
             new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationModifier(1).alwaysEdible().build()));

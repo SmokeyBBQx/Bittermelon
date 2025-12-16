@@ -1,6 +1,6 @@
 package com.site21.bittermelon.common.content.entities;
 
-import com.site21.bittermelon.common.content.items.scps.scp2398.SCP2398;
+import com.site21.bittermelon.common.content.items.scps.scp2398.SCP2398Item;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -214,7 +214,7 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
             entity.hurtServer(level, damageSources().thrown(this, getOwner()), dmg);
         }
 
-        if (getItem().getItem() instanceof SCP2398) {
+        if (getItem().getItem() instanceof SCP2398Item) {
             level().broadcastEntityEvent(this, (byte) 3);
             discard();
         }

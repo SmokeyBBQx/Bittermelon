@@ -1,15 +1,24 @@
 package com.site21.bittermelon.common.events;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.common.content.items.scps.scp377.FortuneHandler;
 import com.site21.bittermelon.common.systems.blockdamage.BlockDamageHelper;
+import net.minecraft.world.entity.Entity;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.jetbrains.annotations.NotNull;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class CommonEvents {
+
+    @SubscribeEvent
+    public static void onEntityTick(EntityTickEvent.@NotNull Post event) {
+        Entity entity = event.getEntity();
+        FortuneHandler.onEntityTick(entity);
+    }
 
     @SubscribeEvent
     public static void onBreakBlock(BlockEvent.@NotNull BreakEvent event) {

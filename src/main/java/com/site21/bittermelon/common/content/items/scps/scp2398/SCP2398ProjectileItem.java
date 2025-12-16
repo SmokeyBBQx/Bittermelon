@@ -22,15 +22,15 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SCP2398Projectile extends ThrownItemProjectile {
-    private static final Logger log = LoggerFactory.getLogger(SCP2398Projectile.class);
+public class SCP2398ProjectileItem extends ThrownItemProjectile {
+    private static final Logger log = LoggerFactory.getLogger(SCP2398ProjectileItem.class);
     private final ParticleOptions trailParticle = ParticleTypes.DUST_PLUME;
 
-    public SCP2398Projectile(EntityType<? extends SCP2398Projectile> entityType, Level level) {
+    public SCP2398ProjectileItem(EntityType<? extends SCP2398ProjectileItem> entityType, Level level) {
         super(entityType, level);
     }
 
-    public SCP2398Projectile(LivingEntity player, Level level, ItemStack stack) {
+    public SCP2398ProjectileItem(LivingEntity player, Level level, ItemStack stack) {
         super(player, level, stack);
     }
 
@@ -106,7 +106,7 @@ public class SCP2398Projectile extends ThrownItemProjectile {
         if (level().isClientSide) return;
         Entity entity = result.getEntity();
 
-        if (entity instanceof ItemEntity || entity instanceof SCP2398Projectile) return;
+        if (entity instanceof ItemEntity || entity instanceof SCP2398ProjectileItem) return;
 
         ((net.minecraft.server.level.ServerLevel) level()).sendParticles(
                 ParticleTypes.CRIT,

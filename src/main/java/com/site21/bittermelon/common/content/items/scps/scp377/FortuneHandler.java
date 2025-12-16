@@ -1,12 +1,8 @@
 package com.site21.bittermelon.common.content.items.scps.scp377;
 
-import com.site21.bittermelon.Bittermelon;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -15,13 +11,10 @@ import java.util.List;
 
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.FORTUNE_INSTANCES;
 
-@EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class FortuneHandler {
     private static final long ACTIVATION_DELAY = 100;
 
-    @SubscribeEvent
-    public static void onEntityTick(EntityTickEvent.@NotNull Post event) {
-        Entity entity = event.getEntity();
+    public static void onEntityTick(@NotNull Entity entity) {
         if (entity.level().isClientSide) return;
         if (!(entity instanceof Player player)) return;
 
