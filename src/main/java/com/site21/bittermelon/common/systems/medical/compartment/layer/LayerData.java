@@ -11,7 +11,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.List;
 import java.util.stream.Stream;
 
 public class LayerData {
@@ -219,7 +218,7 @@ public class LayerData {
                         Codec.INT.fieldOf("width").forGetter(LayerData::getWidth),
                         Codec.INT.fieldOf("height").forGetter(LayerData::getHeight),
                         Codec.list(SlotData.CODEC).fieldOf("slots").forGetter(LayerData::getSerializableGrid),
-                        Codec.unboundedMap(Point.CODEC, UUIDUtil.CODEC).fieldOf("compartments").forGetter(LayerData::getCompartments)
+                        Codec.unboundedMap(Point.STRING_CODEC, UUIDUtil.CODEC).fieldOf("compartments").forGetter(LayerData::getCompartments)
                 ).apply(instance, LayerData::new)
         );
 

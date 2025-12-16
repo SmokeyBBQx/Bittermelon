@@ -29,7 +29,6 @@ public class CompartmentWidget extends MovableResizableWidget {
     private static final int EDGE_MARGIN = 2;
     private static final int BUTTON_SIZE = 10;
     private static final int BUTTON_SPACING = 5;
-//    private static final int SLOT_SIZE = 16;
 
     private final CompartmentInstance compartment;
     private final HealthScreenV2 screen;
@@ -107,7 +106,6 @@ public class CompartmentWidget extends MovableResizableWidget {
     @Override
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         guiGraphics.fill(x, y, getRight(), getBottom(), 0xDD000000);
-        int x;
         renderSlots(guiGraphics, mouseX, mouseY);
         renderCompartments(guiGraphics, mouseX, mouseY);
         renderHoveredSlot(guiGraphics, mouseX, mouseY);

@@ -12,6 +12,15 @@ public record Point(int x, int y) {
             Codec.INT.fieldOf("y").forGetter(Point::y)
     ).apply(instance, Point::new));
 
+    public static final Codec<Point> STRING_CODEC = Codec.STRING.xmap(
+            s -> {
+                String[] parts = s.split(",");
+                return new Point(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+            },
+            point -> point.x() + "," + point.y()
+    );
+
+
     public static final StreamCodec<ByteBuf, Point> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.INT,
             Point::x,

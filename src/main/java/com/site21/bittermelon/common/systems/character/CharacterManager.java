@@ -164,8 +164,8 @@ public class CharacterManager extends SavedData {
                 "characters",
                 CharacterManager::new,
                 RecordCodecBuilder.create(instance -> instance.group(
-                        Character.CODEC.listOf().fieldOf("characters")
-                                .forGetter(cm -> new ArrayList<>(cm.characters.values()))
+                        Character.CODEC.listOf().fieldOf("characters").forGetter(cm ->
+                                new ArrayList<>(cm.characters.values()))
                 ).apply(instance, (List<Character> chars) -> {
                     CharacterManager cm = new CharacterManager();
                     for (Character character : chars) {
