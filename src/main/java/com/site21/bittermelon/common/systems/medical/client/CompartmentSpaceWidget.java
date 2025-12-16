@@ -2,7 +2,7 @@
 //
 //import com.mojang.blaze3d.pipeline.RenderPipeline;
 //import com.site21.bittermelon.Bittermelon;
-//import com.site21.bittermelon.common.systems.medical.client.HealthScreenV2;
+//import com.site21.bittermelon.common.systems.medical.client.HealthScreen;
 //import com.site21.bittermelon.common.systems.medical.client.HeldItemData;
 //import com.site21.bittermelon.common.systems.medical.client.networking.MoveCompartment;
 //import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
@@ -64,7 +64,7 @@
 //    private boolean isContentDragging = false;
 //
 //    private CompartmentInstance compartment;
-//    private final HealthScreenV2 healthScreen;
+//    private final HealthScreen healthScreen;
 //    private final List<CompartmentNodeWidget> compartmentWidgets;
 //    private int layerIndex = 0;
 //    private final LayerData[] layers;
@@ -73,7 +73,7 @@
 //    private final Button[] buttons;
 //    private ResourceLocation backgroundTexture;
 //
-//    public CompartmentSpaceWidget(int x, int y, int width, int height, @NotNull CompartmentInstance compartment, HealthScreenV2 healthScreen) {
+//    public CompartmentSpaceWidget(int x, int y, int width, int height, @NotNull CompartmentInstance compartment, HealthScreen healthScreen) {
 //        super(x, y, width, height, Component.literal(compartment.getName()));
 //        this.compartment = compartment;
 //        this.healthScreen = healthScreen;
@@ -708,7 +708,7 @@
 //        this.compartment = compartment;
 //    }
 //
-//    public HealthScreenV2 getHealthScreen() {
+//    public HealthScreen getHealthScreen() {
 //        return healthScreen;
 //    }
 //

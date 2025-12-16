@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.systems.medical.client.minigame;
 
 import com.site21.bittermelon.common.systems.character.Character;
-import com.site21.bittermelon.common.systems.medical.client.HealthScreenV2;
+import com.site21.bittermelon.common.systems.medical.client.HealthScreen;
 import com.site21.bittermelon.common.systems.medical.client.networking.CompleteMinigame;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
@@ -51,7 +51,7 @@ public abstract class MedicalMinigame extends Screen {
                 1));
 
         this.onClose();
-        HealthScreenV2.openHealthScreen();
+        HealthScreen.openHealthScreen();
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.site21.bittermelon.common.systems.medical.client.networking.OpenHealt
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentData;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.client.Minecraft;
@@ -23,30 +24,34 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class HealthScreenV2 extends Screen {
+public class HealthScreen extends Screen {
     private final UUID characterUUID;
     private Character character;
-    private MedicalStats medicalStats;
-    private List<CompartmentWidget> renderedCompartmentSpaces;
+    private final MedicalStats medicalStats;
+    private final List<CompartmentWidget> compartmentWidgets;
     private CompartmentWidget activeWidget = null;
     private HeldItemData heldItemData = null;
 
-    public HealthScreenV2(@NotNull Character character) {
+    public HealthScreen(@NotNull Character character) {
         super(Component.literal(character.getName()));
         this.characterUUID = character.getUUID();
         this.character = character;
         this.medicalStats = character.getMedicalStats();
-        this.renderedCompartmentSpaces = new ArrayList<>();
+        this.compartmentWidgets = new ArrayList<>();
         // TODO: Implement client listener for medical stats
     }
 
     @Override
     protected void init() {
-        renderedCompartmentSpaces.add(new CompartmentWidget(
+        CompartmentInstance mainCompartment = medicalStats.getMainCompartment();
+        LayerData layer = mainCompartment.getLayers().getFirst();
+        if (layer == null) return;
+
+        compartmentWidgets.add(new CompartmentWidget(
                         20,
                         20,
-                        200,
-                200,
+                        layer.getWidth() * 10,
+                layer.getHeight() * 10,
                         medicalStats.getMainCompartment(),
                 this
                 )
@@ -55,30 +60,31 @@ public class HealthScreenV2 extends Screen {
 
     public void addCompartmentSpace(@NotNull CompartmentInstance instance) {
         // Only open compartments that have layers
-        if (instance.getLayers().isEmpty()) return;
-        if (renderedCompartmentSpaces.stream().anyMatch(widget -> widget.getCompartment().equals(instance))) return;
+        LayerData layer = instance.getLayers().getFirst();
+        if (layer == null) return;
+        if (compartmentWidgets.stream().anyMatch(widget -> widget.getCompartment().equals(instance))) return;
 
-        renderedCompartmentSpaces.add(new CompartmentWidget(
+        compartmentWidgets.add(new CompartmentWidget(
                 20,
                 20,
-                200,
-                200,
+                layer.getWidth() * 20,
+                layer.getHeight() * 20,
                 instance,
                 this
         ));
     }
 
     public void removeCompartmentSpace(CompartmentWidget compartmentSpace) {
-        if (compartmentSpace == renderedCompartmentSpaces.getFirst()) {
+        if (compartmentSpace == compartmentWidgets.getFirst()) {
             onClose();
             return;
         }
-        renderedCompartmentSpaces.remove(compartmentSpace);
+        compartmentWidgets.remove(compartmentSpace);
     }
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        for (CompartmentWidget widget : renderedCompartmentSpaces) {
+        for (CompartmentWidget widget : compartmentWidgets) {
             widget.render(guiGraphics, mouseX, mouseY, partialTick);
         }
 
@@ -106,7 +112,7 @@ public class HealthScreenV2 extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        for (CompartmentWidget widget : renderedCompartmentSpaces.reversed()) {
+        for (CompartmentWidget widget : compartmentWidgets.reversed()) {
             if (widget.mouseClicked(mouseX, mouseY, button)) {
                 activeWidget = widget;
 //                if (heldItemData != null) {

@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static com.site21.bittermelon.common.systems.medical.client.HealthScreenV2.openHealthScreen;
+import static com.site21.bittermelon.common.systems.medical.client.HealthScreen.openHealthScreen;
 
 @OnlyIn(Dist.CLIENT)
 public class IncisionMinigame extends MedicalMinigame {

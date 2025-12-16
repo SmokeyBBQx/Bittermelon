@@ -52,7 +52,7 @@ public record UpdateCompartmentPosition(UUID characterID, VisualData visualData,
 //        target.getVisualData().x(visualData().x).y(visualData().y).isHidden(false);
 //        receiver.tryToInsert(layer, target);
 //
-//        if (Minecraft.getInstance().screen instanceof HealthScreenV2 screen) {
+//        if (Minecraft.getInstance().screen instanceof HealthScreen screen) {
 //            screen.refresh();
 //        }
 //

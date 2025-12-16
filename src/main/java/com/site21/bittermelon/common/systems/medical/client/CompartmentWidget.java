@@ -1,7 +1,6 @@
 package com.site21.bittermelon.common.systems.medical.client;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.systems.medical.client.widget.MovableResizableWidget;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
@@ -31,7 +30,7 @@ public class CompartmentWidget extends MovableResizableWidget {
     private static final int BUTTON_SPACING = 5;
 
     private final CompartmentInstance compartment;
-    private final HealthScreenV2 screen;
+    private final HealthScreen screen;
     private int layerIndex = 0;
     private int contentX;
     private int contentY;
@@ -45,7 +44,7 @@ public class CompartmentWidget extends MovableResizableWidget {
 
     private final LayerSlot[][] grid;
 
-    public CompartmentWidget(int x, int y, int width, int height, @NotNull CompartmentInstance compartment, HealthScreenV2 screen) {
+    public CompartmentWidget(int x, int y, int width, int height, @NotNull CompartmentInstance compartment, HealthScreen screen) {
         super(x, y, width, height, Component.literal(compartment.getName()));
         this.compartment = compartment;
         this.screen = screen;
@@ -300,7 +299,7 @@ public class CompartmentWidget extends MovableResizableWidget {
 
     private void updateSlotSize() {
         int availableWidth = width - 10;
-        int availableHeight = height - 10;
+        int availableHeight = height - getHeaderHeight() - 5;
         LayerData layer = getLayer();
         slotSize = Math.min(availableWidth / layer.getWidth(), availableHeight / layer.getHeight());
     }

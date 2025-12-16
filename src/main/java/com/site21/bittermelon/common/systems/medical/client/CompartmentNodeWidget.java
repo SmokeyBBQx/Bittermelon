@@ -2,7 +2,7 @@
 //
 //import com.mojang.blaze3d.platform.NativeImage;
 //import com.site21.bittermelon.Bittermelon;
-//import com.site21.bittermelon.common.systems.medical.client.HealthScreenV2;
+//import com.site21.bittermelon.common.systems.medical.client.HealthScreen;
 //import com.site21.bittermelon.common.systems.medical.client.HeldItemData;
 //import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 //import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
@@ -34,7 +34,7 @@
 //    private static final ResourceLocation FRAME_CHALLENGE = ResourceLocation.withDefaultNamespace("advancements/challenge_frame_unobtained");
 //    private static final ResourceLocation FRAME_GOAL = ResourceLocation.withDefaultNamespace("advancements/goal_frame_unobtained");
 //
-//    private final HealthScreenV2 healthScreen;
+//    private final HealthScreen healthScreen;
 //    private final CompartmentInstance compartment;
 //
 //    private int relativeX;
@@ -42,7 +42,7 @@
 //    private NativeImage cachedImage = null;
 //    private ResourceLocation cachedImageLocation = null;
 //
-//    public CompartmentNodeWidget(int x, int y, int width, int height, Component message, HealthScreenV2 healthScreen, CompartmentInstance compartment) {
+//    public CompartmentNodeWidget(int x, int y, int width, int height, Component message, HealthScreen healthScreen, CompartmentInstance compartment) {
 //        super(x, y, width, height, message);
 //        this.relativeX = x;
 //        this.relativeY = y;

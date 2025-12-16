@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.systems.medical.client.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.systems.medical.client.HealthScreenV2;
+import com.site21.bittermelon.common.systems.medical.client.HealthScreen;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.UUIDUtil;
@@ -31,7 +31,7 @@ public record UpdateHealthScreen(UUID characterID, MedicalStats medicalStats) im
     }
 
     public void handle(@NotNull IPayloadContext ctx) {
-        if (Minecraft.getInstance().screen instanceof HealthScreenV2 healthScreen) {
+        if (Minecraft.getInstance().screen instanceof HealthScreen healthScreen) {
 //            if (healthScreen.getCharacter().getUUID().equals(characterID)) {
 //                healthScreen.setMedicalStats(medicalStats);
 //                healthScreen.refreshCompartmentList();
