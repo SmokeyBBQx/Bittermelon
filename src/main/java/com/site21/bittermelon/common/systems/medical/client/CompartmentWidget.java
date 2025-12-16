@@ -107,6 +107,7 @@ public class CompartmentWidget extends MovableResizableWidget {
     @Override
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         guiGraphics.fill(x, y, getRight(), getBottom(), 0xDD000000);
+        int x;
         renderSlots(guiGraphics, mouseX, mouseY);
         renderCompartments(guiGraphics, mouseX, mouseY);
         renderHoveredSlot(guiGraphics, mouseX, mouseY);
