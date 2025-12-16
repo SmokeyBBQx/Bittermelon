@@ -5,7 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.character.skills.Skill;
-import com.site21.bittermelon.common.systems.medical.client.screen.networking.UpdateHealthScreen;
+import com.site21.bittermelon.common.systems.medical.client.networking.UpdateHealthScreen;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
 import com.site21.bittermelon.common.systems.medical.drug.DrugInstance;

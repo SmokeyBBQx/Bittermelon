@@ -1,4 +1,4 @@
-package com.site21.bittermelon.common.systems.medical.client.screen.minigame;
+package com.site21.bittermelon.common.systems.medical.client.minigame;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.character.Character;

@@ -1,7 +1,7 @@
-package com.site21.bittermelon.common.systems.medical.client.screen;
+package com.site21.bittermelon.common.systems.medical.client;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.systems.medical.client.screen.widget.MovableResizableWidget;
+import com.site21.bittermelon.common.systems.medical.client.widget.MovableResizableWidget;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;

@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.content.items.base;
 
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.content.items.medical.MedicalItem;
-import com.site21.bittermelon.common.systems.medical.client.screen.minigame.IncisionMinigame;
+import com.site21.bittermelon.common.systems.medical.client.minigame.IncisionMinigame;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentTag;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;

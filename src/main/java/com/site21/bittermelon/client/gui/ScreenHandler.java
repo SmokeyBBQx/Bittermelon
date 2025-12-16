@@ -22,15 +22,13 @@ import com.site21.bittermelon.common.content.items.scps.scp377.client.SCP3771Scr
 import com.site21.bittermelon.common.content.items.wirecutters.client.WireCutterScreen;
 import com.site21.bittermelon.common.content.items.wire.client.WireConnectionScreen;
 import com.site21.bittermelon.common.content.items.writablepaper.client.PaperEditScreen;
-import com.site21.bittermelon.common.systems.medical.client.screen.HealthScreenV2;
+import com.site21.bittermelon.common.systems.medical.client.HealthScreenV2;
 import com.site21.bittermelon.common.systems.personnel.registry.PersonnelEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 public class ScreenHandler {

@@ -1,8 +1,8 @@
-package com.site21.bittermelon.common.systems.medical.client.screen;
+package com.site21.bittermelon.common.systems.medical.client;
 
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.common.systems.medical.client.screen.networking.OpenHealthScreenC2S;
+import com.site21.bittermelon.common.systems.medical.client.networking.OpenHealthScreenC2S;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentData;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;

@@ -1,6 +1,5 @@
-package com.site21.bittermelon.common.systems.medical.client.screen;
+package com.site21.bittermelon.common.systems.medical.client;
 
-import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;

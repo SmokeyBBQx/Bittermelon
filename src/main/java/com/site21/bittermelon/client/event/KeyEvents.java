@@ -2,11 +2,10 @@ package com.site21.bittermelon.client.event;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.character.networking.OpenCharacterScreenC2S;
-import com.site21.bittermelon.common.systems.medical.client.screen.HealthScreenV2;
+import com.site21.bittermelon.common.systems.medical.client.HealthScreenV2;
 import com.site21.bittermelon.common.systems.throwing.ThrowItemPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.InputEvent;

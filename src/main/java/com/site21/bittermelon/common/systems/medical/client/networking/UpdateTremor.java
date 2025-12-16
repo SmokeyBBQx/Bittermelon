@@ -1,7 +1,7 @@
-package com.site21.bittermelon.common.systems.medical.client.screen.networking;
+package com.site21.bittermelon.common.systems.medical.client.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.systems.medical.client.screen.minigame.IncisionMinigame;
+import com.site21.bittermelon.common.systems.medical.client.minigame.IncisionMinigame;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.codec.ByteBufCodecs;

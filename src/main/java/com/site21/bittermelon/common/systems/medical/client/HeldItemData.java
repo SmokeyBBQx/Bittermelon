@@ -1,4 +1,4 @@
-package com.site21.bittermelon.common.systems.medical.client.screen;
+package com.site21.bittermelon.common.systems.medical.client;
 
 import net.minecraft.world.item.ItemStack;
 

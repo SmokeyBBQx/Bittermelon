@@ -1,4 +1,4 @@
-package com.site21.bittermelon.common.systems.medical.client.screen.widget;
+package com.site21.bittermelon.common.systems.medical.client.widget;
 
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.network.chat.Component;

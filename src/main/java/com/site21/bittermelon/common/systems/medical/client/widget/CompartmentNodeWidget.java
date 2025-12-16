@@ -1,9 +1,9 @@
-//package com.site21.bittermelon.common.systems.medical.client.screen.widget;
+//package com.site21.bittermelon.common.systems.medical.client.widget;
 //
 //import com.mojang.blaze3d.platform.NativeImage;
 //import com.site21.bittermelon.Bittermelon;
-//import com.site21.bittermelon.common.systems.medical.client.screen.HealthScreenV2;
-//import com.site21.bittermelon.common.systems.medical.client.screen.HeldItemData;
+//import com.site21.bittermelon.common.systems.medical.client.HealthScreenV2;
+//import com.site21.bittermelon.common.systems.medical.client.HeldItemData;
 //import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 //import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
 //import com.site21.bittermelon.init.neoforge.BitterSounds;
