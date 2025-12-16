@@ -9,6 +9,7 @@ import com.site21.bittermelon.common.content.blocks.electronics.redstonedevice.R
 import com.site21.bittermelon.common.content.blocks.properties.Placement;
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlock;
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
+import com.site21.bittermelon.common.content.items.scps.SCP005Item;
 import com.site21.bittermelon.common.content.items.substance.pill.PillShape;
 import com.site21.bittermelon.datagen.property.*;
 import com.site21.bittermelon.init.neoforge.BitterBlocks;
@@ -39,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Optional;
 
-import static com.site21.bittermelon.common.content.items.scps.scp005.SCP_005;
+import static com.site21.bittermelon.common.content.items.scps.SCP005Item.*;
 import static com.site21.bittermelon.datagen.BitterModelTemplates.*;
 import static com.site21.bittermelon.datagen.BitterModelTemplates.TELEVISION;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.DIRTY_FLOOR;
