@@ -67,7 +67,7 @@ public class PersonnelRegistry extends SavedData {
      * @return The PersonnelEntry associated with the Character, or null if none exists.
      */
     public PersonnelEntry getEntry(@NotNull Character character) {
-        Integer entryId = characterToEntry.get(character.getUUID());
+        Integer entryId = characterToEntry.get(character.getId());
         if (entryId == null) {
             return null;
         }

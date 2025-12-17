@@ -28,7 +28,7 @@ public class DeathEventHandler {
                 List<Character> characters = characterManager.getCharactersByEntityUUID(entity.getUUID());
                 List<Character> charactersToRemove = new ArrayList<>(characters);
                 for (Character character : charactersToRemove) {
-                    characterManager.removeCharacter(character.getUUID());
+                    characterManager.removeCharacter(character.getId());
                 }
             }
         }

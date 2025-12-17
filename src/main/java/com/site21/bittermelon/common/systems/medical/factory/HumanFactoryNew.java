@@ -4,7 +4,6 @@ import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.medical.blood.BloodType;
 import com.site21.bittermelon.common.systems.medical.compartment.Compartment;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
-import com.site21.bittermelon.common.systems.medical.compartment.CompartmentTag;
 import com.site21.bittermelon.common.systems.medical.medicalstats.AnimalMedicalStats;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -13,7 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.site21.bittermelon.init.custom.Compartments.*;
+import static com.site21.bittermelon.init.custom.Compartments.DEBUG_COMPARTMENT;
+import static com.site21.bittermelon.init.custom.Compartments.GALLBLADDER;
 
 public class HumanFactoryNew implements AnatomyFactory {
     private CompartmentInstance wholeBody;
@@ -30,7 +30,7 @@ public class HumanFactoryNew implements AnatomyFactory {
 //        buildAbdomen();
 //        addCompartment(SCALPEL, wholeBody, 0).getVisualData().x(50).y(60);
 
-        return new AnimalMedicalStats(version, compartments, wholeBody.getId(), character.getUUID());
+        return new AnimalMedicalStats(version, compartments, wholeBody.getId(), character.getId());
     }
 
     private void buildHead() {

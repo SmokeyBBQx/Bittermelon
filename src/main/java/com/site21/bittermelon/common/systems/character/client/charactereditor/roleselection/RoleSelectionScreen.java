@@ -64,7 +64,7 @@ public class RoleSelectionScreen extends Screen {
     }
 
     private void onConfirm(Button button) {
-        ClientPacketDistributor.sendToServer(new AddRole(character.getUUID(), selectedRole.getRoleHolder()));
+        ClientPacketDistributor.sendToServer(new AddRole(character.getId(), selectedRole.getRoleHolder()));
         if (previousScreen instanceof CharacterSelectionScreen screen) {
             screen.switchCharacter(character);
             onClose();

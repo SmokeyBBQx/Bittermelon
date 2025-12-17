@@ -65,7 +65,7 @@ public class CharacterWidget extends AbstractWidget {
 
         if (character != null) {
             character.getPlayerInfo().ifPresent(
-                    info -> SkinManager.loadSkin(info.getSkinURL(), String.valueOf(character.getUUID())));
+                    info -> SkinManager.loadSkin(info.getSkinURL(), String.valueOf(character.getId())));
         }
     }
 
@@ -138,7 +138,7 @@ public class CharacterWidget extends AbstractWidget {
                 CharacterManager characterManager = CharacterManager.get(Minecraft.getInstance().level);
                 Character activeCharacter = characterManager.getActiveCharacter(Minecraft.getInstance().player);
 
-                if (activeCharacter == null || !activeCharacter.getUUID().equals(character.getUUID())) {
+                if (activeCharacter == null || !activeCharacter.getId().equals(character.getId())) {
                     screen.switchCharacter(character);
                 }
             } else {

@@ -127,7 +127,7 @@ public class CharacterEditorScreen extends Screen {
         descriptionField.setValue(character.getDescription());
 
         character.getPlayerInfo().ifPresent(info -> {
-            skin = SkinManager.loadSkin(info.getSkinURL(), character.getUUID().toString());
+            skin = SkinManager.loadSkin(info.getSkinURL(), character.getId().toString());
             urlField.setValue(info.getSkinURL());
             boolean isWide = info.getModel().equals(PlayerInfo.SkinModel.WIDE);
             modelButton.setWide(isWide);
@@ -193,7 +193,7 @@ public class CharacterEditorScreen extends Screen {
             character.setDescription(description);
         }
 
-        SkinManager.loadSkin(skinURL, character.getUUID().toString());
+        SkinManager.loadSkin(skinURL, character.getId().toString());
 
         character.getPlayerInfo().ifPresentOrElse(
                 info -> {
@@ -214,7 +214,7 @@ public class CharacterEditorScreen extends Screen {
                 CharacterManager characterManager = CharacterManager.get(minecraft.level);
                 Character activeCharacter = characterManager.getActiveCharacter(minecraft.player);
 
-                if (activeCharacter != null && activeCharacter.getUUID().equals(character.getUUID())) {
+                if (activeCharacter != null && activeCharacter.getId().equals(character.getId())) {
                     selectionScreen.switchCharacter(character);
                 }
             }

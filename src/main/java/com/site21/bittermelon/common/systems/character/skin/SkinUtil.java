@@ -8,8 +8,6 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +19,7 @@ public class SkinUtil {
     public static @Nullable @Unmodifiable AbstractClientPlayer getAbstractClientPlayer(@NotNull Character character) {
          if (character.getPlayerInfo().isPresent()) {
              return getAbstractClientPlayer(character.getEntityUUID(), character.getName(),
-                     ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + character.getUUID()),
+                     ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + character.getId()),
                      character.getPlayerInfo().get().getModel().toMinecraftModel());
          }
 
@@ -31,7 +29,7 @@ public class SkinUtil {
     public static @Nullable @Unmodifiable AbstractClientPlayer getAbstractClientPlayer(@NotNull Character character, PlayerSkin.Model model) {
         if (character.getPlayerInfo().isPresent()) {
             return getAbstractClientPlayer(character.getEntityUUID(), character.getName(),
-                    ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + character.getUUID()),
+                    ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + character.getId()),
                     model);
         }
 

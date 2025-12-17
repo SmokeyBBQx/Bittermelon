@@ -6,7 +6,6 @@ import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import net.minecraft.core.Holder;
 import net.minecraft.core.UUIDUtil;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -16,7 +15,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.List;
 
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_REGISTRY;
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_REGISTRY_KEY;
@@ -161,7 +159,7 @@ public class CompartmentInstance {
     }
 
     public boolean tryToInsert(int layer, int x, int y, @NotNull CompartmentInstance instance) {
-        return layers.get(layer).tryToPlace(x, y, instance, instance.getCompartment().properties.shape);
+        return layers.get(layer).tryToPlace(x, y, instance);
     }
 
     public void removeCompartment(int layer, @NotNull CompartmentInstance instance) {

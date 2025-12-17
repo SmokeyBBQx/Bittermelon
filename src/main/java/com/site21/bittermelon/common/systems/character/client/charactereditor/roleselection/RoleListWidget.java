@@ -97,7 +97,7 @@ public class RoleListWidget extends ObjectSelectionList<RoleListWidget.Entry> {
 
             Character character = screen.getCharacter();
             if (character != null && character.getPlayerInfo().isPresent()) {
-                playerTexture = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + character.getUUID());
+                playerTexture = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + character.getId());
             }
 
             ResourceLocation texture = role.skinLocation;

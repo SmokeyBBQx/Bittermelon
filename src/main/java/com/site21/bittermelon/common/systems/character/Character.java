@@ -82,7 +82,7 @@ public class Character {
         this.emoteColor = emoteColor;
     }
 
-    public UUID getUUID() {
+    public UUID getId() {
         return uuid;
     }
 
@@ -218,7 +218,7 @@ public class Character {
 
     static {
         CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                UUIDUtil.CODEC.fieldOf("uuid").forGetter(Character::getUUID),
+                UUIDUtil.CODEC.fieldOf("uuid").forGetter(Character::getId),
                 UUIDUtil.CODEC.fieldOf("entityUUID").forGetter(Character::getEntityUUID),
                 Codec.STRING.fieldOf("name").forGetter(Character::getName),
                 Codec.STRING.fieldOf("description").forGetter(Character::getDescription),
@@ -237,7 +237,7 @@ public class Character {
 
         STREAM_CODEC = StreamCodec.of(
                 (buf, character) -> {
-                    UUIDUtil.STREAM_CODEC.encode(buf, character.getUUID());
+                    UUIDUtil.STREAM_CODEC.encode(buf, character.getId());
                     UUIDUtil.STREAM_CODEC.encode(buf, character.getEntityUUID());
                     ByteBufCodecs.STRING_UTF8.encode(buf, character.getName());
                     ByteBufCodecs.STRING_UTF8.encode(buf, character.getDescription());

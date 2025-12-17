@@ -3,14 +3,12 @@ package com.site21.bittermelon.init.neoforge;
 import com.site21.bittermelon.Bittermelon;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.StringUtil;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +46,7 @@ public class BitterCreativeTabs {
                     .icon(() -> new ItemStack(SCP_377.get()))
                     .displayItems((parameters, output) -> {
                         for (DeferredHolder<Item, ? extends Item> item : BitterItems.ITEMS.getEntries()) {
-                            if (item.get().builtInRegistryHolder().is(BitterItemTags.SCP)) {
+                            if (item.is(BitterItemTags.SCP)) {
                                 output.accept(item.get());
                             }
                         }

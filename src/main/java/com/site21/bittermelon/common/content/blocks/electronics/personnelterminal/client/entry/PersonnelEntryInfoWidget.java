@@ -25,16 +25,11 @@ import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix3x2f;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.site21.bittermelon.common.systems.character.skin.SkinUtil.getAbstractClientPlayer;
 
 public class PersonnelEntryInfoWidget extends AbstractWidget {
     private final PersonnelEntry entry;
@@ -268,7 +263,7 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
 
         Character character = CharacterManager.get(Minecraft.getInstance().level).getCharacter(entry.getCharacterUUID());
         if (character != null && character.getPlayerInfo().isPresent()) {
-             texture = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + character.getUUID());
+             texture = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + character.getId());
         }
 
         int textureSize = 64;

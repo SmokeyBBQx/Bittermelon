@@ -29,7 +29,7 @@ public class CPRCommand {
         if (targetCharacter == null) return 0;
 
         ServerPlayer commandSender = context.getSource().getPlayerOrException();
-        PacketDistributor.sendToPlayer(commandSender, new OpenCPRScreen(targetCharacter.getUUID()));
+        PacketDistributor.sendToPlayer(commandSender, new OpenCPRScreen(targetCharacter.getId()));
 
         return 1;
     }

@@ -134,7 +134,7 @@ public class Bittermelon {
 
             Character activeCharacter = characterManager.getActiveCharacter(serverPlayer);
             if (activeCharacter != null) {
-                PacketDistributor.sendToPlayer(serverPlayer, new SyncActiveCharacter(activeCharacter.getUUID()));
+                PacketDistributor.sendToPlayer(serverPlayer, new SyncActiveCharacter(activeCharacter.getId()));
             }
         }
     }

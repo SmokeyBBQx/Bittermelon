@@ -1,9 +1,9 @@
 package com.site21.bittermelon.common.content.entities.scp939;
 
 import com.site21.bittermelon.common.content.entities.scp939.behavior.*;
-import com.site21.bittermelon.common.systems.character.Character;
-import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.common.systems.combat.AttackTemplate;
+import com.site21.bittermelon.common.systems.ai.base.BitterMob;
+import com.site21.bittermelon.common.systems.ai.base.Need;
+import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
 import com.site21.bittermelon.common.systems.ai.behavior.attack.Attack;
 import com.site21.bittermelon.common.systems.ai.behavior.attack.Pull;
 import com.site21.bittermelon.common.systems.ai.behavior.attack.Push;
@@ -20,9 +20,9 @@ import com.site21.bittermelon.common.systems.ai.behavior.target.InvalidateAttack
 import com.site21.bittermelon.common.systems.ai.vibration.BitterAngerManagement;
 import com.site21.bittermelon.common.systems.ai.vibration.BitterVibrationSystem;
 import com.site21.bittermelon.common.systems.ai.vibration.BitterVibrationUser;
-import com.site21.bittermelon.common.systems.ai.base.BitterMob;
-import com.site21.bittermelon.common.systems.ai.base.Need;
-import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
+import com.site21.bittermelon.common.systems.character.Character;
+import com.site21.bittermelon.common.systems.character.CharacterManager;
+import com.site21.bittermelon.common.systems.combat.AttackTemplate;
 import com.site21.bittermelon.common.systems.medical.factory.Anatomy;
 import com.site21.bittermelon.init.neoforge.BitterActivity;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -185,9 +185,9 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
 
     public void addVictim(@NotNull Character victim) {
         // TODO: Human condition
-        UUID uuid = victim.getUUID();
+        UUID uuid = victim.getId();
         if (!victims.contains(uuid)) {
-            victims.add(victim.getUUID());
+            victims.add(victim.getId());
         }
     }
 

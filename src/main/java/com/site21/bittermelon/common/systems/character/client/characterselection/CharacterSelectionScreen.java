@@ -83,8 +83,8 @@ public class CharacterSelectionScreen extends Screen {
         minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.PORTAL_TRAVEL, 1));
         ClientPacketDistributor.sendToServer(new AddEffect(new MobEffectInstance(NAUSEA, 160, 255), minecraft.player.getId()));
 
-        ClientPacketDistributor.sendToServer(new SwitchCharacter(character.getEntityUUID(), character.getUUID()));
-        characterManager.setActiveCharacter(minecraft.player, character.getUUID());
+        ClientPacketDistributor.sendToServer(new SwitchCharacter(character.getEntityUUID(), character.getId()));
+        characterManager.setActiveCharacter(minecraft.player, character.getId());
         minecraft.player.displayClientMessage(Component.literal("Switched to: " + character.getName()).withStyle(ChatFormatting.GREEN), false);
 
         onClose();

@@ -11,7 +11,10 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 
 public class PersonnelEntry implements PrivilegeOwner {
     public static final Codec<PersonnelEntry> CODEC;
@@ -51,7 +54,7 @@ public class PersonnelEntry implements PrivilegeOwner {
     }
 
     public PersonnelEntry(@NotNull Player player, @NotNull Character character, String department, String occupation) {
-        this(player.getUUID(), character.getUUID(), character.getName(), occupation, "");
+        this(player.getUUID(), character.getId(), character.getName(), occupation, "");
         this.department = department;
     }
 

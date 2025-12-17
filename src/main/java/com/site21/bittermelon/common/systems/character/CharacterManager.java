@@ -102,7 +102,7 @@ public class CharacterManager extends SavedData {
      * @param character The character to add.
      */
     public void addCharacter(Character character) {
-        characters.put(character.getUUID(), character);
+        characters.put(character.getId(), character);
         setDirty();
     }
 
@@ -153,10 +153,10 @@ public class CharacterManager extends SavedData {
 //            player.load(newPlayerData);
 //            player.teleportTo(player.getX(), player.getY(), player.getZ());
 //            player.getInventory().setChanged();
-            setActiveCharacter(player, switchedTo.getUUID());
+            setActiveCharacter(player, switchedTo.getId());
 //        }
 
-        switchedTo.getPlayerInfo().ifPresent(info -> SkinOverrideSystem.setSkinOverride(player.getUUID(), switchedTo.getUUID(), info.getSkinURL(), info.getModel().toMinecraftModel()));
+        switchedTo.getPlayerInfo().ifPresent(info -> SkinOverrideSystem.setSkinOverride(player.getUUID(), switchedTo.getId(), info.getSkinURL(), info.getModel().toMinecraftModel()));
     }
 
     static {
@@ -169,7 +169,7 @@ public class CharacterManager extends SavedData {
                 ).apply(instance, (List<Character> chars) -> {
                     CharacterManager cm = new CharacterManager();
                     for (Character character : chars) {
-                        cm.characters.put(character.getUUID(), character);
+                        cm.characters.put(character.getId(), character);
                     }
                     return cm;
                 }))

@@ -46,7 +46,7 @@ public abstract class MedicalMinigame extends Screen {
         if (getMinecraft().player == null) return;
         ClientPacketDistributor.sendToServer(new CompleteMinigame(item,
                 compartment.getId(),
-                character.getUUID(),
+                character.getId(),
                 getMinecraft().player.getUUID(),
                 1));
 

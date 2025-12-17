@@ -7,7 +7,6 @@ import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerSlot;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
-import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -42,7 +41,7 @@ public class CompartmentWidget extends MovableResizableWidget {
     private Button decreaseLayerButton;
     private final Button[] buttons;
 
-    private final LayerSlot[][] grid;
+    private LayerSlot[][] grid;
 
     public CompartmentWidget(int x, int y, int width, int height, @NotNull CompartmentInstance compartment, HealthScreen screen) {
         super(x, y, width, height, Component.literal(compartment.getName()));
@@ -58,28 +57,24 @@ public class CompartmentWidget extends MovableResizableWidget {
         closeWidgetButton = Button.builder(
                         Component.literal("X"),
                         (button) -> screen.removeCompartmentSpace(this))
-                .pos(getRight() - BUTTON_SIZE - EDGE_MARGIN, y + BUTTON_SIZE)
                 .size(BUTTON_SIZE, BUTTON_SIZE)
                 .build();
 
         collapseWidgetButton = Button.builder(
                         Component.literal(isOpen ? "-" : "+"),
                         (button) -> toggleOpen())
-                .pos(getRight() - BUTTON_SIZE * 2 - BUTTON_SPACING, y + BUTTON_SIZE)
                 .size(BUTTON_SIZE, BUTTON_SIZE)
                 .build();
 
         increaseLayerButton = Button.builder(
                         Component.literal("↑"),
                         (button) -> increaseLayer())
-                .pos(getRight() - BUTTON_SIZE, y + 20)
                 .size(BUTTON_SIZE, BUTTON_SIZE)
                 .build();
 
         decreaseLayerButton = Button.builder(
                         Component.literal("↓"),
                         (button) -> decreaseLayer())
-                .pos(getRight() - BUTTON_SIZE, y + 32)
                 .size(BUTTON_SIZE, BUTTON_SIZE)
                 .build();
     }
@@ -87,17 +82,21 @@ public class CompartmentWidget extends MovableResizableWidget {
     private void increaseLayer() {
         if (layerIndex == 0) {
             layerIndex = compartment.getLayers().size() - 1;
-            return;
+        } else {
+            --layerIndex;
         }
-        layerIndex--;
+
+        grid = getLayer().getGrid();
     }
 
     private void decreaseLayer() {
         if (layerIndex >= compartment.getLayers().size() - 1) {
             layerIndex = 0;
-            return;
+        } else {
+            ++layerIndex;
         }
-        layerIndex++;
+
+        grid = getLayer().getGrid();
     }
 
     @Override
@@ -107,7 +106,6 @@ public class CompartmentWidget extends MovableResizableWidget {
             renderSlots(guiGraphics, mouseX, mouseY);
             renderCompartments(guiGraphics, mouseX, mouseY);
             renderHoveredSlot(guiGraphics, mouseX, mouseY);
-            renderFrame(guiGraphics);
             renderResizeHandle(guiGraphics, mouseX, mouseY, partialTick);
             increaseLayerButton.render(guiGraphics, mouseX, mouseY, partialTick);
             decreaseLayerButton.render(guiGraphics, mouseX, mouseY, partialTick);
@@ -156,12 +154,10 @@ public class CompartmentWidget extends MovableResizableWidget {
     }
 
     private void renderPlacementIndicator(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        HeldItemData heldItem = screen.getHeldItemData();
-        if (heldItem == null) return;
+        CompartmentInstance heldCompartment = screen.getHeldCompartment();
+        if (heldCompartment == null) return;
 
-        CompartmentInstance heldCompartment = heldItem.heldItem().get(BitterDataComponents.COMPARTMENT).toInstance();
         List<Point> shape = heldCompartment.getCompartment().getShape();
-
         Point hoveredSlot = getHoveredSlot(mouseX, mouseY);
         if (hoveredSlot == null) return;
 
@@ -170,7 +166,7 @@ public class CompartmentWidget extends MovableResizableWidget {
             int targetY = hoveredSlot.y() + p.y();
             int slotX = contentX + targetX * slotSize;
             int slotY = contentY + targetY * slotSize;
-            int color = getLayer().canFit(hoveredSlot.x(), hoveredSlot.y(), shape) ? 0x800000FF : 0x80FF0000;
+            int color = getLayer().canFit(hoveredSlot.x(), hoveredSlot.y(), shape) ? 0x80008000 : 0x80FF0000;
             guiGraphics.fill(slotX, slotY, slotX + slotSize, slotY + slotSize, color);
         }
     }
@@ -211,17 +207,6 @@ public class CompartmentWidget extends MovableResizableWidget {
         return compartment.getLayer(layerIndex).getCompartmentAt(hoveredSlot.x(), hoveredSlot.y());
     }
 
-    private void renderFrame(@NotNull GuiGraphics guiGraphics) {
-//        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, x, y, 0, 0, width / 2, 23, 256, 256);
-//        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, x + width / 2, y, 252 - width / 2, 0, width / 2, 23, 256, 256);
-//
-//        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_SIDES_TEXTURE, x, y + 23, 0, 23, width / 2, height - 48, 256, 256);
-//        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_SIDES_TEXTURE, x + width / 2, y + 23, 256 - width / 2, 23, width / 2, height - 48, 256, 256);
-//
-//        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, x, y + height - 25, 0, 130 - 5, width / 2, 15, 256, 256);
-//        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, x + width / 2, y + height - 25, 252 - width / 2, 130 - 5, width / 2, 15, 256, 256);
-    }
-
     private @Nullable Point getHoveredSlot(int mouseX, int mouseY) {
         for (int row = 0; row < grid.length; row++) {
             for (int col = 0; col < grid[row].length; col++) {
@@ -242,7 +227,7 @@ public class CompartmentWidget extends MovableResizableWidget {
         return null;
     }
 
-    private LayerData getLayer() {
+    public LayerData getLayer() {
         return compartment.getLayer(layerIndex);
     }
 
@@ -255,8 +240,18 @@ public class CompartmentWidget extends MovableResizableWidget {
         }
 
         CompartmentInstance hoveredCompartment = screen.getMedicalStats().getCompartment(getHoveredCompartment((int) mouseX, (int) mouseY));
-        if (button == 1 && hoveredCompartment != null) {
-            screen.addCompartmentSpace(hoveredCompartment);
+        if (hoveredCompartment != null) {
+            if (button == 0) {
+                getLayer().removeInstance(hoveredCompartment.getId());
+                screen.setHeldCompartment(hoveredCompartment);
+                return true;
+            } else {
+                return screen.addCompartmentSpace(hoveredCompartment);
+            }
+        }
+
+        Point hoveredSlot = getHoveredSlot((int) mouseX, (int) mouseY);
+        if (hoveredSlot != null) {
             return true;
         }
 

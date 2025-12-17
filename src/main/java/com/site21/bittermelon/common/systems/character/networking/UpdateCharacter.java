@@ -27,7 +27,7 @@ public record UpdateCharacter(Character character) implements CustomPacketPayloa
 
     public void handle(@NotNull IPayloadContext ctx) {
         CharacterManager manager = CharacterManager.get(ctx.player().level());
-        Character existingCharacter = manager.getCharacter(character.getUUID());
+        Character existingCharacter = manager.getCharacter(character.getId());
 
         if (existingCharacter != null) {
             existingCharacter.setName(character.getName());
@@ -36,7 +36,7 @@ public record UpdateCharacter(Character character) implements CustomPacketPayloa
             character.getPlayerInfo().ifPresent(info ->
                     existingCharacter.setPlayerInfo(new PlayerInfo(info.getSkinURL(), info.getModel())));
         } else {
-            manager.getCharacters().put(character.getUUID(), character);
+            manager.getCharacters().put(character.getId(), character);
         }
 
         if (ctx.flow().isServerbound()) manager.setDirty();

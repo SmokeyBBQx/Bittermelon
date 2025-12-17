@@ -28,7 +28,7 @@ public class KeycardDecorator implements IItemDecorator {
 
         Character character = CharacterManager.get(mc.level).getCharacter(entry.getCharacterUUID());
         if (character != null && character.getPlayerInfo().isPresent()) {
-            texture = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + character.getUUID());
+            texture = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + character.getId());
         }
 
         guiGraphics.pose().pushMatrix();

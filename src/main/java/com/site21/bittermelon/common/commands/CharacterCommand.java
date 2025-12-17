@@ -81,7 +81,7 @@ public class CharacterCommand {
         Character character = new Character(player.getUUID(), name, Anatomy.HUMAN);
 
         manager.addCharacter(character);
-        manager.setActiveCharacter(player, character.getUUID());
+        manager.setActiveCharacter(player, character.getId());
 
         source.sendSuccess(() -> Component.literal("Created and switched to character: " + name), true);
         return 1;
@@ -101,7 +101,7 @@ public class CharacterCommand {
 
         MutableComponent message = Component.literal("Your characters:\n");
         for (Character character : playerCharacters) {
-            boolean isActive = activeCharacter != null && character.getUUID().equals(activeCharacter.getUUID());
+            boolean isActive = activeCharacter != null && character.getId().equals(activeCharacter.getId());
             message.append(Component.literal(
                             (isActive ? "→ " : "  ") + character.getName() + "\n")
                     .withStyle(isActive ? ChatFormatting.GREEN : ChatFormatting.GRAY));

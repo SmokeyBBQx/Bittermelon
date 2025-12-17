@@ -123,7 +123,8 @@ public class LayerData {
      * @param shape the shape defining which slots the compartment occupies
      * @return true if the compartment was successfully placed; false otherwise
      */
-    public boolean tryToPlace(int x, int y, @NotNull CompartmentInstance compartment, @NotNull List<Point> shape) {
+    public boolean tryToPlace(int x, int y, @NotNull CompartmentInstance compartment) {
+        List<Point> shape = compartment.getCompartment().getShape();
         if (!canFit(x, y, shape)) return false;
 
         Point pivotBase = compartment.getCompartment().getPivot();

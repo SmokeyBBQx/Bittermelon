@@ -36,7 +36,7 @@ public class KeycardPrinter extends Block {
         ItemStack keycard = new ItemStack(KEYCARD.get());
 
         if (entry == null) {
-            entry = new PersonnelEntry(player.getUUID(), character.getUUID(), character.getName(), "", "");
+            entry = new PersonnelEntry(player.getUUID(), character.getId(), character.getName(), "", "");
             registry.addEntry(entry);
         }
 

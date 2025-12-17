@@ -3,12 +3,10 @@ package com.site21.bittermelon.common.systems.medical.client;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.medical.client.networking.OpenHealthScreenC2S;
-import com.site21.bittermelon.common.systems.medical.compartment.CompartmentData;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
-import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -25,16 +23,16 @@ import java.util.List;
 import java.util.UUID;
 
 public class HealthScreen extends Screen {
-    private final UUID characterUUID;
+    private final UUID characterId;
     private Character character;
     private final MedicalStats medicalStats;
     private final List<CompartmentWidget> compartmentWidgets;
     private CompartmentWidget activeWidget = null;
-    private HeldItemData heldItemData = null;
+    private CompartmentInstance heldCompartment = null;
 
     public HealthScreen(@NotNull Character character) {
         super(Component.literal(character.getName()));
-        this.characterUUID = character.getUUID();
+        this.characterId = character.getId();
         this.character = character;
         this.medicalStats = character.getMedicalStats();
         this.compartmentWidgets = new ArrayList<>();
@@ -51,18 +49,18 @@ public class HealthScreen extends Screen {
                         20,
                         20,
                         layer.getWidth() * 10,
-                layer.getHeight() * 10,
+                        layer.getHeight() * 10,
                         medicalStats.getMainCompartment(),
-                this
+                        this
                 )
         );
     }
 
-    public void addCompartmentSpace(@NotNull CompartmentInstance instance) {
+    public boolean addCompartmentSpace(@NotNull CompartmentInstance instance) {
         // Only open compartments that have layers
         LayerData layer = instance.getLayers().getFirst();
-        if (layer == null) return;
-        if (compartmentWidgets.stream().anyMatch(widget -> widget.getCompartment().equals(instance))) return;
+        if (layer == null) return false;
+        if (compartmentWidgets.stream().anyMatch(widget -> widget.getCompartment().equals(instance))) return false;
 
         compartmentWidgets.add(new CompartmentWidget(
                 20,
@@ -72,6 +70,8 @@ public class HealthScreen extends Screen {
                 instance,
                 this
         ));
+
+        return true;
     }
 
     public void removeCompartmentSpace(CompartmentWidget compartmentSpace) {
@@ -88,25 +88,28 @@ public class HealthScreen extends Screen {
             widget.render(guiGraphics, mouseX, mouseY, partialTick);
         }
 
-        renderHeldItem(guiGraphics, mouseX, mouseY);
+        renderHeldCompartment(guiGraphics, mouseX, mouseY);
     }
 
-    private void renderHeldItem(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        if (heldItemData != null) {
-            CompartmentData instance = heldItemData.heldItem().get(BitterDataComponents.COMPARTMENT);
-            if (instance == null || instance.getVisualData().getIcon() == null) {
-                guiGraphics.renderFakeItem(heldItemData.heldItem(), mouseX, mouseY);
-            } else {
-                VisualData visualData = instance.getVisualData();
-                float scaleFactor = visualData.scale;
-                guiGraphics.pose().pushMatrix();
-                guiGraphics.pose().translate(mouseX + visualData.x, mouseY + visualData.y);
-                guiGraphics.pose().scale(scaleFactor, scaleFactor);
+    @Override
+    protected void renderBlurredBackground(@NotNull GuiGraphics guiGraphics) {
+    }
 
-                guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, visualData.icon, 0, 0, 20, 20);
+    private void renderHeldCompartment(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        if (heldCompartment == null) return;
 
-                guiGraphics.pose().popMatrix();
-            }
+        if (heldCompartment.getVisualData().getIcon() == null) {
+            guiGraphics.renderFakeItem(heldCompartment.getItem().getDefaultInstance(), mouseX, mouseY);
+        } else {
+            VisualData visualData = heldCompartment.getVisualData();
+            float scaleFactor = visualData.scale;
+            guiGraphics.pose().pushMatrix();
+            guiGraphics.pose().translate(mouseX + visualData.x, mouseY + visualData.y);
+            guiGraphics.pose().scale(scaleFactor, scaleFactor);
+
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, visualData.icon, 0, 0, 0,0, 20, 20, 20, 20);
+
+            guiGraphics.pose().popMatrix();
         }
     }
 
@@ -115,9 +118,10 @@ public class HealthScreen extends Screen {
         for (CompartmentWidget widget : compartmentWidgets.reversed()) {
             if (widget.mouseClicked(mouseX, mouseY, button)) {
                 activeWidget = widget;
-//                if (heldItemData != null) {
-//                    widget.handleCompartmentInteraction(mouseX, mouseY, button);
-//                }
+                if (heldCompartment != null) {
+                    widget.getLayer().tryToPlace((int) mouseX, (int) mouseY, heldCompartment);
+                    heldCompartment = null;
+                }
                 return true;
             }
         }
@@ -146,34 +150,19 @@ public class HealthScreen extends Screen {
     }
 
     public Character getCharacter() {
-        return CharacterManager.get(minecraft.level).getCharacter(characterUUID);
+        return CharacterManager.get(minecraft.level).getCharacter(characterId);
     }
 
     public MedicalStats getMedicalStats() {
         return medicalStats;
     }
 
-    @Override
-    public boolean isPauseScreen() {
-        return false;
+    public CompartmentInstance getHeldCompartment() {
+        return heldCompartment;
     }
 
-    public HeldItemData getHeldItemData() {
-        return heldItemData;
-    }
-
-    public void setHeldItemData(HeldItemData heldItemData) {
-        this.heldItemData = heldItemData;
-    }
-
-    public void refresh() {
-//        for (CompartmentWidget widget : renderedCompartmentSpaces) {
-//            CompartmentInstance updated = medicalStats.getCompartment(widget.getCompartment().getId());
-//            widget.setCompartment(updated);
-//            widget.refreshCompartmentNodes();
-//
-//            // TODO: Refresh specific widgets by mapping widgets to compartment UUIDs?
-//        }
+    public void setHeldCompartment(CompartmentInstance heldCompartment) {
+        this.heldCompartment = heldCompartment;
     }
 
     public static void openHealthScreen() {
@@ -189,6 +178,11 @@ public class HealthScreen extends Screen {
             ClientPacketDistributor.sendToServer(new OpenHealthScreenC2S(player.getUUID(), UUID.randomUUID()));
         }
 
+    }
+
+    @Override
+    public boolean isPauseScreen() {
+        return false;
     }
 }
 
