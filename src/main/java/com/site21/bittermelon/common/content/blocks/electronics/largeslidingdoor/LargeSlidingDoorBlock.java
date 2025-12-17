@@ -287,7 +287,7 @@ public class LargeSlidingDoorBlock extends Block implements EntityBlock {
     }
 
     @Nullable
-    private BlockPos findMasterBlock(@NotNull BlockGetter level, BlockPos pos) {
+    public BlockPos findMasterBlock(@NotNull BlockGetter level, BlockPos pos) {
         BlockState currentState = level.getBlockState(pos);
         if (!currentState.is(LARGE_SLIDING_DOOR.get())) return null;
 
