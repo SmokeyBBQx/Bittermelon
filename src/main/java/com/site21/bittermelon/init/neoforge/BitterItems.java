@@ -30,12 +30,14 @@ import com.site21.bittermelon.common.content.items.writingutensils.HighlighterIt
 import com.site21.bittermelon.common.systems.component.Smokable;
 import com.site21.bittermelon.common.systems.component.screwdriver.Screwdriver;
 import com.site21.bittermelon.common.systems.component.temperature.HeatBehavior;
+import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.DataComponentMatchers;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -44,6 +46,7 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.Consumable;
 import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -112,7 +115,9 @@ public class BitterItems {
     public static final DeferredItem<SCP109Item> SCP_109 = ITEMS.register("scp_109", registryName ->
             new SCP109Item(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
-                    .component(VOLUME, 0.0f)));
+                    .component(VOLUME, 0.0f)
+                    .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("Infinite Canteen").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Euclid").withStyle(ChatFormatting.GOLD)))
+                    )));
 
     public static final DeferredItem<SmokableItem> CIGARETTE = ITEMS.register("cigarette", registryName ->
             new SmokableItem(new Item.Properties()
@@ -129,7 +134,9 @@ public class BitterItems {
 
     public static final DeferredItem<Item> SCP_005 = ITEMS.register("scp_005", registryName ->
             new SCP005Item(new Item.Properties()
-                    .setId(ResourceKey.create(Registries.ITEM, registryName))));
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("The Skeleton Key").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Safe").withStyle(ChatFormatting.GREEN))
+                    ))));
 
     public static final DeferredItem<SyringeItem> SYRINGE = ITEMS.register("syringe", registryName ->
             new SyringeItem(new Item.Properties()
