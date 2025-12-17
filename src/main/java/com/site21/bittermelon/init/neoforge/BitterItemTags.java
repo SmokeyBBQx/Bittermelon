@@ -13,6 +13,11 @@ public class BitterItemTags {
             ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "baseball")
     );
 
+    public static final TagKey<Item> SCP = TagKey.create(
+            Registries.ITEM,
+            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp")
+    );
+
     public static final TagKey<Item> LIGHTER = TagKey.create(
             Registries.ITEM,
             ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "lighter")

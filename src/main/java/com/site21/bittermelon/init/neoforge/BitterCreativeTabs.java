@@ -42,6 +42,20 @@ public class BitterCreativeTabs {
                     .build()
     );
 
+    public static final Supplier<CreativeModeTab> SCP_TAB = CREATIVE_MODE_TABS.register("scp_tab", () ->
+            CreativeModeTab.builder()
+                    .title(Component.literal("SCPs"))
+                    .icon(() -> new ItemStack(SCP_377.get()))
+                    .displayItems((parameters, output) -> {
+                        for (DeferredHolder<Item, ? extends Item> item : BitterItems.ITEMS.getEntries()) {
+                            if (item.get().builtInRegistryHolder().is(BitterItemTags.SCP)) {
+                                output.accept(item.get());
+                            }
+                        }
+                    })
+                    .build()
+    );
+
     @Contract("_, _, _ -> param1")
     private static @NotNull ItemStack createDyedItem(@NotNull ItemStack stack, DyeColor color, String nameSuffix) {
         stack.set(BASE_COLOR, color);
