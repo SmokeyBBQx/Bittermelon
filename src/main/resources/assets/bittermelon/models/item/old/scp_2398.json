@@ -1,6 +1,6 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "bittermelon:item/scp2398"
+    "layer0": "bittermelon:item/scp_2398"
   }
 }
