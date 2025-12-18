@@ -20,7 +20,9 @@ import java.util.List;
 import java.util.Map;
 
 public class IncisionWidget extends AbstractWidget {
-    protected static long SOUND_DELAY = 2780;
+    private static final long SOUND_DELAY = 2780;
+    private static final int DISTANCE_COMPARISON_COUNT = 3;
+
     private final CompartmentWidget compartment;
     private final HealthScreen healthScreen;
     private final List<Point> drawnPoints = new ArrayList<>();
@@ -58,12 +60,10 @@ public class IncisionWidget extends AbstractWidget {
         }
 
         Point lastPoint = drawnPoints.getLast();
-        double distance = Math.sqrt(
-                Math.pow(newPoint.x() - lastPoint.x(), 2) +
-                        Math.pow(newPoint.y() - lastPoint.y(), 2)
+        double distance = Math.sqrt(Math.pow(newPoint.x() - lastPoint.x(), 2) + Math.pow(newPoint.y() - lastPoint.y(), 2)
         );
 
-        return distance >= 3.0;
+        return distance >= 1.0;
     }
 
     @Override
@@ -92,9 +92,8 @@ public class IncisionWidget extends AbstractWidget {
 
         for (Point point : touchedSlots) {
             CompartmentInstance cut = Compartments.CUT.get().toInstance();
-            // TODO: Accuracy calculation is weird and inconsistent
-            float accuracy = calculateAccuracy(relatedPoints.get(point));
-            int color = ARGB.setBrightness(0xFFFF0000, 2 - accuracy);
+            float accuracy = calculateAccuracyFromDistance(relatedPoints.get(point));
+            int color = ARGB.setBrightness(0xFFFF0000, accuracy);
             cut.getVisualData().color(color);
             healthScreen.getMedicalStats().addCompartment(cut);
             compartment.getLayer().tryToPlace(point.x(), point.y(), cut);
@@ -103,6 +102,33 @@ public class IncisionWidget extends AbstractWidget {
 
     private float calculateAccuracy(@NotNull List<Point> points) {
         return points.isEmpty() ? 0.0f : (float) points.size() / compartment.getSlotSize() * 2;
+    }
+
+    private float calculateAccuracyFromDistance(@NotNull List<Point> points) {
+        if (points.isEmpty()) return 0.0f;
+
+        int compareCount = Math.min(points.size(), DISTANCE_COMPARISON_COUNT);
+        double totalDistance = 0.0f;
+
+        for (int i = 0; i < points.size() - 1; ++i) {
+            Point pointA = points.get(i);
+            for (int j = i + 1; j < i + compareCount; ++j) {
+                if (j >= points.size()) break;
+                totalDistance += getDistance(pointA, points.get(j));
+            }
+
+            for (int j = i - 1; j > i - compareCount; --j) {
+                if (j <= 0) break;
+                totalDistance += getDistance(pointA, points.get(j));
+            }
+        }
+
+        float averageDistance = (float) (totalDistance / points.size());
+        return Math.max(0.0f, 1.0f - (averageDistance / 10.0f));
+    }
+
+    private double getDistance(@NotNull Point a, @NotNull Point b) {
+        return Math.sqrt(Math.pow(a.x() - b.x(), 2) + Math.pow(a.y() - b.y(), 2));
     }
 
     private void makeSound(SoundEvent soundEvent) {
