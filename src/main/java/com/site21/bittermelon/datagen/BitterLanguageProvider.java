@@ -10,13 +10,15 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import static com.site21.bittermelon.init.neoforge.BitterItems.*;
 
 public class BitterLanguageProvider extends LanguageProvider {
-    List<Item> customItemTranslations = new ArrayList<>();
+    Set<Item> customItemTranslations = new HashSet<>();
 
     public BitterLanguageProvider(PackOutput output) {
         super(output, Bittermelon.MOD_ID, "en_us");
