@@ -548,7 +548,9 @@ public class Compartments {
                             new Point(1, 2)
                     ))
                     .visualData(VisualData.empty()
-                            .icon("anatomical_gallbladder"))
+                            .icon("anatomical_gallbladder")
+                            .width(3)
+                            .height(3))
             )
     );
 
@@ -574,5 +576,7 @@ public class Compartments {
             () -> new SharpObject("scalpel", new Compartment.Properties().item(BitterItems.SCALPEL)));
 
     public static final DeferredHolder<Compartment, Compartment> CUT = COMPARTMENTS.register("cut",
-            () -> new Compartment("cut", new Compartment.Properties().visualData(VisualData.empty().icon("cut"))));
+            () -> new Compartment("cut", new Compartment.Properties()
+                    .shape(List.of(new Point(0, 0)))
+                    .visualData(VisualData.empty().icon("cut"))));
 }

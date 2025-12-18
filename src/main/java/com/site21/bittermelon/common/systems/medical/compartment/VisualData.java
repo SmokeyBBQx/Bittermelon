@@ -20,13 +20,17 @@ public class VisualData {
 
     public int x;
     public int y;
+    public int width;
+    public int height;
     public float scale;
     public ResourceLocation icon;
     public int color;
 
-    public VisualData(int x, int y, float scale, @Nullable ResourceLocation icon, int color) {
+    public VisualData(int x, int y, int width, int height, float scale, @Nullable ResourceLocation icon, int color) {
         this.x = x;
         this.y = y;
+        this.width = width;
+        this.height = height;
         this.scale = scale;
         this.icon = icon;
         this.color = color;
@@ -34,17 +38,17 @@ public class VisualData {
 
     @SuppressWarnings({"OptionalUsedAsFieldOrParameterType"})
     @Contract(pure = true)
-    public VisualData(int x, int y, float scale, @NotNull Optional<ResourceLocation> icon, int color) {
-        this(x, y, scale, icon.orElse(null), color);
+    public VisualData(int x, int y, int width, int height, float scale, @NotNull Optional<ResourceLocation> icon, int color) {
+        this(x, y, width, height, scale, icon.orElse(null), color);
     }
 
-    public VisualData(int x, int y, float scale, ResourceLocation icon) {
-        this(x, y, scale, icon, DEFAULT_COLOR);
+    public VisualData(int x, int y, int width, int height, float scale, ResourceLocation icon) {
+        this(x, y, width, height, scale, icon, DEFAULT_COLOR);
     }
 
     @Contract(" -> new")
     public static @NotNull VisualData empty() {
-        return new VisualData(0, 0, 1f, Optional.empty(), DEFAULT_COLOR);
+        return new VisualData(0, 0, 1, 1, 1f, Optional.empty(), DEFAULT_COLOR);
     }
 
     public int getX() {
@@ -53,6 +57,14 @@ public class VisualData {
 
     public int getY() {
         return y;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 
     public Optional<ResourceLocation> getOptionalIcon() {
@@ -74,6 +86,16 @@ public class VisualData {
 
     public VisualData y(int y) {
         this.y = y;
+        return this;
+    }
+
+    public VisualData width(int width) {
+        this.width = width;
+        return this;
+    }
+
+    public VisualData height(int height) {
+        this.height = height;
         return this;
     }
 
@@ -101,6 +123,8 @@ public class VisualData {
         CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.INT.fieldOf("x").forGetter(VisualData::getX),
                 Codec.INT.fieldOf("y").forGetter(VisualData::getY),
+                Codec.INT.fieldOf("width").forGetter(VisualData::getWidth),
+                Codec.INT.fieldOf("height").forGetter(VisualData::getHeight),
                 Codec.FLOAT.fieldOf("scale").forGetter(visualData -> visualData.scale),
                 ResourceLocation.CODEC.optionalFieldOf("icon").forGetter(VisualData::getOptionalIcon),
                 Codec.INT.fieldOf("color").forGetter(VisualData::getColor)
@@ -111,6 +135,10 @@ public class VisualData {
                 VisualData::getX,
                 ByteBufCodecs.INT,
                 VisualData::getY,
+                ByteBufCodecs.INT,
+                VisualData::getWidth,
+                ByteBufCodecs.INT,
+                VisualData::getHeight,
                 ByteBufCodecs.FLOAT,
                 visualData -> visualData.scale,
                 ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC),

@@ -13,7 +13,6 @@ import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.List;
 
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_REGISTRY;
 
@@ -38,7 +37,7 @@ public class Compartment {
                 properties.defaultAttributes,
                 properties.defaultTags,
                 id,
-                new VisualData(visualData.x, visualData.y, visualData.scale, visualData.icon)
+                new VisualData(visualData.x, visualData.y, visualData.width, visualData.height, visualData.scale, visualData.icon)
         );
     }
 
@@ -47,7 +46,7 @@ public class Compartment {
     public void onExtract(MedicalStats medicalStats, CompartmentInstance instance) {}
 
     public boolean canExtract(CompartmentInstance instance, MedicalStats medicalStats) {
-        return false;
+        return true;
     }
 
     public ItemStack createItemStack(@NotNull CompartmentInstance instance) {
