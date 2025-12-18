@@ -94,6 +94,7 @@ public class CompartmentInstance {
         }
     }
 
+    /** <h4>Getters and Setters</h4> **/
     public float getAttribute(MedicalAttribute attribute) {
         return attributes.getOrDefault(attribute, 0f) * function;
     }
@@ -158,10 +159,6 @@ public class CompartmentInstance {
         return dirty;
     }
 
-    public boolean tryToInsert(int layer, int x, int y, @NotNull CompartmentInstance instance) {
-        return layers.get(layer).tryToPlace(x, y, instance);
-    }
-
     public void removeCompartment(int layer, @NotNull CompartmentInstance instance) {
         layers.get(layer).removeInstance(instance.id);
     }
@@ -197,6 +194,15 @@ public class CompartmentInstance {
     @Contract("_ -> new")
     public static @NotNull CompartmentInstance fromData(@NotNull CompartmentData data) {
         return data.toInstance();
+    }
+
+    /** <h4>Interaction Methods</h4> **/
+    public boolean tryToInsert(int layer, int x, int y, @NotNull CompartmentInstance instance) {
+        return layers.get(layer).tryToPlace(x, y, instance);
+    }
+
+    public boolean canExtract(MedicalStats medicalStats) {
+        return compartment.canExtract(this, medicalStats);
     }
 
     static {

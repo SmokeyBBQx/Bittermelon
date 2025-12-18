@@ -9,6 +9,7 @@ import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -29,6 +30,7 @@ public class HealthScreen extends Screen {
     private final List<CompartmentWidget> compartmentWidgets;
     private CompartmentWidget activeWidget = null;
     private CompartmentInstance heldCompartment = null;
+    private IncisionWidget incisionWidget = null;
 
     public HealthScreen(@NotNull Character character) {
         super(Component.literal(character.getName()));
@@ -89,6 +91,10 @@ public class HealthScreen extends Screen {
         }
 
         renderHeldCompartment(guiGraphics, mouseX, mouseY);
+
+        if (incisionWidget != null) {
+            incisionWidget.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+        }
     }
 
     @Override
@@ -115,12 +121,27 @@ public class HealthScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        CompartmentInstance previouslyHeld = heldCompartment;
+
+        if (incisionWidget == null) {
+            for (CompartmentWidget widget : compartmentWidgets.reversed()) {
+                if (widget.mouseClicked(mouseX, mouseY, button)) {
+                    activeWidget = widget;
+                    if (widget.isWithinContentArea((int) mouseX, (int) mouseY)) {
+                        incisionWidget = new IncisionWidget((int) mouseX, (int) mouseY, activeWidget, this);
+                        return true;
+                    }
+                }
+            }
+        }
+
         for (CompartmentWidget widget : compartmentWidgets.reversed()) {
             if (widget.mouseClicked(mouseX, mouseY, button)) {
                 activeWidget = widget;
-                if (heldCompartment != null) {
-                    widget.getLayer().tryToPlace((int) mouseX, (int) mouseY, heldCompartment);
-                    heldCompartment = null;
+                if (previouslyHeld != null) {
+                    if (widget.tryToPlace((int) mouseX, (int) mouseY, previouslyHeld)) {
+                        heldCompartment = null;
+                    }
                 }
                 return true;
             }
@@ -131,6 +152,10 @@ public class HealthScreen extends Screen {
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if (incisionWidget != null) {
+            return incisionWidget.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        }
+
         if (activeWidget != null) {
             return activeWidget.mouseDragged(mouseX, mouseY, button, dragX, dragY);
         }
@@ -140,6 +165,10 @@ public class HealthScreen extends Screen {
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (incisionWidget != null) {
+            return incisionWidget.mouseReleased(mouseX, mouseY, button);
+        }
+
         if (activeWidget != null) {
             boolean result = activeWidget.mouseReleased(mouseX, mouseY, button);
             activeWidget = null;
@@ -163,6 +192,10 @@ public class HealthScreen extends Screen {
 
     public void setHeldCompartment(CompartmentInstance heldCompartment) {
         this.heldCompartment = heldCompartment;
+    }
+
+    public void removeWidget(AbstractWidget widget) {
+        incisionWidget = null;
     }
 
     public static void openHealthScreen() {

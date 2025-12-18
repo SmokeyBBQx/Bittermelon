@@ -184,6 +184,8 @@ public class CompartmentWidget extends MovableResizableWidget {
 
             int slotX = contentX + slotPos.x() * slotSize;
             int slotY = contentY + slotPos.y() * slotSize;
+            int compartmentWidth = slotSize * visualData.getWidth();
+            int compartmentHeight = slotSize * visualData.getHeight();
             int color = visualData.color;
 
             // TODO: Buggy
@@ -192,7 +194,7 @@ public class CompartmentWidget extends MovableResizableWidget {
 
             ResourceLocation icon = visualData.getIcon();
             if (icon != null) {
-                guiGraphics.blit(RenderPipelines.GUI_TEXTURED, icon, slotX, slotY, 0, 0, 3 * slotSize, 3 * slotSize, 3 * slotSize, 3 * slotSize, color);
+                guiGraphics.blit(RenderPipelines.GUI_TEXTURED, icon, slotX, slotY, 0, 0, compartmentWidth, compartmentHeight, compartmentWidth, compartmentHeight, color);
             }
         }
     }
@@ -207,7 +209,7 @@ public class CompartmentWidget extends MovableResizableWidget {
         return compartment.getLayer(layerIndex).getCompartmentAt(hoveredSlot.x(), hoveredSlot.y());
     }
 
-    private @Nullable Point getHoveredSlot(int mouseX, int mouseY) {
+    public @Nullable Point getHoveredSlot(int mouseX, int mouseY) {
         for (int row = 0; row < grid.length; row++) {
             for (int col = 0; col < grid[row].length; col++) {
                 LayerSlot slot = grid[row][col];
@@ -256,6 +258,18 @@ public class CompartmentWidget extends MovableResizableWidget {
         }
 
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    public boolean tryToPlace(int x, int y, @NotNull CompartmentInstance compartment) {
+        Point hoveredSlot = getHoveredSlot(x, y);
+        if (hoveredSlot == null) return false;
+
+        return getLayer().tryToPlace(hoveredSlot.x(), hoveredSlot.y(), compartment);
+    }
+
+    public boolean isWithinContentArea(int mouseX, int mouseY) {
+        return mouseX >= contentX && mouseX < contentX + getLayer().getWidth() * slotSize &&
+                mouseY >= contentY && mouseY < contentY + getLayer().getHeight() * slotSize;
     }
 
     @Override
@@ -317,6 +331,10 @@ public class CompartmentWidget extends MovableResizableWidget {
 
     public CompartmentInstance getCompartment() {
         return compartment;
+    }
+
+    public int getSlotSize() {
+        return slotSize;
     }
 
     @Override
