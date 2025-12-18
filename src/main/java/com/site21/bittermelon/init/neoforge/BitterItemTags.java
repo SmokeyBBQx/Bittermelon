@@ -7,6 +7,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
+
 public class BitterItemTags {
     public static final TagKey<Item> BASEBALL = TagKey.create(
             Registries.ITEM,
@@ -27,4 +28,5 @@ public class BitterItemTags {
             Registries.ITEM,
             ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "wire_cutter")
     );
+
 }

@@ -20,9 +20,9 @@ public class SCP131Renderer extends MobRenderer<SCP131, SCP131RenderState, SCP13
     @Override
     public @NotNull ResourceLocation getTextureLocation(@NotNull SCP131RenderState renderState) {
         return renderState.variant == 0 ?
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "bittermelon:textures/entity/scp_131_a.png") :
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "bittermelon:textures/entity/scp_131_b.png");
-    }
+                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/entity/scp_131_a.png") :
+                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/entity/scp_131_b.png");
+        }
 
     @Override
     public @NotNull SCP131RenderState createRenderState() {

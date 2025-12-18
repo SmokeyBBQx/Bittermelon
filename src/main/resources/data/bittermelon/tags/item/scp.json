@@ -1,14 +1,19 @@
 {
   "values": [
-    "bittermelon:scp_377",
-    "bittermelon:scp_109",
     "bittermelon:scp_005",
     "bittermelon:scp_018",
+    "bittermelon:scp_109",
     "bittermelon:scp_151",
     "bittermelon:scp_330",
-    "bittermelon:scp_2398",
+    "bittermelon:scp_377",
     "bittermelon:scp_377_1",
     "bittermelon:fortune_cookie",
-    "bittermelon:cracked_fortune_cookie"
+    "bittermelon:cracked_fortune_cookie",
+    "bittermelon:scp_2398",
+    "bittermelon:scp_131_spawn_egg",
+    "bittermelon:scp_548_spawn_egg",
+    "bittermelon:scp_650_spawn_egg",
+    "bittermelon:scp_939_spawn_egg",
+    "bittermelon:scp_1507_spawn_egg"
   ]
 }
