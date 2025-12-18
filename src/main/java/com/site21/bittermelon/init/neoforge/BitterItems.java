@@ -77,7 +77,8 @@ public class BitterItems {
     public static final DeferredItem<BlockItem> LARGE_SLIDING_DOOR = ITEMS.registerSimpleBlockItem(BitterBlocks.LARGE_SLIDING_DOOR);
     public static final DeferredItem<BlockItem> YELLOW_INSPECTION_POSTER = ITEMS.registerSimpleBlockItem(BitterBlocks.YELLOW_INSPECTION_POSTER);
     public static final DeferredItem<BlockItem> DISTRIBUTION_BOARD = ITEMS.registerSimpleBlockItem(BitterBlocks.DISTRIBUTION_BOARD);
-    public static final DeferredItem<BlockItem> SCP_151 = ITEMS.registerSimpleBlockItem(BitterBlocks.SCP_151);
+    public static final DeferredItem<BlockItem> SCP_151 = ITEMS.registerSimpleBlockItem(BitterBlocks.SCP_151, new Item.Properties()
+                    .stacksTo(1).component(DataComponents.LORE, new ItemLore(List.of(Component.literal("The Painting").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Euclid").withStyle(ChatFormatting.GOLD)))));
     public static final DeferredItem<BlockItem> PERSONNEL_TERMINAL = ITEMS.registerSimpleBlockItem(BitterBlocks.PERSONNEL_TERMINAL);
     public static final DeferredItem<BlockItem> KEYCARD_PRINTER = ITEMS.registerSimpleBlockItem(BitterBlocks.KEYCARD_PRINTER);
     public static final DeferredItem<BlockItem> WINDOWED_SLIDING_DOOR = ITEMS.registerSimpleBlockItem(BitterBlocks.WINDOWED_SLIDING_DOOR);
@@ -100,7 +101,8 @@ public class BitterItems {
             new StandingAndWallBlockItem(BitterBlocks.LIGHT_GRAY_TELEVISION.get(), BitterBlocks.LIGHT_GRAY_WALL_TELEVISION.get(), Direction.DOWN,
             new Item.Properties().setId(ResourceKey.create(Registries.ITEM, registryName))));
     public static final DeferredItem<BlockItem> PLASTIC_FLAMINGO = ITEMS.registerSimpleBlockItem(BitterBlocks.PLASTIC_FLAMINGO);
-    public static final DeferredItem<BlockItem> SCP_330 = ITEMS.registerSimpleBlockItem(BitterBlocks.SCP_330);
+    public static final DeferredItem<BlockItem> SCP_330 = ITEMS.registerSimpleBlockItem(BitterBlocks.SCP_330, new Item.Properties()
+                    .stacksTo(1).component(DataComponents.LORE, new ItemLore(List.of(Component.literal("Take Only Two").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Safe").withStyle(ChatFormatting.GREEN)))));
 
     public static final DeferredItem<FluidContainerItem> BEER_BOTTLE = ITEMS.register("beer_bottle", registryName ->
             new GlassFluidContainerItem(new Item.Properties()
@@ -114,6 +116,7 @@ public class BitterItems {
 
     public static final DeferredItem<SCP109Item> SCP_109 = ITEMS.register("scp_109", registryName ->
             new SCP109Item(new Item.Properties()
+                    .stacksTo(1)
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
                     .component(VOLUME, 0.0f)
                     .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("Infinite Canteen").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Euclid").withStyle(ChatFormatting.GOLD)))
@@ -128,12 +131,17 @@ public class BitterItems {
 
     public static final DeferredItem<Item> SCP_018 = ITEMS.register("scp_018", registryName ->
             new Item(new Item.Properties()
+                    .stacksTo(1)
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
                     .component(ENERGY_LOSS_ON_BOUNCE, 1.5f)
-                    .component(MAX_BOUNCES, 10000)));
+                    .component(MAX_BOUNCES, 10000)
+                    .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("Super Ball").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Euclid").withStyle(ChatFormatting.GOLD)))
+                    )));
+
 
     public static final DeferredItem<Item> SCP_005 = ITEMS.register("scp_005", registryName ->
             new SCP005Item(new Item.Properties()
+                    .stacksTo(1)
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
                     .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("The Skeleton Key").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Safe").withStyle(ChatFormatting.GREEN))
                     ))));
@@ -216,8 +224,10 @@ public class BitterItems {
             new Item.Properties().stacksTo(1));
     public static final DeferredItem<Item> HELLO_KITTY_CELLPHONE = ITEMS.registerSimpleItem("hello_kitty_cellphone");
 
-    public static final DeferredItem<Item> SCP_2398 = ITEMS.registerSimpleItem("scp_2398",
-            new Item.Properties().stacksTo(1));
+    public static final DeferredItem<Item> SCP_2398 = ITEMS.registerSimpleItem("scp_2398", new Item.Properties()
+                    .stacksTo(1)
+                    .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("Home Run Bat").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Safe").withStyle(ChatFormatting.GREEN)))
+                    ));
     public static final DeferredItem<Item> BASEBALL = ITEMS.registerSimpleItem("baseball");
 
     public static final DeferredItem<TestHeatedItem> CIGARETTE_BUTT = ITEMS.register("cigarette_butt", registryName ->
@@ -252,7 +262,11 @@ public class BitterItems {
                                     new MobEffectInstance(MobEffects.HUNGER, 600, 0), 0.8f))
                             .build())));
 
-    public static final DeferredItem<SCP377Item> SCP_377 = ITEMS.registerItem("scp_377", SCP377Item::new);
+    public static final DeferredItem<SCP377Item> SCP_377 = ITEMS.registerItem("scp_377",
+            properties -> new SCP377Item(
+                    properties.stacksTo(1)
+                            .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("Accurate Fortune Cookies").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Safe").withStyle(ChatFormatting.GREEN)))
+            )));
 
     public static final DeferredItem<SCP3771Item> SCP_377_1 = ITEMS.registerItem("scp_377_1", SCP3771Item::new);
 
