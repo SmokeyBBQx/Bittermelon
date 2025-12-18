@@ -62,6 +62,8 @@ public class Bittermelon {
     public Bittermelon(IEventBus modEventBus) {
         NeoForge.EVENT_BUS.register(this);
 
+        BitterEntities.register(modEventBus);
+
         ITEMS.register(modEventBus);
         DATA_COMPONENTS.register(modEventBus);
         SOUND_EVENTS.register(modEventBus);
@@ -70,7 +72,6 @@ public class Bittermelon {
         SUBSTANCES.register(modEventBus);
         MEMORY_MODULE_TYPES.register(modEventBus);
         SENSOR_TYPES.register(modEventBus);
-        BitterEntities.register(modEventBus);
         VERB_SETS.register(modEventBus);
         LOGICAL_OPERATORS.register(modEventBus);
         BLOCK_ENTITY_TYPES.register(modEventBus);
