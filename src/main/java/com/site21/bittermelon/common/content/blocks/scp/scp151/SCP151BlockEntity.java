@@ -45,6 +45,7 @@ public class SCP151BlockEntity extends BlockEntity {
 
         assert level != null;
         for (Player player : level.players()) {
+            if (player.isCreative() || player.isSpectator()) continue;
             if (searchArea.contains(player.getX(), player.getY(), player.getZ())) {
                 if (isPlayerLookingAtBlock(player) && !player.hasEffect(DROWNING)) {
                     player.addEffect(new MobEffectInstance(DROWNING, 24000, 0, true, false, false));
