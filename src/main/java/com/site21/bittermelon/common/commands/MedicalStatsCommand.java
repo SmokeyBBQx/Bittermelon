@@ -6,7 +6,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.medical.blood.BloodType;
-import com.site21.bittermelon.common.systems.medical.factory.Anatomy;
+import com.site21.bittermelon.common.systems.medical.factory.AnatomyType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -30,7 +30,7 @@ public class MedicalStatsCommand {
 
         if (targetCharacter == null) return 0;
 
-        targetCharacter.setMedicalStats(Anatomy.HUMAN.getFactory().build(BloodType.O_MINUS, targetCharacter));
+        targetCharacter.setMedicalStats(AnatomyType.HUMAN.getFactory().build(BloodType.O_MINUS, targetCharacter));
         characterManager.setDirty();
         context.getSource().sendSuccess(() ->
                 Component.literal(targetCharacter.getName() + "'s medical stats reset"), true);

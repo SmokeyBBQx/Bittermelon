@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.site21.bittermelon.common.systems.character.skills.Skill;
 import com.site21.bittermelon.common.systems.medical.blood.BloodType;
-import com.site21.bittermelon.common.systems.medical.factory.Anatomy;
+import com.site21.bittermelon.common.systems.medical.factory.AnatomyType;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
@@ -56,28 +56,28 @@ public class Character {
         this.willpower = willpower;
     }
 
-    /** Creates a new character with default anatomy (human) and random emote color. */
-    public Character(UUID entityUUID, String name, @NotNull Anatomy anatomy) {
+    /** Creates a new character with default anatomyType (human) and random emote color. */
+    public Character(UUID entityUUID, String name, @NotNull AnatomyType anatomyType) {
         this.uuid = UUID.randomUUID();
         this.entityUUID = entityUUID;
         this.name = name;
 
         emoteColor = (int) (Math.random() * 0xFFFFFF);
-        medicalStats = anatomy.getFactory().build(BloodType.O_MINUS, this);
+        medicalStats = anatomyType.getFactory().build(BloodType.O_MINUS, this);
         skills = new EnumMap<>(Skill.class);
         willpower = 6;
     }
 
     /** Creates a new character with default anatomy (human) and specified emote color as hex string (e.g. "FF5733"). */
     public Character(UUID entityUUID, String name, String description, String emoteColor) {
-        this(entityUUID, name, Anatomy.HUMAN);
+        this(entityUUID, name, AnatomyType.HUMAN);
         this.description = description;
         this.emoteColor = TextColor.parseColor("#" + emoteColor).getOrThrow().getValue();
     }
 
     /** Creates a new character with default anatomy (human) and specified emote color as integer. */
     public Character(UUID entityUUID, String name, String description, int emoteColor) {
-        this(entityUUID, name, Anatomy.HUMAN);
+        this(entityUUID, name, AnatomyType.HUMAN);
         this.description = description;
         this.emoteColor = emoteColor;
     }
@@ -136,7 +136,7 @@ public class Character {
      */
     public MedicalStats getMedicalStats() {
         if (medicalStats == null) {
-            return Anatomy.HUMAN.getFactory().build(BloodType.O_MINUS, this);
+            return AnatomyType.HUMAN.getFactory().build(BloodType.O_MINUS, this);
         }
         return medicalStats;
     }
@@ -147,7 +147,7 @@ public class Character {
      */
     public void update(Level level) {
         if (medicalStats != null) {
-            medicalStats.update(level);
+            medicalStats.tick(level);
         } else {
             System.out.println("Medical stats null for " + name);
         }

@@ -4,12 +4,16 @@ import com.mojang.serialization.Codec;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.items.base.ItemSize;
 import com.site21.bittermelon.common.content.items.scps.scp377.Fortune;
-import com.site21.bittermelon.common.systems.component.*;
 import com.site21.bittermelon.common.content.items.substance.pill.PillShape;
+import com.site21.bittermelon.common.systems.component.Smokable;
+import com.site21.bittermelon.common.systems.component.SubstanceContents;
+import com.site21.bittermelon.common.systems.component.WireCutter;
 import com.site21.bittermelon.common.systems.component.screwdriver.Screwdriver;
 import com.site21.bittermelon.common.systems.component.temperature.HeatBehavior;
 import com.site21.bittermelon.common.systems.medical.blood.BloodData;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentData;
+import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentType;
@@ -20,6 +24,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -224,5 +229,19 @@ public class BitterDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<HeatBehavior>> HEAT_BEHAVIOR = DATA_COMPONENTS.registerComponentType(
             "heat_behavior",
             builder -> builder.persistent(HeatBehavior.CODEC)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<EnumMap<MedicalAttribute, Float>>> MEDICAL_ATTRIBUTES = DATA_COMPONENTS.registerComponentType(
+            "medical_attributes",
+            builder -> builder.persistent(
+                    Codec.unboundedMap(MedicalAttribute.CODEC, Codec.FLOAT).xmap(
+                            EnumMap::new,
+                            map -> map
+                    ))
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<LayerData>>> LAYERS = DATA_COMPONENTS.registerComponentType(
+            "layers",
+            builder -> builder.persistent(Codec.list(LayerData.CODEC))
     );
 }

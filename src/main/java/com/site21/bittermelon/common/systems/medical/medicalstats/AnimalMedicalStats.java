@@ -44,23 +44,17 @@ public class AnimalMedicalStats extends MedicalStats {
 
     @Override
     public Codec<AnimalMedicalStats> codec() {
-        return MedicalStats.CODEC.xmap(
-                stats -> (AnimalMedicalStats) stats,
-                stats -> stats
-        );
+        return
     }
 
     @Override
     public StreamCodec<RegistryFriendlyByteBuf, AnimalMedicalStats> streamCodec() {
-        return MedicalStats.STREAM_CODEC.map(
-                stats -> (AnimalMedicalStats) stats,
-                stats -> stats
-        );
+        return
     }
 
     @Override
-    public void update(@NotNull Level level) {
-        super.update(level);
+    public void tick(@NotNull Level level) {
+        super.tick(level);
 
         if (entity == null) {
             return;

@@ -7,14 +7,14 @@ import com.site21.bittermelon.common.systems.ai.base.BitterMob;
 import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
 import com.site21.bittermelon.common.systems.ai.behavior.attack.CollectivePush;
-import com.site21.bittermelon.common.systems.ai.behavior.blockinteraction.InvalidateBreakTarget;
-import com.site21.bittermelon.common.systems.ai.behavior.herd.VerifyOrFindLeader;
 import com.site21.bittermelon.common.systems.ai.behavior.blockinteraction.FindBlockingBlock;
-import com.site21.bittermelon.common.systems.ai.behavior.blockinteraction.LeapAndHurtBlock;
 import com.site21.bittermelon.common.systems.ai.behavior.blockinteraction.FindRandomBreakTarget;
+import com.site21.bittermelon.common.systems.ai.behavior.blockinteraction.InvalidateBreakTarget;
+import com.site21.bittermelon.common.systems.ai.behavior.blockinteraction.LeapAndHurtBlock;
+import com.site21.bittermelon.common.systems.ai.behavior.herd.VerifyOrFindLeader;
 import com.site21.bittermelon.common.systems.ai.behavior.target.InvalidateAttackTarget;
 import com.site21.bittermelon.common.systems.character.Character;
-import com.site21.bittermelon.common.systems.medical.factory.Anatomy;
+import com.site21.bittermelon.common.systems.medical.factory.AnatomyType;
 import com.site21.bittermelon.init.neoforge.BitterActivity;
 import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
 import com.site21.bittermelon.init.neoforge.BitterParticles;
@@ -70,7 +70,7 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
 
     @Override
     protected Character initializeCharacter() {
-        return new Character(uuid, "SCP-1507-" + getRandom().nextInt(1, 24), Anatomy.HUMAN);
+        return new Character(uuid, "SCP-1507-" + getRandom().nextInt(1, 24), AnatomyType.HUMAN);
     }
 
     @Override

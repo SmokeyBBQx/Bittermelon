@@ -7,12 +7,12 @@ import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-public enum Anatomy implements StringRepresentable {
+public enum AnatomyType implements StringRepresentable {
     HUMAN(new HumanFactoryNew());
 
     private final AnatomyFactory factory;
 
-    Anatomy(AnatomyFactory factory) {
+    AnatomyType(AnatomyFactory factory) {
         this.factory = factory;
     }
 
@@ -26,10 +26,10 @@ public enum Anatomy implements StringRepresentable {
         return name().toLowerCase();
     }
 
-    public static final EnumCodec<Anatomy> CODEC = StringRepresentable.fromEnum(Anatomy::values);
+    public static final EnumCodec<AnatomyType> CODEC = StringRepresentable.fromEnum(AnatomyType::values);
 
-    public static final StreamCodec<ByteBuf, Anatomy> STREAM_CODEC = ByteBufCodecs.idMapper(
-            i -> Anatomy.values()[i],
-            Anatomy::ordinal
+    public static final StreamCodec<ByteBuf, AnatomyType> STREAM_CODEC = ByteBufCodecs.idMapper(
+            i -> AnatomyType.values()[i],
+            AnatomyType::ordinal
     );
 }

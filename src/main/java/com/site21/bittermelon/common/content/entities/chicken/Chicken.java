@@ -1,28 +1,28 @@
 package com.site21.bittermelon.common.content.entities.chicken;
 
-import com.site21.bittermelon.common.systems.character.Character;
-import com.site21.bittermelon.common.systems.combat.AttackTemplate;
+import com.site21.bittermelon.common.content.entities.chicken.behavior.PluckAtRandomItem;
+import com.site21.bittermelon.common.systems.ai.base.BitterMob;
+import com.site21.bittermelon.common.systems.ai.base.Need;
+import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
 import com.site21.bittermelon.common.systems.ai.behavior.attack.Attack;
 import com.site21.bittermelon.common.systems.ai.behavior.attack.LeapAtTarget;
 import com.site21.bittermelon.common.systems.ai.behavior.basicneeds.Drink;
 import com.site21.bittermelon.common.systems.ai.behavior.basicneeds.EatFood;
 import com.site21.bittermelon.common.systems.ai.behavior.basicneeds.HasBasicNeeds;
 import com.site21.bittermelon.common.systems.ai.behavior.basicneeds.Preen;
-import com.site21.bittermelon.common.systems.ai.behavior.misc.Defecate;
-import com.site21.bittermelon.common.systems.ai.behavior.misc.FeelsPain;
 import com.site21.bittermelon.common.systems.ai.behavior.mentalbreak.MurderousRage;
 import com.site21.bittermelon.common.systems.ai.behavior.mentalbreak.WarnHighStress;
+import com.site21.bittermelon.common.systems.ai.behavior.misc.Defecate;
+import com.site21.bittermelon.common.systems.ai.behavior.misc.FeelsPain;
 import com.site21.bittermelon.common.systems.ai.behavior.social.Relationship;
 import com.site21.bittermelon.common.systems.ai.behavior.social.Socializable;
 import com.site21.bittermelon.common.systems.ai.behavior.social.interactions.GenericInteraction;
 import com.site21.bittermelon.common.systems.ai.behavior.target.InvalidateAttackTarget;
 import com.site21.bittermelon.common.systems.ai.sensors.NearbyDrinkableFluidsSensor;
 import com.site21.bittermelon.common.systems.ai.sensors.NearbyFoodSensor;
-import com.site21.bittermelon.common.systems.ai.base.BitterMob;
-import com.site21.bittermelon.common.systems.ai.base.Need;
-import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
-import com.site21.bittermelon.common.content.entities.chicken.behavior.PluckAtRandomItem;
-import com.site21.bittermelon.common.systems.medical.factory.Anatomy;
+import com.site21.bittermelon.common.systems.character.Character;
+import com.site21.bittermelon.common.systems.combat.AttackTemplate;
+import com.site21.bittermelon.common.systems.medical.factory.AnatomyType;
 import com.site21.bittermelon.init.neoforge.BitterActivity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
@@ -83,7 +83,7 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
     @Override
     protected Character initializeCharacter() {
         // TODO: Procgen descriptions
-        return new Character(this.uuid, "Chicken", Anatomy.HUMAN);
+        return new Character(this.uuid, "Chicken", AnatomyType.HUMAN);
     }
 
     @Override

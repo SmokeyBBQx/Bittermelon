@@ -1,11 +1,17 @@
 package com.site21.bittermelon.common.systems.medical.compartment;
 
+import com.mojang.serialization.Codec;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -15,8 +21,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_REGISTRY;
+import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_REGISTRY_KEY;
 
 public class Compartment {
+    public static final Codec<Holder<Compartment>> CODEC = COMPARTMENT_REGISTRY.holderByNameCodec();
+    public static final StreamCodec<RegistryFriendlyByteBuf, Holder<Compartment>> STREAM_CODEC = ByteBufCodecs.holderRegistry(COMPARTMENT_REGISTRY_KEY);
     protected final String id;
     protected final Properties properties;
 
@@ -26,18 +35,11 @@ public class Compartment {
     }
 
     public CompartmentInstance toInstance() {
-        VisualData visualData = properties.visualData;
-
         return new CompartmentInstance(
                 this,
                 UUID.randomUUID(),
-                List.of(properties.layers),
-                properties.defaultHealth,
-                properties.defaultHealth,
-                properties.defaultAttributes,
-                properties.defaultTags,
                 id,
-                new VisualData(visualData.x, visualData.y, visualData.width, visualData.height, visualData.scale, visualData.icon)
+                new PatchedDataComponentMap(components())
         );
     }
 
@@ -57,6 +59,10 @@ public class Compartment {
 
     public Holder<Compartment> builtInRegistryHolder() {
         return COMPARTMENT_REGISTRY.get(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, id)).orElseThrow();
+    }
+
+    public DataComponentMap components() {
+        return DataComponentMap.EMPTY;
     }
 
     public LayerData[] getLayers() {

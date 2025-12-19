@@ -4,7 +4,7 @@ import com.site21.bittermelon.common.systems.ai.base.BitterMob;
 import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
 import com.site21.bittermelon.common.systems.character.Character;
-import com.site21.bittermelon.common.systems.medical.factory.Anatomy;
+import com.site21.bittermelon.common.systems.medical.factory.AnatomyType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
@@ -38,7 +38,7 @@ public class SCP548 extends BitterMob<SCP548> {
 
     @Override
     protected Character initializeCharacter() {
-        return new Character(uuid, "SCP-548", Anatomy.HUMAN);
+        return new Character(uuid, "SCP-548", AnatomyType.HUMAN);
     }
 
     @Override
