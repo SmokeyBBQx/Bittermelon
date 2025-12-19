@@ -3,6 +3,7 @@ package com.site21.bittermelon.common.systems.medical.client;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
+import com.site21.bittermelon.common.systems.medical.compartment.CompartmentUtil;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
@@ -22,6 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.VISUAL_DATA;
 
 public class HealthScreen extends Screen {
     private final UUID characterId;
@@ -44,7 +47,7 @@ public class HealthScreen extends Screen {
     @Override
     protected void init() {
         CompartmentInstance mainCompartment = medicalStats.getMainCompartment();
-        LayerData layer = mainCompartment.getLayers().getFirst();
+        LayerData layer = CompartmentUtil.getTopLayer(mainCompartment);
         if (layer == null) return;
 
         compartmentWidgets.add(new CompartmentWidget(
@@ -60,7 +63,7 @@ public class HealthScreen extends Screen {
 
     public boolean addCompartmentSpace(@NotNull CompartmentInstance instance) {
         // Only open compartments that have layers
-        LayerData layer = instance.getLayers().getFirst();
+        LayerData layer = CompartmentUtil.getTopLayer(instance);
         if (layer == null) return false;
         if (compartmentWidgets.stream().anyMatch(widget -> widget.getCompartment().equals(instance))) return false;
 
@@ -103,11 +106,13 @@ public class HealthScreen extends Screen {
 
     private void renderHeldCompartment(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         if (heldCompartment == null) return;
+        if (heldCompartment.has(VISUAL_DATA)) return;
 
-        if (heldCompartment.getVisualData().getIcon() == null) {
+        VisualData visualData = heldCompartment.get(VISUAL_DATA);
+
+        if (visualData.getIcon() == null) {
             guiGraphics.renderFakeItem(heldCompartment.getItem().getDefaultInstance(), mouseX, mouseY);
         } else {
-            VisualData visualData = heldCompartment.getVisualData();
             float scaleFactor = visualData.scale;
             guiGraphics.pose().pushMatrix();
             guiGraphics.pose().translate(mouseX + visualData.x, mouseY + visualData.y);

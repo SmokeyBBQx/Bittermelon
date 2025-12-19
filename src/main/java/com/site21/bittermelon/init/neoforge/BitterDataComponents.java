@@ -13,7 +13,10 @@ import com.site21.bittermelon.common.systems.component.temperature.HeatBehavior;
 import com.site21.bittermelon.common.systems.medical.blood.BloodData;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentData;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
+import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
+import com.site21.bittermelon.common.systems.medical.drug.DrugInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentType;
@@ -243,5 +246,29 @@ public class BitterDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<LayerData>>> LAYERS = DATA_COMPONENTS.registerComponentType(
             "layers",
             builder -> builder.persistent(Codec.list(LayerData.CODEC))
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<Point>>> SHAPE = DATA_COMPONENTS.registerComponentType(
+            "shape",
+            builder -> builder.persistent(Codec.list(Point.CODEC))
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Point>> PIVOT = DATA_COMPONENTS.registerComponentType(
+            "pivot",
+            builder -> builder.persistent(Point.CODEC)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<VisualData>> VISUAL_DATA = DATA_COMPONENTS.registerComponentType(
+            "visual_data",
+            builder -> builder
+                    .persistent(VisualData.CODEC)
+                    .networkSynchronized(VisualData.STREAM_CODEC)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<DrugInstance>>> DRUGS = DATA_COMPONENTS.registerComponentType(
+            "drugs",
+            builder -> builder
+                    .persistent(Codec.list(DrugInstance.CODEC))
+                    .networkSynchronized(DrugInstance.STREAM_CODEC.apply(ByteBufCodecs.list()))
     );
 }

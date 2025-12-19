@@ -2,6 +2,7 @@ package com.site21.bittermelon.common.systems.medical.client;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
+import com.site21.bittermelon.common.systems.medical.compartment.CompartmentUtil;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerSlot;
@@ -22,6 +23,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.SHAPE;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.VISUAL_DATA;
 
 public class CompartmentWidget extends MovableResizableWidget {
     private static final ResourceLocation WINDOW_TEXTURE = Bittermelon.resource("textures/gui/healthscreen/surgery_window.png");
@@ -51,7 +55,7 @@ public class CompartmentWidget extends MovableResizableWidget {
         this.screen = screen;
         initializeButtons();
         buttons = new Button[]{closeWidgetButton, collapseWidgetButton, increaseLayerButton, decreaseLayerButton};
-        grid = compartment.getLayers().getFirst().getGrid();
+        grid = CompartmentUtil.getLayerGrid(compartment, 0);
         updatePositions();
     }
 
@@ -83,7 +87,7 @@ public class CompartmentWidget extends MovableResizableWidget {
 
     private void increaseLayer() {
         if (layerIndex == 0) {
-            layerIndex = compartment.getLayers().size() - 1;
+            layerIndex = CompartmentUtil.getLayers(compartment).size() - 1;
         } else {
             --layerIndex;
         }
@@ -92,7 +96,7 @@ public class CompartmentWidget extends MovableResizableWidget {
     }
 
     private void decreaseLayer() {
-        if (layerIndex >= compartment.getLayers().size() - 1) {
+        if (layerIndex >= CompartmentUtil.getLayers(compartment).size() - 1) {
             layerIndex = 0;
         } else {
             ++layerIndex;
@@ -159,7 +163,9 @@ public class CompartmentWidget extends MovableResizableWidget {
         CompartmentInstance heldCompartment = screen.getHeldCompartment();
         if (heldCompartment == null) return;
 
-        List<Point> shape = heldCompartment.getCompartment().getShape();
+        List<Point> shape = heldCompartment.getOrDefault(SHAPE, List.of());
+        if (shape.isEmpty()) return;
+
         Point hoveredSlot = getHoveredSlot(mouseX, mouseY);
         if (hoveredSlot == null) return;
 
@@ -182,7 +188,8 @@ public class CompartmentWidget extends MovableResizableWidget {
             UUID compartmentId = entry.getValue();
             CompartmentInstance instance = medicalStats.getCompartment(compartmentId);
 
-            VisualData visualData = instance.getVisualData();
+            if (!instance.has(VISUAL_DATA)) continue;
+            VisualData visualData = instance.get(VISUAL_DATA);
 
             int slotX = contentX + slotPos.x() * slotSize;
             int slotY = contentY + slotPos.y() * slotSize;
@@ -208,7 +215,7 @@ public class CompartmentWidget extends MovableResizableWidget {
         Point hoveredSlot = getHoveredSlot(mouseX, mouseY);
         if (hoveredSlot == null) return null;
 
-        return compartment.getLayer(layerIndex).getCompartmentAt(hoveredSlot.x(), hoveredSlot.y());
+        return getLayer().getCompartmentAt(hoveredSlot.x(), hoveredSlot.y());
     }
 
     public @Nullable Point getHoveredSlot(int mouseX, int mouseY) {
@@ -232,7 +239,7 @@ public class CompartmentWidget extends MovableResizableWidget {
     }
 
     public LayerData getLayer() {
-        return compartment.getLayer(layerIndex);
+        return CompartmentUtil.getLayer(compartment, layerIndex);
     }
 
     @Override

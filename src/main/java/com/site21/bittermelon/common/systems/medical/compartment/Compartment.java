@@ -8,6 +8,7 @@ import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -16,22 +17,27 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.neoforged.neoforge.common.CommonHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_REGISTRY;
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_REGISTRY_KEY;
 
 public class Compartment {
     public static final Codec<Holder<Compartment>> CODEC = COMPARTMENT_REGISTRY.holderByNameCodec();
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<Compartment>> STREAM_CODEC = ByteBufCodecs.holderRegistry(COMPARTMENT_REGISTRY_KEY);
-    protected final String id;
-    protected final Properties properties;
 
-    public Compartment(String id, Properties properties) {
+    private final String id;
+    private final Properties properties;
+    private final DataComponentMap components;
+
+    public Compartment(String id, @NotNull Properties properties) {
         this.id = id;
         this.properties = properties;
+        components = properties.components.build();
     }
 
     public CompartmentInstance toInstance() {
@@ -62,7 +68,7 @@ public class Compartment {
     }
 
     public DataComponentMap components() {
-        return DataComponentMap.EMPTY;
+        return components;
     }
 
     public LayerData[] getLayers() {
@@ -94,7 +100,7 @@ public class Compartment {
         Holder<Item> item = Items.AIR.builtInRegistryHolder();
         float defaultHealth = 0;
         VisualData visualData = VisualData.empty();
-        String modelPart = "";
+        private final DataComponentMap.Builder components = DataComponentMap.builder();
 
         public Properties defaultTags(EnumSet<CompartmentTag> defaultTags) {
             this.defaultTags = defaultTags;
@@ -122,17 +128,17 @@ public class Compartment {
         }
 
         public Properties layers(LayerData... layers) {
-            this.layers = layers;
+            components.set(LAYERS, List.of(layers));
             return this;
         }
 
         public Properties shape(List<Point> shape) {
-            this.shape = shape;
+            components.set(SHAPE, shape);
             return this;
         }
 
         public Properties pivot(Point pivot) {
-            this.pivot = pivot;
+            components.set(PIVOT, pivot);
             return this;
         }
 
@@ -151,8 +157,9 @@ public class Compartment {
             return this;
         }
 
-        public Properties modelPart(String modelPart) {
-            this.modelPart = modelPart;
+        public <T> Properties component(DataComponentType<T> component, T value) {
+            CommonHooks.validateComponent(component);
+            components.set(component, value);
             return this;
         }
     }

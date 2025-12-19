@@ -26,7 +26,7 @@ import java.util.UUID;
  * @param x X position within the target compartment
  * @param y Y position within the target compartment
  */
-public record InsertCompartment(UUID characterId, UUID targetId, UUID compartmentId, int layer, int x, int y) implements CustomPacketPayload {
+public record  InsertCompartment(UUID characterId, UUID targetId, UUID compartmentId, int layer, int x, int y) implements CustomPacketPayload {
     public static final Type<InsertCompartment> TYPE = new Type<>(Bittermelon.resource("insert_compartment"));
 
     @Override
