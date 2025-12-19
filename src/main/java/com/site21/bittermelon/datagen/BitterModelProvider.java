@@ -13,6 +13,7 @@ import com.site21.bittermelon.common.content.items.scps.SCP005Item;
 import com.site21.bittermelon.common.content.items.substance.pill.PillShape;
 import com.site21.bittermelon.datagen.property.*;
 import com.site21.bittermelon.init.neoforge.BitterBlocks;
+import com.site21.bittermelon.init.neoforge.BitterSpawnEggs;
 import net.minecraft.client.color.item.Dye;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
@@ -137,6 +138,13 @@ public class BitterModelProvider extends ModelProvider {
         generateSCP377(itemModels);
         itemModels.generateFlatItem(SCP_377_1.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(SCP_2398.get(), ModelTemplates.FLAT_ITEM);
+
+        // SCP Spawn Eggs
+        itemModels.generateFlatItem(BitterSpawnEggs.SCP_131_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(BitterSpawnEggs.SCP_548_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(BitterSpawnEggs.SCP_650_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(BitterSpawnEggs.SCP_939_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(BitterSpawnEggs.SCP_1507_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
 
         // Tools and Equipment
         itemModels.generateFlatItem(LASER_DESIGNATOR.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
