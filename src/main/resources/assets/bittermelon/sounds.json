@@ -8,7 +8,7 @@
   "container.toolbox_close": {
     "category": "neutral",
     "sounds": [
-        "bittermelon:container/toolbox_close"
+      "bittermelon:container/toolbox_close"
     ]
   },
   "entity.scp939.ghostly_exhale": {
@@ -385,6 +385,18 @@
     "category": "neutral",
     "sounds": [
       "bittermelon:container/toolbox_open"
+    ]
+  },
+  "item.scp_377_cookie_take": {
+    "category": "players",
+    "sounds": [
+      "minecraft:entity.item.pickup"
+    ]
+  },
+  "item.scp_377_empty": {
+    "category": "players",
+    "sounds": [
+      "minecraft:block.chest.close"
     ]
   }
 }
