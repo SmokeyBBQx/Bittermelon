@@ -201,6 +201,10 @@ public class CompartmentInstance {
         return layers.get(layer).tryToPlace(x, y, instance);
     }
 
+    public void removeCompartment(int layer, UUID instanceID) {
+        layers.get(layer).removeInstance(instanceID);
+    }
+
     public boolean canExtract(MedicalStats medicalStats) {
         return compartment.canExtract(this, medicalStats);
     }

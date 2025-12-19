@@ -2,11 +2,11 @@ package com.site21.bittermelon.common.systems.medical.client;
 
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.common.systems.medical.client.networking.OpenHealthScreenC2S;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.common.systems.medical.networking.OpenHealthScreenC2S;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -123,17 +123,17 @@ public class HealthScreen extends Screen {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         CompartmentInstance previouslyHeld = heldCompartment;
 
-        if (incisionWidget == null) {
-            for (CompartmentWidget widget : compartmentWidgets.reversed()) {
-                if (widget.mouseClicked(mouseX, mouseY, button)) {
-                    activeWidget = widget;
-                    if (widget.isWithinContentArea((int) mouseX, (int) mouseY)) {
-                        incisionWidget = new IncisionWidget((int) mouseX, (int) mouseY, activeWidget, this);
-                        return true;
-                    }
-                }
-            }
-        }
+//        if (incisionWidget == null) {
+//            for (CompartmentWidget widget : compartmentWidgets.reversed()) {
+//                if (widget.mouseClicked(mouseX, mouseY, button)) {
+//                    activeWidget = widget;
+//                    if (widget.isWithinContentArea((int) mouseX, (int) mouseY)) {
+//                        incisionWidget = new IncisionWidget((int) mouseX, (int) mouseY, activeWidget, this);
+//                        return true;
+//                    }
+//                }
+//            }
+//        }
 
         for (CompartmentWidget widget : compartmentWidgets.reversed()) {
             if (widget.mouseClicked(mouseX, mouseY, button)) {

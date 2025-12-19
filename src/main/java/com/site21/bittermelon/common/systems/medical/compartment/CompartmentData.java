@@ -17,6 +17,9 @@ import java.util.*;
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_REGISTRY;
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_REGISTRY_KEY;
 
+/**
+ * Immutable data representation of a compartment instance. Used for components.
+ */
 public record CompartmentData(
         Holder<Compartment> compartment,
         UUID uuid,

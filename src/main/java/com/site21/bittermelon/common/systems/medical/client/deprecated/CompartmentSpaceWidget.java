@@ -4,7 +4,7 @@
 //import com.site21.bittermelon.Bittermelon;
 //import com.site21.bittermelon.common.systems.medical.client.HealthScreen;
 //import com.site21.bittermelon.common.systems.medical.client.HeldItemData;
-//import com.site21.bittermelon.common.systems.medical.client.networking.MoveCompartment;
+//import com.site21.bittermelon.common.systems.medical.networking.MoveCompartment;
 //import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 //import com.site21.bittermelon.common.systems.medical.compartment.CompartmentTag;
 //import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;

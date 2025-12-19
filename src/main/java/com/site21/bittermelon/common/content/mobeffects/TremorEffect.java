@@ -1,7 +1,6 @@
 package com.site21.bittermelon.common.content.mobeffects;
 
 import com.site21.bittermelon.client.render.screenshake.StartScreenshake;
-import com.site21.bittermelon.common.systems.medical.client.networking.UpdateTremor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.InstantenousMobEffect;
@@ -23,7 +22,7 @@ public class TremorEffect extends InstantenousMobEffect {
 
         if (entity instanceof ServerPlayer player) {
             PacketDistributor.sendToPlayer(player, new StartScreenshake(duration, Math.min(0.8f, (float) amplifier / 10)));
-            PacketDistributor.sendToPlayer(player, new UpdateTremor(amplifier));
+//            PacketDistributor.sendToPlayer(player, new UpdateTremor(amplifier));
         }
 
         return true;

@@ -5,14 +5,10 @@ import com.site21.bittermelon.client.render.screenshake.StartScreenshake;
 import com.site21.bittermelon.common.content.blocks.electronics.containmentpanel.networking.ContainmentNameUpdate;
 import com.site21.bittermelon.common.content.blocks.electronics.containmentpanel.networking.OpenContainmentPanelScreen;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.networking.*;
-import com.site21.bittermelon.common.content.items.wire.networking.*;
-import com.site21.bittermelon.common.systems.atmosphere.networking.*;
-import com.site21.bittermelon.common.systems.character.networking.*;
-import com.site21.bittermelon.common.systems.medical.client.networking.*;
-import com.site21.bittermelon.common.systems.personnel.privilege.networking.*;
-import com.site21.bittermelon.common.systems.electronics.privilege.networking.OpenPrivilegeEditorScreen;
-import com.site21.bittermelon.common.systems.electronics.privilege.networking.RemovePrivilegeForBE;
-import com.site21.bittermelon.common.systems.electronics.privilege.networking.SetPrivilegeForBE;
+import com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.networking.PlaySlidingDoorStuckSound;
+import com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.networking.UpdateSlidingDoorProgress;
+import com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.networking.UpdateSlidingDoorState;
+import com.site21.bittermelon.common.content.blocks.electronics.personnelterminal.networking.OpenPersonnelScreen;
 import com.site21.bittermelon.common.content.blocks.powergrid.distributionboard.networking.OpenDistributionBoardScreen;
 import com.site21.bittermelon.common.content.blocks.powergrid.distributionboard.networking.ToggleBreaker;
 import com.site21.bittermelon.common.content.blocks.powergrid.distributionboard.networking.ToggleMainSwitch;
@@ -20,20 +16,27 @@ import com.site21.bittermelon.common.content.blocks.stickynote.networking.OpenSt
 import com.site21.bittermelon.common.content.blocks.stickynote.networking.UpdateStickyNote;
 import com.site21.bittermelon.common.content.blocks.wallwriting.networking.OpenWallWritingScreen;
 import com.site21.bittermelon.common.content.blocks.wallwriting.networking.UpdateWallWriting;
-import com.site21.bittermelon.common.content.items.scps.scp377.networking.OpenSCP3771Screen;
-import com.site21.bittermelon.common.content.items.wirecutters.networking.CutWire;
-import com.site21.bittermelon.common.content.items.wirecutters.networking.OpenWireCutterScreen;
-import com.site21.bittermelon.common.systems.personnel.registry.networking.AddPersonnelEntry;
-import com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.networking.PlaySlidingDoorStuckSound;
-import com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.networking.UpdateSlidingDoorProgress;
-import com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.networking.UpdateSlidingDoorState;
-import com.site21.bittermelon.common.systems.economy.bank.networking.OpenATMScreen;
-import com.site21.bittermelon.common.content.mobeffects.electrocuted.networking.CutOffChat;
 import com.site21.bittermelon.common.content.entities.scp650.networking.SetEntityPos;
+import com.site21.bittermelon.common.content.items.scps.scp377.networking.OpenSCP3771Screen;
 import com.site21.bittermelon.common.content.items.substance.networking.ReleasePressureUpdate;
 import com.site21.bittermelon.common.content.items.substance.networking.TransferRateUpdate;
+import com.site21.bittermelon.common.content.items.wire.networking.*;
+import com.site21.bittermelon.common.content.items.wirecutters.networking.CutWire;
+import com.site21.bittermelon.common.content.items.wirecutters.networking.OpenWireCutterScreen;
 import com.site21.bittermelon.common.content.items.writablepaper.networking.OpenPaperEditScreen;
-import com.site21.bittermelon.common.content.blocks.electronics.personnelterminal.networking.OpenPersonnelScreen;
+import com.site21.bittermelon.common.content.mobeffects.electrocuted.networking.CutOffChat;
+import com.site21.bittermelon.common.systems.atmosphere.networking.*;
+import com.site21.bittermelon.common.systems.character.networking.*;
+import com.site21.bittermelon.common.systems.economy.bank.networking.OpenATMScreen;
+import com.site21.bittermelon.common.systems.electronics.privilege.networking.OpenPrivilegeEditorScreen;
+import com.site21.bittermelon.common.systems.electronics.privilege.networking.RemovePrivilegeForBE;
+import com.site21.bittermelon.common.systems.electronics.privilege.networking.SetPrivilegeForBE;
+import com.site21.bittermelon.common.systems.medical.networking.InsertCompartment;
+import com.site21.bittermelon.common.systems.medical.networking.OpenHealthScreenC2S;
+import com.site21.bittermelon.common.systems.medical.networking.OpenHealthScreenS2C;
+import com.site21.bittermelon.common.systems.medical.networking.UpdateCompartments;
+import com.site21.bittermelon.common.systems.personnel.privilege.networking.*;
+import com.site21.bittermelon.common.systems.personnel.registry.networking.AddPersonnelEntry;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.RemovePersonnelEntry;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.SyncPersonnelRegistry;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.UpdatePersonnelEntry;
@@ -254,30 +257,6 @@ public class PayloadRegistration {
         );
 
         registrar.playToServer(
-                CompleteMinigame.TYPE,
-                CompleteMinigame.STREAM_CODEC,
-                CompleteMinigame::handle
-        );
-
-        registrar.playToServer(
-                ExtractCompartment.TYPE,
-                ExtractCompartment.STREAM_CODEC,
-                ExtractCompartment::handle
-        );
-
-        registrar.playToClient(
-                UpdateHealthScreen.TYPE,
-                UpdateHealthScreen.STREAM_CODEC,
-                UpdateHealthScreen::handle
-        );
-
-        registrar.playToClient(
-                UpdateTremor.TYPE,
-                UpdateTremor.STREAM_CODEC,
-                UpdateTremor::handle
-        );
-
-        registrar.playToServer(
                 RemoveWiringData.TYPE,
                 RemoveWiringData.STREAM_CODEC,
                 RemoveWiringData::handle
@@ -311,12 +290,6 @@ public class PayloadRegistration {
                 OpenPaperEditScreen.TYPE,
                 OpenPaperEditScreen.STREAM_CODEC,
                 OpenPaperEditScreen::handle
-        );
-
-        registrar.playToServer(
-                MoveCompartment.TYPE,
-                MoveCompartment.STREAM_CODEC,
-                MoveCompartment::handle
         );
 
         registrar.playToClient(
@@ -523,16 +496,10 @@ public class PayloadRegistration {
                 OpenWallWritingScreen::handle
         );
 
-        registrar.playToClient(
+        registrar.playBidirectional(
                 UpdateCompartments.TYPE,
                 UpdateCompartments.STREAM_CODEC,
                 UpdateCompartments::handle
-        );
-
-        registrar.playToClient(
-                UpdateCompartmentPosition.TYPE,
-                UpdateCompartmentPosition.STREAM_CODEC,
-                UpdateCompartmentPosition::handle
         );
 
         registrar.playToClient(
@@ -569,6 +536,12 @@ public class PayloadRegistration {
                 OpenWireCutterScreen.TYPE,
                 OpenWireCutterScreen.STREAM_CODEC,
                 OpenWireCutterScreen::handle
+        );
+
+        registrar.playBidirectional(
+                InsertCompartment.TYPE,
+                InsertCompartment.STREAM_CODEC,
+                InsertCompartment::handle
         );
     }
 }

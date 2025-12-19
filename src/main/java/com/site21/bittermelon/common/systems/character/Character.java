@@ -217,6 +217,7 @@ public class Character {
     }
 
     static {
+        // TODO: Codec does not recreate animal medical stats but instead recreates normal medical stats
         CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 UUIDUtil.CODEC.fieldOf("uuid").forGetter(Character::getId),
                 UUIDUtil.CODEC.fieldOf("entityUUID").forGetter(Character::getEntityUUID),

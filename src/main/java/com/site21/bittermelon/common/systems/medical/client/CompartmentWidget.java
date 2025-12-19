@@ -7,6 +7,7 @@ import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerSlot;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.common.systems.medical.networking.InsertCompartment;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -14,6 +15,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -260,11 +262,14 @@ public class CompartmentWidget extends MovableResizableWidget {
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
-    public boolean tryToPlace(int x, int y, @NotNull CompartmentInstance compartment) {
+    public boolean tryToPlace(int x, int y, @NotNull CompartmentInstance placingCompartment) {
         Point hoveredSlot = getHoveredSlot(x, y);
         if (hoveredSlot == null) return false;
 
-        return getLayer().tryToPlace(hoveredSlot.x(), hoveredSlot.y(), compartment);
+        ClientPacketDistributor.sendToServer(new InsertCompartment(screen.getCharacter().getId(),
+                compartment.getId(), placingCompartment.getId(), layerIndex, hoveredSlot.x(), hoveredSlot.y()));
+//        return getLayer().tryToPlace(hoveredSlot.x(), hoveredSlot.y(), placingCompartment);
+        return true;
     }
 
     public boolean isWithinContentArea(int mouseX, int mouseY) {

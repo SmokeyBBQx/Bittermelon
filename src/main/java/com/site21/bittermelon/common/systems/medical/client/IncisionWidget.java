@@ -1,7 +1,9 @@
 package com.site21.bittermelon.common.systems.medical.client;
 
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
+import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
+import com.site21.bittermelon.common.systems.medical.networking.UpdateCompartments;
 import com.site21.bittermelon.init.custom.Compartments;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.client.Minecraft;
@@ -12,6 +14,7 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.ARGB;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -43,7 +46,7 @@ public class IncisionWidget extends AbstractWidget {
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (button == 0 && (dragX > 0 || dragY > 0 || dragX <= -1 || dragY <= -1)) {
+        if (button == 0) {
             Point newPoint = new Point((int) mouseX, (int) mouseY);
             if (isPointFarEnough(newPoint)) {
                 drawnPoints.add(newPoint);
@@ -63,7 +66,7 @@ public class IncisionWidget extends AbstractWidget {
         double distance = Math.sqrt(Math.pow(newPoint.x() - lastPoint.x(), 2) + Math.pow(newPoint.y() - lastPoint.y(), 2)
         );
 
-        return distance >= 1.0;
+        return distance >= 2.0;
     }
 
     @Override
@@ -79,6 +82,7 @@ public class IncisionWidget extends AbstractWidget {
     private void finishIncision() {
         List<Point> touchedSlots = new ArrayList<>();
         Map<Point, List<Point>> relatedPoints = new HashMap<>();
+        List<CompartmentInstance> cuts = new ArrayList<>();
 
         for (Point point : drawnPoints) {
             Point slot = compartment.getHoveredSlot(point.x(), point.y());
@@ -92,12 +96,21 @@ public class IncisionWidget extends AbstractWidget {
 
         for (Point point : touchedSlots) {
             CompartmentInstance cut = Compartments.CUT.get().toInstance();
+
             float accuracy = calculateAccuracyFromDistance(relatedPoints.get(point));
             int color = ARGB.setBrightness(0xFFFF0000, accuracy);
+
             cut.getVisualData().color(color);
+            cut.setAttribute(MedicalAttribute.BLEED, 1.0f - accuracy);
+
             healthScreen.getMedicalStats().addCompartment(cut);
             compartment.getLayer().tryToPlace(point.x(), point.y(), cut);
+
+            cuts.add(cut);
         }
+
+        cuts.add(compartment.getCompartment());
+        ClientPacketDistributor.sendToServer(new UpdateCompartments(healthScreen.getCharacter().getId(), cuts));
     }
 
     private float calculateAccuracy(@NotNull List<Point> points) {

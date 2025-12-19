@@ -23,6 +23,8 @@ import com.site21.bittermelon.common.content.items.taser.TaserProjectileRenderer
 import com.site21.bittermelon.common.systems.component.screwdriver.ScrewdriverUseAnimation;
 import com.site21.bittermelon.common.systems.component.temperature.HeatDecorator;
 import com.site21.bittermelon.common.systems.fluid.ClientSubstanceFluid;
+import com.site21.bittermelon.common.systems.medical.networking.InsertCompartment;
+import com.site21.bittermelon.common.systems.medical.networking.UpdateCompartments;
 import com.site21.bittermelon.common.systems.personnel.privilege.networking.*;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.AddPersonnelEntry;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.PersonnelClientPayloadHandler;
@@ -214,6 +216,16 @@ public class ClientSetup {
         event.register(
                 UpdatePersonnelEntry.TYPE,
                 PersonnelClientPayloadHandler::updatePersonnelEntry
+        );
+
+        event.register(
+                UpdateCompartments.TYPE,
+                UpdateCompartments::handle
+        );
+
+        event.register(
+                InsertCompartment.TYPE,
+                InsertCompartment::handle
         );
     }
 

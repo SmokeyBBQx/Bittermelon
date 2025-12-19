@@ -1,5 +1,6 @@
 package com.site21.bittermelon.common.systems.medical.medicalstats;
 
+import com.mojang.serialization.Codec;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosHandler;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosInstance;
 import com.site21.bittermelon.common.systems.medical.blood.BloodInstance;
@@ -7,16 +8,23 @@ import com.site21.bittermelon.common.systems.medical.blood.BloodType;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentTag;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerSlot;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static com.site21.bittermelon.init.custom.Substances.OXYGEN;
-import static com.site21.bittermelon.init.neoforge.BitterMobEffects.*;
+import static com.site21.bittermelon.init.neoforge.BitterMobEffects.ASPHYXIATION;
+import static com.site21.bittermelon.init.neoforge.BitterMobEffects.PAIN;
 
 public class AnimalMedicalStats extends MedicalStats {
     private BloodType bloodType = BloodType.A_PLUS;
@@ -35,6 +43,22 @@ public class AnimalMedicalStats extends MedicalStats {
     }
 
     @Override
+    public Codec<AnimalMedicalStats> codec() {
+        return MedicalStats.CODEC.xmap(
+                stats -> (AnimalMedicalStats) stats,
+                stats -> stats
+        );
+    }
+
+    @Override
+    public StreamCodec<RegistryFriendlyByteBuf, AnimalMedicalStats> streamCodec() {
+        return MedicalStats.STREAM_CODEC.map(
+                stats -> (AnimalMedicalStats) stats,
+                stats -> stats
+        );
+    }
+
+    @Override
     public void update(@NotNull Level level) {
         super.update(level);
 
@@ -43,6 +67,7 @@ public class AnimalMedicalStats extends MedicalStats {
         }
 
         updateCardiopulmonary();
+        simulateBleed(level);
     }
 
     private void updateCardiopulmonary() {
@@ -97,6 +122,36 @@ public class AnimalMedicalStats extends MedicalStats {
 
         // TODO: Split drugs
         return BloodInstance.of(volume, bloodType, getActiveDrugs());
+    }
+
+    public void simulateBleed(@NotNull Level level) {
+        if (level.getGameTime() % 20 != 0) return;
+
+        for (CompartmentInstance instance : compartments.values()) {
+            for (LayerData layer : instance.getLayers()) {
+                LayerSlot[][] grid = layer.getGrid();
+                int height = grid.length;
+                if (height == 0) continue;
+                int width = grid[0].length;
+
+                for (Map.Entry<Point, UUID> entry : layer.getCompartments().entrySet()) {
+                    CompartmentInstance targetInstance = getCompartment(entry.getValue());
+                    if (targetInstance.getAttribute(MedicalAttribute.BLEED) <= 0) continue;
+
+                    Point point = entry.getKey();
+                    int x = point.x();
+                    int y = point.y();
+
+                    grid[y][x].updateBloodLevel(0.1f);
+
+                    // Spread to adjacent horizontal slots
+                    if (x > 0) grid[y][x - 1].updateBloodLevel(0.05f);
+                    if (x < width - 1) grid[y][x + 1].updateBloodLevel(0.05f);
+                    if (y > 0) grid[y - 1][x].updateBloodLevel(0.05f);
+                    if (y < height - 1) grid[y + 1][x].updateBloodLevel(0.05f);
+                }
+            }
+        }
     }
 
     public void modifyOxygenSaturation(float delta) {

@@ -67,6 +67,10 @@ public class LayerSlot {
         this.bloodLevel = bloodLevel;
     }
 
+    public void updateBloodLevel(float delta) {
+        bloodLevel = Math.max(0f, Math.min(1f, bloodLevel + delta));
+    }
+
     public boolean isOccupied() {
         return getPivot() != null;
     }

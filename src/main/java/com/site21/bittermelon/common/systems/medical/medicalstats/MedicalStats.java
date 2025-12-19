@@ -5,7 +5,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.character.skills.Skill;
-import com.site21.bittermelon.common.systems.medical.client.networking.UpdateHealthScreen;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
 import com.site21.bittermelon.common.systems.medical.drug.DrugInstance;
@@ -18,9 +17,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.*;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -29,7 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.*;
 
 public class MedicalStats {
-    public static final Codec<MedicalStats> CODEC = RecordCodecBuilder.create(
+    protected static final Codec<MedicalStats> CODEC = RecordCodecBuilder.create(
             instance -> instance.group(
                     Codec.INT.fieldOf("version").orElse(1).forGetter(MedicalStats::getVersion),
                     Codec.list(CompartmentInstance.CODEC).fieldOf("compartments").forGetter(
@@ -42,7 +43,7 @@ public class MedicalStats {
             ).apply(instance, MedicalStats::new)
     );
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, MedicalStats> STREAM_CODEC = StreamCodec.composite(
+    protected static final StreamCodec<RegistryFriendlyByteBuf, MedicalStats> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.INT,
             MedicalStats::getVersion,
             CompartmentInstance.STREAM_CODEC.apply(
@@ -95,6 +96,14 @@ public class MedicalStats {
         this(version, compartments, mainCompartmentID, characterID, new EnumMap<>(MedicalAttribute.class), new ArrayList<>());
     }
 
+    public Codec<? extends MedicalStats> codec() {
+        return CODEC;
+    }
+
+    public StreamCodec<RegistryFriendlyByteBuf, ? extends MedicalStats> streamCodec() {
+        return STREAM_CODEC;
+    }
+
     @SuppressWarnings("unchecked")
     private void initializeEntity(Level level) {
         if (character == null) {
@@ -115,7 +124,7 @@ public class MedicalStats {
     }
 
     public void update(@NotNull Level level) {
-        if (level.isClientSide) return;
+//        if (level.isClientSide) return;
 
         if (entity == null || defaultEntityAttributes.isEmpty()) {
             initializeEntity(level);
@@ -207,6 +216,9 @@ public class MedicalStats {
 
         CompartmentInstance compartment = compartments.get(uuid);
 
+        // TODO: Desync between client and server causing compartments to be missing, why?
+        if (compartment == null) System.out.println("Compartment not found: " + uuid + " for compartments " + compartments.keySet());
+
         if (compartment == null) {
             compartments.remove(uuid);
         }
@@ -227,10 +239,6 @@ public class MedicalStats {
 
     public void addCompartment(CompartmentInstance compartment) {
         compartments.put(compartment.getId(), compartment);
-
-        if (entity != null) {
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new UpdateHealthScreen(characterID, this));
-        }
     }
 
     public void addRelation(CompartmentInstance child, CompartmentInstance parent) {

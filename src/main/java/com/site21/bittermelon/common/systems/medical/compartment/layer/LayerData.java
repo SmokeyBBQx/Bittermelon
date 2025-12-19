@@ -38,7 +38,7 @@ public class LayerData {
     }
 
     public LayerData(String string, Integer width, Integer height, @NotNull List<SlotData> slotData, Map<Point, UUID> compartments) {
-        this(string, width, height, new LayerSlot[height][width], compartments);
+        this(string, width, height, new LayerSlot[height][width], new HashMap<>(compartments));
         for (SlotData sd : slotData) {
             grid[sd.y()][sd.x()] = sd.slot();
         }
@@ -124,8 +124,12 @@ public class LayerData {
      * @return true if the compartment was successfully placed; false otherwise
      */
     public boolean tryToPlace(int x, int y, @NotNull CompartmentInstance compartment) {
+        System.out.println("Trying to place compartment " + compartment.getId() + " at (" + x + ", " + y + ")");
+
         List<Point> shape = compartment.getCompartment().getShape();
         if (!canFit(x, y, shape)) return false;
+
+        System.out.println("Placing compartment " + compartment.getId() + " at (" + x + ", " + y + ")");
 
         Point pivotBase = compartment.getCompartment().getPivot();
         Point pivot = new Point(x + pivotBase.x(), y + pivotBase.y());
@@ -145,6 +149,8 @@ public class LayerData {
      * @param instanceId the UUID of the compartment instance to remove
      */
     public void removeInstance(@NotNull UUID instanceId) {
+        if (!compartments.containsValue(instanceId)) return;
+
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 if (grid[y][x] == null) continue;

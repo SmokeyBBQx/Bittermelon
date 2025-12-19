@@ -1,4 +1,4 @@
-package com.site21.bittermelon.common.systems.medical.client.networking;
+package com.site21.bittermelon.common.systems.medical.networking;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.client.gui.ScreenHandler;
