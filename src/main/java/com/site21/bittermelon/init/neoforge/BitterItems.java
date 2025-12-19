@@ -54,6 +54,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
@@ -128,6 +129,43 @@ public class BitterItems {
                     .component(SMOKABLE, Smokable.DEFAULT)
                     .equippable(EquipmentSlot.HEAD)
                     .component(VOLUME, 20.0f)));
+
+
+    //SPAWN EGGS
+    public static final DeferredItem<Item> SCP_650_SPAWN_EGG = ITEMS.register("scp_650_spawn_egg", registryName ->
+            new Item(new Item.Properties()
+                    .stacksTo(1)
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("Startling Statue").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Euclid").withStyle(ChatFormatting.GOLD)))
+                    )));
+
+    public static final DeferredItem<Item> SCP_131_SPAWN_EGG = ITEMS.register("scp_131_spawn_egg", registryName ->
+            new Item(new Item.Properties()
+                    .stacksTo(1)
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("The Eye Pods").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Euclid").withStyle(ChatFormatting.GOLD)))
+                    )));
+
+    public static final DeferredItem<Item> SCP_548_SPAWN_EGG = ITEMS.register("scp_548_spawn_egg", registryName ->
+            new Item(new Item.Properties()
+                    .stacksTo(1)
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("The Never Ending Pizza Box").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Safe").withStyle(ChatFormatting.GREEN)))
+                    )));
+
+    public static final DeferredItem<Item>  SCP_939_SPAWN_EGG = ITEMS.register("scp_939_spawn_egg", registryName ->
+            new Item(new Item.Properties()
+                    .stacksTo(1)
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("With Many Voices").withStyle(ChatFormatting.GRAY), Component.literal("Keter").withStyle(ChatFormatting.RED)))
+                    )));
+
+    public static final DeferredItem<Item>  SCP_1507_SPAWN_EGG = ITEMS.register("scp_1507_spawn_egg", registryName ->
+            new Item(new Item.Properties()
+                    .stacksTo(1)
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("Pink Flamingos").withStyle(ChatFormatting.GRAY), Component.literal("Euclid").withStyle(ChatFormatting.GOLD)))
+                    )));
 
     public static final DeferredItem<Item> SCP_018 = ITEMS.register("scp_018", registryName ->
             new Item(new Item.Properties()

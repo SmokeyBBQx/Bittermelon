@@ -9,11 +9,10 @@ import com.site21.bittermelon.common.content.blocks.electronics.redstonedevice.R
 import com.site21.bittermelon.common.content.blocks.properties.Placement;
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlock;
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
-import com.site21.bittermelon.common.content.items.scps.SCP005Item;
 import com.site21.bittermelon.common.content.items.substance.pill.PillShape;
 import com.site21.bittermelon.datagen.property.*;
 import com.site21.bittermelon.init.neoforge.BitterBlocks;
-import com.site21.bittermelon.init.neoforge.BitterSpawnEggs;
+import com.site21.bittermelon.init.neoforge.BitterItems;
 import net.minecraft.client.color.item.Dye;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
@@ -140,11 +139,11 @@ public class BitterModelProvider extends ModelProvider {
         itemModels.generateFlatItem(SCP_2398.get(), ModelTemplates.FLAT_ITEM);
 
         // SCP Spawn Eggs
-        itemModels.generateFlatItem(BitterSpawnEggs.SCP_131_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(BitterSpawnEggs.SCP_548_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(BitterSpawnEggs.SCP_650_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(BitterSpawnEggs.SCP_939_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(BitterSpawnEggs.SCP_1507_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(BitterItems.SCP_131_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(BitterItems.SCP_548_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(BitterItems.SCP_650_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(BitterItems.SCP_939_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(BitterItems.SCP_1507_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
 
         // Tools and Equipment
         itemModels.generateFlatItem(LASER_DESIGNATOR.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
