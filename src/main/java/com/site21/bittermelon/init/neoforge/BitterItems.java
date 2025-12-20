@@ -139,9 +139,7 @@ public class BitterItems {
                     new Item.Properties()
                             .stacksTo(1)
                             .setId(ResourceKey.create(Registries.ITEM, registryName))
-                            .component(DataComponents.LORE, new ItemLore(List.of(
-                                    Component.literal("Startling Statue").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY),
-                                    Component.literal("Euclid").withStyle(ChatFormatting.GOLD)
+                            .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("Startling Statue").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Euclid").withStyle(ChatFormatting.GOLD)
                             )))
             ));
 
@@ -151,7 +149,7 @@ public class BitterItems {
                     new Item.Properties()
                             .stacksTo(1)
                             .setId(ResourceKey.create(Registries.ITEM, registryName))
-                            .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("The Eye Pods").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Euclid").withStyle(ChatFormatting.GOLD)))
+                            .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("The Eye Pods").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Safe").withStyle(ChatFormatting.GREEN)))
                             )));
 
     public static final DeferredItem<Item> SCP_548_SPAWN_EGG = ITEMS.register("scp_548_spawn_egg", registryName ->
@@ -160,7 +158,7 @@ public class BitterItems {
                     new Item.Properties()
                             .stacksTo(1)
                             .setId(ResourceKey.create(Registries.ITEM, registryName))
-                            .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("Ice Spider").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Safe").withStyle(ChatFormatting.GREEN)))
+                            .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("Ice Spider").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Euclid").withStyle(ChatFormatting.GOLD)))
             )));
 
     public static final DeferredItem<Item>  SCP_939_SPAWN_EGG = ITEMS.register("scp_939_spawn_egg", registryName ->
