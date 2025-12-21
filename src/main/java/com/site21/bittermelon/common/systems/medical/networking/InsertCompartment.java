@@ -4,6 +4,8 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
+import com.site21.bittermelon.common.systems.medical.compartment.CompartmentUtil;
+import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -20,13 +22,13 @@ import java.util.UUID;
  * <strong>Bidirectional Packet</strong> <br>
  * Insert a compartment into another compartment at a specified layer and position.
  * @param characterId UUID of the character
- * @param targetId UUID of the target compartment that will receive the inserted compartment
- * @param compartmentId UUID of the compartment to be inserted
+ * @param parentId UUID of the target compartment that will receive the inserted compartment
+ * @param childId UUID of the compartment to be inserted
  * @param layer Layer at which to insert the compartment
  * @param x X position within the target compartment
  * @param y Y position within the target compartment
  */
-public record  InsertCompartment(UUID characterId, UUID targetId, UUID compartmentId, int layer, int x, int y) implements CustomPacketPayload {
+public record  InsertCompartment(UUID characterId, UUID parentId, UUID childId, int layer, int x, int y) implements CustomPacketPayload {
     public static final Type<InsertCompartment> TYPE = new Type<>(Bittermelon.resource("insert_compartment"));
 
     @Override
@@ -38,9 +40,9 @@ public record  InsertCompartment(UUID characterId, UUID targetId, UUID compartme
             UUIDUtil.STREAM_CODEC,
             InsertCompartment::characterId,
             UUIDUtil.STREAM_CODEC,
-            InsertCompartment::targetId,
+            InsertCompartment::parentId,
             UUIDUtil.STREAM_CODEC,
-            InsertCompartment::compartmentId,
+            InsertCompartment::childId,
             ByteBufCodecs.INT,
             InsertCompartment::layer,
             ByteBufCodecs.INT,
@@ -54,19 +56,13 @@ public record  InsertCompartment(UUID characterId, UUID targetId, UUID compartme
         Level level = ctx.player().level();
         Character character = CharacterManager.get(level).getCharacter(characterId());
 
-        if (!ctx.flow().isServerbound()) System.out.println("InsertCompartment received on client for character " + characterId());
-
-        if (character == null) System.out.println("Character not found for InsertCompartment: " + characterId());
-
         if (character != null) {
-            CompartmentInstance target = character.getMedicalStats().getCompartment(targetId());
-            CompartmentInstance compartment = character.getMedicalStats().getCompartment(compartmentId());
-            if (target == null) System.out.println("Target compartment not found: " + targetId());
-            if (compartment == null) System.out.println("Compartment to insert not found: " + compartmentId());
+            MedicalStats medicalStats = character.getMedicalStats();
+            CompartmentInstance parent = medicalStats.getCompartment(parentId());
+            CompartmentInstance child = medicalStats.getCompartment(childId());
 
-            if (target != null && compartment != null) {
-                target.removeCompartment(layer(), compartment);
-                target.tryToInsert(layer(), x(), y(), compartment);
+            if (parent != null && child != null) {
+                CompartmentUtil.insertCompartment(parent, child, layer(), x(), y());
             }
         }
 

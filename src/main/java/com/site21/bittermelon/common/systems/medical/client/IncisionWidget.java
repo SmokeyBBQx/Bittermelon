@@ -1,7 +1,9 @@
 package com.site21.bittermelon.common.systems.medical.client;
 
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
+import com.site21.bittermelon.common.systems.medical.compartment.CompartmentUtil;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
+import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
 import com.site21.bittermelon.common.systems.medical.networking.UpdateCompartments;
 import com.site21.bittermelon.init.custom.Compartments;
@@ -21,6 +23,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.VISUAL_DATA;
 
 public class IncisionWidget extends AbstractWidget {
     private static final long SOUND_DELAY = 2780;
@@ -100,8 +104,8 @@ public class IncisionWidget extends AbstractWidget {
             float accuracy = calculateAccuracyFromDistance(relatedPoints.get(point));
             int color = ARGB.setBrightness(0xFFFF0000, accuracy);
 
-            cut.getVisualData().color(color);
-            cut.setAttribute(MedicalAttribute.BLEED, 1.0f - accuracy);
+            cut.getOrDefault(VISUAL_DATA, VisualData.empty()).color(color);
+            CompartmentUtil.setAttribute(cut, MedicalAttribute.BLEED, 1.0f - accuracy);
 
             healthScreen.getMedicalStats().addCompartment(cut);
             compartment.getLayer().tryToPlace(point.x(), point.y(), cut);
