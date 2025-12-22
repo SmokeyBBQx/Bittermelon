@@ -13,6 +13,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.PIVOT;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.SHAPE;
+
 public class LayerData {
     public static final Codec<LayerData> CODEC;
     public static final StreamCodec<ByteBuf, LayerData> STREAM_CODEC;
@@ -124,10 +127,10 @@ public class LayerData {
      * @return true if the compartment was successfully placed; false otherwise
      */
     public boolean tryToPlace(int x, int y, @NotNull CompartmentInstance compartment) {
-        List<Point> shape = compartment.getCompartment().getShape();
+        List<Point> shape = compartment.getOrDefault(SHAPE, List.of());
         if (!canFit(x, y, shape)) return false;
 
-        Point pivotBase = compartment.getCompartment().getPivot();
+        Point pivotBase = compartment.getOrDefault(PIVOT, new Point(0, 0));
         Point pivot = new Point(x + pivotBase.x(), y + pivotBase.y());
         compartments.put(pivot, compartment.getId());
 
@@ -195,6 +198,18 @@ public class LayerData {
             }
         }
         return slots.stream();
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(grid) + compartments.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof LayerData other &&
+                Arrays.deepEquals(this.grid, other.grid) &&
+                this.compartments.equals(other.compartments);
     }
 
     public record SlotData(int x, int y, LayerSlot slot) {

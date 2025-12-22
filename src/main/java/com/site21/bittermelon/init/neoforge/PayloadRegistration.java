@@ -409,7 +409,7 @@ public class PayloadRegistration {
                 AddEffect::handle
         );
 
-        registrar.playToServer(
+        registrar.playBidirectional(
                 UpdateCharacter.TYPE,
                 UpdateCharacter.STREAM_CODEC,
                 UpdateCharacter::handle
@@ -563,6 +563,12 @@ public class PayloadRegistration {
                 ExtractCompartment.TYPE,
                 ExtractCompartment.STREAM_CODEC,
                 ExtractCompartment::handle
+        );
+
+        registrar.playToServer(
+                CreateCharacter.TYPE,
+                CreateCharacter.STREAM_CODEC,
+                CreateCharacter::handle
         );
     }
 }

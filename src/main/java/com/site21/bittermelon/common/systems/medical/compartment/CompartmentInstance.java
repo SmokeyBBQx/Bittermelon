@@ -9,7 +9,6 @@ import net.minecraft.core.component.*;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.common.MutableDataComponentHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,10 +53,6 @@ public class CompartmentInstance implements DataComponentHolder, MutableDataComp
 
     public String getName() {
         return name;
-    }
-
-    public Item getItem() {
-        return compartment.getItem();
     }
 
     public boolean tryToInsert(CompartmentInstance instance, int layerIndex, int x, int y) {

@@ -110,9 +110,7 @@ public class HealthScreen extends Screen {
 
         VisualData visualData = heldCompartment.get(VISUAL_DATA);
 
-        if (visualData.icon() == null) {
-            guiGraphics.renderFakeItem(heldCompartment.getItem().getDefaultInstance(), mouseX, mouseY);
-        } else {
+        if (visualData.icon() != null) {
             float scaleFactor = visualData.scale();
             guiGraphics.pose().pushMatrix();
             guiGraphics.pose().translate(mouseX + visualData.x(), mouseY + visualData.y());

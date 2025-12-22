@@ -18,7 +18,10 @@ import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.common.CommonHooks;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.UUID;
 
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_REGISTRY;
@@ -29,12 +32,10 @@ public class Compartment {
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<Compartment>> STREAM_CODEC = ByteBufCodecs.holderRegistry(COMPARTMENT_REGISTRY_KEY);
 
     private final String id;
-    private final Properties properties;
     private final DataComponentMap components;
 
     public Compartment(String id, @NotNull Properties properties) {
         this.id = id;
-        this.properties = properties;
         components = properties.components.build();
     }
 
@@ -69,35 +70,10 @@ public class Compartment {
         return components;
     }
 
-    public LayerData[] getLayers() {
-        return properties.layers;
-    }
-
-    public EnumSet<CompartmentTag> getDefaultTags() {
-        return properties.defaultTags;
-    }
-
-    public Item getItem() {
-        return properties.item.value();
-    }
-
-    public List<Point> getShape() {
-        return properties.shape;
-    }
-
-    public Point getPivot() {
-        return properties.pivot;
-    }
-
     public static class Properties {
         EnumSet<CompartmentTag> defaultTags = EnumSet.noneOf(CompartmentTag.class);
-        EnumMap<MedicalAttribute, Float> defaultAttributes = new EnumMap<>(MedicalAttribute.class);
-        LayerData[] layers = new LayerData[]{};
-        List<Point> shape = new ArrayList<>();
-        Point pivot = new Point(0, 0);
         Holder<Item> item = Items.AIR.builtInRegistryHolder();
         float defaultHealth = 0;
-        VisualData visualData = VisualData.empty();
         private final DataComponentMap.Builder components = DataComponentMap.builder();
 
         public Properties defaultTags(EnumSet<CompartmentTag> defaultTags) {
@@ -111,17 +87,18 @@ public class Compartment {
         }
 
         public Properties defaultAttributes(EnumMap<MedicalAttribute, Float> defaultAttributes) {
-            this.defaultAttributes = defaultAttributes;
+            components.set(MEDICAL_ATTRIBUTES, defaultAttributes);
             return this;
         }
 
         public Properties addAttribute(MedicalAttribute attribute, float value) {
-            this.defaultAttributes.put(attribute, value);
+            // TODO: Add to components
             return this;
         }
 
         public Properties addAttribute(MedicalAttribute attribute) {
-            this.defaultAttributes.put(attribute, 1.0f);
+//            this.defaultAttributes.put(attribute, 1.0f);
+            // TODO: Add to components
             return this;
         }
 

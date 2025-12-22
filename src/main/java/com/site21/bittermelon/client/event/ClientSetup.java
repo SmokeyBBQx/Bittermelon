@@ -20,6 +20,7 @@ import com.site21.bittermelon.common.content.entities.scp650.client.SCP650Render
 import com.site21.bittermelon.common.content.entities.scp939.client.SCP939Renderer;
 import com.site21.bittermelon.common.content.items.keycard.KeycardDecorator;
 import com.site21.bittermelon.common.content.items.taser.TaserProjectileRenderer;
+import com.site21.bittermelon.common.systems.character.networking.UpdateCharacter;
 import com.site21.bittermelon.common.systems.component.screwdriver.ScrewdriverUseAnimation;
 import com.site21.bittermelon.common.systems.component.temperature.HeatDecorator;
 import com.site21.bittermelon.common.systems.fluid.ClientSubstanceFluid;
@@ -236,8 +237,13 @@ public class ClientSetup {
         );
 
         event.register(
-                ExtractCompartment.TYPE
-                , ExtractCompartment::handle
+                ExtractCompartment.TYPE,
+                ExtractCompartment::handle
+        );
+
+        event.register(
+                UpdateCharacter.TYPE,
+                UpdateCharacter::handle
         );
     }
 

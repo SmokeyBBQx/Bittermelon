@@ -136,7 +136,7 @@ public class Character {
      */
     public MedicalStats getMedicalStats() {
         if (medicalStats == null) {
-            return AnatomyType.HUMAN.getFactory().build(BloodType.O_MINUS, this);
+            medicalStats = AnatomyType.HUMAN.getFactory().build(BloodType.O_MINUS, this);
         }
         return medicalStats;
     }
