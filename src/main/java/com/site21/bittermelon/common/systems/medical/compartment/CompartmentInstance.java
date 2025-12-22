@@ -11,7 +11,6 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.common.MutableDataComponentHolder;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,13 +60,8 @@ public class CompartmentInstance implements DataComponentHolder, MutableDataComp
         return compartment.getItem();
     }
 
-    public CompartmentData toData() {
-        return CompartmentData.fromInstance(this);
-    }
-
-    @Contract("_ -> new")
-    public static @NotNull CompartmentInstance fromData(@NotNull CompartmentData data) {
-        return data.toInstance();
+    public boolean tryToInsert(CompartmentInstance instance, int layerIndex, int x, int y) {
+        return CompartmentUtil.insertCompartment(this, instance, layerIndex, x, y);
     }
 
     @Override
@@ -100,8 +94,9 @@ public class CompartmentInstance implements DataComponentHolder, MutableDataComp
                 Compartment.CODEC.fieldOf("compartment").forGetter(CompartmentInstance::getCompartmentHolder),
                 UUIDUtil.CODEC.fieldOf("id").forGetter(CompartmentInstance::getId),
                 Codec.STRING.fieldOf("name").forGetter(CompartmentInstance::getName),
-                DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(ci -> ci.components.asPatch()
-        ).apply(instance, CompartmentInstance::new)));
+                DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY)
+                        .forGetter(ci -> ci.components.asPatch())
+        ).apply(instance, CompartmentInstance::new));
 
         STREAM_CODEC = StreamCodec.composite(
                 Compartment.STREAM_CODEC,

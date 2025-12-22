@@ -11,7 +11,6 @@ import com.site21.bittermelon.common.systems.component.WireCutter;
 import com.site21.bittermelon.common.systems.component.screwdriver.Screwdriver;
 import com.site21.bittermelon.common.systems.component.temperature.HeatBehavior;
 import com.site21.bittermelon.common.systems.medical.blood.BloodData;
-import com.site21.bittermelon.common.systems.medical.compartment.CompartmentData;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
@@ -138,11 +137,11 @@ public class BitterDataComponents {
             "ammo",
             builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
     );
-
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompartmentData>> COMPARTMENT = DATA_COMPONENTS.registerComponentType(
-            "compartment",
-            builder -> builder.persistent(CompartmentData.CODEC).networkSynchronized(CompartmentData.STREAM_CODEC)
-    );
+//
+//    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompartmentData>> COMPARTMENT = DATA_COMPONENTS.registerComponentType(
+//            "compartment",
+//            builder -> builder.persistent(CompartmentData.CODEC).networkSynchronized(CompartmentData.STREAM_CODEC)
+//    );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> ENERGY_LOSS_ON_BOUNCE = DATA_COMPONENTS.registerComponentType(
             "energy_loss_on_bounce",
@@ -245,17 +244,23 @@ public class BitterDataComponents {
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<LayerData>>> LAYERS = DATA_COMPONENTS.registerComponentType(
             "layers",
-            builder -> builder.persistent(Codec.list(LayerData.CODEC))
+            builder -> builder
+                    .persistent(LayerData.CODEC.listOf())
+                    .networkSynchronized(LayerData.STREAM_CODEC.apply(ByteBufCodecs.list()))
     );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<Point>>> SHAPE = DATA_COMPONENTS.registerComponentType(
             "shape",
-            builder -> builder.persistent(Codec.list(Point.CODEC))
+            builder -> builder
+                    .persistent(Point.CODEC.listOf())
+                    .networkSynchronized(Point.STREAM_CODEC.apply(ByteBufCodecs.list()))
     );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Point>> PIVOT = DATA_COMPONENTS.registerComponentType(
             "pivot",
-            builder -> builder.persistent(Point.CODEC)
+            builder -> builder
+                    .persistent(Point.CODEC)
+                    .networkSynchronized(Point.STREAM_CODEC)
     );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<VisualData>> VISUAL_DATA = DATA_COMPONENTS.registerComponentType(
@@ -268,7 +273,7 @@ public class BitterDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<DrugInstance>>> DRUGS = DATA_COMPONENTS.registerComponentType(
             "drugs",
             builder -> builder
-                    .persistent(Codec.list(DrugInstance.CODEC))
+                    .persistent(DrugInstance.CODEC.listOf())
                     .networkSynchronized(DrugInstance.STREAM_CODEC.apply(ByteBufCodecs.list()))
     );
 }

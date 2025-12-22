@@ -1,11 +1,14 @@
-package com.site21.bittermelon.common.systems.medical.client;
+package com.site21.bittermelon.common.systems.medical.client.interaction;
 
+import com.site21.bittermelon.common.systems.character.networking.SetCharactersChanged;
+import com.site21.bittermelon.common.systems.medical.client.CompartmentWidget;
+import com.site21.bittermelon.common.systems.medical.client.HealthScreen;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentUtil;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
-import com.site21.bittermelon.common.systems.medical.networking.UpdateCompartments;
+import com.site21.bittermelon.common.systems.medical.networking.AddAndInsertCompartment;
 import com.site21.bittermelon.init.custom.Compartments;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.client.Minecraft;
@@ -86,7 +89,6 @@ public class IncisionWidget extends AbstractWidget {
     private void finishIncision() {
         List<Point> touchedSlots = new ArrayList<>();
         Map<Point, List<Point>> relatedPoints = new HashMap<>();
-        List<CompartmentInstance> cuts = new ArrayList<>();
 
         for (Point point : drawnPoints) {
             Point slot = compartment.getHoveredSlot(point.x(), point.y());
@@ -104,17 +106,21 @@ public class IncisionWidget extends AbstractWidget {
             float accuracy = calculateAccuracyFromDistance(relatedPoints.get(point));
             int color = ARGB.setBrightness(0xFFFF0000, accuracy);
 
-            cut.getOrDefault(VISUAL_DATA, VisualData.empty()).color(color);
+            VisualData visualData = cut.getOrDefault(VISUAL_DATA, VisualData.empty()).withColor(color);
+            cut.set(VISUAL_DATA, visualData);
             CompartmentUtil.setAttribute(cut, MedicalAttribute.BLEED, 1.0f - accuracy);
 
-            healthScreen.getMedicalStats().addCompartment(cut);
-            compartment.getLayer().tryToPlace(point.x(), point.y(), cut);
-
-            cuts.add(cut);
+            ClientPacketDistributor.sendToServer(new AddAndInsertCompartment(
+                    healthScreen.getCharacter().getId(),
+                    compartment.getCompartment().getId(),
+                    cut,
+                    compartment.getLayerIndex(),
+                    point.x(),
+                    point.y()
+            ));
         }
 
-        cuts.add(compartment.getCompartment());
-        ClientPacketDistributor.sendToServer(new UpdateCompartments(healthScreen.getCharacter().getId(), cuts));
+        ClientPacketDistributor.sendToServer(new SetCharactersChanged());
     }
 
     private float calculateAccuracy(@NotNull List<Point> points) {

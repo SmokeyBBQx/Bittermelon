@@ -2,6 +2,7 @@ package com.site21.bittermelon.common.systems.medical.client;
 
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
+import com.site21.bittermelon.common.systems.medical.client.interaction.IncisionWidget;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentUtil;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
@@ -110,15 +111,15 @@ public class HealthScreen extends Screen {
 
         VisualData visualData = heldCompartment.get(VISUAL_DATA);
 
-        if (visualData.getIcon() == null) {
+        if (visualData.icon() == null) {
             guiGraphics.renderFakeItem(heldCompartment.getItem().getDefaultInstance(), mouseX, mouseY);
         } else {
-            float scaleFactor = visualData.scale;
+            float scaleFactor = visualData.scale();
             guiGraphics.pose().pushMatrix();
-            guiGraphics.pose().translate(mouseX + visualData.x, mouseY + visualData.y);
+            guiGraphics.pose().translate(mouseX + visualData.x(), mouseY + visualData.y());
             guiGraphics.pose().scale(scaleFactor, scaleFactor);
 
-            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, visualData.icon, 0, 0, 0,0, 20, 20, 20, 20);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, visualData.icon(), 0, 0, 0,0, 20, 20, 20, 20);
 
             guiGraphics.pose().popMatrix();
         }
@@ -128,17 +129,17 @@ public class HealthScreen extends Screen {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         CompartmentInstance previouslyHeld = heldCompartment;
 
-//        if (incisionWidget == null) {
-//            for (CompartmentWidget widget : compartmentWidgets.reversed()) {
-//                if (widget.mouseClicked(mouseX, mouseY, button)) {
-//                    activeWidget = widget;
-//                    if (widget.isWithinContentArea((int) mouseX, (int) mouseY)) {
-//                        incisionWidget = new IncisionWidget((int) mouseX, (int) mouseY, activeWidget, this);
-//                        return true;
-//                    }
-//                }
-//            }
-//        }
+        if (incisionWidget == null) {
+            for (CompartmentWidget widget : compartmentWidgets.reversed()) {
+                if (widget.mouseClicked(mouseX, mouseY, button)) {
+                    activeWidget = widget;
+                    if (widget.isWithinContentArea((int) mouseX, (int) mouseY)) {
+                        incisionWidget = new IncisionWidget((int) mouseX, (int) mouseY, activeWidget, this);
+                        return true;
+                    }
+                }
+            }
+        }
 
         for (CompartmentWidget widget : compartmentWidgets.reversed()) {
             if (widget.mouseClicked(mouseX, mouseY, button)) {
@@ -188,7 +189,8 @@ public class HealthScreen extends Screen {
     }
 
     public MedicalStats getMedicalStats() {
-        return medicalStats;
+        // TODO: Should this refresh on demand?
+        return getCharacter().getMedicalStats();
     }
 
     public CompartmentInstance getHeldCompartment() {
@@ -215,7 +217,6 @@ public class HealthScreen extends Screen {
         } else {
             ClientPacketDistributor.sendToServer(new OpenHealthScreenC2S(player.getUUID(), UUID.randomUUID()));
         }
-
     }
 
     @Override

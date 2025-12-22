@@ -108,9 +108,9 @@ public abstract class DamageGenerator {
             return inflictInjury(newCompartments, damage, medicalStats, entity);
         }
 
-        if (target.hasTag(CompartmentTag.MAJOR_BODY_PART)) {
+//        if (target.hasTag(CompartmentTag.MAJOR_BODY_PART)) {
 //            return inflictInjury(new ArrayList<>(target.getChildren()), damage, medicalStats, entity);
-        }
+//        }
 
         float injuryDamage = 1 + random.nextFloat() * damage;
 

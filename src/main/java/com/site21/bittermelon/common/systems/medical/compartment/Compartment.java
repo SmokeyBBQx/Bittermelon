@@ -5,7 +5,6 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
-import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
@@ -15,7 +14,6 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.common.CommonHooks;
 import org.jetbrains.annotations.NotNull;
@@ -57,11 +55,11 @@ public class Compartment {
         return true;
     }
 
-    public ItemStack createItemStack(@NotNull CompartmentInstance instance) {
-        ItemStack stack = properties.item.value().getDefaultInstance();
-        stack.set(BitterDataComponents.COMPARTMENT, instance.toData());
-        return stack;
-    }
+//    public ItemStack createItemStack(@NotNull CompartmentInstance instance) {
+//        ItemStack stack = properties.item.value().getDefaultInstance();
+//        stack.set(BitterDataComponents.COMPARTMENT, instance.toData());
+//        return stack;
+//    }
 
     public Holder<Compartment> builtInRegistryHolder() {
         return COMPARTMENT_REGISTRY.get(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, id)).orElseThrow();
@@ -153,7 +151,7 @@ public class Compartment {
         }
 
         public Properties visualData(VisualData visualData) {
-            this.visualData = visualData;
+            components.set(VISUAL_DATA, visualData);
             return this;
         }
 

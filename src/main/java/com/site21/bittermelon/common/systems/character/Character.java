@@ -145,7 +145,9 @@ public class Character {
      * Updates the character's medical stats. Should be called periodically, e.g. each server tick.
      * @param level The current game level.
      */
-    public void update(Level level) {
+    public void update(@NotNull Level level) {
+        if (level.isClientSide) return;
+
         if (medicalStats != null) {
             medicalStats.tick(level);
         } else {

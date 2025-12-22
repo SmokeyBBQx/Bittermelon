@@ -6,6 +6,7 @@ import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerSlot
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
@@ -148,14 +149,12 @@ public class CompartmentUtil {
      * @param newLayer New LayerData
      */
     public static void updateLayer(@NotNull CompartmentInstance compartment, int layerIndex, @NotNull LayerData newLayer) {
-        List<LayerData> layers = getLayers(compartment);
+        List<LayerData> layers = new ArrayList<>(getLayers(compartment));
         if (layerIndex > layers.size()) {
             Bittermelon.LOGGER.error("Failed to update layer {} in compartment {}: layer index out of bounds!",
                     layerIndex, compartment.getId());
             return;
         }
-
-        layers.set(layerIndex, newLayer);
         compartment.set(LAYERS, layers);
     }
 }

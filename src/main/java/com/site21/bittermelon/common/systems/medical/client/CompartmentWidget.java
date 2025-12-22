@@ -183,25 +183,26 @@ public class CompartmentWidget extends MovableResizableWidget {
         MedicalStats medicalStats = screen.getMedicalStats();
         UUID hoveredCompartmentId = getHoveredCompartment(mouseX, mouseY);
 
-        for (Map.Entry<Point, UUID> entry : getLayer().getCompartments().entrySet()) {
+        // TODO: Could this be smarter? Either by caching or making layer data immutable to prevent concurrent modification exceptions
+        for (Map.Entry<Point, UUID> entry : List.copyOf(getLayer().getCompartments().entrySet())) {
             Point slotPos = entry.getKey();
             UUID compartmentId = entry.getValue();
             CompartmentInstance instance = medicalStats.getCompartment(compartmentId);
 
-            if (!instance.has(VISUAL_DATA)) continue;
+            if (instance == null || !instance.has(VISUAL_DATA)) continue;
             VisualData visualData = instance.get(VISUAL_DATA);
 
             int slotX = contentX + slotPos.x() * slotSize;
             int slotY = contentY + slotPos.y() * slotSize;
-            int compartmentWidth = slotSize * visualData.getWidth();
-            int compartmentHeight = slotSize * visualData.getHeight();
-            int color = visualData.color;
+            int compartmentWidth = slotSize * visualData.width();
+            int compartmentHeight = slotSize * visualData.height();
+            int color = visualData.color();
 
             // TODO: Buggy
             float pulse = (float) (Math.sin(System.currentTimeMillis() / 500.0) * 0.4f + 0.95f);
             color = compartmentId.equals(hoveredCompartmentId) ? ARGB.color(pulse, color) : color;
 
-            ResourceLocation icon = visualData.getIcon();
+            ResourceLocation icon = visualData.icon();
             if (icon != null) {
                 guiGraphics.blit(RenderPipelines.GUI_TEXTURED, icon, slotX, slotY, 0, 0, compartmentWidth, compartmentHeight, compartmentWidth, compartmentHeight, color);
             }
@@ -240,6 +241,10 @@ public class CompartmentWidget extends MovableResizableWidget {
 
     public LayerData getLayer() {
         return CompartmentUtil.getLayer(compartment, layerIndex);
+    }
+
+    public int getLayerIndex() {
+        return layerIndex;
     }
 
     @Override

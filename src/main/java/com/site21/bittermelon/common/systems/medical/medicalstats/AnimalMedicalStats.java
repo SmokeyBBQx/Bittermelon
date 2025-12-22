@@ -2,17 +2,18 @@ package com.site21.bittermelon.common.systems.medical.medicalstats;
 
 import com.site21.bittermelon.common.systems.atmosphere.AtmosHandler;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosInstance;
-import com.site21.bittermelon.common.systems.medical.blood.BloodInstance;
+import com.site21.bittermelon.common.systems.medical.Anatomy;
 import com.site21.bittermelon.common.systems.medical.blood.BloodType;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
-import com.site21.bittermelon.common.systems.medical.compartment.CompartmentTag;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
-import net.minecraft.util.Mth;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static com.site21.bittermelon.init.custom.Substances.OXYGEN;
@@ -31,8 +32,8 @@ public class AnimalMedicalStats extends MedicalStats {
     private static final float HYPOXIA_DAMAGE = 0.01f;
     private static final float ASPHYXIATION_RATE = 0.05f;
 
-    public AnimalMedicalStats(int version, List<CompartmentInstance> compartments, UUID mainCompartmentID, UUID characterID) {
-        super(version, compartments, mainCompartmentID, characterID);
+    public AnimalMedicalStats(Holder<Anatomy> anatomy, int version, @NotNull List<CompartmentInstance> compartments, UUID mainCompartmentId, UUID characterId, Map<MedicalAttribute, MedicalAttributeInstance> attributes, PatchedDataComponentMap components) {
+        super(anatomy, version, compartments, mainCompartmentId, characterId, attributes, components);
     }
 
     @Override
@@ -43,22 +44,22 @@ public class AnimalMedicalStats extends MedicalStats {
             return;
         }
 
-        updateCardiopulmonary();
-        simulateBleed(level);
+//        updateCardiopulmonary();
+//        simulateBleed(level);
     }
 
-    private void updateCardiopulmonary() {
-        bloodVolume = Math.min(100, bloodVolume + getAttribute(MedicalAttribute.BLOOD_REGENERATION) * getCirculation());
-        oxygenSaturation = Mth.clamp(oxygenSaturation + getRespirationAmount(), 0, 100);
-
-        if (oxygenSaturation < HYPOXIA_THRESHOLD) {
-            for (CompartmentInstance instance : compartments.values()) {
-                if (instance.hasTag(CompartmentTag.BODY_PART)) {
-                    instance.setHealth(instance.getHealth() - HYPOXIA_DAMAGE);
-                }
-            }
-        }
-    }
+//    private void updateCardiopulmonary() {
+//        bloodVolume = Math.min(100, bloodVolume + getAttribute(MedicalAttribute.BLOOD_REGENERATION) * getCirculation());
+//        oxygenSaturation = Mth.clamp(oxygenSaturation + getRespirationAmount(), 0, 100);
+//
+//        if (oxygenSaturation < HYPOXIA_THRESHOLD) {
+//            for (CompartmentInstance instance : compartments.values()) {
+//                if (instance.hasTag(CompartmentTag.BODY_PART)) {
+//                    instance.setHealth(instance.getHealth() - HYPOXIA_DAMAGE);
+//                }
+//            }
+//        }
+//    }
 
     private float getRespirationAmount() {
         if (entity.getAirSupply() <= 0) return -ASPHYXIATION_RATE;
@@ -85,21 +86,21 @@ public class AnimalMedicalStats extends MedicalStats {
         }
     }
 
-    public void transfuseBlood(@NotNull BloodInstance instance) {
-        instance.data().drugs().forEach(this::addDrug);
-        modifyBloodVolume(instance.volume());
-        if (!bloodType.isBloodTypeCompatible(instance.data().bloodType())) {
-            float immuneResponse = getAttribute(MedicalAttribute.IMMUNITY) * getCirculation();
+//    public void transfuseBlood(@NotNull BloodInstance instance) {
+//        instance.data().drugs().forEach(this::addDrug);
+//        modifyBloodVolume(instance.volume());
+//        if (!bloodType.isBloodTypeCompatible(instance.data().bloodType())) {
+//            float immuneResponse = getAttribute(MedicalAttribute.IMMUNITY) * getCirculation();
+//
+//        }
+//    }
 
-        }
-    }
-
-    public BloodInstance drawBlood(float volume) {
-        modifyBloodVolume(-volume);
-
-        // TODO: Split drugs
-        return BloodInstance.of(volume, bloodType, getActiveDrugs());
-    }
+//    public BloodInstance drawBlood(float volume) {
+//        modifyBloodVolume(-volume);
+//
+//        // TODO: Split drugs
+//        return BloodInstance.of(volume, bloodType, getActiveDrugs());
+//    }
 //
 //    public void simulateBleed(@NotNull Level level) {
 //        if (level.getGameTime() % 20 != 0) return;

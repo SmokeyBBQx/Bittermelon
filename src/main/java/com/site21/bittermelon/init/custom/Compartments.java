@@ -181,7 +181,7 @@ public class Compartments {
                             ))
                     )
                     .visualData(VisualData.empty()
-                            .icon("anatomical_liver"))
+                            .withIcon("anatomical_liver"))
             )
     );
 
@@ -348,7 +348,7 @@ public class Compartments {
                     .item(BitterItems.STOMACH)
                     .addAttribute(MedicalAttribute.DIGESTION)
                     .visualData(VisualData.empty()
-                            .icon("anatomical_stomach"))
+                            .withIcon("anatomical_stomach"))
             )
     );
 
@@ -356,7 +356,7 @@ public class Compartments {
             () -> new Compartment("small_intestine", new Compartment.Properties()
                     .defaultHealth(40)
                     .visualData(VisualData.empty()
-                            .icon("anatomical_small_intestine"))
+                            .withIcon("anatomical_small_intestine"))
                     .addAttribute(MedicalAttribute.CIRCULATION)
                     .addAttribute(MedicalAttribute.MOVEMENT)
                     .addAttribute(MedicalAttribute.MANIPULATION)
@@ -369,7 +369,7 @@ public class Compartments {
                     .defaultHealth(40)
                     .item(BitterItems.COLON)
                     .visualData(VisualData.empty()
-                            .icon("anatomical_colon"))
+                            .withIcon("anatomical_colon"))
             )
     );
 
@@ -523,7 +523,7 @@ public class Compartments {
                             ))
                     )
                     .visualData(VisualData.empty()
-                            .icon("anatomical_liver"))
+                            .withIcon("anatomical_liver"))
             )
     );
 
@@ -548,9 +548,9 @@ public class Compartments {
                             new Point(1, 2)
                     ))
                     .visualData(VisualData.empty()
-                            .icon("anatomical_gallbladder")
-                            .width(3)
-                            .height(3))
+                            .withIcon("anatomical_gallbladder")
+                            .withHeight(3)
+                            .withWidth(3))
             )
     );
 
@@ -578,5 +578,5 @@ public class Compartments {
     public static final DeferredHolder<Compartment, Compartment> CUT = COMPARTMENTS.register("cut",
             () -> new Compartment("cut", new Compartment.Properties()
                     .shape(List.of(new Point(0, 0)))
-                    .visualData(VisualData.empty().icon("cut"))));
+                    .visualData(VisualData.empty().withIcon("cut"))));
 }

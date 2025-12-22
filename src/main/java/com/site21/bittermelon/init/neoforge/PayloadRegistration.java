@@ -31,10 +31,7 @@ import com.site21.bittermelon.common.systems.economy.bank.networking.OpenATMScre
 import com.site21.bittermelon.common.systems.electronics.privilege.networking.OpenPrivilegeEditorScreen;
 import com.site21.bittermelon.common.systems.electronics.privilege.networking.RemovePrivilegeForBE;
 import com.site21.bittermelon.common.systems.electronics.privilege.networking.SetPrivilegeForBE;
-import com.site21.bittermelon.common.systems.medical.networking.InsertCompartment;
-import com.site21.bittermelon.common.systems.medical.networking.OpenHealthScreenC2S;
-import com.site21.bittermelon.common.systems.medical.networking.OpenHealthScreenS2C;
-import com.site21.bittermelon.common.systems.medical.networking.UpdateCompartments;
+import com.site21.bittermelon.common.systems.medical.networking.*;
 import com.site21.bittermelon.common.systems.personnel.privilege.networking.*;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.AddPersonnelEntry;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.RemovePersonnelEntry;
@@ -230,6 +227,12 @@ public class PayloadRegistration {
                 OpenHealthScreenS2C.TYPE,
                 OpenHealthScreenS2C.STREAM_CODEC,
                 OpenHealthScreenS2C::handle
+        );
+
+        registrar.playToClient(
+                RefreshHealthScreen.TYPE,
+                RefreshHealthScreen.STREAM_CODEC,
+                RefreshHealthScreen::handle
         );
 
         registrar.playToClient(
@@ -542,6 +545,18 @@ public class PayloadRegistration {
                 InsertCompartment.TYPE,
                 InsertCompartment.STREAM_CODEC,
                 InsertCompartment::handle
+        );
+
+        registrar.playToServer(
+                SetCharactersChanged.TYPE,
+                SetCharactersChanged.STREAM_CODEC,
+                SetCharactersChanged::handle
+        );
+
+        registrar.playBidirectional(
+                AddAndInsertCompartment.TYPE,
+                AddAndInsertCompartment.STREAM_CODEC,
+                AddAndInsertCompartment::handle
         );
     }
 }

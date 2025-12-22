@@ -2,6 +2,7 @@ package com.site21.bittermelon.common.systems.medical.medicalstats;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.character.skills.Skill;
@@ -49,7 +50,9 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
     protected LivingEntity entity;
     protected Character character;
 
-    public MedicalStats(Holder<Anatomy> anatomy, Integer version, @NotNull List<CompartmentInstance> compartments, UUID mainCompartmentId, UUID characterId, Map<MedicalAttribute, MedicalAttributeInstance> attributes, PatchedDataComponentMap components) {
+    public MedicalStats(Holder<Anatomy> anatomy, int version, @NotNull List<CompartmentInstance> compartments,
+                        UUID mainCompartmentId, UUID characterId, Map<MedicalAttribute,
+                    MedicalAttributeInstance> attributes, PatchedDataComponentMap components) {
         this.anatomy = anatomy;
         this.version = version;
         this.mainCompartmentId = mainCompartmentId;
@@ -64,8 +67,11 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
         this.components = components;
     }
 
-    public MedicalStats(Holder<Anatomy> anatomy, Integer version, List<CompartmentInstance> compartments, UUID mainCompartmentId, UUID characterId, Map<MedicalAttribute, MedicalAttributeInstance> attributes, DataComponentPatch components) {
-        this(anatomy, version, compartments, mainCompartmentId, characterId, attributes, PatchedDataComponentMap.fromPatch(anatomy.value().components(), components));
+    public MedicalStats(Holder<Anatomy> anatomy, int version, List<CompartmentInstance> compartments,
+                        UUID mainCompartmentId, UUID characterId, Map<MedicalAttribute,
+                    MedicalAttributeInstance> attributes, DataComponentPatch components) {
+        this(anatomy, version, compartments, mainCompartmentId, characterId, attributes,
+                PatchedDataComponentMap.fromPatch(anatomy.value().components(), components));
     }
 
     @SuppressWarnings("unchecked")
@@ -174,16 +180,17 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
     }
 
     public CompartmentInstance getCompartment(UUID uuid) {
-        if (uuid == null) return null;
+        if (uuid == null) {
+            Bittermelon.LOGGER.error("Tried to get compartment with null UUID!");
+            return null;
+        }
 
         CompartmentInstance compartment = compartments.get(uuid);
 
         // TODO: Desync between client and server causing compartments to be missing, why?
-        if (compartment == null)
-            System.out.println("Compartment not found: " + uuid + " for compartments " + compartments.keySet());
-
         if (compartment == null) {
             compartments.remove(uuid);
+            Bittermelon.LOGGER.error("Compartment with UUID {} not found!", uuid);
         }
 
         return compartment;
@@ -324,8 +331,7 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
                         Anatomy.CODEC.fieldOf("anatomy").forGetter(MedicalStats::getAnatomy),
                         Codec.INT.fieldOf("version").orElse(1).forGetter(MedicalStats::getVersion),
                         Codec.list(CompartmentInstance.CODEC).fieldOf("compartments").forGetter(
-                                stats -> new ArrayList<>(stats.compartments.values())
-                        ),
+                                stats -> new ArrayList<>(stats.compartments.values())),
                         UUIDUtil.CODEC.fieldOf("mainCompartmentID").forGetter(MedicalStats::getMainCompartmentId),
                         UUIDUtil.CODEC.fieldOf("characterID").forGetter(MedicalStats::getCharacterId),
                         Codec.unboundedMap(MedicalAttribute.CODEC, MedicalAttributeInstance.CODEC).fieldOf("attributes").forGetter(MedicalStats::getAttributes),

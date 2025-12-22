@@ -1,6 +1,6 @@
 package com.site21.bittermelon.common.content.anatomies;
 
-import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.Codec;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.medical.Anatomy;
 import com.site21.bittermelon.common.systems.medical.blood.BloodType;
@@ -11,7 +11,7 @@ import net.minecraft.network.codec.StreamCodec;
 
 public class HumanAnatomy extends Anatomy {
     @Override
-    public MapCodec<? extends Anatomy> type() {
+    public Codec<? extends MedicalStats> type() {
         return MedicalStats.CODEC.xmap(
                 stats -> (AnimalMedicalStats) stats,
                 stats -> stats
@@ -19,7 +19,7 @@ public class HumanAnatomy extends Anatomy {
     }
 
     @Override
-    public StreamCodec<? super RegistryFriendlyByteBuf, ? extends Anatomy> streamCodec() {
+    public StreamCodec<? super RegistryFriendlyByteBuf, ? extends MedicalStats> streamCodec() {
         return MedicalStats.STREAM_CODEC.map(
                 stats -> (AnimalMedicalStats) stats,
                 stats -> stats

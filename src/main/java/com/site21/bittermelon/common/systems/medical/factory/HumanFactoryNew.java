@@ -6,10 +6,13 @@ import com.site21.bittermelon.common.systems.medical.compartment.Compartment;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.medicalstats.AnimalMedicalStats;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.init.custom.Anatomies;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.site21.bittermelon.init.custom.Compartments.DEBUG_COMPARTMENT;
@@ -30,7 +33,8 @@ public class HumanFactoryNew implements AnatomyFactory {
 //        buildAbdomen();
 //        addCompartment(SCALPEL, wholeBody, 0).getVisualData().x(50).y(60);
 
-        return new AnimalMedicalStats(version, compartments, wholeBody.getId(), character.getId());
+        return new AnimalMedicalStats(Anatomies.HUMAN_ANATOMY, version, compartments, wholeBody.getId(),
+                character.getId(), new HashMap<>(), new PatchedDataComponentMap(PatchedDataComponentMap.EMPTY));
     }
 
     private void buildHead() {
@@ -73,7 +77,7 @@ public class HumanFactoryNew implements AnatomyFactory {
     private CompartmentInstance addCompartment(@NotNull DeferredHolder<Compartment, Compartment> holder, @NotNull CompartmentInstance parent, int x, int y, int layer) {
         CompartmentInstance instance = holder.get().toInstance();
         compartments.add(instance);
-        parent.tryToInsert(layer, x, y, instance);
+        parent.tryToInsert(instance, layer, x, y);
         return instance;
     }
 }

@@ -37,8 +37,9 @@ public class LayerData {
         }
     }
 
-    public LayerData(String string, Integer width, Integer height, @NotNull List<SlotData> slotData, Map<Point, UUID> compartments) {
-        this(string, width, height, new LayerSlot[height][width], new HashMap<>(compartments));
+    public LayerData(String name, int width, int height, @NotNull List<SlotData> slotData, Map<Point, UUID> compartments) {
+        this(name, width, height, new LayerSlot[height][width], new HashMap<>(compartments));
+        System.out.println("Reconstructing LayerData '" + name + "' with " + slotData.size() + " slots.");
         for (SlotData sd : slotData) {
             grid[sd.y()][sd.x()] = sd.slot();
         }
@@ -120,16 +121,11 @@ public class LayerData {
      * @param x the x-coordinate to place the compartment at
      * @param y the y-coordinate to place the compartment at
      * @param compartment the compartment instance to place
-     * @param shape the shape defining which slots the compartment occupies
      * @return true if the compartment was successfully placed; false otherwise
      */
     public boolean tryToPlace(int x, int y, @NotNull CompartmentInstance compartment) {
-        System.out.println("Trying to place compartment " + compartment.getId() + " at (" + x + ", " + y + ")");
-
         List<Point> shape = compartment.getCompartment().getShape();
         if (!canFit(x, y, shape)) return false;
-
-        System.out.println("Placing compartment " + compartment.getId() + " at (" + x + ", " + y + ")");
 
         Point pivotBase = compartment.getCompartment().getPivot();
         Point pivot = new Point(x + pivotBase.x(), y + pivotBase.y());
