@@ -24,6 +24,7 @@ import com.site21.bittermelon.common.systems.component.screwdriver.ScrewdriverUs
 import com.site21.bittermelon.common.systems.component.temperature.HeatDecorator;
 import com.site21.bittermelon.common.systems.fluid.ClientSubstanceFluid;
 import com.site21.bittermelon.common.systems.medical.networking.AddAndInsertCompartment;
+import com.site21.bittermelon.common.systems.medical.networking.ExtractCompartment;
 import com.site21.bittermelon.common.systems.medical.networking.InsertCompartment;
 import com.site21.bittermelon.common.systems.medical.networking.UpdateCompartments;
 import com.site21.bittermelon.common.systems.personnel.privilege.networking.*;
@@ -232,6 +233,11 @@ public class ClientSetup {
         event.register(
                 AddAndInsertCompartment.TYPE,
                 AddAndInsertCompartment::handle
+        );
+
+        event.register(
+                ExtractCompartment.TYPE
+                , ExtractCompartment::handle
         );
     }
 

@@ -68,7 +68,7 @@ public record AddAndInsertCompartment(UUID characterId, UUID parentId, Compartme
         }
 
         if (ctx.flow().isServerbound()) {
-            PacketDistributor.sendToAllPlayers(new AddAndInsertCompartment(characterId(), parentId(), compartment(), layer(), x(), y()));
+            PacketDistributor.sendToAllPlayers(this);
         }
     }
 }

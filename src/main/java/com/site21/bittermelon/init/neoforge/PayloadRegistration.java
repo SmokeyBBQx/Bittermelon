@@ -558,5 +558,11 @@ public class PayloadRegistration {
                 AddAndInsertCompartment.STREAM_CODEC,
                 AddAndInsertCompartment::handle
         );
+
+        registrar.playBidirectional(
+                ExtractCompartment.TYPE,
+                ExtractCompartment.STREAM_CODEC,
+                ExtractCompartment::handle
+        );
     }
 }

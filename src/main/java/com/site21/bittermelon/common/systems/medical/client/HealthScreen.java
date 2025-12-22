@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.systems.medical.client;
 
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.common.systems.medical.client.interaction.IncisionWidget;
+import com.site21.bittermelon.common.systems.medical.client.interaction.InteractionWidget;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentUtil;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
@@ -34,7 +34,7 @@ public class HealthScreen extends Screen {
     private final List<CompartmentWidget> compartmentWidgets;
     private CompartmentWidget activeWidget = null;
     private CompartmentInstance heldCompartment = null;
-    private IncisionWidget incisionWidget = null;
+    private InteractionWidget interactionWidget = null;
 
     public HealthScreen(@NotNull Character character) {
         super(Component.literal(character.getName()));
@@ -42,7 +42,6 @@ public class HealthScreen extends Screen {
         this.character = character;
         this.medicalStats = character.getMedicalStats();
         this.compartmentWidgets = new ArrayList<>();
-        // TODO: Implement client listener for medical stats
     }
 
     @Override
@@ -96,8 +95,8 @@ public class HealthScreen extends Screen {
 
         renderHeldCompartment(guiGraphics, mouseX, mouseY);
 
-        if (incisionWidget != null) {
-            incisionWidget.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+        if (interactionWidget != null) {
+            interactionWidget.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
         }
     }
 
@@ -129,17 +128,17 @@ public class HealthScreen extends Screen {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         CompartmentInstance previouslyHeld = heldCompartment;
 
-        if (incisionWidget == null) {
-            for (CompartmentWidget widget : compartmentWidgets.reversed()) {
-                if (widget.mouseClicked(mouseX, mouseY, button)) {
-                    activeWidget = widget;
-                    if (widget.isWithinContentArea((int) mouseX, (int) mouseY)) {
-                        incisionWidget = new IncisionWidget((int) mouseX, (int) mouseY, activeWidget, this);
-                        return true;
-                    }
-                }
-            }
-        }
+//        if (interactionWidget == null) {
+//            for (CompartmentWidget widget : compartmentWidgets.reversed()) {
+//                if (widget.mouseClicked(mouseX, mouseY, button)) {
+//                    activeWidget = widget;
+//                    if (widget.isWithinContentArea((int) mouseX, (int) mouseY)) {
+//                        interactionWidget = new IncisionWidget((int) mouseX, (int) mouseY, activeWidget, this);
+//                        return true;
+//                    }
+//                }
+//            }
+//        }
 
         for (CompartmentWidget widget : compartmentWidgets.reversed()) {
             if (widget.mouseClicked(mouseX, mouseY, button)) {
@@ -158,8 +157,8 @@ public class HealthScreen extends Screen {
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (incisionWidget != null) {
-            return incisionWidget.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        if (interactionWidget != null) {
+            return interactionWidget.mouseDragged(mouseX, mouseY, button, dragX, dragY);
         }
 
         if (activeWidget != null) {
@@ -171,8 +170,8 @@ public class HealthScreen extends Screen {
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (incisionWidget != null) {
-            return incisionWidget.mouseReleased(mouseX, mouseY, button);
+        if (interactionWidget != null) {
+            return interactionWidget.mouseReleased(mouseX, mouseY, button);
         }
 
         if (activeWidget != null) {
@@ -202,7 +201,7 @@ public class HealthScreen extends Screen {
     }
 
     public void removeWidget(AbstractWidget widget) {
-        incisionWidget = null;
+        interactionWidget = null;
     }
 
     public static void openHealthScreen() {

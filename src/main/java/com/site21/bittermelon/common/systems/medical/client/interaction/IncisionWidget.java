@@ -13,7 +13,6 @@ import com.site21.bittermelon.init.custom.Compartments;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
@@ -29,7 +28,7 @@ import java.util.Map;
 
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.VISUAL_DATA;
 
-public class IncisionWidget extends AbstractWidget {
+public class IncisionWidget extends InteractionWidget {
     private static final long SOUND_DELAY = 2780;
     private static final int DISTANCE_COMPARISON_COUNT = 3;
 
@@ -45,7 +44,7 @@ public class IncisionWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         for (Point point : drawnPoints) {
             guiGraphics.fill(point.x() - 1, point.y() - 1, point.x() + 1, point.y() + 1, 0xFFFF0000);
         }
@@ -121,10 +120,6 @@ public class IncisionWidget extends AbstractWidget {
         }
 
         ClientPacketDistributor.sendToServer(new SetCharactersChanged());
-    }
-
-    private float calculateAccuracy(@NotNull List<Point> points) {
-        return points.isEmpty() ? 0.0f : (float) points.size() / compartment.getSlotSize() * 2;
     }
 
     private float calculateAccuracyFromDistance(@NotNull List<Point> points) {

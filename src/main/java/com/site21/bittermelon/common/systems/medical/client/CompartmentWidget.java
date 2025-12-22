@@ -212,7 +212,7 @@ public class CompartmentWidget extends MovableResizableWidget {
     private void renderCompartmentTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
     }
 
-    private @Nullable UUID getHoveredCompartment(int mouseX, int mouseY) {
+    public @Nullable UUID getHoveredCompartment(int mouseX, int mouseY) {
         Point hoveredSlot = getHoveredSlot(mouseX, mouseY);
         if (hoveredSlot == null) return null;
 

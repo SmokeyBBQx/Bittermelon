@@ -9,10 +9,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.UUID;
 
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.LAYERS;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.MEDICAL_ATTRIBUTES;
 
+@SuppressWarnings("LoggingSimilarMessage")
 public class CompartmentUtil {
 
     /**
@@ -121,6 +123,27 @@ public class CompartmentUtil {
         }
 
         targetLayer.removeInstance(child.getId());
+        updateLayer(parent, layer, targetLayer);
+        return true;
+    }
+
+    /**
+     * Extract a compartment from a parent compartment at specified layer by child ID
+     * @param parent Parent CompartmentInstance
+     * @param childId UUID of Child CompartmentInstance to extract
+     * @param layer Layer index to extract from
+     * @return true if extraction was successful, false otherwise
+     */
+    public static boolean extractCompartment(@NotNull CompartmentInstance parent, @NotNull UUID childId,
+                                             int layer) {
+        LayerData targetLayer = getLayer(parent, layer);
+        if (targetLayer == null) {
+            Bittermelon.LOGGER.error("Failed to extract compartment {} from parent {}: target layer {} not found!",
+                    childId, parent.getId(), layer);
+            return false;
+        }
+
+        targetLayer.removeInstance(childId);
         updateLayer(parent, layer, targetLayer);
         return true;
     }

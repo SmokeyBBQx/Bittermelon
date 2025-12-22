@@ -201,6 +201,11 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
     }
 
     public void removeCompartment(@NotNull CompartmentInstance compartment) {
+        compartments.remove(compartment.getId());
+    }
+
+    public void removeCompartment(UUID compartmentId) {
+        compartments.remove(compartmentId);
     }
 
     public void addCompartment(CompartmentInstance compartment) {
