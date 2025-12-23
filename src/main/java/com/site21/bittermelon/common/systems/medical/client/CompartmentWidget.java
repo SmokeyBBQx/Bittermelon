@@ -8,7 +8,8 @@ import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerSlot;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
-import com.site21.bittermelon.common.systems.medical.networking.InsertCompartment;
+import com.site21.bittermelon.common.systems.medical.networking.AddAndInsertCompartment;
+import com.site21.bittermelon.common.systems.medical.networking.ExtractCompartment;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -258,7 +259,8 @@ public class CompartmentWidget extends MovableResizableWidget {
         CompartmentInstance hoveredCompartment = screen.getMedicalStats().getCompartment(getHoveredCompartment((int) mouseX, (int) mouseY));
         if (hoveredCompartment != null) {
             if (button == 0) {
-                getLayer().removeInstance(hoveredCompartment.getId());
+                ClientPacketDistributor.sendToServer(new ExtractCompartment(screen.getCharacterId(),
+                        compartment.getId(), hoveredCompartment.getId(), layerIndex));
                 screen.setHeldCompartment(hoveredCompartment);
                 return true;
             } else {
@@ -277,10 +279,10 @@ public class CompartmentWidget extends MovableResizableWidget {
     public boolean tryToPlace(int x, int y, @NotNull CompartmentInstance placingCompartment) {
         Point hoveredSlot = getHoveredSlot(x, y);
         if (hoveredSlot == null) return false;
+        if (!getLayer().canFit(x, y, placingCompartment)) return false;
 
-        ClientPacketDistributor.sendToServer(new InsertCompartment(screen.getCharacter().getId(),
-                compartment.getId(), placingCompartment.getId(), layerIndex, hoveredSlot.x(), hoveredSlot.y()));
-//        return getLayer().tryToPlace(hoveredSlot.x(), hoveredSlot.y(), placingCompartment);
+        ClientPacketDistributor.sendToServer(new AddAndInsertCompartment(screen.getCharacter().getId(),
+                compartment.getId(), placingCompartment, layerIndex, hoveredSlot.x(), hoveredSlot.y()));
         return true;
     }
 

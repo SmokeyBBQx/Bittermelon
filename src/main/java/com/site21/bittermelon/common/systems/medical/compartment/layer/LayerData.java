@@ -120,6 +120,18 @@ public class LayerData {
     }
 
     /**
+     * Checks if a compartment instance can fit at the given (x, y) position in the layer.
+     * @param x the x-coordinate to check
+     * @param y the y-coordinate to check
+     * @param compartment the compartment instance to check
+     * @return true if the compartment can fit; false otherwise
+     */
+    public boolean canFit(int x, int y, @NotNull CompartmentInstance compartment) {
+        List<Point> shape = compartment.getOrDefault(SHAPE, List.of());
+        return canFit(x, y, shape);
+    }
+
+    /**
      * Attempts to place a compartment instance at the specified (x, y) position in the layer.
      * @param x the x-coordinate to place the compartment at
      * @param y the y-coordinate to place the compartment at

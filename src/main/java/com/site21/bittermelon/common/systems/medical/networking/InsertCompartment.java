@@ -12,6 +12,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -63,6 +64,10 @@ public record  InsertCompartment(UUID characterId, UUID parentId, UUID childId, 
             if (parent != null && child != null) {
                 CompartmentUtil.insertCompartment(parent, child, layer(), x(), y());
             }
+        }
+
+        if (ctx.flow().isServerbound()) {
+            PacketDistributor.sendToAllPlayers(this);
         }
     }
 }

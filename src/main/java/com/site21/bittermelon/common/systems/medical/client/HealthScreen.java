@@ -29,8 +29,6 @@ import static com.site21.bittermelon.init.neoforge.BitterDataComponents.VISUAL_D
 
 public class HealthScreen extends Screen {
     private final UUID characterId;
-    private Character character;
-    private final MedicalStats medicalStats;
     private final List<CompartmentWidget> compartmentWidgets;
     private CompartmentWidget activeWidget = null;
     private CompartmentInstance heldCompartment = null;
@@ -39,13 +37,12 @@ public class HealthScreen extends Screen {
     public HealthScreen(@NotNull Character character) {
         super(Component.literal(character.getName()));
         this.characterId = character.getId();
-        this.character = character;
-        this.medicalStats = character.getMedicalStats();
         this.compartmentWidgets = new ArrayList<>();
     }
 
     @Override
     protected void init() {
+        MedicalStats medicalStats = getMedicalStats();
         CompartmentInstance mainCompartment = medicalStats.getMainCompartment();
         LayerData layer = CompartmentUtil.getTopLayer(mainCompartment);
         if (layer == null) return;
@@ -181,12 +178,18 @@ public class HealthScreen extends Screen {
         return super.mouseReleased(mouseX, mouseY, button);
     }
 
+    /**
+     * Does a fresh lookup of the character to ensure we have the latest data from the server.
+     */
     public Character getCharacter() {
         return CharacterManager.get(minecraft.level).getCharacter(characterId);
     }
 
+    public UUID getCharacterId() {
+        return characterId;
+    }
+
     public MedicalStats getMedicalStats() {
-        // TODO: Should this refresh on demand?
         return getCharacter().getMedicalStats();
     }
 
