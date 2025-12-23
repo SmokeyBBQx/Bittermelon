@@ -1,6 +1,7 @@
 package com.site21.bittermelon.common.systems.medical.client;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.common.systems.character.networking.SetCharactersChanged;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentUtil;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
@@ -279,10 +280,12 @@ public class CompartmentWidget extends MovableResizableWidget {
     public boolean tryToPlace(int x, int y, @NotNull CompartmentInstance placingCompartment) {
         Point hoveredSlot = getHoveredSlot(x, y);
         if (hoveredSlot == null) return false;
-        if (!getLayer().canFit(x, y, placingCompartment)) return false;
+        if (!getLayer().canFit(hoveredSlot.x(), hoveredSlot.y(), placingCompartment)) return false;
 
+        // Compartment should always be able to fit here
         ClientPacketDistributor.sendToServer(new AddAndInsertCompartment(screen.getCharacter().getId(),
                 compartment.getId(), placingCompartment, layerIndex, hoveredSlot.x(), hoveredSlot.y()));
+        ClientPacketDistributor.sendToServer(new SetCharactersChanged());
         return true;
     }
 
