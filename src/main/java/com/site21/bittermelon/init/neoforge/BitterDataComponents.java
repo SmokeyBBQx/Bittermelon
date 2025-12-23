@@ -8,6 +8,7 @@ import com.site21.bittermelon.common.content.items.substance.pill.PillShape;
 import com.site21.bittermelon.common.systems.component.Smokable;
 import com.site21.bittermelon.common.systems.component.SubstanceContents;
 import com.site21.bittermelon.common.systems.component.WireCutter;
+import com.site21.bittermelon.common.systems.component.medical.Scalpel;
 import com.site21.bittermelon.common.systems.component.screwdriver.Screwdriver;
 import com.site21.bittermelon.common.systems.component.temperature.HeatBehavior;
 import com.site21.bittermelon.common.systems.medical.blood.BloodData;
@@ -275,5 +276,10 @@ public class BitterDataComponents {
             builder -> builder
                     .persistent(DrugInstance.CODEC.listOf())
                     .networkSynchronized(DrugInstance.STREAM_CODEC.apply(ByteBufCodecs.list()))
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Scalpel>> SCALPEL = DATA_COMPONENTS.registerComponentType(
+            "scalpel",
+            builder -> builder.persistent(Scalpel.CODEC)
     );
 }

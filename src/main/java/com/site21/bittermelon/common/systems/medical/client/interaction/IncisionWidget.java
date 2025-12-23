@@ -32,13 +32,15 @@ public class IncisionWidget extends InteractionWidget {
     private static final long SOUND_DELAY = 2780;
     private static final int DISTANCE_COMPARISON_COUNT = 3;
 
+    private final float efficiency;
     private final CompartmentWidget compartment;
     private final HealthScreen healthScreen;
     private final List<Point> drawnPoints = new ArrayList<>();
     private long lastSoundTime = 0;
 
-    public IncisionWidget(int x, int y, CompartmentWidget compartment, HealthScreen healthScreen) {
+    public IncisionWidget(int x, int y, float efficiency, CompartmentWidget compartment, HealthScreen healthScreen) {
         super(x, y, 1, 1, Component.literal("Incision"));
+        this.efficiency = efficiency;
         this.compartment = compartment;
         this.healthScreen = healthScreen;
     }
@@ -79,7 +81,6 @@ public class IncisionWidget extends InteractionWidget {
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         if (button == 0) {
             finishIncision();
-            healthScreen.removeWidget(this);
             return true;
         }
         return false;
@@ -102,7 +103,7 @@ public class IncisionWidget extends InteractionWidget {
         for (Point point : touchedSlots) {
             CompartmentInstance cut = Compartments.CUT.get().toInstance();
 
-            float accuracy = calculateAccuracyFromDistance(relatedPoints.get(point));
+            float accuracy = calculateAccuracyFromDistance(relatedPoints.get(point)) * efficiency;
             int color = ARGB.setBrightness(0xFFFF0000, accuracy);
 
             VisualData visualData = cut.getOrDefault(VISUAL_DATA, VisualData.empty()).withColor(color);

@@ -28,6 +28,7 @@ import com.site21.bittermelon.common.content.items.writablepaper.WritablePaper;
 import com.site21.bittermelon.common.content.items.writingutensils.ChalkItem;
 import com.site21.bittermelon.common.content.items.writingutensils.HighlighterItem;
 import com.site21.bittermelon.common.systems.component.Smokable;
+import com.site21.bittermelon.common.systems.component.medical.Scalpel;
 import com.site21.bittermelon.common.systems.component.screwdriver.Screwdriver;
 import com.site21.bittermelon.common.systems.component.temperature.HeatBehavior;
 import net.minecraft.ChatFormatting;
@@ -98,7 +99,7 @@ public class BitterItems {
     public static final DeferredItem<BlockItem> CAGE_LAMP = ITEMS.registerSimpleBlockItem(BitterBlocks.CAGE_LAMP);
     public static final DeferredItem<BlockItem> LIGHT_GRAY_TELEVISION = ITEMS.register("light_gray_television", registryName ->
             new StandingAndWallBlockItem(BitterBlocks.LIGHT_GRAY_TELEVISION.get(), BitterBlocks.LIGHT_GRAY_WALL_TELEVISION.get(), Direction.DOWN,
-            new Item.Properties().setId(ResourceKey.create(Registries.ITEM, registryName))));
+                    new Item.Properties().setId(ResourceKey.create(Registries.ITEM, registryName))));
     public static final DeferredItem<BlockItem> PLASTIC_FLAMINGO = ITEMS.registerSimpleBlockItem(BitterBlocks.PLASTIC_FLAMINGO);
     public static final DeferredItem<BlockItem> SCP_330 = ITEMS.registerSimpleBlockItem(BitterBlocks.SCP_330);
 
@@ -162,8 +163,12 @@ public class BitterItems {
                     .component(VOLUME, 20.0f)));
 
 
-    public static final DeferredItem<Item> SCALPEL = ITEMS.registerSimpleItem("scalpel",
-            new Item.Properties().stacksTo(1));
+    public static final DeferredItem<Item> SCALPEL = ITEMS.register("scalpel", registryName ->
+            new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .stacksTo(1)
+                    .component(BitterDataComponents.SCALPEL, new Scalpel(1.0f, Optional.empty()))
+            ));
 
     public static final DeferredItem<Item> HEMOSTAT = ITEMS.registerSimpleItem("hemostat",
             new Item.Properties().stacksTo(1));
@@ -296,13 +301,13 @@ public class BitterItems {
             new Item.Properties()
                     .setNoCombineRepair()
                     .component(
-                        DataComponents.CAN_PLACE_ON,
-                        new AdventureModePredicate(List.of(
-                            new BlockPredicate(
-                                    Optional.of(HolderSet.direct(BitterBlocks.WALL_WRITING)),
-                                    Optional.empty(),
-                                    Optional.empty(),
-                                    DataComponentMatchers.ANY)))
+                            DataComponents.CAN_PLACE_ON,
+                            new AdventureModePredicate(List.of(
+                                    new BlockPredicate(
+                                            Optional.of(HolderSet.direct(BitterBlocks.WALL_WRITING)),
+                                            Optional.empty(),
+                                            Optional.empty(),
+                                            DataComponentMatchers.ANY)))
                     ).component(
                             DataComponents.TOOLTIP_DISPLAY,
                             new TooltipDisplay(false, new LinkedHashSet<>(List.of(DataComponents.CAN_PLACE_ON)))
