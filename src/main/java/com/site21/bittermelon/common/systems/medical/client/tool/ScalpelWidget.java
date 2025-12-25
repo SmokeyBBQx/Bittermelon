@@ -23,8 +23,7 @@ public class ScalpelWidget extends InstrumentWidget {
     @Override
     public void renderTool(@NotNull GuiGraphics guiGraphics, int x, int y) {
         guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(x, y);
-        guiGraphics.pose().rotate(rotation);
+        guiGraphics.pose().rotateAbout(rotation, x, y);
         guiGraphics.pose().translate(-16, -8);
         super.renderTool(guiGraphics, 0, 0);
         guiGraphics.pose().popMatrix();

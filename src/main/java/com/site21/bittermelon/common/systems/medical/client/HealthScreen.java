@@ -117,7 +117,8 @@ public class HealthScreen extends Screen {
             guiGraphics.pose().translate(mouseX + visualData.x(), mouseY + visualData.y());
             guiGraphics.pose().scale(scaleFactor, scaleFactor);
 
-            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, visualData.icon(), 0, 0, 0, 0, 20, 20, 20, 20);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, visualData.icon(), 0, 0, 0, 0, 20,
+                    20, 20, 20);
 
             guiGraphics.pose().popMatrix();
         }

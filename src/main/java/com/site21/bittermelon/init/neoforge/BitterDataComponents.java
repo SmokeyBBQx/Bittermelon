@@ -9,6 +9,7 @@ import com.site21.bittermelon.common.systems.component.Smokable;
 import com.site21.bittermelon.common.systems.component.SubstanceContents;
 import com.site21.bittermelon.common.systems.component.WireCutter;
 import com.site21.bittermelon.common.systems.component.medical.Scalpel;
+import com.site21.bittermelon.common.systems.component.medical.Suture;
 import com.site21.bittermelon.common.systems.component.screwdriver.Screwdriver;
 import com.site21.bittermelon.common.systems.component.temperature.HeatBehavior;
 import com.site21.bittermelon.common.systems.medical.blood.BloodData;
@@ -281,5 +282,10 @@ public class BitterDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Scalpel>> SCALPEL = DATA_COMPONENTS.registerComponentType(
             "scalpel",
             builder -> builder.persistent(Scalpel.CODEC)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Suture>> SUTURE = DATA_COMPONENTS.registerComponentType(
+            "suture",
+            builder -> builder.persistent(Suture.CODEC)
     );
 }

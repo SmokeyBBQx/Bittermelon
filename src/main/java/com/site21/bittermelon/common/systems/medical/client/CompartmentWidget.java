@@ -258,7 +258,7 @@ public class CompartmentWidget extends MovableResizableWidget {
         }
 
         CompartmentInstance hoveredCompartment = screen.getMedicalStats().getCompartment(getHoveredCompartment((int) mouseX, (int) mouseY));
-        if (hoveredCompartment != null) {
+        if (hoveredCompartment != null && hoveredCompartment.getCompartment().canExtract(hoveredCompartment, screen.getMedicalStats())) {
             if (button == 0) {
                 ClientPacketDistributor.sendToServer(new ExtractCompartment(screen.getCharacterId(),
                         compartment.getId(), hoveredCompartment.getId(), layerIndex));
@@ -357,6 +357,14 @@ public class CompartmentWidget extends MovableResizableWidget {
 
     public int getSlotSize() {
         return slotSize;
+    }
+
+    public int getContentX() {
+        return contentX;
+    }
+
+    public int getContentY() {
+        return contentY;
     }
 
     @Override

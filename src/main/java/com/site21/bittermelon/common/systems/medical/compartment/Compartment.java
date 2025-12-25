@@ -5,6 +5,7 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.init.custom.Compartments;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
@@ -53,7 +54,7 @@ public class Compartment {
     public void onExtract(MedicalStats medicalStats, CompartmentInstance instance) {}
 
     public boolean canExtract(CompartmentInstance instance, MedicalStats medicalStats) {
-        return true;
+        return instance.getCompartment() != Compartments.CUT.get();
     }
 
 //    public ItemStack createItemStack(@NotNull CompartmentInstance instance) {

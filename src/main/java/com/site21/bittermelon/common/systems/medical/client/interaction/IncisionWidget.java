@@ -146,10 +146,6 @@ public class IncisionWidget extends InteractionWidget {
         return Math.max(0.0f, 1.0f - (averageDistance / 10.0f));
     }
 
-    private double getDistance(@NotNull Point a, @NotNull Point b) {
-        return Math.sqrt(Math.pow(a.x() - b.x(), 2) + Math.pow(a.y() - b.y(), 2));
-    }
-
     private void makeSound(SoundEvent soundEvent) {
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastSoundTime > SOUND_DELAY) {

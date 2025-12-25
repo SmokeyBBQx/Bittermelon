@@ -1,15 +1,14 @@
 package com.site21.bittermelon.datagen;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.content.blocks.electronics.television.StandingTelevisionBlock;
-import com.site21.bittermelon.common.content.blocks.poster.SmallPosterBlock;
 import com.site21.bittermelon.common.content.blocks.dirtyfloor.DirtyFloorBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.keycardreader.KeycardReaderBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.redstonedevice.RedstoneDeviceBlock;
+import com.site21.bittermelon.common.content.blocks.electronics.television.StandingTelevisionBlock;
+import com.site21.bittermelon.common.content.blocks.poster.SmallPosterBlock;
 import com.site21.bittermelon.common.content.blocks.properties.Placement;
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlock;
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
-import com.site21.bittermelon.common.content.items.scps.SCP005Item;
 import com.site21.bittermelon.common.content.items.substance.pill.PillShape;
 import com.site21.bittermelon.datagen.property.*;
 import com.site21.bittermelon.init.neoforge.BitterBlocks;
@@ -23,7 +22,10 @@ import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
 import net.minecraft.client.data.models.model.*;
 import net.minecraft.client.renderer.block.model.VariantMutator;
-import net.minecraft.client.renderer.item.*;
+import net.minecraft.client.renderer.item.ConditionalItemModel;
+import net.minecraft.client.renderer.item.ItemModel;
+import net.minecraft.client.renderer.item.RangeSelectItemModel;
+import net.minecraft.client.renderer.item.SelectItemModel;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -40,12 +42,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Optional;
 
-import static com.site21.bittermelon.common.content.items.scps.SCP005Item.*;
 import static com.site21.bittermelon.datagen.BitterModelTemplates.*;
-import static com.site21.bittermelon.datagen.BitterModelTemplates.TELEVISION;
-import static com.site21.bittermelon.init.neoforge.BitterBlocks.DIRTY_FLOOR;
-import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.LARGE_SLIDING_DOOR;
+import static com.site21.bittermelon.init.neoforge.BitterBlocks.*;
+import static com.site21.bittermelon.init.neoforge.BitterItems.KEYCARD_READER;
+import static com.site21.bittermelon.init.neoforge.BitterItems.STICKY_NOTE;
 import static com.site21.bittermelon.init.neoforge.BitterItems.*;
 import static net.minecraft.client.data.models.BlockModelGenerators.*;
 
@@ -172,6 +173,7 @@ public class BitterModelProvider extends ModelProvider {
         itemModels.generateFlatItem(WRITABLE_PAPER.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TASER_CARTRIDGE.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(HANDHELD_SYSTEM_INTERFACE.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(SUTURE.get(), ModelTemplates.FLAT_ITEM);
     }
 
     public void createFluid(@NotNull BlockModelGenerators blockModels) {

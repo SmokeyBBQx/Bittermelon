@@ -29,6 +29,7 @@ import com.site21.bittermelon.common.content.items.writingutensils.ChalkItem;
 import com.site21.bittermelon.common.content.items.writingutensils.HighlighterItem;
 import com.site21.bittermelon.common.systems.component.Smokable;
 import com.site21.bittermelon.common.systems.component.medical.Scalpel;
+import com.site21.bittermelon.common.systems.component.medical.Suture;
 import com.site21.bittermelon.common.systems.component.screwdriver.Screwdriver;
 import com.site21.bittermelon.common.systems.component.temperature.HeatBehavior;
 import net.minecraft.ChatFormatting;
@@ -167,7 +168,7 @@ public class BitterItems {
             new Item(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
                     .stacksTo(1)
-                    .component(BitterDataComponents.SCALPEL, new Scalpel(1.0f, Optional.empty()))
+                    .component(BitterDataComponents.SCALPEL, new Scalpel(1.0f))
             ));
 
     public static final DeferredItem<Item> HEMOSTAT = ITEMS.registerSimpleItem("hemostat",
@@ -326,4 +327,11 @@ public class BitterItems {
             new BucketItem(BitterFluids.SUBSTANCE_FLUID.get(), new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, registryName.effectiveModel()))
                     .stacksTo(1)));
+
+    public static final DeferredItem<Item> SUTURE = ITEMS.register("suture", registryName ->
+            new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .stacksTo(1)
+                    .component(BitterDataComponents.SUTURE, new Suture(1.0f))
+            ));
 }
