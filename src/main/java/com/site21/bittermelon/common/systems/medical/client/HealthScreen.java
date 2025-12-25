@@ -134,7 +134,7 @@ public class HealthScreen extends Screen {
             }
         } else {
             for (InstrumentWidget widget : instrumentWidgets) {
-                if (widget.mouseClicked(mouseX, mouseY, button)) {
+                if (widget.isHovered()) {
                     heldTool = widget;
                     return true;
                 }

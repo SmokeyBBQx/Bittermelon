@@ -52,7 +52,7 @@ public class SuturingWidget extends InteractionWidget {
         }
 
         if (sutureStart != null) {
-            float angle = (float) Math.atan2(mouseX - sutureStart.x(), mouseY - sutureStart.y());
+            float angle = (float) Math.atan2(mouseY - sutureStart.y(), mouseX - sutureStart.x());
             guiGraphics.pose().pushMatrix();
             guiGraphics.pose().rotateAbout(angle, sutureStart.x(), sutureStart.y());
             guiGraphics.fill(
@@ -71,8 +71,10 @@ public class SuturingWidget extends InteractionWidget {
         Point hoveredSlot = compartmentWidget.getHoveredSlot((int) mouseX, (int) mouseY);
         if (hoveredSlot == null) return false;
 
-        sutureStart = new Point(hoveredSlot.x() * compartmentWidget.getSlotSize() + compartmentWidget.getContentX(),
-                hoveredSlot.y() * compartmentWidget.getSlotSize() + compartmentWidget.getContentY());
+        UUID hoveredCompartmentId = compartmentWidget.getHoveredCompartment((int) mouseX, (int) mouseY);
+        if (hoveredCompartmentId == null) return true;
+
+        sutureStart = new Point((int) mouseX, (int) mouseY);
 
         return true;
     }
@@ -81,10 +83,17 @@ public class SuturingWidget extends InteractionWidget {
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
         if (sutureStart == null) return false;
 
+        int slotSize = compartmentWidget.getSlotSize();
+
         Point newPoint = new Point((int) mouseX, (int) mouseY);
-        if (getDistance(sutureStart, newPoint) > compartmentWidget.getSlotSize()) {
+        if (getDistance(sutureStart, newPoint) > slotSize) {
             if (makeSuture(mouseX, mouseY)) {
-                suturePoints.add(sutureStart);
+                Point hoveredSlot = compartmentWidget.getHoveredSlot(sutureStart.x(), sutureStart.y());
+                if (hoveredSlot != null) {
+                    suturePoints.add(new Point(compartmentWidget.getContentX() + hoveredSlot.x() * slotSize,
+                            compartmentWidget.getContentY() + hoveredSlot.y() * slotSize));
+                }
+
                 sutureStart = null;
                 return true;
             }
