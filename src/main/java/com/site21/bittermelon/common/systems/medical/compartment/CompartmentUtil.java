@@ -178,7 +178,7 @@ public class CompartmentUtil {
                     layerIndex, compartment.getId());
             return;
         }
-        layers.add(layerIndex, newLayer);
+        layers.set(layerIndex, newLayer);
         compartment.set(LAYERS, layers);
     }
 }

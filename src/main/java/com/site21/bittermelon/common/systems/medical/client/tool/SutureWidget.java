@@ -60,6 +60,11 @@ public class SutureWidget extends InstrumentWidget {
     }
 
     @Override
+    public void onLayerChanged(CompartmentWidget widget) {
+        suturingWidget = null;
+    }
+
+    @Override
     protected void updateWidgetNarration(@NotNull NarrationElementOutput narrationElementOutput) {
 
     }

@@ -1,6 +1,7 @@
 package com.site21.bittermelon.common.systems.medical.client.tool;
 
 import com.site21.bittermelon.common.systems.component.medical.MedicalInstrument;
+import com.site21.bittermelon.common.systems.medical.client.CompartmentWidget;
 import com.site21.bittermelon.common.systems.medical.client.HealthScreen;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -54,5 +55,8 @@ public abstract class InstrumentWidget extends AbstractWidget {
     @Override
     protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         renderTool(guiGraphics, x, y);
+    }
+
+    public void onLayerChanged(CompartmentWidget widget) {
     }
 }

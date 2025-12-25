@@ -216,6 +216,12 @@ public class HealthScreen extends Screen {
         this.heldCompartment = heldCompartment;
     }
 
+    public void onLayerChanged(CompartmentWidget widget) {
+        for (InstrumentWidget tool : instrumentWidgets) {
+            tool.onLayerChanged(widget);
+        }
+    }
+
     public static void openHealthScreen() {
         Minecraft mc = Minecraft.getInstance();
         Player player = Minecraft.getInstance().player;

@@ -91,20 +91,22 @@ public class CompartmentWidget extends MovableResizableWidget {
         if (layerIndex == 0) {
             layerIndex = CompartmentUtil.getLayers(compartment).size() - 1;
         } else {
-            --layerIndex;
+            layerIndex--;
         }
 
         grid = getLayer().getGrid();
+        screen.onLayerChanged(this);
     }
 
     private void decreaseLayer() {
         if (layerIndex >= CompartmentUtil.getLayers(compartment).size() - 1) {
             layerIndex = 0;
         } else {
-            ++layerIndex;
+            layerIndex++;
         }
 
         grid = getLayer().getGrid();
+        screen.onLayerChanged(this);
     }
 
     @Override
