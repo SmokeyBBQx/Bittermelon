@@ -23,6 +23,7 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_REGISTRY;
@@ -33,20 +34,25 @@ public class Compartment {
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<Compartment>> STREAM_CODEC = ByteBufCodecs.holderRegistry(COMPARTMENT_REGISTRY_KEY);
 
     private final String id;
+    private final Properties properties;
     private final DataComponentMap components;
 
     public Compartment(String id, @NotNull Properties properties) {
         this.id = id;
+        this.properties = properties;
         components = properties.components.build();
     }
 
     public CompartmentInstance toInstance() {
-        return new CompartmentInstance(
+        CompartmentInstance instance = new CompartmentInstance(
                 this,
                 UUID.randomUUID(),
                 id,
                 new PatchedDataComponentMap(components())
         );
+
+        instance.set(LAYERS, properties.defaultLayers.get());
+        return instance;
     }
 
     public void tick(MedicalStats medicalStats, @NotNull CompartmentInstance instance) {}
@@ -75,6 +81,7 @@ public class Compartment {
         EnumSet<CompartmentTag> defaultTags = EnumSet.noneOf(CompartmentTag.class);
         Holder<Item> item = Items.AIR.builtInRegistryHolder();
         float defaultHealth = 0;
+        Supplier<List<LayerData>> defaultLayers = List::of;
         private final DataComponentMap.Builder components = DataComponentMap.builder();
 
         public Properties defaultTags(EnumSet<CompartmentTag> defaultTags) {
@@ -104,7 +111,7 @@ public class Compartment {
         }
 
         public Properties layers(LayerData... layers) {
-            components.set(LAYERS, List.of(layers));
+            defaultLayers = () -> List.of(layers);
             return this;
         }
 
