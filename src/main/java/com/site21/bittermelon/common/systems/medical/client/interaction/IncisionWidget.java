@@ -54,6 +54,8 @@ public class IncisionWidget extends InteractionWidget {
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if(compartment.getHoveredCompartment((int) mouseX, (int) mouseY) != null) return false;
+
         if (button == 0) {
             Point newPoint = new Point((int) mouseX, (int) mouseY);
             if (isPointFarEnough(newPoint)) {

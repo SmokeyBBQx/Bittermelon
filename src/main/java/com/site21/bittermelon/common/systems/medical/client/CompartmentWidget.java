@@ -15,6 +15,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
@@ -22,12 +23,12 @@ import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.SHAPE;
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.VISUAL_DATA;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 
 public class CompartmentWidget extends MovableResizableWidget {
     private static final ResourceLocation WINDOW_TEXTURE = Bittermelon.resource("textures/gui/healthscreen/surgery_window.png");
@@ -50,6 +51,7 @@ public class CompartmentWidget extends MovableResizableWidget {
     private final Button[] buttons;
 
     private LayerSlot[][] grid;
+    private float[][] light;
 
     public CompartmentWidget(int x, int y, int width, int height, @NotNull CompartmentInstance compartment, HealthScreen screen) {
         super(x, y, width, height, Component.literal(compartment.getName()));
@@ -59,6 +61,7 @@ public class CompartmentWidget extends MovableResizableWidget {
         buttons = new Button[]{closeWidgetButton, collapseWidgetButton, increaseLayerButton, decreaseLayerButton};
         grid = CompartmentUtil.getLayerGrid(compartment, 0);
         updatePositions();
+        updateLight();
     }
 
     private void initializeButtons() {
@@ -95,6 +98,7 @@ public class CompartmentWidget extends MovableResizableWidget {
         }
 
         grid = getLayer().getGrid();
+        updateLight();
         screen.onLayerChanged(this);
     }
 
@@ -106,7 +110,58 @@ public class CompartmentWidget extends MovableResizableWidget {
         }
 
         grid = getLayer().getGrid();
+        updateLight();
         screen.onLayerChanged(this);
+    }
+
+    private void updateLight() {
+        light = new float[grid.length][grid[0].length];
+        for (float[] floats : light) {
+            Arrays.fill(floats, layerIndex == 0 ? 1.0f : 0.0f);
+        }
+
+        LayerData previousLayer = layerIndex > 0 ? CompartmentUtil.getLayer(compartment, layerIndex - 1) : null;
+        if (previousLayer == null) return;
+
+        for (Map.Entry<Point, UUID> entry : previousLayer.getCompartments().entrySet()) {
+            CompartmentInstance instance = screen.getMedicalStats().getCompartment(entry.getValue());
+            int revealDistance = instance.getOrDefault(REVEAL_DISTANCE, 0);
+            if (revealDistance <= 0) continue;
+
+            Point slotPos = entry.getKey();
+            lightSlots(slotPos.x(), slotPos.y(), compartment.getOrDefault(SHAPE, List.of(new Point(0, 0))), revealDistance);
+        }
+    }
+
+    private void lightSlots(int x, int y, @NotNull List<Point> shape, int visibility) {
+        for (Point p : shape) {
+            int targetX = x + p.x();
+            int targetY = y + p.y();
+            if (targetX < 0 || targetX >= grid[0].length || targetY < 0 || targetY >= grid.length) continue;
+
+            if (grid[targetY][targetX] != null) {
+                light[targetY][targetX] = 1;
+
+                for (Direction ignored : Direction.Plane.HORIZONTAL) {
+                    spreadLight(targetX, targetY, 0, visibility);
+                }
+            }
+        }
+    }
+
+    private void spreadLight(int x, int y, int dist, int visibility) {
+        if (dist >= visibility) return;
+
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            int adjacentX = x + direction.getStepX();
+            int adjacentY = y + direction.getStepZ();
+            if (adjacentX < 0 || adjacentX >= grid[0].length || adjacentY < 0 || adjacentY >= grid.length)
+                continue;
+            if (grid[adjacentY][adjacentX] != null) {
+                light[adjacentY][adjacentX] = Math.max(light[adjacentY][adjacentX], (float) 1 / (dist + 2));
+                spreadLight(adjacentX, adjacentY, dist + 1, visibility);
+            }
+        }
     }
 
     @Override
@@ -150,7 +205,7 @@ public class CompartmentWidget extends MovableResizableWidget {
         guiGraphics.fill(x, y, x + slotSize, y + slotSize, bloodColor);
 
         // Fog of war overlay
-        int fogColor = ARGB.color(1 - slot.getVisibility(), 0xDD000000);
+        int fogColor = ARGB.color(1 - light[v][u], 0xDD000000);
         guiGraphics.fill(x, y, x + slotSize, y + slotSize, fogColor);
     }
 
@@ -228,7 +283,7 @@ public class CompartmentWidget extends MovableResizableWidget {
             for (int col = 0; col < grid[row].length; col++) {
                 LayerSlot slot = grid[row][col];
                 if (slot == null) continue;
-                if (slot.getVisibility() < 0.5f) continue;
+                if (light[row][col] <= 0) continue;
 
                 int slotX = contentX + col * slotSize;
                 int slotY = contentY + row * slotSize;

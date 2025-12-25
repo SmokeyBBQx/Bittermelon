@@ -179,24 +179,6 @@ public class LayerData {
     }
 
     /**
-     * Reveals slots in the specified shape at the given (x, y) position by setting their visibility.
-     * @param x the x-coordinate to start revealing from
-     * @param y the y-coordinate to start revealing from
-     * @param shape the shape defining which slots to reveal
-     * @param visibility the visibility level to set for the revealed slots
-     */
-    public void revealSlots(int x, int y, @NotNull List<Point> shape, float visibility) {
-        for (Point p : shape) {
-            int targetX = x + p.x();
-            int targetY = y + p.y();
-            if (targetX < 0 || targetX >= width || targetY < 0 || targetY >= height) continue;
-            if (grid[targetY][targetX] != null) {
-                grid[targetY][targetX].setVisibility(visibility);
-            }
-        }
-    }
-
-    /**
      * Streams all non-null slots in the layer. Useful for iterating over occupied slots.
      * @return A stream of SlotData representing non-null slots.
      */

@@ -63,6 +63,7 @@ public class Compartment {
         return instance.getCompartment() != Compartments.CUT.get();
     }
 
+
 //    public ItemStack createItemStack(@NotNull CompartmentInstance instance) {
 //        ItemStack stack = properties.item.value().getDefaultInstance();
 //        stack.set(BitterDataComponents.COMPARTMENT, instance.toData());

@@ -9,6 +9,7 @@ import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData
 import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.SlotPoint;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.SlotType;
+import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import com.site21.bittermelon.init.neoforge.BitterItems;
 import net.minecraft.core.Holder;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -720,5 +721,6 @@ public class Compartments {
     public static final DeferredHolder<Compartment, Compartment> CUT = COMPARTMENTS.register("cut",
             () -> new Compartment("cut", new Compartment.Properties()
                     .shape(List.of(new Point(0, 0)))
-                    .visualData(VisualData.empty().withIcon("cut"))));
+                    .visualData(VisualData.empty().withIcon("cut"))
+                    .component(BitterDataComponents.REVEAL_DISTANCE.get(), 1)));
 }

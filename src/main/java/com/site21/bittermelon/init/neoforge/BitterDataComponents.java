@@ -288,4 +288,9 @@ public class BitterDataComponents {
             "suture",
             builder -> builder.persistent(Suture.CODEC)
     );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> REVEAL_DISTANCE = DATA_COMPONENTS.registerComponentType(
+            "reveal_distance",
+            builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
+    );
 }
