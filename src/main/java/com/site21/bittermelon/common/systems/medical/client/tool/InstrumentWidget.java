@@ -12,13 +12,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public abstract class ToolWidget extends AbstractWidget {
+public abstract class InstrumentWidget extends AbstractWidget {
     protected final ItemStack stack;
     protected final DataComponentType<? extends MedicalInstrument> componentType;
     protected final HealthScreen screen;
 
-    public ToolWidget(@NotNull ItemStack stack, DataComponentType<? extends MedicalInstrument> componentType,
-                      int x, int y, int width, int height, HealthScreen screen) {
+    public InstrumentWidget(@NotNull ItemStack stack, DataComponentType<? extends MedicalInstrument> componentType,
+                            int x, int y, int width, int height, HealthScreen screen) {
         super(x, y, width, height, Component.literal(stack.getHoverName().getString()));
         this.stack = stack;
         this.componentType = componentType;

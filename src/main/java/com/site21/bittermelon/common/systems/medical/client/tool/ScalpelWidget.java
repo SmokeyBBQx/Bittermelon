@@ -9,9 +9,11 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class ScalpelWidget extends ToolWidget {
+public class ScalpelWidget extends InstrumentWidget {
     private IncisionWidget incisionWidget;
     private final float efficiency;
+    private float rotation = 0;
+    private double startX, startY = 0;
 
     public ScalpelWidget(@NotNull ItemStack stack, int x, int y, int width, int height, HealthScreen screen) {
         super(stack, BitterDataComponents.SCALPEL.get(), x, y, width, height, screen);
@@ -19,16 +21,29 @@ public class ScalpelWidget extends ToolWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+    public void renderTool(@NotNull GuiGraphics guiGraphics, int x, int y) {
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().translate(x, y);
+        guiGraphics.pose().rotate(rotation);
+        guiGraphics.pose().translate(-16, -8);
+        super.renderTool(guiGraphics, 0, 0);
+        guiGraphics.pose().popMatrix();
+    }
 
+    @Override
+    protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (incisionWidget != null) {
             incisionWidget.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
         }
+
+        super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        startX = mouseX;
+        startY = mouseY;
+
         if (incisionWidget == null) {
             CompartmentWidget hoveredWidget = screen.getHoveredCompartmentWidget(mouseX, mouseY);
             if (hoveredWidget != null) {
@@ -42,6 +57,8 @@ public class ScalpelWidget extends ToolWidget {
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        rotation = (float) (Math.atan2(mouseY - startY, mouseX - startX) + Math.PI);
+
         if (incisionWidget != null) {
             return incisionWidget.mouseDragged(mouseX, mouseY, button, dragX, dragY);
         }
@@ -50,6 +67,7 @@ public class ScalpelWidget extends ToolWidget {
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        rotation = 0;
         if (incisionWidget != null) {
             if (incisionWidget.mouseReleased(mouseX, mouseY, button)) {
                 incisionWidget = null;

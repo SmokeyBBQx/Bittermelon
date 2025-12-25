@@ -3,7 +3,7 @@ package com.site21.bittermelon.common.systems.medical.client;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.component.medical.MedicalInstrument;
-import com.site21.bittermelon.common.systems.medical.client.tool.ToolWidget;
+import com.site21.bittermelon.common.systems.medical.client.tool.InstrumentWidget;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentUtil;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
@@ -30,16 +30,16 @@ import static com.site21.bittermelon.init.neoforge.BitterDataComponents.VISUAL_D
 public class HealthScreen extends Screen {
     private final UUID characterId;
     private final List<CompartmentWidget> compartmentWidgets;
-    private final List<ToolWidget> toolWidgets;
+    private final List<InstrumentWidget> instrumentWidgets;
     private CompartmentWidget activeWidget = null;
     private CompartmentInstance heldCompartment = null;
-    private ToolWidget heldTool = null;
+    private InstrumentWidget heldTool = null;
 
     public HealthScreen(@NotNull Character character) {
         super(Component.literal(character.getName()));
         this.characterId = character.getId();
         this.compartmentWidgets = new ArrayList<>();
-        this.toolWidgets = new ArrayList<>();
+        this.instrumentWidgets = new ArrayList<>();
         initTools();
     }
 
@@ -60,7 +60,7 @@ public class HealthScreen extends Screen {
         player.getInventory().iterator().forEachRemaining(stack ->
                 stack.getComponents().iterator().forEachRemaining(component -> {
                     if (component.value() instanceof MedicalInstrument instrument) {
-                        toolWidgets.add(instrument.createWidget(stack, 10, 10, 32, 32, this));
+                        instrumentWidgets.add(instrument.createWidget(stack, 10, 10, 32, 32, this));
                     }
                 }));
     }
@@ -92,12 +92,12 @@ public class HealthScreen extends Screen {
 
         renderHeldCompartment(guiGraphics, mouseX, mouseY);
 
-        for (ToolWidget widget : toolWidgets) {
+        for (InstrumentWidget widget : instrumentWidgets) {
+            widget.render(guiGraphics, mouseX, mouseY, partialTick);
             if (widget == heldTool) {
                 // Renders at mouse position if held
                 heldTool.renderTool(guiGraphics, mouseX, mouseY);
             }
-            widget.render(guiGraphics, mouseX, mouseY, partialTick);
         }
     }
 
@@ -132,7 +132,7 @@ public class HealthScreen extends Screen {
                 heldTool = null;
             }
         } else {
-            for (ToolWidget widget : toolWidgets) {
+            for (InstrumentWidget widget : instrumentWidgets) {
                 if (widget.mouseClicked(mouseX, mouseY, button)) {
                     heldTool = widget;
                     return true;
