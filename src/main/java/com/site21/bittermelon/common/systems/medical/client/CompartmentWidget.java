@@ -306,6 +306,10 @@ public class CompartmentWidget extends MovableResizableWidget {
         return layerIndex;
     }
 
+    public LayerSlot[][] getGrid() {
+        return grid;
+    }
+
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         for (Button btn : buttons) {

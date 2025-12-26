@@ -9,6 +9,7 @@ import com.site21.bittermelon.common.systems.character.skills.Skill;
 import com.site21.bittermelon.common.systems.medical.Anatomy;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
+import com.site21.bittermelon.common.systems.medical.component.MedicalTicker;
 import net.minecraft.core.Holder;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.*;
@@ -102,6 +103,12 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
         updateCompartments();
         updateEntityAttributes();
         handleMobEffects();
+
+        for (TypedDataComponent<?> componentType : getComponents()) {
+            if (componentType.value() instanceof MedicalTicker ticker) {
+                ticker.tick(this, level);
+            }
+        }
     }
 
     private void updateCompartments() {

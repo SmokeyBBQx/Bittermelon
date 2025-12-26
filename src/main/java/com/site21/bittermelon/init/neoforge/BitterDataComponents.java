@@ -8,11 +8,13 @@ import com.site21.bittermelon.common.content.items.substance.pill.PillShape;
 import com.site21.bittermelon.common.systems.component.Smokable;
 import com.site21.bittermelon.common.systems.component.SubstanceContents;
 import com.site21.bittermelon.common.systems.component.WireCutter;
+import com.site21.bittermelon.common.systems.component.medical.Retractor;
 import com.site21.bittermelon.common.systems.component.medical.Scalpel;
 import com.site21.bittermelon.common.systems.component.medical.Suture;
 import com.site21.bittermelon.common.systems.component.screwdriver.Screwdriver;
 import com.site21.bittermelon.common.systems.component.temperature.HeatBehavior;
 import com.site21.bittermelon.common.systems.medical.blood.BloodData;
+import com.site21.bittermelon.common.systems.medical.blood.BloodInfo;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
@@ -292,5 +294,20 @@ public class BitterDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> REVEAL_DISTANCE = DATA_COMPONENTS.registerComponentType(
             "reveal_distance",
             builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Retractor>> RETRACTOR = DATA_COMPONENTS.registerComponentType(
+            "retractor",
+            builder -> builder.persistent(Retractor.CODEC)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> BLOOD_VOLUME = DATA_COMPONENTS.registerComponentType(
+            "blood_volume",
+            builder -> builder.persistent(Codec.FLOAT).networkSynchronized(ByteBufCodecs.FLOAT)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<BloodInfo>> BLOOD_INFO = DATA_COMPONENTS.registerComponentType(
+            "blood_info",
+            builder -> builder.persistent(BloodInfo.CODEC)
     );
 }

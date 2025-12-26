@@ -12,6 +12,7 @@ import com.site21.bittermelon.common.systems.medical.compartment.layer.SlotType;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import com.site21.bittermelon.init.neoforge.BitterItems;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -722,5 +723,11 @@ public class Compartments {
             () -> new Compartment("cut", new Compartment.Properties()
                     .shape(List.of(new Point(0, 0)))
                     .visualData(VisualData.empty().withIcon("cut"))
+                    .component(BitterDataComponents.REVEAL_DISTANCE.get(), 1)));
+
+    public static final DeferredHolder<Compartment, Compartment> FRACTURE = COMPARTMENTS.register("fracture",
+            () -> new Compartment("fracture", new Compartment.Properties()
+                    .shape(List.of(new Point(0, 0)))
+                    .visualData(VisualData.empty().withIcon(ResourceLocation.withDefaultNamespace("textures/block/destroy_stage_9.png")))
                     .component(BitterDataComponents.REVEAL_DISTANCE.get(), 1)));
 }

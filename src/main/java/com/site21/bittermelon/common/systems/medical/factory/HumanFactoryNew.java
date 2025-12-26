@@ -1,12 +1,14 @@
 package com.site21.bittermelon.common.systems.medical.factory;
 
 import com.site21.bittermelon.common.systems.character.Character;
+import com.site21.bittermelon.common.systems.medical.blood.BloodInfo;
 import com.site21.bittermelon.common.systems.medical.blood.BloodType;
 import com.site21.bittermelon.common.systems.medical.compartment.Compartment;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.medicalstats.AnimalMedicalStats;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.init.custom.Anatomies;
+import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
@@ -37,8 +39,12 @@ public class HumanFactoryNew implements AnatomyFactory {
 //        buildAbdomen();
 //        addCompartment(SCALPEL, wholeBody, 0).getVisualData().x(50).y(60);
 
-        return new AnimalMedicalStats(Anatomies.HUMAN_ANATOMY, version, compartments, wholeBody.getId(),
+        MedicalStats stats = new AnimalMedicalStats(Anatomies.HUMAN_ANATOMY, version, compartments, wholeBody.getId(),
                 character.getId(), new HashMap<>(), new PatchedDataComponentMap(PatchedDataComponentMap.EMPTY));
+
+        stats.set(BitterDataComponents.BLOOD_INFO, new BloodInfo(bloodType));
+
+        return stats;
     }
 
     private void buildHead() {

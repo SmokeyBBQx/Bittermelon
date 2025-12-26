@@ -28,6 +28,7 @@ import com.site21.bittermelon.common.content.items.writablepaper.WritablePaper;
 import com.site21.bittermelon.common.content.items.writingutensils.ChalkItem;
 import com.site21.bittermelon.common.content.items.writingutensils.HighlighterItem;
 import com.site21.bittermelon.common.systems.component.Smokable;
+import com.site21.bittermelon.common.systems.component.medical.Retractor;
 import com.site21.bittermelon.common.systems.component.medical.Scalpel;
 import com.site21.bittermelon.common.systems.component.medical.Suture;
 import com.site21.bittermelon.common.systems.component.screwdriver.Screwdriver;
@@ -174,8 +175,12 @@ public class BitterItems {
     public static final DeferredItem<Item> HEMOSTAT = ITEMS.registerSimpleItem("hemostat",
             new Item.Properties().stacksTo(1));
 
-    public static final DeferredItem<Item> RETRACTOR = ITEMS.registerSimpleItem("retractor",
-            new Item.Properties().stacksTo(1));
+    public static final DeferredItem<Item> RETRACTOR = ITEMS.register("retractor", registryName ->
+            new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .stacksTo(1)
+                    .component(BitterDataComponents.RETRACTOR, new Retractor())
+            ));
 
     public static final DeferredItem<Item> CAUTERY = ITEMS.registerSimpleItem("cautery",
             new Item.Properties().stacksTo(1));

@@ -7,7 +7,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
-import java.util.*;
+import java.util.List;
 
 public record BloodData(BloodType bloodType, List<DrugInstance> drugs) {
     public static final Codec<BloodData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -22,19 +22,4 @@ public record BloodData(BloodType bloodType, List<DrugInstance> drugs) {
             BloodData::drugs,
             BloodData::new
     );
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj instanceof BloodData(BloodType otherType, List<DrugInstance> otherDrugs)) {
-            return otherType.equals(bloodType) && otherDrugs.equals(drugs);
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(bloodType, drugs);
-    }
 }
