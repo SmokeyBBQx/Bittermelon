@@ -13,6 +13,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.PIVOT;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.SHAPE;
+
 public class LayerData {
     public static final Codec<LayerData> CODEC;
     public static final StreamCodec<ByteBuf, LayerData> STREAM_CODEC;
@@ -37,8 +40,9 @@ public class LayerData {
         }
     }
 
-    public LayerData(String string, Integer width, Integer height, @NotNull List<SlotData> slotData, Map<Point, UUID> compartments) {
-        this(string, width, height, new LayerSlot[height][width], compartments);
+    public LayerData(String name, int width, int height, @NotNull List<SlotData> slotData, Map<Point, UUID> compartments) {
+        this(name, width, height, new LayerSlot[height][width], new HashMap<>(compartments));
+        System.out.println("Reconstructing LayerData '" + name + "' with " + slotData.size() + " slots.");
         for (SlotData sd : slotData) {
             grid[sd.y()][sd.x()] = sd.slot();
         }
@@ -116,18 +120,29 @@ public class LayerData {
     }
 
     /**
+     * Checks if a compartment instance can fit at the given (x, y) position in the layer.
+     * @param x the x-coordinate to check
+     * @param y the y-coordinate to check
+     * @param compartment the compartment instance to check
+     * @return true if the compartment can fit; false otherwise
+     */
+    public boolean canFit(int x, int y, @NotNull CompartmentInstance compartment) {
+        List<Point> shape = compartment.getOrDefault(SHAPE, List.of());
+        return canFit(x, y, shape);
+    }
+
+    /**
      * Attempts to place a compartment instance at the specified (x, y) position in the layer.
      * @param x the x-coordinate to place the compartment at
      * @param y the y-coordinate to place the compartment at
      * @param compartment the compartment instance to place
-     * @param shape the shape defining which slots the compartment occupies
      * @return true if the compartment was successfully placed; false otherwise
      */
     public boolean tryToPlace(int x, int y, @NotNull CompartmentInstance compartment) {
-        List<Point> shape = compartment.getCompartment().getShape();
+        List<Point> shape = compartment.getOrDefault(SHAPE, List.of());
         if (!canFit(x, y, shape)) return false;
 
-        Point pivotBase = compartment.getCompartment().getPivot();
+        Point pivotBase = compartment.getOrDefault(PIVOT, new Point(0, 0));
         Point pivot = new Point(x + pivotBase.x(), y + pivotBase.y());
         compartments.put(pivot, compartment.getId());
 
@@ -145,6 +160,8 @@ public class LayerData {
      * @param instanceId the UUID of the compartment instance to remove
      */
     public void removeInstance(@NotNull UUID instanceId) {
+        if (!compartments.containsValue(instanceId)) return;
+
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 if (grid[y][x] == null) continue;
@@ -157,24 +174,6 @@ public class LayerData {
                     grid[y][x].setPivot(null);
                     compartments.remove(pivot);
                 }
-            }
-        }
-    }
-
-    /**
-     * Reveals slots in the specified shape at the given (x, y) position by setting their visibility.
-     * @param x the x-coordinate to start revealing from
-     * @param y the y-coordinate to start revealing from
-     * @param shape the shape defining which slots to reveal
-     * @param visibility the visibility level to set for the revealed slots
-     */
-    public void revealSlots(int x, int y, @NotNull List<Point> shape, float visibility) {
-        for (Point p : shape) {
-            int targetX = x + p.x();
-            int targetY = y + p.y();
-            if (targetX < 0 || targetX >= width || targetY < 0 || targetY >= height) continue;
-            if (grid[targetY][targetX] != null) {
-                grid[targetY][targetX].setVisibility(visibility);
             }
         }
     }
@@ -193,6 +192,18 @@ public class LayerData {
             }
         }
         return slots.stream();
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(grid) + compartments.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof LayerData other &&
+                Arrays.deepEquals(this.grid, other.grid) &&
+                this.compartments.equals(other.compartments);
     }
 
     public record SlotData(int x, int y, LayerSlot slot) {

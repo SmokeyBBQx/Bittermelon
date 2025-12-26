@@ -1,15 +1,20 @@
 package com.site21.bittermelon.common.systems.medical.factory;
 
 import com.site21.bittermelon.common.systems.character.Character;
+import com.site21.bittermelon.common.systems.medical.blood.BloodInfo;
 import com.site21.bittermelon.common.systems.medical.blood.BloodType;
 import com.site21.bittermelon.common.systems.medical.compartment.Compartment;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.medicalstats.AnimalMedicalStats;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.init.custom.Anatomies;
+import com.site21.bittermelon.init.neoforge.BitterDataComponents;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.site21.bittermelon.init.custom.Compartments.DEBUG_COMPARTMENT;
@@ -24,13 +29,22 @@ public class HumanFactoryNew implements AnatomyFactory {
     public MedicalStats build(BloodType bloodType, @NotNull Character character) {
         compartments = new ArrayList<>();
         wholeBody = addCompartment(DEBUG_COMPARTMENT);
-        addCompartment(GALLBLADDER, wholeBody, 10, 1, 0);
+
+        CompartmentInstance gallBladder = GALLBLADDER.get().toInstance();
+
+        addCompartment(gallBladder, wholeBody, 10, 1, 0);
+
 //
 //        buildHead();
 //        buildAbdomen();
 //        addCompartment(SCALPEL, wholeBody, 0).getVisualData().x(50).y(60);
 
-        return new AnimalMedicalStats(version, compartments, wholeBody.getId(), character.getId());
+        MedicalStats stats = new AnimalMedicalStats(Anatomies.HUMAN_ANATOMY, version, compartments, wholeBody.getId(),
+                character.getId(), new HashMap<>(), new PatchedDataComponentMap(PatchedDataComponentMap.EMPTY));
+
+        stats.set(BitterDataComponents.BLOOD_INFO, new BloodInfo(bloodType));
+
+        return stats;
     }
 
     private void buildHead() {
@@ -73,7 +87,12 @@ public class HumanFactoryNew implements AnatomyFactory {
     private CompartmentInstance addCompartment(@NotNull DeferredHolder<Compartment, Compartment> holder, @NotNull CompartmentInstance parent, int x, int y, int layer) {
         CompartmentInstance instance = holder.get().toInstance();
         compartments.add(instance);
-        parent.tryToInsert(layer, x, y, instance);
+        parent.tryToInsert(instance, layer, x, y);
         return instance;
+    }
+
+    private void addCompartment(CompartmentInstance instance, @NotNull CompartmentInstance parent, int x, int y, int layer) {
+        compartments.add(instance);
+        parent.tryToInsert(instance, layer, x, y);
     }
 }

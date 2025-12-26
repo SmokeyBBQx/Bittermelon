@@ -20,9 +20,14 @@ import com.site21.bittermelon.common.content.entities.scp650.client.SCP650Render
 import com.site21.bittermelon.common.content.entities.scp939.client.SCP939Renderer;
 import com.site21.bittermelon.common.content.items.keycard.KeycardDecorator;
 import com.site21.bittermelon.common.content.items.taser.TaserProjectileRenderer;
+import com.site21.bittermelon.common.systems.character.networking.UpdateCharacter;
 import com.site21.bittermelon.common.systems.component.screwdriver.ScrewdriverUseAnimation;
 import com.site21.bittermelon.common.systems.component.temperature.HeatDecorator;
 import com.site21.bittermelon.common.systems.fluid.ClientSubstanceFluid;
+import com.site21.bittermelon.common.systems.medical.networking.AddAndInsertCompartment;
+import com.site21.bittermelon.common.systems.medical.networking.ExtractCompartment;
+import com.site21.bittermelon.common.systems.medical.networking.InsertCompartment;
+import com.site21.bittermelon.common.systems.medical.networking.UpdateCompartments;
 import com.site21.bittermelon.common.systems.personnel.privilege.networking.*;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.AddPersonnelEntry;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.PersonnelClientPayloadHandler;
@@ -214,6 +219,31 @@ public class ClientSetup {
         event.register(
                 UpdatePersonnelEntry.TYPE,
                 PersonnelClientPayloadHandler::updatePersonnelEntry
+        );
+
+        event.register(
+                UpdateCompartments.TYPE,
+                UpdateCompartments::handle
+        );
+
+        event.register(
+                InsertCompartment.TYPE,
+                InsertCompartment::handle
+        );
+
+        event.register(
+                AddAndInsertCompartment.TYPE,
+                AddAndInsertCompartment::handle
+        );
+
+        event.register(
+                ExtractCompartment.TYPE,
+                ExtractCompartment::handle
+        );
+
+        event.register(
+                UpdateCharacter.TYPE,
+                UpdateCharacter::handle
         );
     }
 

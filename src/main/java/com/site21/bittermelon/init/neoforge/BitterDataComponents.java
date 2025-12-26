@@ -4,12 +4,22 @@ import com.mojang.serialization.Codec;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.items.base.ItemSize;
 import com.site21.bittermelon.common.content.items.scps.scp377.Fortune;
-import com.site21.bittermelon.common.systems.component.*;
 import com.site21.bittermelon.common.content.items.substance.pill.PillShape;
+import com.site21.bittermelon.common.systems.component.Smokable;
+import com.site21.bittermelon.common.systems.component.SubstanceContents;
+import com.site21.bittermelon.common.systems.component.WireCutter;
+import com.site21.bittermelon.common.systems.component.medical.Retractor;
+import com.site21.bittermelon.common.systems.component.medical.Scalpel;
+import com.site21.bittermelon.common.systems.component.medical.Suture;
 import com.site21.bittermelon.common.systems.component.screwdriver.Screwdriver;
 import com.site21.bittermelon.common.systems.component.temperature.HeatBehavior;
 import com.site21.bittermelon.common.systems.medical.blood.BloodData;
-import com.site21.bittermelon.common.systems.medical.compartment.CompartmentData;
+import com.site21.bittermelon.common.systems.medical.blood.BloodInfo;
+import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
+import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
+import com.site21.bittermelon.common.systems.medical.drug.DrugInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentType;
@@ -20,6 +30,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -130,11 +141,11 @@ public class BitterDataComponents {
             "ammo",
             builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
     );
-
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompartmentData>> COMPARTMENT = DATA_COMPONENTS.registerComponentType(
-            "compartment",
-            builder -> builder.persistent(CompartmentData.CODEC).networkSynchronized(CompartmentData.STREAM_CODEC)
-    );
+//
+//    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompartmentData>> COMPARTMENT = DATA_COMPONENTS.registerComponentType(
+//            "compartment",
+//            builder -> builder.persistent(CompartmentData.CODEC).networkSynchronized(CompartmentData.STREAM_CODEC)
+//    );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> ENERGY_LOSS_ON_BOUNCE = DATA_COMPONENTS.registerComponentType(
             "energy_loss_on_bounce",
@@ -224,5 +235,79 @@ public class BitterDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<HeatBehavior>> HEAT_BEHAVIOR = DATA_COMPONENTS.registerComponentType(
             "heat_behavior",
             builder -> builder.persistent(HeatBehavior.CODEC)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<EnumMap<MedicalAttribute, Float>>> MEDICAL_ATTRIBUTES = DATA_COMPONENTS.registerComponentType(
+            "medical_attributes",
+            builder -> builder.persistent(
+                    Codec.unboundedMap(MedicalAttribute.CODEC, Codec.FLOAT).xmap(
+                            EnumMap::new,
+                            map -> map
+                    ))
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<LayerData>>> LAYERS = DATA_COMPONENTS.registerComponentType(
+            "layers",
+            builder -> builder
+                    .persistent(LayerData.CODEC.listOf())
+                    .networkSynchronized(LayerData.STREAM_CODEC.apply(ByteBufCodecs.list()))
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<Point>>> SHAPE = DATA_COMPONENTS.registerComponentType(
+            "shape",
+            builder -> builder
+                    .persistent(Point.CODEC.listOf())
+                    .networkSynchronized(Point.STREAM_CODEC.apply(ByteBufCodecs.list()))
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Point>> PIVOT = DATA_COMPONENTS.registerComponentType(
+            "pivot",
+            builder -> builder
+                    .persistent(Point.CODEC)
+                    .networkSynchronized(Point.STREAM_CODEC)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<VisualData>> VISUAL_DATA = DATA_COMPONENTS.registerComponentType(
+            "visual_data",
+            builder -> builder
+                    .persistent(VisualData.CODEC)
+                    .networkSynchronized(VisualData.STREAM_CODEC)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<DrugInstance>>> DRUGS = DATA_COMPONENTS.registerComponentType(
+            "drugs",
+            builder -> builder
+                    .persistent(DrugInstance.CODEC.listOf())
+                    .networkSynchronized(DrugInstance.STREAM_CODEC.apply(ByteBufCodecs.list()))
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Scalpel>> SCALPEL = DATA_COMPONENTS.registerComponentType(
+            "scalpel",
+            builder -> builder.persistent(Scalpel.CODEC)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Suture>> SUTURE = DATA_COMPONENTS.registerComponentType(
+            "suture",
+            builder -> builder.persistent(Suture.CODEC)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> REVEAL_DISTANCE = DATA_COMPONENTS.registerComponentType(
+            "reveal_distance",
+            builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Retractor>> RETRACTOR = DATA_COMPONENTS.registerComponentType(
+            "retractor",
+            builder -> builder.persistent(Retractor.CODEC)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> BLOOD_VOLUME = DATA_COMPONENTS.registerComponentType(
+            "blood_volume",
+            builder -> builder.persistent(Codec.FLOAT).networkSynchronized(ByteBufCodecs.FLOAT)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<BloodInfo>> BLOOD_INFO = DATA_COMPONENTS.registerComponentType(
+            "blood_info",
+            builder -> builder.persistent(BloodInfo.CODEC)
     );
 }

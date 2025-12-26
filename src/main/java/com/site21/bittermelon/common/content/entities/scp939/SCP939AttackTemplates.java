@@ -2,7 +2,9 @@ package com.site21.bittermelon.common.content.entities.scp939;
 
 import com.site21.bittermelon.common.systems.combat.AttackTemplate;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentTag;
-import com.site21.bittermelon.common.systems.medical.damage.generators.*;
+import com.site21.bittermelon.common.systems.medical.damage.generators.BluntForceTrauma;
+import com.site21.bittermelon.common.systems.medical.damage.generators.Lacerations;
+import com.site21.bittermelon.common.systems.medical.damage.generators.Stab;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.common.systems.stumble.StumbleHandler;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
@@ -16,7 +18,7 @@ import static com.site21.bittermelon.init.neoforge.BitterSounds.*;
 public final class SCP939AttackTemplates {
     public static final List<AttackTemplate> ATTACK_TEMPLATES = List.of(
             new AttackTemplate.AttackTemplateBuilder()
-                    .setDamageSupplier(() -> new BoneBreakingBite(EnumSet.of(CompartmentTag.SOFT_TISSUE, CompartmentTag.HARD_TISSUE)))
+//                    .setDamageSupplier(() -> new BoneBreakingBite(EnumSet.of(CompartmentTag.SOFT_TISSUE, CompartmentTag.HARD_TISSUE)))
                     .setArea(2)
                     .setDepthRange(1, 6)
                     .setDamage(15)
@@ -108,7 +110,7 @@ public final class SCP939AttackTemplates {
                     .setSound(SMASH.value())
                     .build(),
             new AttackTemplate.AttackTemplateBuilder()
-                    .setDamageSupplier(() -> new Bite(EnumSet.of(CompartmentTag.SOFT_TISSUE, CompartmentTag.HARD_TISSUE)))
+//                    .setDamageSupplier(() -> new Bite(EnumSet.of(CompartmentTag.SOFT_TISSUE, CompartmentTag.HARD_TISSUE)))
                     .setArea(3)
                     .setDepthRange(1, 5)
                     .setDamage(12)

@@ -5,13 +5,15 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
+import com.site21.bittermelon.common.systems.character.networking.UpdateCharacter;
 import com.site21.bittermelon.common.systems.medical.blood.BloodType;
-import com.site21.bittermelon.common.systems.medical.factory.Anatomy;
+import com.site21.bittermelon.common.systems.medical.factory.AnatomyType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 public class MedicalStatsCommand {
@@ -30,10 +32,11 @@ public class MedicalStatsCommand {
 
         if (targetCharacter == null) return 0;
 
-        targetCharacter.setMedicalStats(Anatomy.HUMAN.getFactory().build(BloodType.O_MINUS, targetCharacter));
+        targetCharacter.setMedicalStats(AnatomyType.HUMAN.getFactory().build(BloodType.O_MINUS, targetCharacter));
         characterManager.setDirty();
         context.getSource().sendSuccess(() ->
                 Component.literal(targetCharacter.getName() + "'s medical stats reset"), true);
+        PacketDistributor.sendToAllPlayers(new UpdateCharacter(targetCharacter));
         return 1;
     }
 }

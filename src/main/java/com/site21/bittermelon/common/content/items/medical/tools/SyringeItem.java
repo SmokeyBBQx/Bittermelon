@@ -3,7 +3,6 @@ package com.site21.bittermelon.common.content.items.medical.tools;
 import com.site21.bittermelon.common.content.items.substance.FluidContainerItem;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.common.systems.medical.blood.BloodData;
 import com.site21.bittermelon.common.systems.medical.medicalstats.AnimalMedicalStats;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import net.minecraft.world.InteractionHand;
@@ -24,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.custom.Substances.BLOOD;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.BLOOD_DATA;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.CAN_SPILL;
 
 public class SyringeItem extends FluidContainerItem {
@@ -99,7 +97,7 @@ public class SyringeItem extends FluidContainerItem {
         Character character = CharacterManager.get(entity.level()).getActiveCharacter(entity);
         if (character != null) {
             if (character.getMedicalStats() instanceof AnimalMedicalStats medicalStats) {
-                stack.set(BLOOD_DATA, new BloodData(medicalStats.getBloodType(), medicalStats.getActiveDrugs()));
+//                stack.set(BLOOD_DATA, new BloodData(medicalStats.getBloodType(), medicalStats.getActiveDrugs()));
                 medicalStats.modifyBloodVolume(-transferRate);
             }
         }

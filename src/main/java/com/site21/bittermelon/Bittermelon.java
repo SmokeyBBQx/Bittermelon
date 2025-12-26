@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
+import static com.site21.bittermelon.init.custom.Anatomies.ANATOMIES;
 import static com.site21.bittermelon.init.custom.Compartments.COMPARTMENTS;
 import static com.site21.bittermelon.init.custom.Drugs.DRUGS;
 import static com.site21.bittermelon.init.custom.LogicalOperators.LOGICAL_OPERATORS;
@@ -86,6 +87,7 @@ public class Bittermelon {
         FLUID_TYPES.register(modEventBus);
         MEDIA.register(modEventBus);
         PARTICLES.register(modEventBus);
+        ANATOMIES.register(modEventBus);
 
         modEventBus.addListener(BitterRegistries::registerRegistries);
         modEventBus.addListener(this::commonSetup);

@@ -29,6 +29,9 @@ import com.site21.bittermelon.common.content.items.writablepaper.WritablePaper;
 import com.site21.bittermelon.common.content.items.writingutensils.ChalkItem;
 import com.site21.bittermelon.common.content.items.writingutensils.HighlighterItem;
 import com.site21.bittermelon.common.systems.component.Smokable;
+import com.site21.bittermelon.common.systems.component.medical.Retractor;
+import com.site21.bittermelon.common.systems.component.medical.Scalpel;
+import com.site21.bittermelon.common.systems.component.medical.Suture;
 import com.site21.bittermelon.common.systems.component.screwdriver.Screwdriver;
 import com.site21.bittermelon.common.systems.component.temperature.HeatBehavior;
 import net.minecraft.ChatFormatting;
@@ -101,7 +104,7 @@ public class BitterItems {
     public static final DeferredItem<BlockItem> CAGE_LAMP = ITEMS.registerSimpleBlockItem(BitterBlocks.CAGE_LAMP);
     public static final DeferredItem<BlockItem> LIGHT_GRAY_TELEVISION = ITEMS.register("light_gray_television", registryName ->
             new StandingAndWallBlockItem(BitterBlocks.LIGHT_GRAY_TELEVISION.get(), BitterBlocks.LIGHT_GRAY_WALL_TELEVISION.get(), Direction.DOWN,
-            new Item.Properties().setId(ResourceKey.create(Registries.ITEM, registryName))));
+                    new Item.Properties().setId(ResourceKey.create(Registries.ITEM, registryName))));
     public static final DeferredItem<BlockItem> PLASTIC_FLAMINGO = ITEMS.registerSimpleBlockItem(BitterBlocks.PLASTIC_FLAMINGO);
     public static final DeferredItem<BlockItem> SCP_330 = ITEMS.registerSimpleBlockItem(BitterBlocks.SCP_330, new Item.Properties()
                     .stacksTo(1).component(DataComponents.LORE, new ItemLore(List.of(Component.literal("Take Only Two").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Safe").withStyle(ChatFormatting.GREEN)))));
@@ -219,14 +222,22 @@ public class BitterItems {
                     .component(VOLUME, 20.0f)));
 
 
-    public static final DeferredItem<Item> SCALPEL = ITEMS.registerSimpleItem("scalpel",
-            new Item.Properties().stacksTo(1));
+    public static final DeferredItem<Item> SCALPEL = ITEMS.register("scalpel", registryName ->
+            new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .stacksTo(1)
+                    .component(BitterDataComponents.SCALPEL, new Scalpel(1.0f))
+            ));
 
     public static final DeferredItem<Item> HEMOSTAT = ITEMS.registerSimpleItem("hemostat",
             new Item.Properties().stacksTo(1));
 
-    public static final DeferredItem<Item> RETRACTOR = ITEMS.registerSimpleItem("retractor",
-            new Item.Properties().stacksTo(1));
+    public static final DeferredItem<Item> RETRACTOR = ITEMS.register("retractor", registryName ->
+            new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .stacksTo(1)
+                    .component(BitterDataComponents.RETRACTOR, new Retractor())
+            ));
 
     public static final DeferredItem<Item> CAUTERY = ITEMS.registerSimpleItem("cautery",
             new Item.Properties().stacksTo(1));
@@ -359,13 +370,13 @@ public class BitterItems {
             new Item.Properties()
                     .setNoCombineRepair()
                     .component(
-                        DataComponents.CAN_PLACE_ON,
-                        new AdventureModePredicate(List.of(
-                            new BlockPredicate(
-                                    Optional.of(HolderSet.direct(BitterBlocks.WALL_WRITING)),
-                                    Optional.empty(),
-                                    Optional.empty(),
-                                    DataComponentMatchers.ANY)))
+                            DataComponents.CAN_PLACE_ON,
+                            new AdventureModePredicate(List.of(
+                                    new BlockPredicate(
+                                            Optional.of(HolderSet.direct(BitterBlocks.WALL_WRITING)),
+                                            Optional.empty(),
+                                            Optional.empty(),
+                                            DataComponentMatchers.ANY)))
                     ).component(
                             DataComponents.TOOLTIP_DISPLAY,
                             new TooltipDisplay(false, new LinkedHashSet<>(List.of(DataComponents.CAN_PLACE_ON)))
@@ -384,4 +395,11 @@ public class BitterItems {
             new BucketItem(BitterFluids.SUBSTANCE_FLUID.get(), new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, registryName.effectiveModel()))
                     .stacksTo(1)));
+
+    public static final DeferredItem<Item> SUTURE = ITEMS.register("suture", registryName ->
+            new Item(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .stacksTo(1)
+                    .component(BitterDataComponents.SUTURE, new Suture(1.0f))
+            ));
 }

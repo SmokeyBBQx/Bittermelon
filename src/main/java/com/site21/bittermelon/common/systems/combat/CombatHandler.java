@@ -3,7 +3,6 @@ package com.site21.bittermelon.common.systems.combat;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
-import com.site21.bittermelon.common.systems.medical.compartment.CompartmentTag;
 import com.site21.bittermelon.common.systems.medical.damage.DamageResult;
 import com.site21.bittermelon.common.systems.medical.damage.InjuryResult;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
@@ -127,14 +126,14 @@ public class CombatHandler {
 
     public static List<String> getAmputationMessages(Character target, @NotNull DamageResult damageResult) {
         return damageResult.injuryResults().stream()
-                .filter(result -> result.injury().hasTag(CompartmentTag.TRAUMATIC_AMPUTATION))
+//                .filter(result -> result.injury().hasTag(CompartmentTag.TRAUMATIC_AMPUTATION))
                 .map(result -> target.getName() + "'s " + result.message())
                 .toList();
     }
 
     private static @Nullable String getInjuryDescription(@NotNull DamageResult damageResult, float performance, MedicalStats medicalStats) {
         List<InjuryResult> injuryResults = damageResult.injuryResults().stream()
-                .filter(result -> !result.injury().hasTag(CompartmentTag.TRAUMATIC_AMPUTATION))
+//                .filter(result -> !result.injury().hasTag(CompartmentTag.TRAUMATIC_AMPUTATION))
                 .toList();
 
         if (injuryResults.isEmpty()) return null;

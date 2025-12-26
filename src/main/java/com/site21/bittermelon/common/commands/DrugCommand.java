@@ -6,7 +6,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.common.systems.medical.drug.DrugInstance;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -40,7 +39,7 @@ public class DrugCommand {
         if (targetCharacter == null) return 0;
 
         MedicalStats medicalStats = targetCharacter.getMedicalStats();
-        medicalStats.addDrug(new DrugInstance(drug, amount));
+//        medicalStats.addDrug(new DrugInstance(drug, amount));
 
         return 1;
     }

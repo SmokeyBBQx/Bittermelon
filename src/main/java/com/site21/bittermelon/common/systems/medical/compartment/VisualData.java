@@ -13,28 +13,18 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class VisualData {
+public record VisualData(
+        int x,
+        int y,
+        int width,
+        int height,
+        float scale,
+        @Nullable ResourceLocation icon,
+        int color
+) {
     public static final Codec<VisualData> CODEC;
     public static final StreamCodec<ByteBuf, VisualData> STREAM_CODEC;
     public static final int DEFAULT_COLOR = 0xFFFFFFFF;
-
-    public int x;
-    public int y;
-    public int width;
-    public int height;
-    public float scale;
-    public ResourceLocation icon;
-    public int color;
-
-    public VisualData(int x, int y, int width, int height, float scale, @Nullable ResourceLocation icon, int color) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.scale = scale;
-        this.icon = icon;
-        this.color = color;
-    }
 
     @SuppressWarnings({"OptionalUsedAsFieldOrParameterType"})
     @Contract(pure = true)
@@ -51,100 +41,73 @@ public class VisualData {
         return new VisualData(0, 0, 1, 1, 1f, Optional.empty(), DEFAULT_COLOR);
     }
 
-    public int getX() {
-        return x;
+    @Contract("_ -> new")
+    public @NotNull VisualData withX(int x) {
+        return new VisualData(x, this.y, this.width, this.height, this.scale, this.icon, this.color);
     }
 
-    public int getY() {
-        return y;
+    @Contract("_ -> new")
+    public @NotNull VisualData withY(int y) {
+        return new VisualData(this.x, y, this.width, this.height, this.scale, this.icon, this.color);
     }
 
-    public int getWidth() {
-        return width;
+    @Contract("_ -> new")
+    public @NotNull VisualData withWidth(int width) {
+        return new VisualData(this.x, this.y, width, this.height, this.scale, this.icon, this.color);
     }
 
-    public int getHeight() {
-        return height;
+    @Contract("_ -> new")
+    public @NotNull VisualData withHeight(int height) {
+        return new VisualData(this.x, this.y, this.width, height, this.scale, this.icon, this.color);
     }
 
-    public Optional<ResourceLocation> getOptionalIcon() {
-        return Optional.ofNullable(icon);
+    @Contract("_ -> new")
+    public @NotNull VisualData withScale(float scale) {
+        return new VisualData(this.x, this.y, this.width, this.height, scale, this.icon, this.color);
     }
 
-    public ResourceLocation getIcon() {
-        return icon;
+    @Contract("_ -> new")
+    public @NotNull VisualData withIcon(ResourceLocation icon) {
+        return new VisualData(this.x, this.y, this.width, this.height, this.scale, icon, this.color);
     }
 
-    public int getColor() {
-        return color;
+    @Contract("_ -> new")
+    public @NotNull VisualData withIcon(String name) {
+        return new VisualData(this.x, this.y, this.width, this.height, this.scale,
+                Bittermelon.resource("textures/gui/organs/" + name + ".png"), this.color);
     }
 
-    public VisualData x(int x) {
-        this.x = x;
-        return this;
-    }
-
-    public VisualData y(int y) {
-        this.y = y;
-        return this;
-    }
-
-    public VisualData width(int width) {
-        this.width = width;
-        return this;
-    }
-
-    public VisualData height(int height) {
-        this.height = height;
-        return this;
-    }
-
-    public VisualData scale(float scale) {
-        this.scale = scale;
-        return this;
-    }
-
-    public VisualData icon(ResourceLocation icon) {
-        this.icon = icon;
-        return this;
-    }
-
-    public VisualData icon(String name) {
-        this.icon = Bittermelon.resource("textures/gui/organs/" + name + ".png");
-        return this;
-    }
-
-    public VisualData color(int color) {
-        this.color = color;
-        return this;
+    @Contract("_ -> new")
+    public @NotNull VisualData withColor(int color) {
+        return new VisualData(this.x, this.y, this.width, this.height, this.scale, this.icon, color);
     }
 
     static {
         CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Codec.INT.fieldOf("x").forGetter(VisualData::getX),
-                Codec.INT.fieldOf("y").forGetter(VisualData::getY),
-                Codec.INT.fieldOf("width").forGetter(VisualData::getWidth),
-                Codec.INT.fieldOf("height").forGetter(VisualData::getHeight),
-                Codec.FLOAT.fieldOf("scale").forGetter(visualData -> visualData.scale),
-                ResourceLocation.CODEC.optionalFieldOf("icon").forGetter(VisualData::getOptionalIcon),
-                Codec.INT.fieldOf("color").forGetter(VisualData::getColor)
+                Codec.INT.fieldOf("x").forGetter(VisualData::x),
+                Codec.INT.fieldOf("y").forGetter(VisualData::y),
+                Codec.INT.fieldOf("width").forGetter(VisualData::width),
+                Codec.INT.fieldOf("height").forGetter(VisualData::height),
+                Codec.FLOAT.fieldOf("scale").forGetter(VisualData::scale),
+                ResourceLocation.CODEC.optionalFieldOf("icon").forGetter(vd -> Optional.ofNullable(vd.icon)),
+                Codec.INT.fieldOf("color").forGetter(VisualData::color)
         ).apply(instance, VisualData::new));
 
         STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.INT,
-                VisualData::getX,
+                VisualData::x,
                 ByteBufCodecs.INT,
-                VisualData::getY,
+                VisualData::y,
                 ByteBufCodecs.INT,
-                VisualData::getWidth,
+                VisualData::width,
                 ByteBufCodecs.INT,
-                VisualData::getHeight,
+                VisualData::height,
                 ByteBufCodecs.FLOAT,
-                visualData -> visualData.scale,
+                VisualData::scale,
                 ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC),
-                VisualData::getOptionalIcon,
+                vd -> Optional.ofNullable(vd.icon),
                 ByteBufCodecs.INT,
-                VisualData::getColor,
+                VisualData::color,
                 VisualData::new
         );
     }

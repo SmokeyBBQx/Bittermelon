@@ -1,25 +1,34 @@
 package com.site21.bittermelon.common.systems.medical.client;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.common.systems.character.networking.SetCharactersChanged;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
+import com.site21.bittermelon.common.systems.medical.compartment.CompartmentUtil;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerSlot;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.common.systems.medical.networking.AddAndInsertCompartment;
+import com.site21.bittermelon.common.systems.medical.networking.ExtractCompartment;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 
 public class CompartmentWidget extends MovableResizableWidget {
     private static final ResourceLocation WINDOW_TEXTURE = Bittermelon.resource("textures/gui/healthscreen/surgery_window.png");
@@ -42,6 +51,7 @@ public class CompartmentWidget extends MovableResizableWidget {
     private final Button[] buttons;
 
     private LayerSlot[][] grid;
+    private float[][] light;
 
     public CompartmentWidget(int x, int y, int width, int height, @NotNull CompartmentInstance compartment, HealthScreen screen) {
         super(x, y, width, height, Component.literal(compartment.getName()));
@@ -49,8 +59,9 @@ public class CompartmentWidget extends MovableResizableWidget {
         this.screen = screen;
         initializeButtons();
         buttons = new Button[]{closeWidgetButton, collapseWidgetButton, increaseLayerButton, decreaseLayerButton};
-        grid = compartment.getLayers().getFirst().getGrid();
+        grid = CompartmentUtil.getLayerGrid(compartment, 0);
         updatePositions();
+        updateLight();
     }
 
     private void initializeButtons() {
@@ -81,22 +92,76 @@ public class CompartmentWidget extends MovableResizableWidget {
 
     private void increaseLayer() {
         if (layerIndex == 0) {
-            layerIndex = compartment.getLayers().size() - 1;
+            layerIndex = CompartmentUtil.getLayers(compartment).size() - 1;
         } else {
-            --layerIndex;
+            layerIndex--;
         }
 
         grid = getLayer().getGrid();
+        updateLight();
+        screen.onLayerChanged(this);
     }
 
     private void decreaseLayer() {
-        if (layerIndex >= compartment.getLayers().size() - 1) {
+        if (layerIndex >= CompartmentUtil.getLayers(compartment).size() - 1) {
             layerIndex = 0;
         } else {
-            ++layerIndex;
+            layerIndex++;
         }
 
         grid = getLayer().getGrid();
+        updateLight();
+        screen.onLayerChanged(this);
+    }
+
+    private void updateLight() {
+        light = new float[grid.length][grid[0].length];
+        for (float[] floats : light) {
+            Arrays.fill(floats, layerIndex == 0 ? 1.0f : 0.0f);
+        }
+
+        LayerData previousLayer = layerIndex > 0 ? CompartmentUtil.getLayer(compartment, layerIndex - 1) : null;
+        if (previousLayer == null) return;
+
+        for (Map.Entry<Point, UUID> entry : previousLayer.getCompartments().entrySet()) {
+            CompartmentInstance instance = screen.getMedicalStats().getCompartment(entry.getValue());
+            int revealDistance = instance.getOrDefault(REVEAL_DISTANCE, 0);
+            if (revealDistance <= 0) continue;
+
+            Point slotPos = entry.getKey();
+            lightSlots(slotPos.x(), slotPos.y(), compartment.getOrDefault(SHAPE, List.of(new Point(0, 0))), revealDistance);
+        }
+    }
+
+    private void lightSlots(int x, int y, @NotNull List<Point> shape, int visibility) {
+        for (Point p : shape) {
+            int targetX = x + p.x();
+            int targetY = y + p.y();
+            if (targetX < 0 || targetX >= grid[0].length || targetY < 0 || targetY >= grid.length) continue;
+
+            if (grid[targetY][targetX] != null) {
+                light[targetY][targetX] = 1;
+
+                for (Direction ignored : Direction.Plane.HORIZONTAL) {
+                    spreadLight(targetX, targetY, 0, visibility);
+                }
+            }
+        }
+    }
+
+    private void spreadLight(int x, int y, int dist, int visibility) {
+        if (dist >= visibility) return;
+
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            int adjacentX = x + direction.getStepX();
+            int adjacentY = y + direction.getStepZ();
+            if (adjacentX < 0 || adjacentX >= grid[0].length || adjacentY < 0 || adjacentY >= grid.length)
+                continue;
+            if (grid[adjacentY][adjacentX] != null) {
+                light[adjacentY][adjacentX] = Math.max(light[adjacentY][adjacentX], (float) 1 / (dist + 2));
+                spreadLight(adjacentX, adjacentY, dist + 1, visibility);
+            }
+        }
     }
 
     @Override
@@ -140,7 +205,7 @@ public class CompartmentWidget extends MovableResizableWidget {
         guiGraphics.fill(x, y, x + slotSize, y + slotSize, bloodColor);
 
         // Fog of war overlay
-        int fogColor = ARGB.color(1 - slot.getVisibility(), 0xDD000000);
+        int fogColor = ARGB.color(1 - light[v][u], 0xDD000000);
         guiGraphics.fill(x, y, x + slotSize, y + slotSize, fogColor);
     }
 
@@ -157,7 +222,9 @@ public class CompartmentWidget extends MovableResizableWidget {
         CompartmentInstance heldCompartment = screen.getHeldCompartment();
         if (heldCompartment == null) return;
 
-        List<Point> shape = heldCompartment.getCompartment().getShape();
+        List<Point> shape = heldCompartment.getOrDefault(SHAPE, List.of());
+        if (shape.isEmpty()) return;
+
         Point hoveredSlot = getHoveredSlot(mouseX, mouseY);
         if (hoveredSlot == null) return;
 
@@ -175,24 +242,26 @@ public class CompartmentWidget extends MovableResizableWidget {
         MedicalStats medicalStats = screen.getMedicalStats();
         UUID hoveredCompartmentId = getHoveredCompartment(mouseX, mouseY);
 
-        for (Map.Entry<Point, UUID> entry : getLayer().getCompartments().entrySet()) {
+        // TODO: Could this be smarter? Either by caching or making layer data immutable to prevent concurrent modification exceptions
+        for (Map.Entry<Point, UUID> entry : List.copyOf(getLayer().getCompartments().entrySet())) {
             Point slotPos = entry.getKey();
             UUID compartmentId = entry.getValue();
             CompartmentInstance instance = medicalStats.getCompartment(compartmentId);
 
-            VisualData visualData = instance.getVisualData();
+            if (instance == null || !instance.has(VISUAL_DATA)) continue;
+            VisualData visualData = instance.get(VISUAL_DATA);
 
             int slotX = contentX + slotPos.x() * slotSize;
             int slotY = contentY + slotPos.y() * slotSize;
-            int compartmentWidth = slotSize * visualData.getWidth();
-            int compartmentHeight = slotSize * visualData.getHeight();
-            int color = visualData.color;
+            int compartmentWidth = slotSize * visualData.width();
+            int compartmentHeight = slotSize * visualData.height();
+            int color = visualData.color();
 
             // TODO: Buggy
             float pulse = (float) (Math.sin(System.currentTimeMillis() / 500.0) * 0.4f + 0.95f);
             color = compartmentId.equals(hoveredCompartmentId) ? ARGB.color(pulse, color) : color;
 
-            ResourceLocation icon = visualData.getIcon();
+            ResourceLocation icon = visualData.icon();
             if (icon != null) {
                 guiGraphics.blit(RenderPipelines.GUI_TEXTURED, icon, slotX, slotY, 0, 0, compartmentWidth, compartmentHeight, compartmentWidth, compartmentHeight, color);
             }
@@ -202,11 +271,11 @@ public class CompartmentWidget extends MovableResizableWidget {
     private void renderCompartmentTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
     }
 
-    private @Nullable UUID getHoveredCompartment(int mouseX, int mouseY) {
+    public @Nullable UUID getHoveredCompartment(int mouseX, int mouseY) {
         Point hoveredSlot = getHoveredSlot(mouseX, mouseY);
         if (hoveredSlot == null) return null;
 
-        return compartment.getLayer(layerIndex).getCompartmentAt(hoveredSlot.x(), hoveredSlot.y());
+        return getLayer().getCompartmentAt(hoveredSlot.x(), hoveredSlot.y());
     }
 
     public @Nullable Point getHoveredSlot(int mouseX, int mouseY) {
@@ -214,7 +283,7 @@ public class CompartmentWidget extends MovableResizableWidget {
             for (int col = 0; col < grid[row].length; col++) {
                 LayerSlot slot = grid[row][col];
                 if (slot == null) continue;
-                if (slot.getVisibility() < 0.5f) continue;
+                if (light[row][col] <= 0) continue;
 
                 int slotX = contentX + col * slotSize;
                 int slotY = contentY + row * slotSize;
@@ -230,7 +299,15 @@ public class CompartmentWidget extends MovableResizableWidget {
     }
 
     public LayerData getLayer() {
-        return compartment.getLayer(layerIndex);
+        return CompartmentUtil.getLayer(compartment, layerIndex);
+    }
+
+    public int getLayerIndex() {
+        return layerIndex;
+    }
+
+    public LayerSlot[][] getGrid() {
+        return grid;
     }
 
     @Override
@@ -242,9 +319,10 @@ public class CompartmentWidget extends MovableResizableWidget {
         }
 
         CompartmentInstance hoveredCompartment = screen.getMedicalStats().getCompartment(getHoveredCompartment((int) mouseX, (int) mouseY));
-        if (hoveredCompartment != null) {
+        if (hoveredCompartment != null && hoveredCompartment.getCompartment().canExtract(hoveredCompartment, screen.getMedicalStats())) {
             if (button == 0) {
-                getLayer().removeInstance(hoveredCompartment.getId());
+                ClientPacketDistributor.sendToServer(new ExtractCompartment(screen.getCharacterId(),
+                        compartment.getId(), hoveredCompartment.getId(), layerIndex));
                 screen.setHeldCompartment(hoveredCompartment);
                 return true;
             } else {
@@ -260,11 +338,16 @@ public class CompartmentWidget extends MovableResizableWidget {
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
-    public boolean tryToPlace(int x, int y, @NotNull CompartmentInstance compartment) {
+    public boolean tryToPlace(int x, int y, @NotNull CompartmentInstance placingCompartment) {
         Point hoveredSlot = getHoveredSlot(x, y);
         if (hoveredSlot == null) return false;
+        if (!getLayer().canFit(hoveredSlot.x(), hoveredSlot.y(), placingCompartment)) return false;
 
-        return getLayer().tryToPlace(hoveredSlot.x(), hoveredSlot.y(), compartment);
+        // Compartment should always be able to fit here
+        ClientPacketDistributor.sendToServer(new AddAndInsertCompartment(screen.getCharacter().getId(),
+                compartment.getId(), placingCompartment, layerIndex, hoveredSlot.x(), hoveredSlot.y()));
+        ClientPacketDistributor.sendToServer(new SetCharactersChanged());
+        return true;
     }
 
     public boolean isWithinContentArea(int mouseX, int mouseY) {
@@ -335,6 +418,14 @@ public class CompartmentWidget extends MovableResizableWidget {
 
     public int getSlotSize() {
         return slotSize;
+    }
+
+    public int getContentX() {
+        return contentX;
+    }
+
+    public int getContentY() {
+        return contentY;
     }
 
     @Override

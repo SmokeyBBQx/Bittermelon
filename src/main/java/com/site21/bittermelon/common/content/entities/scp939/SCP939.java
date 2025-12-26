@@ -23,7 +23,7 @@ import com.site21.bittermelon.common.systems.ai.vibration.BitterVibrationUser;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.combat.AttackTemplate;
-import com.site21.bittermelon.common.systems.medical.factory.Anatomy;
+import com.site21.bittermelon.common.systems.medical.factory.AnatomyType;
 import com.site21.bittermelon.init.neoforge.BitterActivity;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
@@ -105,7 +105,7 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
 
     @Override
     protected Character initializeCharacter() {
-        return new Character(this.uuid, "SCP-939-" + getRandom().nextInt(1, 24), Anatomy.HUMAN);
+        return new Character(this.uuid, "SCP-939-" + getRandom().nextInt(1, 24), AnatomyType.HUMAN);
     }
 
     @Override

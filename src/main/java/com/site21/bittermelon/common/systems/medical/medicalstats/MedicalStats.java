@@ -2,15 +2,17 @@ package com.site21.bittermelon.common.systems.medical.medicalstats;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.character.skills.Skill;
-import com.site21.bittermelon.common.systems.medical.client.networking.UpdateHealthScreen;
+import com.site21.bittermelon.common.systems.medical.Anatomy;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
-import com.site21.bittermelon.common.systems.medical.drug.DrugInstance;
+import com.site21.bittermelon.common.systems.medical.component.MedicalTicker;
 import net.minecraft.core.Holder;
 import net.minecraft.core.UUIDUtil;
+import net.minecraft.core.component.*;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -18,87 +20,65 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.*;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.common.MutableDataComponentHolder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.MEDICAL_ATTRIBUTES;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.*;
 
-public class MedicalStats {
-    public static final Codec<MedicalStats> CODEC = RecordCodecBuilder.create(
-            instance -> instance.group(
-                    Codec.INT.fieldOf("version").orElse(1).forGetter(MedicalStats::getVersion),
-                    Codec.list(CompartmentInstance.CODEC).fieldOf("compartments").forGetter(
-                            stats -> new ArrayList<>(stats.compartments.values())
-                    ),
-                    UUIDUtil.CODEC.fieldOf("mainCompartmentID").forGetter(MedicalStats::getMainCompartmentID),
-                    UUIDUtil.CODEC.fieldOf("characterID").forGetter(MedicalStats::getCharacterID),
-                    Codec.unboundedMap(MedicalAttribute.CODEC, MedicalAttributeInstance.CODEC).fieldOf("attributes").forGetter(MedicalStats::getAttributes),
-                    Codec.list(DrugInstance.CODEC).fieldOf("activeDrugs").forGetter(MedicalStats::getActiveDrugs)
-            ).apply(instance, MedicalStats::new)
-    );
+public class MedicalStats implements DataComponentHolder, MutableDataComponentHolder {
+    public static final Codec<MedicalStats> CODEC;
+    public static final StreamCodec<RegistryFriendlyByteBuf, MedicalStats> STREAM_CODEC;
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, MedicalStats> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.INT,
-            MedicalStats::getVersion,
-            CompartmentInstance.STREAM_CODEC.apply(
-                    ByteBufCodecs.collection(ArrayList::new)
-            ),
-            MedicalStats::getCompartmentsCollection,
-            UUIDUtil.STREAM_CODEC,
-            MedicalStats::getMainCompartmentID,
-            UUIDUtil.STREAM_CODEC,
-            MedicalStats::getCharacterID,
-            ByteBufCodecs.map(
-                    HashMap::new,
-                    MedicalAttribute.STREAM_CODEC,
-                    MedicalAttributeInstance.STREAM_CODEC
-            ),
-            MedicalStats::getAttributes,
-            DrugInstance.STREAM_CODEC.apply(ByteBufCodecs.list()),
-            MedicalStats::getActiveDrugs,
-            MedicalStats::new
-    );
-
+    private final Holder<Anatomy> anatomy;
     private final int version;
-    protected final Map<UUID, CompartmentInstance> compartments;
-    protected final UUID mainCompartmentID;
-    protected final UUID characterID;
+    private final Map<UUID, CompartmentInstance> compartments;
+    private final UUID mainCompartmentId;
+    private final UUID characterId;
     private final EnumMap<MedicalAttribute, MedicalAttributeInstance> medicalAttributes;
-    protected final Map<Holder<Attribute>, Double> defaultEntityAttributes;
-    protected final List<DrugInstance> activeDrugs;
-    protected final Map<CompartmentInstance, CompartmentInstance> compartmentRelations;
+    private final Map<Holder<Attribute>, Double> defaultEntityAttributes;
+    private final PatchedDataComponentMap components;
 
     protected LivingEntity entity;
     protected Character character;
 
-    public MedicalStats(int version, @NotNull Collection<CompartmentInstance> compartments, UUID mainCompartmentID, UUID characterID, Map<MedicalAttribute, MedicalAttributeInstance> attributes, List<DrugInstance> activeDrugs) {
+    public MedicalStats(Holder<Anatomy> anatomy, int version, @NotNull List<CompartmentInstance> compartments,
+                        UUID mainCompartmentId, UUID characterId, Map<MedicalAttribute,
+                    MedicalAttributeInstance> attributes, PatchedDataComponentMap components) {
+        this.anatomy = anatomy;
         this.version = version;
-        this.mainCompartmentID = mainCompartmentID;
+        this.mainCompartmentId = mainCompartmentId;
         this.compartments = new ConcurrentHashMap<>();
         for (CompartmentInstance instance : compartments) {
             this.compartments.put(instance.getId(), instance);
         }
-        this.characterID = characterID;
-        this.activeDrugs = new ArrayList<>(activeDrugs);
-        medicalAttributes = new EnumMap<>(MedicalAttribute.class);
+        this.characterId = characterId;
+        this.medicalAttributes = new EnumMap<>(MedicalAttribute.class);
         medicalAttributes.putAll(attributes);
         this.defaultEntityAttributes = new HashMap<>();
-        this.compartmentRelations = new HashMap<>();
+        this.components = components;
     }
 
-    public MedicalStats(int version, @NotNull List<CompartmentInstance> compartments, UUID mainCompartmentID, UUID characterID) {
-        this(version, compartments, mainCompartmentID, characterID, new EnumMap<>(MedicalAttribute.class), new ArrayList<>());
+    public MedicalStats(Holder<Anatomy> anatomy, int version, List<CompartmentInstance> compartments,
+                        UUID mainCompartmentId, UUID characterId, Map<MedicalAttribute,
+                    MedicalAttributeInstance> attributes, DataComponentPatch components) {
+        this(anatomy, version, compartments, mainCompartmentId, characterId, attributes,
+                PatchedDataComponentMap.fromPatch(anatomy.value().components(), components));
     }
 
     @SuppressWarnings("unchecked")
     private void initializeEntity(Level level) {
         if (character == null) {
-            character = CharacterManager.get(level).getCharacter(characterID);
+            character = CharacterManager.get(level).getCharacter(characterId);
             return;
         }
 
@@ -114,9 +94,7 @@ public class MedicalStats {
         }
     }
 
-    public void update(@NotNull Level level) {
-        if (level.isClientSide) return;
-
+    public void tick(@NotNull Level level) {
         if (entity == null || defaultEntityAttributes.isEmpty()) {
             initializeEntity(level);
             return;
@@ -124,21 +102,27 @@ public class MedicalStats {
 
         updateCompartments();
         updateEntityAttributes();
-        tickDrugs();
         handleMobEffects();
+
+        for (TypedDataComponent<?> componentType : getComponents()) {
+            if (componentType.value() instanceof MedicalTicker ticker) {
+                ticker.tick(this, level);
+            }
+        }
     }
 
     private void updateCompartments() {
         for (CompartmentInstance compartment : compartments.values()) {
             compartment.tick(this);
 
-            if (compartment.isDirty()) {
-                for (MedicalAttribute attribute : compartment.getAttributes().keySet()) {
+            EnumMap<MedicalAttribute, Float> attributes = compartment.get(MEDICAL_ATTRIBUTES);
+
+            if (attributes != null) {
+                for (MedicalAttribute attribute : attributes.keySet()) {
                     MedicalAttributeInstance instance = medicalAttributes.computeIfAbsent(attribute,
                             (k) -> new MedicalAttributeInstance());
-                    instance.updateModifier(compartment.getId(), compartment.getAttribute(attribute));
+                    instance.updateModifier(compartment.getId(), attributes.get(attribute));
                 }
-                compartment.setDirty(false);
             }
         }
     }
@@ -148,17 +132,17 @@ public class MedicalStats {
         updateManipulationAttributes();
     }
 
-    private void tickDrugs() {
-        Iterator<DrugInstance> iterator = activeDrugs.iterator();
-        while (iterator.hasNext()) {
-            DrugInstance drug = iterator.next();
-            drug.tickInstance(this);
-            if (drug.getAmount() <= 0) {
-                drug.remove(this);
-                iterator.remove();
-            }
-        }
-    }
+//    private void tickDrugs() {
+//        Iterator<DrugInstance> iterator = activeDrugs.iterator();
+//        while (iterator.hasNext()) {
+//            DrugInstance drug = iterator.next();
+//            drug.tickInstance(this);
+//            if (drug.getAmount() <= 0) {
+//                drug.remove(this);
+//                iterator.remove();
+//            }
+//        }
+//    }
 
     private void updateMovementAttributes() {
         float capability = getMovement() * character.getSkill(Skill.AGILITY);
@@ -203,12 +187,17 @@ public class MedicalStats {
     }
 
     public CompartmentInstance getCompartment(UUID uuid) {
-        if (uuid == null) return null;
+        if (uuid == null) {
+            Bittermelon.LOGGER.error("Tried to get compartment with null UUID!");
+            return null;
+        }
 
         CompartmentInstance compartment = compartments.get(uuid);
 
+        // TODO: Desync between client and server causing compartments to be missing, why?
         if (compartment == null) {
             compartments.remove(uuid);
+            Bittermelon.LOGGER.error("Compartment with UUID {} not found!", uuid);
         }
 
         return compartment;
@@ -218,39 +207,16 @@ public class MedicalStats {
         return compartments;
     }
 
-    public Collection<CompartmentInstance> getCompartmentsCollection() {
-        return compartments.values();
+    public void removeCompartment(@NotNull CompartmentInstance compartment) {
+        compartments.remove(compartment.getId());
     }
 
-    public void removeCompartment(@NotNull CompartmentInstance compartment) {
+    public void removeCompartment(UUID compartmentId) {
+        compartments.remove(compartmentId);
     }
 
     public void addCompartment(CompartmentInstance compartment) {
         compartments.put(compartment.getId(), compartment);
-
-        if (entity != null) {
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new UpdateHealthScreen(characterID, this));
-        }
-    }
-
-    public void addRelation(CompartmentInstance child, CompartmentInstance parent) {
-        compartmentRelations.put(child, parent);
-    }
-
-    public Map<CompartmentInstance, CompartmentInstance> getCompartmentRelations() {
-        return compartmentRelations;
-    }
-
-    public void addDrug(DrugInstance instance) {
-        activeDrugs.add(instance);
-    }
-
-    public void removeDrug(DrugInstance instance) {
-        activeDrugs.remove(instance);
-    }
-
-    public List<DrugInstance> getActiveDrugs() {
-        return activeDrugs;
     }
 
     public void removeModifiers(UUID uuid, @NotNull Collection<MedicalAttribute> attributes) {
@@ -317,16 +283,16 @@ public class MedicalStats {
         return getAttribute(MedicalAttribute.BRAIN_CONSCIOUSNESS);
     }
 
-    public UUID getMainCompartmentID() {
-        return mainCompartmentID;
+    public UUID getMainCompartmentId() {
+        return mainCompartmentId;
     }
 
     public CompartmentInstance getMainCompartment() {
-        return getCompartment(mainCompartmentID);
+        return getCompartment(mainCompartmentId);
     }
 
-    public UUID getCharacterID() {
-        return characterID;
+    public UUID getCharacterId() {
+        return characterId;
     }
 
     public UUID getEntityID() {
@@ -340,5 +306,71 @@ public class MedicalStats {
 
     public int getVersion() {
         return version;
+    }
+
+    public Holder<Anatomy> getAnatomy() {
+        return anatomy;
+    }
+
+    @Override
+    public <T> @Nullable T set(@NotNull DataComponentType<T> component, @Nullable T value) {
+        return components.set(component, value);
+    }
+
+    @Override
+    public <T> @Nullable T remove(@NotNull DataComponentType<? extends T> component) {
+        return components.remove(component);
+    }
+
+    @Override
+    public void applyComponents(@NotNull DataComponentPatch patch) {
+        components.applyPatch(patch);
+    }
+
+    @Override
+    public void applyComponents(@NotNull DataComponentMap components) {
+        this.components.setAll(this.components);
+    }
+
+    @Override
+    public @NotNull DataComponentMap getComponents() {
+        return components;
+    }
+
+    static {
+        CODEC = RecordCodecBuilder.create(
+                instance -> instance.group(
+                        Anatomy.CODEC.fieldOf("anatomy").forGetter(MedicalStats::getAnatomy),
+                        Codec.INT.fieldOf("version").orElse(1).forGetter(MedicalStats::getVersion),
+                        Codec.list(CompartmentInstance.CODEC).fieldOf("compartments").forGetter(
+                                stats -> new ArrayList<>(stats.compartments.values())),
+                        UUIDUtil.CODEC.fieldOf("mainCompartmentID").forGetter(MedicalStats::getMainCompartmentId),
+                        UUIDUtil.CODEC.fieldOf("characterID").forGetter(MedicalStats::getCharacterId),
+                        Codec.unboundedMap(MedicalAttribute.CODEC, MedicalAttributeInstance.CODEC).fieldOf("attributes").forGetter(MedicalStats::getAttributes),
+                        DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(stats -> stats.components.asPatch())
+                ).apply(instance, MedicalStats::new)
+        );
+
+        STREAM_CODEC = StreamCodec.composite(
+                Anatomy.STREAM_CODEC,
+                MedicalStats::getAnatomy,
+                ByteBufCodecs.INT,
+                MedicalStats::getVersion,
+                CompartmentInstance.STREAM_CODEC.apply(ByteBufCodecs.list()),
+                stats -> new ArrayList<>(stats.compartments.values()),
+                UUIDUtil.STREAM_CODEC,
+                MedicalStats::getMainCompartmentId,
+                UUIDUtil.STREAM_CODEC,
+                MedicalStats::getCharacterId,
+                ByteBufCodecs.map(
+                        HashMap::new,
+                        MedicalAttribute.STREAM_CODEC,
+                        MedicalAttributeInstance.STREAM_CODEC
+                ),
+                MedicalStats::getAttributes,
+                DataComponentPatch.STREAM_CODEC,
+                stats -> stats.components.asPatch(),
+                MedicalStats::new
+        );
     }
 }

@@ -4,7 +4,6 @@ import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.common.systems.medical.blood.BloodData;
 import com.site21.bittermelon.common.systems.medical.medicalstats.AnimalMedicalStats;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import net.minecraft.core.BlockPos;
@@ -18,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.custom.Substances.BLOOD;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.BLOOD_DATA;
 import static net.minecraft.world.level.block.Block.UPDATE_ALL_IMMEDIATE;
 
 public class BleedingEffect extends MobEffect {
@@ -44,7 +42,7 @@ public class BleedingEffect extends MobEffect {
         Character character = CharacterManager.get(entity.level()).getActiveCharacter(entity);
         if (character != null) {
             if (character.getMedicalStats() instanceof AnimalMedicalStats medicalStats) {
-                stack.set(BLOOD_DATA, new BloodData(medicalStats.getBloodType(), medicalStats.getActiveDrugs()));
+//                stack.set(BLOOD_DATA, new BloodData(medicalStats.getBloodType(), medicalStats.getActiveDrugs()));
                 medicalStats.modifyBloodVolume(-amplifier);
             }
         }

@@ -16,22 +16,20 @@ public class LayerSlot {
 
     private final SlotType type;
     private Point pivot;
-    private float visibility;
     private float bloodLevel;
 
-    public LayerSlot(SlotType type, @Nullable Point pivot, float visibility, float bloodLevel) {
+    public LayerSlot(SlotType type, @Nullable Point pivot, float bloodLevel) {
         this.type = type;
         this.pivot = pivot;
-        this.visibility = visibility;
         this.bloodLevel = bloodLevel;
     }
 
-    public LayerSlot(SlotType type, @NotNull Optional<Point> point, float visibility, float bloodLevel) {
-        this(type, point.orElse(null), visibility, bloodLevel);
+    public LayerSlot(SlotType type, @NotNull Optional<Point> point, float bloodLevel) {
+        this(type, point.orElse(null), bloodLevel);
     }
 
     public LayerSlot(SlotType type) {
-        this(type, Optional.empty(), 1.0f, 0f);
+        this(type, Optional.empty(), 0f);
     }
 
     public SlotType getType() {
@@ -51,20 +49,16 @@ public class LayerSlot {
         this.pivot = pivot;
     }
 
-    public float getVisibility() {
-        return visibility;
-    }
-
-    public void setVisibility(float visibility) {
-        this.visibility = visibility;
-    }
-
     public float getBloodLevel() {
         return bloodLevel;
     }
 
     public void setBloodLevel(float bloodLevel) {
         this.bloodLevel = bloodLevel;
+    }
+
+    public void updateBloodLevel(float delta) {
+        bloodLevel = Math.max(0f, Math.min(1f, bloodLevel + delta));
     }
 
     public boolean isOccupied() {
@@ -75,7 +69,6 @@ public class LayerSlot {
         CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 SlotType.CODEC.fieldOf("type").forGetter(LayerSlot::getType),
                 Point.CODEC.optionalFieldOf("pivot").forGetter(LayerSlot::getPivotOpt),
-                Codec.FLOAT.fieldOf("visibility").forGetter(LayerSlot::getVisibility),
                 Codec.FLOAT.fieldOf("blood_level").forGetter(LayerSlot::getBloodLevel)
         ).apply(instance, LayerSlot::new));
 
@@ -84,8 +77,6 @@ public class LayerSlot {
                 LayerSlot::getType,
                 ByteBufCodecs.optional(Point.STREAM_CODEC),
                 LayerSlot::getPivotOpt,
-                ByteBufCodecs.FLOAT,
-                LayerSlot::getVisibility,
                 ByteBufCodecs.FLOAT,
                 LayerSlot::getBloodLevel,
                 LayerSlot::new

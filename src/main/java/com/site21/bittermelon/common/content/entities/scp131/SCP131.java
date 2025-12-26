@@ -1,10 +1,10 @@
 package com.site21.bittermelon.common.content.entities.scp131;
 
-import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.ai.base.BitterMob;
 import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
-import com.site21.bittermelon.common.systems.medical.factory.Anatomy;
+import com.site21.bittermelon.common.systems.character.Character;
+import com.site21.bittermelon.common.systems.medical.factory.AnatomyType;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -52,7 +52,7 @@ public class SCP131 extends BitterMob<SCP131> {
 
     @Override
     protected Character initializeCharacter() {
-        return new Character(uuid, "SCP-131", Anatomy.HUMAN);
+        return new Character(uuid, "SCP-131", AnatomyType.HUMAN);
     }
 
     @Override
