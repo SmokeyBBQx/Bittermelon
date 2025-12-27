@@ -14,7 +14,6 @@ import com.site21.bittermelon.common.systems.stumble.client.RiseKeyHandler;
 import com.site21.bittermelon.common.systems.stumble.client.RiseProgressBar;
 import com.site21.bittermelon.common.systems.telecomms.intercom.IntercomManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.PostChain;
 import net.minecraft.util.TriState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -43,9 +42,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onRenderOverlayPre(RenderGuiLayerEvent.@NotNull Pre event) {
-        if (event.getName() == VanillaGuiLayers.EXPERIENCE_LEVEL
-                || event.getName() == VanillaGuiLayers.PLAYER_HEALTH
-                || event.getName() == VanillaGuiLayers.FOOD_LEVEL) {
+        if (event.getName() == VanillaGuiLayers.PLAYER_HEALTH || event.getName() == VanillaGuiLayers.FOOD_LEVEL) {
             event.setCanceled(true);
         }
     }

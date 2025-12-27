@@ -160,6 +160,10 @@ public class ClientSetup {
     }
 
     @SubscribeEvent
+    public static void registerGuiLayers(@NotNull RegisterGuiLayersEvent event) {
+    }
+
+    @SubscribeEvent
     public static void registerClientPayloadHandlers(@NotNull RegisterClientPayloadHandlersEvent event) {
         event.register(
                 SetLastTypingTime.TYPE,

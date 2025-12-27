@@ -2,10 +2,12 @@ package com.site21.bittermelon.init.neoforge;
 
 import com.mojang.serialization.Codec;
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.systems.atmosphere.data.AtmosBlockData;
 import com.site21.bittermelon.common.content.items.scps.scp377.FortuneInstance;
+import com.site21.bittermelon.common.systems.atmosphere.data.AtmosBlockData;
 import com.site21.bittermelon.common.systems.blockdamage.BlockDamageData;
 import net.minecraft.core.UUIDUtil;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.util.ExtraCodecs;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
@@ -39,7 +41,10 @@ public class BitterAttachmentTypes {
     );
 
     public static final Supplier<AttachmentType<Integer>> STRESS = ATTACHMENT_TYPES.register(
-            "stress", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT.fieldOf("stress")).build()
+            "stress", () -> AttachmentType.builder(() -> 0)
+                    .serialize(ExtraCodecs.NON_NEGATIVE_INT.fieldOf("stress"))
+                    .sync(ByteBufCodecs.INT)
+                    .build()
     );
 
     public static final Supplier<AttachmentType<Integer>> FEAR = ATTACHMENT_TYPES.register(

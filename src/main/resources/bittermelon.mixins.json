@@ -4,14 +4,16 @@
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
   "mixins": [
-    "ChatScreenMixin",
-    "GameRendererMixin",
     "ItemEntityMixin",
     "ItemMixin"
   ],
   "client": [
     "ChatComponentMixin",
+    "ChatScreenMixin",
+    "ContextualInfoExtender",
     "CrosshairMixin",
+    "GameRendererMixin",
+    "GuiMixin",
     "LivingEntityRendererMixin",
     "PlayerInfoMixin"
   ],
