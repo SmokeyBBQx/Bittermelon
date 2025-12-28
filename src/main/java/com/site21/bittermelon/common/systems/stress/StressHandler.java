@@ -13,7 +13,7 @@ public class StressHandler {
         if (player.getData(STRESS_RELIEF) == 0 || player.hasEffect(EUPHORIA)) return;
 
         if (player.level().getGameTime() % 40 == 0) {
-            StressUtil.updateStressRelief(player, -0.01f);
+            StressUtil.updateStressRelief(player, -0.05f);
         }
     }
 
