@@ -3,7 +3,9 @@ package com.site21.bittermelon.common.events;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.items.scps.scp377.FortuneHandler;
 import com.site21.bittermelon.common.systems.blockdamage.BlockDamageHelper;
+import com.site21.bittermelon.common.systems.stress.StressHandler;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.BlockEvent;
@@ -17,6 +19,10 @@ public class CommonEvents {
     public static void onEntityTick(EntityTickEvent.@NotNull Post event) {
         Entity entity = event.getEntity();
         FortuneHandler.onEntityTick(entity);
+
+        if (entity instanceof Player player) {
+            StressHandler.tickStress(player);
+        }
     }
 
     @SubscribeEvent

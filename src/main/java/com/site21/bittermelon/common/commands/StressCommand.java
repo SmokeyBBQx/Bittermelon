@@ -1,6 +1,7 @@
 package com.site21.bittermelon.common.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.site21.bittermelon.common.systems.stress.StressUtil;
@@ -16,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.STRESS;
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.STRESS_RELIEF;
 
 public class StressCommand {
     public static void register(@NotNull CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -62,6 +64,50 @@ public class StressCommand {
                             return 0;
                         })
                 )
+                // /stress relief set <targets> <value>
+                .then(Commands.literal("relief")
+                        .then(Commands.literal("set")
+                                .then(Commands.argument("targets", EntityArgument.players())
+                                        .then(Commands.argument("value", FloatArgumentType.floatArg(0.0f, 1.0f))
+                                                .executes(context -> setStressRelief(
+                                                        context,
+                                                        EntityArgument.getPlayers(context, "targets"),
+                                                        FloatArgumentType.getFloat(context, "value")
+                                                ))
+                                        )
+                                )
+                        )
+                        // /stress relief add <targets> <amount>
+                        .then(Commands.literal("add")
+                                .then(Commands.argument("targets", EntityArgument.players())
+                                        .then(Commands.argument("amount", FloatArgumentType.floatArg())
+                                                .executes(context -> updateStressRelief(
+                                                        context,
+                                                        EntityArgument.getPlayers(context, "targets"),
+                                                        FloatArgumentType.getFloat(context, "amount")
+                                                ))
+                                        )
+                                )
+                        )
+                        // /stress relief get [target]
+                        .then(Commands.literal("get")
+                                .then(Commands.argument("target", EntityArgument.player())
+                                        .executes(context -> getStressRelief(
+                                                context,
+                                                EntityArgument.getPlayer(context, "target")
+                                        ))
+                                )
+                                .executes(context -> {
+                                    Entity source = context.getSource().getEntity();
+                                    if (source instanceof Player player) {
+                                        return getStressRelief(context, player);
+                                    }
+                                    context.getSource().sendFailure(Component.literal("Must be a player to check stress relief"));
+                                    return 0;
+                                })
+                        )
+                )
+
         );
     }
 
@@ -99,6 +145,44 @@ public class StressCommand {
     private static int getStress(@NotNull CommandContext<CommandSourceStack> context, @NotNull Player target) {
         context.getSource().sendSuccess(() ->
                 Component.literal(target.getName().getString() + "'s stress: " + target.getData(STRESS)), false);
+        return 1;
+    }
+
+    private static int setStressRelief(@NotNull CommandContext<CommandSourceStack> context, @NotNull Collection<ServerPlayer> targets, float value) {
+        if (targets.isEmpty()) {
+            context.getSource().sendFailure(Component.literal("No valid players found"));
+            return 0;
+        }
+
+        for (ServerPlayer target : targets) {
+            target.setData(STRESS_RELIEF, value);
+        }
+
+        context.getSource().sendSuccess(() ->
+                Component.literal("Set stress relief to " + String.format("%.2f", value) + " for " + targets.size() + " player(s)"), true);
+        return 1;
+    }
+
+    private static int updateStressRelief(@NotNull CommandContext<CommandSourceStack> context, @NotNull Collection<ServerPlayer> targets, float amount) {
+        if (targets.isEmpty()) {
+            context.getSource().sendFailure(Component.literal("No valid players found"));
+            return 0;
+        }
+
+        for (ServerPlayer target : targets) {
+            StressUtil.updateStressRelief(target, amount);
+        }
+
+        String action = amount >= 0 ? "Added " + String.format("%.2f", amount) : "Removed " + String.format("%.2f", -amount);
+        context.getSource().sendSuccess(() ->
+                Component.literal(action + " stress relief for " + targets.size() + " player(s)"), true);
+        return 1;
+    }
+
+    private static int getStressRelief(@NotNull CommandContext<CommandSourceStack> context, @NotNull Player target) {
+        float stressRelief = target.getData(STRESS_RELIEF);
+        context.getSource().sendSuccess(() ->
+                Component.literal(target.getName().getString() + "'s stress relief: " + String.format("%.2f", stressRelief)), false);
         return 1;
     }
 }

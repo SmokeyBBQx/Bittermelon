@@ -47,6 +47,13 @@ public class BitterAttachmentTypes {
                     .build()
     );
 
+    public static final Supplier<AttachmentType<Float>> STRESS_RELIEF = ATTACHMENT_TYPES.register(
+            "stress_relief", () -> AttachmentType.builder(() -> 0f)
+                    .serialize(Codec.FLOAT.fieldOf("stress_relief"))
+                    .sync(ByteBufCodecs.FLOAT)
+                    .build()
+    );
+
     public static final Supplier<AttachmentType<Integer>> FEAR = ATTACHMENT_TYPES.register(
             "fear", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT.fieldOf("fear")).build()
     );

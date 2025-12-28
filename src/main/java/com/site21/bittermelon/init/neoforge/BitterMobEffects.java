@@ -2,9 +2,9 @@ package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.blocks.scp.scp151.DrowningEffect;
+import com.site21.bittermelon.common.content.items.taser.TaserEffect;
 import com.site21.bittermelon.common.content.mobeffects.*;
 import com.site21.bittermelon.common.content.mobeffects.electrocuted.ElectrocutedEffect;
-import com.site21.bittermelon.common.content.items.taser.TaserEffect;
 import com.site21.bittermelon.common.systems.stumble.FallenEffect;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -41,4 +41,5 @@ public class BitterMobEffects {
     public static final Holder<MobEffect> UNCONSCIOUS = MOB_EFFECTS.register("unconscious", () -> new BitterEffect(MobEffectCategory.HARMFUL, 0));
     public static final Holder<MobEffect> HALLUCINATION = MOB_EFFECTS.register("hallucination", () -> new BitterEffect(MobEffectCategory.NEUTRAL, 0));
     public static final Holder<MobEffect> BLEEDING = MOB_EFFECTS.register("bleeding", BleedingEffect::new);
+    public static final Holder<MobEffect> EUPHORIA = MOB_EFFECTS.register("euphoria", EuphoriaEffect::new);
 }
