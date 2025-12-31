@@ -19,6 +19,7 @@ import com.site21.bittermelon.common.content.entities.scp548.client.SCP548Render
 import com.site21.bittermelon.common.content.entities.scp650.client.SCP650Renderer;
 import com.site21.bittermelon.common.content.entities.scp939.client.SCP939Renderer;
 import com.site21.bittermelon.common.content.items.keycard.KeycardDecorator;
+import com.site21.bittermelon.common.content.items.repairtool.RepairToolUseAnimation;
 import com.site21.bittermelon.common.content.items.taser.TaserProjectileRenderer;
 import com.site21.bittermelon.common.systems.character.networking.UpdateCharacter;
 import com.site21.bittermelon.common.systems.component.screwdriver.ScrewdriverUseAnimation;
@@ -131,6 +132,11 @@ public class ClientSetup {
         event.registerItem(
                 new ScrewdriverUseAnimation(),
                 BitterItems.SCREWDRIVER
+        );
+
+        event.registerItem(
+                new RepairToolUseAnimation(),
+                BitterItems.REPAIR_TOOL
         );
     }
 

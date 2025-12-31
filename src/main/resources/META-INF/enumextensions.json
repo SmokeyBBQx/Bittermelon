@@ -17,6 +17,15 @@
         "class": "com/site21/bittermelon/common/systems/component/screwdriver/ScrewdriverPose",
         "field": "SCREW_POSE"
       }
+    },
+    {
+      "enum": "net/minecraft/world/item/ItemUseAnimation",
+      "name": "BITTERMELON_REPAIR_TOOL",
+      "constructor": "(ILjava/lang/String;)V",
+      "parameters": [
+        -1,
+        "bittermelon:repair_tool"
+      ]
     }
   ]
 }

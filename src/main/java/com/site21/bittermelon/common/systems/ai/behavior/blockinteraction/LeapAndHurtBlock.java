@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.systems.ai.behavior.blockinteraction;
 
 import com.mojang.datafixers.util.Pair;
-import com.site21.bittermelon.common.systems.blockdamage.BlockDamageHelper;
+import com.site21.bittermelon.common.systems.blockdamage.BlockDamageUtil;
 import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
@@ -59,7 +59,7 @@ public class LeapAndHurtBlock<E extends Mob> extends DelayedBehaviour<E> {
         Level level = entity.level();
 
         int damage = (int) entity.getAttributeValue(Attributes.ATTACK_DAMAGE);
-        BlockDamageHelper.addDamage(level, breakTarget, damage);
+        BlockDamageUtil.addDamage(level, breakTarget, damage);
 
         BrainUtil.clearMemory(entity, BitterMemoryTypes.BREAK_TARGET.get());
 

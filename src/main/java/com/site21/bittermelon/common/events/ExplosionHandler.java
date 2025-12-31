@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.events;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.items.scps.scp2398.SCP2398Item;
-import com.site21.bittermelon.common.systems.blockdamage.BlockDamageHelper;
+import com.site21.bittermelon.common.systems.blockdamage.BlockDamageUtil;
 import com.site21.bittermelon.common.systems.syncsound.SyncSoundEvent;
 import com.site21.bittermelon.common.systems.syncsound.SyncSoundType;
 import net.minecraft.ChatFormatting;
@@ -35,7 +35,7 @@ public class ExplosionHandler {
 
         for (BlockPos pos : affectedBlocks) {
             int breakProgress = calculateBreakProgress(explosion.center(), pos, explosion.radius());
-            BlockDamageHelper.addDamage(level, pos, breakProgress);
+            BlockDamageUtil.addDamage(level, pos, breakProgress);
         }
 
         List<Entity> affectedEntities = event.getAffectedEntities();

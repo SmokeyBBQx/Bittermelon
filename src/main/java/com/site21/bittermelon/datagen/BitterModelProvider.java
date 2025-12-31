@@ -10,7 +10,6 @@ import com.site21.bittermelon.common.content.blocks.properties.Placement;
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlock;
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.common.content.items.substance.pill.PillShape;
-import com.site21.bittermelon.common.content.items.scps.SCP005Item;
 import com.site21.bittermelon.datagen.property.*;
 import com.site21.bittermelon.init.neoforge.BitterBlocks;
 import com.site21.bittermelon.init.neoforge.BitterItems;
@@ -183,6 +182,7 @@ public class BitterModelProvider extends ModelProvider {
         itemModels.generateFlatItem(TASER_CARTRIDGE.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(HANDHELD_SYSTEM_INTERFACE.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(SUTURE.get(), ModelTemplates.FLAT_ITEM);
+        generate3D2DItem(itemModels, REPAIR_TOOL.get());
     }
 
     public void createFluid(@NotNull BlockModelGenerators blockModels) {

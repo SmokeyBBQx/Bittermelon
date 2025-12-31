@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.site21.bittermelon.common.systems.blockdamage.BlockDamageData;
-import com.site21.bittermelon.common.systems.blockdamage.BlockDamageHelper;
+import com.site21.bittermelon.common.systems.blockdamage.BlockDamageUtil;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.chunk.SectionRenderDispatcher;
@@ -26,7 +26,7 @@ public class BlockDamageRenderer {
         while (iterator.hasNext()) {
             SectionRenderDispatcher.RenderSection renderSection = (SectionRenderDispatcher.RenderSection) iterator.next();
             BlockPos renderPos = renderSection.getRenderOrigin();
-            BlockDamageData data = BlockDamageHelper.getBlockDamageData(level, renderPos);
+            BlockDamageData data = BlockDamageUtil.getBlockDamageData(level, renderPos);
 
             for (BlockPos damagedPos : data.getBlockDamages().keySet()) {
                 if (!renderSection.getBoundingBox().intersects(damagedPos)) {

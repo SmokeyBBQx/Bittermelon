@@ -35,7 +35,6 @@ public class CompartmentWidget extends MovableResizableWidget {
     private static final ResourceLocation WINDOW_SIDES_TEXTURE = Bittermelon.resource("textures/gui/healthscreen/surgery_window_sides.png");
     private static final int EDGE_MARGIN = 2;
     private static final int BUTTON_SIZE = 10;
-    private static final int BUTTON_SPACING = 5;
 
     private final CompartmentInstance compartment;
     private final HealthScreen screen;

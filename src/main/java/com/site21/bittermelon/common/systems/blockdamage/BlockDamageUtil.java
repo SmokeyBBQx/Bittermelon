@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import org.jetbrains.annotations.NotNull;
 
-public class BlockDamageHelper {
+public class BlockDamageUtil {
     public static int getDamage(@NotNull LevelAccessor level, @NotNull BlockPos pos) {
         return getBlockDamageData(level, pos).getBlockDamage(pos);
     }
@@ -20,6 +20,13 @@ public class BlockDamageHelper {
         ChunkAccess chunk = level.getChunk(pos);
         BlockDamageData data = chunk.getData(BitterAttachmentTypes.BLOCK_DAMAGE);
         data.addBlockDamage(level, pos, damage);
+        chunk.setData(BitterAttachmentTypes.BLOCK_DAMAGE, data);
+    }
+
+    public static void repairDamage(@NotNull LevelAccessor level, @NotNull BlockPos pos, int repairAmount) {
+        ChunkAccess chunk = level.getChunk(pos);
+        BlockDamageData data = chunk.getData(BitterAttachmentTypes.BLOCK_DAMAGE);
+        data.repairBlockDamage(pos, repairAmount);
         chunk.setData(BitterAttachmentTypes.BLOCK_DAMAGE, data);
     }
 

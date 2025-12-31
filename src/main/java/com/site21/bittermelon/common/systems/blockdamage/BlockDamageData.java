@@ -8,6 +8,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.LevelAccessor;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import java.util.Map;
 public class BlockDamageData {
     private static final int MAX_DAMAGE = 100;
 
+    public static final Codec<BlockPos> BLOCK_POS_STRING_CODEC;
     public static final Codec<BlockDamageData> CODEC;
     public static final StreamCodec<ByteBuf, BlockDamageData> STREAM_CODEC;
 
@@ -39,12 +41,22 @@ public class BlockDamageData {
     }
 
     public void addBlockDamage(LevelAccessor level, BlockPos pos, int damage) {
-        float resistance = BlockDamageHelper.getBlockResistance(level, pos);
+        float resistance = BlockDamageUtil.getBlockResistance(level, pos);
         int currentDamage = blockDamage.getOrDefault(pos, 0);
         int newDamage = Mth.clamp(currentDamage + Math.round(damage / resistance), 0, MAX_DAMAGE);
         if (newDamage >= MAX_DAMAGE) {
             blockDamage.remove(pos);
             level.destroyBlock(pos, true);
+        } else {
+            blockDamage.put(pos, newDamage);
+        }
+    }
+
+    public void repairBlockDamage(BlockPos pos, int repairAmount) {
+        int currentDamage = blockDamage.getOrDefault(pos, 0);
+        int newDamage = Mth.clamp(currentDamage - repairAmount, 0, MAX_DAMAGE);
+        if (newDamage <= 0) {
+            blockDamage.remove(pos);
         } else {
             blockDamage.put(pos, newDamage);
         }
@@ -56,9 +68,20 @@ public class BlockDamageData {
         return data;
     }
 
+    @Contract("_ -> new")
+    public static @NotNull BlockPos fromShortString(@NotNull String str) {
+        String[] parts = str.split(",");
+        int x = Integer.parseInt(parts[0]);
+        int y = Integer.parseInt(parts[1]);
+        int z = Integer.parseInt(parts[2]);
+        return new BlockPos(x, y, z);
+    }
+
     static {
+        BLOCK_POS_STRING_CODEC = Codec.stringResolver(BlockPos::toShortString, BlockDamageData::fromShortString);
+
         CODEC = RecordCodecBuilder.create((instance) -> instance.group(
-                Codec.unboundedMap(BlockPos.CODEC, Codec.INT).fieldOf("block_damage").forGetter(BlockDamageData::getBlockDamages)
+                Codec.unboundedMap(BLOCK_POS_STRING_CODEC, Codec.INT).fieldOf("block_damage").forGetter(BlockDamageData::getBlockDamages)
         ).apply(instance, BlockDamageData::deserialize));
 
         STREAM_CODEC = StreamCodec.composite(

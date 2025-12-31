@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.site21.bittermelon.common.systems.blockdamage.BlockDamageHelper;
+import com.site21.bittermelon.common.systems.blockdamage.BlockDamageUtil;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
@@ -25,7 +25,7 @@ public class BlockDamageCommand {
                 .then(Commands.argument("pos", BlockPosArgument.blockPos())
                         .executes(context -> {
                             BlockPos pos = BlockPosArgument.getBlockPos(context, "pos");
-                            int damage = BlockDamageHelper.getDamage(context.getSource().getLevel(), pos);
+                            int damage = BlockDamageUtil.getDamage(context.getSource().getLevel(), pos);
                             context.getSource().sendSuccess(
                                     () -> Component.literal("Block damage at " + pos + ": " + damage),
                                     false
@@ -35,7 +35,7 @@ public class BlockDamageCommand {
     }
 
     private static int damageBlock(@NotNull CommandSourceStack source, BlockPos pos, int amount) {
-        BlockDamageHelper.addDamage(source.getLevel(), pos, amount);
+        BlockDamageUtil.addDamage(source.getLevel(), pos, amount);
         return 1;
     }
 }

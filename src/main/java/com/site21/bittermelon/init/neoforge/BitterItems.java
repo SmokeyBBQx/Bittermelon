@@ -1,7 +1,6 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
-import net.minecraft.world.item.SpawnEggItem;
 import com.site21.bittermelon.common.content.items.IntercomPhoneItem;
 import com.site21.bittermelon.common.content.items.StickyNote;
 import com.site21.bittermelon.common.content.items.TestHeatedItem;
@@ -9,6 +8,7 @@ import com.site21.bittermelon.common.content.items.handheldsysteminterface.Handh
 import com.site21.bittermelon.common.content.items.laserdesignator.LaserDesignatorItem;
 import com.site21.bittermelon.common.content.items.medical.tools.SyringeItem;
 import com.site21.bittermelon.common.content.items.mop.MopItem;
+import com.site21.bittermelon.common.content.items.repairtool.RepairToolItem;
 import com.site21.bittermelon.common.content.items.scps.SCP005Item;
 import com.site21.bittermelon.common.content.items.scps.SCP109Item;
 import com.site21.bittermelon.common.content.items.scps.scp377.SCP3771Item;
@@ -58,7 +58,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
@@ -401,5 +400,11 @@ public class BitterItems {
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
                     .stacksTo(1)
                     .component(BitterDataComponents.SUTURE, new Suture(1.0f))
+            ));
+
+    public static final DeferredItem<RepairToolItem> REPAIR_TOOL = ITEMS.register("repair_tool", registryName ->
+            new RepairToolItem(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .stacksTo(1)
             ));
 }
