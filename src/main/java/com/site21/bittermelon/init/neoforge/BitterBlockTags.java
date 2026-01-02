@@ -16,4 +16,8 @@ public class BitterBlockTags {
             Registries.BLOCK,
             ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "inspectable")
     );
-}
+
+    public static final TagKey<Block> UNREPAIRABLE = TagKey.create(
+            Registries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "unrepairable")
+    );}

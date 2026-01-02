@@ -1,6 +1,7 @@
 package com.site21.bittermelon.common.content.items.repairtool;
 
 import com.site21.bittermelon.common.systems.blockdamage.BlockDamageUtil;
+import com.site21.bittermelon.init.neoforge.BitterBlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -19,7 +20,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class RepairToolItem extends Item {
     public static final ItemUseAnimation REPAIR_TOOL_ANIMATION = ItemUseAnimation.valueOf("BITTERMELON_REPAIR_TOOL");
@@ -50,16 +50,10 @@ public class RepairToolItem extends Item {
         Vec3 pos = hitResult.getLocation();
         BlockPos blockPos = ((BlockHitResult) hitResult).getBlockPos();
         spawnParticles(serverLevel, pos, entity.getLookAngle());
-        BlockDamageUtil.repairDamage(level, blockPos, 1);
-        level.playSound(null, blockPos, SoundEvents.FIREWORK_ROCKET_TWINKLE, SoundSource.PLAYERS, 0.5f, 2);
-    }
-
-    private @Nullable Vec3 getTargetPos(@NotNull LivingEntity entity) {
-        var hitResult = entity.pick(entity.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE), 0.0F, false);
-        if (hitResult.getType() == HitResult.Type.BLOCK) {
-            return hitResult.getLocation();
+        level.playSound(null, blockPos, SoundEvents.FIREWORK_ROCKET_TWINKLE, SoundSource.PLAYERS, 0.25f, 2f);
+        if (!level.getBlockState(blockPos).is(BitterBlockTags.UNREPAIRABLE)) {
+            BlockDamageUtil.repairDamage(level, blockPos, 1);
         }
-        return null;
     }
 
     private void spawnParticles(@NotNull ServerLevel level, @NotNull Vec3 pos, @NotNull Vec3 angle) {
@@ -68,7 +62,7 @@ public class RepairToolItem extends Item {
                 pos.x, pos.y, pos.z,
                 10,
                 angle.x * 0.2, angle.y * 0.2, angle.z * 0.2,
-                0.05
+                0.25
         );
     }
 

@@ -3,7 +3,7 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
-		"0": "bittermelon:item/repair_tool"
+		"0": "bittermelon:item/repair_tool_in_hand"
 	},
 	"elements": [
 		{
