@@ -70,7 +70,7 @@ public class BlockDamageData {
 
     @Contract("_ -> new")
     public static @NotNull BlockPos fromShortString(@NotNull String str) {
-        String[] parts = str.split(",");
+        String[] parts = str.split(", ");
         int x = Integer.parseInt(parts[0]);
         int y = Integer.parseInt(parts[1]);
         int z = Integer.parseInt(parts[2]);
