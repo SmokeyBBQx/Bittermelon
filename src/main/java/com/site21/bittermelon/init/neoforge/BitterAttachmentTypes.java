@@ -5,6 +5,7 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.items.scps.scp377.FortuneInstance;
 import com.site21.bittermelon.common.systems.atmosphere.data.AtmosBlockData;
 import com.site21.bittermelon.common.systems.blockdamage.BlockDamageData;
+import com.site21.bittermelon.common.systems.electronics.wiring.WireNetwork;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.util.ExtraCodecs;
@@ -75,6 +76,13 @@ public class BitterAttachmentTypes {
             "block_damage", () -> AttachmentType.builder(BlockDamageData::new)
                     .serialize(BlockDamageData.CODEC.fieldOf("block_damage"))
                     .sync(BlockDamageData.STREAM_CODEC)
+                    .build()
+    );
+
+    public static final Supplier<AttachmentType<WireNetwork>> WIRE_NETWORK = ATTACHMENT_TYPES.register(
+            "wire_network", () -> AttachmentType.builder(WireNetwork::new)
+                    .serialize(WireNetwork.CODEC.fieldOf("wire_network"))
+                    .sync(WireNetwork.STREAM_CODEC)
                     .build()
     );
 }
