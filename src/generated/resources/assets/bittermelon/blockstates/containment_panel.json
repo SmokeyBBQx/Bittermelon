@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "bittermelon:block/indented_small_block",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "bittermelon:block/indented_small_block"
+    },
+    "facing=south": {
+      "model": "bittermelon:block/indented_small_block",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "bittermelon:block/indented_small_block",
+      "y": 270
+    }
+  }
+}

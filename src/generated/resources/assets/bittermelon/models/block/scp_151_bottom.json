@@ -1,0 +1,6 @@
+{
+  "parent": "bittermelon:block/painting_bottom",
+  "textures": {
+    "texture": "bittermelon:block/scp_151"
+  }
+}

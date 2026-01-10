@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=east,placement=left": {
+      "model": "bittermelon:block/keycard_reader_left",
+      "y": 90
+    },
+    "facing=east,placement=right": {
+      "model": "bittermelon:block/keycard_reader_right",
+      "y": 90
+    },
+    "facing=north,placement=left": {
+      "model": "bittermelon:block/keycard_reader_left"
+    },
+    "facing=north,placement=right": {
+      "model": "bittermelon:block/keycard_reader_right"
+    },
+    "facing=south,placement=left": {
+      "model": "bittermelon:block/keycard_reader_left",
+      "y": 180
+    },
+    "facing=south,placement=right": {
+      "model": "bittermelon:block/keycard_reader_right",
+      "y": 180
+    },
+    "facing=west,placement=left": {
+      "model": "bittermelon:block/keycard_reader_left",
+      "y": 270
+    },
+    "facing=west,placement=right": {
+      "model": "bittermelon:block/keycard_reader_right",
+      "y": 270
+    }
+  }
+}

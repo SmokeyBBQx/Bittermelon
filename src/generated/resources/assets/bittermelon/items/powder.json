@@ -1,0 +1,64 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "entries": [
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "bittermelon:item/powder_1",
+          "tints": [
+            {
+              "type": "bittermelon:substance_color",
+              "default": 16777215
+            }
+          ]
+        },
+        "threshold": 0.0
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "bittermelon:item/powder_2",
+          "tints": [
+            {
+              "type": "bittermelon:substance_color",
+              "default": 16777215
+            }
+          ]
+        },
+        "threshold": 5.0
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "bittermelon:item/powder_3",
+          "tints": [
+            {
+              "type": "bittermelon:substance_color",
+              "default": 16777215
+            }
+          ]
+        },
+        "threshold": 10.0
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/sugar",
+          "tints": [
+            {
+              "type": "bittermelon:substance_color",
+              "default": 16777215
+            }
+          ]
+        },
+        "threshold": 15.0
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "minecraft:item/sugar"
+    },
+    "property": "bittermelon:substance_volume"
+  }
+}

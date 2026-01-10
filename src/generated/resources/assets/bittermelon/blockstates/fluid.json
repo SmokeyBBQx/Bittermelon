@@ -1,0 +1,355 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_0"
+      },
+      "when": {
+        "east": "false",
+        "floating": "false",
+        "level": "0",
+        "north": "false",
+        "south": "false",
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_1"
+      },
+      "when": {
+        "east": "false",
+        "floating": "false",
+        "level": "1",
+        "north": "false",
+        "south": "false",
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_2"
+      },
+      "when": {
+        "floating": "false",
+        "level": "3"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_3"
+      },
+      "when": {
+        "floating": "false",
+        "level": "4"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_4"
+      },
+      "when": {
+        "floating": "false",
+        "level": "5"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_5"
+      },
+      "when": {
+        "floating": "false",
+        "level": "6"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_6"
+      },
+      "when": {
+        "floating": "false",
+        "level": "7"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_7"
+      },
+      "when": {
+        "floating": "false",
+        "level": "8"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_8"
+      },
+      "when": {
+        "floating": "false",
+        "level": "9"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_9"
+      },
+      "when": {
+        "floating": "false",
+        "level": "10"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_floating"
+      },
+      "when": {
+        "east": "false",
+        "floating": "true",
+        "north": "false",
+        "south": "false",
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_floating_n"
+      },
+      "when": {
+        "east": "false",
+        "floating": "true",
+        "north": "true",
+        "south": "false",
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_floating_e"
+      },
+      "when": {
+        "east": "true",
+        "floating": "true",
+        "north": "false",
+        "south": "false",
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_floating_s"
+      },
+      "when": {
+        "east": "false",
+        "floating": "true",
+        "north": "false",
+        "south": "true",
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_floating_w"
+      },
+      "when": {
+        "east": "false",
+        "floating": "true",
+        "north": "false",
+        "south": "false",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid"
+      },
+      "when": {
+        "east": "false",
+        "floating": "false",
+        "level": "2",
+        "north": "false",
+        "south": "false",
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_n"
+      },
+      "when": {
+        "east": "false",
+        "floating": "false",
+        "north": "true",
+        "south": "false",
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_e"
+      },
+      "when": {
+        "east": "true",
+        "floating": "false",
+        "north": "false",
+        "south": "false",
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_s"
+      },
+      "when": {
+        "east": "false",
+        "floating": "false",
+        "north": "false",
+        "south": "true",
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_w"
+      },
+      "when": {
+        "east": "false",
+        "floating": "false",
+        "north": "false",
+        "south": "false",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_ne"
+      },
+      "when": {
+        "east": "true",
+        "floating": "false",
+        "north": "true",
+        "south": "false",
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_ns"
+      },
+      "when": {
+        "east": "false",
+        "floating": "false",
+        "north": "true",
+        "south": "true",
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_nw"
+      },
+      "when": {
+        "east": "false",
+        "floating": "false",
+        "north": "true",
+        "south": "false",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_es"
+      },
+      "when": {
+        "east": "true",
+        "floating": "false",
+        "north": "false",
+        "south": "true",
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_ew"
+      },
+      "when": {
+        "east": "true",
+        "floating": "false",
+        "north": "false",
+        "south": "false",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_sw"
+      },
+      "when": {
+        "east": "false",
+        "floating": "false",
+        "north": "false",
+        "south": "true",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_nes"
+      },
+      "when": {
+        "east": "true",
+        "floating": "false",
+        "north": "true",
+        "south": "true",
+        "west": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_new"
+      },
+      "when": {
+        "east": "true",
+        "floating": "false",
+        "north": "true",
+        "south": "false",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_nsw"
+      },
+      "when": {
+        "east": "false",
+        "floating": "false",
+        "north": "true",
+        "south": "true",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_esw"
+      },
+      "when": {
+        "east": "true",
+        "floating": "false",
+        "north": "false",
+        "south": "true",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "bittermelon:block/fluid/fluid_nesw"
+      },
+      "when": {
+        "east": "true",
+        "floating": "false",
+        "north": "true",
+        "south": "true",
+        "west": "true"
+      }
+    }
+  ]
+}

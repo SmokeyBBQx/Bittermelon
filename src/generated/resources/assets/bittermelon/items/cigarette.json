@@ -1,0 +1,14 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "bittermelon:item/cigarette"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "bittermelon:item/cigarette_lit"
+    },
+    "property": "bittermelon:smokable_lit"
+  }
+}

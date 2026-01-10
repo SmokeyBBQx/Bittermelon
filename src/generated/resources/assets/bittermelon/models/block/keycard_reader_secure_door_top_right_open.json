@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/door_top_right_open",
+  "textures": {
+    "bottom": "bittermelon:block/keycard_reader_secure_door_bottom",
+    "top": "bittermelon:block/keycard_reader_secure_door_top"
+  }
+}

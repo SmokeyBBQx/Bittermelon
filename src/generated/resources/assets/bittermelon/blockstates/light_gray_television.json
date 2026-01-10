@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "rotation=0": {
+      "model": "bittermelon:block/light_gray_television"
+    },
+    "rotation=1": {
+      "model": "bittermelon:block/light_gray_television_225"
+    },
+    "rotation=10": {
+      "model": "bittermelon:block/light_gray_television_45",
+      "y": 180
+    },
+    "rotation=11": {
+      "model": "bittermelon:block/light_gray_television_675",
+      "y": 180
+    },
+    "rotation=12": {
+      "model": "bittermelon:block/light_gray_television",
+      "y": 270
+    },
+    "rotation=13": {
+      "model": "bittermelon:block/light_gray_television_225",
+      "y": 270
+    },
+    "rotation=14": {
+      "model": "bittermelon:block/light_gray_television_45",
+      "y": 270
+    },
+    "rotation=15": {
+      "model": "bittermelon:block/light_gray_television_675",
+      "y": 270
+    },
+    "rotation=2": {
+      "model": "bittermelon:block/light_gray_television_45"
+    },
+    "rotation=3": {
+      "model": "bittermelon:block/light_gray_television_675"
+    },
+    "rotation=4": {
+      "model": "bittermelon:block/light_gray_television",
+      "y": 90
+    },
+    "rotation=5": {
+      "model": "bittermelon:block/light_gray_television_225",
+      "y": 90
+    },
+    "rotation=6": {
+      "model": "bittermelon:block/light_gray_television_45",
+      "y": 90
+    },
+    "rotation=7": {
+      "model": "bittermelon:block/light_gray_television_675",
+      "y": 90
+    },
+    "rotation=8": {
+      "model": "bittermelon:block/light_gray_television",
+      "y": 180
+    },
+    "rotation=9": {
+      "model": "bittermelon:block/light_gray_television_225",
+      "y": 180
+    }
+  }
+}

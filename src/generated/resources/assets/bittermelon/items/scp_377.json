@@ -1,0 +1,14 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "bittermelon:item/scp_377_empty"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "bittermelon:item/scp_377"
+    },
+    "property": "bittermelon:empty_377"
+  }
+}

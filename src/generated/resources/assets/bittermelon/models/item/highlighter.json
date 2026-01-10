@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "bittermelon:item/highlighter_tip",
+    "layer1": "bittermelon:item/highlighter"
+  }
+}
