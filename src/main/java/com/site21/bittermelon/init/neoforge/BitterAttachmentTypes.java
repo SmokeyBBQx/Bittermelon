@@ -89,4 +89,24 @@ public class BitterAttachmentTypes {
     public static final Supplier<AttachmentType<Long>> LAST_SCREAM_TIME = ATTACHMENT_TYPES.register(
             "last_scream_time", () -> AttachmentType.builder(() -> 0L).build()
     );
+
+    public static final Supplier<AttachmentType<Long>> LAST_LAUGH_TIME = ATTACHMENT_TYPES.register(
+            "last_laugh_time", () -> AttachmentType.builder(() -> 0L).build()
+    );
+
+    public static final Supplier<AttachmentType<Long>> LAST_SIGHS_TIME = ATTACHMENT_TYPES.register(
+            "last_sighs_time", () -> AttachmentType.builder(() -> 0L).build()
+    );
+
+    public static final Supplier<AttachmentType<Long>> LAST_SMILES_TIME = ATTACHMENT_TYPES.register(
+            "last_smiles_time", () -> AttachmentType.builder(() -> 0L).build()
+    );
+
+    public static final Supplier<AttachmentType<Long>> LAST_SHRUGS_TIME = ATTACHMENT_TYPES.register(
+            "last_shrugs_time", () -> AttachmentType.builder(() -> 0L).build()
+    );
+
+    public static final Supplier<AttachmentType<Long>> LAST_COUGHS_TIME = ATTACHMENT_TYPES.register(
+            "last_coughs_time", () -> AttachmentType.builder(() -> 0L).build()
+    );
 }
