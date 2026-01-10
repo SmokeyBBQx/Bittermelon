@@ -2,11 +2,11 @@ package com.site21.bittermelon.init.neoforge;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.site21.bittermelon.Bittermelon;
-import net.neoforged.jarjar.nio.util.Lazy;
 import net.minecraft.client.KeyMapping;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.jarjar.nio.util.Lazy;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.client.settings.KeyModifier;
@@ -45,10 +45,19 @@ public class BitterKeyBindings {
             )
     );
 
+    public static final Lazy<KeyMapping> SCREAM_KEY = Lazy.of(() ->
+            new KeyMapping(
+                    "Scream",
+                    InputConstants.Type.KEYSYM,
+                    GLFW.GLFW_KEY_V,
+                    "key.category.bittermelon"
+            ));
+
     @SubscribeEvent
     public static void register(@NotNull RegisterKeyMappingsEvent event) {
         event.register(HEALTH_SCREEN_KEY.get());
         event.register(THROW_ITEM_KEY.get());
         event.register(CHARACTER_KEY.get());
+        event.register(SCREAM_KEY.get());
     }
 }

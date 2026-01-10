@@ -85,4 +85,8 @@ public class BitterAttachmentTypes {
                     .sync(WireNetwork.STREAM_CODEC)
                     .build()
     );
+
+    public static final Supplier<AttachmentType<Long>> LAST_SCREAM_TIME = ATTACHMENT_TYPES.register(
+            "last_scream_time", () -> AttachmentType.builder(() -> 0L).build()
+    );
 }
