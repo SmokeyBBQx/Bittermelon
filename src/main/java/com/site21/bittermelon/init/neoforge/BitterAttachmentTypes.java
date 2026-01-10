@@ -109,4 +109,9 @@ public class BitterAttachmentTypes {
     public static final Supplier<AttachmentType<Long>> LAST_COUGHS_TIME = ATTACHMENT_TYPES.register(
             "last_coughs_time", () -> AttachmentType.builder(() -> 0L).build()
     );
+
+    public static final Supplier<AttachmentType<Long>> LAST_EMOTE_TIME = ATTACHMENT_TYPES.register(
+            "last_emote_time",
+            () -> AttachmentType.builder(() -> 0L).build()
+    );
 }

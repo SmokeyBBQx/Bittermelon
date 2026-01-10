@@ -42,94 +42,42 @@ public class KeyEvents {
         }
     }
 
-    private static void sendScreamMessage() {
+    private static void sendEmoteMessage(String emoteText) {
         Minecraft mc = Minecraft.getInstance();
         assert mc.level != null;
         assert mc.player != null;
 
         long time = mc.level.getGameTime();
-        if (time - mc.player.getData(BitterAttachmentTypes.LAST_SCREAM_TIME.get()) < 60) return;
+        if (time - mc.player.getData(BitterAttachmentTypes.LAST_EMOTE_TIME.get()) < 60) return;
 
         Character character = CharacterManager.get(mc.level).getActiveCharacter(mc.player);
         if (character != null) {
-            mc.player.connection.sendChat("*" + character.getName() + " screams!*");
-            mc.player.setData(BitterAttachmentTypes.LAST_SCREAM_TIME.get(), time);
+            mc.player.connection.sendChat("*" + character.getName() + " " + emoteText + "*");
+            mc.player.setData(BitterAttachmentTypes.LAST_EMOTE_TIME.get(), time);
         }
+    }
+
+    private static void sendScreamMessage() {
+        sendEmoteMessage("screams!");
     }
 
     private static void sendLaughMessage() {
-        Minecraft mc = Minecraft.getInstance();
-        assert mc.level != null;
-        assert mc.player != null;
-
-        long time = mc.level.getGameTime();
-        if (time - mc.player.getData(BitterAttachmentTypes.LAST_LAUGH_TIME.get()) < 60) return;
-
-        Character character = CharacterManager.get(mc.level).getActiveCharacter(mc.player);
-        if (character != null) {
-            mc.player.connection.sendChat("*" + character.getName() + " laughs!*");
-            mc.player.setData(BitterAttachmentTypes.LAST_LAUGH_TIME.get(), time);
-        }
+        sendEmoteMessage("laughs!");
     }
 
     private static void sendSighsMessage() {
-        Minecraft mc = Minecraft.getInstance();
-        assert mc.level != null;
-        assert mc.player != null;
-
-        long time = mc.level.getGameTime();
-        if (time - mc.player.getData(BitterAttachmentTypes.LAST_SIGHS_TIME.get()) < 60) return;
-
-        Character character = CharacterManager.get(mc.level).getActiveCharacter(mc.player);
-        if (character != null) {
-            mc.player.connection.sendChat("*" + character.getName() + " sighs*");
-            mc.player.setData(BitterAttachmentTypes.LAST_SIGHS_TIME.get(), time);
-        }
+        sendEmoteMessage("sighs");
     }
 
     private static void sendSmilesMessage() {
-        Minecraft mc = Minecraft.getInstance();
-        assert mc.level != null;
-        assert mc.player != null;
-
-        long time = mc.level.getGameTime();
-        if (time - mc.player.getData(BitterAttachmentTypes.LAST_SMILES_TIME.get()) < 60) return;
-
-        Character character = CharacterManager.get(mc.level).getActiveCharacter(mc.player);
-        if (character != null) {
-            mc.player.connection.sendChat("*" + character.getName() + " smiles*");
-            mc.player.setData(BitterAttachmentTypes.LAST_SMILES_TIME.get(), time);
-        }
+        sendEmoteMessage("smiles");
     }
 
     private static void sendShrugsMessage() {
-        Minecraft mc = Minecraft.getInstance();
-        assert mc.level != null;
-        assert mc.player != null;
-
-        long time = mc.level.getGameTime();
-        if (time - mc.player.getData(BitterAttachmentTypes.LAST_SHRUGS_TIME.get()) < 60) return;
-
-        Character character = CharacterManager.get(mc.level).getActiveCharacter(mc.player);
-        if (character != null) {
-            mc.player.connection.sendChat("*" + character.getName() + " shrugs*");
-            mc.player.setData(BitterAttachmentTypes.LAST_SHRUGS_TIME.get(), time);
-        }
+        sendEmoteMessage("shrugs");
     }
 
     private static void sendCoughsMessage() {
-        Minecraft mc = Minecraft.getInstance();
-        assert mc.level != null;
-        assert mc.player != null;
-
-        long time = mc.level.getGameTime();
-        if (time - mc.player.getData(BitterAttachmentTypes.LAST_COUGHS_TIME.get()) < 60) return;
-
-        Character character = CharacterManager.get(mc.level).getActiveCharacter(mc.player);
-        if (character != null) {
-            mc.player.connection.sendChat("*" + character.getName() + " coughs*");
-            mc.player.setData(BitterAttachmentTypes.LAST_COUGHS_TIME.get(), time);
-        }
+        sendEmoteMessage("coughs");
     }
-
 }
