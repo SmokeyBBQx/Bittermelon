@@ -198,7 +198,7 @@ public class StickyNoteBlock extends Block implements EntityBlock {
                 String message = stickyNote.getNotes()[position.ordinal()];
                 Component component = message != null && !message.isBlank() ?
                         Component.literal(message).withStyle() :
-                        Component.literal("Empty Note").withStyle(ChatFormatting.ITALIC)
+                        Component.literal("Empty377 Note").withStyle(ChatFormatting.ITALIC)
                                 .withStyle(ChatFormatting.GRAY);
                 player.displayClientMessage(component, false);
                 return InteractionResult.CONSUME;

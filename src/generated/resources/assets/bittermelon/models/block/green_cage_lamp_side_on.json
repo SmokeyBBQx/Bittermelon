@@ -1,6 +1,0 @@
-{
-  "parent": "bittermelon:block/cage_lamp_side",
-  "textures": {
-    "texture": "bittermelon:block/green_cage_lamp_on"
-  }
-}

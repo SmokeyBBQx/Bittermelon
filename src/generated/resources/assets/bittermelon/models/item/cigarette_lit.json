@@ -1,6 +1,0 @@
-{
-  "parent": "bittermelon:item/smokable",
-  "textures": {
-    "layer0": "bittermelon:item/cigarette_lit"
-  }
-}

@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "bittermelon:item/scp_548_spawn_egg"
-  }
-}

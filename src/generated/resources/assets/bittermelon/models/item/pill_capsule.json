@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "bittermelon:item/pill_capsule",
-    "layer1": "bittermelon:item/pill_capsule_overlay"
-  }
-}

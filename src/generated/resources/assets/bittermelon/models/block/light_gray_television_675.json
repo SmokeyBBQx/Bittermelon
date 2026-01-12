@@ -1,6 +1,0 @@
-{
-  "parent": "bittermelon:block/television_675",
-  "textures": {
-    "texture": "bittermelon:block/light_gray_television"
-  }
-}

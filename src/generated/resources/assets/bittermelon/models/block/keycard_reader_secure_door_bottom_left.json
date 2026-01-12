@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:block/door_bottom_left",
-  "textures": {
-    "bottom": "bittermelon:block/keycard_reader_secure_door_bottom",
-    "top": "bittermelon:block/keycard_reader_secure_door_top"
-  }
-}

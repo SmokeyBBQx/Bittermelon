@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "bittermelon:block/personnel_terminal_block"
-  }
-}

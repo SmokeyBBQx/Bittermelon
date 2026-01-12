@@ -1,9 +1,0 @@
-{
-  "parent": "minecraft:block/orientable_with_bottom",
-  "textures": {
-    "bottom": "bittermelon:block/redstone_device_bottom",
-    "front": "bittermelon:block/redstone_device_front_on",
-    "side": "bittermelon:block/redstone_device_side",
-    "top": "bittermelon:block/redstone_device_top"
-  }
-}
