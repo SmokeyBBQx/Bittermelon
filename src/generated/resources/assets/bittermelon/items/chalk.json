@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "bittermelon:item/chalk",
+    "tints": [
+      {
+        "type": "bittermelon:base_color",
+        "default": "white"
+      }
+    ]
+  }
+}

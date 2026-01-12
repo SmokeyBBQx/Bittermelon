@@ -1,0 +1,6 @@
+{
+  "parent": "bittermelon:block/small_poster_right",
+  "textures": {
+    "texture": "bittermelon:block/yellow_inspection_poster"
+  }
+}

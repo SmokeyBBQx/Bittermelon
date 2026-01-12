@@ -1,0 +1,7 @@
+{
+  "parent": "bittermelon:block/sliding_door_top_right",
+  "textures": {
+    "bottom": "bittermelon:block/windowed_sliding_door_bottom",
+    "top": "bittermelon:block/windowed_sliding_door_top"
+  }
+}

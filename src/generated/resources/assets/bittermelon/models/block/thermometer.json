@@ -1,0 +1,6 @@
+{
+  "parent": "bittermelon:block/button",
+  "textures": {
+    "texture": "bittermelon:block/thermometer"
+  }
+}

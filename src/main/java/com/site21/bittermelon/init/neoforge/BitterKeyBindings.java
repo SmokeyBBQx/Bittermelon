@@ -53,11 +53,56 @@ public class BitterKeyBindings {
                     "key.category.bittermelon"
             ));
 
+    public static final Lazy<KeyMapping> LAUGH_KEY = Lazy.of(() ->
+            new KeyMapping(
+                    "Laugh",
+                    InputConstants.Type.KEYSYM,
+                    GLFW.GLFW_KEY_5,
+                    "key.category.bittermelon"
+            ));
+
+    public static final Lazy<KeyMapping> SHRUGS_KEY = Lazy.of(() ->
+            new KeyMapping(
+                    "Shrugs",
+                    InputConstants.Type.KEYSYM,
+                    GLFW.GLFW_KEY_3,
+                    "key.category.bittermelon"
+            ));
+
+    public static final Lazy<KeyMapping> COUGHS_KEY = Lazy.of(() ->
+            new KeyMapping(
+                    "Coughs",
+                    InputConstants.Type.KEYSYM,
+                    GLFW.GLFW_KEY_2,
+                    "key.category.bittermelon"
+            ));
+
+    public static final Lazy<KeyMapping> SMILES_KEY = Lazy.of(() ->
+            new KeyMapping(
+                    "Smiles",
+                    InputConstants.Type.KEYSYM,
+                    GLFW.GLFW_KEY_1,
+                    "key.category.bittermelon"
+            ));
+
+    public static final Lazy<KeyMapping> SIGHS_KEY = Lazy.of(() ->
+            new KeyMapping(
+                    "Sighs",
+                    InputConstants.Type.KEYSYM,
+                    GLFW.GLFW_KEY_4,
+                    "key.category.bittermelon"
+            ));
+
     @SubscribeEvent
     public static void register(@NotNull RegisterKeyMappingsEvent event) {
         event.register(HEALTH_SCREEN_KEY.get());
         event.register(THROW_ITEM_KEY.get());
         event.register(CHARACTER_KEY.get());
         event.register(SCREAM_KEY.get());
+        event.register(LAUGH_KEY.get());
+        event.register(SHRUGS_KEY.get());
+        event.register(COUGHS_KEY.get());
+        event.register(SMILES_KEY.get());
+        event.register(SIGHS_KEY.get());
     }
 }
