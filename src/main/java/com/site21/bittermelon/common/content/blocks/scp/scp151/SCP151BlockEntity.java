@@ -14,7 +14,10 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.AttachFace;
-import net.minecraft.world.phys.*;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.SCP151_BLOCK_ENTITY;
@@ -106,7 +109,6 @@ public class SCP151BlockEntity extends BlockEntity {
             expectedDirection = new Vec3(0, -1, 0);
         } else {
             Direction facing = state.getValue(SCP151Block.FACING).getOpposite();
-//            expectedDirection = Vec3.atLowerCornerOf(facing.getNormal());
             expectedDirection = Vec3.atLowerCornerOf(facing.getUnitVec3i());
         }
 

@@ -1,0 +1,26 @@
+{
+	"format_version": "1.21.6",
+	"render_type": "minecraft:translucent",
+	"credit": "Made with Blockbench",
+	"ambientocclusion": false,
+	"textures": {
+		"texture": "bittermelon:block/burrow",
+		"particle": "#texture"
+	},
+	"elements": [
+		{
+			"from": [0, 0.05, 0],
+			"to": [16, 0.05, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [14, 0.05, 0]},
+			"color": 8,
+			"faces": {
+				"north": {"uv": [0, 2, 16, 2], "texture": "#texture"},
+				"east": {"uv": [0, 2, 16, 2], "texture": "#texture"},
+				"south": {"uv": [0, 2, 16, 2], "texture": "#texture"},
+				"west": {"uv": [0, 2, 16, 2], "texture": "#texture"},
+				"up": {"uv": [0, 0, 16, 16], "texture": "#texture"},
+				"down": {"uv": [0, 0, 16, 16], "texture": "#texture"}
+			}
+		}
+	]
+}

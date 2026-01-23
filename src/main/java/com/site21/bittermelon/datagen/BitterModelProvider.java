@@ -61,7 +61,6 @@ public class BitterModelProvider extends ModelProvider {
     protected void registerModels(@NotNull BlockModelGenerators blockModels, @NotNull ItemModelGenerators itemModels) {
         createFluid(blockModels);
         blockModels.createTrivialCube(BitterBlocks.SMALL_CARDBOARD_BOX.get());
-        blockModels.createTrivialCube(BitterBlocks.STRUCTURAL_BLOCK.get());
         blockModels.createTrivialCube(BitterBlocks.ATM.get());
         createIndentedSmallBlock(blockModels, BitterBlocks.CONTAINMENT_PANEL.get());
         blockModels.createDoor(BitterBlocks.SECURE_DOOR.get());
@@ -106,6 +105,9 @@ public class BitterModelProvider extends ModelProvider {
         blockModels.blockStateOutput.accept(
                 MultiVariantGenerator.dispatch(BitterBlocks.SCP_330.get(), plainVariant(modLocation("block/scp_330")))
                         .with(ROTATION_HORIZONTAL_FACING)
+        );
+        blockModels.blockStateOutput.accept(
+                MultiVariantGenerator.dispatch(BURROW.get(), plainVariant(modLocation("block/burrow")))
         );
 
         // SubstanceFluid Containers

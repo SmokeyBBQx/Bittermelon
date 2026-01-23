@@ -89,4 +89,11 @@ public class BitterAttachmentTypes {
     public static final Supplier<AttachmentType<Long>> LAST_SCREAM_TIME = ATTACHMENT_TYPES.register(
             "last_scream_time", () -> AttachmentType.builder(() -> 0L).build()
     );
+
+    public static final Supplier<AttachmentType<Integer>> CARRIED_PASSENGER = ATTACHMENT_TYPES.register(
+            "carried_passenger", () -> AttachmentType.builder(() -> -1)
+                    .serialize(Codec.INT.fieldOf("carried_passenger"))
+                    .sync(ByteBufCodecs.INT)
+                    .build()
+    );
 }

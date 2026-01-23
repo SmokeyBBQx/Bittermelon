@@ -20,4 +20,10 @@ public class BitterBlockTags {
     public static final TagKey<Block> UNREPAIRABLE = TagKey.create(
             Registries.BLOCK,
             ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "unrepairable")
-    );}
+    );
+
+    public static final TagKey<Block> BURROWABLE = TagKey.create(
+            Registries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "burrowable")
+    );
+}

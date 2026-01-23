@@ -1,5 +1,6 @@
 package com.site21.bittermelon.common.content.entities.scp548;
 
+import com.site21.bittermelon.common.content.entities.scp548.behavior.FindOrMakeBurrow;
 import com.site21.bittermelon.common.systems.ai.base.BitterMob;
 import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
@@ -21,6 +22,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarge
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetPlayerLookTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetRandomLookTarget;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
+import net.tslat.smartbrainlib.api.core.sensor.custom.NearbyBlocksSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,7 +51,8 @@ public class SCP548 extends BitterMob<SCP548> {
     @Override
     public List<? extends ExtendedSensor<? extends SCP548>> getSensors() {
         return List.of(
-                new NearbyLivingEntitySensor<>()
+                new NearbyLivingEntitySensor<>(),
+                new NearbyBlocksSensor<SCP548>().setRadius(4, 1)
         );
     }
 
@@ -72,7 +75,8 @@ public class SCP548 extends BitterMob<SCP548> {
                 new OneRandomBehaviour<>(
                         new SetRandomWalkTarget<>()
                                 .setRadius(getRandom().nextInt(1, 10)),
-                        new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))
+                        new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60)),
+                        new FindOrMakeBurrow()
                 )
         );
     }

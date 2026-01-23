@@ -1,11 +1,7 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.content.blocks.electronics.television.StandingTelevisionBlock;
-import com.site21.bittermelon.common.content.blocks.electronics.television.WallTelevisionBlock;
-import com.site21.bittermelon.common.content.blocks.flamingo.FlamingoBlock;
-import com.site21.bittermelon.common.content.blocks.poster.SmallPosterBlock;
-import com.site21.bittermelon.common.content.blocks.base.structuralblock.StructuralBlock;
+import com.site21.bittermelon.common.content.blocks.burrow.BurrowBlock;
 import com.site21.bittermelon.common.content.blocks.container.smallbox.SmallBox;
 import com.site21.bittermelon.common.content.blocks.dirtyfloor.DirtyFloorBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.ATMBlock;
@@ -23,9 +19,13 @@ import com.site21.bittermelon.common.content.blocks.electronics.securedoor.Keyca
 import com.site21.bittermelon.common.content.blocks.electronics.securedoor.SecureDoorBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.slidingdoor.SlidingDoorBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.speaker.SpeakerBlock;
+import com.site21.bittermelon.common.content.blocks.electronics.television.StandingTelevisionBlock;
+import com.site21.bittermelon.common.content.blocks.electronics.television.WallTelevisionBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.thermometer.ThermometerBlock;
+import com.site21.bittermelon.common.content.blocks.flamingo.FlamingoBlock;
 import com.site21.bittermelon.common.content.blocks.lights.CageLampBlock;
 import com.site21.bittermelon.common.content.blocks.lights.emergencyexitlight.EmergencyExitLampBlock;
+import com.site21.bittermelon.common.content.blocks.poster.SmallPosterBlock;
 import com.site21.bittermelon.common.content.blocks.powergrid.distributionboard.DistributionBoardBlock;
 import com.site21.bittermelon.common.content.blocks.scp.scp151.SCP151Block;
 import com.site21.bittermelon.common.content.blocks.scp.scp330.SCP330Block;
@@ -83,10 +83,6 @@ public class BitterBlocks {
     public static final DeferredBlock<SmallBox> SMALL_CARDBOARD_BOX = BLOCKS.registerBlock("small_cardboard_box", SmallBox::new, BlockBehaviour.Properties.of()
             .destroyTime(-1)
             .sound(SoundType.WOOL)
-    );
-
-    public static final DeferredBlock<StructuralBlock> STRUCTURAL_BLOCK = BLOCKS.registerBlock("structural_block", StructuralBlock::new, BlockBehaviour.Properties.of()
-            .destroyTime(1.5f)
     );
 
     public static final DeferredBlock<ATMBlock> ATM = BLOCKS.registerBlock("atm", ATMBlock::new, BlockBehaviour.Properties.of()
@@ -283,4 +279,10 @@ public class BitterBlocks {
     );
 
     public static final DeferredBlock<SCP330Block> SCP_330 = BLOCKS.registerBlock("scp_330", SCP330Block::new, BlockBehaviour.Properties.of());
+
+    public static final DeferredBlock<BurrowBlock> BURROW = BLOCKS.registerBlock("burrow", BurrowBlock::new, BlockBehaviour.Properties.of()
+            .noOcclusion()
+            .destroyTime(0.5f)
+            .sound(SoundType.GRAVEL)
+    );
 }

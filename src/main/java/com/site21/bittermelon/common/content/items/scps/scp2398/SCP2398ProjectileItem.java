@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.content.items.scps.scp2398;
 
-import com.site21.bittermelon.common.content.blocks.base.structuralblock.StructuralBlockEntity;
 import com.site21.bittermelon.common.content.entities.ThrownItemProjectile;
+import com.site21.bittermelon.common.systems.blockdamage.BlockDamageUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -92,9 +92,7 @@ public class SCP2398ProjectileItem extends ThrownItemProjectile {
         if (state.is(Tags.Blocks.GLASS_BLOCKS) || state.is(Tags.Blocks.GLASS_PANES)) {
             level().destroyBlock(pos, false, this);
         } else {
-            if (level().getBlockEntity(pos) instanceof StructuralBlockEntity blockEntity) {
-                blockEntity.setBreakProgress(blockEntity.getBreakProgress() + 0.4f);
-            }
+            BlockDamageUtil.addDamage(level(), pos, 40);
             this.level().broadcastEntityEvent(this, (byte) 3);
             this.discard();
             level().addFreshEntity(itemEntity);

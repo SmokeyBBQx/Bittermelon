@@ -1,7 +1,7 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.content.blocks.base.structuralblock.StructuralBlockEntity;
+import com.site21.bittermelon.common.content.blocks.burrow.BurrowBlockEntity;
 import com.site21.bittermelon.common.content.blocks.container.smallbox.BoxBlockEntity;
 import com.site21.bittermelon.common.content.blocks.electronics.containmentalarm.ContainmentAlarmBlockEntity;
 import com.site21.bittermelon.common.content.blocks.electronics.containmentpanel.ContainmentPanelBlockEntity;
@@ -44,10 +44,6 @@ public class BitterBlockEntities {
     public static final Supplier<BlockEntityType<BoxBlockEntity>> BOX_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
             "box_block_entity",
             () -> new BlockEntityType<>(BoxBlockEntity::new, false, SMALL_CARDBOARD_BOX.get()));
-
-    public static final Supplier<BlockEntityType<StructuralBlockEntity>> STRUCTURAL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
-            "structural_block_entity",
-            () -> new BlockEntityType<>(StructuralBlockEntity::new, false, STRUCTURAL_BLOCK.get()));
 
     public static final Supplier<BlockEntityType<ContainmentPanelBlockEntity>> CONTAINMENT_PANEL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
             "containment_panel_block_entity",
@@ -136,4 +132,8 @@ public class BitterBlockEntities {
     public static final Supplier<BlockEntityType<FlamingoBlockEntity>> PLASTIC_FLAMINGO_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
             "plastic_flamingo_block_entity",
             () -> new BlockEntityType<>(FlamingoBlockEntity::new, false, PLASTIC_FLAMINGO.get()));
+
+    public static final Supplier<BlockEntityType<BurrowBlockEntity>> BURROW_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
+            "burrow_block_entity",
+            () -> new BlockEntityType<>(BurrowBlockEntity::new, false, BURROW.get()));
 }

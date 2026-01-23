@@ -1,9 +1,8 @@
 package com.site21.bittermelon.common.content.blocks.electronics.containmentpanel;
 
-import com.site21.bittermelon.common.content.blocks.base.structuralblock.StructuralBlockEntity;
-import com.site21.bittermelon.common.systems.electronics.ContainmentDevice;
-import com.site21.bittermelon.common.content.blocks.electronics.ElectronicBlockEntity;
 import com.site21.bittermelon.common.content.blocks.dirtyfloor.DirtyFloorBlock;
+import com.site21.bittermelon.common.content.blocks.electronics.ElectronicBlockEntity;
+import com.site21.bittermelon.common.systems.electronics.ContainmentDevice;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
@@ -189,9 +188,9 @@ public class ContainmentPanelBlockEntity extends ElectronicBlockEntity {
         float damage = 0;
 
         for (BlockPos pos : BlockPos.betweenClosed(boundingBox.minX(), boundingBox.minY(), boundingBox.minZ(), boundingBox.maxX(), boundingBox.maxY(), boundingBox.maxZ())) {
-            if (level.getBlockEntity(pos) instanceof StructuralBlockEntity structuralBlockEntity) {
-                damage += structuralBlockEntity.getBreakProgress() * 10;
-            }
+//            if (level.getBlockEntity(pos) instanceof StructuralBlockEntity structuralBlockEntity) {
+//                damage += structuralBlockEntity.getBreakProgress() * 10;
+//            }
         }
 
         return damage;

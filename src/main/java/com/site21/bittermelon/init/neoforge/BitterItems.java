@@ -73,7 +73,6 @@ public class BitterItems {
     public static final DeferredItem<BlockItem> INTERCOM = ITEMS.registerSimpleBlockItem(BitterBlocks.INTERCOM);
     public static final DeferredItem<BlockItem> ENVIRONMENT_SENSOR = ITEMS.registerSimpleBlockItem(BitterBlocks.ENVIRONMENT_SENSOR);
     public static final DeferredItem<BlockItem> CONTAINMENT_ALARM = ITEMS.registerSimpleBlockItem(BitterBlocks.CONTAINMENT_ALARM);
-    public static final DeferredItem<BlockItem> STRUCTURAL_BLOCK = ITEMS.registerSimpleBlockItem(BitterBlocks.STRUCTURAL_BLOCK);
     public static final DeferredItem<BlockItem> DETONATOR = ITEMS.registerSimpleBlockItem(BitterBlocks.DETONATOR);
     public static final DeferredItem<BlockItem> SPEAKER = ITEMS.registerSimpleBlockItem(BitterBlocks.SPEAKER);
     public static final DeferredItem<BlockItem> SECURE_DOOR = ITEMS.registerSimpleBlockItem(BitterBlocks.SECURE_DOOR);

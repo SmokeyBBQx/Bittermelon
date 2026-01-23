@@ -1,8 +1,8 @@
 package com.site21.bittermelon.client.event;
 
+import com.google.common.reflect.TypeToken;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.client.particles.PlasticParticle;
-import com.site21.bittermelon.common.content.blocks.base.structuralblock.StructuralBlockRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.client.PhoneCordRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.client.LargeSlidingDoorRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.slidingdoor.client.SlidingDoorRenderer;
@@ -35,14 +35,19 @@ import com.site21.bittermelon.common.systems.personnel.registry.networking.Perso
 import com.site21.bittermelon.common.systems.personnel.registry.networking.RemovePersonnelEntry;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.UpdatePersonnelEntry;
 import com.site21.bittermelon.datagen.property.*;
+import com.site21.bittermelon.init.neoforge.BitterAttachmentTypes;
 import com.site21.bittermelon.init.neoforge.BitterBlockEntities;
 import com.site21.bittermelon.init.neoforge.BitterItems;
 import com.site21.bittermelon.init.neoforge.BitterParticles;
 import com.site21.bittermelon.networking.client.ClientPayloadHandler;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
+import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.context.ContextKey;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -50,6 +55,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
+import net.neoforged.neoforge.client.renderstate.RegisterRenderStateModifiersEvent;
 import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
@@ -58,6 +64,9 @@ import static com.site21.bittermelon.init.neoforge.BitterFluidTypes.SUBSTANCE_FL
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class ClientSetup {
+    public static final ContextKey<Float> ENTITY_WIDTH = new ContextKey<>(
+            Bittermelon.resource("entity_width")
+    );
 
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.@NotNull RegisterRenderers event) {
@@ -70,7 +79,6 @@ public class ClientSetup {
         event.registerEntityRenderer(SCP_1507.get(), SCP1507Renderer::new);
         event.registerEntityRenderer(TASER_PROJECTILE.get(), TaserProjectileRenderer::new);
         event.registerEntityRenderer(SCP_548.get(), SCP548Renderer::new);
-        event.registerBlockEntityRenderer(BitterBlockEntities.STRUCTURAL_BLOCK_ENTITY.get(), StructuralBlockRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.THERMOMETER_BLOCK_ENTITY.get(), ThermometerRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.INTERCOM_BLOCK_ENTITY.get(), PhoneCordRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.LARGE_SLIDING_DOOR_BLOCK_ENTITY.get(), LargeSlidingDoorRenderer::new);
@@ -78,6 +86,23 @@ public class ClientSetup {
         event.registerBlockEntityRenderer(BitterBlockEntities.WALL_WRITING_BLOCK_ENTITY.get(), WallWritingRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.TELEVISION_BLOCK_ENTITY.get(), TelevisionRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.PLASTIC_FLAMINGO_BLOCK_ENTITY.get(), FlamingoBlockRenderer::new);
+    }
+
+    @SubscribeEvent
+    public static void registerRenderStateModifiers(@NotNull RegisterRenderStateModifiersEvent event) {
+        TypeToken<HumanoidMobRenderer<Mob, HumanoidRenderState, ?>> humanoidTypeToken = new TypeToken<>() {};
+
+        event.registerEntityModifier(
+                humanoidTypeToken,
+                (entity, state) -> {
+                    int passengerIndex = entity.getData(BitterAttachmentTypes.CARRIED_PASSENGER);
+                    System.out.println("Passenger Index: " + passengerIndex);
+                    if (passengerIndex >= 0 && entity.getPassengers().size() < passengerIndex) return;
+                    System.out.println("Setting entity width for passenger index: " + passengerIndex);
+                    float entityWidth = entity.getPassengers().get(passengerIndex).getBbWidth();
+                    state.setRenderData(ENTITY_WIDTH, entityWidth);
+                }
+        );
     }
 
     @SubscribeEvent
