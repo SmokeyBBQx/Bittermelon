@@ -6,6 +6,7 @@ import com.site21.bittermelon.client.render.TypingIndicatorRenderer;
 import com.site21.bittermelon.common.systems.atmosphere.client.AtmosFogRenderer;
 import com.site21.bittermelon.common.systems.atmosphere.data.AtmosLevelData;
 import com.site21.bittermelon.common.systems.blockdamage.client.BlockDamageRenderer;
+import com.site21.bittermelon.common.systems.carry.ThrowCarriedEntity;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.economy.bank.AccountRegistry;
 import com.site21.bittermelon.common.systems.personnel.privilege.PrivilegeManager;
@@ -13,13 +14,19 @@ import com.site21.bittermelon.common.systems.personnel.registry.PersonnelRegistr
 import com.site21.bittermelon.common.systems.stumble.client.RiseKeyHandler;
 import com.site21.bittermelon.common.systems.stumble.client.RiseProgressBar;
 import com.site21.bittermelon.common.systems.telecomms.intercom.IntercomManager;
+import com.site21.bittermelon.init.neoforge.BitterAttachmentTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.util.TriState;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID)
@@ -107,5 +114,19 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onClientTickPre(ClientTickEvent.Pre event) {
         ShaderManager.updatePostEffects();
+    }
+
+    @SubscribeEvent
+    public static void onRightClickEmpty(PlayerInteractEvent.@NotNull RightClickEmpty event) {
+        Player player = event.getEntity();
+
+        if (player.isShiftKeyDown() && event.getHand() == InteractionHand.MAIN_HAND) {
+            int passengerIndex = player.getData(BitterAttachmentTypes.CARRIED_PASSENGER);
+            if (passengerIndex >= 0 && passengerIndex < player.getPassengers().size()) {
+                Entity carriedEntity = player.getPassengers().get(passengerIndex);
+                carriedEntity.stopRiding();
+                ClientPacketDistributor.sendToServer(new ThrowCarriedEntity(player.getUUID(), passengerIndex));
+            }
+        }
     }
 }
