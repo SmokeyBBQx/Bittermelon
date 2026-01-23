@@ -3,13 +3,17 @@ package com.site21.bittermelon.common.events;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.items.scps.scp377.FortuneHandler;
 import com.site21.bittermelon.common.systems.blockdamage.BlockDamageUtil;
+import com.site21.bittermelon.common.systems.carry.CarryHandler;
+import com.site21.bittermelon.common.systems.carry.ThrowCarriedEntity;
 import com.site21.bittermelon.common.systems.stress.StressHandler;
 import com.site21.bittermelon.init.neoforge.BitterAttachmentTypes;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
@@ -22,6 +26,10 @@ public class CommonEvents {
     public static void onEntityTick(EntityTickEvent.@NotNull Post event) {
         Entity entity = event.getEntity();
         FortuneHandler.onEntityTick(entity);
+
+        if (entity instanceof LivingEntity livingEntity) {
+            CarryHandler.tickCarrying(livingEntity);
+        }
 
         if (entity instanceof Player player) {
             StressHandler.tickStress(player);
@@ -69,7 +77,7 @@ public class CommonEvents {
             if (passengerIndex >= 0 && passengerIndex < player.getPassengers().size()) {
                 Entity carriedEntity = player.getPassengers().get(passengerIndex);
                 carriedEntity.stopRiding();
-                player.removeData(BitterAttachmentTypes.CARRIED_PASSENGER);
+                ClientPacketDistributor.sendToServer(new ThrowCarriedEntity(player.getUUID(), passengerIndex));
             }
         }
     }

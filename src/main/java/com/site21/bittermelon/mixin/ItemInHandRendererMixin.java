@@ -46,15 +46,21 @@ public class ItemInHandRendererMixin {
         float entityWidth = player.getPassengers().isEmpty() ? 0f : player.getPassengers().getFirst().getBbWidth();
 
         float zRotation = entityWidth > 0 ? (entityWidth - 1.0f) * 0.2f : 0f;
-        float xRotation = -1.0f;
+        float xRotation = -2.0f;
 
         float bodyYaw = player.yBodyRotO + (player.yBodyRot - player.yBodyRotO) * partialTick;
         float cameraYaw = player.getViewYRot(partialTick);
         float yawDifference = bodyYaw - cameraYaw;
 
+        float cameraPitch = player.getViewXRot(partialTick);
+
+        float yOffset = -0.4f;
+        float zOffset = 0.3f;
+
         // Right hand
         poseStack.pushPose();
-        poseStack.translate(0.0f, -0.4f, -0.4f);
+        poseStack.mulPose(Axis.XP.rotationDegrees(cameraPitch));
+        poseStack.translate(0.0f, yOffset, zOffset);
         poseStack.mulPose(Axis.YP.rotationDegrees(-yawDifference));
         poseStack.mulPose(Axis.XP.rotation(xRotation));
         poseStack.mulPose(Axis.ZP.rotation(zRotation));
@@ -64,7 +70,8 @@ public class ItemInHandRendererMixin {
 
         // Left hand
         poseStack.pushPose();
-        poseStack.translate(0.0f, -0.4f, -0.4f);
+        poseStack.mulPose(Axis.XP.rotationDegrees(cameraPitch));
+        poseStack.translate(0.0f, yOffset, zOffset);
         poseStack.mulPose(Axis.YP.rotationDegrees(-yawDifference));
         poseStack.mulPose(Axis.XP.rotation(xRotation));
         poseStack.mulPose(Axis.ZP.rotation(-zRotation));

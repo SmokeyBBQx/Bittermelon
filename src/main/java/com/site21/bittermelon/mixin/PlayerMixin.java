@@ -22,7 +22,7 @@ public abstract class PlayerMixin extends LivingEntity {
         int carriedPassenger = this.getData(BitterAttachmentTypes.CARRIED_PASSENGER);
 
         if (passenger == carriedPassenger) {
-            float yOffset = dimensions.height() / 3f;
+            float yOffset = dimensions.height() / 2f - entity.getDimensions(getPose()).height() / 2;
 
             if (this.getPose() == Pose.CROUCHING) {
                 yOffset = dimensions.height() * 0.85f;

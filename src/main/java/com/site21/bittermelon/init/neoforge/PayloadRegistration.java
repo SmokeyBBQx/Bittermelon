@@ -26,6 +26,7 @@ import com.site21.bittermelon.common.content.items.wirecutters.networking.OpenWi
 import com.site21.bittermelon.common.content.items.writablepaper.networking.OpenPaperEditScreen;
 import com.site21.bittermelon.common.content.mobeffects.electrocuted.networking.CutOffChat;
 import com.site21.bittermelon.common.systems.atmosphere.networking.*;
+import com.site21.bittermelon.common.systems.carry.ThrowCarriedEntity;
 import com.site21.bittermelon.common.systems.character.networking.*;
 import com.site21.bittermelon.common.systems.economy.bank.networking.OpenATMScreen;
 import com.site21.bittermelon.common.systems.electronics.privilege.networking.OpenPrivilegeEditorScreen;
@@ -569,6 +570,12 @@ public class PayloadRegistration {
                 CreateCharacter.TYPE,
                 CreateCharacter.STREAM_CODEC,
                 CreateCharacter::handle
+        );
+
+        registrar.playToServer(
+                ThrowCarriedEntity.TYPE,
+                ThrowCarriedEntity.STREAM_CODEC,
+                ThrowCarriedEntity::handle
         );
     }
 }

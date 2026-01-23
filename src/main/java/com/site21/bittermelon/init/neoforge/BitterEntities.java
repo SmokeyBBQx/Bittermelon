@@ -46,7 +46,7 @@ public class BitterEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<SCP650>> SCP_650 = ENTITY_TYPES.register("scp_650",
             () -> EntityType.Builder.of(SCP650::new, MobCategory.MONSTER)
-                    .sized(0.9f, 1.6f)
+                    .sized(0.7f, 1.7f)
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_650"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SCP131>> SCP_131 = ENTITY_TYPES.register("scp_131",
@@ -66,7 +66,7 @@ public class BitterEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<SCP548>> SCP_548 = ENTITY_TYPES.register("scp_548",
             () -> EntityType.Builder.of(SCP548::new, MobCategory.MONSTER)
-                    .sized(0.2f, 0.2f)
+                    .sized(0.2f, 0.1f)
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_548"))));
 
     public static void register(IEventBus eventBus) {
