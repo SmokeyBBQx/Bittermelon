@@ -47,10 +47,12 @@ public class CommonEvents {
     public static void onEntityInteract(PlayerInteractEvent.@NotNull EntityInteract event) {
         Player player = event.getEntity();
 
+        if (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()) return;
+
         if (player.isShiftKeyDown() && event.getHand() == InteractionHand.MAIN_HAND) {
             event.getTarget().startRiding(player, true);
-            System.out.println("Passenger index: " + player.getPassengers().indexOf(event.getTarget()));
             player.setData(BitterAttachmentTypes.CARRIED_PASSENGER, player.getPassengers().indexOf(event.getTarget()));
+            event.setCanceled(true);
         }
     }
 
@@ -63,7 +65,15 @@ public class CommonEvents {
             if (passengerIndex >= 0 && passengerIndex < player.getPassengers().size()) {
                 Entity carriedEntity = player.getPassengers().get(passengerIndex);
                 carriedEntity.stopRiding();
-                player.removeData(BitterAttachmentTypes.CARRIED_PASSENGER);
+
+                if (player.canInteractWithBlock(event.getPos(), -player.blockInteractionRange() / 2)) {
+                    carriedEntity.setPos(event.getHitVec().getLocation());
+                    player.removeData(BitterAttachmentTypes.CARRIED_PASSENGER);
+                } else {
+                    ClientPacketDistributor.sendToServer(new ThrowCarriedEntity(player.getUUID(), passengerIndex));
+                }
+
+                event.setCanceled(true);
             }
         }
     }
