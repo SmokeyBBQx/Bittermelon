@@ -1,6 +1,5 @@
 package com.site21.bittermelon.client.event;
 
-import com.google.common.reflect.TypeToken;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.client.particles.PlasticParticle;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.client.PhoneCordRenderer;
@@ -41,13 +40,11 @@ import com.site21.bittermelon.init.neoforge.BitterItems;
 import com.site21.bittermelon.init.neoforge.BitterParticles;
 import com.site21.bittermelon.networking.client.ClientPayloadHandler;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
-import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
-import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.context.ContextKey;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -90,17 +87,14 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void registerRenderStateModifiers(@NotNull RegisterRenderStateModifiersEvent event) {
-        TypeToken<HumanoidMobRenderer<Mob, HumanoidRenderState, ?>> humanoidTypeToken = new TypeToken<>() {};
-
         event.registerEntityModifier(
-                humanoidTypeToken,
+                PlayerRenderer.class,
                 (entity, state) -> {
                     int passengerIndex = entity.getData(BitterAttachmentTypes.CARRIED_PASSENGER);
-                    System.out.println("Passenger Index: " + passengerIndex);
-                    if (passengerIndex >= 0 && entity.getPassengers().size() < passengerIndex) return;
-                    System.out.println("Setting entity width for passenger index: " + passengerIndex);
-                    float entityWidth = entity.getPassengers().get(passengerIndex).getBbWidth();
-                    state.setRenderData(ENTITY_WIDTH, entityWidth);
+                    if (passengerIndex >= 0 && passengerIndex < entity.getPassengers().size()) {
+                        float entityWidth = entity.getPassengers().get(passengerIndex).getBbWidth();
+                        state.setRenderData(ENTITY_WIDTH, entityWidth);
+                    }
                 }
         );
     }

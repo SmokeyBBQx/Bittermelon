@@ -14,15 +14,15 @@ import com.site21.bittermelon.common.systems.stumble.client.RiseKeyHandler;
 import com.site21.bittermelon.common.systems.stumble.client.RiseProgressBar;
 import com.site21.bittermelon.common.systems.telecomms.intercom.IntercomManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.util.TriState;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import org.jetbrains.annotations.NotNull;
 
-@EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class ClientEvents {
 
     @SubscribeEvent
@@ -50,6 +50,25 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onRenderOverlayPost(RenderGuiLayerEvent.@NotNull Post event) {
         RiseProgressBar.render(event.getGuiGraphics());
+    }
+
+    // TODO: Shit doesn't work
+    // TODO: WHY DO YOU FAIL ME EVENTS
+    @SubscribeEvent
+    public static void onRenderLiving(RenderLivingEvent.@NotNull Post<?, ?, ?> event) {
+        if (event.getRenderer().getModel() instanceof HumanoidModel<?> model) {
+            float renderWidth = event.getRenderState().getRenderDataOrDefault(ClientSetup.ENTITY_WIDTH, 0.0f);
+
+            if (renderWidth > 0f) {
+                float widthFactor = Math.min(renderWidth / 0.5f, 2.0f);
+                float x = -1.0f;
+                float z = 0.005f * widthFactor;
+                model.rightArm.xRot = x;
+                model.leftArm.xRot = x;
+                model.rightArm.zRot = z;
+                model.leftArm.zRot = -z;
+            }
+        }
     }
 
     @SubscribeEvent

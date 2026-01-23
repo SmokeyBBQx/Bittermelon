@@ -25,9 +25,13 @@ public abstract class HumanoidModelMixin {
     @Inject(at = @At("RETURN"), method = "setupAnim(Lnet/minecraft/client/renderer/entity/state/HumanoidRenderState;)V")
     private void onSetupAnim(@NotNull HumanoidRenderState state, CallbackInfo ci) {
         float renderWidth = state.getRenderDataOrDefault(ClientSetup.ENTITY_WIDTH, 0f);
-        if (renderWidth > 0f) {
-            leftArm.x -= renderWidth;
-            rightArm.x += renderWidth;
+        if (renderWidth > 0.0f) {
+            float z = (renderWidth - 1.0f) * 0.2f;
+            float x = -1.0f;
+            rightArm.xRot = x;
+            leftArm.xRot = x;
+            rightArm.zRot = z;
+            leftArm.zRot = -z;
         }
     }
 }

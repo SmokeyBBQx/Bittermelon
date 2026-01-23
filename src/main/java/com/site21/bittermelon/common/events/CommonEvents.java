@@ -59,4 +59,18 @@ public class CommonEvents {
             }
         }
     }
+
+    @SubscribeEvent
+    public static void onRightClickEmpty(PlayerInteractEvent.@NotNull RightClickEmpty event) {
+        Player player = event.getEntity();
+
+        if (player.isShiftKeyDown() && event.getHand() == InteractionHand.MAIN_HAND) {
+            int passengerIndex = player.getData(BitterAttachmentTypes.CARRIED_PASSENGER);
+            if (passengerIndex >= 0 && passengerIndex < player.getPassengers().size()) {
+                Entity carriedEntity = player.getPassengers().get(passengerIndex);
+                carriedEntity.stopRiding();
+                player.removeData(BitterAttachmentTypes.CARRIED_PASSENGER);
+            }
+        }
+    }
 }

@@ -22,7 +22,7 @@ public abstract class PlayerMixin extends LivingEntity {
         int carriedPassenger = this.getData(BitterAttachmentTypes.CARRIED_PASSENGER);
 
         if (passenger == carriedPassenger) {
-            float yOffset = dimensions.height() / 2;
+            float yOffset = dimensions.height() / 3f;
 
             if (this.getPose() == Pose.CROUCHING) {
                 yOffset = dimensions.height() * 0.85f;
@@ -30,7 +30,7 @@ public abstract class PlayerMixin extends LivingEntity {
                 yOffset = dimensions.height() * 0.4f;
             }
 
-            double horizontalOffset = 0.75;
+            double horizontalOffset = 0.55;
 
             double yawRad = Math.toRadians(this.yBodyRot);
             double xOffset = -Math.sin(yawRad) * horizontalOffset;

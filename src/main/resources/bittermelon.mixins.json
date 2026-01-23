@@ -17,6 +17,7 @@
     "GameRendererMixin",
     "GuiMixin",
     "HumanoidModelMixin",
+    "ItemInHandRendererMixin",
     "LivingEntityRendererMixin",
     "PlayerInfoMixin"
   ],
