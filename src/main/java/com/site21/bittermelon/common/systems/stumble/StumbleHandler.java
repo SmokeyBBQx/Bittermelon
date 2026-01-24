@@ -2,6 +2,7 @@ package com.site21.bittermelon.common.systems.stumble;
 
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
+import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.init.neoforge.BitterMobEffects;
 import com.site21.bittermelon.networking.client.ClearForcedPose;
 import com.site21.bittermelon.networking.client.SetForcedPose;
@@ -18,8 +19,9 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.UUID;
 
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.MEDICAL_STATS;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.FALLEN;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.STUN;
 import static com.site21.bittermelon.util.LocalMessageHelper.sendLocalMessage;
@@ -40,9 +42,8 @@ public class StumbleHandler {
 
         if (entity.level().isClientSide) return;
 
-        Character character = CharacterManager.get(entity.level()).getActiveCharacter(entity);
-        if (character != null) {
-            int movement = (int) character.getMedicalStats().getMovement();
+        if (entity.getData(MEDICAL_STATS) instanceof MedicalStats medicalStats) {
+            int movement = (int) medicalStats.getMovement();
             if (movement > 0) {
                 length /= movement;
             } else {

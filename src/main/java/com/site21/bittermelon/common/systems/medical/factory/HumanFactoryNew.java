@@ -1,6 +1,5 @@
 package com.site21.bittermelon.common.systems.medical.factory;
 
-import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.medical.blood.BloodInfo;
 import com.site21.bittermelon.common.systems.medical.blood.BloodType;
 import com.site21.bittermelon.common.systems.medical.compartment.Compartment;
@@ -25,7 +24,7 @@ public class HumanFactoryNew implements AnatomyFactory {
     private static final int version = 0;
 
     @Override
-    public MedicalStats build(BloodType bloodType, @NotNull Character character) {
+    public MedicalStats build(BloodType bloodType) {
         compartments = new ArrayList<>();
         wholeBody = addCompartment(WHOLE_BODY);
 //        var debugLiver = addCompartment(DEBUG_COMPARTMENT, wholeBody, 0, 0, 0);
@@ -44,7 +43,7 @@ public class HumanFactoryNew implements AnatomyFactory {
 //        addCompartment(SCALPEL, wholeBody, 0).getVisualData().x(50).y(60);
 
         MedicalStats stats = new AnimalMedicalStats(Anatomies.HUMAN_ANATOMY, version, compartments, wholeBody.getId(),
-                character.getId(), new HashMap<>(), new PatchedDataComponentMap(PatchedDataComponentMap.EMPTY));
+                new HashMap<>(), new PatchedDataComponentMap(PatchedDataComponentMap.EMPTY));
 
         stats.set(BitterDataComponents.BLOOD_INFO, new BloodInfo(bloodType));
 

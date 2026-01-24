@@ -20,6 +20,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.MEDICAL_STATS;
+
 public class CombatHandler {
     public record AttackResult(boolean hit, DamageResult damageResult, String message) {
     }
@@ -34,8 +36,8 @@ public class CombatHandler {
         if (attackerCharacter == null || targetCharacter == null) return;
 
         AttackResult result = executeAttack(
-                attackerCharacter,
-                targetCharacter,
+                attacker,
+                null,
                 attackTemplate,
                 attacker,
                 target
@@ -61,22 +63,22 @@ public class CombatHandler {
 
 
     public static @Nullable AttackResult executeAttack(
-            @NotNull Character attacker,
-            Character target,
+            @NotNull LivingEntity attacker,
+            LivingEntity target,
             @NotNull AttackTemplate attackTemplate,
             LivingEntity attackerEntity,
             LivingEntity targetEntity) {
-        float performance = attackTemplate.calculatePerformance(attacker.getMedicalStats());
+        float performance = attackTemplate.calculatePerformance(attacker.getData(MEDICAL_STATS));
         if (performance <= 0) return null;
 
         DamageResult damageResult = attackTemplate.damageGeneratorSupplier().get().generateDamage(
-                target.getMedicalStats(),
+                target.getData(MEDICAL_STATS),
                 attackTemplate.area(),
                 attackTemplate.minDepth(),
                 attackTemplate.maxDepth(),
                 attackTemplate.damage(),
                 performance,
-                target,
+                null,
                 targetEntity);
 
         if (damageResult == null) return null;
@@ -84,11 +86,11 @@ public class CombatHandler {
         String targetBodyPart = damageResult.targetBodyPart().getName().toLowerCase();
 
         if (attackerEntity.getRandom().nextFloat() > performance) {
-            String missMessage = formatMissMessage(attacker, target, targetBodyPart);
+            String missMessage = formatMissMessage(null, null, targetBodyPart);
             return new AttackResult(false, null, missMessage);
         }
 
-        String hitMessage = formatHitMessage(attacker, target, attackTemplate, damageResult, performance, targetBodyPart);
+        String hitMessage = formatHitMessage(null, null, attackTemplate, damageResult, performance, targetBodyPart);
         attackTemplate.executeSpecialAction(attackerEntity, targetEntity);
 
         // Apply minimal damage to trigger Minecraft's damage visuals
@@ -117,7 +119,7 @@ public class CombatHandler {
             float performance,
             String targetBodyPart
     ) {
-        String injuryDescription = getInjuryDescription(damageResult, performance, target.getMedicalStats());
+        String injuryDescription = getInjuryDescription(damageResult, performance, null);
         if (injuryDescription == null) return null;
 
         return attack.getFormattedMessage(attacker.getName(), target.getName(), targetBodyPart)

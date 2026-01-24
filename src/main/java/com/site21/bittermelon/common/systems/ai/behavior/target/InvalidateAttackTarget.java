@@ -1,9 +1,10 @@
 package com.site21.bittermelon.common.systems.ai.behavior.target;
 
-import com.site21.bittermelon.common.systems.character.Character;
-import com.site21.bittermelon.common.systems.character.CharacterManager;
+import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
+
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.MEDICAL_STATS;
 
 public class InvalidateAttackTarget<E extends LivingEntity> extends net.tslat.smartbrainlib.api.core.behaviour.custom.target.InvalidateAttackTarget<E> {
     @Override
@@ -11,9 +12,8 @@ public class InvalidateAttackTarget<E extends LivingEntity> extends net.tslat.sm
         if (entity.level() != target.level())
             return true;
 
-        Character character = CharacterManager.get(entity.level()).getActiveCharacter(target);
-        if (character != null) {
-            return character.getMedicalStats().getConsciousness() <= 0;
+        if (target.getData(MEDICAL_STATS) instanceof MedicalStats medicalStats) {
+            return medicalStats.getConsciousness() <= 0;
         }
 
         return target.isDeadOrDying() || target.isRemoved();

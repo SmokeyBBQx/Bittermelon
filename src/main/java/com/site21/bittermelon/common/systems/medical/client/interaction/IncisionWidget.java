@@ -1,6 +1,5 @@
 package com.site21.bittermelon.common.systems.medical.client.interaction;
 
-import com.site21.bittermelon.common.systems.character.networking.SetCharactersChanged;
 import com.site21.bittermelon.common.systems.medical.client.CompartmentWidget;
 import com.site21.bittermelon.common.systems.medical.client.HealthScreen;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
@@ -113,7 +112,7 @@ public class IncisionWidget extends InteractionWidget {
             CompartmentUtil.setAttribute(cut, MedicalAttribute.BLEED, 1.0f - accuracy);
 
             ClientPacketDistributor.sendToServer(new AddAndInsertCompartment(
-                    healthScreen.getCharacter().getId(),
+                    healthScreen.getEntity().getUUID(),
                     compartment.getCompartment().getId(),
                     cut,
                     compartment.getLayerIndex(),
@@ -121,8 +120,6 @@ public class IncisionWidget extends InteractionWidget {
                     point.y()
             ));
         }
-
-        ClientPacketDistributor.sendToServer(new SetCharactersChanged());
     }
 
     private float calculateAccuracyFromDistance(@NotNull List<Point> points) {

@@ -3,20 +3,17 @@ package com.site21.bittermelon.common.systems.medical.medicalstats;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.systems.character.Character;
-import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.common.systems.character.skills.Skill;
 import com.site21.bittermelon.common.systems.medical.Anatomy;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
 import com.site21.bittermelon.common.systems.medical.component.MedicalTicker;
+import com.site21.bittermelon.init.custom.Anatomies;
 import net.minecraft.core.Holder;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.*;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,7 +21,6 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
-import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.MutableDataComponentHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,21 +34,21 @@ import static com.site21.bittermelon.init.neoforge.BitterMobEffects.*;
 public class MedicalStats implements DataComponentHolder, MutableDataComponentHolder {
     public static final Codec<MedicalStats> CODEC;
     public static final StreamCodec<RegistryFriendlyByteBuf, MedicalStats> STREAM_CODEC;
+    public static final MedicalStats EMPTY = new MedicalStats(Anatomies.HUMAN_ANATOMY, 0,
+            Collections.emptyList(), UUID.fromString("00000000-0000-0000-0000-000000000000"),
+            new EnumMap<>(MedicalAttribute.class),
+            new PatchedDataComponentMap(DataComponentMap.EMPTY));
 
     private final Holder<Anatomy> anatomy;
     private final int version;
     private final Map<UUID, CompartmentInstance> compartments;
     private final UUID mainCompartmentId;
-    private final UUID characterId;
     private final EnumMap<MedicalAttribute, MedicalAttributeInstance> medicalAttributes;
     private final Map<Holder<Attribute>, Double> defaultEntityAttributes;
     private final PatchedDataComponentMap components;
 
-    protected LivingEntity entity;
-    protected Character character;
-
     public MedicalStats(Holder<Anatomy> anatomy, int version, @NotNull List<CompartmentInstance> compartments,
-                        UUID mainCompartmentId, UUID characterId, Map<MedicalAttribute,
+                        UUID mainCompartmentId, Map<MedicalAttribute,
                     MedicalAttributeInstance> attributes, PatchedDataComponentMap components) {
         this.anatomy = anatomy;
         this.version = version;
@@ -61,7 +57,6 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
         for (CompartmentInstance instance : compartments) {
             this.compartments.put(instance.getId(), instance);
         }
-        this.characterId = characterId;
         this.medicalAttributes = new EnumMap<>(MedicalAttribute.class);
         medicalAttributes.putAll(attributes);
         this.defaultEntityAttributes = new HashMap<>();
@@ -69,44 +64,34 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
     }
 
     public MedicalStats(Holder<Anatomy> anatomy, int version, List<CompartmentInstance> compartments,
-                        UUID mainCompartmentId, UUID characterId, Map<MedicalAttribute,
+                        UUID mainCompartmentId, Map<MedicalAttribute,
                     MedicalAttributeInstance> attributes, DataComponentPatch components) {
-        this(anatomy, version, compartments, mainCompartmentId, characterId, attributes,
+        this(anatomy, version, compartments, mainCompartmentId, attributes,
                 PatchedDataComponentMap.fromPatch(anatomy.value().components(), components));
     }
 
     @SuppressWarnings("unchecked")
-    private void initializeEntity(Level level) {
-        if (character == null) {
-            character = CharacterManager.get(level).getCharacter(characterId);
-            return;
-        }
+    private void initializeEntity(LivingEntity entity) {
+        EntityType<? extends LivingEntity> entityType = (EntityType<? extends LivingEntity>) entity.getType();
 
-        if (level instanceof ServerLevel serverLevel) {
-            this.entity = (LivingEntity) serverLevel.getEntities().get(character.getEntityUUID());
-            if (entity == null) return;
-
-            EntityType<? extends LivingEntity> entityType = (EntityType<? extends LivingEntity>) entity.getType();
-
-            for (AttributeInstance instance : DefaultAttributes.getSupplier(entityType).instances.values()) {
-                defaultEntityAttributes.put(instance.getAttribute(), instance.getBaseValue());
-            }
+        for (AttributeInstance instance : DefaultAttributes.getSupplier(entityType).instances.values()) {
+            defaultEntityAttributes.put(instance.getAttribute(), instance.getBaseValue());
         }
     }
 
-    public void tick(@NotNull Level level) {
-        if (entity == null || defaultEntityAttributes.isEmpty()) {
-            initializeEntity(level);
+    public void tick(@NotNull LivingEntity entity) {
+        if (defaultEntityAttributes.isEmpty()) {
+            initializeEntity(entity);
             return;
         }
 
         updateCompartments();
-        updateEntityAttributes();
-        handleMobEffects();
+        updateEntityAttributes(entity);
+        handleMobEffects(entity);
 
         for (TypedDataComponent<?> componentType : getComponents()) {
             if (componentType.value() instanceof MedicalTicker ticker) {
-                ticker.tick(this, level);
+                ticker.tick(this, entity.level());
             }
         }
     }
@@ -127,9 +112,9 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
         }
     }
 
-    private void updateEntityAttributes() {
-        updateMovementAttributes();
-        updateManipulationAttributes();
+    private void updateEntityAttributes(LivingEntity entity) {
+        updateMovementAttributes(entity);
+        updateManipulationAttributes(entity);
     }
 
 //    private void tickDrugs() {
@@ -144,8 +129,9 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
 //        }
 //    }
 
-    private void updateMovementAttributes() {
-        float capability = getMovement() * character.getSkill(Skill.AGILITY);
+    private void updateMovementAttributes(LivingEntity entity) {
+//        float capability = getMovement() * character.getSkill(Skill.AGILITY);
+        float capability = getMovement();
 
         if (capability < 1) {
             entity.addEffect(new MobEffectInstance(BAD_MOBILITY, MobEffectInstance.INFINITE_DURATION,
@@ -154,21 +140,21 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
             entity.removeEffect(BAD_MOBILITY);
         }
 
-        updateEntityAttribute(Attributes.MOVEMENT_SPEED, capability);
-        updateEntityAttribute(Attributes.JUMP_STRENGTH, capability);
+        updateEntityAttribute(entity, Attributes.MOVEMENT_SPEED, capability);
+        updateEntityAttribute(entity, Attributes.JUMP_STRENGTH, capability);
     }
 
-    private void updateManipulationAttributes() {
+    private void updateManipulationAttributes(LivingEntity entity) {
         float capability = getManipulation();
 
-        updateEntityAttribute(Attributes.ATTACK_SPEED, capability);
-        updateEntityAttribute(Attributes.ATTACK_DAMAGE, capability);
-        updateEntityAttribute(Attributes.BLOCK_BREAK_SPEED, capability);
-        updateEntityAttribute(Attributes.BLOCK_INTERACTION_RANGE, capability);
-        updateEntityAttribute(Attributes.ENTITY_INTERACTION_RANGE, capability);
+        updateEntityAttribute(entity, Attributes.ATTACK_SPEED, capability);
+        updateEntityAttribute(entity, Attributes.ATTACK_DAMAGE, capability);
+        updateEntityAttribute(entity, Attributes.BLOCK_BREAK_SPEED, capability);
+        updateEntityAttribute(entity, Attributes.BLOCK_INTERACTION_RANGE, capability);
+        updateEntityAttribute(entity, Attributes.ENTITY_INTERACTION_RANGE, capability);
     }
 
-    private void updateEntityAttribute(Holder<Attribute> attributeHolder, double value) {
+    private void updateEntityAttribute(LivingEntity entity, Holder<Attribute> attributeHolder, double value) {
         AttributeInstance attribute = entity.getAttribute(attributeHolder);
         if (attribute == null) return;
 
@@ -178,7 +164,7 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
         attribute.setBaseValue(value * baseValue);
     }
 
-    protected void handleMobEffects() {
+    protected void handleMobEffects(LivingEntity entity) {
         if (getConsciousness() <= 0) {
             entity.addEffect(new MobEffectInstance(UNCONSCIOUS, 2, 0, true, false, false));
         } else if (getConsciousness() < 1) {
@@ -291,19 +277,6 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
         return getCompartment(mainCompartmentId);
     }
 
-    public UUID getCharacterId() {
-        return characterId;
-    }
-
-    public UUID getEntityID() {
-        if (entity == null) return null;
-        return entity.getUUID();
-    }
-
-    public LivingEntity getEntity() {
-        return entity;
-    }
-
     public int getVersion() {
         return version;
     }
@@ -345,7 +318,6 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
                         Codec.list(CompartmentInstance.CODEC).fieldOf("compartments").forGetter(
                                 stats -> new ArrayList<>(stats.compartments.values())),
                         UUIDUtil.CODEC.fieldOf("mainCompartmentID").forGetter(MedicalStats::getMainCompartmentId),
-                        UUIDUtil.CODEC.fieldOf("characterID").forGetter(MedicalStats::getCharacterId),
                         Codec.unboundedMap(MedicalAttribute.CODEC, MedicalAttributeInstance.CODEC).fieldOf("attributes").forGetter(MedicalStats::getAttributes),
                         DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(stats -> stats.components.asPatch())
                 ).apply(instance, MedicalStats::new)
@@ -360,8 +332,6 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
                 stats -> new ArrayList<>(stats.compartments.values()),
                 UUIDUtil.STREAM_CODEC,
                 MedicalStats::getMainCompartmentId,
-                UUIDUtil.STREAM_CODEC,
-                MedicalStats::getCharacterId,
                 ByteBufCodecs.map(
                         HashMap::new,
                         MedicalAttribute.STREAM_CODEC,

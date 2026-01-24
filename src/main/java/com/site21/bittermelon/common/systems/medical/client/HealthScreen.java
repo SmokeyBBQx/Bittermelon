@@ -1,7 +1,5 @@
 package com.site21.bittermelon.common.systems.medical.client;
 
-import com.site21.bittermelon.common.systems.character.Character;
-import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.component.medical.MedicalInstrument;
 import com.site21.bittermelon.common.systems.medical.client.tool.InstrumentWidget;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
@@ -9,35 +7,33 @@ import com.site21.bittermelon.common.systems.medical.compartment.CompartmentUtil
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
-import com.site21.bittermelon.common.systems.medical.networking.OpenHealthScreenC2S;
+import com.site21.bittermelon.init.neoforge.BitterAttachmentTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.VISUAL_DATA;
 
 public class HealthScreen extends Screen {
-    private final UUID characterId;
+    private final LivingEntity entity;
     private final List<CompartmentWidget> compartmentWidgets;
     private final List<InstrumentWidget> instrumentWidgets;
     private CompartmentWidget activeWidget = null;
     private CompartmentInstance heldCompartment = null;
     private InstrumentWidget heldTool = null;
 
-    public HealthScreen(@NotNull Character character) {
-        super(Component.literal(character.getName()));
-        this.characterId = character.getId();
+    public HealthScreen(@NotNull LivingEntity entity) {
+        super(Component.literal("Health Screen"));
+        this.entity = entity;
         this.compartmentWidgets = new ArrayList<>();
         this.instrumentWidgets = new ArrayList<>();
         initTools();
@@ -110,6 +106,7 @@ public class HealthScreen extends Screen {
         if (heldCompartment.has(VISUAL_DATA)) return;
 
         VisualData visualData = heldCompartment.get(VISUAL_DATA);
+        assert visualData != null;
 
         if (visualData.icon() != null) {
             float scaleFactor = visualData.scale();
@@ -193,23 +190,16 @@ public class HealthScreen extends Screen {
         return null;
     }
 
-    /**
-     * Does a fresh lookup of the character to ensure we have the latest data from the server.
-     */
-    public Character getCharacter() {
-        return CharacterManager.get(minecraft.level).getCharacter(characterId);
-    }
-
-    public UUID getCharacterId() {
-        return characterId;
-    }
-
     public MedicalStats getMedicalStats() {
-        return getCharacter().getMedicalStats();
+        return entity.getData(BitterAttachmentTypes.MEDICAL_STATS);
     }
 
     public CompartmentInstance getHeldCompartment() {
         return heldCompartment;
+    }
+
+    public LivingEntity getEntity() {
+        return entity;
     }
 
     public void setHeldCompartment(CompartmentInstance heldCompartment) {
@@ -227,12 +217,10 @@ public class HealthScreen extends Screen {
         Player player = Minecraft.getInstance().player;
         if (player == null) return;
 
-        HitResult hitResult = mc.hitResult;
-        if (hitResult != null && hitResult.getType() == HitResult.Type.ENTITY) {
-            EntityHitResult entityHit = (EntityHitResult) hitResult;
-            ClientPacketDistributor.sendToServer(new OpenHealthScreenC2S(player.getUUID(), entityHit.getEntity().getUUID()));
+        if (mc.hitResult instanceof EntityHitResult hitResult && hitResult.getEntity() instanceof LivingEntity entity) {
+            mc.setScreen(new HealthScreen(entity));
         } else {
-            ClientPacketDistributor.sendToServer(new OpenHealthScreenC2S(player.getUUID(), UUID.randomUUID()));
+            mc.setScreen(new HealthScreen(player));
         }
     }
 

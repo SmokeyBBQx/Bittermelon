@@ -35,7 +35,6 @@ public record UpdateCharacter(Character character) implements CustomPacketPayloa
             existingCharacter.setDescription(character.getDescription());
             character.getPlayerInfo().ifPresent(info ->
                     existingCharacter.setPlayerInfo(new PlayerInfo(info.getSkinURL(), info.getModel())));
-            existingCharacter.setMedicalStats(character.getMedicalStats());
         } else {
             manager.getCharacters().put(character.getId(), character);
         }

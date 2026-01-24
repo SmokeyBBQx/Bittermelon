@@ -1,6 +1,5 @@
 package com.site21.bittermelon.common.systems.medical.client.interaction;
 
-import com.site21.bittermelon.common.systems.character.networking.SetCharactersChanged;
 import com.site21.bittermelon.common.systems.medical.client.CompartmentWidget;
 import com.site21.bittermelon.common.systems.medical.client.HealthScreen;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
@@ -110,11 +109,10 @@ public class SuturingWidget extends InteractionWidget {
         if (!(hoveredCompartment.getCompartment().equals(Compartments.CUT.get()))) return false;
 
         ClientPacketDistributor.sendToServer(new ExtractCompartment(
-                healthScreen.getCharacter().getId(),
+                healthScreen.getEntity().getUUID(),
                 compartmentWidget.getCompartment().getId(),
                 hoveredCompartmentId,
                 compartmentWidget.getLayerIndex()));
-        ClientPacketDistributor.sendToServer(new SetCharactersChanged());
 
         makeSound(BitterSounds.SCALPEL.value());
 

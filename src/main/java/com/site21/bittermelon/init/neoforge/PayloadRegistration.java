@@ -218,18 +218,6 @@ public class PayloadRegistration {
                 MakeWireConnection::handle
         );
 
-        registrar.playToServer(
-                OpenHealthScreenC2S.TYPE,
-                OpenHealthScreenC2S.STREAM_CODEC,
-                OpenHealthScreenC2S::handle
-        );
-
-        registrar.playToClient(
-                OpenHealthScreenS2C.TYPE,
-                OpenHealthScreenS2C.STREAM_CODEC,
-                OpenHealthScreenS2C::handle
-        );
-
         registrar.playToClient(
                 RefreshHealthScreen.TYPE,
                 RefreshHealthScreen.STREAM_CODEC,

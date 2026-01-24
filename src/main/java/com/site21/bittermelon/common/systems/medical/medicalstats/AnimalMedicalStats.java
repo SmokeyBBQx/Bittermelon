@@ -1,24 +1,16 @@
 package com.site21.bittermelon.common.systems.medical.medicalstats;
 
-import com.site21.bittermelon.common.systems.atmosphere.AtmosHandler;
-import com.site21.bittermelon.common.systems.atmosphere.AtmosInstance;
 import com.site21.bittermelon.common.systems.medical.Anatomy;
 import com.site21.bittermelon.common.systems.medical.blood.BloodType;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.PatchedDataComponentMap;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import static com.site21.bittermelon.init.custom.Substances.OXYGEN;
-import static com.site21.bittermelon.init.neoforge.BitterMobEffects.ASPHYXIATION;
-import static com.site21.bittermelon.init.neoforge.BitterMobEffects.PAIN;
 
 public class AnimalMedicalStats extends MedicalStats {
     private BloodType bloodType = BloodType.A_PLUS;
@@ -32,21 +24,12 @@ public class AnimalMedicalStats extends MedicalStats {
     private static final float HYPOXIA_DAMAGE = 0.01f;
     private static final float ASPHYXIATION_RATE = 0.05f;
 
-    public AnimalMedicalStats(Holder<Anatomy> anatomy, int version, @NotNull List<CompartmentInstance> compartments, UUID mainCompartmentId, UUID characterId, Map<MedicalAttribute, MedicalAttributeInstance> attributes, PatchedDataComponentMap components) {
-        super(anatomy, version, compartments, mainCompartmentId, characterId, attributes, components);
+    public AnimalMedicalStats(Holder<Anatomy> anatomy, int version, @NotNull List<CompartmentInstance> compartments, UUID mainCompartmentId, Map<MedicalAttribute, MedicalAttributeInstance> attributes, PatchedDataComponentMap components) {
+        super(anatomy, version, compartments, mainCompartmentId, attributes, components);
     }
-
-    @Override
-    public void tick(@NotNull Level level) {
-        super.tick(level);
-
-        if (entity == null) {
-            return;
-        }
 
 //        updateCardiopulmonary();
 //        simulateBleed(level);
-    }
 
 //    private void updateCardiopulmonary() {
 //        bloodVolume = Math.min(100, bloodVolume + getAttribute(MedicalAttribute.BLOOD_REGENERATION) * getCirculation());
@@ -60,31 +43,31 @@ public class AnimalMedicalStats extends MedicalStats {
 //            }
 //        }
 //    }
-
-    private float getRespirationAmount() {
-        if (entity.getAirSupply() <= 0) return -ASPHYXIATION_RATE;
-        if (!entity.getEyeInFluidType().isAir()) return 0;
-
-        AtmosInstance atmosInstance = AtmosHandler.getAtmosInstanceAt(entity.level(), entity.getOnPos().above());
-        if (atmosInstance != null) {
-            if (!atmosInstance.containsGas(OXYGEN.get())) return 0;
-        }
-
-        return getRespiration();
-    }
-
-    @Override
-    protected void handleMobEffects() {
-        super.handleMobEffects();
-
-        if (bloodVolume < BLOOD_LOSS_THRESHOLD || oxygenSaturation < HYPOXIA_THRESHOLD) {
-            entity.addEffect(new MobEffectInstance(ASPHYXIATION, 2, 0, true, false, false));
-        }
-
-        if (getPain() > 0) {
-            entity.addEffect(new MobEffectInstance(PAIN, 2, (int) getPain(), true, false, false));
-        }
-    }
+//
+//    private float getRespirationAmount() {
+//        if (entity.getAirSupply() <= 0) return -ASPHYXIATION_RATE;
+//        if (!entity.getEyeInFluidType().isAir()) return 0;
+//
+//        AtmosInstance atmosInstance = AtmosHandler.getAtmosInstanceAt(entity.level(), entity.getOnPos().above());
+//        if (atmosInstance != null) {
+//            if (!atmosInstance.containsGas(OXYGEN.get())) return 0;
+//        }
+//
+//        return getRespiration();
+//    }
+//
+//    @Override
+//    protected void handleMobEffects() {
+//        super.handleMobEffects();
+//
+//        if (bloodVolume < BLOOD_LOSS_THRESHOLD || oxygenSaturation < HYPOXIA_THRESHOLD) {
+//            entity.addEffect(new MobEffectInstance(ASPHYXIATION, 2, 0, true, false, false));
+//        }
+//
+//        if (getPain() > 0) {
+//            entity.addEffect(new MobEffectInstance(PAIN, 2, (int) getPain(), true, false, false));
+//        }
+//    }
 
 //    public void transfuseBlood(@NotNull BloodInstance instance) {
 //        instance.data().drugs().forEach(this::addDrug);

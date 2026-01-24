@@ -298,7 +298,9 @@ public class CompartmentWidget extends MovableResizableWidget {
     }
 
     public LayerData getLayer() {
-        return CompartmentUtil.getLayer(compartment, layerIndex);
+        // TODO: Compartment becomes stale, need to fetch from medical stats again
+        return CompartmentUtil.getLayer(screen.getMedicalStats().getCompartment(compartment.getId()), layerIndex);
+//        return CompartmentUtil.getLayer(compartment, layerIndex);
     }
 
     public int getLayerIndex() {
@@ -320,7 +322,7 @@ public class CompartmentWidget extends MovableResizableWidget {
         CompartmentInstance hoveredCompartment = screen.getMedicalStats().getCompartment(getHoveredCompartment((int) mouseX, (int) mouseY));
         if (hoveredCompartment != null && hoveredCompartment.getCompartment().canExtract(hoveredCompartment, screen.getMedicalStats())) {
             if (button == 0) {
-                ClientPacketDistributor.sendToServer(new ExtractCompartment(screen.getCharacterId(),
+                ClientPacketDistributor.sendToServer(new ExtractCompartment(screen.getEntity().getUUID(),
                         compartment.getId(), hoveredCompartment.getId(), layerIndex));
                 screen.setHeldCompartment(hoveredCompartment);
                 return true;
@@ -343,7 +345,7 @@ public class CompartmentWidget extends MovableResizableWidget {
         if (!getLayer().canFit(hoveredSlot.x(), hoveredSlot.y(), placingCompartment)) return false;
 
         // Compartment should always be able to fit here
-        ClientPacketDistributor.sendToServer(new AddAndInsertCompartment(screen.getCharacter().getId(),
+        ClientPacketDistributor.sendToServer(new AddAndInsertCompartment(screen.getEntity().getUUID(),
                 compartment.getId(), placingCompartment, layerIndex, hoveredSlot.x(), hoveredSlot.y()));
         ClientPacketDistributor.sendToServer(new SetCharactersChanged());
         return true;

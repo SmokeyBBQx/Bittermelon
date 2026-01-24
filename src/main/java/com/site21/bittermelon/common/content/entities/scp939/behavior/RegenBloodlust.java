@@ -1,10 +1,10 @@
 package com.site21.bittermelon.common.content.entities.scp939.behavior;
 
 import com.mojang.datafixers.util.Pair;
+import com.site21.bittermelon.common.content.entities.scp939.SCP939;
+import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.common.systems.ai.base.Need;
-import com.site21.bittermelon.common.content.entities.scp939.SCP939;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -14,6 +14,8 @@ import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
 import net.tslat.smartbrainlib.util.BrainUtil;
 
 import java.util.List;
+
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.MEDICAL_STATS;
 
 public class RegenBloodlust<E extends SCP939> extends ExtendedBehaviour<E> {
     private static final List<Pair<MemoryModuleType<?>, MemoryStatus>> MEMORY_REQUIREMENTS = ObjectArrayList.of(
@@ -35,7 +37,7 @@ public class RegenBloodlust<E extends SCP939> extends ExtendedBehaviour<E> {
         Character targetCharacter = CharacterManager.get(entity.level()).getActiveCharacter(target);
         if (targetCharacter == null) return;
 
-        if (targetCharacter.getMedicalStats().getConsciousness() < 0.1f) {
+        if (target.getData(MEDICAL_STATS).getConsciousness() < 0.1f) {
             entity.modifyNeed(Need.BLOODLUST, -30);
         }
 

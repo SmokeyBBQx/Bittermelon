@@ -4,6 +4,8 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.items.scps.scp377.FortuneHandler;
 import com.site21.bittermelon.common.systems.blockdamage.BlockDamageUtil;
 import com.site21.bittermelon.common.systems.carry.CarryHandler;
+import com.site21.bittermelon.common.systems.medical.blood.BloodType;
+import com.site21.bittermelon.common.systems.medical.factory.AnatomyType;
 import com.site21.bittermelon.common.systems.stress.StressHandler;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -14,6 +16,8 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.jetbrains.annotations.NotNull;
+
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.MEDICAL_STATS;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class CommonEvents {
@@ -29,6 +33,11 @@ public class CommonEvents {
 
         if (entity instanceof Player player) {
             StressHandler.tickStress(player);
+            if (!player.hasData(MEDICAL_STATS)) {
+                player.setData(MEDICAL_STATS, AnatomyType.HUMAN.getFactory().build(BloodType.O_MINUS));
+            } else {
+                player.getData(MEDICAL_STATS).tick(player);
+            }
         }
     }
 

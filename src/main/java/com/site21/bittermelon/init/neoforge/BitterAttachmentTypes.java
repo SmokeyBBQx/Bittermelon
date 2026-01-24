@@ -6,6 +6,7 @@ import com.site21.bittermelon.common.content.items.scps.scp377.FortuneInstance;
 import com.site21.bittermelon.common.systems.atmosphere.data.AtmosBlockData;
 import com.site21.bittermelon.common.systems.blockdamage.BlockDamageData;
 import com.site21.bittermelon.common.systems.electronics.wiring.WireNetwork;
+import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.util.ExtraCodecs;
@@ -94,6 +95,13 @@ public class BitterAttachmentTypes {
             "carried_passenger", () -> AttachmentType.builder(() -> new UUID(0, 0))
                     .serialize(UUIDUtil.CODEC.fieldOf("carried_passenger"))
                     .sync(UUIDUtil.STREAM_CODEC)
+                    .build()
+    );
+
+    public static final Supplier<AttachmentType<MedicalStats>> MEDICAL_STATS = ATTACHMENT_TYPES.register(
+            "medical_stats", () -> AttachmentType.builder(() -> MedicalStats.EMPTY)
+                    .serialize(MedicalStats.CODEC.fieldOf("medical_stats"))
+                    .sync(MedicalStats.STREAM_CODEC)
                     .build()
     );
 }

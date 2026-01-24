@@ -3,9 +3,7 @@ package com.site21.bittermelon.common.systems.character;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.site21.bittermelon.common.systems.character.skills.Skill;
-import com.site21.bittermelon.common.systems.medical.blood.BloodType;
 import com.site21.bittermelon.common.systems.medical.factory.AnatomyType;
-import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
@@ -37,7 +35,6 @@ public class Character {
     private String name;
     private String description = "";
     private int emoteColor;
-    private MedicalStats medicalStats;
     private final EnumMap<Skill, Float> skills;
     private int willpower;
     private PlayerInfo playerInfo;
@@ -45,13 +42,12 @@ public class Character {
     /** Full constructor for deserialization purposes.
      * Use other constructors for creating new characters.
      */
-    public Character(UUID uuid, UUID entityUUID, String name, String description, int emoteColor, MedicalStats medicalStats, EnumMap<Skill, Float> skills, int willpower) {
+    public Character(UUID uuid, UUID entityUUID, String name, String description, int emoteColor, EnumMap<Skill, Float> skills, int willpower) {
         this.uuid = uuid;
         this.entityUUID = entityUUID;
         this.name = name;
         this.description = description;
         this.emoteColor = emoteColor;
-        this.medicalStats = medicalStats;
         this.skills = skills;
         this.willpower = willpower;
     }
@@ -63,7 +59,6 @@ public class Character {
         this.name = name;
 
         emoteColor = (int) (Math.random() * 0xFFFFFF);
-        medicalStats = anatomyType.getFactory().build(BloodType.O_MINUS, this);
         skills = new EnumMap<>(Skill.class);
         willpower = 6;
     }
@@ -122,24 +117,20 @@ public class Character {
         this.name = name;
     }
 
-    public void setMedicalStats(MedicalStats medicalStats) {
-        this.medicalStats = medicalStats;
-    }
-
     public void setPlayerInfo(PlayerInfo playerInfo) {
         this.playerInfo = playerInfo;
     }
 
-    /**
-     *  Gets the character's medical stats.
-     * @return The character's medical stats. If not set, returns default human anatomy with O- blood type.
-     */
-    public MedicalStats getMedicalStats() {
-        if (medicalStats == null) {
-            medicalStats = AnatomyType.HUMAN.getFactory().build(BloodType.O_MINUS, this);
-        }
-        return medicalStats;
-    }
+//    /**
+//     *  Gets the character's medical stats.
+//     * @return The character's medical stats. If not set, returns default human anatomy with O- blood type.
+//     */
+//    public MedicalStats getMedicalStats() {
+//        if (medicalStats == null) {
+//            medicalStats = AnatomyType.HUMAN.getFactory().build(BloodType.O_MINUS, this);
+//        }
+//        return medicalStats;
+//    }
 
     /**
      * Updates the character's medical stats. Should be called periodically, e.g. each server tick.
@@ -147,12 +138,6 @@ public class Character {
      */
     public void update(@NotNull Level level) {
         if (level.isClientSide) return;
-
-        if (medicalStats != null) {
-            medicalStats.tick(level);
-        } else {
-            System.out.println("Medical stats null for " + name);
-        }
     }
 
     public EnumMap<Skill, Float> getSkills() {
@@ -226,14 +211,13 @@ public class Character {
                 Codec.STRING.fieldOf("name").forGetter(Character::getName),
                 Codec.STRING.fieldOf("description").forGetter(Character::getDescription),
                 Codec.INT.fieldOf("emoteColor").forGetter(Character::getEmoteColor),
-                MedicalStats.CODEC.fieldOf("medicalStats").forGetter(Character::getMedicalStats),
                 Codec.unboundedMap(Skill.CODEC, Codec.FLOAT).fieldOf("skills").forGetter(Character::getSkills),
                 Codec.INT.fieldOf("willpower").forGetter(Character::getWillpower),
                 PlayerInfo.CODEC.optionalFieldOf("playerInfo").forGetter(Character::getPlayerInfo)
         ).apply(instance, (uuid, entityUUID, name, description, emoteColor,
-                           medicalStats, skills, willpower, playerInfo) -> {
+                           skills, willpower, playerInfo) -> {
             EnumMap<Skill, Float> skillMap = new EnumMap<>(Skill.class);
-            Character character = new Character(uuid, entityUUID, name, description, emoteColor, medicalStats, skillMap, willpower);
+            Character character = new Character(uuid, entityUUID, name, description, emoteColor, skillMap, willpower);
             playerInfo.ifPresent(character::setPlayerInfo);
             return character;
         }));
@@ -245,7 +229,6 @@ public class Character {
                     ByteBufCodecs.STRING_UTF8.encode(buf, character.getName());
                     ByteBufCodecs.STRING_UTF8.encode(buf, character.getDescription());
                     ByteBufCodecs.INT.encode(buf, character.getEmoteColor());
-                    MedicalStats.STREAM_CODEC.encode(buf, character.getMedicalStats());
                     buf.writeMap(character.getSkills(),
                             FriendlyByteBuf::writeEnum,
                             FriendlyByteBuf::writeFloat
@@ -259,8 +242,6 @@ public class Character {
                     String name = ByteBufCodecs.STRING_UTF8.decode(buf);
                     String description = ByteBufCodecs.STRING_UTF8.decode(buf);
                     int emoteColor = ByteBufCodecs.INT.decode(buf);
-                    MedicalStats medicalStats = MedicalStats.STREAM_CODEC.decode(buf);
-
                     EnumMap<Skill, Float> skills = new EnumMap<>(Skill.class);
                     Map<Skill, Float> tempMap = buf.readMap(
                             byteBuf -> byteBuf.readEnum(Skill.class),
@@ -270,7 +251,7 @@ public class Character {
                     int willpower = ByteBufCodecs.INT.decode(buf);
                     Optional<PlayerInfo> playerInfo = PlayerInfo.STREAM_CODEC.apply(ByteBufCodecs::optional).decode(buf);
 
-                    Character character = new Character(uuid, entityUUID, name, description, emoteColor, medicalStats, skills, willpower);
+                    Character character = new Character(uuid, entityUUID, name, description, emoteColor, skills, willpower);
                     playerInfo.ifPresent(character::setPlayerInfo);
                     return character;
                 }
