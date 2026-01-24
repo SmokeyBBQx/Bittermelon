@@ -90,10 +90,10 @@ public class BitterAttachmentTypes {
             "last_scream_time", () -> AttachmentType.builder(() -> 0L).build()
     );
 
-    public static final Supplier<AttachmentType<Integer>> CARRIED_PASSENGER = ATTACHMENT_TYPES.register(
-            "carried_passenger", () -> AttachmentType.builder(() -> -1)
-                    .serialize(Codec.INT.fieldOf("carried_passenger"))
-                    .sync(ByteBufCodecs.INT)
+    public static final Supplier<AttachmentType<UUID>> CARRIED_PASSENGER = ATTACHMENT_TYPES.register(
+            "carried_passenger", () -> AttachmentType.builder(() -> new UUID(0, 0))
+                    .serialize(UUIDUtil.CODEC.fieldOf("carried_passenger"))
+                    .sync(UUIDUtil.STREAM_CODEC)
                     .build()
     );
 }

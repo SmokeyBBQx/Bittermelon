@@ -12,6 +12,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 public class CarryHandler {
 
@@ -35,20 +38,22 @@ public class CarryHandler {
 
     /**
      * Allows the carrier to pick up the target entity as a passenger.
+     *
      * @param carrier The entity that will carry the target.
-     * @param target The entity to be picked up.
+     * @param target  The entity to be picked up.
      * @return True if the target was successfully picked up, false otherwise.
      */
     public static boolean pickUpEntity(LivingEntity carrier, @NotNull Entity target) {
         if (!target.isAlive()) return false;
 
         target.startRiding(carrier, true);
-        carrier.setData(BitterAttachmentTypes.CARRIED_PASSENGER, carrier.getPassengers().indexOf(target));
+        carrier.setData(BitterAttachmentTypes.CARRIED_PASSENGER, target.getUUID());
         return true;
     }
 
     /**
      * Handles the player attempting to pick up an entity.
+     *
      * @param player The player attempting to pick up the entity.
      * @param target The entity to be picked up.
      * @return True if the entity was successfully picked up, false otherwise.
@@ -64,30 +69,46 @@ public class CarryHandler {
     }
 
     /**
-     * Places the carried entity at the specified block position or throws it if out of range.
-     * @param player The player placing the entity.
-     * @param pos The block position to place the entity at.
+     * Places the carriedId entity at the specified block position or throws it if out of range.
+     *
+     * @param player    The player placing the entity.
+     * @param pos       The block position to place the entity at.
      * @param hitResult The block hit result for precise placement.
      * @return True if the entity was successfully placed, false otherwise.
      */
     public static boolean placeEntity(Player player, BlockPos pos, BlockHitResult hitResult) {
         if (!player.isShiftKeyDown()) return false;
 
-        int passengerIndex = player.getData(BitterAttachmentTypes.CARRIED_PASSENGER);
-        if (passengerIndex >= 0 && passengerIndex < player.getPassengers().size()) {
-            Entity carriedEntity = player.getPassengers().get(passengerIndex);
-            carriedEntity.stopRiding();
+        Entity carriedEntity = getCarried(player);
+        if (carriedEntity == null) return false;
 
-            if (player.canInteractWithBlock(pos, -player.blockInteractionRange() / 2)) {
-                carriedEntity.setPos(hitResult.getLocation());
-                player.removeData(BitterAttachmentTypes.CARRIED_PASSENGER);
-            } else {
-                ClientPacketDistributor.sendToServer(new ThrowCarriedEntity(player.getUUID(), passengerIndex));
-            }
+        carriedEntity.stopRiding();
 
-            return true;
+        if (player.canInteractWithBlock(pos, -player.blockInteractionRange() / 2)) {
+            carriedEntity.setPos(hitResult.getLocation());
+            player.removeData(BitterAttachmentTypes.CARRIED_PASSENGER);
+        } else {
+            ClientPacketDistributor.sendToServer(new ThrowCarriedEntity(player.getUUID(), carriedEntity.getUUID()));
         }
 
-        return false;
+        return true;
+    }
+
+    /**
+     * Retrieves the entity currently being carriedId by the carrier.
+     *
+     * @param carrier The entity carrying another entity.
+     * @return The carriedId entity, or null if none is being carriedId.
+     */
+    public static @Nullable Entity getCarried(LivingEntity carrier) {
+        UUID carriedUUID = carrier.getData(BitterAttachmentTypes.CARRIED_PASSENGER);
+        for (Entity passenger : carrier.getPassengers()) {
+            if (passenger.getUUID().equals(carriedUUID)) {
+                return passenger;
+            }
+        }
+
+        carrier.removeData(BitterAttachmentTypes.CARRIED_PASSENGER);
+        return null;
     }
 }

@@ -4,7 +4,6 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.init.neoforge.BitterAttachmentTypes;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.UUIDUtil;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.Entity;
@@ -15,14 +14,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public record ThrowCarriedEntity(UUID uuid, int passengerIndex) implements CustomPacketPayload {
+public record ThrowCarriedEntity(UUID uuid, UUID carriedId) implements CustomPacketPayload {
     public static final Type<ThrowCarriedEntity> TYPE = new Type<>(Bittermelon.resource("throw_carried_entity"));
 
     public static final StreamCodec<ByteBuf, ThrowCarriedEntity> STREAM_CODEC = StreamCodec.composite(
             UUIDUtil.STREAM_CODEC,
             ThrowCarriedEntity::uuid,
-            ByteBufCodecs.INT,
-            ThrowCarriedEntity::passengerIndex,
+            UUIDUtil.STREAM_CODEC,
+            ThrowCarriedEntity::carriedId,
             ThrowCarriedEntity::new
     );
 
@@ -35,7 +34,9 @@ public record ThrowCarriedEntity(UUID uuid, int passengerIndex) implements Custo
         Player player = ctx.player().level().getPlayerByUUID(uuid);
         assert player != null;
 
-        Entity carriedEntity = player.getPassengers().get(passengerIndex);
+        Entity carriedEntity = CarryHandler.getCarried(player);
+        if (carriedEntity == null) return;
+
         carriedEntity.stopRiding();
         player.removeData(BitterAttachmentTypes.CARRIED_PASSENGER);
 

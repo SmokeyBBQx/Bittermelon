@@ -6,6 +6,7 @@ import com.site21.bittermelon.client.render.TypingIndicatorRenderer;
 import com.site21.bittermelon.common.systems.atmosphere.client.AtmosFogRenderer;
 import com.site21.bittermelon.common.systems.atmosphere.data.AtmosLevelData;
 import com.site21.bittermelon.common.systems.blockdamage.client.BlockDamageRenderer;
+import com.site21.bittermelon.common.systems.carry.CarryHandler;
 import com.site21.bittermelon.common.systems.carry.ThrowCarriedEntity;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.economy.bank.AccountRegistry;
@@ -14,7 +15,6 @@ import com.site21.bittermelon.common.systems.personnel.registry.PersonnelRegistr
 import com.site21.bittermelon.common.systems.stumble.client.RiseKeyHandler;
 import com.site21.bittermelon.common.systems.stumble.client.RiseProgressBar;
 import com.site21.bittermelon.common.systems.telecomms.intercom.IntercomManager;
-import com.site21.bittermelon.init.neoforge.BitterAttachmentTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.util.TriState;
@@ -121,12 +121,11 @@ public class ClientEvents {
         Player player = event.getEntity();
 
         if (player.isShiftKeyDown() && event.getHand() == InteractionHand.MAIN_HAND) {
-            int passengerIndex = player.getData(BitterAttachmentTypes.CARRIED_PASSENGER);
-            if (passengerIndex >= 0 && passengerIndex < player.getPassengers().size()) {
-                Entity carriedEntity = player.getPassengers().get(passengerIndex);
-                carriedEntity.stopRiding();
-                ClientPacketDistributor.sendToServer(new ThrowCarriedEntity(player.getUUID(), passengerIndex));
-            }
+            Entity carriedEntity = CarryHandler.getCarried(player);
+            if (carriedEntity == null) return;
+
+            carriedEntity.stopRiding();
+            ClientPacketDistributor.sendToServer(new ThrowCarriedEntity(player.getUUID(), carriedEntity.getUUID()));
         }
     }
 }

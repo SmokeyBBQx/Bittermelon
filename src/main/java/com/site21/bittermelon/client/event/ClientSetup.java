@@ -20,6 +20,7 @@ import com.site21.bittermelon.common.content.entities.scp939.client.SCP939Render
 import com.site21.bittermelon.common.content.items.keycard.KeycardDecorator;
 import com.site21.bittermelon.common.content.items.repairtool.RepairToolUseAnimation;
 import com.site21.bittermelon.common.content.items.taser.TaserProjectileRenderer;
+import com.site21.bittermelon.common.systems.carry.CarryHandler;
 import com.site21.bittermelon.common.systems.character.networking.UpdateCharacter;
 import com.site21.bittermelon.common.systems.component.screwdriver.ScrewdriverUseAnimation;
 import com.site21.bittermelon.common.systems.component.temperature.HeatDecorator;
@@ -34,7 +35,6 @@ import com.site21.bittermelon.common.systems.personnel.registry.networking.Perso
 import com.site21.bittermelon.common.systems.personnel.registry.networking.RemovePersonnelEntry;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.UpdatePersonnelEntry;
 import com.site21.bittermelon.datagen.property.*;
-import com.site21.bittermelon.init.neoforge.BitterAttachmentTypes;
 import com.site21.bittermelon.init.neoforge.BitterBlockEntities;
 import com.site21.bittermelon.init.neoforge.BitterItems;
 import com.site21.bittermelon.init.neoforge.BitterParticles;
@@ -45,6 +45,7 @@ import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.context.ContextKey;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -90,11 +91,14 @@ public class ClientSetup {
         event.registerEntityModifier(
                 PlayerRenderer.class,
                 (entity, state) -> {
-                    int passengerIndex = entity.getData(BitterAttachmentTypes.CARRIED_PASSENGER);
-                    if (passengerIndex >= 0 && passengerIndex < entity.getPassengers().size()) {
-                        float entityWidth = entity.getPassengers().get(passengerIndex).getBbWidth();
-                        state.setRenderData(ENTITY_WIDTH, entityWidth);
+                    Entity carriedEntity = CarryHandler.getCarried(entity);
+                    if (carriedEntity == null) {
+                        state.setRenderData(ENTITY_WIDTH, 0f);
+                        return;
                     }
+
+                    float entityWidth = carriedEntity.getBbWidth();
+                    state.setRenderData(ENTITY_WIDTH, entityWidth);
                 }
         );
     }
