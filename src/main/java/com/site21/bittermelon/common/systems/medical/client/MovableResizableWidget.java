@@ -47,14 +47,6 @@ public abstract class MovableResizableWidget extends AbstractWidget {
         return getHeaderHeight() + 10;
     }
 
-    protected int getMaxWidth() {
-        return 200;
-    }
-
-    protected int getMaxHeight() {
-        return 200;
-    }
-
     protected boolean isInResizeArea(double mouseX, double mouseY) {
         if (!isOpen) return false;
 
@@ -106,8 +98,8 @@ public abstract class MovableResizableWidget extends AbstractWidget {
                 delta = -delta;
             }
 
-            int newWidth = Math.clamp(resizeStartWidth + delta, getMinWidth(), getMaxWidth());
-            int newHeight = (int) Math.clamp(newWidth / aspectRatio, getMinHeight(), getMaxHeight());
+            int newWidth = Math.max(resizeStartWidth + delta, getMinWidth());
+            int newHeight = (int) Math.max(newWidth / aspectRatio, getMinHeight());
 
             setWidth(newWidth);
             setHeight(newHeight);

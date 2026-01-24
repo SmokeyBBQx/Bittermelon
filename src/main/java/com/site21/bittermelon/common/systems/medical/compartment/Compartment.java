@@ -19,10 +19,7 @@ import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.common.CommonHooks;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
@@ -119,6 +116,16 @@ public class Compartment {
         public Properties shape(List<Point> shape) {
             components.set(SHAPE, shape);
             return this;
+        }
+
+        public Properties shapeOf(int width, int height) {
+            List<Point> shape = new ArrayList<>();
+            for (int i = 0; i < height; ++i) {
+                for (int j = 0; j < width; ++j) {
+                    shape.add(new Point(j, i));
+                }
+            }
+            return shape(shape);
         }
 
         public Properties pivot(Point pivot) {

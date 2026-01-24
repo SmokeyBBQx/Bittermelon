@@ -17,8 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.site21.bittermelon.init.custom.Compartments.DEBUG_COMPARTMENT;
-import static com.site21.bittermelon.init.custom.Compartments.GALLBLADDER;
+import static com.site21.bittermelon.init.custom.Compartments.*;
 
 public class HumanFactoryNew implements AnatomyFactory {
     private CompartmentInstance wholeBody;
@@ -28,11 +27,14 @@ public class HumanFactoryNew implements AnatomyFactory {
     @Override
     public MedicalStats build(BloodType bloodType, @NotNull Character character) {
         compartments = new ArrayList<>();
-        wholeBody = addCompartment(DEBUG_COMPARTMENT);
+        wholeBody = addCompartment(WHOLE_BODY);
+//        var debugLiver = addCompartment(DEBUG_COMPARTMENT, wholeBody, 0, 0, 0);
+        var leftArm = addCompartment(ARM, wholeBody, 0, 7, 0);
+        var rightArm = addCompartment(ARM, wholeBody, 11, 7, 0);
 
         CompartmentInstance gallBladder = GALLBLADDER.get().toInstance();
 
-        addCompartment(gallBladder, wholeBody, 10, 1, 0);
+//        addCompartment(gallBladder, wholeBody, 10, 1, 0);
 
 //
 //        buildHead();

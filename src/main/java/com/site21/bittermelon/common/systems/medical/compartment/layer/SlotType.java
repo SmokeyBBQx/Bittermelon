@@ -1,6 +1,5 @@
 package com.site21.bittermelon.common.systems.medical.compartment.layer;
 
-import com.site21.bittermelon.common.systems.medical.blood.BloodType;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -9,7 +8,7 @@ import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;
 
 public enum SlotType implements StringRepresentable {
-    CAVITY(null),
+    CAVITY(ResourceLocation.withDefaultNamespace("textures/block/tinted_glass.png")),
     SKIN(ResourceLocation.withDefaultNamespace("textures/block/white_terracotta.png")),
     MUSCLE(ResourceLocation.withDefaultNamespace("textures/block/netherrack.png")),
     FAT(ResourceLocation.withDefaultNamespace("textures/block/horn_coral_block.png")),
