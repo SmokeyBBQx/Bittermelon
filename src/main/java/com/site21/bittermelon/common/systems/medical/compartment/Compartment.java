@@ -39,7 +39,7 @@ public class Compartment {
 
     public Compartment(String id, @NotNull Properties properties) {
         this.id = id;
-        this.properties = properties;
+        this.properties = properties.build();
         components = properties.components.build();
     }
 
@@ -83,6 +83,7 @@ public class Compartment {
         Holder<Item> item = Items.AIR.builtInRegistryHolder();
         float defaultHealth = 0;
         Supplier<List<LayerData>> defaultLayers = List::of;
+        private final EnumMap<MedicalAttribute, Float> attributes = new EnumMap<>(MedicalAttribute.class);
         private final DataComponentMap.Builder components = DataComponentMap.builder();
 
         public Properties defaultTags(EnumSet<CompartmentTag> defaultTags) {
@@ -101,13 +102,12 @@ public class Compartment {
         }
 
         public Properties addAttribute(MedicalAttribute attribute, float value) {
-            // TODO: Add to components
+            this.attributes.put(attribute, value);
             return this;
         }
 
         public Properties addAttribute(MedicalAttribute attribute) {
-//            this.defaultAttributes.put(attribute, 1.0f);
-            // TODO: Add to components
+            this.attributes.put(attribute, 1.0f);
             return this;
         }
 
@@ -144,6 +144,13 @@ public class Compartment {
         public <T> Properties component(DataComponentType<T> component, T value) {
             CommonHooks.validateComponent(component);
             components.set(component, value);
+            return this;
+        }
+
+        public Properties build() {
+            if (!attributes.isEmpty()) {
+                components.set(MEDICAL_ATTRIBUTES, attributes);
+            }
             return this;
         }
     }
