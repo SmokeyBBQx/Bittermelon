@@ -3,7 +3,6 @@ package com.site21.bittermelon.common.systems.character;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.site21.bittermelon.common.systems.character.skills.Skill;
-import com.site21.bittermelon.common.systems.medical.factory.AnatomyType;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
@@ -53,7 +52,7 @@ public class Character {
     }
 
     /** Creates a new character with default anatomyType (human) and random emote color. */
-    public Character(UUID entityUUID, String name, @NotNull AnatomyType anatomyType) {
+    public Character(UUID entityUUID, String name) {
         this.uuid = UUID.randomUUID();
         this.entityUUID = entityUUID;
         this.name = name;
@@ -65,14 +64,14 @@ public class Character {
 
     /** Creates a new character with default anatomy (human) and specified emote color as hex string (e.g. "FF5733"). */
     public Character(UUID entityUUID, String name, String description, String emoteColor) {
-        this(entityUUID, name, AnatomyType.HUMAN);
+        this(entityUUID, name);
         this.description = description;
         this.emoteColor = TextColor.parseColor("#" + emoteColor).getOrThrow().getValue();
     }
 
     /** Creates a new character with default anatomy (human) and specified emote color as integer. */
     public Character(UUID entityUUID, String name, String description, int emoteColor) {
-        this(entityUUID, name, AnatomyType.HUMAN);
+        this(entityUUID, name);
         this.description = description;
         this.emoteColor = emoteColor;
     }
@@ -204,7 +203,6 @@ public class Character {
     }
 
     static {
-        // TODO: Codec does not recreate animal medical stats but instead recreates normal medical stats
         CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 UUIDUtil.CODEC.fieldOf("uuid").forGetter(Character::getId),
                 UUIDUtil.CODEC.fieldOf("entityUUID").forGetter(Character::getEntityUUID),

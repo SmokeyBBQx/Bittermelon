@@ -3,7 +3,7 @@ package com.site21.bittermelon.common.systems.medical.medicalstats;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.systems.medical.Anatomy;
+import com.site21.bittermelon.common.systems.medical.anatomy.Anatomy;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
 import com.site21.bittermelon.common.systems.medical.component.MedicalTicker;
@@ -34,7 +34,7 @@ import static com.site21.bittermelon.init.neoforge.BitterMobEffects.*;
 public class MedicalStats implements DataComponentHolder, MutableDataComponentHolder {
     public static final Codec<MedicalStats> CODEC;
     public static final StreamCodec<RegistryFriendlyByteBuf, MedicalStats> STREAM_CODEC;
-    public static final MedicalStats EMPTY = new MedicalStats(Anatomies.HUMAN_ANATOMY, 0,
+    public static final MedicalStats EMPTY = new MedicalStats(Anatomies.HUMAN, 0,
             Collections.emptyList(), UUID.fromString("00000000-0000-0000-0000-000000000000"),
             new EnumMap<>(MedicalAttribute.class),
             new PatchedDataComponentMap(DataComponentMap.EMPTY));
@@ -80,6 +80,8 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
     }
 
     public void tick(@NotNull LivingEntity entity) {
+        anatomy.value().tick(entity, this);
+
         if (defaultEntityAttributes.isEmpty()) {
             initializeEntity(entity);
             return;

@@ -1,6 +1,5 @@
 package com.site21.bittermelon.common.systems.medical.client;
 
-import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.character.networking.SetCharactersChanged;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentUtil;
@@ -31,8 +30,6 @@ import java.util.UUID;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 
 public class CompartmentWidget extends MovableResizableWidget {
-    private static final ResourceLocation WINDOW_TEXTURE = Bittermelon.resource("textures/gui/healthscreen/surgery_window.png");
-    private static final ResourceLocation WINDOW_SIDES_TEXTURE = Bittermelon.resource("textures/gui/healthscreen/surgery_window_sides.png");
     private static final int EDGE_MARGIN = 2;
     private static final int BUTTON_SIZE = 10;
 
@@ -119,7 +116,7 @@ public class CompartmentWidget extends MovableResizableWidget {
             Arrays.fill(floats, layerIndex == 0 ? 1.0f : 0.0f);
         }
 
-        LayerData previousLayer = layerIndex > 0 ? CompartmentUtil.getLayer(compartment, layerIndex - 1) : null;
+        LayerData previousLayer = layerIndex > 0 ? CompartmentUtil.getLayer(getCompartment(), layerIndex - 1) : null;
         if (previousLayer == null) return;
 
         for (Map.Entry<Point, UUID> entry : previousLayer.getCompartments().entrySet()) {
@@ -414,7 +411,7 @@ public class CompartmentWidget extends MovableResizableWidget {
     }
 
     public CompartmentInstance getCompartment() {
-        return compartment;
+        return screen.getMedicalStats().getCompartment(compartment.getId());
     }
 
     public int getSlotSize() {

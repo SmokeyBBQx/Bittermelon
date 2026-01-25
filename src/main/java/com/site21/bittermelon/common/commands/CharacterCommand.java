@@ -6,7 +6,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.character.networking.UpdateCharacter;
-import com.site21.bittermelon.common.systems.medical.factory.AnatomyType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -80,7 +79,7 @@ public class CharacterCommand {
             }
         }
 
-        Character character = new Character(player.getUUID(), name, AnatomyType.HUMAN);
+        Character character = new Character(player.getUUID(), name);
 
         manager.addCharacter(character);
         manager.setActiveCharacter(player, character.getId());

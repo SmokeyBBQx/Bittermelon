@@ -19,7 +19,10 @@ import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.common.CommonHooks;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
@@ -76,22 +79,11 @@ public class Compartment {
     }
 
     public static class Properties {
-        EnumSet<CompartmentTag> defaultTags = EnumSet.noneOf(CompartmentTag.class);
         Holder<Item> item = Items.AIR.builtInRegistryHolder();
         float defaultHealth = 0;
         Supplier<List<LayerData>> defaultLayers = List::of;
         private final EnumMap<MedicalAttribute, Float> attributes = new EnumMap<>(MedicalAttribute.class);
         private final DataComponentMap.Builder components = DataComponentMap.builder();
-
-        public Properties defaultTags(EnumSet<CompartmentTag> defaultTags) {
-            this.defaultTags = defaultTags;
-            return this;
-        }
-
-        public Properties defaultTags(CompartmentTag @NotNull ... tags) {
-            this.defaultTags = tags.length > 0 ? EnumSet.of(tags[0], tags) : EnumSet.noneOf(CompartmentTag.class);
-            return this;
-        }
 
         public Properties defaultAttributes(EnumMap<MedicalAttribute, Float> defaultAttributes) {
             components.set(MEDICAL_ATTRIBUTES, defaultAttributes);

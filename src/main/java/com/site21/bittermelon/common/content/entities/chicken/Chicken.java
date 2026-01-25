@@ -22,7 +22,6 @@ import com.site21.bittermelon.common.systems.ai.sensors.NearbyDrinkableFluidsSen
 import com.site21.bittermelon.common.systems.ai.sensors.NearbyFoodSensor;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.combat.AttackTemplate;
-import com.site21.bittermelon.common.systems.medical.factory.AnatomyType;
 import com.site21.bittermelon.init.neoforge.BitterActivity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
@@ -83,7 +82,7 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
     @Override
     protected Character initializeCharacter() {
         // TODO: Procgen descriptions
-        return new Character(this.uuid, "Chicken", AnatomyType.HUMAN);
+        return new Character(this.uuid, "Chicken");
     }
 
     @Override

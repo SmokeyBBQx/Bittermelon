@@ -4,7 +4,7 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.blocks.electronics.television.Media;
 import com.site21.bittermelon.common.systems.chat.VerbSet;
 import com.site21.bittermelon.common.systems.electronics.wiring.Signal;
-import com.site21.bittermelon.common.systems.medical.Anatomy;
+import com.site21.bittermelon.common.systems.medical.anatomy.Anatomy;
 import com.site21.bittermelon.common.systems.medical.compartment.Compartment;
 import com.site21.bittermelon.common.systems.medical.drug.Drug;
 import com.site21.bittermelon.common.systems.roles.Role;

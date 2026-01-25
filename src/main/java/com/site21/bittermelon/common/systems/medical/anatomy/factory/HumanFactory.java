@@ -1,13 +1,10 @@
-package com.site21.bittermelon.common.systems.medical.factory;
+package com.site21.bittermelon.common.systems.medical.anatomy.factory;
 
-import com.site21.bittermelon.common.systems.medical.blood.BloodInfo;
-import com.site21.bittermelon.common.systems.medical.blood.BloodType;
 import com.site21.bittermelon.common.systems.medical.compartment.Compartment;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.medicalstats.AnimalMedicalStats;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.init.custom.Anatomies;
-import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
@@ -18,13 +15,13 @@ import java.util.List;
 
 import static com.site21.bittermelon.init.custom.Compartments.*;
 
-public class HumanFactoryNew implements AnatomyFactory {
+public class HumanFactory implements AnatomyFactory {
     private CompartmentInstance wholeBody;
     private List<CompartmentInstance> compartments;
     private static final int version = 0;
 
     @Override
-    public MedicalStats build(BloodType bloodType) {
+    public MedicalStats build() {
         compartments = new ArrayList<>();
         wholeBody = addCompartment(WHOLE_BODY);
 //        var debugLiver = addCompartment(DEBUG_COMPARTMENT, wholeBody, 0, 0, 0);
@@ -42,10 +39,10 @@ public class HumanFactoryNew implements AnatomyFactory {
 //        buildAbdomen();
 //        addCompartment(SCALPEL, wholeBody, 0).getVisualData().x(50).y(60);
 
-        MedicalStats stats = new AnimalMedicalStats(Anatomies.HUMAN_ANATOMY, version, compartments, wholeBody.getId(),
+        MedicalStats stats = new AnimalMedicalStats(Anatomies.HUMAN, version, compartments, wholeBody.getId(),
                 new HashMap<>(), new PatchedDataComponentMap(PatchedDataComponentMap.EMPTY));
 
-        stats.set(BitterDataComponents.BLOOD_INFO, new BloodInfo(bloodType));
+//        stats.set(BitterDataComponents.BLOOD_INFO, new BloodInfo(bloodType));
 
         return stats;
     }

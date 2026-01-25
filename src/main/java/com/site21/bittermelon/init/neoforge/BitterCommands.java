@@ -17,7 +17,7 @@ public class BitterCommands {
         StumbleCommand.register(event.getDispatcher());
         CPRCommand.register(event.getDispatcher());
         ChatCommands.register(event.getDispatcher());
-        MedicalStatsCommand.register(event.getDispatcher());
+        MedicalStatsCommand.register(event.getDispatcher(), event.getBuildContext());
         DrugCommand.register(event.getDispatcher(), event.getBuildContext());
         PrivilegeCommand.register(event.getDispatcher());
         BlockDamageCommand.register(event.getDispatcher());

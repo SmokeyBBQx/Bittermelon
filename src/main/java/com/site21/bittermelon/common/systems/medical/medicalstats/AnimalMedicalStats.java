@@ -1,6 +1,6 @@
 package com.site21.bittermelon.common.systems.medical.medicalstats;
 
-import com.site21.bittermelon.common.systems.medical.Anatomy;
+import com.site21.bittermelon.common.systems.medical.anatomy.Anatomy;
 import com.site21.bittermelon.common.systems.medical.blood.BloodType;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
