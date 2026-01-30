@@ -25,10 +25,13 @@ public class HumanFactory implements AnatomyFactory {
         compartments = new ArrayList<>();
         wholeBody = addCompartment(WHOLE_BODY);
 //        var debugLiver = addCompartment(DEBUG_COMPARTMENT, wholeBody, 0, 0, 0);
-        addCompartment(ARM, wholeBody, 0, 7, 0);
-        addCompartment(ARM, wholeBody, 11, 7, 0);
+        addCompartment(UPPER_ARM, wholeBody, 0, 7, 0);
+        addCompartment(UPPER_ARM, wholeBody, 11, 7, 0);
+        addCompartment(FOREARM, wholeBody, 0, 12, 0);
+        addCompartment(FOREARM, wholeBody, 11, 12, 0);
         addCompartment(HAND, wholeBody, 0, 17, 0);
         addCompartment(HAND, wholeBody, 11, 17, 0);
+        addCompartment(TORSO, wholeBody, 3, 7, 0);
 
         CompartmentInstance gallBladder = GALLBLADDER.get().toInstance();
 

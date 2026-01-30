@@ -10,8 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Random;
 
 public class Germ {
-    // TODO: Figure out something better instead of doing it like this?
-
     public static final Codec<Germ> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ExtraCodecs.POSITIVE_INT.fieldOf("incubationTime").forGetter(Germ::getIncubationTime),
             ExtraCodecs.POSITIVE_INT.fieldOf("infectionTime").forGetter(Germ::getInfectionTime),
