@@ -25,8 +25,8 @@ public class HumanFactory implements AnatomyFactory {
         compartments = new ArrayList<>();
         wholeBody = addCompartment(WHOLE_BODY);
 //        var debugLiver = addCompartment(DEBUG_COMPARTMENT, wholeBody, 0, 0, 0);
-        var leftArm = addCompartment(ARM, wholeBody, 0, 7, 0);
-        var rightArm = addCompartment(ARM, wholeBody, 11, 7, 0);
+        addCompartment(ARM, wholeBody, 0, 7, 0);
+        addCompartment(ARM, wholeBody, 11, 7, 0);
         addCompartment(HAND, wholeBody, 0, 17, 0);
         addCompartment(HAND, wholeBody, 11, 17, 0);
 

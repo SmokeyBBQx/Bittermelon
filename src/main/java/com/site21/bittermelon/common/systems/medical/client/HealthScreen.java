@@ -1,5 +1,7 @@
 package com.site21.bittermelon.common.systems.medical.client;
 
+import com.site21.bittermelon.common.systems.character.Character;
+import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.component.medical.MedicalInstrument;
 import com.site21.bittermelon.common.systems.medical.client.tool.InstrumentWidget;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
@@ -13,6 +15,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.EntityHitResult;
@@ -206,6 +209,25 @@ public class HealthScreen extends Screen {
         this.heldCompartment = heldCompartment;
     }
 
+    private String getName(Entity entity) {
+        if (entity == null) return "Unknown";
+
+        Character character = CharacterManager.get(entity.level()).getActiveCharacter(entity);
+        if (character != null) {
+            return character.getName();
+        } else {
+            return entity.getDisplayName().getString();
+        }
+    }
+
+    public String getPlayerName() {
+        return getName(Minecraft.getInstance().player);
+    }
+
+    public String getTargetName() {
+        return getName(entity);
+    }
+
     public void onLayerChanged(CompartmentWidget widget) {
         for (InstrumentWidget tool : instrumentWidgets) {
             tool.onLayerChanged(widget);
@@ -227,6 +249,17 @@ public class HealthScreen extends Screen {
     @Override
     public boolean isPauseScreen() {
         return false;
+    }
+
+    public void sendMessage(String message) {
+        Minecraft mc = Minecraft.getInstance();
+        assert mc.level != null;
+        assert mc.player != null;
+
+        Character character = CharacterManager.get(mc.level).getActiveCharacter(mc.player);
+        if (character != null) {
+            mc.player.connection.sendChat(message);
+        }
     }
 }
 

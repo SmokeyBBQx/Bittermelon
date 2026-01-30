@@ -116,6 +116,9 @@ public class SuturingWidget extends InteractionWidget {
 
         makeSound(BitterSounds.SCALPEL.value());
 
+        healthScreen.sendMessage("*" + healthScreen.getPlayerName() + " sutures " +
+                healthScreen.getTargetName() + "'s " + compartmentWidget.getCompartment().getName() + ".*");
+
         return true;
     }
 

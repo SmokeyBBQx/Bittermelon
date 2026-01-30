@@ -6,6 +6,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
 public enum CompartmentTag {
+    SOFT_TISSUE,
     HARD_TISSUE,
     MAJOR_BODY_PART;
 

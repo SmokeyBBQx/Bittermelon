@@ -120,6 +120,9 @@ public class IncisionWidget extends InteractionWidget {
                     point.y()
             ));
         }
+
+        healthScreen.sendMessage("*" + healthScreen.getPlayerName() + " makes an incision into " +
+                healthScreen.getTargetName() + "'s " + compartment.getCompartment().getName() + ".*");
     }
 
     private float calculateAccuracyFromDistance(@NotNull List<Point> points) {

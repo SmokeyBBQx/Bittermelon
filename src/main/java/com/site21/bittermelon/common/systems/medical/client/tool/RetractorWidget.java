@@ -39,6 +39,9 @@ public class RetractorWidget extends InstrumentWidget {
                 slotInstance.set(BitterDataComponents.REVEAL_DISTANCE, 5);
             }
         }
+
+        screen.sendMessage("*" + screen.getPlayerName() + " retracts " + screen.getTargetName() + "'s " +
+                widget.getCompartment().getName() + ".*");
     }
 
     private @NotNull List<Point> floodFillHorizontal(@NotNull CompartmentWidget widget, @NotNull Point start) {
