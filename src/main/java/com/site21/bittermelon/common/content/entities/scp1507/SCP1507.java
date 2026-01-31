@@ -76,7 +76,6 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     protected Map<Need, NeedInstance> initializeNeeds() {
         return Map.of(
                 Need.SOCIALIZATION, new NeedInstance(0.001f, value -> Math.pow(value, 1.2), BitterActivity.SOCIALIZE.get()),
-//                Need.MOVEMENT, new NeedInstance(0.001f, value -> Math.pow(value, 1.5), BitterActivity.EXPLORE.get()),
                 Need.ANGER, new NeedInstance(0f, value -> Math.pow(value, 2.0), Activity.FIGHT)
         );
     }
@@ -207,10 +206,6 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
                 0.2
         );
     }
-
-//    private static int getBlockBreakTime(@NotNull SCP1507 entity) {
-//        return entity.getMood() >=
-//    }
 
     private static float getFollowDistance(LivingEntity entity) {
         return isActive(entity) ? 4.0f : (float) entity.getAttributeValue(Attributes.FOLLOW_RANGE) / 1.5f;

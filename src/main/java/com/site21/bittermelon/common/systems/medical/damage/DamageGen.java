@@ -26,13 +26,13 @@ public class DamageGen {
         int y = random.nextInt(height);
         int attempts = 0;
 
-        while (!layer.canFit(x, y, shape) && attempts < 20) {
+        while (!layer.canFit(x, y, 0, shape) && attempts < 20) {
             x = random.nextInt(width);
             y = random.nextInt(height);
             attempts++;
         }
 
-        CompartmentUtil.insertCompartment(target, injury, layerIndex, x, y);
+        CompartmentUtil.insertCompartment(target, injury, 0, layerIndex, x, y);
     }
 
     public static void makeLaceration(CompartmentInstance target, int layerIndex) {

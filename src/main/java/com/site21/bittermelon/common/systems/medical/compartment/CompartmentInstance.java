@@ -55,8 +55,8 @@ public class CompartmentInstance implements DataComponentHolder, MutableDataComp
         return name;
     }
 
-    public boolean tryToInsert(CompartmentInstance instance, int layerIndex, int x, int y) {
-        return CompartmentUtil.insertCompartment(this, instance, layerIndex, x, y);
+    public boolean tryToInsert(CompartmentInstance instance, int layerIndex, int x, int y, int z) {
+        return CompartmentUtil.insertCompartment(this, instance, layerIndex, x, y, z);
     }
 
     @Override

@@ -88,10 +88,11 @@ public class CompartmentUtil {
      * @param layer Layer index to insert into
      * @param x X position in the layer grid
      * @param y Y position in the layer grid
+     * @param z Z position in the layer grid
      * @return true if insertion was successful, false otherwise
      */
     public static boolean insertCompartment(@NotNull CompartmentInstance parent, @NotNull CompartmentInstance child,
-                                            int layer, int x, int y) {
+                                            int layer, int x, int y, int z) {
         LayerData targetLayer = getLayer(parent, layer);
         if (targetLayer == null) {
             Bittermelon.LOGGER.error("Failed to insert compartment {} into parent {}: target layer {} not found!",
@@ -99,7 +100,7 @@ public class CompartmentUtil {
             return false;
         }
 
-        if(!targetLayer.tryToPlace(x, y, child)) return false;
+        if(!targetLayer.tryToPlace(x, y, z, child)) return false;
 
         updateLayer(parent, layer, targetLayer);
         return true;
@@ -156,12 +157,13 @@ public class CompartmentUtil {
      * @param toLayerIndex Layer index in destination compartment
      * @param toX X position in destination layer grid
      * @param toY Y position in destination layer grid
+     * @param toZ Z position in destination layer grid
      * @return true if move was successful, false otherwise
      */
     public static boolean moveCompartment(@NotNull CompartmentInstance from, CompartmentInstance to, CompartmentInstance target,
-                                          int fromLayerIndex, int toLayerIndex, int toX, int toY) {
+                                          int fromLayerIndex, int toLayerIndex, int toX, int toY, int toZ) {
         if (!extractCompartment(from, target, fromLayerIndex)) return false;
-        return insertCompartment(to, target, toLayerIndex, toX, toY);
+        return insertCompartment(to, target, toLayerIndex, toX, toY, toZ);
     }
 
     /**

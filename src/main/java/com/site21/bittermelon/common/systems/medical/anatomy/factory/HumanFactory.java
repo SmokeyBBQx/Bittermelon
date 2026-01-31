@@ -31,7 +31,9 @@ public class HumanFactory implements AnatomyFactory {
         addCompartment(FOREARM, wholeBody, 11, 12, 0);
         addCompartment(HAND, wholeBody, 0, 17, 0);
         addCompartment(HAND, wholeBody, 11, 17, 0);
-        addCompartment(TORSO, wholeBody, 3, 7, 0);
+        CompartmentInstance torso = addCompartment(TORSO, wholeBody, 3, 7, 0);
+        addCompartment(LIVER, torso, 0, 0, 1, 0);
+        addCompartment(STOMACH, torso, 0, 0, 0, 0);
 
         CompartmentInstance gallBladder = GALLBLADDER.get().toInstance();
 
@@ -87,15 +89,26 @@ public class HumanFactory implements AnatomyFactory {
         return instance;
     }
 
-    private CompartmentInstance addCompartment(@NotNull DeferredHolder<Compartment, Compartment> holder, @NotNull CompartmentInstance parent, int x, int y, int layer) {
+    private CompartmentInstance addCompartment(@NotNull DeferredHolder<Compartment, Compartment> holder,
+                                               @NotNull CompartmentInstance parent, int x, int y, int z, int layer) {
         CompartmentInstance instance = holder.get().toInstance();
         compartments.add(instance);
-        parent.tryToInsert(instance, layer, x, y);
+        parent.tryToInsert(instance, layer, x, y, z);
         return instance;
     }
 
-    private void addCompartment(CompartmentInstance instance, @NotNull CompartmentInstance parent, int x, int y, int layer) {
+    private CompartmentInstance addCompartment(@NotNull DeferredHolder<Compartment, Compartment> holder,
+                                               @NotNull CompartmentInstance parent, int x, int y,  int layer) {
+        return addCompartment(holder, parent, x, y, 0, layer);
+    }
+
+    private void addCompartment(CompartmentInstance instance, @NotNull CompartmentInstance parent, int x, int y,
+                                int z, int layer) {
         compartments.add(instance);
-        parent.tryToInsert(instance, layer, x, y);
+        parent.tryToInsert(instance, layer, x, y, z);
+    }
+
+    private void  addCompartment(CompartmentInstance instance, @NotNull CompartmentInstance parent, int x, int y, int layer) {
+        addCompartment(instance, parent, x, y, 0, layer);
     }
 }

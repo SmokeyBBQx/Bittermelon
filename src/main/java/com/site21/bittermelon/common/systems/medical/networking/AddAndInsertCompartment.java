@@ -27,7 +27,8 @@ import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.MEDICAL
  * @param x X position within the target compartment
  * @param y Y position within the target compartment
  */
-public record AddAndInsertCompartment(UUID entityUUID, UUID parentId, CompartmentInstance compartment, int layer, int x, int y) implements CustomPacketPayload {
+public record AddAndInsertCompartment(UUID entityUUID, UUID parentId, CompartmentInstance compartment, int layer,
+                                      int x, int y, int z) implements CustomPacketPayload {
     public static final Type<AddAndInsertCompartment> TYPE = new Type<>(Bittermelon.resource("add_and_insert_compartment"));
 
     @Override
@@ -48,6 +49,8 @@ public record AddAndInsertCompartment(UUID entityUUID, UUID parentId, Compartmen
             AddAndInsertCompartment::x,
             ByteBufCodecs.INT,
             AddAndInsertCompartment::y,
+            ByteBufCodecs.INT,
+            AddAndInsertCompartment::z,
             AddAndInsertCompartment::new
     );
 
@@ -58,7 +61,7 @@ public record AddAndInsertCompartment(UUID entityUUID, UUID parentId, Compartmen
 
             CompartmentInstance parent = medicalStats.getCompartment(parentId());
             if (parent != null) {
-                CompartmentUtil.insertCompartment(parent, compartment(), layer(), x(), y());
+                CompartmentUtil.insertCompartment(parent, compartment(), layer(), x(), y(), z());
             }
 
             entity.syncData(MEDICAL_STATS);

@@ -21,43 +21,76 @@ public class LayerData {
     public static final StreamCodec<ByteBuf, LayerData> STREAM_CODEC;
 
     private final String name;
-    private final int width, height;
+    private final int width, height, depth;
     private final LayerSlot[][] grid;
-    private final Map<Point, UUID> compartments;
+    private final HashMap<Point, UUID>[] compartments;
 
-    public LayerData(String name, int width, int height, @NotNull LayerSlot[][] grid, Map<Point, UUID> compartments) {
+    public LayerData(String name, int width, int height, int depth, @NotNull LayerSlot[][] grid, HashMap<Point, UUID>[] compartments) {
         this.name = name;
         this.width = width;
         this.height = height;
+        this.depth = depth;
         this.grid = grid;
         this.compartments = compartments;
     }
 
-    public LayerData(String name, int width, int height, @NotNull List<SlotPoint> shape) {
-        this(name, width, height, new LayerSlot[height][width], new HashMap<>());
+    public LayerData(String name, int width, int height, int depth, @NotNull List<SlotPoint> shape) {
+        this(name, width, height, depth, new LayerSlot[height][width], createCompartmentArray(depth));
         for (SlotPoint p : shape) {
-            grid[p.y()][p.x()] = new LayerSlot(p.type());
+            grid[p.y()][p.x()] = new LayerSlot(p.type(), depth);
         }
     }
 
-    public LayerData(String name, int width, int height, @NotNull List<SlotData> slotData, Map<Point, UUID> compartments) {
-        this(name, width, height, new LayerSlot[height][width], new HashMap<>(compartments));
+    public LayerData(String name, int width, int height, @NotNull List<SlotPoint> shape) {
+        this(name, width, height, 1, new LayerSlot[height][width], createCompartmentArray(1));
+        for (SlotPoint p : shape) {
+            grid[p.y()][p.x()] = new LayerSlot(p.type(), 1);
+        }
+    }
+
+    public LayerData(String name, int width, int height, int depth, @NotNull List<SlotData> slotData,
+                     List<HashMap<Point, UUID>> compartments) {
+        this(name, width, height, depth, new LayerSlot[height][width], createCompartmentArray(compartments));
         System.out.println("Reconstructing LayerData '" + name + "' with " + slotData.size() + " slots.");
         for (SlotData sd : slotData) {
             grid[sd.y()][sd.x()] = sd.slot();
         }
     }
 
-    @Contract("_, _, _, _ -> new")
-    public static @NotNull LayerData fromRegularShape(String name, int width, int height, SlotType type) {
+    @Contract("_, _, _, _, _ -> new")
+    public static @NotNull LayerData fromRegularShape(String name, int width, int height, int depth, SlotType type) {
         LayerSlot[][] grid = new LayerSlot[height][width];
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
-                grid[y][x] = new LayerSlot(type);
+                grid[y][x] = new LayerSlot(type, depth);
             }
         }
-        return new LayerData(name, width, height, grid, new HashMap<>());
+        return new LayerData(name, width, height, depth, grid, createCompartmentArray(depth));
     }
+
+    @Contract("_, _, _, _ -> new")
+    public static @NotNull LayerData fromRegularShape(String name, int width, int height, SlotType type) {
+        return fromRegularShape(name, width, height, 1, type);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static HashMap<Point, UUID>[] createCompartmentArray(int depth) {
+        HashMap<Point, UUID>[] arr = new HashMap[depth];
+        for (int i = 0; i < depth; i++) {
+            arr[i] = new HashMap<>();
+        }
+        return arr;
+    }
+
+    private static HashMap<Point, UUID>[] createCompartmentArray(List<HashMap<Point, UUID>> list) {
+        @SuppressWarnings("unchecked")
+        HashMap<Point, UUID>[] arr = new HashMap[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            arr[i] = list.get(i);
+        }
+        return arr;
+    }
+
 
     public String getName() {
         return name;
@@ -71,22 +104,40 @@ public class LayerData {
         return height;
     }
 
+    public int getDepth() {
+        return depth;
+    }
+
     public LayerSlot[][] getGrid() {
         return grid;
     }
 
-    public Map<Point, UUID> getCompartments() {
+    public Map<Point, UUID>[] getCompartments() {
         return compartments;
     }
 
-    public UUID getCompartmentAt(int x, int y) {
-        Point pivot = grid[y][x].getPivot();
+    public List<HashMap<Point, UUID>> getCompartmentsList() {
+        return Arrays.asList(compartments);
+    }
+
+    public List<Map<Point, UUID>> getCompartmentsListAbstract() {
+        return Arrays.asList(compartments);
+    }
+
+
+    public Map<Point, UUID> getCompartmentsAt(int z) {
+        return compartments[z];
+    }
+
+    public UUID getCompartmentAt(int x, int y, int z) {
+        Point pivot = grid[y][x].getPivot(z);
         if (pivot == null) return null;
-        return compartments.get(pivot);
+        return compartments[z].get(pivot);
     }
 
     /**
      * Converts the grid into a list of serializable SlotData objects for storage
+     *
      * @return A list of SlotData representing non-null slots in the grid.
      */
     public List<SlotData> getSerializableGrid() {
@@ -103,53 +154,61 @@ public class LayerData {
 
     /**
      * Checks if a compartment with the specified shape can fit at the given (x, y) position in the layer.
-     * @param x the x-coordinate to check
-     * @param y the y-coordinate to check
+     *
+     * @param x     the x-coordinate to check
+     * @param y     the y-coordinate to check
+     * @param z     the depth layer to check
      * @param shape the shape defining which slots the compartment would occupy
      * @return true if the compartment can fit; false otherwise
      */
-    public boolean canFit(int x, int y, @NotNull List<Point> shape) {
+    public boolean canFit(int x, int y, int z, @NotNull List<Point> shape) {
+        if (z < 0 || z >= depth) return false;
+
         for (Point p : shape) {
             int targetX = x + p.x();
             int targetY = y + p.y();
             if (targetX < 0 || targetX >= width || targetY < 0 || targetY >= height) return false;
             if (grid[targetY][targetX] == null) return false;
-            if (grid[targetY][targetX].isOccupied()) return false;
+            if (grid[targetY][targetX].isOccupied(z)) return false;
         }
         return true;
     }
 
     /**
      * Checks if a compartment instance can fit at the given (x, y) position in the layer.
-     * @param x the x-coordinate to check
-     * @param y the y-coordinate to check
+     *
+     * @param x           the x-coordinate to check
+     * @param y           the y-coordinate to check
+     * @param z           the depth layer to check
      * @param compartment the compartment instance to check
      * @return true if the compartment can fit; false otherwise
      */
-    public boolean canFit(int x, int y, @NotNull CompartmentInstance compartment) {
+    public boolean canFit(int x, int y, int z, @NotNull CompartmentInstance compartment) {
         List<Point> shape = compartment.getOrDefault(SHAPE, List.of());
-        return canFit(x, y, shape);
+        return canFit(x, y, z, shape);
     }
 
     /**
      * Attempts to place a compartment instance at the specified (x, y) position in the layer.
-     * @param x the x-coordinate to place the compartment at
-     * @param y the y-coordinate to place the compartment at
+     *
+     * @param x           the x-coordinate to place the compartment at
+     * @param y           the y-coordinate to place the compartment at
+     * @param z           the depth layer to place the compartment in
      * @param compartment the compartment instance to place
      * @return true if the compartment was successfully placed; false otherwise
      */
-    public boolean tryToPlace(int x, int y, @NotNull CompartmentInstance compartment) {
+    public boolean tryToPlace(int x, int y, int z, @NotNull CompartmentInstance compartment) {
         List<Point> shape = compartment.getOrDefault(SHAPE, List.of());
-        if (!canFit(x, y, shape)) return false;
+        if (!canFit(x, y, z, shape)) return false;
 
         Point pivotBase = compartment.getOrDefault(PIVOT, new Point(0, 0));
         Point pivot = new Point(x + pivotBase.x(), y + pivotBase.y());
-        compartments.put(pivot, compartment.getId());
+        compartments[z].put(pivot, compartment.getId());
 
         for (Point p : shape) {
             int targetX = x + p.x();
             int targetY = y + p.y();
-            grid[targetY][targetX].setPivot(pivot);
+            grid[targetY][targetX].setPivot(z, pivot);
         }
 
         return true;
@@ -157,22 +216,25 @@ public class LayerData {
 
     /**
      * Clears all slots associated with the specified compartment instance ID.
+     *
      * @param instanceId the UUID of the compartment instance to remove
      */
     public void removeInstance(@NotNull UUID instanceId) {
-        if (!compartments.containsValue(instanceId)) return;
+        for (int z = 0; z < depth; ++z) {
+            if (!compartments[z].containsValue(instanceId)) return;
 
-        for (int y = 0; y < height; ++y) {
-            for (int x = 0; x < width; ++x) {
-                if (grid[y][x] == null) continue;
+            for (int y = 0; y < height; ++y) {
+                for (int x = 0; x < width; ++x) {
+                    if (grid[y][x] == null) continue;
 
-                Point pivot = grid[y][x].getPivot();
-                if (pivot == null) continue;
+                    Point pivot = grid[y][x].getPivot(z);
+                    if (pivot == null) continue;
 
-                UUID compartmentId = compartments.get(pivot);
-                if (compartmentId == null || instanceId.equals(compartmentId)) {
-                    grid[y][x].setPivot(null);
-                    compartments.remove(pivot);
+                    UUID compartmentId = compartments[z].get(pivot);
+                    if (compartmentId == null || instanceId.equals(compartmentId)) {
+                        grid[y][x].setPivots(null);
+                        compartments[z].remove(pivot);
+                    }
                 }
             }
         }
@@ -180,6 +242,7 @@ public class LayerData {
 
     /**
      * Streams all non-null slots in the layer. Useful for iterating over occupied slots.
+     *
      * @return A stream of SlotData representing non-null slots.
      */
     public Stream<SlotData> streamSlots() {
@@ -229,9 +292,16 @@ public class LayerData {
                         Codec.STRING.fieldOf("name").forGetter(LayerData::getName),
                         Codec.INT.fieldOf("width").forGetter(LayerData::getWidth),
                         Codec.INT.fieldOf("height").forGetter(LayerData::getHeight),
+                        Codec.INT.fieldOf("depth").forGetter(LayerData::getDepth),
                         Codec.list(SlotData.CODEC).fieldOf("slots").forGetter(LayerData::getSerializableGrid),
-                        Codec.unboundedMap(Point.STRING_CODEC, UUIDUtil.CODEC).fieldOf("compartments").forGetter(LayerData::getCompartments)
-                ).apply(instance, LayerData::new)
+                        Codec.list(Codec.unboundedMap(Point.STRING_CODEC, UUIDUtil.CODEC)).fieldOf("compartments")
+                                .forGetter(LayerData::getCompartmentsListAbstract)
+                ).apply(instance, (name, width, height, depth, slots,
+                                   compartments) ->
+                        new LayerData(name, width, height, depth, slots, compartments.stream()
+                                .map(HashMap::new)
+                                .toList())
+                )
         );
 
         STREAM_CODEC = StreamCodec.composite(
@@ -241,13 +311,15 @@ public class LayerData {
                 LayerData::getWidth,
                 ByteBufCodecs.INT,
                 LayerData::getHeight,
+                ByteBufCodecs.INT,
+                LayerData::getDepth,
                 SlotData.STREAM_CODEC.apply(ByteBufCodecs.list()),
                 LayerData::getSerializableGrid,
                 ByteBufCodecs.map(
                         HashMap::new,
                         Point.STREAM_CODEC,
-                        UUIDUtil.STREAM_CODEC),
-                LayerData::getCompartments,
+                        UUIDUtil.STREAM_CODEC).apply(ByteBufCodecs.list()),
+                LayerData::getCompartmentsList,
                 LayerData::new
         );
     }

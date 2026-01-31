@@ -120,17 +120,6 @@ public class Character {
         this.playerInfo = playerInfo;
     }
 
-//    /**
-//     *  Gets the character's medical stats.
-//     * @return The character's medical stats. If not set, returns default human anatomy with O- blood type.
-//     */
-//    public MedicalStats getMedicalStats() {
-//        if (medicalStats == null) {
-//            medicalStats = AnatomyType.HUMAN.getFactory().build(BloodType.O_MINUS, this);
-//        }
-//        return medicalStats;
-//    }
-
     /**
      * Updates the character's medical stats. Should be called periodically, e.g. each server tick.
      * @param level The current game level.

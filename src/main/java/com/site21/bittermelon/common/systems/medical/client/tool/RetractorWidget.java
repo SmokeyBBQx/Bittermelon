@@ -34,7 +34,7 @@ public class RetractorWidget extends InstrumentWidget {
         List<Point> retractPoints = horizontal ? floodFillHorizontal(widget, start) : floodFillVertical(widget, start);
         for (Point point : retractPoints) {
             CompartmentInstance slotInstance = screen.getMedicalStats().getCompartment(
-                    widget.getLayer().getCompartmentAt(point.x(), point.y()));
+                    widget.getLayer().getCompartmentAt(point.x(), point.y(), 0));
             if (slotInstance != null && slotInstance.getCompartment().equals(Compartments.CUT.get())) {
                 slotInstance.set(BitterDataComponents.REVEAL_DISTANCE, 5);
             }
@@ -84,7 +84,7 @@ public class RetractorWidget extends InstrumentWidget {
         if (widget.getGrid()[y][x] == null) return false;
 
         CompartmentInstance slotInstance = screen.getMedicalStats().getCompartment(
-                widget.getLayer().getCompartmentAt(x, y));
+                widget.getLayer().getCompartmentAt(x, y, 0));
         if (slotInstance == null) return false;
 
         return slotInstance.getCompartment().equals(Compartments.CUT.get());

@@ -32,16 +32,16 @@ public class IncisionWidget extends InteractionWidget {
     private static final int DISTANCE_COMPARISON_COUNT = 3;
 
     private final float efficiency;
-    private final CompartmentWidget compartment;
-    private final HealthScreen healthScreen;
+    private final CompartmentWidget compartmentWidget;
+    private final HealthScreen screen;
     private final List<Point> drawnPoints = new ArrayList<>();
     private long lastSoundTime = 0;
 
-    public IncisionWidget(int x, int y, float efficiency, CompartmentWidget compartment, HealthScreen healthScreen) {
+    public IncisionWidget(int x, int y, float efficiency, CompartmentWidget compartmentWidget, HealthScreen screen) {
         super(x, y, 1, 1, Component.literal("Incision"));
         this.efficiency = efficiency;
-        this.compartment = compartment;
-        this.healthScreen = healthScreen;
+        this.compartmentWidget = compartmentWidget;
+        this.screen = screen;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class IncisionWidget extends InteractionWidget {
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if(compartment.getHoveredCompartment((int) mouseX, (int) mouseY) != null) return false;
+        if(compartmentWidget.getHoveredCompartment((int) mouseX, (int) mouseY) != null) return false;
 
         if (button == 0) {
             Point newPoint = new Point((int) mouseX, (int) mouseY);
@@ -92,7 +92,7 @@ public class IncisionWidget extends InteractionWidget {
         Map<Point, List<Point>> relatedPoints = new HashMap<>();
 
         for (Point point : drawnPoints) {
-            Point slot = compartment.getHoveredSlot(point.x(), point.y());
+            Point slot = compartmentWidget.getHoveredSlot(point.x(), point.y());
             relatedPoints.computeIfAbsent(slot, k -> new ArrayList<>()).add(point);
             if (touchedSlots.contains(slot)) continue;
 
@@ -112,17 +112,18 @@ public class IncisionWidget extends InteractionWidget {
             CompartmentUtil.setAttribute(cut, MedicalAttribute.BLEED, 1.0f - accuracy);
 
             ClientPacketDistributor.sendToServer(new AddAndInsertCompartment(
-                    healthScreen.getEntity().getUUID(),
-                    compartment.getCompartment().getId(),
+                    screen.getEntity().getUUID(),
+                    compartmentWidget.getCompartment().getId(),
                     cut,
-                    compartment.getLayerIndex(),
+                    compartmentWidget.getLayerIndex(),
                     point.x(),
-                    point.y()
+                    point.y(),
+                    compartmentWidget.getDepth()
             ));
         }
 
-        healthScreen.sendMessage("*" + healthScreen.getPlayerName() + " makes an incision into " +
-                healthScreen.getTargetName() + "'s " + compartment.getCompartment().getName() + ".*");
+        screen.sendMessage("*" + screen.getPlayerName() + " makes an incision into " +
+                screen.getTargetName() + "'s " + compartmentWidget.getCompartment().getName() + ".*");
     }
 
     private float calculateAccuracyFromDistance(@NotNull List<Point> points) {

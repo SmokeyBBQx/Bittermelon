@@ -18,6 +18,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
+import net.minecraft.util.Mth;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,6 +37,7 @@ public class CompartmentWidget extends MovableResizableWidget {
     private final CompartmentInstance compartment;
     private final HealthScreen screen;
     private int layerIndex = 0;
+    private int depth = 0;
     private int contentX;
     private int contentY;
     private int slotSize = 16;
@@ -119,7 +121,7 @@ public class CompartmentWidget extends MovableResizableWidget {
         LayerData previousLayer = layerIndex > 0 ? CompartmentUtil.getLayer(getCompartment(), layerIndex - 1) : null;
         if (previousLayer == null) return;
 
-        for (Map.Entry<Point, UUID> entry : previousLayer.getCompartments().entrySet()) {
+        for (Map.Entry<Point, UUID> entry : previousLayer.getCompartmentsAt(0).entrySet()) {
             CompartmentInstance instance = screen.getMedicalStats().getCompartment(entry.getValue());
             int revealDistance = instance.getOrDefault(REVEAL_DISTANCE, 0);
             if (revealDistance <= 0) continue;
@@ -229,7 +231,7 @@ public class CompartmentWidget extends MovableResizableWidget {
             int targetY = hoveredSlot.y() + p.y();
             int slotX = contentX + targetX * slotSize;
             int slotY = contentY + targetY * slotSize;
-            int color = getLayer().canFit(hoveredSlot.x(), hoveredSlot.y(), shape) ? 0x80008000 : 0x80FF0000;
+            int color = getLayer().canFit(hoveredSlot.x(), hoveredSlot.y(), depth, shape) ? 0x80008000 : 0x80FF0000;
             guiGraphics.fill(slotX, slotY, slotX + slotSize, slotY + slotSize, color);
         }
     }
@@ -238,28 +240,31 @@ public class CompartmentWidget extends MovableResizableWidget {
         MedicalStats medicalStats = screen.getMedicalStats();
         UUID hoveredCompartmentId = getHoveredCompartment(mouseX, mouseY);
 
-        // TODO: Could this be smarter? Either by caching or making layer data immutable to prevent concurrent modification exceptions
-        for (Map.Entry<Point, UUID> entry : List.copyOf(getLayer().getCompartments().entrySet())) {
-            Point slotPos = entry.getKey();
-            UUID compartmentId = entry.getValue();
-            CompartmentInstance instance = medicalStats.getCompartment(compartmentId);
+        for (Map<Point, UUID> compartments : getLayer().getCompartments()) {
+            // TODO: Could this be smarter? Either by caching or making layer data immutable to prevent concurrent modification exceptions
+            for (Map.Entry<Point, UUID> entry : List.copyOf(compartments.entrySet())) {
+                Point slotPos = entry.getKey();
+                UUID compartmentId = entry.getValue();
+                CompartmentInstance instance = medicalStats.getCompartment(compartmentId);
 
-            if (instance == null || !instance.has(VISUAL_DATA)) continue;
-            VisualData visualData = instance.get(VISUAL_DATA);
+                if (instance == null || !instance.has(VISUAL_DATA)) continue;
+                VisualData visualData = instance.get(VISUAL_DATA);
 
-            int slotX = contentX + slotPos.x() * slotSize;
-            int slotY = contentY + slotPos.y() * slotSize;
-            int compartmentWidth = slotSize * visualData.width();
-            int compartmentHeight = slotSize * visualData.height();
-            int color = visualData.color();
+                int slotX = contentX + slotPos.x() * slotSize;
+                int slotY = contentY + slotPos.y() * slotSize;
+                int compartmentWidth = slotSize * visualData.width();
+                int compartmentHeight = slotSize * visualData.height();
+                int color = visualData.color();
 
-            // TODO: Buggy
-            float pulse = (float) (Math.sin(System.currentTimeMillis() / 500.0) * 0.4f + 0.95f);
-            color = compartmentId.equals(hoveredCompartmentId) ? ARGB.color(pulse, color) : color;
+                // TODO: Buggy
+                float pulse = (float) (Math.sin(System.currentTimeMillis() / 500.0) * 0.4f + 0.95f);
+                color = compartmentId.equals(hoveredCompartmentId) ? ARGB.color(pulse, color) : color;
 
-            ResourceLocation icon = visualData.icon();
-            if (icon != null) {
-                guiGraphics.blit(RenderPipelines.GUI_TEXTURED, icon, slotX, slotY, 0, 0, compartmentWidth, compartmentHeight, compartmentWidth, compartmentHeight, color);
+                ResourceLocation icon = visualData.icon();
+                if (icon != null) {
+                    guiGraphics.blit(RenderPipelines.GUI_TEXTURED, icon, slotX, slotY, 0, 0, compartmentWidth,
+                            compartmentHeight, compartmentWidth, compartmentHeight, color);
+                }
             }
         }
     }
@@ -271,7 +276,7 @@ public class CompartmentWidget extends MovableResizableWidget {
         Point hoveredSlot = getHoveredSlot(mouseX, mouseY);
         if (hoveredSlot == null) return null;
 
-        return getLayer().getCompartmentAt(hoveredSlot.x(), hoveredSlot.y());
+        return getLayer().getCompartmentAt(hoveredSlot.x(), hoveredSlot.y(), depth);
     }
 
     public @Nullable Point getHoveredSlot(int mouseX, int mouseY) {
@@ -336,14 +341,20 @@ public class CompartmentWidget extends MovableResizableWidget {
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        depth = Mth.clamp(depth + (scrollY > 0 ? 1 : -1), 0, getLayer().getDepth() - 1);
+        return true;
+    }
+
     public boolean tryToPlace(int x, int y, @NotNull CompartmentInstance placingCompartment) {
         Point hoveredSlot = getHoveredSlot(x, y);
         if (hoveredSlot == null) return false;
-        if (!getLayer().canFit(hoveredSlot.x(), hoveredSlot.y(), placingCompartment)) return false;
+        if (!getLayer().canFit(hoveredSlot.x(), hoveredSlot.y(), depth, placingCompartment)) return false;
 
         // Compartment should always be able to fit here
         ClientPacketDistributor.sendToServer(new AddAndInsertCompartment(screen.getEntity().getUUID(),
-                compartment.getId(), placingCompartment, layerIndex, hoveredSlot.x(), hoveredSlot.y()));
+                compartment.getId(), placingCompartment, layerIndex, hoveredSlot.x(), hoveredSlot.y(), depth));
         ClientPacketDistributor.sendToServer(new SetCharactersChanged());
         return true;
     }
@@ -424,6 +435,10 @@ public class CompartmentWidget extends MovableResizableWidget {
 
     public int getContentY() {
         return contentY;
+    }
+
+    public int getDepth() {
+        return depth;
     }
 
     @Override

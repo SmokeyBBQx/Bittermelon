@@ -26,7 +26,7 @@ import java.util.UUID;
  * @param x X position within the target compartment
  * @param y Y position within the target compartment
  */
-public record  InsertCompartment(UUID entityUUID, UUID parentId, UUID childId, int layer, int x, int y) implements CustomPacketPayload {
+public record  InsertCompartment(UUID entityUUID, UUID parentId, UUID childId, int layer, int x, int y, int z) implements CustomPacketPayload {
     public static final Type<InsertCompartment> TYPE = new Type<>(Bittermelon.resource("insert_compartment"));
 
     @Override
@@ -47,6 +47,8 @@ public record  InsertCompartment(UUID entityUUID, UUID parentId, UUID childId, i
             InsertCompartment::x,
             ByteBufCodecs.INT,
             InsertCompartment::y,
+            ByteBufCodecs.INT,
+            InsertCompartment::z,
             InsertCompartment::new
     );
 
@@ -58,7 +60,7 @@ public record  InsertCompartment(UUID entityUUID, UUID parentId, UUID childId, i
             CompartmentInstance child = medicalStats.getCompartment(childId());
 
             if (parent != null && child != null) {
-                CompartmentUtil.insertCompartment(parent, child, layer(), x(), y());
+                CompartmentUtil.insertCompartment(parent, child, layer(), x(), y(), z());
             }
 
             entity.syncData(BitterAttachmentTypes.MEDICAL_STATS);

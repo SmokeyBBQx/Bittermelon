@@ -177,11 +177,20 @@ public class HealthScreen extends Screen {
 
         if (activeWidget != null) {
             boolean result = activeWidget.mouseReleased(mouseX, mouseY, button);
-            activeWidget = null;
+//            activeWidget = null;
             return result;
         }
 
         return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        if (activeWidget != null) {
+            return activeWidget.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        }
+
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
     public CompartmentWidget getHoveredCompartmentWidget(double mouseX, double mouseY) {

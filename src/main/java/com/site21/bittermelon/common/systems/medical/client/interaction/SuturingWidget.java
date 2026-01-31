@@ -23,14 +23,14 @@ import java.util.List;
 import java.util.UUID;
 
 public class SuturingWidget extends InteractionWidget {
-    private final HealthScreen healthScreen;
+    private final HealthScreen screen;
     private final CompartmentWidget compartmentWidget;
     private final List<Point> suturePoints;
     private Point sutureStart = null;
 
-    public SuturingWidget(int x, int y, HealthScreen healthScreen, CompartmentWidget compartmentWidget) {
+    public SuturingWidget(int x, int y, HealthScreen screen, CompartmentWidget compartmentWidget) {
         super(x, y, 1, 1, Component.literal("Suture"));
-        this.healthScreen = healthScreen;
+        this.screen = screen;
         this.compartmentWidget = compartmentWidget;
         this.suturePoints = new ArrayList<>();
     }
@@ -105,19 +105,19 @@ public class SuturingWidget extends InteractionWidget {
         UUID hoveredCompartmentId = compartmentWidget.getHoveredCompartment((int) mouseX, (int) mouseY);
         if (hoveredCompartmentId == null) return false;
 
-        CompartmentInstance hoveredCompartment = healthScreen.getMedicalStats().getCompartment(hoveredCompartmentId);
+        CompartmentInstance hoveredCompartment = screen.getMedicalStats().getCompartment(hoveredCompartmentId);
         if (!(hoveredCompartment.getCompartment().equals(Compartments.CUT.get()))) return false;
 
         ClientPacketDistributor.sendToServer(new ExtractCompartment(
-                healthScreen.getEntity().getUUID(),
+                screen.getEntity().getUUID(),
                 compartmentWidget.getCompartment().getId(),
                 hoveredCompartmentId,
                 compartmentWidget.getLayerIndex()));
 
         makeSound(BitterSounds.SCALPEL.value());
 
-        healthScreen.sendMessage("*" + healthScreen.getPlayerName() + " sutures " +
-                healthScreen.getTargetName() + "'s " + compartmentWidget.getCompartment().getName() + ".*");
+        screen.sendMessage("*" + screen.getPlayerName() + " sutures " +
+                screen.getTargetName() + "'s " + compartmentWidget.getCompartment().getName() + ".*");
 
         return true;
     }
