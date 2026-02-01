@@ -17,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.common.CommonHooks;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class Compartment {
     public Compartment(String id, @NotNull Properties properties) {
         this.id = id;
         this.properties = properties.build();
+        properties.components.set(DISPLAY_NAME, StringUtils.capitalize(id.replace("_", " ")));
         components = properties.components.build();
     }
 

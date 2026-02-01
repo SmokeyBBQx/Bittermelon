@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.site21.bittermelon.init.custom.Compartments.*;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.DISPLAY_NAME;
 
 public class HumanFactory implements AnatomyFactory {
     private CompartmentInstance wholeBody;
@@ -25,12 +26,24 @@ public class HumanFactory implements AnatomyFactory {
         compartments = new ArrayList<>();
         wholeBody = addCompartment(WHOLE_BODY);
 //        var debugLiver = addCompartment(DEBUG_COMPARTMENT, wholeBody, 0, 0, 0);
-        addCompartment(UPPER_ARM, wholeBody, 0, 7, 0);
-        addCompartment(UPPER_ARM, wholeBody, 11, 7, 0);
-        addCompartment(FOREARM, wholeBody, 0, 12, 0);
-        addCompartment(FOREARM, wholeBody, 11, 12, 0);
-        addCompartment(HAND, wholeBody, 0, 17, 0);
-        addCompartment(HAND, wholeBody, 11, 17, 0);
+        CompartmentInstance leftUpperArm = addCompartment(UPPER_ARM, wholeBody, 0, 7, 0);
+        leftUpperArm.set(DISPLAY_NAME, "Left Upper Arm");
+
+        CompartmentInstance rightUpperArm = addCompartment(UPPER_ARM, wholeBody, 11, 7, 0);
+        rightUpperArm.set(DISPLAY_NAME, "Right Upper Arm");
+
+        CompartmentInstance leftForearm = addCompartment(FOREARM, wholeBody, 0, 12, 0);
+        leftForearm.set(DISPLAY_NAME, "Left Forearm");
+
+        CompartmentInstance rightForearm = addCompartment(FOREARM, wholeBody, 0, 12, 0);
+        rightForearm.set(DISPLAY_NAME, "Right Forearm");
+
+        CompartmentInstance leftHand = addCompartment(HAND, wholeBody, 0, 17, 0);
+        leftHand.set(DISPLAY_NAME, "Left Hand");
+
+        CompartmentInstance rightHand = addCompartment(HAND, wholeBody, 0, 17, 0);
+        rightHand.set(DISPLAY_NAME, "Right Hand");
+
         CompartmentInstance torso = addCompartment(TORSO, wholeBody, 3, 7, 0);
         addCompartment(LIVER, torso, 0, 0, 1, 0);
         addCompartment(STOMACH, torso, 0, 0, 0, 0);

@@ -154,17 +154,17 @@ public abstract class MovableResizableWidget extends AbstractWidget {
         guiGraphics.fill(getX() + width - 1, getY(), getX() + width, getY() + headerHeight, borderColor); // Right
         guiGraphics.fill(getX(), getY() + headerHeight - 1, getX() + width, getY() + headerHeight, borderColor);
 
-        int dotSize = 2;
-        int spacing = 4;
-        int centerX = getX() + width / 2;
-        int centerY = getY() + headerHeight / 2;
+//        int dotSize = 2;
+//        int spacing = 4;
+//        int centerX = getX() + width / 2;
+//        int centerY = getY() + headerHeight / 2;
 
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                int dotX = centerX + i * spacing - dotSize / 2;
-                int dotY = centerY + j * spacing - dotSize / 2;
-                guiGraphics.fill(dotX, dotY, dotX + dotSize, dotY + dotSize, borderColor);
-            }
-        }
+//        for (int i = -1; i <= 1; i++) {
+//            for (int j = -1; j <= 1; j++) {
+//                int dotX = centerX + i * spacing - dotSize / 2;
+//                int dotY = centerY + j * spacing - dotSize / 2;
+//                guiGraphics.fill(dotX, dotY, dotX + dotSize, dotY + dotSize, borderColor);
+//            }
+//        }
     }
 }

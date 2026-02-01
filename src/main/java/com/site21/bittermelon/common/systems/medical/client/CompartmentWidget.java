@@ -297,6 +297,15 @@ public class CompartmentWidget extends MovableResizableWidget {
     private void renderCompartmentTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
     }
 
+    protected void renderDragHandle(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.renderDragHandle(guiGraphics, mouseX, mouseY, partialTick);
+
+        String name = screen.getMainCompartmentWidget().equals(this)
+                ? screen.getTargetName()
+                : compartment.getOrDefault(DISPLAY_NAME, compartment.getName()) + " " + getLayer().getName();
+        guiGraphics.drawCenteredString(screen.getFont(), name, x + width / 2, y + 4, 0xFFFFFFFF);
+    }
+
     public @Nullable UUID getHoveredCompartment(int mouseX, int mouseY) {
         Point hoveredSlot = getHoveredSlot(mouseX, mouseY);
         if (hoveredSlot == null) return null;

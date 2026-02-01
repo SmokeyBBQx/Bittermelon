@@ -310,4 +310,9 @@ public class BitterDataComponents {
             "blood_info",
             builder -> builder.persistent(BloodInfo.CODEC)
     );
-}
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> DISPLAY_NAME = DATA_COMPONENTS.registerComponentType(
+            "display_name",
+            builder -> builder.persistent(Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8)
+    );
+ }

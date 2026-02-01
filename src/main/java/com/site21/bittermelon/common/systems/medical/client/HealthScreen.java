@@ -216,6 +216,10 @@ public class HealthScreen extends Screen {
         return entity;
     }
 
+    public CompartmentWidget getMainCompartmentWidget() {
+        return compartmentWidgets.getFirst();
+    }
+
     public void setHeldCompartment(CompartmentInstance heldCompartment) {
         this.heldCompartment = heldCompartment;
     }
