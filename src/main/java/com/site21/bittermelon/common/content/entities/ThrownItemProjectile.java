@@ -5,6 +5,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
@@ -251,6 +253,14 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
         return true;
     }
 
+    @Override
+    public @NotNull InteractionResult interact(@NotNull Player player, @NotNull InteractionHand hand) {
+        if (level().isClientSide()) return InteractionResult.SUCCESS;
+
+        player.addItem(getItem());
+        discard();
+        return InteractionResult.SUCCESS;
+    }
 
     @Override
     public boolean isPickable() {
