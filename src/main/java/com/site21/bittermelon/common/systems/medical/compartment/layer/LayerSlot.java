@@ -8,9 +8,7 @@ import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class LayerSlot {
     public static final Codec<LayerSlot> CODEC;
@@ -82,6 +80,10 @@ public class LayerSlot {
 
     public boolean isOccupied(int depth) {
         return getPivot(depth) != null;
+    }
+
+    public boolean isOccupied() {
+        return Arrays.stream(pivots).anyMatch(Objects::nonNull);
     }
 
     public record PivotData(int depth, Optional<Point> pivot) {

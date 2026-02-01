@@ -86,6 +86,10 @@ public class CompartmentWidget extends MovableResizableWidget {
                         (button) -> decreaseLayer())
                 .size(BUTTON_SIZE, BUTTON_SIZE)
                 .build();
+
+        boolean hasLayers = CompartmentUtil.getLayers(compartment).size() > 1;
+        increaseLayerButton.visible = hasLayers;
+        decreaseLayerButton.visible = hasLayers;
     }
 
     private void increaseLayer() {
@@ -275,9 +279,11 @@ public class CompartmentWidget extends MovableResizableWidget {
                 int compartmentHeight = slotSize * visualData.height();
                 int color = visualData.color();
 
-                // TODO: Buggy
-                float pulse = (float) (Math.sin(System.currentTimeMillis() / 500.0) * 0.4f + 0.95f);
-                color = compartmentId.equals(hoveredCompartmentId) ? ARGB.color(pulse, color) : color;
+                if (compartmentId.equals(hoveredCompartmentId)) {
+                    float pulse = (float) (Math.sin(System.currentTimeMillis() / 500.0) * 0.2f + 0.8f);
+                    int alpha = (int) (ARGB.alpha(color) * pulse);
+                    color = ARGB.color(alpha, color);
+                }
 
                 ResourceLocation icon = visualData.icon();
                 if (icon != null) {
