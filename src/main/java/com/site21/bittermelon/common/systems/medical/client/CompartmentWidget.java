@@ -179,6 +179,14 @@ public class CompartmentWidget extends MovableResizableWidget {
     }
 
     private void renderSlots(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        LayerData layer = getLayer();
+        if (layer.getTexture() != null) {
+            int width = layer.getWidth() * slotSize;
+            int height = layer.getHeight() * slotSize;
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, layer.getTexture(), contentX, contentY, 0, 0,
+                    width, height, width, height);
+        }
+
         for (int row = 0; row < grid.length; row++) {
             for (int col = 0; col < grid[row].length; col++) {
                 LayerSlot slot = grid[row][col];
@@ -194,17 +202,28 @@ public class CompartmentWidget extends MovableResizableWidget {
     }
 
     private void renderSlot(int x, int y, int u, int v, @NotNull LayerSlot slot, @NotNull GuiGraphics guiGraphics) {
+        if (light[v][u] <= 0) {
+            guiGraphics.fill(x, y, x + slotSize, y + slotSize, 0xDD000000);
+            return;
+        }
+
         // Slot texture
-        ResourceLocation texture = slot.getType().getTexture();
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, u, v, slotSize, slotSize, 1, 1, 16, 16);
+        if (getLayer().getTexture() == null) {
+            ResourceLocation texture = slot.getType().getTexture();
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, u, v, slotSize, slotSize, 1, 1, 16, 16);
+        }
 
         // Blood level overlay
-        int bloodColor = ARGB.color(slot.getBloodLevel(), 0x900000);
-        guiGraphics.fill(x, y, x + slotSize, y + slotSize, bloodColor);
+        if (slot.getBloodLevel() > 0) {
+            int bloodColor = ARGB.color(slot.getBloodLevel(), 0x900000);
+            guiGraphics.fill(x, y, x + slotSize, y + slotSize, bloodColor);
+        }
 
         // Fog of war overlay
-        int fogColor = ARGB.color(1 - light[v][u], 0xDD000000);
-        guiGraphics.fill(x, y, x + slotSize, y + slotSize, fogColor);
+        if (light[v][u] < 1) {
+            int fogColor = ARGB.color(1 - light[v][u], 0xDD000000);
+            guiGraphics.fill(x, y, x + slotSize, y + slotSize, fogColor);
+        }
     }
 
     private void renderHoveredSlot(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {

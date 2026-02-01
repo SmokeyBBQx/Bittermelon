@@ -70,7 +70,9 @@ public class HealthScreen extends Screen {
         if (layer == null) return false;
         if (compartmentWidgets.stream().anyMatch(widget -> widget.getCompartment().equals(instance))) return false;
 
-        compartmentWidgets.add(new CompartmentWidget(20, 20, layer.getWidth() * 20, layer.getHeight() * 20, instance, this));
+        CompartmentWidget widget = new CompartmentWidget(20, 20, layer.getWidth() * 20, layer.getHeight() * 20, instance, this);
+        compartmentWidgets.add(widget);
+        activeWidget = widget;
 
         return true;
     }

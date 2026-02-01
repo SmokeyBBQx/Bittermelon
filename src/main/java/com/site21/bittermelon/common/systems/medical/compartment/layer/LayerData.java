@@ -7,6 +7,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,33 +25,36 @@ public class LayerData {
     private final int width, height, depth;
     private final LayerSlot[][] grid;
     private final HashMap<Point, UUID>[] compartments;
+    private ResourceLocation texture;
 
-    public LayerData(String name, int width, int height, int depth, @NotNull LayerSlot[][] grid, HashMap<Point, UUID>[] compartments) {
+    public LayerData(String name, int width, int height, int depth, @NotNull LayerSlot[][] grid,
+                     HashMap<Point, UUID>[] compartments, ResourceLocation texture) {
         this.name = name;
         this.width = width;
         this.height = height;
         this.depth = depth;
         this.grid = grid;
         this.compartments = compartments;
+        this.texture = texture;
     }
 
     public LayerData(String name, int width, int height, int depth, @NotNull List<SlotPoint> shape) {
-        this(name, width, height, depth, new LayerSlot[height][width], createCompartmentArray(depth));
+        this(name, width, height, depth, new LayerSlot[height][width], createCompartmentArray(depth), null);
         for (SlotPoint p : shape) {
             grid[p.y()][p.x()] = new LayerSlot(p.type(), depth);
         }
     }
 
     public LayerData(String name, int width, int height, @NotNull List<SlotPoint> shape) {
-        this(name, width, height, 1, new LayerSlot[height][width], createCompartmentArray(1));
+        this(name, width, height, 1, new LayerSlot[height][width], createCompartmentArray(1), null);
         for (SlotPoint p : shape) {
             grid[p.y()][p.x()] = new LayerSlot(p.type(), 1);
         }
     }
 
     public LayerData(String name, int width, int height, int depth, @NotNull List<SlotData> slotData,
-                     List<HashMap<Point, UUID>> compartments) {
-        this(name, width, height, depth, new LayerSlot[height][width], createCompartmentArray(compartments));
+                     List<HashMap<Point, UUID>> compartments, Optional<ResourceLocation> texture) {
+        this(name, width, height, depth, new LayerSlot[height][width], createCompartmentArray(compartments), texture.orElse(null));
         System.out.println("Reconstructing LayerData '" + name + "' with " + slotData.size() + " slots.");
         for (SlotData sd : slotData) {
             grid[sd.y()][sd.x()] = sd.slot();
@@ -65,7 +69,7 @@ public class LayerData {
                 grid[y][x] = new LayerSlot(type, depth);
             }
         }
-        return new LayerData(name, width, height, depth, grid, createCompartmentArray(depth));
+        return new LayerData(name, width, height, depth, grid, createCompartmentArray(depth), null);
     }
 
     @Contract("_, _, _, _ -> new")
@@ -133,6 +137,19 @@ public class LayerData {
         Point pivot = grid[y][x].getPivot(z);
         if (pivot == null) return null;
         return compartments[z].get(pivot);
+    }
+
+    public ResourceLocation getTexture() {
+        return texture;
+    }
+
+    public Optional<ResourceLocation> getTextureOptional() {
+        return Optional.ofNullable(texture);
+    }
+
+    public LayerData setTexture(ResourceLocation texture) {
+        this.texture = texture;
+        return this;
     }
 
     /**
@@ -295,12 +312,11 @@ public class LayerData {
                         Codec.INT.fieldOf("depth").forGetter(LayerData::getDepth),
                         Codec.list(SlotData.CODEC).fieldOf("slots").forGetter(LayerData::getSerializableGrid),
                         Codec.list(Codec.unboundedMap(Point.STRING_CODEC, UUIDUtil.CODEC)).fieldOf("compartments")
-                                .forGetter(LayerData::getCompartmentsListAbstract)
+                                .forGetter(LayerData::getCompartmentsListAbstract),
+                        ResourceLocation.CODEC.optionalFieldOf("texture").forGetter(LayerData::getTextureOptional)
                 ).apply(instance, (name, width, height, depth, slots,
-                                   compartments) ->
-                        new LayerData(name, width, height, depth, slots, compartments.stream()
-                                .map(HashMap::new)
-                                .toList())
+                                   compartments, texture) ->
+                        new LayerData(name, width, height, depth, slots, compartments.stream().map(HashMap::new).toList(), texture)
                 )
         );
 
@@ -320,6 +336,8 @@ public class LayerData {
                         Point.STREAM_CODEC,
                         UUIDUtil.STREAM_CODEC).apply(ByteBufCodecs.list()),
                 LayerData::getCompartmentsList,
+                ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC),
+                LayerData::getTextureOptional,
                 LayerData::new
         );
     }
