@@ -249,7 +249,7 @@ public class LayerData {
 
                     UUID compartmentId = compartments[z].get(pivot);
                     if (compartmentId == null || instanceId.equals(compartmentId)) {
-                        grid[y][x].setPivots(null);
+                        grid[y][x].setPivot(z, null);
                         compartments[z].remove(pivot);
                     }
                 }
