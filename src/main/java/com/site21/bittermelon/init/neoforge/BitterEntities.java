@@ -72,7 +72,6 @@ public class BitterEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<Cage>> CAGE = ENTITY_TYPES.register("cage",
             () -> EntityType.Builder.of(Cage::new, MobCategory.MISC)
-                    .sized(1.0f, 2.0f)
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "cage"))));
 
     public static void register(IEventBus eventBus) {

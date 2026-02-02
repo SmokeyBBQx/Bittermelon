@@ -7,11 +7,8 @@ import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class CageRenderer extends EntityRenderer<Cage, CageRenderState> {
     private final BlockRenderDispatcher blockRenderer;
@@ -26,13 +23,13 @@ public class CageRenderer extends EntityRenderer<Cage, CageRenderState> {
         for (BlockInfo info : renderState.blocks) {
             poseStack.pushPose();
             poseStack.translate(
-                    info.offset().getX() - 0.5,
+                    info.offset().getX(),
                     info.offset().getY(),
-                    info.offset().getZ() - 0.5
+                    info.offset().getZ()
             );
 
             blockRenderer.renderSingleBlock(
-                    info.state(),
+                    Blocks.OAK_WOOD.defaultBlockState(),
                     poseStack,
                     bufferSource,
                     packedLight,
@@ -55,15 +52,6 @@ public class CageRenderer extends EntityRenderer<Cage, CageRenderState> {
         super.extractRenderState(entity, reusedState, partialTick);
         reusedState.level = entity.level();
         reusedState.pos = entity.getOnPos();
-        reusedState.blocks = List.of(
-                new BlockInfo(Blocks.VAULT.defaultBlockState(), new Vec3i(1, 0, 0)),
-                new BlockInfo(Blocks.VAULT.defaultBlockState(), new Vec3i(1, 1, 0)),
-                new BlockInfo(Blocks.VAULT.defaultBlockState(), new Vec3i(1, 1, 1)),
-                new BlockInfo(Blocks.VAULT.defaultBlockState(), new Vec3i(0, 0, 1)),
-                new BlockInfo(Blocks.VAULT.defaultBlockState(), new Vec3i(0, 1, 0)),
-                new BlockInfo(Blocks.VAULT.defaultBlockState(), new Vec3i(0, 1, 1)),
-                new BlockInfo(Blocks.VAULT.defaultBlockState(), new Vec3i(1, 0, 1)),
-                new BlockInfo(Blocks.VAULT.defaultBlockState(), new Vec3i(0, 0, 0))
-        );
+        reusedState.blocks = entity.getBlocks();
     }
 }

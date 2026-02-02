@@ -44,6 +44,7 @@ import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.BLOCK_ENT
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.BLOCKS;
 import static com.site21.bittermelon.init.neoforge.BitterCreativeTabs.CREATIVE_MODE_TABS;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.DATA_COMPONENTS;
+import static com.site21.bittermelon.init.neoforge.BitterDataSerializers.ENTITY_DATA_SERIALIZERS;
 import static com.site21.bittermelon.init.neoforge.BitterFluidTypes.FLUID_TYPES;
 import static com.site21.bittermelon.init.neoforge.BitterFluids.FLUIDS;
 import static com.site21.bittermelon.init.neoforge.BitterItems.ITEMS;
@@ -88,6 +89,7 @@ public class Bittermelon {
         MEDIA.register(modEventBus);
         PARTICLES.register(modEventBus);
         ANATOMIES.register(modEventBus);
+        ENTITY_DATA_SERIALIZERS.register(modEventBus);
 
         modEventBus.addListener(BitterRegistries::registerRegistries);
         modEventBus.addListener(this::commonSetup);

@@ -55,7 +55,6 @@ public class LayerData {
     public LayerData(String name, int width, int height, int depth, @NotNull List<SlotData> slotData,
                      List<HashMap<Point, UUID>> compartments, Optional<ResourceLocation> texture) {
         this(name, width, height, depth, new LayerSlot[height][width], createCompartmentArray(compartments), texture.orElse(null));
-        System.out.println("Reconstructing LayerData '" + name + "' with " + slotData.size() + " slots.");
         for (SlotData sd : slotData) {
             grid[sd.y()][sd.x()] = sd.slot();
         }
