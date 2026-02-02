@@ -11,6 +11,7 @@ import com.site21.bittermelon.common.content.blocks.electronics.thermometer.clie
 import com.site21.bittermelon.common.content.blocks.flamingo.FlamingoBlockRenderer;
 import com.site21.bittermelon.common.content.blocks.substance.fluid.client.FluidBlockColor;
 import com.site21.bittermelon.common.content.blocks.wallwriting.client.WallWritingRenderer;
+import com.site21.bittermelon.common.content.entities.cage.client.CageRenderer;
 import com.site21.bittermelon.common.content.entities.chicken.client.ChickenRenderer;
 import com.site21.bittermelon.common.content.entities.scp131.client.SCP131Renderer;
 import com.site21.bittermelon.common.content.entities.scp1507.client.SCP1507Renderer;
@@ -77,6 +78,7 @@ public class ClientSetup {
         event.registerEntityRenderer(SCP_1507.get(), SCP1507Renderer::new);
         event.registerEntityRenderer(TASER_PROJECTILE.get(), TaserProjectileRenderer::new);
         event.registerEntityRenderer(SCP_548.get(), SCP548Renderer::new);
+        event.registerEntityRenderer(CAGE.get(), CageRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.THERMOMETER_BLOCK_ENTITY.get(), ThermometerRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.INTERCOM_BLOCK_ENTITY.get(), PhoneCordRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.LARGE_SLIDING_DOOR_BLOCK_ENTITY.get(), LargeSlidingDoorRenderer::new);

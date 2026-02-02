@@ -2,6 +2,7 @@ package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.entities.ThrownItemProjectile;
+import com.site21.bittermelon.common.content.entities.cage.Cage;
 import com.site21.bittermelon.common.content.entities.chicken.Chicken;
 import com.site21.bittermelon.common.content.entities.scp131.SCP131;
 import com.site21.bittermelon.common.content.entities.scp1507.SCP1507;
@@ -68,6 +69,11 @@ public class BitterEntities {
             () -> EntityType.Builder.of(SCP548::new, MobCategory.MONSTER)
                     .sized(0.2f, 0.1f)
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_548"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<Cage>> CAGE = ENTITY_TYPES.register("cage",
+            () -> EntityType.Builder.of(Cage::new, MobCategory.MISC)
+                    .sized(1.0f, 2.0f)
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "cage"))));
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);

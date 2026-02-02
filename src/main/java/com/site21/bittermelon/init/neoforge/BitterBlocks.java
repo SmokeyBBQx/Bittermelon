@@ -32,6 +32,7 @@ import com.site21.bittermelon.common.content.blocks.scp.scp330.SCP330Block;
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlock;
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.common.content.blocks.wallwriting.WallWritingBlock;
+import com.site21.bittermelon.common.content.entities.cage.CageBlock;
 import com.site21.bittermelon.common.systems.fluid.SubstanceFluidBlock;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.block.Block;
@@ -284,5 +285,11 @@ public class BitterBlocks {
             .noOcclusion()
             .destroyTime(0.5f)
             .sound(SoundType.GRAVEL)
+    );
+
+    public static final DeferredBlock<CageBlock> CAGE = BLOCKS.registerBlock("cage", CageBlock::new, BlockBehaviour.Properties.of()
+            .noOcclusion()
+            .destroyTime(2.0f)
+            .sound(SoundType.METAL)
     );
 }
