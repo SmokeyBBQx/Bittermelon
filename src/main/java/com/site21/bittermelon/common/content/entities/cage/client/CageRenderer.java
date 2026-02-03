@@ -29,7 +29,7 @@ public class CageRenderer extends EntityRenderer<Cage, CageRenderState> {
             );
 
             blockRenderer.renderSingleBlock(
-                    Blocks.OAK_WOOD.defaultBlockState(),
+                    Blocks.BARREL.defaultBlockState(),
                     poseStack,
                     bufferSource,
                     packedLight,

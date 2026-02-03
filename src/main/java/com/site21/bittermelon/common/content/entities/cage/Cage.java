@@ -3,6 +3,8 @@ package com.site21.bittermelon.common.content.entities.cage;
 import com.site21.bittermelon.common.content.entities.cage.client.BlockInfo;
 import com.site21.bittermelon.init.neoforge.BitterDataSerializers;
 import com.site21.bittermelon.init.neoforge.BitterEntities;
+import com.site21.bittermelon.init.neoforge.BitterSounds;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
@@ -10,6 +12,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
@@ -104,6 +107,11 @@ public class Cage extends Entity {
     @Override
     protected double getDefaultGravity() {
         return 0.02;
+    }
+
+    @Override
+    protected void playStepSound(BlockPos pos, BlockState state) {
+        level().playSound(null, pos, BitterSounds.DRAG.value(), getSoundSource(), 0.25f, 0.1f + random.nextFloat() * 0.2f);
     }
 
     @Override
