@@ -16,4 +16,6 @@ public abstract class EntityMixin {
     private boolean skipSerializeCheckWhenForced(EntityType<?> type, Entity vehicle, boolean force) {
         return force || type.canSerialize();
     }
+
+
 }

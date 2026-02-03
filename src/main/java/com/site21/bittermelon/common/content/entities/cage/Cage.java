@@ -17,9 +17,12 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Cage extends Entity {
@@ -32,6 +35,7 @@ public class Cage extends Entity {
 
     public Cage(EntityType<?> entityType, Level level) {
         super(entityType, level);
+
     }
 
     public static Cage create(Level level, List<BlockInfo> blocks) {
@@ -152,4 +156,11 @@ public class Cage extends Entity {
         );
     }
 
+    public List<VoxelShape> getCollisionShapes(Entity entity) {
+        List<VoxelShape> shapes = new ArrayList<>();
+        for (BlockInfo info : getBlocks()) {
+            shapes.add(info.state().getCollisionShape(level(), getOnPos().offset(info.offset()), CollisionContext.of(entity)));
+        }
+        return shapes;
+    }
 }

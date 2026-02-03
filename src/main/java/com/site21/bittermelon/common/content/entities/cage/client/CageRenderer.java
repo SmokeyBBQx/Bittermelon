@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
 public class CageRenderer extends EntityRenderer<Cage, CageRenderState> {
@@ -29,7 +28,7 @@ public class CageRenderer extends EntityRenderer<Cage, CageRenderState> {
             );
 
             blockRenderer.renderSingleBlock(
-                    Blocks.BARREL.defaultBlockState(),
+                    info.state(),
                     poseStack,
                     bufferSource,
                     packedLight,

@@ -42,7 +42,7 @@ public class CageBlock extends Block {
             visited.add(currentPos);
 
             BlockState state = level.getBlockState(currentPos);
-            if (state.getBlock() instanceof CageBlock) {
+            if (!state.isAir()) {
                 Vec3i offset = currentPos.subtract(origin);
                 offset = new Vec3i(Math.abs(offset.getX()), Math.abs(offset.getY()), Math.abs(offset.getZ()));
                 cageBlocks.add(new BlockInfo(state, offset));
