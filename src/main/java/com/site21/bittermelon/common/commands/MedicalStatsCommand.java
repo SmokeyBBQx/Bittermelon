@@ -4,6 +4,10 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.site21.bittermelon.common.systems.medical.anatomy.Anatomy;
+import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
+import com.site21.bittermelon.common.systems.medical.damage.DamageGen;
+import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.init.custom.Compartments;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -23,7 +27,11 @@ public class MedicalStatsCommand {
                         .then(Commands.argument("target", EntityArgument.entity())
                                 .then(Commands.argument("anatomy", ResourceArgument.resource(buildContext, ANATOMY_REGISTRY_KEY))
                                         .executes(MedicalStatsCommand::resetMedicalStats))
-                        )));
+                        ))
+                .then(Commands.literal("damage")
+                        .then(Commands.argument("target", EntityArgument.entity())
+                                .executes(MedicalStatsCommand::applyDamage))
+                ));
     }
 
     private static int resetMedicalStats(@NotNull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
@@ -32,6 +40,21 @@ public class MedicalStatsCommand {
         target.setData(MEDICAL_STATS, anatomy.toInstance(target));
         context.getSource().sendSuccess(() ->
                 Component.literal(target.getDisplayName() + "'s medical stats reset"), true);
+
+        return 1;
+    }
+
+    private static int applyDamage(@NotNull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Entity target = EntityArgument.getEntity(context, "target");
+        MedicalStats medicalStats = target.getData(MEDICAL_STATS);
+
+        for (CompartmentInstance compartment : medicalStats.getCompartments().values()) {
+            if (compartment.getCompartment().equals(Compartments.UPPER_ARM.get())) {
+                DamageGen.makeLaceration(medicalStats, target.getRandom(), compartment, 0, 4, 1);
+            }
+        }
+
+        target.syncData(MEDICAL_STATS);
 
         return 1;
     }

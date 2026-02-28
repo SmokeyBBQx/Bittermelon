@@ -2,7 +2,6 @@ package com.site21.bittermelon.common.systems.medical.medicalstats;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.medical.anatomy.Anatomy;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
@@ -175,20 +174,8 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
     }
 
     public CompartmentInstance getCompartment(UUID uuid) {
-        if (uuid == null) {
-            Bittermelon.LOGGER.error("Tried to get compartment with null UUID!");
-            return null;
-        }
-
-        CompartmentInstance compartment = compartments.get(uuid);
-
-        // TODO: Desync between client and server causing compartments to be missing, why?
-        if (compartment == null) {
-            compartments.remove(uuid);
-            Bittermelon.LOGGER.error("Compartment with UUID {} not found!", uuid);
-        }
-
-        return compartment;
+        if (uuid == null) return null;
+        return compartments.get(uuid);
     }
 
     public Map<UUID, CompartmentInstance> getCompartments() {
@@ -304,7 +291,7 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
 
     @Override
     public void applyComponents(@NotNull DataComponentMap components) {
-        this.components.setAll(this.components);
+        this.components.setAll(components);
     }
 
     @Override
