@@ -83,6 +83,10 @@ public class HealthScreen extends Screen {
             return;
         }
         compartmentWidgets.remove(compartmentSpace);
+
+        if (activeWidget == compartmentSpace) {
+            activeWidget = null;
+        }
     }
 
     @Override
@@ -168,7 +172,11 @@ public class HealthScreen extends Screen {
     private boolean compartmentWidgetClick(@NotNull CompartmentWidget widget, CompartmentInstance previouslyHeld,
                                            double mouseX, double mouseY, int button) {
         if (widget.mouseClicked(mouseX, mouseY, button)) {
-            activeWidget = widget;
+            // Ensure that removed compartments are not re-added as active
+            if (compartmentWidgets.contains(widget)) {
+                activeWidget = widget;
+            }
+
             if (previouslyHeld != null) {
                 if (widget.tryToPlace((int) mouseX, (int) mouseY, previouslyHeld)) {
                     heldCompartment = null;
