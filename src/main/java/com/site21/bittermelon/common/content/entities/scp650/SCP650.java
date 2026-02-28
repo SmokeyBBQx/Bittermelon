@@ -1,9 +1,9 @@
 package com.site21.bittermelon.common.content.entities.scp650;
 
-import com.site21.bittermelon.common.systems.ai.sensors.ObserversSensor;
 import com.site21.bittermelon.common.content.entities.scp650.behavior.InvalidateFoundTarget;
 import com.site21.bittermelon.common.content.entities.scp650.behavior.TeleportBehindRandomTarget;
 import com.site21.bittermelon.common.content.entities.scp650.client.SCP650Animation;
+import com.site21.bittermelon.common.systems.ai.sensors.ObserversSensor;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.network.protocol.game.DebugPackets;
@@ -27,6 +27,7 @@ import java.util.List;
 
 public class SCP650 extends Mob implements SmartBrainOwner<SCP650> {
     private static final EntityDataAccessor<String> POSE = SynchedEntityData.defineId(SCP650.class, EntityDataSerializers.STRING);
+    // TODO: Replace these with enums
     public static final String[] SCARE_POSES = {
             "JUMPSCARE", "JUMPSCARE_2", "JUMPSCARE_3", "JUMPSCARE_4", "JUMPSCARE_5", "MENACING", "BOWLING",
             "SPOOKY", "RAPTURE", "KARATE"

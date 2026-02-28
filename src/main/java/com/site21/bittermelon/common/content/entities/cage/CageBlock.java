@@ -13,6 +13,8 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.*;
 
+import static com.site21.bittermelon.init.neoforge.BitterBlocks.CAGE;
+
 public class CageBlock extends Block {
     public CageBlock(Properties properties) {
         super(properties);
@@ -42,7 +44,7 @@ public class CageBlock extends Block {
             visited.add(currentPos);
 
             BlockState state = level.getBlockState(currentPos);
-            if (!state.isAir()) {
+            if (state.is(CAGE)) {
                 Vec3i offset = currentPos.subtract(origin);
                 offset = new Vec3i(Math.abs(offset.getX()), Math.abs(offset.getY()), Math.abs(offset.getZ()));
                 cageBlocks.add(new BlockInfo(state, offset));

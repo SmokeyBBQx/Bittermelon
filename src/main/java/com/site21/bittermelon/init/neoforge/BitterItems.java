@@ -1,6 +1,7 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.common.content.items.DebugWire;
 import com.site21.bittermelon.common.content.items.IntercomPhoneItem;
 import com.site21.bittermelon.common.content.items.StickyNote;
 import com.site21.bittermelon.common.content.items.TestHeatedItem;
@@ -404,6 +405,12 @@ public class BitterItems {
 
     public static final DeferredItem<RepairToolItem> REPAIR_TOOL = ITEMS.register("repair_tool", registryName ->
             new RepairToolItem(new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, registryName))
+                    .stacksTo(1)
+            ));
+
+    public static final DeferredItem<DebugWire> DEBUG_WIRE = ITEMS.register("debug_wire", registryName ->
+            new DebugWire(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
                     .stacksTo(1)
             ));

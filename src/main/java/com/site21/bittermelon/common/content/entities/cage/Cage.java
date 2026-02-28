@@ -137,6 +137,7 @@ public class Cage extends Entity {
 
     @Override
     protected AABB makeBoundingBox(Vec3 position) {
+        // TODO: Cache
         int minX = 0, maxX = 0;
         int minY = 0, maxY = 0;
         int minZ = 0, maxZ = 0;
@@ -157,6 +158,7 @@ public class Cage extends Entity {
     }
 
     public List<VoxelShape> getCollisionShapes(Entity entity) {
+        // TODO: Doesn't work
         List<VoxelShape> shapes = new ArrayList<>();
         for (BlockInfo info : getBlocks()) {
             shapes.add(info.state().getCollisionShape(level(), getOnPos().offset(info.offset()), CollisionContext.of(entity)));

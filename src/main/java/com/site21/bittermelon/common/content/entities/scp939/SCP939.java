@@ -4,7 +4,6 @@ import com.site21.bittermelon.common.content.entities.scp939.behavior.*;
 import com.site21.bittermelon.common.systems.ai.base.BitterMob;
 import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
-import com.site21.bittermelon.common.systems.ai.behavior.attack.Attack;
 import com.site21.bittermelon.common.systems.ai.behavior.attack.Pull;
 import com.site21.bittermelon.common.systems.ai.behavior.attack.Push;
 import com.site21.bittermelon.common.systems.ai.behavior.attack.YankItem;
@@ -424,8 +423,8 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
                 new SetWalkTargetToAttackTarget<>()
                         .speedMod((entity, target) -> 1.4f)
                         .stopIf(LivingEntity::isDeadOrDying),
-                new Attack<>(10, getAttackTemplates())
-                        .cooldownFor(scp939 -> 60),
+                // new Attack<>(10, getAttackTemplates())
+                //        .cooldownFor(scp939 -> 60),
                 new OneRandomBehaviour<>(
                         new Push<>(10),
                         new YankItem<>(10),

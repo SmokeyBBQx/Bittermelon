@@ -1,17 +1,14 @@
 package com.site21.bittermelon.common.content.entities.scp843;
 
-import com.site21.bittermelon.common.systems.character.Character;
-import com.site21.bittermelon.common.systems.ai.behavior.social.Relationship;
-import com.site21.bittermelon.common.systems.ai.behavior.social.Socializable;
+import com.site21.bittermelon.common.content.entities.scp843.behavior.Photosynthesize;
 import com.site21.bittermelon.common.systems.ai.base.BitterMob;
 import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
-import com.site21.bittermelon.common.content.entities.scp843.behavior.Photosynthesize;
+import com.site21.bittermelon.common.systems.ai.behavior.social.Relationship;
+import com.site21.bittermelon.common.systems.ai.behavior.social.Socializable;
+import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.init.neoforge.BitterActivity;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.schedule.Activity;
@@ -28,18 +25,6 @@ import java.util.Map;
 
 @SuppressWarnings("unchecked")
 public class SCP843 extends BitterMob<SCP843> implements Socializable, SmartBrainOwner<SCP843> {
-    private static final EntityDataAccessor<Float> SUNLIGHT = SynchedEntityData.defineId(SCP843.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> NUTRIENTS = SynchedEntityData.defineId(SCP843.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> THIRST = SynchedEntityData.defineId(SCP843.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> PROCREATION = SynchedEntityData.defineId(SCP843.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> SOCIALIZATION = SynchedEntityData.defineId(SCP843.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> REST = SynchedEntityData.defineId(SCP843.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> BLADDER = SynchedEntityData.defineId(SCP843.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> DEFECATION = SynchedEntityData.defineId(SCP843.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> MOVEMENT = SynchedEntityData.defineId(SCP843.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> HYGIENE = SynchedEntityData.defineId(SCP843.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Float> RECREATION = SynchedEntityData.defineId(SCP843.class, EntityDataSerializers.FLOAT);
-
     protected SCP843(EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level);
     }
