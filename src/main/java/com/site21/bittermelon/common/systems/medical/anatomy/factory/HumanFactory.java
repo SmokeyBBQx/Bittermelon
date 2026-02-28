@@ -26,19 +26,19 @@ public class HumanFactory implements AnatomyFactory {
         compartments = new ArrayList<>();
         wholeBody = addCompartment(WHOLE_BODY);
 //        var debugLiver = addCompartment(DEBUG_COMPARTMENT, wholeBody, 0, 0, 0);
-        CompartmentInstance leftUpperArm = addCompartment(UPPER_ARM, wholeBody, 0, 7, 0);
+        CompartmentInstance leftUpperArm = addCompartment(UPPER_ARM, wholeBody, 11, 7, 0);
         leftUpperArm.set(DISPLAY_NAME, "Left Upper Arm");
 
-        CompartmentInstance rightUpperArm = addCompartment(UPPER_ARM, wholeBody, 11, 7, 0);
+        CompartmentInstance rightUpperArm = addCompartment(UPPER_ARM, wholeBody, 0, 7, 0);
         rightUpperArm.set(DISPLAY_NAME, "Right Upper Arm");
 
-        CompartmentInstance leftForearm = addCompartment(FOREARM, wholeBody, 0, 12, 0);
+        CompartmentInstance leftForearm = addCompartment(FOREARM, wholeBody, 11, 12, 0);
         leftForearm.set(DISPLAY_NAME, "Left Forearm");
 
         CompartmentInstance rightForearm = addCompartment(FOREARM, wholeBody, 0, 12, 0);
         rightForearm.set(DISPLAY_NAME, "Right Forearm");
 
-        CompartmentInstance leftHand = addCompartment(HAND, wholeBody, 0, 17, 0);
+        CompartmentInstance leftHand = addCompartment(HAND, wholeBody, 11, 17, 0);
         leftHand.set(DISPLAY_NAME, "Left Hand");
 
         CompartmentInstance rightHand = addCompartment(HAND, wholeBody, 0, 17, 0);

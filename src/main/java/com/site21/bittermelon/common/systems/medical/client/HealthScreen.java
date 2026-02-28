@@ -88,7 +88,13 @@ public class HealthScreen extends Screen {
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         for (CompartmentWidget widget : compartmentWidgets) {
-            widget.render(guiGraphics, mouseX, mouseY, partialTick);
+            if (widget != activeWidget) {
+                widget.render(guiGraphics, mouseX, mouseY, partialTick);
+            }
+        }
+
+        if (activeWidget != null) {
+            activeWidget.render(guiGraphics, mouseX, mouseY, partialTick);
         }
 
         renderHeldCompartment(guiGraphics, mouseX, mouseY);
@@ -143,19 +149,34 @@ public class HealthScreen extends Screen {
             }
         }
 
+        if (activeWidget != null) {
+            if (compartmentWidgetClick(activeWidget, previouslyHeld, mouseX, mouseY, button)) {
+                return true;
+            }
+        }
+
         for (CompartmentWidget widget : compartmentWidgets.reversed()) {
-            if (widget.mouseClicked(mouseX, mouseY, button)) {
-                activeWidget = widget;
-                if (previouslyHeld != null) {
-                    if (widget.tryToPlace((int) mouseX, (int) mouseY, previouslyHeld)) {
-                        heldCompartment = null;
-                    }
-                }
+            if (widget == activeWidget) continue;
+            if (compartmentWidgetClick(widget, previouslyHeld, mouseX, mouseY, button)) {
                 return true;
             }
         }
 
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    private boolean compartmentWidgetClick(@NotNull CompartmentWidget widget, CompartmentInstance previouslyHeld,
+                                           double mouseX, double mouseY, int button) {
+        if (widget.mouseClicked(mouseX, mouseY, button)) {
+            activeWidget = widget;
+            if (previouslyHeld != null) {
+                if (widget.tryToPlace((int) mouseX, (int) mouseY, previouslyHeld)) {
+                    heldCompartment = null;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override
