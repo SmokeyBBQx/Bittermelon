@@ -4,12 +4,40 @@ import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInst
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentUtil;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.SlotType;
+import com.site21.bittermelon.init.custom.Compartments;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Random;
 
 public class DamageGen {
+
+    public static @Nullable Point findRandomPoint(CompartmentInstance target, int layerIndex, List<Point> shape,
+                                                  int width, int height) {
+        LayerData layer = CompartmentUtil.getLayer(target, layerIndex);
+        if (layer == null) throw new RuntimeException("Target compartment has no layer at index " + layerIndex);
+
+        int searchWidth = layer.getWidth() - width;
+        int searchHeight = layer.getHeight() - height;
+
+        Random random = new Random();
+        int x = random.nextInt(searchWidth);
+        int y = random.nextInt(searchHeight);
+        int attempts = 0;
+
+        while (!layer.canFit(x, y, 0, shape) && attempts < 20) {
+            x = random.nextInt(searchWidth);
+            y = random.nextInt(searchHeight);
+            attempts++;
+        }
+
+        if (attempts >= 20) return null;
+
+        return new Point(x, y);
+    }
+
     public static void placeRandomly(CompartmentInstance target, int layerIndex, CompartmentInstance injury) {
         LayerData layer = CompartmentUtil.getLayer(target, layerIndex);
         if (layer == null) throw new RuntimeException("Target compartment has no layer at index " + layerIndex);
@@ -35,10 +63,39 @@ public class DamageGen {
         CompartmentUtil.insertCompartment(target, injury, 0, layerIndex, x, y);
     }
 
-    public static void makeLaceration(CompartmentInstance target, int layerIndex) {
+    public static void makeLaceration(CompartmentInstance target, int layerIndex, int length, int depth) {
         LayerData layer = CompartmentUtil.getLayer(target, layerIndex);
         if (layer == null) throw new RuntimeException("Target compartment has no layer at index " + layerIndex);
 
+        Point start = findRandomPoint(target, layerIndex, List.of(new Point(0, 0)), 1, 1);
+        if (start == null) return;
 
+        int x = start.x();
+        int y = start.y();
+
+        Random random = new Random();
+        while (length > 0) {
+            boolean down = random.nextBoolean();
+
+            if (down) {
+                y++;
+            } else {
+                x--;
+            }
+
+            CompartmentInstance injury = getInjury(layer, x, y);
+            if (injury == null) continue;
+
+            if (!(CompartmentUtil.insertCompartment(target, injury, layerIndex, x, y, 0))) break;
+            length--;
+        }
+    }
+
+    public static CompartmentInstance getInjury(LayerData layer, int x, int y) {
+        SlotType slotType = layer.getGrid()[x][y].getType();
+        if (slotType == null) return null;
+
+        if (slotType == SlotType.BONE) return null;
+        return Compartments.CUT.get().toInstance();
     }
 }

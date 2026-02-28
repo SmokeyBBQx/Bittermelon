@@ -9,15 +9,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
-@OnlyIn(Dist.CLIENT)
+
 public class PrivilegeEditorScreen extends BaseTerminalScreen {
     private final Screen previousScreen;
     private final PrivilegeManager privilegeManager;

@@ -7,11 +7,9 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-@OnlyIn(Dist.CLIENT)
+
 public class ModelButton extends AbstractWidget {
     private static final ResourceLocation WIDE_ICON = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/wide_model_button");
     private static final ResourceLocation WIDE_ICON_HIGHLIGHTED = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/wide_model_button_highlighted");
@@ -54,7 +52,7 @@ public class ModelButton extends AbstractWidget {
         onPress.onPress(this);
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     public interface OnPress {
         void onPress(ModelButton button);
     }

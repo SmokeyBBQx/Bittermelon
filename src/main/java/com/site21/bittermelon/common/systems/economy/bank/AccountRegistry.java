@@ -6,8 +6,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -29,7 +27,7 @@ public class AccountRegistry extends SavedData {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     private static AccountRegistry getClient() {
         if (clientInstance == null) {
             clientInstance = new AccountRegistry();
@@ -37,7 +35,7 @@ public class AccountRegistry extends SavedData {
         return clientInstance;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     public static void clearClientData() {
         if (clientInstance != null) {
             clientInstance.accounts.clear();
@@ -66,7 +64,7 @@ public class AccountRegistry extends SavedData {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     public void updateCharacterFromServer(Account account) {
         accounts.put(account.getId(), account);
     }

@@ -6,11 +6,9 @@ import com.site21.bittermelon.common.systems.personnel.privilege.PrivilegeOwner;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
-@OnlyIn(Dist.CLIENT)
+
 public class PrivilegeEditorScreen extends Screen {
     private static final int WIDGET_WIDTH = 300;
     private static final int WIDGET_HEIGHT = 200;

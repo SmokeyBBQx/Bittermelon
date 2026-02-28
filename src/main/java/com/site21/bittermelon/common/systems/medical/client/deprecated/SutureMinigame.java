@@ -10,7 +10,7 @@
 //import net.neoforged.api.distmarker.OnlyIn;
 //import org.jetbrains.annotations.NotNull;
 //
-//@OnlyIn(Dist.CLIENT)
+//
 //public class SutureMinigame extends MedicalMinigame {
 //    public SutureMinigame(ItemStack item, CompartmentInstance compartment, MedicalStats medicalStats, Character character) {
 //        super(Component.literal("Suture"), item, compartment, medicalStats, character);

@@ -4,10 +4,8 @@ import com.site21.bittermelon.common.content.blocks.electronics.personneltermina
 import com.site21.bittermelon.common.systems.personnel.privilege.PrivilegeOwner;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
+
 public class PrivilegeListWidget extends PrivilegeEditorWidget {
     private final PrivilegeEditorScreen parentScreen;
 

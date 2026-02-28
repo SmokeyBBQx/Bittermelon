@@ -18,8 +18,6 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableInt;
@@ -30,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@OnlyIn(Dist.CLIENT)
+
 public class PaperEditScreenOld extends Screen {
     public static final ResourceLocation PAPER_LOCATION = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/paper.png");
     private static final int TEXT_WIDTH = 114;
@@ -436,7 +434,7 @@ public class PaperEditScreenOld extends Screen {
         selectionRects.add(createPartialLineSelection(text, splitter, lineStarts[endLine], selectionEnd, (int) yPos, lineStarts[endLine], lines.get(endLine).scale));
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     static class DisplayCache {
         static final DisplayCache EMPTY;
         private final String fullText;
@@ -510,7 +508,7 @@ public class PaperEditScreenOld extends Screen {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     static class LineInfo {
         final Style style;
         final String contents;
@@ -529,7 +527,7 @@ public class PaperEditScreenOld extends Screen {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     record Pos2i(int x, int y) {
     }
 }

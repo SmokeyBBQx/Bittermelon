@@ -12,8 +12,6 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.jetbrains.annotations.Contract;
@@ -24,7 +22,7 @@ import org.joml.Matrix3x2f;
 import java.util.ArrayList;
 import java.util.List;
 
-@OnlyIn(Dist.CLIENT)
+
 public class PaperEditScreen extends Screen {
     public static final ResourceLocation PAPER_LOCATION = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/paper.png");
     private String text;
@@ -259,16 +257,16 @@ public class PaperEditScreen extends Screen {
         };
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     record DisplayCache(LineInfo[] lines) {
         static DisplayCache EMPTY = new DisplayCache(new LineInfo[0]);
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     record LineInfo(Component text, int y, float scale, boolean centered) {
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     record MarkdownFormat(Component component, boolean centered) {
     }
 }

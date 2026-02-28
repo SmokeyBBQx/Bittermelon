@@ -7,12 +7,10 @@ import com.site21.bittermelon.common.systems.personnel.privilege.networking.SetP
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
-@OnlyIn(Dist.CLIENT)
+
 public class PrivilegeGroupEditorWidget extends PrivilegeEditorWidget {
     private final PrivilegeGroup group;
 

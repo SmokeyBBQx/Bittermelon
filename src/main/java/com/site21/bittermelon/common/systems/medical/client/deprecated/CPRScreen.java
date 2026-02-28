@@ -14,7 +14,7 @@
 //import org.jetbrains.annotations.NotNull;
 //import org.lwjgl.glfw.GLFW;
 //
-//@OnlyIn(Dist.CLIENT)
+//
 //public class CPRScreen extends Screen {
 //    private static final int CIRCLE_RADIUS = 40;
 //    // TODO: New indicator texture

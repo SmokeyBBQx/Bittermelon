@@ -13,11 +13,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-@OnlyIn(Dist.CLIENT)
+
 public class SlidingDoorRenderer implements BlockEntityRenderer<SlidingDoorBlockEntity> {
 
     public SlidingDoorRenderer(BlockEntityRendererProvider.Context context) {}

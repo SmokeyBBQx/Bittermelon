@@ -18,7 +18,7 @@
 //
 //import static com.site21.bittermelon.common.systems.medical.client.HealthScreen.openHealthScreen;
 //
-//@OnlyIn(Dist.CLIENT)
+//
 //public class IncisionMinigame extends MedicalMinigame {
 //    private final List<Point> drawnPoints = new ArrayList<>();
 //    private int lineX;

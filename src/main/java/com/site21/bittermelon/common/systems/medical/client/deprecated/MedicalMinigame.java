@@ -15,7 +15,7 @@
 //import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 //import org.jetbrains.annotations.NotNull;
 //
-//@OnlyIn(Dist.CLIENT)
+//
 //public abstract class MedicalMinigame extends Screen {
 //    protected final ItemStack item;
 //    protected final CompartmentInstance compartment;

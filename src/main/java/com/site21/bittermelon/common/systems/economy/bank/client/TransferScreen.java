@@ -8,13 +8,11 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
 
-@OnlyIn(Dist.CLIENT)
+
 public class TransferScreen extends Screen {
     private final AccountScreen parent;
     private final Account account;

@@ -11,8 +11,6 @@ import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.SignText;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
@@ -20,7 +18,7 @@ import org.joml.Vector3f;
 import javax.annotation.Nullable;
 import java.util.stream.IntStream;
 
-@OnlyIn(Dist.CLIENT)
+
 public class WallWritingScreen extends Screen {
     private static final int MAX_TEXT_LINE_WIDTH = 90;
     private static final int TEXT_LINE_HEIGHT = 10;

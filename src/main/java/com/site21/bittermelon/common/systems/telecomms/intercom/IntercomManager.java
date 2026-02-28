@@ -11,8 +11,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +32,7 @@ public class IntercomManager extends SavedData {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     private static IntercomManager getClient() {
         if (clientInstance == null) {
             clientInstance = new IntercomManager();
@@ -42,7 +40,7 @@ public class IntercomManager extends SavedData {
         return clientInstance;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     public static void clearClientData() {
         if (clientInstance != null) {
             clientInstance.intercomIDs.clear();
@@ -111,17 +109,17 @@ public class IntercomManager extends SavedData {
         return intercomIDs;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     public void addIntercomFromServer(BlockPos pos, String id) {
         intercomIDs.put(pos, id);
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     public void removeIntercomFromServer(BlockPos pos) {
         intercomIDs.remove(pos);
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     public void updateAllFromServer(Map<BlockPos, String> intercoms) {
         intercomIDs.clear();
         intercomIDs.putAll(intercoms);

@@ -8,8 +8,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +35,7 @@ public class PrivilegeManager extends SavedData {
     }
 
 
-    @OnlyIn(Dist.CLIENT)
+    
     private static PrivilegeManager getClient() {
         if (clientInstance == null) {
             clientInstance = new PrivilegeManager();
@@ -45,7 +43,7 @@ public class PrivilegeManager extends SavedData {
         return clientInstance;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     public static void clearClientData() {
         if (clientInstance != null) {
             clientInstance.privilegeGroups.clear();
@@ -101,7 +99,7 @@ public class PrivilegeManager extends SavedData {
         return privileges.contains(privilege) || privilegeGroups.containsKey(privilege);
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     public void addPrivilegeFromServer(String privilege) {
         privileges.add(privilege);
     }

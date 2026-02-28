@@ -15,13 +15,11 @@ import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.client.renderer.blockentity.SignRenderer.getDarkColor;
 
-@OnlyIn(Dist.CLIENT)
+
 public class WallWritingRenderer implements BlockEntityRenderer<WallWritingBlockEntity> {
     private static final float TEXT_SCALE = 0.010416667f;
     private final Font font;

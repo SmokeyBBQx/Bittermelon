@@ -16,7 +16,7 @@
 //import java.util.List;
 //import java.util.Random;
 //
-//@OnlyIn(Dist.CLIENT)
+//
 //public class CauteryMinigame extends MedicalMinigame {
 //    private final List<BleedPoint> bleedPoints = new ArrayList<>();
 //    private final List<BleedPoint> clampedPoints = new ArrayList<>();

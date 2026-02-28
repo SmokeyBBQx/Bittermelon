@@ -22,13 +22,11 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.common.systems.character.skin.SkinUtil.getAbstractClientPlayer;
 
-@OnlyIn(Dist.CLIENT)
+
 public class CharacterWidget extends AbstractWidget {
     private static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/character_box");
     private static final ResourceLocation BACKGROUND_HOVERED = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/character_box_hovered");

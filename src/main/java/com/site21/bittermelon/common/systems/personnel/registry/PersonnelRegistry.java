@@ -8,8 +8,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +34,7 @@ public class PersonnelRegistry extends SavedData {
         return Objects.requireNonNull(server.getLevel(Level.OVERWORLD)).getDataStorage().computeIfAbsent(TYPE);
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     private static PersonnelRegistry getClient() {
         if (clientInstance == null) {
             clientInstance = new PersonnelRegistry();
@@ -44,7 +42,7 @@ public class PersonnelRegistry extends SavedData {
         return clientInstance;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     public static void clearClientData() {
         if (clientInstance != null) {
             clientInstance.personnelEntries.clear();
@@ -103,7 +101,7 @@ public class PersonnelRegistry extends SavedData {
         setDirty();
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     public void addEntryFromServer(PersonnelEntry entry) {
         personnelEntries.put(entry.getId(), entry);
     }

@@ -9,8 +9,6 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 public class PortButton extends AbstractWidget {
@@ -61,7 +59,7 @@ public class PortButton extends AbstractWidget {
         onPress.onPress(this);
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     public interface OnPress {
         void onPress(PortButton button);
     }

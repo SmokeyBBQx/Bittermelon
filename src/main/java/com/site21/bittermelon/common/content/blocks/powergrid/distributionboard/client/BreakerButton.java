@@ -9,8 +9,6 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.neoforge.BitterSounds.BREAKER_SWITCH;
@@ -76,7 +74,7 @@ public class BreakerButton extends AbstractWidget {
         onPress.onPress(this);
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     public interface OnPress {
         void onPress(BreakerButton button);
     }

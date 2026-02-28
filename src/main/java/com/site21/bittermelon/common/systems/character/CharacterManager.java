@@ -9,8 +9,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +38,7 @@ public class CharacterManager extends SavedData {
         return server.getLevel(Level.OVERWORLD).getDataStorage().computeIfAbsent(TYPE);
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     private static CharacterManager getClient() {
         if (clientInstance == null) {
             clientInstance = new CharacterManager();
@@ -48,7 +46,7 @@ public class CharacterManager extends SavedData {
         return clientInstance;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    
     public static void clearClientData() {
         if (clientInstance != null) {
             clientInstance.characters.clear();

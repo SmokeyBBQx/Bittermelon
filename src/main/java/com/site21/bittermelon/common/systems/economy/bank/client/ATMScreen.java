@@ -1,22 +1,20 @@
 package com.site21.bittermelon.common.systems.economy.bank.client;
 
-import com.site21.bittermelon.common.systems.personnel.registry.PersonnelEntry;
 import com.site21.bittermelon.common.systems.economy.bank.Account;
 import com.site21.bittermelon.common.systems.economy.bank.AccountRegistry;
 import com.site21.bittermelon.common.systems.economy.bank.client.list.AccountListWidget;
 import com.site21.bittermelon.common.systems.economy.bank.client.list.AccountUserEntry;
+import com.site21.bittermelon.common.systems.personnel.registry.PersonnelEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-@OnlyIn(Dist.CLIENT)
+
 public class ATMScreen extends Screen {
     private final PersonnelEntry user;
     private final List<Account> accounts;

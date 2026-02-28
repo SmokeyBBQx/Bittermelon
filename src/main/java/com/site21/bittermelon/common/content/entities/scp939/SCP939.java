@@ -46,7 +46,6 @@ import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.DynamicGameEventListener;
-import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
@@ -97,8 +96,6 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
         vibrationData = new BitterVibrationSystem.Data();
         dynamicGameEventListener = new DynamicGameEventListener<>(new BitterVibrationSystem.Listener(this));
         angerManagement = new BitterAngerManagement(this::canTargetEntity, Collections.emptyList());
-
-        initializePathfinding();
     }
 
     @Override
@@ -124,16 +121,6 @@ public class SCP939 extends BitterMob<SCP939> implements Socializable, BitterVib
                 .add(Attributes.MAX_HEALTH, 150.0)
                 .add(Attributes.ATTACK_KNOCKBACK, 1.5)
                 .add(Attributes.ATTACK_DAMAGE, 30.0);
-    }
-
-    private void initializePathfinding() {
-        this.getNavigation().setCanFloat(true);
-        this.setPathfindingMalus(PathType.UNPASSABLE_RAIL, 0.0F);
-        this.setPathfindingMalus(PathType.DAMAGE_OTHER, 8.0F);
-        this.setPathfindingMalus(PathType.POWDER_SNOW, 8.0F);
-        this.setPathfindingMalus(PathType.LAVA, 8.0F);
-        this.setPathfindingMalus(PathType.DAMAGE_FIRE, 0.0F);
-        this.setPathfindingMalus(PathType.DANGER_FIRE, 0.0F);
     }
 
     @Override

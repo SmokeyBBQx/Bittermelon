@@ -7,8 +7,6 @@ import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.StringRepresentable;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -83,7 +81,7 @@ public class PlayerInfo {
          * @return The corresponding Minecraft PlayerSkin.Model enum.
          */
         @Contract(pure = true)
-        @OnlyIn(Dist.CLIENT)
+        
         public PlayerSkin.@NotNull Model toMinecraftModel() {
             return PlayerSkin.Model.byName(this.id);
         }
@@ -94,7 +92,7 @@ public class PlayerInfo {
          * @return The corresponding SkinModel enum.
          */
         @Contract(pure = true)
-        @OnlyIn(Dist.CLIENT)
+        
         public static SkinModel fromMinecraftModel(PlayerSkin.@NotNull Model minecraftModel) {
             return byName(minecraftModel.id());
         }

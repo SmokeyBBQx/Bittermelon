@@ -4,14 +4,12 @@ import com.site21.bittermelon.common.content.blocks.electronics.personneltermina
 import com.site21.bittermelon.common.systems.personnel.privilege.PrivilegeGroup;
 import com.site21.bittermelon.common.systems.personnel.privilege.networking.RemovePrivilegeGroup;
 import net.minecraft.client.Minecraft;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-@OnlyIn(Dist.CLIENT)
+
 public class PrivilegeGroupListWidget extends DeletableListWidget<PrivilegeGroupListWidget.Entry> {
     private final PrivilegeEditorScreen screen;
 

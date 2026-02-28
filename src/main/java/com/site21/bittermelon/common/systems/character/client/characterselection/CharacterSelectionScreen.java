@@ -11,8 +11,6 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,7 +18,7 @@ import java.util.List;
 
 import static net.minecraft.world.effect.MobEffects.NAUSEA;
 
-@OnlyIn(Dist.CLIENT)
+
 public class CharacterSelectionScreen extends Screen {
     private static final int WIDGET_SIZE = 100;
     private static final int WIDGET_SPACING = 2;

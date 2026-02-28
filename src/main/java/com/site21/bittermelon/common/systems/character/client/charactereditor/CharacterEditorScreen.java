@@ -21,8 +21,6 @@ import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
@@ -31,7 +29,7 @@ import org.joml.Vector3f;
 import static com.site21.bittermelon.common.systems.character.skin.SkinUtil.getAbstractClientPlayer;
 import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventory;
 
-@OnlyIn(Dist.CLIENT)
+
 public class CharacterEditorScreen extends Screen {
     private static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/character_background");
     private static final int MARGIN = 15;

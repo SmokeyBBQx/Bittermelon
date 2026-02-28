@@ -21,6 +21,7 @@ import net.minecraft.util.TriState;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
@@ -29,7 +30,7 @@ import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
 
-@EventBusSubscriber(modid = Bittermelon.MOD_ID)
+@EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class ClientEvents {
 
     @SubscribeEvent

@@ -9,11 +9,9 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-@OnlyIn(Dist.CLIENT)
+
 public class TaserProjectileRenderer extends EntityRenderer<TaserProjectile, TaserProjectileRenderState> {
     public TaserProjectileRenderer(EntityRendererProvider.Context context) {
         super(context);

@@ -13,15 +13,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.CORD_CONNECTION;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.PORT_ID;
 
-@OnlyIn(Dist.CLIENT)
+
 public class WireConnectionScreen extends WiringScreen {
     private static final ResourceLocation WIRE_TERMINAL_SPRITE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "wiring/wire_terminal");
     private final InteractionHand hand;
