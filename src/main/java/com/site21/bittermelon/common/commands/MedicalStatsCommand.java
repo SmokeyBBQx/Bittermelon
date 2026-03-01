@@ -50,7 +50,7 @@ public class MedicalStatsCommand {
 
         for (CompartmentInstance compartment : medicalStats.getCompartments().values()) {
             if (compartment.getCompartment().equals(Compartments.UPPER_ARM.get())) {
-                DamageGen.makeLaceration(medicalStats, target.getRandom(), compartment, 0, 4, 1);
+                DamageGen.makeLaceration(medicalStats, target.getRandom(), compartment, 0, 4, 2);
             }
         }
 

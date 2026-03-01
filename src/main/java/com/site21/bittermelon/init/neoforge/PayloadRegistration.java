@@ -549,9 +549,9 @@ public class PayloadRegistration {
         );
 
         registrar.playBidirectional(
-                ExtractCompartment.TYPE,
-                ExtractCompartment.STREAM_CODEC,
-                ExtractCompartment::handle
+                RemoveCompartment.TYPE,
+                RemoveCompartment.STREAM_CODEC,
+                RemoveCompartment::handle
         );
 
         registrar.playToServer(

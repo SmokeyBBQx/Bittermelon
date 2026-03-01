@@ -4,7 +4,7 @@ import com.site21.bittermelon.common.systems.medical.client.CompartmentWidget;
 import com.site21.bittermelon.common.systems.medical.client.HealthScreen;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
-import com.site21.bittermelon.common.systems.medical.networking.ExtractCompartment;
+import com.site21.bittermelon.common.systems.medical.networking.RemoveCompartment;
 import com.site21.bittermelon.init.custom.Compartments;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.client.Minecraft;
@@ -108,11 +108,11 @@ public class SuturingWidget extends InteractionWidget {
         CompartmentInstance hoveredCompartment = screen.getMedicalStats().getCompartment(hoveredCompartmentId);
         if (!(hoveredCompartment.getCompartment().equals(Compartments.CUT.get()))) return false;
 
-        ClientPacketDistributor.sendToServer(new ExtractCompartment(
+        ClientPacketDistributor.sendToServer(new RemoveCompartment(
                 screen.getEntity().getUUID(),
                 compartmentWidget.getCompartment().getId(),
-                hoveredCompartmentId,
-                compartmentWidget.getLayerIndex()));
+                hoveredCompartmentId
+        ));
 
         makeSound(BitterSounds.SCALPEL.value());
 

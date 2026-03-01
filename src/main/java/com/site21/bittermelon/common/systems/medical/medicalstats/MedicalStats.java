@@ -3,6 +3,7 @@ package com.site21.bittermelon.common.systems.medical.medicalstats;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.site21.bittermelon.common.systems.medical.anatomy.Anatomy;
+import com.site21.bittermelon.common.systems.medical.anatomy.AnatomyModel;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
 import com.site21.bittermelon.common.systems.medical.component.MedicalTicker;
@@ -35,7 +36,7 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
     public static final StreamCodec<RegistryFriendlyByteBuf, MedicalStats> STREAM_CODEC;
     public static final MedicalStats EMPTY = new MedicalStats(Anatomies.HUMAN, 0,
             Collections.emptyList(), UUID.fromString("00000000-0000-0000-0000-000000000000"),
-            new EnumMap<>(MedicalAttribute.class),
+            new EnumMap<>(MedicalAttribute.class), AnatomyModel.EMPTY,
             new PatchedDataComponentMap(DataComponentMap.EMPTY));
 
     private final Holder<Anatomy> anatomy;
@@ -44,11 +45,12 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
     private final UUID mainCompartmentId;
     private final EnumMap<MedicalAttribute, MedicalAttributeInstance> medicalAttributes;
     private final Map<Holder<Attribute>, Double> defaultEntityAttributes;
+    private final AnatomyModel anatomyModel;
     private final PatchedDataComponentMap components;
 
     public MedicalStats(Holder<Anatomy> anatomy, int version, @NotNull List<CompartmentInstance> compartments,
-                        UUID mainCompartmentId, Map<MedicalAttribute,
-                    MedicalAttributeInstance> attributes, PatchedDataComponentMap components) {
+                        UUID mainCompartmentId, Map<MedicalAttribute, MedicalAttributeInstance> attributes,
+                        AnatomyModel anatomyModel, PatchedDataComponentMap components) {
         this.anatomy = anatomy;
         this.version = version;
         this.mainCompartmentId = mainCompartmentId;
@@ -59,13 +61,14 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
         this.medicalAttributes = new EnumMap<>(MedicalAttribute.class);
         medicalAttributes.putAll(attributes);
         this.defaultEntityAttributes = new HashMap<>();
+        this.anatomyModel = anatomyModel;
         this.components = components;
     }
 
     public MedicalStats(Holder<Anatomy> anatomy, int version, List<CompartmentInstance> compartments,
-                        UUID mainCompartmentId, Map<MedicalAttribute,
-                    MedicalAttributeInstance> attributes, DataComponentPatch components) {
-        this(anatomy, version, compartments, mainCompartmentId, attributes,
+                        UUID mainCompartmentId, Map<MedicalAttribute, MedicalAttributeInstance> attributes,
+                        AnatomyModel anatomyModel, DataComponentPatch components) {
+        this(anatomy, version, compartments, mainCompartmentId, attributes, anatomyModel,
                 PatchedDataComponentMap.fromPatch(anatomy.value().components(), components));
     }
 
@@ -274,6 +277,10 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
         return anatomy;
     }
 
+    public AnatomyModel getAnatomyModel() {
+        return anatomyModel;
+    }
+
     @Override
     public <T> @Nullable T set(@NotNull DataComponentType<T> component, @Nullable T value) {
         return components.set(component, value);
@@ -308,6 +315,7 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
                                 stats -> new ArrayList<>(stats.compartments.values())),
                         UUIDUtil.CODEC.fieldOf("mainCompartmentID").forGetter(MedicalStats::getMainCompartmentId),
                         Codec.unboundedMap(MedicalAttribute.CODEC, MedicalAttributeInstance.CODEC).fieldOf("attributes").forGetter(MedicalStats::getAttributes),
+                        AnatomyModel.CODEC.fieldOf("anatomyModel").forGetter(MedicalStats::getAnatomyModel),
                         DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(stats -> stats.components.asPatch())
                 ).apply(instance, MedicalStats::new)
         );
@@ -327,6 +335,8 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
                         MedicalAttributeInstance.STREAM_CODEC
                 ),
                 MedicalStats::getAttributes,
+                AnatomyModel.STREAM_CODEC,
+                MedicalStats::getAnatomyModel,
                 DataComponentPatch.STREAM_CODEC,
                 stats -> stats.components.asPatch(),
                 MedicalStats::new

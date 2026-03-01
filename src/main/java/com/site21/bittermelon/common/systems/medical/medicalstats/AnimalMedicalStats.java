@@ -1,6 +1,7 @@
 package com.site21.bittermelon.common.systems.medical.medicalstats;
 
 import com.site21.bittermelon.common.systems.medical.anatomy.Anatomy;
+import com.site21.bittermelon.common.systems.medical.anatomy.AnatomyModel;
 import com.site21.bittermelon.common.systems.medical.blood.BloodType;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
@@ -24,8 +25,10 @@ public class AnimalMedicalStats extends MedicalStats {
     private static final float HYPOXIA_DAMAGE = 0.01f;
     private static final float ASPHYXIATION_RATE = 0.05f;
 
-    public AnimalMedicalStats(Holder<Anatomy> anatomy, int version, @NotNull List<CompartmentInstance> compartments, UUID mainCompartmentId, Map<MedicalAttribute, MedicalAttributeInstance> attributes, PatchedDataComponentMap components) {
-        super(anatomy, version, compartments, mainCompartmentId, attributes, components);
+    public AnimalMedicalStats(Holder<Anatomy> anatomy, int version, @NotNull List<CompartmentInstance> compartments,
+                              UUID mainCompartmentId, Map<MedicalAttribute, MedicalAttributeInstance> attributes,
+                              AnatomyModel anatomyModel, PatchedDataComponentMap components) {
+        super(anatomy, version, compartments, mainCompartmentId, attributes, anatomyModel, components);
     }
 
 //        updateCardiopulmonary();

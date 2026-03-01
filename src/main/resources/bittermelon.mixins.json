@@ -15,6 +15,7 @@
     "ChatScreenMixin",
     "ContextualInfoExtender",
     "CrosshairMixin",
+    "EntityModelMixin",
     "GameRendererMixin",
     "GuiMixin",
     "HumanoidModelMixin",

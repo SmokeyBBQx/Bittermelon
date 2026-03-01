@@ -8,7 +8,7 @@ import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerSlot
 import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.common.systems.medical.networking.AddAndInsertCompartment;
-import com.site21.bittermelon.common.systems.medical.networking.ExtractCompartment;
+import com.site21.bittermelon.common.systems.medical.networking.RemoveCompartment;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -357,8 +357,8 @@ public class CompartmentWidget extends MovableResizableWidget {
         CompartmentInstance hoveredCompartment = screen.getMedicalStats().getCompartment(getHoveredCompartment((int) mouseX, (int) mouseY));
         if (hoveredCompartment != null && hoveredCompartment.getCompartment().canExtract(hoveredCompartment, screen.getMedicalStats())) {
             if (button == 0) {
-                ClientPacketDistributor.sendToServer(new ExtractCompartment(screen.getEntity().getUUID(),
-                        compartment.getId(), hoveredCompartment.getId(), layerIndex));
+                ClientPacketDistributor.sendToServer(new RemoveCompartment(screen.getEntity().getUUID(),
+                        compartment.getId(), hoveredCompartment.getId()));
                 screen.setHeldCompartment(hoveredCompartment);
                 return true;
             } else {

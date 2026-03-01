@@ -1,5 +1,6 @@
 package com.site21.bittermelon.common.systems.medical.anatomy.factory;
 
+import com.site21.bittermelon.common.systems.medical.anatomy.AnatomyModel;
 import com.site21.bittermelon.common.systems.medical.compartment.Compartment;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.medicalstats.AnimalMedicalStats;
@@ -26,11 +27,15 @@ public class HumanFactory implements AnatomyFactory {
         compartments = new ArrayList<>();
         wholeBody = addCompartment(WHOLE_BODY);
 //        var debugLiver = addCompartment(DEBUG_COMPARTMENT, wholeBody, 0, 0, 0);
+        AnatomyModel anatomyModel = new AnatomyModel();
+
         CompartmentInstance leftUpperArm = addCompartment(UPPER_ARM, wholeBody, 11, 7, 0);
         leftUpperArm.set(DISPLAY_NAME, "Left Upper Arm");
+        anatomyModel.addLimb("left_arm", leftUpperArm.getId());
 
         CompartmentInstance rightUpperArm = addCompartment(UPPER_ARM, wholeBody, 0, 7, 0);
         rightUpperArm.set(DISPLAY_NAME, "Right Upper Arm");
+        anatomyModel.addLimb("right_arm", rightUpperArm.getId());
 
         CompartmentInstance leftForearm = addCompartment(FOREARM, wholeBody, 11, 12, 0);
         leftForearm.set(DISPLAY_NAME, "Left Forearm");
@@ -48,6 +53,8 @@ public class HumanFactory implements AnatomyFactory {
         addCompartment(LIVER, torso, 0, 0, 1, 0);
         addCompartment(STOMACH, torso, 0, 0, 0, 0);
 
+        anatomyModel.addLimb("right_leg", null);
+
         CompartmentInstance gallBladder = GALLBLADDER.get().toInstance();
 
 //        addCompartment(gallBladder, wholeBody, 10, 1, 0);
@@ -57,8 +64,10 @@ public class HumanFactory implements AnatomyFactory {
 //        buildAbdomen();
 //        addCompartment(SCALPEL, wholeBody, 0).getVisualData().x(50).y(60);
 
+
+
         MedicalStats stats = new AnimalMedicalStats(Anatomies.HUMAN, version, compartments, wholeBody.getId(),
-                new HashMap<>(), new PatchedDataComponentMap(PatchedDataComponentMap.EMPTY));
+                new HashMap<>(), anatomyModel, new PatchedDataComponentMap(PatchedDataComponentMap.EMPTY));
 
 //        stats.set(BitterDataComponents.BLOOD_INFO, new BloodInfo(bloodType));
 

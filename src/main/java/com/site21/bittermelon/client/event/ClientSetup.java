@@ -1,5 +1,6 @@
 package com.site21.bittermelon.client.event;
 
+import com.google.common.reflect.TypeToken;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.client.particles.PlasticParticle;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.client.PhoneCordRenderer;
@@ -27,8 +28,8 @@ import com.site21.bittermelon.common.systems.component.screwdriver.ScrewdriverUs
 import com.site21.bittermelon.common.systems.component.temperature.HeatDecorator;
 import com.site21.bittermelon.common.systems.fluid.ClientSubstanceFluid;
 import com.site21.bittermelon.common.systems.medical.networking.AddAndInsertCompartment;
-import com.site21.bittermelon.common.systems.medical.networking.ExtractCompartment;
 import com.site21.bittermelon.common.systems.medical.networking.InsertCompartment;
+import com.site21.bittermelon.common.systems.medical.networking.RemoveCompartment;
 import com.site21.bittermelon.common.systems.medical.networking.UpdateCompartments;
 import com.site21.bittermelon.common.systems.personnel.privilege.networking.*;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.AddPersonnelEntry;
@@ -41,12 +42,15 @@ import com.site21.bittermelon.init.neoforge.BitterItems;
 import com.site21.bittermelon.init.neoforge.BitterParticles;
 import com.site21.bittermelon.networking.client.ClientPayloadHandler;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -57,6 +61,9 @@ import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlers
 import net.neoforged.neoforge.client.renderstate.RegisterRenderStateModifiersEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.MEDICAL_STATS;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
 import static com.site21.bittermelon.init.neoforge.BitterEntities.*;
 import static com.site21.bittermelon.init.neoforge.BitterFluidTypes.SUBSTANCE_FLUID_TYPE;
@@ -65,6 +72,10 @@ import static com.site21.bittermelon.init.neoforge.BitterFluidTypes.SUBSTANCE_FL
 public class ClientSetup {
     public static final ContextKey<Float> ENTITY_WIDTH = new ContextKey<>(
             Bittermelon.resource("entity_width")
+    );
+
+    public static final ContextKey<Map<String, Boolean>> LIMB_VISIBILITY = new ContextKey<>(
+            Bittermelon.resource("limb_visibility")
     );
 
     @SubscribeEvent
@@ -101,6 +112,18 @@ public class ClientSetup {
 
                     float entityWidth = carriedEntity.getBbWidth();
                     state.setRenderData(ENTITY_WIDTH, entityWidth);
+                }
+        );
+
+        event.registerEntityModifier(
+                new TypeToken<LivingEntityRenderer<LivingEntity, LivingEntityRenderState, ?>>() {},
+                (entity, state) -> {
+                    Map<String, Boolean> limbVisibility = null;
+                    if (entity.hasData(MEDICAL_STATS)) {
+                        limbVisibility = entity.getData(MEDICAL_STATS).getAnatomyModel().getLimbVisibility();
+                    }
+
+                    state.setRenderData(LIMB_VISIBILITY, limbVisibility);
                 }
         );
     }
@@ -272,8 +295,8 @@ public class ClientSetup {
         );
 
         event.register(
-                ExtractCompartment.TYPE,
-                ExtractCompartment::handle
+                RemoveCompartment.TYPE,
+                RemoveCompartment::handle
         );
 
         event.register(

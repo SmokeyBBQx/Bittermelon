@@ -107,6 +107,29 @@ public class CompartmentUtil {
     }
 
     /**
+     * Insert a compartment into a parent compartment across multiple layers at specified position
+     * @param parent Parent CompartmentInstance
+     * @param child Child CompartmentInstance to insert
+     * @param layer Starting layer index to insert into
+     * @param x X position in the layer grid
+     * @param y Y position in the layer grid
+     * @param z Z position in the layer grid
+     * @param depth Number of layers to attempt insertion into, starting from the specified layer
+     * @return true if insertion was successful in at least one layer, false otherwise
+     */
+    public static boolean insertCompartment(@NotNull CompartmentInstance parent, @NotNull CompartmentInstance child,
+                                            int layer, int x, int y, int z, int depth) {
+        boolean anyInserted = false;
+        for (int i = layer; i < layer + depth; i++) {
+            if (insertCompartment(parent, child, i, x, y, z)) {
+                anyInserted = true;
+            }
+        }
+
+        return anyInserted;
+    }
+
+    /**
      * Extract a compartment from a parent compartment at specified layer
      * @param parent Parent CompartmentInstance
      * @param child Child CompartmentInstance to extract
@@ -146,6 +169,18 @@ public class CompartmentUtil {
         targetLayer.removeInstance(childId);
         updateLayer(parent, layer, targetLayer);
         return true;
+    }
+
+    /**
+     * Remove a compartment from a parent compartment across all layers by child ID
+     * @param parent Parent CompartmentInstance
+     * @param childId UUID of Child CompartmentInstance to remove
+     */
+    public static void removeCompartment(@NotNull CompartmentInstance parent, @NotNull UUID childId) {
+        List<LayerData> layers = getLayers(parent);
+        for (int i = 0; i < layers.size(); i++) {
+            extractCompartment(parent, childId, i);
+        }
     }
 
     /**
