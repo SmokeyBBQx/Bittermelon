@@ -13,6 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * To be moved into anatomy. There should only be one MedicalStats class.
+ */
+@Deprecated
 public class AnimalMedicalStats extends MedicalStats {
     private BloodType bloodType = BloodType.A_PLUS;
     private float bloodVolume = 100;

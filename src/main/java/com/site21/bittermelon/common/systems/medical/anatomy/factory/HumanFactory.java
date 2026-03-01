@@ -54,6 +54,7 @@ public class HumanFactory implements AnatomyFactory {
         addCompartment(STOMACH, torso, 0, 0, 0, 0);
 
         anatomyModel.addLimb("right_leg", null);
+        anatomyModel.addLimb("left_leg", null);
 
         CompartmentInstance gallBladder = GALLBLADDER.get().toInstance();
 

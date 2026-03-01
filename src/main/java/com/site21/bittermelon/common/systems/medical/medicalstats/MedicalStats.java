@@ -309,14 +309,28 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
     static {
         CODEC = RecordCodecBuilder.create(
                 instance -> instance.group(
-                        Anatomy.CODEC.fieldOf("anatomy").forGetter(MedicalStats::getAnatomy),
-                        Codec.INT.fieldOf("version").orElse(1).forGetter(MedicalStats::getVersion),
-                        Codec.list(CompartmentInstance.CODEC).fieldOf("compartments").forGetter(
-                                stats -> new ArrayList<>(stats.compartments.values())),
-                        UUIDUtil.CODEC.fieldOf("mainCompartmentID").forGetter(MedicalStats::getMainCompartmentId),
-                        Codec.unboundedMap(MedicalAttribute.CODEC, MedicalAttributeInstance.CODEC).fieldOf("attributes").forGetter(MedicalStats::getAttributes),
-                        AnatomyModel.CODEC.fieldOf("anatomyModel").forGetter(MedicalStats::getAnatomyModel),
-                        DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(stats -> stats.components.asPatch())
+                        Anatomy.CODEC
+                                .fieldOf("anatomy")
+                                .forGetter(MedicalStats::getAnatomy),
+                        Codec.INT
+                                .fieldOf("version")
+                                .orElse(1)
+                                .forGetter(MedicalStats::getVersion),
+                        Codec.list(CompartmentInstance.CODEC)
+                                .fieldOf("compartments")
+                                .forGetter(stats -> new ArrayList<>(stats.compartments.values())),
+                        UUIDUtil.CODEC
+                                .fieldOf("mainCompartmentID")
+                                .forGetter(MedicalStats::getMainCompartmentId),
+                        Codec.unboundedMap(MedicalAttribute.CODEC, MedicalAttributeInstance.CODEC)
+                                .fieldOf("attributes")
+                                .forGetter(MedicalStats::getAttributes),
+                        AnatomyModel.CODEC
+                                .fieldOf("anatomyModel")
+                                .forGetter(MedicalStats::getAnatomyModel),
+                        DataComponentPatch.CODEC
+                                .optionalFieldOf("components", DataComponentPatch.EMPTY)
+                                .forGetter(stats -> stats.components.asPatch())
                 ).apply(instance, MedicalStats::new)
         );
 
