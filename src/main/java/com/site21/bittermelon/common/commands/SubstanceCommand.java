@@ -3,10 +3,10 @@ package com.site21.bittermelon.common.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.site21.bittermelon.common.systems.atmosphere.AtmosHandler;
-import com.site21.bittermelon.common.systems.atmosphere.AtmosInstance;
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.common.content.items.substance.SubstanceContainerItem;
+import com.site21.bittermelon.common.systems.atmosphere.AtmosHandler;
+import com.site21.bittermelon.common.systems.atmosphere.AtmosInstance;
 import com.site21.bittermelon.common.systems.fluid.SubstanceFluidBlockEntity;
 import com.site21.bittermelon.common.systems.substance.Substance;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
@@ -122,7 +122,7 @@ public class SubstanceCommand {
             return 0;
         }
 
-        fluidBlockEntity.setTemperature(amount);
+//        fluidBlockEntity.setTemperature(amount);
         source.sendSuccess(() -> Component.literal("Temperature: " + fluidBlockEntity.getTemperature()), true);
         return 1;
     }

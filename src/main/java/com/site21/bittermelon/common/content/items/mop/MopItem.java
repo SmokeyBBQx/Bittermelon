@@ -69,7 +69,7 @@ public class MopItem extends FluidContainerItem {
         int useDuration = 10;
 
         if (entity.level().getBlockEntity(targetPos) instanceof FluidBlockEntity fluid) {
-            useDuration = (int) Math.min(getTransferRate(stack), fluid.getTotalVolume());
+//            useDuration = (int) Math.min(getTransferRate(stack), fluid.getTotalVolume());
         } else if (!isContainerEmpty(stack)) {
             useDuration = (int) getLimitedTransferRate(stack);
         }

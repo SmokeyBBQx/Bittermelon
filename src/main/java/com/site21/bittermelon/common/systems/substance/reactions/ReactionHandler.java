@@ -63,15 +63,16 @@ public class ReactionHandler {
         handleReaction(reaction, relatedStacks, getConcentrations(relatedStacks), container);
     }
 
-    private @NotNull Map<Substance, Float> getConcentrations(@NotNull List<SubstanceStack> mixture) {
-        Map<Substance, Float> concentrations = new HashMap<>();
+    private @NotNull Map<Substance, Integer> getConcentrations(@NotNull List<SubstanceStack> mixture) {
+        Map<Substance, Integer> concentrations = new HashMap<>();
         for (SubstanceStack stack : mixture) {
             concentrations.put(stack.getSubstance(), stack.getAmount());
         }
         return concentrations;
     }
 
-    public void handleReaction(@NotNull Reaction reaction, @NotNull List<SubstanceStack> mixture, Map<Substance, Float> concentrations, @NotNull ReactionContainer container) {
+    public void handleReaction(@NotNull Reaction reaction, @NotNull List<SubstanceStack> mixture,
+                               Map<Substance, Integer> concentrations, @NotNull ReactionContainer container) {
         double reactionRate = reaction.calculateReactionRate(concentrations, container.getTemperature());
 
         // Calculate the limiting factor based on available reactants
@@ -89,7 +90,7 @@ public class ReactionHandler {
         // Consume reactants
         for (SubstanceStack stack : mixture) {
             int proportion = reaction.getReactantProportion(stack.getSubstance());
-            stack.modifyAmount((float) (-proportion * reactionRate));
+            stack.modifyAmount((int) (-proportion * reactionRate));
         }
 
         // Produce products
@@ -97,7 +98,7 @@ public class ReactionHandler {
             Substance product = entry.getKey();
             int proportion = entry.getValue();
 
-            SubstanceStack productStack = new SubstanceStack(product, (float) (proportion * reactionRate));
+            SubstanceStack productStack = new SubstanceStack(product, (int) (proportion * reactionRate));
 
             if (productStack.getAmount() > 0) {
                 container.updateSubstance(productStack);

@@ -37,9 +37,9 @@ import java.util.UUID;
 public class BitterDataComponents {
     public static final DeferredRegister.DataComponents DATA_COMPONENTS = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, Bittermelon.MOD_ID);
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> VOLUME = DATA_COMPONENTS.registerComponentType(
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> VOLUME = DATA_COMPONENTS.registerComponentType(
             "volume",
-            builder -> builder.persistent(Codec.FLOAT).networkSynchronized(ByteBufCodecs.FLOAT)
+            builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT)
     );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<SubstanceContents>> SUBSTANCE_CONTENTS = DATA_COMPONENTS.registerComponentType(

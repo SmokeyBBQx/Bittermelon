@@ -13,10 +13,10 @@ public final class SubstanceUtils {
      * @param substances the list of SubstanceStacks
      * @return the total amount of substance in moles
      */
-    public static float getTotalAmount(@NotNull List<SubstanceStack> substances) {
+    public static int getTotalAmount(@NotNull List<SubstanceStack> substances) {
         return substances.stream()
                 .map(SubstanceStack::getVolume)
-                .reduce(0f, Float::sum);
+                .reduce(0, Integer::sum);
     }
 
     /**

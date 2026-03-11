@@ -52,7 +52,7 @@ public class SCP109Item extends FluidContainerItem {
             stack.set(COOLDOWN, stack.getOrDefault(COOLDOWN, 20) - 1);
             if (stack.getOrDefault(CAN_SPILL, true) && stack.getOrDefault(COOLDOWN, 20) <= 0) {
                 stack.set(COOLDOWN, 20);
-                spill(stack, level, entity.blockPosition(), getMaxTransferRate(stack) * entity.getRandom().nextFloat());
+                spill(stack, level, entity.blockPosition(), getMaxTransferRate(stack) * entity.getRandom().nextInt());
                 entity.playSound(SoundEvents.WATER_AMBIENT, 0.3f, 1);
             }
         }
@@ -60,7 +60,7 @@ public class SCP109Item extends FluidContainerItem {
     }
 
     @Override
-    protected void transferSubstancesToBlock(BlockPos pos, @NotNull Level level, ItemStack stack, float volume) {
+    protected void transferSubstancesToBlock(BlockPos pos, @NotNull Level level, ItemStack stack, int volume) {
         if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluidEntity) {
             transferSubstances(stack, getTotalVolume(stack), volume,
                     (substance, amount) -> fluidEntity.updateSubstance(substance));

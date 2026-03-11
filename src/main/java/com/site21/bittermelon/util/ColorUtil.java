@@ -12,13 +12,13 @@ public final class ColorUtil {
      * @param colors A map where keys are colors (as ARGB integers) and values are their respective amounts.
      * @return The resulting mixed color as an ARGB integer.
      */
-    public static int mixColors(@NotNull Map<Integer, Float> colors) {
-        float totalAmount = 0;
-        float redSum = 0, greenSum = 0, blueSum = 0;
+    public static int mixColors(@NotNull Map<Integer, Integer> colors) {
+        int totalAmount = 0;
+        int redSum = 0, greenSum = 0, blueSum = 0;
 
-        for (Map.Entry<Integer, Float> entry : colors.entrySet()) {
+        for (Map.Entry<Integer, Integer> entry : colors.entrySet()) {
             int color = entry.getKey();
-            float amount = entry.getValue();
+            int amount = entry.getValue();
 
             totalAmount += amount;
             redSum += ((color >> 16) & 0xFF) * amount;
@@ -26,9 +26,9 @@ public final class ColorUtil {
             blueSum += (color & 0xFF) * amount;
         }
 
-        int red = Math.round(redSum / totalAmount);
-        int green = Math.round(greenSum / totalAmount);
-        int blue = Math.round(blueSum / totalAmount);
+        int red = Math.round((float) redSum / totalAmount);
+        int green = Math.round((float) greenSum / totalAmount);
+        int blue = Math.round((float) blueSum / totalAmount);
 
         return 0xFF000000 | (red << 16) | (green << 8) | blue;
     }
@@ -40,13 +40,13 @@ public final class ColorUtil {
      * @return An array containing the RGB components of the resulting mixed color.
      */
     @Contract("_ -> new")
-    public static int @NotNull [] mixColorsRGB(@NotNull Map<Integer, Float> colors) {
-        float totalAmount = 0;
-        float redSum = 0, greenSum = 0, blueSum = 0;
+    public static int @NotNull [] mixColorsRGB(@NotNull Map<Integer, Integer> colors) {
+        int totalAmount = 0;
+        int redSum = 0, greenSum = 0, blueSum = 0;
 
-        for (Map.Entry<Integer, Float> entry : colors.entrySet()) {
+        for (Map.Entry<Integer, Integer> entry : colors.entrySet()) {
             int color = entry.getKey();
-            float amount = entry.getValue();
+            int amount = entry.getValue();
 
             totalAmount += amount;
             redSum += ((color >> 16) & 0xFF) * amount;
@@ -58,9 +58,9 @@ public final class ColorUtil {
             return new int[]{0xAA, 0xD5, 0xDB}; // Default color if total amount is 0
         }
 
-        int red = Math.round(redSum / totalAmount);
-        int green = Math.round(greenSum / totalAmount);
-        int blue = Math.round(blueSum / totalAmount);
+        int red = Math.round((float) redSum / totalAmount);
+        int green = Math.round((float) greenSum / totalAmount);
+        int blue = Math.round((float) blueSum / totalAmount);
 
         return new int[]{red, green, blue};
     }

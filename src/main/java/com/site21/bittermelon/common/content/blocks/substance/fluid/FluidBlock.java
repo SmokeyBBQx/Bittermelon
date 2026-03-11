@@ -1,23 +1,20 @@
 package com.site21.bittermelon.common.content.blocks.substance.fluid;
 
 import com.google.common.collect.ImmutableMap;
-import com.site21.bittermelon.common.systems.stumble.StumbleHandler;
-import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.InsideBlockEffectApplier;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.*;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.PipeBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -96,17 +93,17 @@ public class FluidBlock extends Block implements EntityBlock {
         return FLUID_BLOCK_ENTITY.get().create(pPos, pState);
     }
 
-    @Nullable
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> blockEntityType) {
-        return level.isClientSide() ? null : (level0, state0, blockEntityType0, blockEntity) -> ((FluidBlockEntity) blockEntity).tick();
-    }
+//    @Nullable
+//    @Override
+//    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> blockEntityType) {
+//        return level.isClientSide() ? null : (level0, state0, blockEntityType0, blockEntity) -> ((FluidBlockEntity) blockEntity).tick();
+//    }
 
     @Override
     protected void neighborChanged(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Block neighborBlock, @Nullable Orientation orientation, boolean movedByPiston) {
         super.neighborChanged(state, level, pos, neighborBlock, orientation, movedByPiston);
         if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluidEntity) {
-            fluidEntity.setActive();
+//            fluidEntity.setActive();
         }
     }
 
@@ -119,18 +116,18 @@ public class FluidBlock extends Block implements EntityBlock {
     protected void entityInside(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Entity entity, @NotNull InsideBlockEffectApplier effectApplier) {
         if (level.isClientSide) return;
 
-        if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluidBlockEntity) {
-            float slipperiness = fluidBlockEntity.getSlipperiness();
-
-            if (entity instanceof LivingEntity livingEntity) {
-                if (entity.getDeltaMovement().length() > 0) {
-                    if (entity.getRandom().nextFloat() > (entity.isSprinting() ? 1 - slipperiness : 1 - slipperiness / 10)) {
-                        StumbleHandler.stumble(livingEntity);
-                        level.playSound(null, pos, BitterSounds.SLIP.value(), SoundSource.AMBIENT);
-                    }
-                }
-            }
-        }
+//        if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluidBlockEntity) {
+//            float slipperiness = fluidBlockEntity.getSlipperiness();
+//
+//            if (entity instanceof LivingEntity livingEntity) {
+//                if (entity.getDeltaMovement().length() > 0) {
+//                    if (entity.getRandom().nextFloat() > (entity.isSprinting() ? 1 - slipperiness : 1 - slipperiness / 10)) {
+//                        StumbleHandler.stumble(livingEntity);
+//                        level.playSound(null, pos, BitterSounds.SLIP.value(), SoundSource.AMBIENT);
+//                    }
+//                }
+//            }
+//        }
 
         // TODO: Implement getting chemicals on skin
     }
@@ -141,9 +138,9 @@ public class FluidBlock extends Block implements EntityBlock {
 
         if (entity == null) return friction;
 
-        if (entity.level().getBlockEntity(pos) instanceof FluidBlockEntity fluidBlockEntity) {
-            return fluidBlockEntity.getSlipperiness();
-        }
+//        if (entity.level().getBlockEntity(pos) instanceof FluidBlockEntity fluidBlockEntity) {
+//            return fluidBlockEntity.getSlipperiness();
+//        }
 
         return friction;
     }

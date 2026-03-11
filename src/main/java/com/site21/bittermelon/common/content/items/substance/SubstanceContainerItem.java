@@ -4,7 +4,6 @@ import com.site21.bittermelon.common.content.items.base.BitterItem;
 import com.site21.bittermelon.common.systems.component.SubstanceContents;
 import com.site21.bittermelon.common.systems.substance.Substance;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
-import com.site21.bittermelon.util.ColorUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -13,10 +12,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -45,11 +42,11 @@ public class SubstanceContainerItem extends BitterItem {
         return getSubstanceData(stack).substances();
     }
 
-    public float getTotalAmount(ItemStack stack) {
+    public int getTotalAmount(ItemStack stack) {
         return getSubstanceData(stack).getTotalAmount();
     }
 
-    public float getTotalVolume(ItemStack stack) {
+    public int getTotalVolume(ItemStack stack) {
         return getSubstanceData(stack).getTotalVolume();
     }
 
@@ -66,8 +63,8 @@ public class SubstanceContainerItem extends BitterItem {
         }
     }
 
-    public float getCapacity(@NotNull ItemStack stack) {
-        return stack.getOrDefault(VOLUME, 0.0f);
+    public int getCapacity(@NotNull ItemStack stack) {
+        return stack.getOrDefault(VOLUME, 0);
     }
 
     public boolean isContainerEmpty(ItemStack stack) {
@@ -81,16 +78,16 @@ public class SubstanceContainerItem extends BitterItem {
      * @param entity The LivingEntity consuming the substances.
      * @return The updated ItemStack after consumption.
      */
-    public ItemStack consumeSubstances(ItemStack stack, float consumeRate, LivingEntity entity) {
-        float totalAmount = getTotalVolume(stack);
+    public ItemStack consumeSubstances(ItemStack stack, int consumeRate, LivingEntity entity) {
+        int totalAmount = getTotalVolume(stack);
         SubstanceContents.Mutable mutableData = getMutableSubstanceData(stack);
         Iterator<SubstanceStack> iterator = mutableData.substances.iterator();
 
         while (iterator.hasNext()) {
             SubstanceStack substance = iterator.next();
 
-            float proportion = totalAmount > 0 ? substance.getVolume() / totalAmount : 0;
-            float consumeAmount = Math.min(consumeRate * proportion, substance.getVolume());
+            int proportion = totalAmount > 0 ? substance.getVolume() / totalAmount : 0;
+            int consumeAmount = Math.min(consumeRate * proportion, substance.getVolume());
 
             SubstanceStack consumedSubstance = substance.copy();
             consumedSubstance.setVolume(consumeAmount);
@@ -151,7 +148,7 @@ public class SubstanceContainerItem extends BitterItem {
 
     private Component getSensoryMessageComponent(ItemStack stack, String singleVerb, String multipleMain, String mediumPrefix, String mediumSuffix, String strongPrefix, Function<Substance, String> propertyGetter) {
         List<SubstanceStack> substances = getContents(stack);
-        float totalVolume = getSubstanceData(stack).getTotalVolume();
+        int totalVolume = getSubstanceData(stack).getTotalVolume();
 
         if (totalVolume == 0 || substances.isEmpty()) {
             return Component.empty();
@@ -173,8 +170,8 @@ public class SubstanceContainerItem extends BitterItem {
                     return property != null && !property.trim().isEmpty();
                 })
                 .map(substance -> {
-                    float volume = substance.getVolume();
-                    float percentageAmount = volume / totalVolume * 100;
+                    int volume = substance.getVolume();
+                    int percentageAmount = volume / totalVolume * 100;
                     String property = propertyGetter.apply(substance.getSubstance());
 
                     if (percentageAmount <= 35) {

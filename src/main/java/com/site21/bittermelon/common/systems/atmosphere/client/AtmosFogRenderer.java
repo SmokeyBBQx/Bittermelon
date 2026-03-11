@@ -45,7 +45,7 @@ public class AtmosFogRenderer {
         AtmosInstance instance = AtmosHandler.getAtmosInstanceAt(mc.level, mc.player.getOnPos().above());
         if (instance == null) return;
 
-        Map<Integer, Float> colors = new HashMap<>();
+        Map<Integer, Integer> colors = new HashMap<>();
 
         for (SubstanceStack stack : instance.getGases()) {
             colors.put(stack.getSubstance().getColor(), stack.getAmount());

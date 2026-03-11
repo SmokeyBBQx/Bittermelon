@@ -24,7 +24,8 @@ public class FluidBlockColor implements BlockColor {
             }
         }
         if (blockEntity instanceof FluidBlockEntity fluidBlockEntity) {
-            return fluidBlockEntity.getColor();
+//            return fluidBlockEntity.getColor();
+            return 1;
         } else {
             return -1;
         }

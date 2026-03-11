@@ -1,8 +1,8 @@
 package com.site21.bittermelon.common.content.items.substance;
 
-import com.site21.bittermelon.common.systems.component.SubstanceContents;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosHandler;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosInstance;
+import com.site21.bittermelon.common.systems.component.SubstanceContents;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import com.site21.bittermelon.util.SubstanceUtils;
 import net.minecraft.server.level.ServerLevel;
@@ -99,8 +99,8 @@ public class GasContainerItem extends SubstanceContainerItem {
 
         if (atmosInstance == null || atmosInstance.getPressure() <= 0 || getReleasePressure(stack) < atmosInstance.getPressure()) return;
 
-        float totalVolume = getTotalVolume(stack);
-        float transferVolume = ((getReleasePressure(stack) * totalVolume) / atmosInstance.getPressure()) / 100;
+        int totalVolume = getTotalVolume(stack);
+        int transferVolume = (int) (((getReleasePressure(stack) * totalVolume) / atmosInstance.getPressure()) / 100);
 
         // TODO: Propulsion when transfer volume is too high
 
@@ -111,8 +111,8 @@ public class GasContainerItem extends SubstanceContainerItem {
             SubstanceStack substance = iterator.next();
             if (substance == null) continue;
 
-            float proportion = totalVolume > 0 ? substance.getVolume() / totalVolume : 0;
-            float proportionalTransferVolume = Math.min(transferVolume * proportion, substance.getVolume());
+            int proportion = totalVolume > 0 ? substance.getVolume() / totalVolume : 0;
+            int proportionalTransferVolume = Math.min(transferVolume * proportion, substance.getVolume());
 
             if (proportionalTransferVolume > 0) {
                 SubstanceStack transferredSubstance = substance.copy();

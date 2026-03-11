@@ -112,18 +112,18 @@ public class BitterItems {
     public static final DeferredItem<FluidContainerItem> BEER_BOTTLE = ITEMS.register("beer_bottle", registryName ->
             new GlassFluidContainerItem(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
-                    .component(VOLUME, 75.0f)));
+                    .component(VOLUME, 75)));
 
     public static final DeferredItem<FluidContainerItem> WHISKEY_BOTTLE = ITEMS.register("whiskey_bottle", registryName ->
             new FluidContainerItem(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
-                    .component(VOLUME, 100.0f)));
+                    .component(VOLUME, 100)));
 
     public static final DeferredItem<SCP109Item> SCP_109 = ITEMS.register("scp_109", registryName ->
             new SCP109Item(new Item.Properties()
                     .stacksTo(1)
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
-                    .component(VOLUME, 0.0f)
+                    .component(VOLUME, 0)
                     .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("Infinite Canteen").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Euclid").withStyle(ChatFormatting.GOLD)))
                     )));
 
@@ -132,7 +132,7 @@ public class BitterItems {
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
                     .component(SMOKABLE, Smokable.DEFAULT)
                     .equippable(EquipmentSlot.HEAD)
-                    .component(VOLUME, 20.0f)));
+                    .component(VOLUME, 20)));
 
 
     //SPAWN EGGS
@@ -201,25 +201,25 @@ public class BitterItems {
     public static final DeferredItem<SyringeItem> SYRINGE = ITEMS.register("syringe", registryName ->
             new SyringeItem(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
-                    .component(VOLUME, 10.0f)));
+                    .component(VOLUME, 10)));
 
     public static final DeferredItem<MopItem> MOP = ITEMS.register("mop", registryName ->
             new MopItem(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
-                    .component(VOLUME, 50.0f)
+                    .component(VOLUME, 50)
                     .component(MAX_TRANSFER_RATE, 20)));
 
     public static final DeferredItem<PowderedSubstanceItem> POWDER = ITEMS.register("powder", registryName ->
             new PowderedSubstanceItem(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
-                    .component(VOLUME, 20.0f)));
+                    .component(VOLUME, 20)));
 
     public static final DeferredItem<PillItem> PILL = ITEMS.register("pill", registryName ->
             new PillItem(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, registryName))
                     .component(PILL_SHAPE, PillShape.ROUND)
                     .component(DataComponents.DYED_COLOR, new DyedItemColor(0xFFFFFF))
-                    .component(VOLUME, 20.0f)));
+                    .component(VOLUME, 20)));
 
 
     public static final DeferredItem<Item> SCALPEL = ITEMS.register("scalpel", registryName ->

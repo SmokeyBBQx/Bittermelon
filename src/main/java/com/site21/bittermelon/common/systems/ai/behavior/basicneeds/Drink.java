@@ -37,7 +37,7 @@ public class Drink<E extends Mob & HasBasicNeeds & NeedsUser> extends ExtendedBe
 
         if (entity.distanceToSqr(fluid.getBlockPos().getX(), fluid.getBlockPos().getY(), fluid.getBlockPos().getZ()) < 3) {
             entity.getNavigation().stop();
-            fluid.transferSubstancesVolume(1);
+//            fluid.transferSubstancesVolume(1);
             // TODO: Figure out how to get nutritional value of food
             entity.modifyNeed(Need.THIRST, -5);
         } else {

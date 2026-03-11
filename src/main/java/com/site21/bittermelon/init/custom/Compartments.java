@@ -1,7 +1,6 @@
 package com.site21.bittermelon.init.custom;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.content.compartments.SharpObject;
 import com.site21.bittermelon.common.systems.medical.compartment.Compartment;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
@@ -669,9 +668,6 @@ public class Compartments {
             )
     );
 
-    public static final DeferredHolder<Compartment, Compartment> SCALPEL = COMPARTMENTS.register("scalpel",
-            () -> new SharpObject("scalpel", new Compartment.Properties().item(BitterItems.SCALPEL)));
-
     public static final DeferredHolder<Compartment, Compartment> CUT = COMPARTMENTS.register("cut",
             () -> new Compartment("cut", new Compartment.Properties()
                     .shape(List.of(new Point(0, 0)))
@@ -683,4 +679,9 @@ public class Compartments {
                     .shape(List.of(new Point(0, 0)))
                     .visualData(VisualData.empty().withIcon(ResourceLocation.withDefaultNamespace("textures/block/destroy_stage_9.png")))
                     .component(BitterDataComponents.REVEAL_DISTANCE.get(), 1)));
+
+    public static final DeferredHolder<Compartment, Compartment> BULLET = COMPARTMENTS.register("bullet",
+            () -> new Compartment("bullet", new Compartment.Properties()
+                    .shape(List.of(new Point(0, 0)))
+                    .visualData(VisualData.empty().withIcon(ResourceLocation.withDefaultNamespace("textures/block/gold_block.png")))));
 }

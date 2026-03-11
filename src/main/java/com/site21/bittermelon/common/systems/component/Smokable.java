@@ -116,7 +116,7 @@ public record Smokable(Holder<Item> buttItem, int smokeDuration, Holder<SoundEve
 
         playSmokeSound(level, entity.getOnPos(), stack);
         addSmokeParticles(level, entity);
-        consumeSubstances(stack, 1 * ((float) (getUseDuration(stack, entity) - timeLeft) / getUseDuration(stack, entity)), entity);
+        consumeSubstances(stack, ((getUseDuration(stack, entity) - timeLeft) / getUseDuration(stack, entity)), entity);
 
         if (getTotalAmount(stack) < 0.1f && entity instanceof ServerPlayer player) {
             int slot = player.getInventory().findSlotMatchingItem(stack);

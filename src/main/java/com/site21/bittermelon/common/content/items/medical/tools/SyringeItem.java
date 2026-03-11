@@ -79,8 +79,8 @@ public class SyringeItem extends FluidContainerItem {
         if (entity.isShiftKeyDown()) {
             stack = consumeSubstances(stack, getLimitedTransferRate(stack), target);
         } else {
-            float spaceAvailable = getCapacity(stack) - getTotalVolume(stack);
-            float transferRate = Math.min(getTransferRate(stack), spaceAvailable);
+            int spaceAvailable = getCapacity(stack) - getTotalVolume(stack);
+            int transferRate = Math.min(getTransferRate(stack), spaceAvailable);
 
             SubstanceStack substanceStack = drawSubstanceFromEntity(target, transferRate);
             updateSubstance(stack, substanceStack);
@@ -89,7 +89,7 @@ public class SyringeItem extends FluidContainerItem {
         return stack;
     }
 
-    private @NotNull SubstanceStack drawSubstanceFromEntity(@NotNull LivingEntity entity, float transferRate) {
+    private @NotNull SubstanceStack drawSubstanceFromEntity(@NotNull LivingEntity entity, int transferRate) {
         SubstanceStack stack = new SubstanceStack(BLOOD.get(), 0);
         stack.setVolume(transferRate);
 

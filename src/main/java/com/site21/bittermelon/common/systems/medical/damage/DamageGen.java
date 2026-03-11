@@ -10,6 +10,7 @@ import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.init.custom.Compartments;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.util.RandomSource;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -21,6 +22,11 @@ public class DamageGen {
         LayerData layer = CompartmentUtil.getLayer(target, layerIndex);
         if (layer == null) throw new RuntimeException("Target compartment has no layer at index " + layerIndex);
 
+        return findRandomPoint(random, layer, shape, width, height);
+    }
+
+    public static @Nullable Point findRandomPoint(RandomSource random, @NotNull LayerData layer, List<Point> shape,
+                                                  int width, int height) {
         int searchWidth = layer.getWidth() - width;
         int searchHeight = layer.getHeight() - height;
 
@@ -74,9 +80,8 @@ public class DamageGen {
             CompartmentInstance injury = getInjury(layer, x, y);
             if (injury == null) continue;
 
-            medicalStats.addCompartment(injury);
-
             if (!(CompartmentUtil.insertCompartment(target, injury, layerIndex, x, y, 0, depth))) break;
+            medicalStats.addCompartment(injury);
             length--;
         }
     }
@@ -87,5 +92,44 @@ public class DamageGen {
 
         if (slot.getType() == SlotType.BONE) return null;
         return Compartments.CUT.get().toInstance();
+    }
+
+    public static void handleBullet(MedicalStats medicalStats, RandomSource random, CompartmentInstance target, float power) {
+        int layerIndex = 0;
+
+        LayerData layer = CompartmentUtil.getLayer(target, layerIndex);
+        if (layer == null) throw new RuntimeException("Target compartment has no layer at index " + layerIndex);
+
+        Point point = findRandomPoint(random, layer, List.of(new Point(0, 0)), 1, 1);
+        if (point == null) return;
+
+        while (random.nextFloat() < power) {
+            CompartmentInstance injury = getBulletInjury(layer, point.x(), point.y());
+            if (injury == null) break;
+
+            if (!CompartmentUtil.insertCompartment(target, injury, layerIndex, point.x(), point.y(), 0, 1)) break;
+            medicalStats.addCompartment(injury);
+
+            layerIndex++;
+
+            if (layerIndex >= CompartmentUtil.getLayers(target).size()) break;
+        }
+
+        if (layerIndex < CompartmentUtil.getLayers(target).size()) {
+            CompartmentInstance bullet = Compartments.BULLET.get().toInstance();
+            CompartmentUtil.insertCompartment(target, bullet, layerIndex, point.x(), point.y(), 0, 1);
+            medicalStats.addCompartment(bullet);
+        }
+    }
+
+    public static @Nullable CompartmentInstance getBulletInjury(LayerData layer, int x, int y) {
+        LayerSlot slot = layer.getGrid()[y][x];
+        if (slot == null) return null;
+
+        return switch (slot.getType()) {
+            case BONE -> Compartments.FRACTURE.get().toInstance();
+            case SKIN, FAT, MUSCLE, ORGAN -> Compartments.CUT.get().toInstance();
+            default -> null;
+        };
     }
 }

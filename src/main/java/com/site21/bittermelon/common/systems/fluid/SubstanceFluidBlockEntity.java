@@ -7,11 +7,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
@@ -28,14 +25,14 @@ import static net.minecraft.world.level.block.Block.UPDATE_ALL;
 
 public class SubstanceFluidBlockEntity extends BlockEntity {
     private final List<SubstanceStack> substances;
-    private float cachedVolume;
+    private int cachedVolume;
     private int cachedColor;
 
     public SubstanceFluidBlockEntity(BlockPos pos, BlockState blockState) {
         super(SUBSTANCE_FLUID_BLOCK_ENTITY.get(), pos, blockState);
 
         substances = new ArrayList<>();
-        cachedVolume = -1f;
+        cachedVolume = -1;
         cachedColor = -1;
     }
 
@@ -62,7 +59,7 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
         }
     }
 
-    public void removeSubstance(SubstanceStack substance, float amount) {
+    public void removeSubstance(SubstanceStack substance, int amount) {
         for (SubstanceStack stack : substances) {
             if (substance.canMergeWith(stack)) {
                 stack.modifyAmount(-amount);
@@ -101,7 +98,7 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
     private void updateFluidState() {
         if (level == null) return;
         if (level.getBlockState(worldPosition).isAir()) return;
-        int fluidLevel = Math.max(1, (int) Mth.clamp(getVolume(), 1, 15));
+        int fluidLevel = Math.max(1, (int) Mth.clamp(getVolume() / 62.5, 1, 15));
 
         BlockState currentState = level.getBlockState(worldPosition);
         BlockState newState = currentState.setValue(SubstanceFluidBlock.LEVEL, fluidLevel);
@@ -110,11 +107,11 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
         level.scheduleTick(worldPosition, SUBSTANCE_FLUID.get(), SUBSTANCE_FLUID.get().getTickDelay(level));
     }
 
-    public float getVolume() {
+    public int getVolume() {
         if (cachedVolume == -1f) {
             cachedVolume = substances.stream()
                     .map(SubstanceStack::getVolume)
-                    .reduce(0f, Float::sum);
+                    .reduce(0, Integer::sum);
         }
 
         return cachedVolume;
@@ -125,7 +122,7 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
             if (substances.isEmpty()) {
                 cachedColor = 0xFFAAD5DB; // Default color if no substances
             } else {
-                Map<Integer, Float> colors = new HashMap<>();
+                Map<Integer, Integer> colors = new HashMap<>();
                 // Create a copy to avoid concurrent modification
                 List<SubstanceStack> substancesCopy = new ArrayList<>(substances);
                 for (SubstanceStack stack : substancesCopy) {
@@ -143,7 +140,7 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
         }
 
         return substances.stream()
-                .map(entry -> String.format("%s: %f", entry.getSubstance().getName(), entry.getAmount()))
+                .map(entry -> String.format("%s: %d", entry.getSubstance().getName(), entry.getAmount()))
                 .collect(Collectors.joining(", "));
     }
 
@@ -183,7 +180,7 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
     @Override
     public void setChanged() {
         super.setChanged();
-        cachedVolume = -1f;
+        cachedVolume = -1;
         cachedColor = -1;
         requestModelDataUpdate();
     }

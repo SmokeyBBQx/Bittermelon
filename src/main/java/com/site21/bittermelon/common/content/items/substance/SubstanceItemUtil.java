@@ -20,16 +20,16 @@ public class SubstanceItemUtil {
      * @param entity The LivingEntity consuming the substances.
      * @return The updated ItemStack after consumption.
      */
-    public static ItemStack consumeSubstances(ItemStack stack, float consumeRate, LivingEntity entity) {
-        float totalAmount = getTotalVolume(stack);
+    public static ItemStack consumeSubstances(ItemStack stack, int consumeRate, LivingEntity entity) {
+        int totalAmount = getTotalVolume(stack);
         SubstanceContents.Mutable mutableData = getMutableSubstanceData(stack);
         Iterator<SubstanceStack> iterator = mutableData.substances.iterator();
 
         while (iterator.hasNext()) {
             SubstanceStack substance = iterator.next();
 
-            float proportion = totalAmount > 0 ? substance.getVolume() / totalAmount : 0;
-            float consumeAmount = Math.min(consumeRate * proportion, substance.getVolume());
+            int proportion = totalAmount > 0 ? substance.getVolume() / totalAmount : 0;
+            int consumeAmount = Math.min(consumeRate * proportion, substance.getVolume());
 
             SubstanceStack consumedSubstance = substance.copy();
             consumedSubstance.setVolume(consumeAmount);
@@ -63,7 +63,7 @@ public class SubstanceItemUtil {
     public static @NotNull SubstanceContents getSubstanceData(@NotNull ItemStack stack) {
         return stack.getOrDefault(SUBSTANCE_CONTENTS.get(), SubstanceContents.EMPTY);
     }
-    public static float getTotalVolume(ItemStack stack) {
+    public static int getTotalVolume(ItemStack stack) {
         return getSubstanceData(stack).getTotalVolume();
     }
 

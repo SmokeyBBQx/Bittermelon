@@ -24,20 +24,20 @@ public record SubstanceContents(List<SubstanceStack> substances) {
         this.substances = new ArrayList<>(substances);
     }
 
-    public float getTotalVolume() {
+    public int getTotalVolume() {
         return substances.stream()
                 .map(SubstanceStack::getVolume)
-                .reduce(0f, Float::sum);
+                .reduce(0, Integer::sum);
     }
 
-    public float getTotalAmount() {
+    public int getTotalAmount() {
         return substances.stream()
                 .map(SubstanceStack::getAmount)
-                .reduce(0f, Float::sum);
+                .reduce(0, Integer::sum);
     }
 
     public int getColor() {
-        Map<Integer, Float> colors = new HashMap<>();
+        Map<Integer, Integer> colors = new HashMap<>();
         for (SubstanceStack stack : substances) {
             colors.put(stack.getSubstance().getColor(), stack.getAmount());
         }

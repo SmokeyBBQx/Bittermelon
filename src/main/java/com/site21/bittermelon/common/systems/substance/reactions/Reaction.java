@@ -23,14 +23,14 @@ public class Reaction {
         this.enthalpyChange = builder.enthalpyChange;
     }
 
-    public double calculateReactionRate(Map<Substance, Float> concentrations, float temperature) {
+    public double calculateReactionRate(Map<Substance, Integer> concentrations, float temperature) {
         float R = 8.314f;
         double rate = (preExponentialFactor * Math.exp(-activationEnergy * 1000 / (R * temperature))) / 20;
 
         for (Map.Entry<Substance, Integer> entry : orders.entrySet()) {
             Substance substance = entry.getKey();
             int order = entry.getValue();
-            float concentration = concentrations.getOrDefault(substance, 0.0f);
+            float concentration = concentrations.getOrDefault(substance, 0);
             rate *= Math.pow(concentration, order);
         }
 

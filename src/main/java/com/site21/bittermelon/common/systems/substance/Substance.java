@@ -61,8 +61,8 @@ public class Substance {
      * Calculates the molar volume of the substance in cm³/mol.
      * @return Molar volume in cm³/mol.
      */
-    public float getMolarVolume() {
-        return properties.molarMass / properties.density;
+    public int getMolarVolume() {
+        return (int) (properties.molarMass / properties.density);
     }
 
     /**

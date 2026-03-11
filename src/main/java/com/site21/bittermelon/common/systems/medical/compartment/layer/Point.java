@@ -20,7 +20,6 @@ public record Point(int x, int y) {
             point -> point.x() + "," + point.y()
     );
 
-
     public static final StreamCodec<ByteBuf, Point> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.INT,
             Point::x,
@@ -28,4 +27,8 @@ public record Point(int x, int y) {
             Point::y,
             Point::new
     );
+
+    public Point move(int dx, int dy) {
+        return new Point(x() + dx, y() + dy);
+    }
 }
