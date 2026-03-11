@@ -53,15 +53,24 @@ public class ClientSubstanceFluid implements IClientFluidTypeExtensions {
             int alpha = ARGB.alpha(color);
             int red = 0, green = 0, blue = 0, count = 0;
 
-            for (Direction direction : Direction.Plane.HORIZONTAL) {
+            for (Direction direction : Direction.values()) {
                 BlockPos checkPos = pos.relative(direction);
                 if (getter.getBlockEntity(checkPos) instanceof SubstanceFluidBlockEntity be) {
                     int c = be.getColor();
+                    if (c == 0xFFAAD5DB) continue;
+
                     red += ARGB.red(c);
                     green += ARGB.green(c);
                     blue += ARGB.blue(c);
                     count++;
                 }
+            }
+
+            if (count > 0 && color != 0xFFAAD5DB) {
+                red += ARGB.red(color);
+                green += ARGB.green(color);
+                blue += ARGB.blue(color);
+                count++;
             }
 
             return count > 0 ? ARGB.color(alpha, red / count, green / count, blue / count) : color;

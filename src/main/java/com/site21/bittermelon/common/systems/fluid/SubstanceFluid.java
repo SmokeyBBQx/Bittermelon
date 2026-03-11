@@ -140,7 +140,7 @@ public class SubstanceFluid extends Fluid {
             // Check if there is a block in the way to spread downwards
             if (canSpreadTo(level, neighborPos, fluidBE)) {
                 if (canSpreadTo(level, neighborPos.below(), fluidBE)) {
-                    neighbors.add(neighborPos.below());
+                    neighbors.add(neighborPos);
                 }
             }
         }
