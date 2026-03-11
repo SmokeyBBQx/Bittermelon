@@ -42,6 +42,8 @@ import com.site21.bittermelon.init.neoforge.BitterItems;
 import com.site21.bittermelon.init.neoforge.BitterParticles;
 import com.site21.bittermelon.networking.client.ClientPayloadHandler;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
@@ -55,6 +57,7 @@ import net.minecraft.world.item.Item;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
@@ -67,6 +70,7 @@ import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.MEDICAL
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
 import static com.site21.bittermelon.init.neoforge.BitterEntities.*;
 import static com.site21.bittermelon.init.neoforge.BitterFluidTypes.SUBSTANCE_FLUID_TYPE;
+import static com.site21.bittermelon.init.neoforge.BitterFluids.SUBSTANCE_FLUID;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class ClientSetup {
@@ -77,6 +81,11 @@ public class ClientSetup {
     public static final ContextKey<Map<String, Boolean>> LIMB_VISIBILITY = new ContextKey<>(
             Bittermelon.resource("limb_visibility")
     );
+
+    @SubscribeEvent
+    public static void fmlSetup(FMLClientSetupEvent event) {
+        ItemBlockRenderTypes.setRenderLayer(SUBSTANCE_FLUID.get(), ChunkSectionLayer.TRANSLUCENT);
+    }
 
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.@NotNull RegisterRenderers event) {

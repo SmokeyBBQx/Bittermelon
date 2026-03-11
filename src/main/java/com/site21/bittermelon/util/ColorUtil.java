@@ -14,23 +14,25 @@ public final class ColorUtil {
      */
     public static int mixColors(@NotNull Map<Integer, Integer> colors) {
         int totalAmount = 0;
-        int redSum = 0, greenSum = 0, blueSum = 0;
+        int redSum = 0, greenSum = 0, blueSum = 0, alphaSum = 0;
 
         for (Map.Entry<Integer, Integer> entry : colors.entrySet()) {
             int color = entry.getKey();
             int amount = entry.getValue();
 
             totalAmount += amount;
+            alphaSum += ((color >> 24) & 0xFF) * amount;
             redSum += ((color >> 16) & 0xFF) * amount;
             greenSum += ((color >> 8) & 0xFF) * amount;
             blueSum += (color & 0xFF) * amount;
         }
 
+        int alpha = Math.round((float) alphaSum / totalAmount);
         int red = Math.round((float) redSum / totalAmount);
         int green = Math.round((float) greenSum / totalAmount);
         int blue = Math.round((float) blueSum / totalAmount);
 
-        return 0xFF000000 | (red << 16) | (green << 8) | blue;
+        return (alpha << 24) | (red << 16) | (green << 8) | blue;
     }
 
     /**

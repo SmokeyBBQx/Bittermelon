@@ -20,6 +20,7 @@ public class Substances {
     public static final Supplier<Substance> WATER = SUBSTANCES.register("water", () -> new Substance(
             "Water",
             new Substance.Properties()
+                    .color(0x50AAD5DB)
     ));
 
     public static final Supplier<Substance> HYDROGEN_PEROXIDE = SUBSTANCES.register("hydrogen_peroxide", () -> new Substance(

@@ -1,6 +1,5 @@
 package com.site21.bittermelon.common.systems.fluid;
 
-import com.site21.bittermelon.Bittermelon;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -10,6 +9,7 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector4f;
 
 public class ClientSubstanceFluid implements IClientFluidTypeExtensions {
@@ -36,9 +36,13 @@ public class ClientSubstanceFluid implements IClientFluidTypeExtensions {
 
     @Override
     public @NotNull ResourceLocation getFlowingTexture() {
-        return ResourceLocation.withDefaultNamespace("block/water_flowing");
+        return ResourceLocation.withDefaultNamespace("block/water_flow");
     }
 
+    @Override
+    public @Nullable ResourceLocation getOverlayTexture() {
+        return ResourceLocation.withDefaultNamespace("block/water_overlay");
+    }
 
     @Override
     public int getTintColor(@NotNull FluidState state, @NotNull BlockAndTintGetter getter, @NotNull BlockPos pos) {

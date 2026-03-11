@@ -8,6 +8,7 @@ import com.site21.bittermelon.init.neoforge.BitterFluidTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.profiling.Profiler;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
@@ -78,6 +79,17 @@ public class SubstanceFluid extends Fluid {
         }
 
         Profiler.get().pop();
+    }
+
+    @Override
+    protected void randomTick(ServerLevel level, BlockPos pos, FluidState state, RandomSource random) {
+        // Might be redundant
+        equalizeSubstances(level, pos, (SubstanceFluidBlockEntity) level.getBlockEntity(pos));
+    }
+
+    @Override
+    protected boolean isRandomlyTicking() {
+        return true;
     }
 
     private boolean spreadDownwards(@NotNull Level level, @NotNull BlockPos pos, @NotNull SubstanceFluidBlockEntity fluidBE) {
@@ -158,6 +170,8 @@ public class SubstanceFluid extends Fluid {
         // Check if we can spread upwards
         if (level.getFluidState(abovePos).is(this) || level.getBlockState(abovePos).canBeReplaced()) {
             List<SubstanceStack> substancesToSpread = spreadSubstances2(fluidBE.getSubstances(), spreadVolume, fluidBE.getVolume());
+            if (substancesToSpread.isEmpty()) return;
+
             spreadTo(level, abovePos, substancesToSpread);
 
             for (SubstanceStack spreadStack : substancesToSpread) {
