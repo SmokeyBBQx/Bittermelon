@@ -37,9 +37,8 @@ import static com.site21.bittermelon.init.neoforge.BitterBlocks.SUBSTANCE_FLUID_
 
 public class SubstanceFluid extends Fluid {
     public static final IntegerProperty LEVEL = BitterStateProperties.LEVEL;
-    private static final int SPREAD_THRESHOLD = 200;
+    private static final int SPREAD_THRESHOLD = 125;
     private static final int OVERFLOW_THRESHOLD = 1000;
-    private static final int EQUALIZATION_THRESHOLD = 0;
 
     private final Map<FluidState, VoxelShape> shapes = Maps.newIdentityHashMap();
 
@@ -69,7 +68,7 @@ public class SubstanceFluid extends Fluid {
             if (spreadDownwards(level, pos, fluidBE)) return;
 
             int volume = fluidBE.getVolume();
-            if (volume > 125) {
+            if (volume > SPREAD_THRESHOLD) {
                 if (!spreadHorizontally(level, pos, fluidBE, volume)) {
                     if (volume > OVERFLOW_THRESHOLD) {
                         spreadUpwards(level, pos, fluidBE);
@@ -89,7 +88,7 @@ public class SubstanceFluid extends Fluid {
 
     @Override
     protected boolean isRandomlyTicking() {
-        return true;
+        return false;
     }
 
     private boolean spreadDownwards(@NotNull Level level, @NotNull BlockPos pos, @NotNull SubstanceFluidBlockEntity fluidBE) {
@@ -148,16 +147,15 @@ public class SubstanceFluid extends Fluid {
         // If no downward spread positions, try horizontally
         if (neighbors.isEmpty()) {
             for (Direction direction : Direction.Plane.HORIZONTAL) {
-                if (canSpreadTo(level, pos.relative(direction), fluidBE)) {
-                    neighbors.add(pos.relative(direction));
+                BlockPos neighborPos = pos.relative(direction);
+                if (canSpreadTo(level, neighborPos, fluidBE)) {
+                    neighbors.add(neighborPos);
                 }
             }
         }
 
         Collections.shuffle(neighbors);
-
         Profiler.get().pop();
-
         return neighbors;
     }
 
@@ -169,7 +167,8 @@ public class SubstanceFluid extends Fluid {
 
         // Check if we can spread upwards
         if (level.getFluidState(abovePos).is(this) || level.getBlockState(abovePos).canBeReplaced()) {
-            List<SubstanceStack> substancesToSpread = spreadSubstances2(fluidBE.getSubstances(), spreadVolume, fluidBE.getVolume());
+            List<SubstanceStack> substancesToSpread = spreadSubstancesByVolume(fluidBE.getSubstances(), spreadVolume,
+                    fluidBE.getVolume());
             if (substancesToSpread.isEmpty()) return;
 
             spreadTo(level, abovePos, substancesToSpread);
@@ -214,12 +213,12 @@ public class SubstanceFluid extends Fluid {
         return spreadStacks;
     }
 
-    private List<SubstanceStack> spreadSubstances2(List<SubstanceStack> substances, int transferVolume, int totalVolume) {
+    private List<SubstanceStack> spreadSubstancesByVolume(List<SubstanceStack> substances, int transferVolume, int totalVolume) {
         List<SubstanceStack> spreadStacks = new ArrayList<>();
         float ratio = (float) transferVolume / totalVolume;
 
         for (SubstanceStack stack : substances) {
-            int amount = (int) ((float) stack.getAmount() * ratio);
+            int amount = (int) (stack.getAmount() * ratio);
 
             if (amount > 0) {
                 SubstanceStack spreadStack = stack.copy();
@@ -269,13 +268,10 @@ public class SubstanceFluid extends Fluid {
 
         int totalVolume = fluids.stream().mapToInt(SubstanceFluidBlockEntity::getVolume).sum();
         int averageVolume = totalVolume / fluids.size();
-        int maxDeviation = fluids.stream()
+        boolean needsEqualization = fluids.stream()
                 .mapToInt(SubstanceFluidBlockEntity::getVolume)
-                .map(vol -> Math.abs(vol - averageVolume))
-                .max()
-                .orElse(0);
-
-        if (maxDeviation <= 0) {
+                .anyMatch(vol -> Math.abs(vol - averageVolume) > 0);
+        if (!needsEqualization) {
             Profiler.get().pop();
             return;
         }
@@ -316,7 +312,6 @@ public class SubstanceFluid extends Fluid {
 
         Profiler.get().pop();
     }
-
 
     private void spreadTo(@NotNull LevelAccessor level, BlockPos pos, List<SubstanceStack> substances) {
         if (!level.getFluidState(pos).is(this)) {
