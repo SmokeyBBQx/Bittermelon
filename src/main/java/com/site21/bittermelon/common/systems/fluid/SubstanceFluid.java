@@ -9,6 +9,8 @@ import com.site21.bittermelon.init.neoforge.BitterFluidTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.profiling.Profiler;
 import net.minecraft.world.item.BucketItem;
@@ -95,6 +97,11 @@ public class SubstanceFluid extends Fluid {
         return true;
     }
 
+    @Override
+    protected void animateTick(Level level, BlockPos pos, FluidState state, RandomSource random) {
+        super.animateTick(level, pos, state, random);
+    }
+
     private boolean spreadDownwards(@NotNull Level level, @NotNull BlockPos pos, @NotNull SubstanceFluidBlockEntity fluidBE) {
         // Check if the fluid below is the same type and not full
         // If not, spread downwards
@@ -141,6 +148,7 @@ public class SubstanceFluid extends Fluid {
         }
 
         equalizeSubstances(level, pos, fluidBE);
+
         Profiler.get().pop();
         return true;
     }
@@ -267,8 +275,7 @@ public class SubstanceFluid extends Fluid {
 
         // Check if the block can be replaced by this fluid
         BlockState blockState = level.getBlockState(pos);
-        Block block = blockState.getBlock();
-        if (block instanceof LiquidBlockContainer liquidBlockContainer) {
+        if (blockState.getBlock() instanceof LiquidBlockContainer liquidBlockContainer) {
             return liquidBlockContainer.canPlaceLiquid(null, level, pos, blockState, this);
         }
 
@@ -343,7 +350,8 @@ public class SubstanceFluid extends Fluid {
     private void spreadTo(@NotNull LevelAccessor level, BlockPos pos, List<SubstanceStack> substances) {
         if (!level.getFluidState(pos).is(this)) {
             FluidState newState = defaultFluidState().setValue(LEVEL, 1);
-            level.setBlock(pos, createLegacyBlock(newState), Block.UPDATE_ALL);
+            level.setBlock(pos, createLegacyBlock(newState), Block.UPDATE_CLIENTS);
+            playFlowSound(level, pos, level.getRandom());
         }
 
         if (level.getBlockEntity(pos) instanceof SubstanceFluidBlockEntity spreadBE) {
@@ -360,6 +368,17 @@ public class SubstanceFluid extends Fluid {
                 BlockDamageUtil.addDamage(level, neighborPos, fluidBE.getPressure() / 100);
             }
         }
+    }
+
+    private void playFlowSound(LevelAccessor level, BlockPos pos, RandomSource random) {
+        level.playSound(
+                null,
+                pos,
+                SoundEvents.WATER_AMBIENT,
+                SoundSource.AMBIENT,
+                random.nextFloat() * 0.25F + 0.75F,
+                random.nextFloat() + 0.5F
+        );
     }
 
     @Override

@@ -1,11 +1,7 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.systems.fluid.SubstanceFluid;
 import com.site21.bittermelon.common.systems.fluid.SubstanceFluidType;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
@@ -16,6 +12,7 @@ public class BitterFluidTypes {
     public static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(NeoForgeRegistries.FLUID_TYPES, Bittermelon.MOD_ID);
 
     public static final Supplier<FluidType> SUBSTANCE_FLUID_TYPE = FLUID_TYPES.register("substance_fluid_type", () ->
-            new SubstanceFluidType(FluidType.Properties.create())
+            new SubstanceFluidType(FluidType.Properties.create()
+            )
     );
 }
