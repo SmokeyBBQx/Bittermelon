@@ -18,6 +18,7 @@ import static com.site21.bittermelon.init.neoforge.BitterBlocks.CAGE;
 public class CageBlock extends Block {
     public CageBlock(Properties properties) {
         super(properties);
+        registerDefaultState(getStateDefinition().any());
     }
 
     @Override

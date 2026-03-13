@@ -109,6 +109,7 @@ public class BitterModelProvider extends ModelProvider {
         blockModels.blockStateOutput.accept(
                 MultiVariantGenerator.dispatch(BURROW.get(), plainVariant(modLocation("block/burrow")))
         );
+        blockModels.createTrivialCube(BitterBlocks.CAGE.get());
 
         // SubstanceFluid Containers
         itemModels.generateFlatItem(BEER_BOTTLE.get(), ModelTemplates.FLAT_ITEM);
@@ -185,6 +186,7 @@ public class BitterModelProvider extends ModelProvider {
         itemModels.generateFlatItem(HANDHELD_SYSTEM_INTERFACE.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(SUTURE.get(), ModelTemplates.FLAT_ITEM);
         generate3D2DItem(itemModels, REPAIR_TOOL.get());
+        itemModels.generateFlatItem(DEBUG_WIRE.get(), ModelTemplates.FLAT_ITEM);
     }
 
     public void createFluid(@NotNull BlockModelGenerators blockModels) {

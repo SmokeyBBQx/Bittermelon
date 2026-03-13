@@ -33,7 +33,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.SUBSTANCE_FLUID_BLOCK;
@@ -119,11 +122,12 @@ public class SubstanceFluid extends Fluid {
     private boolean spreadHorizontally(@NotNull Level level, BlockPos pos, @NotNull SubstanceFluidBlockEntity fluidBE, int volume) {
         Profiler.get().push("spreadHorizontally");
 
-        List<BlockPos> spreadPositions = getDownwardSpreadPositions(level, pos, fluidBE);
+        List<BlockPos> spreadPositions = new ArrayList<>(4);
+        getDownwardSpreadPositions(level, pos, fluidBE, spreadPositions);
         boolean downwardSpread = !spreadPositions.isEmpty();
 
         if (!downwardSpread) {
-            spreadPositions = getSpreadPositions(level, pos, fluidBE);
+            getSpreadPositions(level, pos, fluidBE, spreadPositions);
             if (spreadPositions.isEmpty()) {
                 Profiler.get().pop();
                 return false;
@@ -166,33 +170,24 @@ public class SubstanceFluid extends Fluid {
         );
     }
 
-    private List<BlockPos> getDownwardSpreadPositions(Level level, BlockPos pos, SubstanceFluidBlockEntity fluidBE) {
-        List<BlockPos> neighbors = new ArrayList<>();
-
+    private void getDownwardSpreadPositions(Level level, BlockPos pos, SubstanceFluidBlockEntity fluidBE,
+                                                      List<BlockPos> positions) {
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             BlockPos neighborPos = pos.relative(direction);
-            if (level.getBlockState(pos).canBeReplaced() && canSpreadTo(level, neighborPos.below(), fluidBE)) {
-                neighbors.add(neighborPos);
+            if (level.getBlockState(neighborPos).canBeReplaced() && canSpreadTo(level, neighborPos.below(), fluidBE)) {
+                positions.add(neighborPos);
             }
         }
-
-        Collections.shuffle(neighbors);
-        return neighbors;
     }
 
-    private List<BlockPos> getSpreadPositions(Level level, BlockPos pos, SubstanceFluidBlockEntity fluidBE) {
-        List<BlockPos> neighbors = new ArrayList<>();
-
-        // If no downward spread positions, try horizontally
+    private void getSpreadPositions(Level level, BlockPos pos, SubstanceFluidBlockEntity fluidBE,
+                                              List<BlockPos> positions) {
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             BlockPos neighborPos = pos.relative(direction);
             if (canSpreadTo(level, neighborPos, fluidBE)) {
-                neighbors.add(neighborPos);
+                positions.add(neighborPos);
             }
         }
-
-        Collections.shuffle(neighbors);
-        return neighbors;
     }
 
     private void spreadUpwards(@NotNull Level level, @NotNull BlockPos pos, @NotNull SubstanceFluidBlockEntity fluidBE) {
@@ -269,8 +264,9 @@ public class SubstanceFluid extends Fluid {
         // Check if the neighbor fluid state is empty or same type
         FluidState neighborFluidState = level.getFluidState(pos);
         if (!neighborFluidState.isEmpty() && !neighborFluidState.is(this)) return false;
+
         if (level.getBlockEntity(pos) instanceof SubstanceFluidBlockEntity neighborBE) {
-            if (neighborBE.getVolume() >= FULL_BLOCK_VOLUME) return false;
+            return neighborBE.getVolume() < FULL_BLOCK_VOLUME;
         }
 
         // Check if the block can be replaced by this fluid
@@ -281,6 +277,7 @@ public class SubstanceFluid extends Fluid {
 
         return blockState.canBeReplaced();
     }
+
 
     private void equalizeSubstances(@NotNull Level level, BlockPos worldPosition, SubstanceFluidBlockEntity fluidBE) {
         Profiler.get().push("equalizeSubstances");
@@ -300,17 +297,27 @@ public class SubstanceFluid extends Fluid {
             return;
         }
 
-        int totalVolume = fluids.stream().mapToInt(SubstanceFluidBlockEntity::getVolume).sum();
-        int averageVolume = totalVolume / fluids.size();
-        boolean needsEqualization = fluids.stream()
-                .mapToInt(SubstanceFluidBlockEntity::getVolume)
-                .anyMatch(vol -> Math.abs(vol - averageVolume) > 0);
+        int totalVolume = 0;
+        for (SubstanceFluidBlockEntity be : fluids) {
+            totalVolume += be.getVolume();
+        }
+
+        int fluidCount = fluids.size();
+        int averageVolume = totalVolume / fluidCount;
+
+        boolean needsEqualization = false;
+        for (SubstanceFluidBlockEntity be : fluids) {
+            if (be.getVolume() != averageVolume) {
+                needsEqualization = true;
+                break;
+            }
+        }
+
         if (!needsEqualization) {
             Profiler.get().pop();
             return;
         }
 
-        // Calculate total amounts by substance type
         Map<Substance, Integer> totalsByType = new HashMap<>();
         for (SubstanceFluidBlockEntity be : fluids) {
             for (SubstanceStack stack : be.getSubstances()) {
@@ -318,18 +325,14 @@ public class SubstanceFluid extends Fluid {
             }
         }
 
-        int fluidCount = fluids.size();
-
-        // Distribute substances to each fluid block
         for (int i = 0; i < fluidCount; i++) {
             SubstanceFluidBlockEntity be = fluids.get(i);
-            List<SubstanceStack> newStacks = new ArrayList<>();
+            List<SubstanceStack> newStacks = new ArrayList<>(totalsByType.size());
 
             for (var entry : totalsByType.entrySet()) {
                 int totalAmount = entry.getValue();
                 int baseAmount = totalAmount / fluidCount;
                 int remainder = totalAmount % fluidCount;
-
                 int amount = baseAmount + (i < remainder ? 1 : 0);
 
                 if (amount > 0) {
