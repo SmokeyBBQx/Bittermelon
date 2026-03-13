@@ -40,7 +40,7 @@ public class SubstanceFluid extends Fluid {
     public static final IntegerProperty LEVEL = BitterStateProperties.LEVEL;
     public static final int FULL_BLOCK_VOLUME = 1000;
     private static final int SPREAD_THRESHOLD = 125;
-    private static final int PRESSURE_THRESHOLD = 250;
+    private static final int PRESSURE_THRESHOLD = 100;
 
     private final Map<FluidState, VoxelShape> shapes = Maps.newIdentityHashMap();
 
