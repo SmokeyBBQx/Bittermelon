@@ -13,7 +13,6 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
@@ -36,11 +35,11 @@ public class SubstanceFluidBlock extends Block implements LiquidBlockContainer, 
 
     public SubstanceFluidBlock(Properties properties) {
         super(properties);
-        registerDefaultState(getStateDefinition().any().setValue(LEVEL, 16));
+        registerDefaultState(getStateDefinition().any().setValue(LEVEL, 20));
         this.stateCache = new ArrayList<>();
         this.fluid = SUBSTANCE_FLUID.get();
 
-        for (int i = 1; i < 16; i++) {
+        for (int i = 1; i < 20; i++) {
             stateCache.add(fluid.defaultFluidState().setValue(LEVEL, i));
         }
 

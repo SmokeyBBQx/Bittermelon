@@ -98,7 +98,7 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
     private void updateFluidState() {
         if (level == null) return;
         if (level.getBlockState(worldPosition).isAir()) return;
-        int fluidLevel = Math.max(1, (int) Mth.clamp(getVolume() / 62.5, 1, 15));
+        int fluidLevel = Math.max(1, Mth.clamp(getVolume() / 50, 1, 19));
 
         BlockState currentState = level.getBlockState(worldPosition);
         BlockState newState = currentState.setValue(SubstanceFluidBlock.LEVEL, fluidLevel);

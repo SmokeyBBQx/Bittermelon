@@ -6,6 +6,6 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
 public class BitterStateProperties {
     public static final EnumProperty<Placement> PLACEMENT = EnumProperty.create("placement", Placement.class);
-    public static final IntegerProperty LEVEL = IntegerProperty.create("level", 1, 16);
+    public static final IntegerProperty LEVEL = IntegerProperty.create("level", 1, 20);
     public static final BooleanProperty OVERFLOWING = BooleanProperty.create("overflowing");
 }

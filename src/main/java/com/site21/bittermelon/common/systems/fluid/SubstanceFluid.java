@@ -39,8 +39,9 @@ import static com.site21.bittermelon.init.neoforge.BitterBlocks.SUBSTANCE_FLUID_
 public class SubstanceFluid extends Fluid {
     public static final IntegerProperty LEVEL = BitterStateProperties.LEVEL;
     public static final int FULL_BLOCK_VOLUME = 1000;
-    private static final int SPREAD_THRESHOLD = 125;
+    private static final int SPREAD_THRESHOLD = 100;
     private static final int PRESSURE_THRESHOLD = 100;
+    private static final float DOWNWARDS_SPREAD_RATIO = 0.85f;
 
     private final Map<FluidState, VoxelShape> shapes = Maps.newIdentityHashMap();
 
@@ -111,57 +112,78 @@ public class SubstanceFluid extends Fluid {
     private boolean spreadHorizontally(@NotNull Level level, BlockPos pos, @NotNull SubstanceFluidBlockEntity fluidBE, int volume) {
         Profiler.get().push("spreadHorizontally");
 
-        List<BlockPos> spreadPositions = getSpreadPositions(level, pos, fluidBE);
-        if (spreadPositions.isEmpty()) return false;
+        List<BlockPos> spreadPositions = getDownwardSpreadPositions(level, pos, fluidBE);
+        boolean downwardSpread = !spreadPositions.isEmpty();
 
-        List<SubstanceStack> substancesToSpread = spreadSubstances(fluidBE.getSubstances(), spreadPositions.size() + 1);
+        if (!downwardSpread) {
+            spreadPositions = getSpreadPositions(level, pos, fluidBE);
+            if (spreadPositions.isEmpty()) {
+                Profiler.get().pop();
+                return false;
+            }
+        }
 
-        // Spread to each position
+        int spreadCount = spreadPositions.size();
+        List<SubstanceStack> substancesToSpread = getSubstancesForSpread(fluidBE, spreadCount, downwardSpread);
+
+        if (substancesToSpread.isEmpty()) {
+            Profiler.get().pop();
+            return false;
+        }
+
         for (BlockPos spreadPos : spreadPositions) {
             spreadTo(level, spreadPos, substancesToSpread);
         }
 
-        // Remove spread substances from original block entity
         for (SubstanceStack spreadStack : substancesToSpread) {
-            int totalRemoved = spreadStack.getAmount() * spreadPositions.size();
+            int totalRemoved = spreadStack.getAmount() * spreadCount;
             fluidBE.removeSubstance(spreadStack, totalRemoved);
         }
 
         equalizeSubstances(level, pos, fluidBE);
-
         Profiler.get().pop();
-
         return true;
     }
 
-    private @NotNull List<BlockPos> getSpreadPositions(@NotNull Level level, @NotNull BlockPos pos, SubstanceFluidBlockEntity fluidBE) {
-        Profiler.get().push("getSpreadPositions");
+    private List<SubstanceStack> getSubstancesForSpread(SubstanceFluidBlockEntity fluidBE, int spreadCount, boolean downwardSpread) {
+        int sourceVolume = fluidBE.getVolume();
+        int spreadVolume = downwardSpread ?
+                Math.round(sourceVolume * DOWNWARDS_SPREAD_RATIO) / spreadCount :
+                sourceVolume / (spreadCount + 1);
 
+        return spreadSubstancesByVolume(
+                fluidBE.getSubstances(),
+                spreadVolume,
+                sourceVolume
+        );
+    }
+
+    private List<BlockPos> getDownwardSpreadPositions(Level level, BlockPos pos, SubstanceFluidBlockEntity fluidBE) {
         List<BlockPos> neighbors = new ArrayList<>();
 
-        // Try to spread downwards first
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             BlockPos neighborPos = pos.relative(direction);
-            // Check if there is a block in the way to spread downwards
-            if (canSpreadTo(level, neighborPos, fluidBE)) {
-                if (canSpreadTo(level, neighborPos.below(), fluidBE)) {
-                    neighbors.add(neighborPos);
-                }
-            }
-        }
-
-        // If no downward spread positions, try horizontally
-        if (neighbors.isEmpty()) {
-            for (Direction direction : Direction.Plane.HORIZONTAL) {
-                BlockPos neighborPos = pos.relative(direction);
-                if (canSpreadTo(level, neighborPos, fluidBE)) {
-                    neighbors.add(neighborPos);
-                }
+            if (level.getBlockState(pos).canBeReplaced() && canSpreadTo(level, neighborPos.below(), fluidBE)) {
+                neighbors.add(neighborPos);
             }
         }
 
         Collections.shuffle(neighbors);
-        Profiler.get().pop();
+        return neighbors;
+    }
+
+    private List<BlockPos> getSpreadPositions(Level level, BlockPos pos, SubstanceFluidBlockEntity fluidBE) {
+        List<BlockPos> neighbors = new ArrayList<>();
+
+        // If no downward spread positions, try horizontally
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            BlockPos neighborPos = pos.relative(direction);
+            if (canSpreadTo(level, neighborPos, fluidBE)) {
+                neighbors.add(neighborPos);
+            }
+        }
+
+        Collections.shuffle(neighbors);
         return neighbors;
     }
 
@@ -171,20 +193,16 @@ public class SubstanceFluid extends Fluid {
 
         BlockPos abovePos = pos.above();
 
-        // Check if we can spread upwards
-        if (!canSpreadTo(level, abovePos, fluidBE)) {
-            exertPressure(fluidBE, level);
-            return;
-        }
+        if (level.getFluidState(abovePos).is(this) || level.getBlockState(abovePos).canBeReplaced()) {
+            List<SubstanceStack> substancesToSpread = spreadSubstancesByVolume(fluidBE.getSubstances(), spreadVolume,
+                    fluidBE.getVolume());
+            if (substancesToSpread.isEmpty()) return;
 
-        List<SubstanceStack> substancesToSpread = spreadSubstancesByVolume(fluidBE.getSubstances(), spreadVolume,
-                fluidBE.getVolume());
-        if (substancesToSpread.isEmpty()) return;
+            spreadTo(level, abovePos, substancesToSpread);
 
-        spreadTo(level, abovePos, substancesToSpread);
-
-        for (SubstanceStack spreadStack : substancesToSpread) {
-            fluidBE.removeSubstance(spreadStack, spreadStack.getAmount());
+            for (SubstanceStack spreadStack : substancesToSpread) {
+                fluidBE.removeSubstance(spreadStack, spreadStack.getAmount());
+            }
         }
     }
 
@@ -377,7 +395,7 @@ public class SubstanceFluid extends Fluid {
 
     @Override
     public float getOwnHeight(@NotNull FluidState state) {
-        return 14 / 16f * state.getAmount() / 16;
+        return state.getAmount() / 20.0f;
     }
 
     @Override
