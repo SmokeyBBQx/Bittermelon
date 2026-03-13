@@ -2,6 +2,7 @@ package com.site21.bittermelon.common.systems.fluid;
 
 import com.google.common.collect.Maps;
 import com.site21.bittermelon.common.content.blocks.properties.BitterStateProperties;
+import com.site21.bittermelon.common.systems.blockdamage.BlockDamageUtil;
 import com.site21.bittermelon.common.systems.substance.Substance;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import com.site21.bittermelon.init.neoforge.BitterFluidTypes;
@@ -37,8 +38,9 @@ import static com.site21.bittermelon.init.neoforge.BitterBlocks.SUBSTANCE_FLUID_
 
 public class SubstanceFluid extends Fluid {
     public static final IntegerProperty LEVEL = BitterStateProperties.LEVEL;
+    public static final int FULL_BLOCK_VOLUME = 1000;
     private static final int SPREAD_THRESHOLD = 125;
-    private static final int OVERFLOW_THRESHOLD = 1000;
+    private static final int PRESSURE_THRESHOLD = 250;
 
     private final Map<FluidState, VoxelShape> shapes = Maps.newIdentityHashMap();
 
@@ -70,7 +72,7 @@ public class SubstanceFluid extends Fluid {
             int volume = fluidBE.getVolume();
             if (volume > SPREAD_THRESHOLD) {
                 if (!spreadHorizontally(level, pos, fluidBE, volume)) {
-                    if (volume > OVERFLOW_THRESHOLD) {
+                    if (volume > FULL_BLOCK_VOLUME) {
                         spreadUpwards(level, pos, fluidBE);
                     }
                 }
@@ -82,22 +84,26 @@ public class SubstanceFluid extends Fluid {
 
     @Override
     protected void randomTick(ServerLevel level, BlockPos pos, FluidState state, RandomSource random) {
-        // Might be redundant
-        equalizeSubstances(level, pos, (SubstanceFluidBlockEntity) level.getBlockEntity(pos));
+        if (level.getBlockEntity(pos) instanceof SubstanceFluidBlockEntity fluidBE) {
+            exertPressure(fluidBE, level);
+        }
     }
 
     @Override
     protected boolean isRandomlyTicking() {
-        return false;
+        return true;
     }
 
     private boolean spreadDownwards(@NotNull Level level, @NotNull BlockPos pos, @NotNull SubstanceFluidBlockEntity fluidBE) {
         // Check if the fluid below is the same type and not full
         // If not, spread downwards
 
+        List<SubstanceStack> substances = fluidBE.getSubstances();
+
+        if (substances.isEmpty()) return false;
         if (!canSpreadTo(level, pos.below(), fluidBE)) return false;
 
-        spreadTo(level, pos.below(), fluidBE.getSubstances());
+        spreadTo(level, pos.below(), substances);
         fluidBE.setSubstances(new ArrayList<>());
         return true;
     }
@@ -160,22 +166,25 @@ public class SubstanceFluid extends Fluid {
     }
 
     private void spreadUpwards(@NotNull Level level, @NotNull BlockPos pos, @NotNull SubstanceFluidBlockEntity fluidBE) {
-        int spreadVolume = fluidBE.getVolume() - OVERFLOW_THRESHOLD;
+        int spreadVolume = fluidBE.getVolume() - FULL_BLOCK_VOLUME;
         if (spreadVolume <= 0) return;
 
         BlockPos abovePos = pos.above();
 
         // Check if we can spread upwards
-        if (level.getFluidState(abovePos).is(this) || level.getBlockState(abovePos).canBeReplaced()) {
-            List<SubstanceStack> substancesToSpread = spreadSubstancesByVolume(fluidBE.getSubstances(), spreadVolume,
-                    fluidBE.getVolume());
-            if (substancesToSpread.isEmpty()) return;
+        if (!canSpreadTo(level, abovePos, fluidBE)) {
+            exertPressure(fluidBE, level);
+            return;
+        }
 
-            spreadTo(level, abovePos, substancesToSpread);
+        List<SubstanceStack> substancesToSpread = spreadSubstancesByVolume(fluidBE.getSubstances(), spreadVolume,
+                fluidBE.getVolume());
+        if (substancesToSpread.isEmpty()) return;
 
-            for (SubstanceStack spreadStack : substancesToSpread) {
-                fluidBE.removeSubstance(spreadStack, spreadStack.getAmount());
-            }
+        spreadTo(level, abovePos, substancesToSpread);
+
+        for (SubstanceStack spreadStack : substancesToSpread) {
+            fluidBE.removeSubstance(spreadStack, spreadStack.getAmount());
         }
     }
 
@@ -235,7 +244,7 @@ public class SubstanceFluid extends Fluid {
         FluidState neighborFluidState = level.getFluidState(pos);
         if (!neighborFluidState.isEmpty() && !neighborFluidState.is(this)) return false;
         if (level.getBlockEntity(pos) instanceof SubstanceFluidBlockEntity neighborBE) {
-            if (neighborBE.getVolume() >= OVERFLOW_THRESHOLD) return false;
+            if (neighborBE.getVolume() >= FULL_BLOCK_VOLUME) return false;
         }
 
         // Check if the block can be replaced by this fluid
@@ -321,6 +330,17 @@ public class SubstanceFluid extends Fluid {
 
         if (level.getBlockEntity(pos) instanceof SubstanceFluidBlockEntity spreadBE) {
             spreadBE.transferSubstances(substances);
+        }
+    }
+
+    private void exertPressure(SubstanceFluidBlockEntity fluidBE, LevelAccessor level) {
+        if (fluidBE.getPressure() >= PRESSURE_THRESHOLD) {
+            for (Direction direction : Direction.values()) {
+                BlockPos neighborPos = fluidBE.getBlockPos().relative(direction);
+                if (level.getBlockState(neighborPos).canBeReplaced()) continue;
+
+                BlockDamageUtil.addDamage(level, neighborPos, fluidBE.getPressure() / 100);
+            }
         }
     }
 
