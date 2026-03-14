@@ -46,19 +46,19 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
 
     public ThrownItemProjectile(EntityType<? extends ThrownItemProjectile> entityType, Level level) {
         super(entityType, level);
-        energyLossOnBounce = 0.7;
+        energyLossOnBounce = 0.25f;
         maxBounces = 50;
     }
 
     public ThrownItemProjectile(double x, double y, double z, Level level, ItemStack item) {
         super(THROWN_ITEM_PROJECTILE.get(), x, y, z, level, item);
-        energyLossOnBounce = item.getOrDefault(ENERGY_LOSS_ON_BOUNCE, 0.7f);
+        energyLossOnBounce = item.getOrDefault(ENERGY_LOSS_ON_BOUNCE, 0.25f);
         maxBounces = item.getOrDefault(MAX_BOUNCES, 50);
     }
 
     public ThrownItemProjectile(LivingEntity owner, Level level, ItemStack item) {
         super(THROWN_ITEM_PROJECTILE.get(), owner, level, item);
-        energyLossOnBounce = item.getOrDefault(ENERGY_LOSS_ON_BOUNCE, 0.7f);
+        energyLossOnBounce = item.getOrDefault(ENERGY_LOSS_ON_BOUNCE, 0.2f);
         maxBounces = item.getOrDefault(MAX_BOUNCES, 50);
     }
 
