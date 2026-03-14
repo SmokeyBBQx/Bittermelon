@@ -93,9 +93,7 @@ public class SCP2398ProjectileItem extends ThrownItemProjectile {
             level().destroyBlock(pos, false, this);
         } else {
             BlockDamageUtil.addDamage(level(), pos, 40);
-            this.level().broadcastEntityEvent(this, (byte) 3);
-            this.discard();
-            level().addFreshEntity(itemEntity);
+            super.onHitBlock(result);
         }
     }
 
@@ -131,7 +129,6 @@ public class SCP2398ProjectileItem extends ThrownItemProjectile {
                     Level.ExplosionInteraction.MOB);
         }
 
-        this.level().broadcastEntityEvent(this, (byte) 3);
-        this.discard();
+        super.onHitEntity(result);
     }
 }
