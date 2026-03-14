@@ -4,13 +4,11 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.client.event.LayerDefinitions;
 import com.site21.bittermelon.common.content.entities.scp650.SCP650;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-public class SCP650Renderer extends LivingEntityRenderer<SCP650, SCP650RenderState, SCP650Model> {
+public class SCP650Renderer extends MobRenderer<SCP650, SCP650RenderState, SCP650Model> {
 
     public SCP650Renderer(EntityRendererProvider.Context context) {
         super(context, new SCP650Model(context.bakeLayer(LayerDefinitions.SCP_650_LAYER)), 0.25f);
