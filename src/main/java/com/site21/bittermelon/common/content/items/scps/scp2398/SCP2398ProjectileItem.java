@@ -57,15 +57,15 @@ public class SCP2398ProjectileItem extends ThrownItemProjectile {
                         z + offsetZ,
                         1,
                         0, 0, 0,
-                        0.01
-                );
+                        0.01);
             }
         }
     }
 
     @Override
     protected void onHitBlock(@NotNull BlockHitResult result) {
-        if (level().isClientSide) return;
+        if (level().isClientSide)
+            return;
 
         BlockPos pos = result.getBlockPos();
         ItemEntity itemEntity = new ItemEntity(level(), pos.getX(), pos.getY(), pos.getZ(), getItem());
@@ -77,11 +77,11 @@ public class SCP2398ProjectileItem extends ThrownItemProjectile {
                 pos.getZ() + 0.5,
                 10,
                 0.5, 0.5, 0.5,
-                0.1
-        );
+                0.1);
 
         BlockState state = level().getBlockState(pos);
-        level().playSound(null, getOnPos(), state.getSoundType(level(), pos, this).getBreakSound(), SoundSource.PLAYERS, 1, 1);
+        level().playSound(null, getOnPos(), state.getSoundType(level(), pos, this).getBreakSound(), SoundSource.PLAYERS,
+                1, 1);
 
         if (state.getBlock() instanceof BellBlock block) {
             block.attemptToRing(level(), pos, result.getDirection());
@@ -101,10 +101,12 @@ public class SCP2398ProjectileItem extends ThrownItemProjectile {
 
     @Override
     protected void onHitEntity(@NotNull EntityHitResult result) {
-        if (level().isClientSide) return;
+        if (level().isClientSide)
+            return;
         Entity entity = result.getEntity();
 
-        if (entity instanceof ItemEntity || entity instanceof SCP2398ProjectileItem) return;
+        if (entity instanceof ItemEntity || entity instanceof SCP2398ProjectileItem)
+            return;
 
         ((net.minecraft.server.level.ServerLevel) level()).sendParticles(
                 ParticleTypes.CRIT,
@@ -113,11 +115,22 @@ public class SCP2398ProjectileItem extends ThrownItemProjectile {
                 entity.getZ(),
                 15,
                 0.5, 0.5, 0.5,
-                0.1
-        );
+                0.1);
 
         float dmg = 15;
         entity.hurt(this.damageSources().thrown(this, this.getOwner()), dmg);
+
+        if (entity instanceof LivingEntity livingEntity) {
+            float explosionScaleFactor = (float) livingEntity.getHitbox().getSize();
+            level().explode(
+                    getOwner(),
+                    livingEntity.getX(),
+                    livingEntity.getY(),
+                    livingEntity.getZ(),
+                    2.0f * explosionScaleFactor,
+                    Level.ExplosionInteraction.MOB);
+        }
+
         this.level().broadcastEntityEvent(this, (byte) 3);
         this.discard();
     }
