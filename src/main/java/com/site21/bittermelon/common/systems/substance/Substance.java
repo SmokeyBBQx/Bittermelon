@@ -73,6 +73,10 @@ public class Substance {
         return properties.slipperiness;
     }
 
+    public int getViscosity() {
+        return properties.viscosity;
+    }
+
     public String getFlavor() {
         return properties.flavor;
     }
@@ -92,8 +96,8 @@ public class Substance {
     public static class Properties {
         float molarMass = 18.02f; // g/mol
         float density = 1; // g/cm^3
-        float transparency = 1;
         float slipperiness = 0.1f;
+        int viscosity = 1000; //
         int color = 0xFFAAD5DB;
         String flavor = "";
         String smell = "";
@@ -110,13 +114,13 @@ public class Substance {
             return this;
         }
 
-        public Properties transparency(float transparency) {
-            this.transparency = transparency;
+        public Properties slipperiness(float slipperiness) {
+            this.slipperiness = slipperiness;
             return this;
         }
 
-        public Properties slipperiness(float slipperiness) {
-            this.slipperiness = slipperiness;
+        public Properties viscosity(int viscosity) {
+            this.viscosity = viscosity;
             return this;
         }
 

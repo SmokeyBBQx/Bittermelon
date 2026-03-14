@@ -13,6 +13,9 @@ public class BitterFluidTypes {
 
     public static final Supplier<FluidType> SUBSTANCE_FLUID_TYPE = FLUID_TYPES.register("substance_fluid_type", () ->
             new SubstanceFluidType(FluidType.Properties.create()
+                    .canExtinguish(true)
+                    .supportsBoating(true)
+                    .isWaterLike(true)
             )
     );
 }

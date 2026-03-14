@@ -75,6 +75,13 @@ public class SubstanceFluid extends Fluid {
 
             if (spreadDownwards(level, pos, fluidBE)) return;
 
+            int tickInterval = (int) Math.ceil(fluidBE.getViscosity() / 1000.0);
+            if (tickInterval > 1 && level.getGameTime() % tickInterval * 5 != 0) {
+                Profiler.get().pop();
+                level.scheduleTick(pos, this, getTickDelay(level));
+                return;
+            }
+
             int volume = fluidBE.getVolume();
             if (volume > SPREAD_THRESHOLD) {
                 if (!spreadHorizontally(level, pos, fluidBE, volume)) {
@@ -208,24 +215,6 @@ public class SubstanceFluid extends Fluid {
             }
         }
     }
-
-//    private @NotNull List<SubstanceStack> getSubstancesForSpread(@NotNull SubstanceFluidBlockEntity fluidBE, int volume) {
-//        List<SubstanceStack> originalSubstances = fluidBE.getSubstances();
-//        List<SubstanceStack> spreadSubstances = new ArrayList<>();
-//
-//        for (SubstanceStack stack : originalSubstances) {
-//            float proportion = (float) stack.getVolume() / fluidBE.getVolume();
-//            int transferVolume = Math.min((int)(volume * proportion), stack.getVolume());
-//
-//            if (transferVolume > 0) {
-//                SubstanceStack spreadStack = stack.copy();
-//                spreadStack.setVolume(transferVolume);
-//                spreadSubstances.add(spreadStack);
-//            }
-//        }
-//
-//        return spreadSubstances;
-//    }
 
     private List<SubstanceStack> spreadSubstances(List<SubstanceStack> substances, int spreadCount) {
         List<SubstanceStack> spreadStacks = new ArrayList<>();

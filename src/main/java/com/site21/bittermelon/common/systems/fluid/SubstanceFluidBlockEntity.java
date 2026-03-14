@@ -134,6 +134,23 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
         return cachedColor;
     }
 
+    public int getViscosity() {
+        int weightedSum = 0;
+        int totalVolume = 0;
+
+        for (SubstanceStack stack : substances) {
+            int volume = stack.getVolume();
+            int viscosity = stack.getSubstance().getViscosity();
+            weightedSum += viscosity * volume;
+            totalVolume += volume;
+        }
+
+        if (totalVolume <= 0) return 1000;
+
+
+        return weightedSum / totalVolume;
+    }
+
     /**
      * Calculates the pressure based on the fluid's volume.
      * The pressure is defined as the difference between the full block volume and the current volume of the fluid.

@@ -32,6 +32,7 @@ public class Substances {
             "Blood",
             new Substance.Properties()
                     .color(0xFFB52222)
+                    .viscosity(2500)
     ));
 
     public static final Supplier<Substance> URINE = SUBSTANCES.register("urine", () -> new Substance(
@@ -83,5 +84,19 @@ public class Substances {
                     .slipperiness(0.5f)
                     .drug(Drugs.SPACE_MIRAGE)
                     .flavor("oily")
+    ));
+
+    public static final Supplier<Substance> KOOL_AID = SUBSTANCES.register("kool_aid", () -> new Substance(
+            "Kool-Aid",
+            new Substance.Properties()
+                    .color(0xFFB52222)
+                    .flavor("sweet")
+    ));
+
+    public static final Supplier<Substance> APPLE_JUICE = SUBSTANCES.register("apple_juice", () -> new Substance(
+            "Apple Juice",
+            new Substance.Properties()
+                    .color(0xFFFFDC65)
+                    .flavor("sweet")
     ));
 }
