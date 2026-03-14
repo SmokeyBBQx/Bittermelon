@@ -34,7 +34,7 @@ public class SCP131Model extends EntityModel<SCP131RenderState> {
 
         PartDefinition top_bit_bottom_r1 = body.addOrReplaceChild("top_bit_bottom_r1", CubeListBuilder.create().texOffs(21, 14).addBox(-1.5F, -1.5F, -1.5F, 3.0F, 3.0F, 3.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -0.6527F, -0.652F, -0.2182F, 0.0F, 0.0F));
 
-        PartDefinition wheel = body.addOrReplaceChild("wheel", CubeListBuilder.create().texOffs(21, 0).addBox(-2.5F, -0.5F, -2.5F, 5.0F, 1.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -0.5F, 0.5F));
+        PartDefinition wheel = body.addOrReplaceChild("wheel", CubeListBuilder.create().texOffs(21, 0).addBox(-2.5F, -0.5F, -2.5F, 5.0F, 1.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 7.75F, -0.75F));
 
         return LayerDefinition.create(mesh, 64, 64);
     }
