@@ -43,23 +43,27 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
     private int bounceCount = 0;
     private final int maxBounces;
     private final double energyLossOnBounce;
+    private boolean hasLanded;
 
     public ThrownItemProjectile(EntityType<? extends ThrownItemProjectile> entityType, Level level) {
         super(entityType, level);
         energyLossOnBounce = 0.25f;
         maxBounces = 50;
+        hasLanded = false;
     }
 
     public ThrownItemProjectile(double x, double y, double z, Level level, ItemStack item) {
         super(THROWN_ITEM_PROJECTILE.get(), x, y, z, level, item);
         energyLossOnBounce = item.getOrDefault(ENERGY_LOSS_ON_BOUNCE, 0.25f);
         maxBounces = item.getOrDefault(MAX_BOUNCES, 50);
+        hasLanded = false;
     }
 
     public ThrownItemProjectile(LivingEntity owner, Level level, ItemStack item) {
         super(THROWN_ITEM_PROJECTILE.get(), owner, level, item);
         energyLossOnBounce = item.getOrDefault(ENERGY_LOSS_ON_BOUNCE, 0.2f);
         maxBounces = item.getOrDefault(MAX_BOUNCES, 50);
+        hasLanded = false;
     }
 
     @Override
@@ -120,7 +124,10 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
             }
         }
 
-        spawnAtLocation(level, getItem());
+        if (!hasLanded) {
+            spawnAtLocation(level, getItem());
+            hasLanded = true;
+        }
 
         level.broadcastEntityEvent(this, (byte) 3);
         discard();
