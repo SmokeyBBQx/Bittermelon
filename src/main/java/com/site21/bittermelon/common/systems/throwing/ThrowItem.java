@@ -1,8 +1,10 @@
 package com.site21.bittermelon.common.systems.throwing;
 
 import com.site21.bittermelon.common.content.entities.ThrownItemProjectile;
+import com.site21.bittermelon.common.content.items.scps.scp2398.SCP2398ProjectileItem;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
+import com.site21.bittermelon.init.neoforge.BitterItems;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.sounds.SoundEvents;
@@ -33,7 +35,12 @@ public class ThrowItem {
     }
 
     private static void spawnProjectile(Level level, Player player, @NotNull ItemStack heldItem) {
-        ThrownItemProjectile projectile = new ThrownItemProjectile(player, level, heldItem.copy());
+        ThrownItemProjectile projectile;
+        if (heldItem.is(BitterItems.SCP_2398)) {
+            projectile = new SCP2398ProjectileItem(player, level, heldItem.copy());
+        } else {
+            projectile = new ThrownItemProjectile(player, level, heldItem.copy());
+        }
         projectile.setPos(player.getX(), player.getEyeY() - 0.1, player.getZ());
         projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0f, 1f, 1.0f);
         level.addFreshEntity(projectile);
