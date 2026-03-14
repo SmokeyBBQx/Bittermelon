@@ -16,7 +16,7 @@ import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ATMOSPH
 public class AtmosClientSyncing {
 
     @SubscribeEvent
-    public static void onChunkWatch(ChunkWatchEvent.@NotNull Watch event) {
+    public static void onChunkSent(ChunkWatchEvent.@NotNull Sent event) {
         if (event.getLevel().isClientSide) return;
 
         ChunkPos chunkPos = event.getPos();
