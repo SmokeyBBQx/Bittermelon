@@ -1,5 +1,7 @@
 package com.site21.bittermelon.common.systems.fluid;
 
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.site21.bittermelon.common.systems.substance.Substance;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -7,6 +9,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import org.jetbrains.annotations.NotNull;
@@ -57,7 +60,7 @@ public class ClientSubstanceFluid implements IClientFluidTypeExtensions {
                 BlockPos checkPos = pos.relative(direction);
                 if (getter.getBlockEntity(checkPos) instanceof SubstanceFluidBlockEntity be) {
                     int c = be.getColor();
-                    if (c == 0xFFAAD5DB) continue;
+                    if (c == Substance.DEFAULT_COLOR) continue;
 
                     red += ARGB.red(c);
                     green += ARGB.green(c);
@@ -66,7 +69,7 @@ public class ClientSubstanceFluid implements IClientFluidTypeExtensions {
                 }
             }
 
-            if (count > 0 && color != 0xFFAAD5DB) {
+            if (count > 0 && color != Substance.DEFAULT_COLOR) {
                 red += ARGB.red(color);
                 green += ARGB.green(color);
                 blue += ARGB.blue(color);
@@ -91,4 +94,9 @@ public class ClientSubstanceFluid implements IClientFluidTypeExtensions {
         return fluidFogColor;
     }
 
+    @Override
+    public boolean renderFluid(FluidState fluidState, BlockAndTintGetter getter, BlockPos pos, VertexConsumer vertexConsumer, BlockState blockState) {
+        // Not really a fix but it prevents the blank fluids from rendering
+        return IClientFluidTypeExtensions.of(fluidState).getTintColor(fluidState, getter, pos) == Substance.DEFAULT_COLOR;
+    }
 }

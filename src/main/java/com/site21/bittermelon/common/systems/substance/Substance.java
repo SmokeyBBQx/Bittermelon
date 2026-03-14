@@ -19,7 +19,9 @@ import static com.site21.bittermelon.init.neoforge.BitterRegistries.SUBSTANCE_RE
 
 public class Substance {
     public static final Codec<Holder<Substance>> CODEC = SUBSTANCE_REGISTRY.holderByNameCodec();
-    public static final StreamCodec<RegistryFriendlyByteBuf, Holder<Substance>> STREAM_CODEC = ByteBufCodecs.holderRegistry(SUBSTANCE_REGISTRY_KEY);
+    public static final StreamCodec<RegistryFriendlyByteBuf, Holder<Substance>> STREAM_CODEC =
+            ByteBufCodecs.holderRegistry(SUBSTANCE_REGISTRY_KEY);
+    public static final int DEFAULT_COLOR = 0xFFAAD5DB;
 
     private final String name;
     private final Substance.Properties properties;
@@ -98,7 +100,7 @@ public class Substance {
         float density = 1; // g/cm^3
         float slipperiness = 0.1f;
         int viscosity = 1000; //
-        int color = 0xFFAAD5DB;
+        int color = DEFAULT_COLOR;
         String flavor = "";
         String smell = "";
         Holder<Drug> drug;
