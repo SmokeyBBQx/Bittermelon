@@ -49,7 +49,6 @@ public class SubstanceFluid extends Fluid {
     private static final float DOWNWARDS_SPREAD_RATIO = 0.85f;
 
     private final Map<FluidState, VoxelShape> shapes = Maps.newIdentityHashMap();
-
     private final Supplier<? extends BucketItem> bucket;
 
     public SubstanceFluid(Supplier<? extends BucketItem> bucket) {
@@ -75,7 +74,7 @@ public class SubstanceFluid extends Fluid {
             if (spreadDownwards(level, pos, fluidBE)) return;
 
             int tickInterval = (int) Math.ceil(fluidBE.getViscosity() / 1000.0);
-            if (tickInterval > 1 && level.getGameTime() % tickInterval * 5 != 0) {
+            if (tickInterval > 1 && level.getGameTime() % (tickInterval * 5L) != 0) {
                 Profiler.get().pop();
                 level.scheduleTick(pos, this, tickInterval);
                 return;
@@ -104,11 +103,6 @@ public class SubstanceFluid extends Fluid {
     @Override
     protected boolean isRandomlyTicking() {
         return true;
-    }
-
-    @Override
-    protected void animateTick(Level level, BlockPos pos, FluidState state, RandomSource random) {
-        super.animateTick(level, pos, state, random);
     }
 
     private boolean spreadDownwards(@NotNull Level level, @NotNull BlockPos pos, @NotNull SubstanceFluidBlockEntity fluidBE) {
@@ -419,9 +413,7 @@ public class SubstanceFluid extends Fluid {
             if (fluidBE.getVolume() > SPREAD_THRESHOLD) {
                 for (Direction direction : Direction.Plane.HORIZONTAL) {
                     neighborPos.setWithOffset(pos, direction);
-                    FluidState neighborFluid = level.getFluidState(neighborPos);
-
-                    if (level.getBlockState(neighborPos).canBeReplaced() || (neighborFluid.is(this))) {
+                    if (level.getBlockState(neighborPos).canBeReplaced()) {
                         flowX += direction.getStepX();
                         flowZ += direction.getStepZ();
                     }

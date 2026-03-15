@@ -6,7 +6,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
@@ -128,31 +127,7 @@ public class SimpleFluid extends Fluid {
 
         Vec3 flowDirection = new Vec3(flowX, 0.0, flowZ);
 
-        // Apply downward flow if the fluid is deep enough and has solid blocks on the sides
-        if (state.getValue(LEVEL) >= 20) {
-            for (Direction horizontalDir : Direction.Plane.HORIZONTAL) {
-                neighborPos.setWithOffset(pos, horizontalDir);
-                boolean blockedAtCurrent = isSolidFace(level, pos, horizontalDir);
-                boolean blockedAtNeighbor = isSolidFace(level, neighborPos, horizontalDir.getOpposite());
-
-                if (blockedAtCurrent || blockedAtNeighbor) {
-                    flowDirection = flowDirection.normalize().add(0.0, -6.0, 0.0);
-                    break;
-                }
-            }
-        }
-
         return flowDirection.normalize();
-    }
-
-    private boolean isSolidFace(BlockGetter level, BlockPos pos, Direction direction) {
-        BlockState blockState = level.getBlockState(pos);
-        FluidState fluidState = level.getFluidState(pos);
-        if (fluidState.getType().isSame(this)) {
-            return false;
-        } else {
-            return Block.isFaceFull(blockState.getCollisionShape(level, pos), direction);
-        }
     }
 
     @Override
@@ -207,7 +182,7 @@ public class SimpleFluid extends Fluid {
         if (distributedLevel <= 0) return false;
 
         for (BlockPos spreadPos : spreadPositions) {
-            if (level.getFluidState(spreadPos) instanceof FluidState existing && existing.getType().isSame(this)) {
+            if (level.getFluidState(spreadPos) instanceof FluidState existing && existing.is(this)) {
                 int newLevel = Mth.clamp(existing.getValue(LEVEL) + distributedLevel, 1, 20);
                 level.setBlock(spreadPos, createLegacyBlock(state.setValue(LEVEL, newLevel)), Block.UPDATE_ALL);
             } else {
@@ -223,8 +198,9 @@ public class SimpleFluid extends Fluid {
     }
 
     private void getDownwardSpreadPositions(Level level, BlockPos pos, List<BlockPos> positions) {
+        BlockPos.MutableBlockPos neighborPos = new BlockPos.MutableBlockPos();
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            BlockPos neighborPos = pos.relative(direction);
+            neighborPos.setWithOffset(pos, direction);
             if (level.getBlockState(neighborPos).canBeReplaced() && canSpreadTo(level, neighborPos.below())) {
                 positions.add(neighborPos);
             }
@@ -232,8 +208,9 @@ public class SimpleFluid extends Fluid {
     }
 
     private void getSpreadPositions(Level level, BlockPos pos, List<BlockPos> positions) {
+        BlockPos.MutableBlockPos neighborPos = new BlockPos.MutableBlockPos();
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            BlockPos neighborPos = pos.relative(direction);
+            neighborPos.setWithOffset(pos, direction);
             if (canSpreadTo(level, neighborPos)) {
                 positions.add(neighborPos);
             }
@@ -250,30 +227,34 @@ public class SimpleFluid extends Fluid {
             BlockState blockState = level.getBlockState(pos);
             return blockState.canBeReplaced(this);
         }
-        if (fluidState.getType().isSame(this)) {
+        if (fluidState.is(this)) {
             return fluidState.getValue(LEVEL) < 20;
         }
         return false;
     }
 
-    private void equalizeFluid(Level level, BlockPos pos, FluidState ignoredState) {
+    private void equalizeFluid(Level level, BlockPos pos, FluidState state) {
         List<BlockPos> connectedPositions = new ArrayList<>();
         connectedPositions.add(pos);
+        BlockPos.MutableBlockPos neighborPos = new BlockPos.MutableBlockPos();
 
         for (Direction dir : Direction.Plane.HORIZONTAL) {
-            BlockPos neighborPos = pos.relative(dir);
-            if (level.getFluidState(neighborPos).getType().isSame(this)) {
+            neighborPos.setWithOffset(pos, dir);
+            FluidState neighborState = level.getFluidState(neighborPos);
+            boolean aboveThreshold = Math.abs(state.getAmount() - neighborState.getAmount()) > 1;
+
+            if (neighborState.is(this) && aboveThreshold) {
                 connectedPositions.add(neighborPos);
             }
         }
 
+        if (connectedPositions.size() <= 1) return;
+
         int totalLevel = 0;
         for (BlockPos cellPos : connectedPositions) {
-            FluidState cellFluidState = level.getFluidState(cellPos);
-            if (!cellFluidState.getType().isSame(this)) {
-                return;
-            }
-            totalLevel += cellFluidState.getValue(LEVEL);
+            FluidState cellState = level.getFluidState(cellPos);
+            if (!cellState.is(this)) return;
+            totalLevel += cellState.getValue(LEVEL);
         }
 
         int count = connectedPositions.size();
@@ -289,10 +270,4 @@ public class SimpleFluid extends Fluid {
             );
         }
     }
-
-
-    @Override
-    protected void animateTick(Level level, BlockPos pos, FluidState state, RandomSource random) {
-    }
-
 }

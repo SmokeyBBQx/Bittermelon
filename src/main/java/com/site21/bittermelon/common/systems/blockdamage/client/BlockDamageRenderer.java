@@ -16,17 +16,15 @@ import net.neoforged.neoforge.client.IRenderableSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Iterator;
-
 public class BlockDamageRenderer {
 
     public static void renderDamaged(Level level, @Nullable PoseStack poseStack, @NotNull Camera camera, @NotNull Iterable<? extends IRenderableSection> renderableSections) {
         Minecraft minecraft = Minecraft.getInstance();
-        Iterator<? extends IRenderableSection> iterator = renderableSections.iterator();
-        while (iterator.hasNext()) {
-            SectionRenderDispatcher.RenderSection renderSection = (SectionRenderDispatcher.RenderSection) iterator.next();
+        for (IRenderableSection section : renderableSections) {
+            SectionRenderDispatcher.RenderSection renderSection = (SectionRenderDispatcher.RenderSection) section;
             BlockPos renderPos = renderSection.getRenderOrigin();
             BlockDamageData data = BlockDamageUtil.getBlockDamageData(level, renderPos);
+            Vec3 cameraPos = camera.getPosition();
 
             for (BlockPos damagedPos : data.getBlockDamages().keySet()) {
                 if (!renderSection.getBoundingBox().intersects(damagedPos)) {
@@ -39,7 +37,6 @@ public class BlockDamageRenderer {
 
                 poseStack.pushPose();
 
-                Vec3 cameraPos = camera.getPosition();
                 poseStack.translate(
                         damagedPos.getX() - cameraPos.x,
                         damagedPos.getY() - cameraPos.y,
