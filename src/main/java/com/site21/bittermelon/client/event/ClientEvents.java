@@ -44,7 +44,7 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public static void onRenderLevelAfterTranslucent(RenderLevelStageEvent.@NotNull AfterTranslucentBlocks event) {
+    public static void onRenderLevelAfterEntities(RenderLevelStageEvent.@NotNull AfterEntities event) {
         BlockDamageRenderer.renderDamaged(event.getLevel(), event.getPoseStack(), event.getCamera(), event.getRenderableSections());
     }
 
