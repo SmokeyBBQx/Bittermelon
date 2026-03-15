@@ -10,7 +10,6 @@ import com.site21.bittermelon.common.content.blocks.electronics.television.Media
 import com.site21.bittermelon.common.content.blocks.electronics.television.client.TelevisionRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.thermometer.client.ThermometerRenderer;
 import com.site21.bittermelon.common.content.blocks.flamingo.FlamingoBlockRenderer;
-import com.site21.bittermelon.common.content.blocks.substance.fluid.client.FluidBlockColor;
 import com.site21.bittermelon.common.content.blocks.wallwriting.client.WallWritingRenderer;
 import com.site21.bittermelon.common.content.entities.cage.client.CageRenderer;
 import com.site21.bittermelon.common.content.entities.chicken.client.ChickenRenderer;
@@ -26,6 +25,7 @@ import com.site21.bittermelon.common.systems.carry.CarryHandler;
 import com.site21.bittermelon.common.systems.character.networking.UpdateCharacter;
 import com.site21.bittermelon.common.systems.component.screwdriver.ScrewdriverUseAnimation;
 import com.site21.bittermelon.common.systems.component.temperature.HeatDecorator;
+import com.site21.bittermelon.common.systems.fluid.ClientFluid;
 import com.site21.bittermelon.common.systems.fluid.ClientSubstanceFluid;
 import com.site21.bittermelon.common.systems.medical.networking.AddAndInsertCompartment;
 import com.site21.bittermelon.common.systems.medical.networking.InsertCompartment;
@@ -67,8 +67,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.MEDICAL_STATS;
-import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
 import static com.site21.bittermelon.init.neoforge.BitterEntities.*;
+import static com.site21.bittermelon.init.neoforge.BitterFluidTypes.SIMPLE_FLUID_TYPE;
 import static com.site21.bittermelon.init.neoforge.BitterFluidTypes.SUBSTANCE_FLUID_TYPE;
 import static com.site21.bittermelon.init.neoforge.BitterFluids.SUBSTANCE_FLUID;
 
@@ -135,11 +135,6 @@ public class ClientSetup {
                     state.setRenderData(LIMB_VISIBILITY, limbVisibility);
                 }
         );
-    }
-
-    @SubscribeEvent
-    public static void registerColorHandlers(RegisterColorHandlersEvent.@NotNull Block event) {
-        event.register(new FluidBlockColor(), FLUID.get());
     }
 
     @SubscribeEvent
@@ -210,6 +205,7 @@ public class ClientSetup {
     @SubscribeEvent
     public static void onRegisterFluidTypeExtensions(@NotNull RegisterClientExtensionsEvent event) {
         event.registerFluidType(new ClientSubstanceFluid(), SUBSTANCE_FLUID_TYPE.get());
+        event.registerFluidType(new ClientFluid(), SIMPLE_FLUID_TYPE.get());
     }
 
     @SubscribeEvent

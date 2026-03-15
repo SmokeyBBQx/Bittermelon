@@ -18,4 +18,12 @@ public class BitterFluidTypes {
                     .isWaterLike(true)
             )
     );
+
+    public static final Supplier<FluidType> SIMPLE_FLUID_TYPE = FLUID_TYPES.register("simple_fluid_type", () ->
+            new FluidType(FluidType.Properties.create()
+                    .canExtinguish(true)
+                    .supportsBoating(true)
+                    .isWaterLike(true)
+            )
+    );
 }

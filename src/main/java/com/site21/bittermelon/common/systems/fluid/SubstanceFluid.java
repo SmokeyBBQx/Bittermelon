@@ -54,8 +54,7 @@ public class SubstanceFluid extends Fluid {
 
     public SubstanceFluid(Supplier<? extends BucketItem> bucket) {
         this.bucket = bucket;
-        registerDefaultState(getStateDefinition().any()
-                .setValue(LEVEL, 1));
+        registerDefaultState(getStateDefinition().any().setValue(LEVEL, 1));
     }
 
     @Override
@@ -78,7 +77,7 @@ public class SubstanceFluid extends Fluid {
             int tickInterval = (int) Math.ceil(fluidBE.getViscosity() / 1000.0);
             if (tickInterval > 1 && level.getGameTime() % tickInterval * 5 != 0) {
                 Profiler.get().pop();
-                level.scheduleTick(pos, this, getTickDelay(level));
+                level.scheduleTick(pos, this, tickInterval);
                 return;
             }
 
@@ -113,9 +112,6 @@ public class SubstanceFluid extends Fluid {
     }
 
     private boolean spreadDownwards(@NotNull Level level, @NotNull BlockPos pos, @NotNull SubstanceFluidBlockEntity fluidBE) {
-        // Check if the fluid below is the same type and not full
-        // If not, spread downwards
-
         List<SubstanceStack> substances = fluidBE.getSubstances();
 
         if (substances.isEmpty()) return false;
@@ -153,11 +149,7 @@ public class SubstanceFluid extends Fluid {
             spreadTo(level, spreadPos, substancesToSpread);
         }
 
-        for (SubstanceStack spreadStack : substancesToSpread) {
-            int totalRemoved = spreadStack.getAmount() * spreadCount;
-            fluidBE.removeSubstance(spreadStack, totalRemoved);
-        }
-
+        fluidBE.removeSubstances(substancesToSpread, spreadCount);
         equalizeSubstances(level, pos, fluidBE);
 
         Profiler.get().pop();
@@ -178,22 +170,32 @@ public class SubstanceFluid extends Fluid {
     }
 
     private void getDownwardSpreadPositions(Level level, BlockPos pos, SubstanceFluidBlockEntity fluidBE,
-                                                      List<BlockPos> positions) {
+                                            List<BlockPos> positions) {
+        BlockPos.MutableBlockPos neighborPos = new BlockPos.MutableBlockPos();
+
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            BlockPos neighborPos = pos.relative(direction);
+            neighborPos.setWithOffset(pos, direction);
             if (level.getBlockState(neighborPos).canBeReplaced() && canSpreadTo(level, neighborPos.below(), fluidBE)) {
-                positions.add(neighborPos);
+                positions.add(neighborPos.immutable());
             }
         }
     }
 
-    private void getSpreadPositions(Level level, BlockPos pos, SubstanceFluidBlockEntity fluidBE,
-                                              List<BlockPos> positions) {
+    private void getSpreadPositions(Level level, BlockPos pos, SubstanceFluidBlockEntity fluidBE, List<BlockPos> positions) {
+        List<BlockPos> backupPositions = new ArrayList<>(4);
+        BlockPos.MutableBlockPos neighborPos = new BlockPos.MutableBlockPos();
+
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            BlockPos neighborPos = pos.relative(direction);
-            if (canSpreadTo(level, neighborPos, fluidBE)) {
-                positions.add(neighborPos);
+            neighborPos.setWithOffset(pos, direction);
+            if (level.getBlockState(neighborPos).canBeReplaced()) {
+                positions.add(neighborPos.immutable());
+            } else if (canSpreadTo(level, neighborPos, fluidBE)) {
+                backupPositions.add(neighborPos.immutable());
             }
+        }
+
+        if (positions.isEmpty()) {
+            positions.addAll(backupPositions);
         }
     }
 
@@ -267,16 +269,36 @@ public class SubstanceFluid extends Fluid {
         return blockState.canBeReplaced();
     }
 
+    private boolean canSpreadHorizontally(Level level, BlockPos pos, SubstanceFluidBlockEntity fluidBE) {
+        FluidState neighborFluidState = level.getFluidState(pos);
+        if (!neighborFluidState.isEmpty() && !neighborFluidState.is(this)) return false;
 
-    private void equalizeSubstances(@NotNull Level level, BlockPos worldPosition, SubstanceFluidBlockEntity fluidBE) {
+        if (level.getBlockEntity(pos) instanceof SubstanceFluidBlockEntity neighborBE) {
+            return neighborBE.getVolume() < FULL_BLOCK_VOLUME && Math.abs(neighborBE.getAmount() - fluidBE.getAmount()) > 1;
+        }
+
+        // Check if the block can be replaced by this fluid
+        BlockState blockState = level.getBlockState(pos);
+        if (blockState.getBlock() instanceof LiquidBlockContainer liquidBlockContainer) {
+            return liquidBlockContainer.canPlaceLiquid(null, level, pos, blockState, this);
+        }
+
+        return blockState.canBeReplaced();
+    }
+
+
+    private void equalizeSubstances(@NotNull Level level, BlockPos pos, SubstanceFluidBlockEntity fluidBE) {
         Profiler.get().push("equalizeSubstances");
 
         List<SubstanceFluidBlockEntity> fluids = new ArrayList<>(5);
         fluids.add(fluidBE);
+        int height = level.getFluidState(pos).getAmount();
+        BlockPos.MutableBlockPos neighborPos = new BlockPos.MutableBlockPos();
 
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            BlockPos neighborPos = worldPosition.relative(direction);
-            if (level.getBlockEntity(neighborPos) instanceof SubstanceFluidBlockEntity neighborBE) {
+            neighborPos.setWithOffset(pos, direction);
+            if (level.getBlockEntity(neighborPos) instanceof SubstanceFluidBlockEntity neighborBE
+                    && level.getFluidState(neighborPos).getAmount() != height) {
                 fluids.add(neighborBE);
             }
         }
@@ -286,26 +308,7 @@ public class SubstanceFluid extends Fluid {
             return;
         }
 
-        int totalVolume = 0;
-        for (SubstanceFluidBlockEntity be : fluids) {
-            totalVolume += be.getVolume();
-        }
-
         int fluidCount = fluids.size();
-        int averageVolume = totalVolume / fluidCount;
-
-        boolean needsEqualization = false;
-        for (SubstanceFluidBlockEntity be : fluids) {
-            if (be.getVolume() != averageVolume) {
-                needsEqualization = true;
-                break;
-            }
-        }
-
-        if (!needsEqualization) {
-            Profiler.get().pop();
-            return;
-        }
 
         Map<Substance, Integer> totalsByType = new HashMap<>();
         for (SubstanceFluidBlockEntity be : fluids) {
@@ -339,7 +342,7 @@ public class SubstanceFluid extends Fluid {
         Profiler.get().pop();
     }
 
-    private void spreadTo(@NotNull LevelAccessor level, BlockPos pos, List<SubstanceStack> substances) {
+    private void spreadTo(@NotNull Level level, BlockPos pos, List<SubstanceStack> substances) {
         if (!level.getFluidState(pos).is(this)) {
             FluidState newState = defaultFluidState().setValue(LEVEL, 1);
             level.setBlock(pos, createLegacyBlock(newState), Block.UPDATE_CLIENTS);
@@ -362,7 +365,7 @@ public class SubstanceFluid extends Fluid {
         }
     }
 
-    private void playFlowSound(LevelAccessor level, BlockPos pos, RandomSource random) {
+    private void playFlowSound(Level level, BlockPos pos, RandomSource random) {
         level.playSound(
                 null,
                 pos,
@@ -385,8 +388,54 @@ public class SubstanceFluid extends Fluid {
     }
 
     @Override
-    protected @NotNull Vec3 getFlow(@NotNull BlockGetter blockReader, @NotNull BlockPos pos, @NotNull FluidState fluidState) {
-        return Vec3.ZERO;
+    protected @NotNull Vec3 getFlow(@NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull FluidState state) {
+        double flowX = 0.0;
+        double flowZ = 0.0;
+        BlockPos.MutableBlockPos neighborPos = new BlockPos.MutableBlockPos();
+
+//        for (Direction direction : Direction.Plane.HORIZONTAL) {
+//            Direction opposite = direction.getOpposite();
+//
+//            // adjacent
+//            neighborPos.setWithOffset(pos, direction);
+//            FluidState adjacentFluid = level.getFluidState(neighborPos);
+//            BlockState adjacentBlock = level.getBlockState(neighborPos);
+//            boolean occupied = adjacentFluid.getAmount() > 1 && !adjacentBlock.canBeReplaced();
+//
+//            // opposite
+//            neighborPos.setWithOffset(pos, opposite);
+//            FluidState oppositeFluid = level.getFluidState(neighborPos);
+//            boolean oppositeUnoccupied = oppositeFluid.is(this)
+//                    ? oppositeFluid.getAmount() < 2
+//                    : level.getBlockState(neighborPos).canBeReplaced();
+//
+//            if (occupied && oppositeUnoccupied) {
+//                flowX += opposite.getStepX();
+//                flowZ += opposite.getStepZ();
+//            }
+//        }
+
+        if (level.getBlockEntity(pos) instanceof SubstanceFluidBlockEntity fluidBE) {
+            if (fluidBE.getVolume() > SPREAD_THRESHOLD) {
+                for (Direction direction : Direction.Plane.HORIZONTAL) {
+                    neighborPos.setWithOffset(pos, direction);
+                    FluidState neighborFluid = level.getFluidState(neighborPos);
+
+                    if (level.getBlockState(neighborPos).canBeReplaced() || (neighborFluid.is(this))) {
+                        flowX += direction.getStepX();
+                        flowZ += direction.getStepZ();
+                    }
+                }
+            }
+        }
+
+        if (flowX * flowX + flowZ * flowZ < 0.01) {
+            return Vec3.ZERO;
+        }
+
+        Vec3 flowDirection = new Vec3(flowX, 0.0, flowZ);
+
+        return flowDirection.normalize();
     }
 
     @Override

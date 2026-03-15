@@ -1,5 +1,6 @@
 package com.site21.bittermelon.common.systems.fluid;
 
+import com.site21.bittermelon.common.systems.substance.Substance;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import com.site21.bittermelon.util.ColorUtil;
 import net.minecraft.core.BlockPos;
@@ -27,6 +28,8 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
     private final List<SubstanceStack> substances;
     private int cachedVolume;
     private int cachedColor;
+    private int cachedAmount;
+    private int cachedViscosity;
 
     public SubstanceFluidBlockEntity(BlockPos pos, BlockState blockState) {
         super(SUBSTANCE_FLUID_BLOCK_ENTITY.get(), pos, blockState);
@@ -34,6 +37,8 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
         substances = new ArrayList<>();
         cachedVolume = -1;
         cachedColor = -1;
+        cachedAmount = -1;
+        cachedViscosity = -1;
     }
 
     public void updateSubstance(SubstanceStack substance) {
@@ -53,10 +58,25 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
         updateFluidState();
     }
 
+    public void updateSubstanceNoUpdate(SubstanceStack substance) {
+        // Merge with existing substances if possible
+        for (SubstanceStack stack : substances) {
+            if (stack.canMergeWith(substance)) {
+                stack.modifyAmount(substance.getAmount());
+                return;
+            }
+        }
+
+        // Otherwise, add as a new substance
+        substances.add(substance);
+    }
+
     public void transferSubstances(@NotNull List<SubstanceStack> substances) {
         for (SubstanceStack stack : substances) {
-            updateSubstance(stack.copy());
+            updateSubstanceNoUpdate(stack.copy());
         }
+        updateFluidState();
+        setChanged();
     }
 
     public void removeSubstance(SubstanceStack substance, int amount) {
@@ -71,6 +91,34 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
                 return;
             }
         }
+    }
+
+    public void removeSubstanceNoUpdate(SubstanceStack substance, int amount) {
+        for (SubstanceStack stack : substances) {
+            if (substance.canMergeWith(stack)) {
+                stack.modifyAmount(-amount);
+                if (stack.getAmount() <= 0) {
+                    substances.remove(stack);
+                }
+                return;
+            }
+        }
+    }
+
+    public void removeSubstances(@NotNull List<SubstanceStack> substances) {
+        for (SubstanceStack stack : substances) {
+            removeSubstanceNoUpdate(stack, stack.getAmount());
+        }
+        setChanged();
+        updateFluidState();
+    }
+
+    public void removeSubstances(List<SubstanceStack> substances, int multiplier) {
+        for (SubstanceStack stack : substances) {
+            removeSubstanceNoUpdate(stack, stack.getAmount() * multiplier);
+        }
+        setChanged();
+        updateFluidState();
     }
 
     public List<SubstanceStack> getSubstances() {
@@ -95,7 +143,7 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
         substances.add(stack);
     }
 
-    private void updateFluidState() {
+    public void updateFluidState() {
         if (level == null) return;
         if (level.getBlockState(worldPosition).isAir()) return;
         int fluidLevel = Math.max(1, Mth.clamp(getVolume() / 50, 1, 19));
@@ -109,18 +157,30 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
 
     public int getVolume() {
         if (cachedVolume == -1f) {
-            cachedVolume = substances.stream()
-                    .map(SubstanceStack::getVolume)
-                    .reduce(0, Integer::sum);
+            cachedVolume = 0;
+            for (SubstanceStack stack : substances) {
+                cachedVolume += stack.getVolume();
+            }
         }
 
         return cachedVolume;
     }
 
+    public int getAmount() {
+        if (cachedAmount == -1f) {
+            cachedAmount = 0;
+            for (SubstanceStack stack : substances) {
+                cachedAmount += stack.getAmount();
+            }
+        }
+
+        return cachedAmount;
+    }
+
     public int getColor() {
         if (cachedColor == -1) {
             if (substances.isEmpty()) {
-                cachedColor = 0xFFAAD5DB; // Default color if no substances
+                cachedColor = Substance.DEFAULT_COLOR;
             } else {
                 Map<Integer, Integer> colors = new HashMap<>();
                 // Create a copy to avoid concurrent modification
@@ -135,6 +195,8 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
     }
 
     public int getViscosity() {
+        if (cachedViscosity != -1) return cachedViscosity;
+
         int weightedSum = 0;
         int totalVolume = 0;
 
@@ -148,7 +210,8 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
         if (totalVolume <= 0) return 1000;
 
 
-        return weightedSum / totalVolume;
+        cachedViscosity = weightedSum / totalVolume;
+        return cachedViscosity;
     }
 
     /**
@@ -208,6 +271,8 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
         super.setChanged();
         cachedVolume = -1;
         cachedColor = -1;
+        cachedAmount = -1;
+        cachedViscosity = -1;
         requestModelDataUpdate();
     }
 }

@@ -396,6 +396,11 @@ public class BitterItems {
                     .setId(ResourceKey.create(Registries.ITEM, registryName.effectiveModel()))
                     .stacksTo(1)));
 
+    public static final DeferredItem<BucketItem> SIMPLE_FLUID_BUCKET = ITEMS.registerItem("simple_fluid_bucket", registryName ->
+            new BucketItem(BitterFluids.SIMPLE_FLUID.get(), new Item.Properties()
+                    .setId(ResourceKey.create(Registries.ITEM, registryName.effectiveModel()))
+                    .stacksTo(1)));
+
     public static final DeferredItem<Item> SUTURE = ITEMS.register("suture", registryName ->
             new Item(new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, registryName))

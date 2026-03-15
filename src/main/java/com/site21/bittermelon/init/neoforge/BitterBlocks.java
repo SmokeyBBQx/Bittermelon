@@ -33,6 +33,7 @@ import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlock;
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.common.content.blocks.wallwriting.WallWritingBlock;
 import com.site21.bittermelon.common.content.entities.cage.CageBlock;
+import com.site21.bittermelon.common.systems.fluid.SimpleFluidBlock;
 import com.site21.bittermelon.common.systems.fluid.SubstanceFluidBlock;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.block.Block;
@@ -176,16 +177,10 @@ public class BitterBlocks {
 
     public static final DeferredBlock<SubstanceFluidBlock> SUBSTANCE_FLUID_BLOCK = BLOCKS.registerBlock("substance_fluid_block", SubstanceFluidBlock::new, BlockBehaviour.Properties.of()
             .mapColor(MapColor.WATER)
-            .noOcclusion()
-            .destroyTime(-1)
-            .sound(new DeferredSoundType(1.0f,
-                    1.0f,
-                    BitterSounds.SPLATTER::value,
-                    BitterSounds.SOGGY::value,
-                    BitterSounds.SPLAT::value,
-                    BitterSounds.SOGGY::value,
-                    BitterSounds.SPLATTER::value
-            ))
+    );
+
+    public static final DeferredBlock<SimpleFluidBlock> SIMPLE_FLUID_BLOCK = BLOCKS.registerBlock("simple_fluid_block", SimpleFluidBlock::new, BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WATER)
     );
 
     public static final DeferredBlock<EmergencyExitLampBlock> EMERGENCY_EXIT_LAMP = BLOCKS.registerBlock("emergency_exit_lamp", EmergencyExitLampBlock::new, BlockBehaviour.Properties.of()
