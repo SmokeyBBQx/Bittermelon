@@ -11,6 +11,7 @@
     "PlayerMixin"
   ],
   "client": [
+    "AbstractContainerMenuMixin",
     "ChatComponentMixin",
     "ChatScreenMixin",
     "ContextualInfoExtender",
