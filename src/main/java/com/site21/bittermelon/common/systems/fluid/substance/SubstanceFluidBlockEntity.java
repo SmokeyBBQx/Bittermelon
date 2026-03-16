@@ -195,7 +195,9 @@ public class SubstanceFluidBlockEntity extends BlockEntity implements Reactor {
     public void updateFluidState() {
         if (level == null) return;
         if (level.getBlockState(worldPosition).isAir()) return;
+
         int fluidLevel = Math.max(1, Mth.clamp(getVolume() / 50, 1, 19));
+        if (level.getFluidState(worldPosition).getAmount() == fluidLevel) return;
 
         BlockState currentState = level.getBlockState(worldPosition);
         BlockState newState = currentState.setValue(SubstanceFluidBlock.LEVEL, fluidLevel);
@@ -330,7 +332,6 @@ public class SubstanceFluidBlockEntity extends BlockEntity implements Reactor {
         cachedAmount = -1;
         cachedViscosity = -1;
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-        requestModelDataUpdate();
         reactionsDirty = true;
     }
 }
