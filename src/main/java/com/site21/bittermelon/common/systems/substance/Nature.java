@@ -5,4 +5,5 @@ public enum Nature {
     WEAK_ACID,
     BASE,
     COMBUSTIBLE,
+    WATER_BASED
 }

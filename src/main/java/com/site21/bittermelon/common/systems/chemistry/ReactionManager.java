@@ -30,8 +30,8 @@ public class ReactionManager {
                     natureToReactions.computeIfAbsent(entry.getKey(), k -> new HashSet<>()).add(reaction);
                 }
 
-                for (var holder : reagent.substanceRequirements()) {
-                    substanceToReactions.computeIfAbsent(holder.value(), k -> new HashSet<>()).add(reaction);
+                for (Substance substance : reagent.substanceRequirements()) {
+                    substanceToReactions.computeIfAbsent(substance, k -> new HashSet<>()).add(reaction);
                 }
             }
         }

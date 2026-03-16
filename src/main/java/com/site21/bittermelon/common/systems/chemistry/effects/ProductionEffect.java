@@ -31,7 +31,7 @@ public class ProductionEffect implements ReactionEffect {
         for (var entry : products.entrySet()) {
             SubstanceStack stack = entry.getKey().toStack();
             stack.setAmount(amount * entry.getValue());
-            reactor.updateSubstance(stack);
+            reactor.updateSubstanceNoUpdate(stack);
         }
     }
 }

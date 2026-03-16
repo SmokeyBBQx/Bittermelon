@@ -22,6 +22,7 @@ public class Substances {
             "Water",
             new Substance.Properties()
                     .color(0x50AAD5DB)
+                    .nature(Nature.WATER_BASED, 1.0f)
     ));
 
     public static final Supplier<Substance> HYDROGEN_PEROXIDE = SUBSTANCES.register("hydrogen_peroxide", () -> new Substance(
@@ -34,6 +35,7 @@ public class Substances {
             new Substance.Properties()
                     .color(0xFFB52222)
                     .viscosity(2500)
+                    .nature(Nature.WATER_BASED, 0.7f)
     ));
 
     public static final Supplier<Substance> URINE = SUBSTANCES.register("urine", () -> new Substance(
@@ -41,6 +43,7 @@ public class Substances {
             new Substance.Properties()
                     .color(0xFFFFDC65)
                     .nature(Nature.STRONG_ACID, 0.8f)
+                    .nature(Nature.WATER_BASED, 0.8f)
     ));
 
     public static final Supplier<Substance> VOMIT = SUBSTANCES.register("vomit", () -> new Substance(
@@ -48,6 +51,7 @@ public class Substances {
             new Substance.Properties()
                     .color(0xFFCFBD8B)
                     .nature(Nature.BASE, 0.5f)
+                    .nature(Nature.WATER_BASED, 0.6f)
     ));
 
     public static final Supplier<Substance> SODIUM_CYANIDE = SUBSTANCES.register("sodium_cyanide", () -> new Substance(
@@ -95,6 +99,7 @@ public class Substances {
             new Substance.Properties()
                     .color(0xFFB52222)
                     .flavor("sweet")
+                    .nature(Nature.WATER_BASED, 0.9f)
     ));
 
     public static final Supplier<Substance> APPLE_JUICE = SUBSTANCES.register("apple_juice", () -> new Substance(
@@ -102,5 +107,34 @@ public class Substances {
             new Substance.Properties()
                     .color(0xFFFFDC65)
                     .flavor("sweet")
+                    .nature(Nature.WATER_BASED, 0.8f)
+    ));
+
+    public static final Supplier<Substance> SULFURIC_ACID = SUBSTANCES.register("sulfuric_acid", () -> new Substance(
+            "Sulfuric Acid",
+            new Substance.Properties()
+                    .color(0x50AAD5DB)
+                    .nature(Nature.STRONG_ACID, 0.9f)
+    ));
+
+    public static final Supplier<Substance> HYDROCHLORIC_ACID = SUBSTANCES.register("hydrochloric_acid", () -> new Substance(
+            "Hydrochloric Acid",
+            new Substance.Properties()
+                    .color(0x50AAD5DB)
+                    .nature(Nature.STRONG_ACID, 0.8f)
+    ));
+
+    public static final Supplier<Substance> NITRIC_ACID = SUBSTANCES.register("nitric_acid", () -> new Substance(
+            "Nitric Acid",
+            new Substance.Properties()
+                    .color(0x50AAD5DB)
+                    .nature(Nature.STRONG_ACID, 0.7f)
+    ));
+
+    public static final Supplier<Substance> RED_ICE = SUBSTANCES.register("red_ice", () -> new Substance(
+            "Red Ice",
+            new Substance.Properties()
+                    .color(0xFFB52222)
     ));
 }
+

@@ -90,11 +90,11 @@ public class SubstanceStack implements DataComponentHolder, MutableDataComponent
     }
 
     public int getVolume() {
-        return (int) (amount * substance.getMolarVolume());
+        return (int) (amount * substance.getMolarVolume() / 1000);
     }
 
     public void setVolume(int volume) {
-        amount = (int) (volume / substance.getMolarVolume());
+        amount = (int) (volume / substance.getMolarVolume() * 1000);
     }
 
     public void modifyVolume(int delta) {

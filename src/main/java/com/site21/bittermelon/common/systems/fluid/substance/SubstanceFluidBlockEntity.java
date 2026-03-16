@@ -329,6 +329,7 @@ public class SubstanceFluidBlockEntity extends BlockEntity implements Reactor {
         cachedColor = -1;
         cachedAmount = -1;
         cachedViscosity = -1;
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         requestModelDataUpdate();
         reactionsDirty = true;
     }

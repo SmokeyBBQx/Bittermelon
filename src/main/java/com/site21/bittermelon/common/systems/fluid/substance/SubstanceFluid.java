@@ -71,6 +71,7 @@ public class SubstanceFluid extends Fluid {
                 return;
             }
 
+            // Perhaps this shouldn't run when the fluid is flowing
             fluidBE.tickReactions();
 
             if (spreadDownwards(level, pos, fluidBE)) return;

@@ -22,27 +22,27 @@ public record Reaction(
             }
         }
 
-        int reagentMatches = 0;
-        for (SubstanceStack stack : reactor.getSubstances()) {
-            for (Reagent reagent : reagents) {
+        for (Reagent reagent : reagents) {
+            boolean found = false;
+            for (SubstanceStack stack : reactor.getSubstances()) {
                 if (reagent.matches(stack)) {
-                    reagentMatches++;
+                    found = true;
                     break;
                 }
             }
+            if (!found) return false;
         }
 
-        return reagentMatches == reagents.size();
+        return true;
     }
 
     public int getReactionRate(Reactor reactor, Level level, BlockPos pos) {
-        return 2;
+        return 1000;
     }
 
     public boolean react(Reactor reactor, Level level, BlockPos pos) {
-        float proportion = 1;
-        int rate = getReactionRate(reactor, level, pos);
         Map<SubstanceStack, Reagent> reactants = new HashMap<>();
+        int scaledAmount = getReactionRate(reactor, level, pos);
 
         for (Reagent reagent : reagents) {
             boolean found = false;
@@ -50,7 +50,7 @@ public record Reaction(
                 if (reagent.matches(stack)) {
                     reactants.put(stack, reagent);
                     if (reagent.proportion() > 0) {
-                        proportion = Math.min(proportion, (float) stack.getAmount() / (reagent.proportion() * rate));
+                        scaledAmount = Math.min(scaledAmount, stack.getAmount() / reagent.proportion());
                     }
                     found = true;
                     break;
@@ -60,18 +60,17 @@ public record Reaction(
             if (!found) return false;
         }
 
-        if (proportion <= 0) return false;
-
-        int scaledAmount = (int) (proportion * rate);
+        if (scaledAmount <= 0) return false;
 
         for (var entry : reactants.entrySet()) {
-            reactor.removeSubstance(entry.getKey(), scaledAmount * entry.getValue().proportion());
+            reactor.removeSubstanceNoUpdate(entry.getKey(), scaledAmount * entry.getValue().proportion());
         }
 
         for (ReactionEffect effect : effects) {
             effect.apply(reactor, level, pos, scaledAmount);
         }
 
+        reactor.setChanged();
         return true;
     }
 }

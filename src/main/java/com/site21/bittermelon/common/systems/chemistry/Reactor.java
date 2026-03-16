@@ -9,7 +9,13 @@ import java.util.EnumSet;
 public interface Reactor {
     void updateSubstance(SubstanceStack stack);
 
+    void updateSubstanceNoUpdate(SubstanceStack stack);
+
     void removeSubstance(SubstanceStack stack, int amount);
+
+    void removeSubstanceNoUpdate(SubstanceStack stack, int amount);
+
+    void setChanged();
 
     int getAmount();
 

@@ -44,6 +44,7 @@ import static com.site21.bittermelon.init.custom.LogicalOperators.LOGICAL_OPERAT
 import static com.site21.bittermelon.init.custom.Medias.MEDIA;
 import static com.site21.bittermelon.init.custom.Roles.ROLES;
 import static com.site21.bittermelon.init.custom.Substances.SUBSTANCES;
+import static com.site21.bittermelon.init.custom.Substances.WATER;
 import static com.site21.bittermelon.init.custom.VerbSets.VERB_SETS;
 import static com.site21.bittermelon.init.neoforge.BitterActivity.ACTIVITY;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ATTACHMENT_TYPES;
@@ -119,15 +120,29 @@ public class Bittermelon {
         );
 
         Reaction explosionReaction = new Reaction(
-                List.of(new Reagent.Builder().addNatureRequirement(Nature.WEAK_ACID, 0.5f).build()),
+                List.of(
+                        new Reagent.Builder().addNatureRequirement(Nature.WEAK_ACID, 0.5f).build(),
+                        new Reagent.Builder().addSubstanceRequirement(WATER.get()).build()),
                 List.of(),
                 0,
                 0,
                 List.of(new ExplosionEffect())
         );
 
+        Reaction redIceConversion = new Reaction(
+                List.of(
+                        new Reagent.Builder().proportion(0).addSubstanceRequirement(Substances.RED_ICE.get()).build(),
+                        new Reagent.Builder().addNatureRequirement(Nature.WATER_BASED, 0f).build()
+                ),
+                List.of(),
+                Integer.MIN_VALUE,
+                0,
+                List.of(new ProductionEffect().addProduct(Substances.RED_ICE.get(), 1))
+        );
+
         reactionManager.register(testReaction);
         reactionManager.register(explosionReaction);
+        reactionManager.register(redIceConversion);
         reactionManager.build();
     }
 
