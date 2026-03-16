@@ -1,10 +1,10 @@
 package com.site21.bittermelon.common.systems.fluid.substance;
 
+import com.site21.bittermelon.common.systems.chemistry.Reaction;
+import com.site21.bittermelon.common.systems.chemistry.ReactionManager;
+import com.site21.bittermelon.common.systems.chemistry.Reactor;
 import com.site21.bittermelon.common.systems.substance.Substance;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
-import com.site21.bittermelon.common.systems.substance.reactions.Reaction;
-import com.site21.bittermelon.common.systems.substance.reactions.ReactionManager;
-import com.site21.bittermelon.common.systems.substance.reactions.Reactor;
 import com.site21.bittermelon.util.ColorUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;

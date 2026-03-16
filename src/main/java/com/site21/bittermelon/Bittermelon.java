@@ -6,12 +6,12 @@ import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.character.networking.SyncActiveCharacter;
 import com.site21.bittermelon.common.systems.character.networking.SyncCharacters;
+import com.site21.bittermelon.common.systems.chemistry.Reaction;
+import com.site21.bittermelon.common.systems.chemistry.ReactionManager;
+import com.site21.bittermelon.common.systems.chemistry.Reagent;
+import com.site21.bittermelon.common.systems.chemistry.effects.ExplosionEffect;
+import com.site21.bittermelon.common.systems.chemistry.effects.ProductionEffect;
 import com.site21.bittermelon.common.systems.substance.Nature;
-import com.site21.bittermelon.common.systems.substance.reactions.Reaction;
-import com.site21.bittermelon.common.systems.substance.reactions.ReactionManager;
-import com.site21.bittermelon.common.systems.substance.reactions.Reagent;
-import com.site21.bittermelon.common.systems.substance.reactions.effects.ExplosionEffect;
-import com.site21.bittermelon.common.systems.substance.reactions.effects.ProductionEffect;
 import com.site21.bittermelon.common.systems.telecomms.intercom.IntercomManager;
 import com.site21.bittermelon.common.systems.telecomms.intercom.networking.SyncIntercomList;
 import com.site21.bittermelon.init.custom.Substances;
@@ -128,6 +128,7 @@ public class Bittermelon {
 
         reactionManager.register(testReaction);
         reactionManager.register(explosionReaction);
+        reactionManager.build();
     }
 
     @SubscribeEvent

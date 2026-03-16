@@ -1,4 +1,4 @@
-package com.site21.bittermelon.common.systems.substance.reactions;
+package com.site21.bittermelon.common.systems.chemistry;
 
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import net.minecraft.core.BlockPos;
@@ -27,6 +27,7 @@ public record Reaction(
             for (Reagent reagent : reagents) {
                 if (reagent.matches(stack)) {
                     reagentMatches++;
+                    break;
                 }
             }
         }

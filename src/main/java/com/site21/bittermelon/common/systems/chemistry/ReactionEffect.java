@@ -1,4 +1,4 @@
-package com.site21.bittermelon.common.systems.substance.reactions;
+package com.site21.bittermelon.common.systems.chemistry;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;

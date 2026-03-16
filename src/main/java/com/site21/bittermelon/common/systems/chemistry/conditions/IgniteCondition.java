@@ -1,7 +1,7 @@
-package com.site21.bittermelon.common.systems.substance.reactions.conditions;
+package com.site21.bittermelon.common.systems.chemistry.conditions;
 
-import com.site21.bittermelon.common.systems.substance.reactions.ReactionCondition;
-import com.site21.bittermelon.common.systems.substance.reactions.Reactor;
+import com.site21.bittermelon.common.systems.chemistry.ReactionCondition;
+import com.site21.bittermelon.common.systems.chemistry.Reactor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;

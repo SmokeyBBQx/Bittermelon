@@ -1,7 +1,7 @@
-package com.site21.bittermelon.common.systems.substance.reactions.effects;
+package com.site21.bittermelon.common.systems.chemistry.effects;
 
-import com.site21.bittermelon.common.systems.substance.reactions.ReactionEffect;
-import com.site21.bittermelon.common.systems.substance.reactions.Reactor;
+import com.site21.bittermelon.common.systems.chemistry.ReactionEffect;
+import com.site21.bittermelon.common.systems.chemistry.Reactor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 

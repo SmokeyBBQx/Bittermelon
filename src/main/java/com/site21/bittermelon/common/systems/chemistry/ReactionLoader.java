@@ -1,4 +1,4 @@
-package com.site21.bittermelon.common.systems.substance.reactions;
+package com.site21.bittermelon.common.systems.chemistry;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.HolderLookup;

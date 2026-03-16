@@ -1,4 +1,4 @@
-package com.site21.bittermelon.common.systems.substance.reactions;
+package com.site21.bittermelon.common.systems.chemistry;
 
 import com.site21.bittermelon.common.systems.substance.Nature;
 import com.site21.bittermelon.common.systems.substance.Substance;
@@ -12,8 +12,8 @@ public record Reagent(
         int proportion,
         int order,
         EnumMap<Nature, Float> natureRequirements,
-        Set<Holder<Substance>> substanceRequirements
-) {
+        Set<Holder<Substance>> substanceRequirements) {
+
     boolean matches(SubstanceStack stack) {
         Substance substance = stack.getSubstance();
 
