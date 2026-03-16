@@ -1,4 +1,4 @@
-package com.site21.bittermelon.common.systems.fluid;
+package com.site21.bittermelon.common.systems.fluid.simple;
 
 import com.google.common.collect.Maps;
 import com.site21.bittermelon.common.content.blocks.properties.BitterStateProperties;

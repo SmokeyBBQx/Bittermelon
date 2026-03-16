@@ -6,9 +6,15 @@ import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.character.networking.SyncActiveCharacter;
 import com.site21.bittermelon.common.systems.character.networking.SyncCharacters;
-import com.site21.bittermelon.common.systems.substance.reactions.Reactions;
+import com.site21.bittermelon.common.systems.substance.Nature;
+import com.site21.bittermelon.common.systems.substance.reactions.Reaction;
+import com.site21.bittermelon.common.systems.substance.reactions.ReactionManager;
+import com.site21.bittermelon.common.systems.substance.reactions.Reagent;
+import com.site21.bittermelon.common.systems.substance.reactions.effects.ExplosionEffect;
+import com.site21.bittermelon.common.systems.substance.reactions.effects.ProductionEffect;
 import com.site21.bittermelon.common.systems.telecomms.intercom.IntercomManager;
 import com.site21.bittermelon.common.systems.telecomms.intercom.networking.SyncIntercomList;
+import com.site21.bittermelon.init.custom.Substances;
 import com.site21.bittermelon.init.neoforge.BitterEntities;
 import com.site21.bittermelon.init.neoforge.BitterRegistries;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
@@ -28,6 +34,8 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
+
+import java.util.List;
 
 import static com.site21.bittermelon.init.custom.Anatomies.ANATOMIES;
 import static com.site21.bittermelon.init.custom.Compartments.COMPARTMENTS;
@@ -96,7 +104,30 @@ public class Bittermelon {
     }
 
     private void commonSetup(final @NotNull FMLCommonSetupEvent event) {
-        event.enqueueWork(Reactions::initReactions);
+        ReactionManager reactionManager = ReactionManager.getInstance();
+        Reaction testReaction = new Reaction(
+                List.of(
+                        new Reagent.Builder().addNatureRequirement(Nature.STRONG_ACID, 0.5f).build(),
+                        new Reagent.Builder().addNatureRequirement(Nature.BASE, 0.5f).build()),
+                List.of(),
+                0,
+                0,
+                List.of(new ProductionEffect()
+                        .addProduct(Substances.KOOL_AID.get(), 2)
+                        .addProduct(Substances.HYDROGEN_CYANIDE.get(), 1)
+                )
+        );
+
+        Reaction explosionReaction = new Reaction(
+                List.of(new Reagent.Builder().addNatureRequirement(Nature.WEAK_ACID, 0.5f).build()),
+                List.of(),
+                0,
+                0,
+                List.of(new ExplosionEffect())
+        );
+
+        reactionManager.register(testReaction);
+        reactionManager.register(explosionReaction);
     }
 
     @SubscribeEvent

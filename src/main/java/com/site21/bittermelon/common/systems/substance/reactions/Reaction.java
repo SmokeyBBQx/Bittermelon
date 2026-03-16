@@ -1,116 +1,76 @@
 package com.site21.bittermelon.common.systems.substance.reactions;
 
-import com.site21.bittermelon.common.systems.substance.Substance;
-import org.jetbrains.annotations.NotNull;
+import com.site21.bittermelon.common.systems.substance.SubstanceStack;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class Reaction {
-    private final Map<Substance, Integer> reactants;
-    private final Map<Substance, Integer> products;
-    private final Map<Substance, Integer> orders;
-    private final float activationEnergy;
-    private final float preExponentialFactor;
-    private final float enthalpyChange;
-
-    private Reaction(@NotNull ReactionBuilder builder) {
-        this.reactants = new HashMap<>(builder.reactants);
-        this.products = new HashMap<>(builder.products);
-        this.orders = new HashMap<>(builder.orders);
-        this.activationEnergy = builder.activationEnergy;
-        this.preExponentialFactor = builder.preExponentialFactor;
-        this.enthalpyChange = builder.enthalpyChange;
-    }
-
-    public double calculateReactionRate(Map<Substance, Integer> concentrations, float temperature) {
-        float R = 8.314f;
-        double rate = (preExponentialFactor * Math.exp(-activationEnergy * 1000 / (R * temperature))) / 20;
-
-        for (Map.Entry<Substance, Integer> entry : orders.entrySet()) {
-            Substance substance = entry.getKey();
-            int order = entry.getValue();
-            float concentration = concentrations.getOrDefault(substance, 0);
-            rate *= Math.pow(concentration, order);
+public record Reaction(
+        List<Reagent> reagents,
+        List<ReactionCondition> conditions,
+        int minTemperature,
+        int temperatureChange,
+        List<ReactionEffect> effects
+) {
+    public boolean canOccur(Reactor reactor, Level level, BlockPos pos) {
+        for (ReactionCondition condition : conditions) {
+            if (!condition.test(reactor, level, pos)) {
+                return false;
+            }
         }
 
-        return rate;
-    }
-
-    public Map<Substance, Integer> getReactants() {
-        return new HashMap<>(reactants);
-    }
-
-    public Map<Substance, Integer> getProducts() {
-        return new HashMap<>(products);
-    }
-
-    public Map<Substance, Integer> getOrders() {
-        return new HashMap<>(orders);
-    }
-
-    public int getReactantProportion(Substance substance) {
-        return reactants.get(substance);
-    }
-
-    public int getOrder(Substance substance) {
-        return orders.get(substance);
-    }
-
-    public float getActivationEnergy() {
-        return activationEnergy;
-    }
-
-    public float getPreExponentialFactor() {
-        return preExponentialFactor;
-    }
-
-    public float getEnthalpyChange() {
-        return enthalpyChange;
-    }
-
-    public static class ReactionBuilder {
-        private final Map<Substance, Integer> reactants = new HashMap<>();
-        private final Map<Substance, Integer> products = new HashMap<>();
-        private final Map<Substance, Integer> orders = new HashMap<>();
-
-        private float activationEnergy = 2.5f;
-        private float preExponentialFactor = 1e4f;
-        private float enthalpyChange = 0;
-
-        public ReactionBuilder addReactant(Substance substance, int proportion, int order) {
-            reactants.put(substance, proportion);
-            orders.put(substance, order);
-            return this;
+        int reagentMatches = 0;
+        for (SubstanceStack stack : reactor.getSubstances()) {
+            for (Reagent reagent : reagents) {
+                if (reagent.matches(stack)) {
+                    reagentMatches++;
+                }
+            }
         }
 
-        public ReactionBuilder addProduct(Substance substance, int proportion) {
-            products.put(substance, proportion);
-            return this;
+        return reagentMatches == reagents.size();
+    }
+
+    public int getReactionRate(Reactor reactor, Level level, BlockPos pos) {
+        return 2;
+    }
+
+    public boolean react(Reactor reactor, Level level, BlockPos pos) {
+        float proportion = 1;
+        int rate = getReactionRate(reactor, level, pos);
+        Map<SubstanceStack, Reagent> reactants = new HashMap<>();
+
+        for (Reagent reagent : reagents) {
+            boolean found = false;
+            for (SubstanceStack stack : reactor.getSubstances()) {
+                if (reagent.matches(stack)) {
+                    reactants.put(stack, reagent);
+                    if (reagent.proportion() > 0) {
+                        proportion = Math.min(proportion, (float) stack.getAmount() / (reagent.proportion() * rate));
+                    }
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) return false;
         }
 
-        public ReactionBuilder addCatalyst(Substance substance, int order) {
-            orders.put(substance, order);
-            return this;
+        if (proportion <= 0) return false;
+
+        int scaledAmount = (int) (proportion * rate);
+
+        for (var entry : reactants.entrySet()) {
+            reactor.removeSubstance(entry.getKey(), scaledAmount * entry.getValue().proportion());
         }
 
-        public ReactionBuilder activationEnergy(float activationEnergy) {
-            this.activationEnergy = activationEnergy;
-            return this;
+        for (ReactionEffect effect : effects) {
+            effect.apply(reactor, level, pos, scaledAmount);
         }
 
-        public ReactionBuilder preExponentialFactor(float preExponentialFactor) {
-            this.preExponentialFactor = preExponentialFactor;
-            return this;
-        }
-
-        public ReactionBuilder enthalpyChange(float enthalpyChange) {
-            this.enthalpyChange = enthalpyChange;
-            return this;
-        }
-
-        public Reaction build() {
-            return new Reaction(this);
-        }
+        return true;
     }
 }

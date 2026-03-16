@@ -7,10 +7,9 @@ import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlockEn
 import com.site21.bittermelon.common.content.items.substance.SubstanceContainerItem;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosHandler;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosInstance;
-import com.site21.bittermelon.common.systems.fluid.SubstanceFluidBlockEntity;
+import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlockEntity;
 import com.site21.bittermelon.common.systems.substance.Substance;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
-import com.site21.bittermelon.init.custom.Substances;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -123,7 +122,7 @@ public class SubstanceCommand {
         }
 
 //        fluidBlockEntity.setTemperature(amount);
-        source.sendSuccess(() -> Component.literal("Temperature: " + fluidBlockEntity.getTemperature()), true);
+//        source.sendSuccess(() -> Component.literal("Temperature: " + fluidBlockEntity.getTemperature()), true);
         return 1;
     }
 
@@ -243,7 +242,7 @@ public class SubstanceCommand {
         source.getLevel().setBlock(pos, FLUID.get().defaultBlockState(), 3);
 
         if (source.getLevel().getBlockEntity(pos) instanceof FluidBlockEntity fluidBlockEntity) {
-            fluidBlockEntity.updateSubstance(new SubstanceStack(Substances.WATER.get(), 1));
+//            fluidBlockEntity.updateSubstance(new SubstanceStack(Substances.WATER.get(), 1));
         }
 
         return 1;

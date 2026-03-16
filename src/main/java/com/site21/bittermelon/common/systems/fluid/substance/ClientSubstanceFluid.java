@@ -1,4 +1,4 @@
-package com.site21.bittermelon.common.systems.fluid;
+package com.site21.bittermelon.common.systems.fluid.substance;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.site21.bittermelon.common.systems.substance.Substance;

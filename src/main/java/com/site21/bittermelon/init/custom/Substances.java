@@ -1,6 +1,7 @@
 package com.site21.bittermelon.init.custom;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.common.systems.substance.Nature;
 import com.site21.bittermelon.common.systems.substance.Substance;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -14,7 +15,7 @@ public class Substances {
 
     public static final Supplier<Substance> OXYGEN = SUBSTANCES.register("oxygen", () -> new Substance(
             "Oxygen",
-            new Substance.Properties()
+            new Substance.Properties().nature(Nature.COMBUSTIBLE, 0.5f)
     ));
 
     public static final Supplier<Substance> WATER = SUBSTANCES.register("water", () -> new Substance(
@@ -25,7 +26,7 @@ public class Substances {
 
     public static final Supplier<Substance> HYDROGEN_PEROXIDE = SUBSTANCES.register("hydrogen_peroxide", () -> new Substance(
             "Hydrogen Peroxide",
-            new Substance.Properties()
+            new Substance.Properties().nature(Nature.WEAK_ACID, 0.5f)
     ));
 
     public static final Supplier<Substance> BLOOD = SUBSTANCES.register("blood", () -> new Substance(
@@ -39,12 +40,14 @@ public class Substances {
             "Urine",
             new Substance.Properties()
                     .color(0xFFFFDC65)
+                    .nature(Nature.STRONG_ACID, 0.8f)
     ));
 
     public static final Supplier<Substance> VOMIT = SUBSTANCES.register("vomit", () -> new Substance(
             "Vomit",
             new Substance.Properties()
                     .color(0xFFCFBD8B)
+                    .nature(Nature.BASE, 0.5f)
     ));
 
     public static final Supplier<Substance> SODIUM_CYANIDE = SUBSTANCES.register("sodium_cyanide", () -> new Substance(
@@ -63,6 +66,7 @@ public class Substances {
                     .drug(CYANIDE)
                     .smell("almondy")
                     .flavor("bitter")
+                    .nature(Nature.WEAK_ACID, 0.6f)
     ));
 
     public static final Supplier<Substance> MOTOR_OIL = SUBSTANCES.register("motor_oil", () -> new Substance(

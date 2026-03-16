@@ -14,6 +14,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.common.CommonHooks;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.EnumMap;
+
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.SUBSTANCE_REGISTRY;
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.SUBSTANCE_REGISTRY_KEY;
 
@@ -59,6 +61,10 @@ public class Substance {
         return components;
     }
 
+    public EnumMap<Nature, Float> getNature() {
+        return properties.nature;
+    }
+
     /**
      * Calculates the molar volume of the substance in cm³/mol.
      * @return Molar volume in cm³/mol.
@@ -96,6 +102,7 @@ public class Substance {
     }
 
     public static class Properties {
+        EnumMap<Nature, Float> nature = new EnumMap<>(Nature.class);
         float molarMass = 18.02f; // g/mol
         float density = 1; // g/cm^3
         float slipperiness = 0.1f;
@@ -105,6 +112,11 @@ public class Substance {
         String smell = "";
         Holder<Drug> drug;
         private final DataComponentMap.Builder components = DataComponentMap.builder();
+
+        public Properties nature(Nature nature, float intensity) {
+            this.nature.put(nature, intensity);
+            return this;
+        }
 
         public Properties molarMass(float molarMass) {
             this.molarMass = molarMass;

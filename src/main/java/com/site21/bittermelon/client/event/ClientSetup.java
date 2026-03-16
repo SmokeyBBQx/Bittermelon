@@ -25,8 +25,8 @@ import com.site21.bittermelon.common.systems.carry.CarryHandler;
 import com.site21.bittermelon.common.systems.character.networking.UpdateCharacter;
 import com.site21.bittermelon.common.systems.component.screwdriver.ScrewdriverUseAnimation;
 import com.site21.bittermelon.common.systems.component.temperature.HeatDecorator;
-import com.site21.bittermelon.common.systems.fluid.ClientFluid;
-import com.site21.bittermelon.common.systems.fluid.ClientSubstanceFluid;
+import com.site21.bittermelon.common.systems.fluid.simple.ClientSimpleFluid;
+import com.site21.bittermelon.common.systems.fluid.substance.ClientSubstanceFluid;
 import com.site21.bittermelon.common.systems.medical.networking.AddAndInsertCompartment;
 import com.site21.bittermelon.common.systems.medical.networking.InsertCompartment;
 import com.site21.bittermelon.common.systems.medical.networking.RemoveCompartment;
@@ -205,7 +205,7 @@ public class ClientSetup {
     @SubscribeEvent
     public static void onRegisterFluidTypeExtensions(@NotNull RegisterClientExtensionsEvent event) {
         event.registerFluidType(new ClientSubstanceFluid(), SUBSTANCE_FLUID_TYPE.get());
-        event.registerFluidType(new ClientFluid(), SIMPLE_FLUID_TYPE.get());
+        event.registerFluidType(new ClientSimpleFluid(), SIMPLE_FLUID_TYPE.get());
     }
 
     @SubscribeEvent

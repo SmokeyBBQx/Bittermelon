@@ -25,7 +25,7 @@ import com.site21.bittermelon.common.content.blocks.scp.scp151.SCP151BlockEntity
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlockEntity;
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.common.content.blocks.wallwriting.WallWritingBlockEntity;
-import com.site21.bittermelon.common.systems.fluid.SubstanceFluidBlockEntity;
+import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlockEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredRegister;

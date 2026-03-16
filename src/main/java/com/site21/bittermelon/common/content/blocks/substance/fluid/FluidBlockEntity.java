@@ -1,7 +1,6 @@
 package com.site21.bittermelon.common.content.blocks.substance.fluid;
 
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
-import com.site21.bittermelon.common.systems.substance.reactions.ReactionContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -12,7 +11,7 @@ import java.util.List;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.FLUID_BLOCK_ENTITY;
 
-public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
+public class FluidBlockEntity extends BlockEntity {
     // Constants
     private static final int SPREAD_THRESHOLD = 16;
     private static final int MAX_CAPACITY = 40;
@@ -38,25 +37,6 @@ public class FluidBlockEntity extends BlockEntity implements ReactionContainer {
         super(FLUID_BLOCK_ENTITY.get(), pos, blockState);
     }
 
-    @Override
-    public float getTemperature() {
-        return 0;
-    }
-
-    @Override
-    public float getHeatCapacity() {
-        return 0;
-    }
-
-    @Override
-    public void modifyTemperature(float temperature) {
-
-    }
-
-    @Override
-    public void updateSubstance(SubstanceStack stack) {
-
-    }
 
 //    public void tick() {
 //        if (getTotalAmount() <= 0) {

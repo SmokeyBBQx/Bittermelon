@@ -1,4 +1,4 @@
-package com.site21.bittermelon.common.systems.fluid;
+package com.site21.bittermelon.common.systems.fluid.substance;
 
 import com.google.common.collect.Maps;
 import com.site21.bittermelon.common.content.blocks.properties.BitterStateProperties;
@@ -70,6 +70,8 @@ public class SubstanceFluid extends Fluid {
                 level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
                 return;
             }
+
+            fluidBE.tickReactions();
 
             if (spreadDownwards(level, pos, fluidBE)) return;
 
@@ -279,7 +281,6 @@ public class SubstanceFluid extends Fluid {
 
         return blockState.canBeReplaced();
     }
-
 
     private void equalizeSubstances(@NotNull Level level, BlockPos pos, SubstanceFluidBlockEntity fluidBE) {
         Profiler.get().push("equalizeSubstances");
