@@ -2,6 +2,7 @@ package com.site21.bittermelon.common.systems.component.temperature;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.core.Holder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -83,6 +84,20 @@ public record HeatBehavior(int smokingPoint, int meltingPoint, int flashPoint, i
 
         coolAndSmoke(level.getGameTime(), level, entity, stack, temperature);
         tryIgnite(stack, level, entity, temperature);
+    }
+
+    public int getStackedTemperature(@NotNull ItemStack stack1, @NotNull ItemStack stack2) {
+        if (stack1.is(stack2.getItem()) && !stack1.is(Items.AIR)) {
+            if (stack1.getCount() + stack2.getCount() != 0) {
+                int temperature_1 = stack1.getOrDefault(BitterDataComponents.TEMPERATURE, 273);
+                int temperature_2 = stack2.getOrDefault(BitterDataComponents.TEMPERATURE, 273);
+                int weighted_average = (temperature_1 * stack1.getCount() + temperature_2 * stack2.getCount())
+                        / (stack1.getCount() + stack2.getCount());
+
+                return weighted_average;
+            }
+        }
+        return 273; // default
     }
 
     private void handleBurning(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, long burnTime) {

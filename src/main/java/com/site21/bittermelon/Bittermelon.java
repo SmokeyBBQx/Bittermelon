@@ -6,21 +6,25 @@ import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.character.networking.SyncActiveCharacter;
 import com.site21.bittermelon.common.systems.character.networking.SyncCharacters;
+import com.site21.bittermelon.common.systems.component.temperature.HeatBehavior;
 import com.site21.bittermelon.common.systems.substance.reactions.Reactions;
 import com.site21.bittermelon.common.systems.telecomms.intercom.IntercomManager;
 import com.site21.bittermelon.common.systems.telecomms.intercom.networking.SyncIntercomList;
+import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import com.site21.bittermelon.init.neoforge.BitterEntities;
 import com.site21.bittermelon.init.neoforge.BitterRegistries;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.ItemStackedOnOtherEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
@@ -43,7 +47,7 @@ import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.LAST_TY
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.BLOCK_ENTITY_TYPES;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.BLOCKS;
 import static com.site21.bittermelon.init.neoforge.BitterCreativeTabs.CREATIVE_MODE_TABS;
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.DATA_COMPONENTS;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 import static com.site21.bittermelon.init.neoforge.BitterDataSerializers.ENTITY_DATA_SERIALIZERS;
 import static com.site21.bittermelon.init.neoforge.BitterFluidTypes.FLUID_TYPES;
 import static com.site21.bittermelon.init.neoforge.BitterFluids.FLUIDS;
@@ -141,6 +145,19 @@ public class Bittermelon {
             if (activeCharacter != null) {
                 PacketDistributor.sendToPlayer(serverPlayer, new SyncActiveCharacter(activeCharacter.getId()));
             }
+        }
+    }
+
+    @SubscribeEvent
+    public void onItemsStacked(ItemStackedOnOtherEvent event) {
+        if (event.getCarriedItem().is(event.getStackedOnItem().getItem())) {
+            ItemStack carried = event.getCarriedItem();
+            ItemStack stacked = event.getStackedOnItem();
+            if (carried.getCount() + stacked.getCount() == 0) return;
+
+            int weighted_average = HeatBehavior.DEFAULT.getStackedTemperature(carried, stacked);
+            carried.set(BitterDataComponents.TEMPERATURE, weighted_average);
+            stacked.set(BitterDataComponents.TEMPERATURE, weighted_average);
         }
     }
 
