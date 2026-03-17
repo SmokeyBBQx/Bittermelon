@@ -197,12 +197,14 @@ public class SubstanceFluidBlockEntity extends BlockEntity implements Reactor {
         if (level.getBlockState(worldPosition).isAir()) return;
 
         int fluidLevel = Math.max(1, Mth.clamp(getVolume() / 50, 1, 19));
-        if (level.getFluidState(worldPosition).getAmount() == fluidLevel) return;
+        if (level.getFluidState(worldPosition).getAmount() != fluidLevel) {
+            BlockState currentState = level.getBlockState(worldPosition);
+            BlockState newState = currentState.setValue(SubstanceFluidBlock.LEVEL, fluidLevel);
 
-        BlockState currentState = level.getBlockState(worldPosition);
-        BlockState newState = currentState.setValue(SubstanceFluidBlock.LEVEL, fluidLevel);
+            level.setBlock(worldPosition, newState, UPDATE_ALL);
+        }
 
-        level.setBlock(worldPosition, newState, UPDATE_ALL);
+
         level.scheduleTick(worldPosition, SUBSTANCE_FLUID.get(), SUBSTANCE_FLUID.get().getTickDelay(level));
     }
 
@@ -331,7 +333,6 @@ public class SubstanceFluidBlockEntity extends BlockEntity implements Reactor {
         cachedColor = -1;
         cachedAmount = -1;
         cachedViscosity = -1;
-        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         reactionsDirty = true;
     }
 }
