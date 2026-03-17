@@ -76,12 +76,12 @@ public class SubstanceFluid extends Fluid {
 
             if (spreadDownwards(level, pos, fluidBE)) return;
 
-            int tickInterval = (int) Math.ceil(fluidBE.getViscosity() / 1000.0);
-            if (tickInterval > 1 && level.getGameTime() % (tickInterval * 5L) != 0) {
-                Profiler.get().pop();
-                level.scheduleTick(pos, this, tickInterval);
-                return;
-            }
+//            int tickInterval = (int) Math.ceil(fluidBE.getViscosity() / 1000.0);
+//            if (tickInterval > 1 && level.getGameTime() % (tickInterval * 5L) != 0) {
+//                Profiler.get().pop();
+//                level.scheduleTick(pos, this, tickInterval);
+//                return;
+//            }
 
             int volume = fluidBE.getVolume();
             if (volume > SPREAD_THRESHOLD) {

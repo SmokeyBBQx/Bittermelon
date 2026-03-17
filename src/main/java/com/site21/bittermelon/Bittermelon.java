@@ -11,6 +11,7 @@ import com.site21.bittermelon.common.systems.chemistry.ReactionManager;
 import com.site21.bittermelon.common.systems.chemistry.Reagent;
 import com.site21.bittermelon.common.systems.chemistry.effects.ExplosionEffect;
 import com.site21.bittermelon.common.systems.chemistry.effects.ProductionEffect;
+import com.site21.bittermelon.common.systems.chemistry.effects.SpawnEntityEffect;
 import com.site21.bittermelon.common.systems.substance.Nature;
 import com.site21.bittermelon.common.systems.telecomms.intercom.IntercomManager;
 import com.site21.bittermelon.common.systems.telecomms.intercom.networking.SyncIntercomList;
@@ -54,6 +55,7 @@ import static com.site21.bittermelon.init.neoforge.BitterBlocks.BLOCKS;
 import static com.site21.bittermelon.init.neoforge.BitterCreativeTabs.CREATIVE_MODE_TABS;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.DATA_COMPONENTS;
 import static com.site21.bittermelon.init.neoforge.BitterDataSerializers.ENTITY_DATA_SERIALIZERS;
+import static com.site21.bittermelon.init.neoforge.BitterEntities.SEA_MONKEY;
 import static com.site21.bittermelon.init.neoforge.BitterFluidTypes.FLUID_TYPES;
 import static com.site21.bittermelon.init.neoforge.BitterFluids.FLUIDS;
 import static com.site21.bittermelon.init.neoforge.BitterItems.ITEMS;
@@ -140,9 +142,23 @@ public class Bittermelon {
                 List.of(new ProductionEffect().addProduct(Substances.RED_ICE.get(), 1))
         );
 
+        Reaction seaMonkeyCreation = new Reaction(
+                List.of(
+                        new Reagent.Builder().addSubstanceRequirement(Substances.KOOL_AID.get()).build(),
+                        new Reagent.Builder().addSubstanceRequirement(Substances.BLOOD.get()).build(),
+                        new Reagent.Builder().proportion(2).addSubstanceRequirement(Substances.FERTILE_LIQUID.get()).build(),
+                        new Reagent.Builder().addSubstanceRequirement(Substances.BRINE_SHRIMP.get()).build()
+                ),
+                List.of(),
+                0,
+                0,
+                List.of(new SpawnEntityEffect(SEA_MONKEY.get(), 20), new ProductionEffect().addProduct(WATER.get(), 2))
+        );
+
         reactionManager.register(testReaction);
         reactionManager.register(explosionReaction);
         reactionManager.register(redIceConversion);
+        reactionManager.register(seaMonkeyCreation);
         reactionManager.build();
     }
 

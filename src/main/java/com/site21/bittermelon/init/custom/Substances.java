@@ -136,5 +136,19 @@ public class Substances {
             new Substance.Properties()
                     .color(0xFFB52222)
     ));
+
+    public static final Supplier<Substance> BRINE_SHRIMP = SUBSTANCES.register("brine_shrimp", () -> new Substance(
+            "Brine Shrimp",
+            new Substance.Properties()
+                    .color(0xFFFFDC65)
+                    .nature(Nature.WATER_BASED, 0.9f)
+    ));
+
+    public static final Supplier<Substance> FERTILE_LIQUID = SUBSTANCES.register("fertile_liquid", () -> new Substance(
+            "Fertile Liquid",
+            new Substance.Properties()
+                    .color(0xFFB1A5C2)
+                    .nature(Nature.WATER_BASED, 0.9f)
+    ));
 }
 

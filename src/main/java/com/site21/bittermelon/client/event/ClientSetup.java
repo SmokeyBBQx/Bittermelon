@@ -18,6 +18,7 @@ import com.site21.bittermelon.common.content.entities.scp1507.client.SCP1507Rend
 import com.site21.bittermelon.common.content.entities.scp548.client.SCP548Renderer;
 import com.site21.bittermelon.common.content.entities.scp650.client.SCP650Renderer;
 import com.site21.bittermelon.common.content.entities.scp939.client.SCP939Renderer;
+import com.site21.bittermelon.common.content.entities.seamonkey.client.SeaMonkeyRenderer;
 import com.site21.bittermelon.common.content.items.keycard.KeycardDecorator;
 import com.site21.bittermelon.common.content.items.repairtool.RepairToolUseAnimation;
 import com.site21.bittermelon.common.content.items.taser.TaserProjectileRenderer;
@@ -99,6 +100,7 @@ public class ClientSetup {
         event.registerEntityRenderer(TASER_PROJECTILE.get(), TaserProjectileRenderer::new);
         event.registerEntityRenderer(SCP_548.get(), SCP548Renderer::new);
         event.registerEntityRenderer(CAGE.get(), CageRenderer::new);
+        event.registerEntityRenderer(SEA_MONKEY.get(), SeaMonkeyRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.THERMOMETER_BLOCK_ENTITY.get(), ThermometerRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.INTERCOM_BLOCK_ENTITY.get(), PhoneCordRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.LARGE_SLIDING_DOOR_BLOCK_ENTITY.get(), LargeSlidingDoorRenderer::new);
