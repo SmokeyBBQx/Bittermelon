@@ -3,9 +3,6 @@ package com.site21.bittermelon.client.render;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +18,6 @@ public class LoreOpeningOverlay {
     private static final int DISPLAY_DURATION = 10000;
     private static final int FADE_DURATION = 500;
 
-    @SubscribeEvent
     public static void onRenderGUI(RenderGuiEvent.Post event) {
         if (!shouldDisplayText) return;
 

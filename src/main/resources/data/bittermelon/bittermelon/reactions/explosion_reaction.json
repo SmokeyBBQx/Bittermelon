@@ -1,0 +1,29 @@
+{
+  "reagents": [
+    {
+      "proportion": 1,
+      "order": 0,
+      "nature_requirements": {
+        "weak_acid": 0.5
+      },
+      "substance_requirements": []
+    },
+    {
+      "proportion": 1,
+      "order": 0,
+      "nature_requirements": {},
+      "substance_requirements": [
+        "bittermelon:water"
+      ]
+    }
+  ],
+  "conditions": [],
+  "min_temperature": 0,
+  "temperature_change": 0,
+  "effects": [
+    {
+      "type": "bittermelon:explosion"
+    }
+  ]
+}
+

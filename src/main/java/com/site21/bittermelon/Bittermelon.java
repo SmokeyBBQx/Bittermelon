@@ -6,16 +6,9 @@ import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.character.networking.SyncActiveCharacter;
 import com.site21.bittermelon.common.systems.character.networking.SyncCharacters;
-import com.site21.bittermelon.common.systems.chemistry.Reaction;
-import com.site21.bittermelon.common.systems.chemistry.ReactionManager;
-import com.site21.bittermelon.common.systems.chemistry.Reagent;
-import com.site21.bittermelon.common.systems.chemistry.effects.ExplosionEffect;
-import com.site21.bittermelon.common.systems.chemistry.effects.ProductionEffect;
-import com.site21.bittermelon.common.systems.chemistry.effects.SpawnEntityEffect;
-import com.site21.bittermelon.common.systems.substance.Nature;
+import com.site21.bittermelon.common.systems.chemistry.ReactionLoader;
 import com.site21.bittermelon.common.systems.telecomms.intercom.IntercomManager;
 import com.site21.bittermelon.common.systems.telecomms.intercom.networking.SyncIntercomList;
-import com.site21.bittermelon.init.custom.Substances;
 import com.site21.bittermelon.init.neoforge.BitterEntities;
 import com.site21.bittermelon.init.neoforge.BitterRegistries;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
@@ -28,6 +21,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
@@ -36,16 +30,15 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
-import java.util.List;
-
 import static com.site21.bittermelon.init.custom.Anatomies.ANATOMIES;
 import static com.site21.bittermelon.init.custom.Compartments.COMPARTMENTS;
 import static com.site21.bittermelon.init.custom.Drugs.DRUGS;
 import static com.site21.bittermelon.init.custom.LogicalOperators.LOGICAL_OPERATORS;
 import static com.site21.bittermelon.init.custom.Medias.MEDIA;
+import static com.site21.bittermelon.init.custom.ReactionConditions.REACTION_CONDITION_TYPES;
+import static com.site21.bittermelon.init.custom.ReactionEffects.REACTION_EFFECT_TYPES;
 import static com.site21.bittermelon.init.custom.Roles.ROLES;
 import static com.site21.bittermelon.init.custom.Substances.SUBSTANCES;
-import static com.site21.bittermelon.init.custom.Substances.WATER;
 import static com.site21.bittermelon.init.custom.VerbSets.VERB_SETS;
 import static com.site21.bittermelon.init.neoforge.BitterActivity.ACTIVITY;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ATTACHMENT_TYPES;
@@ -55,7 +48,6 @@ import static com.site21.bittermelon.init.neoforge.BitterBlocks.BLOCKS;
 import static com.site21.bittermelon.init.neoforge.BitterCreativeTabs.CREATIVE_MODE_TABS;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.DATA_COMPONENTS;
 import static com.site21.bittermelon.init.neoforge.BitterDataSerializers.ENTITY_DATA_SERIALIZERS;
-import static com.site21.bittermelon.init.neoforge.BitterEntities.SEA_MONKEY;
 import static com.site21.bittermelon.init.neoforge.BitterFluidTypes.FLUID_TYPES;
 import static com.site21.bittermelon.init.neoforge.BitterFluids.FLUIDS;
 import static com.site21.bittermelon.init.neoforge.BitterItems.ITEMS;
@@ -101,65 +93,19 @@ public class Bittermelon {
         PARTICLES.register(modEventBus);
         ANATOMIES.register(modEventBus);
         ENTITY_DATA_SERIALIZERS.register(modEventBus);
+        REACTION_CONDITION_TYPES.register(modEventBus);
+        REACTION_EFFECT_TYPES.register(modEventBus);
 
         modEventBus.addListener(BitterRegistries::registerRegistries);
         modEventBus.addListener(this::commonSetup);
     }
 
     private void commonSetup(final @NotNull FMLCommonSetupEvent event) {
-        ReactionManager reactionManager = ReactionManager.getInstance();
-        Reaction testReaction = new Reaction(
-                List.of(
-                        new Reagent.Builder().addNatureRequirement(Nature.STRONG_ACID, 0.5f).build(),
-                        new Reagent.Builder().addNatureRequirement(Nature.BASE, 0.5f).build()),
-                List.of(),
-                0,
-                0,
-                List.of(new ProductionEffect()
-                        .addProduct(Substances.KOOL_AID.get(), 2)
-                        .addProduct(Substances.HYDROGEN_CYANIDE.get(), 1)
-                )
-        );
+    }
 
-        Reaction explosionReaction = new Reaction(
-                List.of(
-                        new Reagent.Builder().addNatureRequirement(Nature.WEAK_ACID, 0.5f).build(),
-                        new Reagent.Builder().addSubstanceRequirement(WATER.get()).build()),
-                List.of(),
-                0,
-                0,
-                List.of(new ExplosionEffect())
-        );
-
-        Reaction redIceConversion = new Reaction(
-                List.of(
-                        new Reagent.Builder().proportion(0).addSubstanceRequirement(Substances.RED_ICE.get()).build(),
-                        new Reagent.Builder().addNatureRequirement(Nature.WATER_BASED, 0f).build()
-                ),
-                List.of(),
-                Integer.MIN_VALUE,
-                0,
-                List.of(new ProductionEffect().addProduct(Substances.RED_ICE.get(), 1))
-        );
-
-        Reaction seaMonkeyCreation = new Reaction(
-                List.of(
-                        new Reagent.Builder().addSubstanceRequirement(Substances.KOOL_AID.get()).build(),
-                        new Reagent.Builder().addSubstanceRequirement(Substances.BLOOD.get()).build(),
-                        new Reagent.Builder().proportion(2).addSubstanceRequirement(Substances.FERTILE_LIQUID.get()).build(),
-                        new Reagent.Builder().addSubstanceRequirement(Substances.BRINE_SHRIMP.get()).build()
-                ),
-                List.of(),
-                0,
-                0,
-                List.of(new SpawnEntityEffect(SEA_MONKEY.get(), 20), new ProductionEffect().addProduct(WATER.get(), 2))
-        );
-
-        reactionManager.register(testReaction);
-        reactionManager.register(explosionReaction);
-        reactionManager.register(redIceConversion);
-        reactionManager.register(seaMonkeyCreation);
-        reactionManager.build();
+    @SubscribeEvent
+    public void onAddReloadListeners(AddServerReloadListenersEvent event) {
+        event.addListener(Bittermelon.resource("reactions"), new ReactionLoader(event.getRegistryAccess()));
     }
 
     @SubscribeEvent

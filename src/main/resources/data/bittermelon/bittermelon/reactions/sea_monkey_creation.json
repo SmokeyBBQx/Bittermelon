@@ -1,0 +1,53 @@
+{
+  "reagents": [
+    {
+      "proportion": 1,
+      "order": 0,
+      "nature_requirements": {},
+      "substance_requirements": [
+        "bittermelon:kool_aid"
+      ]
+    },
+    {
+      "proportion": 1,
+      "order": 0,
+      "nature_requirements": {},
+      "substance_requirements": [
+        "bittermelon:blood"
+      ]
+    },
+    {
+      "proportion": 2,
+      "order": 0,
+      "nature_requirements": {},
+      "substance_requirements": [
+        "bittermelon:fertile_liquid"
+      ]
+    },
+    {
+      "proportion": 1,
+      "order": 0,
+      "nature_requirements": {},
+      "substance_requirements": [
+        "bittermelon:brine_shrimp"
+      ]
+    }
+  ],
+  "conditions": [],
+  "min_temperature": 0,
+  "temperature_change": 0,
+  "effects": [
+    {
+      "type": "bittermelon:spawn_entity",
+      "entity": "bittermelon:sea_monkey",
+      "max_amount": 10
+    },
+    {
+      "type": "bittermelon:synthesis",
+      "products": {
+        "bittermelon:water": 2
+      }
+    }
+  ]
+}
+

@@ -1,0 +1,36 @@
+{
+  "reagents": [
+    {
+      "proportion": 1,
+      "order": 1,
+      "nature_requirements": {},
+      "substance_requirements": [
+        "bittermelon:blood"
+      ]
+    },
+    {
+      "proportion": 2,
+      "order": 2,
+      "nature_requirements": {},
+      "substance_requirements": [
+        "bittermelon:hydrogen_peroxide"
+      ]
+    }
+  ],
+  "conditions": [],
+  "min_temperature": 20,
+  "temperature_change": 50,
+  "effects": [
+    {
+      "type": "bittermelon:synthesis",
+      "products": {
+        "bittermelon:water": 2,
+        "bittermelon:oxygen": 1
+      }
+    },
+    {
+      "type": "bittermelon:explosion"
+    }
+  ]
+}
+

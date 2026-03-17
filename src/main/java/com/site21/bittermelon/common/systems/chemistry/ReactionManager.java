@@ -4,6 +4,7 @@ import com.site21.bittermelon.common.systems.substance.Nature;
 import com.site21.bittermelon.common.systems.substance.Substance;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.world.level.Level;
 
 import java.util.*;
@@ -21,20 +22,26 @@ public class ReactionManager {
 
     public void register(Reaction reaction) {
         reactions.add(reaction);
-    }
 
-    public void build() {
-        for (Reaction reaction : reactions) {
-            for (Reagent reagent : reaction.reagents()) {
-                for (var entry : reagent.natureRequirements().entrySet()) {
-                    natureToReactions.computeIfAbsent(entry.getKey(), k -> new HashSet<>()).add(reaction);
-                }
+        for (Reagent reagent : reaction.reagents()) {
+            for (var entry : reagent.natureRequirements().entrySet()) {
+                natureToReactions
+                        .computeIfAbsent(entry.getKey(), k -> new HashSet<>())
+                        .add(reaction);
+            }
 
-                for (Substance substance : reagent.substanceRequirements()) {
-                    substanceToReactions.computeIfAbsent(substance, k -> new HashSet<>()).add(reaction);
-                }
+            for (Holder<Substance> holder : reagent.substanceRequirements()) {
+                substanceToReactions
+                        .computeIfAbsent(holder.value(), k -> new HashSet<>())
+                        .add(reaction);
             }
         }
+    }
+
+    public void clear() {
+        reactions.clear();
+        natureToReactions.clear();
+        substanceToReactions.clear();
     }
 
     public Set<Reaction> findMatch(Reactor reactor, Level level, BlockPos pos) {

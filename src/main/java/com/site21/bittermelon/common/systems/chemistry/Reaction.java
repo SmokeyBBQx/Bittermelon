@@ -1,5 +1,7 @@
 package com.site21.bittermelon.common.systems.chemistry;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -15,6 +17,8 @@ public record Reaction(
         int temperatureChange,
         List<ReactionEffect> effects
 ) {
+    public static final Codec<Reaction> CODEC;
+
     public boolean canOccur(Reactor reactor, Level level, BlockPos pos) {
         for (ReactionCondition condition : conditions) {
             if (!condition.test(reactor, level, pos)) {
@@ -72,5 +76,25 @@ public record Reaction(
 
         reactor.setChanged();
         return true;
+    }
+
+    static {
+        CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Reagent.CODEC.listOf()
+                        .fieldOf("reagents")
+                        .forGetter(Reaction::reagents),
+                ReactionCondition.CODEC.listOf()
+                        .fieldOf("conditions")
+                        .forGetter(Reaction::conditions),
+                Codec.INT
+                        .fieldOf("min_temperature")
+                        .forGetter(Reaction::minTemperature),
+                Codec.INT
+                        .fieldOf("temperature_change")
+                        .forGetter(Reaction::temperatureChange),
+                ReactionEffect.CODEC.listOf()
+                        .fieldOf("effects")
+                        .forGetter(Reaction::effects)
+        ).apply(instance, Reaction::new));
     }
 }

@@ -1,6 +1,7 @@
 package com.site21.bittermelon.common.systems.chemistry.effects;
 
 import com.site21.bittermelon.common.systems.chemistry.ReactionEffect;
+import com.site21.bittermelon.common.systems.chemistry.ReactionEffectType;
 import com.site21.bittermelon.common.systems.chemistry.Reactor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -9,13 +10,13 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
-public class SpawnEntityEffect implements ReactionEffect {
-    private final EntityType<?> entityType;
-    private final int maxAmount;
+import static com.site21.bittermelon.init.custom.ReactionEffects.SPAWN_ENTITY;
 
-    public SpawnEntityEffect(EntityType<?> entityType, int maxAmount) {
-        this.entityType = entityType;
-        this.maxAmount = maxAmount;
+public record SpawnEntityEffect(EntityType<?> entityType, int maxAmount) implements ReactionEffect {
+
+    @Override
+    public ReactionEffectType<?> getType() {
+        return SPAWN_ENTITY.get();
     }
 
     @Override
