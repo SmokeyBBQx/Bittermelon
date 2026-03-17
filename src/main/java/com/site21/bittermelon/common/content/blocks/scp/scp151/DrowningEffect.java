@@ -1,7 +1,6 @@
 package com.site21.bittermelon.common.content.blocks.scp.scp151;
 
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
-import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.stumble.StumbleHandler;
@@ -150,10 +149,11 @@ public class DrowningEffect extends MobEffect {
             player.level().setBlock(pos, FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
         }
 
-        if (player.level().getBlockEntity(pos) instanceof FluidBlockEntity fluid) {
-            fluid.updateSubstance(vomit);
-            fluid.updateSubstance(water);
-        }
+        // TODO: Reimplement substance transfer to blocks
+//        if (player.level().getBlockEntity(pos) instanceof FluidBlockEntity fluid) {
+//            fluid.updateSubstance(vomit);
+//            fluid.updateSubstance(water);
+//        }
 
         player.level().playSound(null, player.getOnPos(), BitterSounds.SPLAT.value(), SoundSource.PLAYERS);
     }

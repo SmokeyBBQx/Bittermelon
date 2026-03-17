@@ -1,8 +1,8 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.systems.fluid.SimpleFluid;
-import com.site21.bittermelon.common.systems.fluid.SubstanceFluid;
+import com.site21.bittermelon.common.systems.fluid.simple.SimpleFluid;
+import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluid;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.registries.DeferredRegister;

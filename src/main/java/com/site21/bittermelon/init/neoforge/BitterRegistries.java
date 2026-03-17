@@ -3,6 +3,8 @@ package com.site21.bittermelon.init.neoforge;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.blocks.electronics.television.Media;
 import com.site21.bittermelon.common.systems.chat.VerbSet;
+import com.site21.bittermelon.common.systems.chemistry.ReactionConditionType;
+import com.site21.bittermelon.common.systems.chemistry.ReactionEffectType;
 import com.site21.bittermelon.common.systems.electronics.wiring.Signal;
 import com.site21.bittermelon.common.systems.medical.anatomy.Anatomy;
 import com.site21.bittermelon.common.systems.medical.compartment.Compartment;
@@ -58,15 +60,29 @@ public class BitterRegistries {
             .sync(true)
             .create();
 
+    public static final ResourceKey<Registry<ReactionConditionType<?>>> REACTION_CONDITION_TYPE_KEY =
+            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "reaction_condition_type"));
+    public static final Registry<ReactionConditionType<?>> REACTION_CONDITION_TYPE = new RegistryBuilder<>(REACTION_CONDITION_TYPE_KEY)
+            .sync(true)
+            .create();
+
+    public static final ResourceKey<Registry<ReactionEffectType<?>>> REACTION_EFFECT_TYPE_KEY =
+            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "reaction_effect_type"));
+    public static final Registry<ReactionEffectType<?>> REACTION_EFFECT_TYPE = new RegistryBuilder<>(REACTION_EFFECT_TYPE_KEY)
+            .sync(true)
+            .create();
+
     @SubscribeEvent
     public static void registerRegistries(@NotNull NewRegistryEvent event) {
-       event.register(SUBSTANCE_REGISTRY);
-       event.register(VERB_SET_REGISTRY);
-       event.register(LOGICAL_OPERATORS_REGISTRY);
-       event.register(COMPARTMENT_REGISTRY);
-       event.register(DRUG_REGISTRY);
-       event.register(ROLE_REGISTRY);
-       event.register(MEDIA_REGISTRY);
-       event.register(ANATOMY_REGISTRY);
+        event.register(SUBSTANCE_REGISTRY);
+        event.register(VERB_SET_REGISTRY);
+        event.register(LOGICAL_OPERATORS_REGISTRY);
+        event.register(COMPARTMENT_REGISTRY);
+        event.register(DRUG_REGISTRY);
+        event.register(ROLE_REGISTRY);
+        event.register(MEDIA_REGISTRY);
+        event.register(ANATOMY_REGISTRY);
+        event.register(REACTION_CONDITION_TYPE);
+        event.register(REACTION_EFFECT_TYPE);
     }
 }

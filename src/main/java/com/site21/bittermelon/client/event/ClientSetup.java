@@ -18,6 +18,7 @@ import com.site21.bittermelon.common.content.entities.scp1507.client.SCP1507Rend
 import com.site21.bittermelon.common.content.entities.scp548.client.SCP548Renderer;
 import com.site21.bittermelon.common.content.entities.scp650.client.SCP650Renderer;
 import com.site21.bittermelon.common.content.entities.scp939.client.SCP939Renderer;
+import com.site21.bittermelon.common.content.entities.seamonkey.client.SeaMonkeyRenderer;
 import com.site21.bittermelon.common.content.items.keycard.KeycardDecorator;
 import com.site21.bittermelon.common.content.items.repairtool.RepairToolUseAnimation;
 import com.site21.bittermelon.common.content.items.taser.TaserProjectileRenderer;
@@ -25,8 +26,8 @@ import com.site21.bittermelon.common.systems.carry.CarryHandler;
 import com.site21.bittermelon.common.systems.character.networking.UpdateCharacter;
 import com.site21.bittermelon.common.systems.component.screwdriver.ScrewdriverUseAnimation;
 import com.site21.bittermelon.common.systems.component.temperature.HeatDecorator;
-import com.site21.bittermelon.common.systems.fluid.ClientFluid;
-import com.site21.bittermelon.common.systems.fluid.ClientSubstanceFluid;
+import com.site21.bittermelon.common.systems.fluid.simple.ClientSimpleFluid;
+import com.site21.bittermelon.common.systems.fluid.substance.ClientSubstanceFluid;
 import com.site21.bittermelon.common.systems.medical.networking.AddAndInsertCompartment;
 import com.site21.bittermelon.common.systems.medical.networking.InsertCompartment;
 import com.site21.bittermelon.common.systems.medical.networking.RemoveCompartment;
@@ -99,6 +100,7 @@ public class ClientSetup {
         event.registerEntityRenderer(TASER_PROJECTILE.get(), TaserProjectileRenderer::new);
         event.registerEntityRenderer(SCP_548.get(), SCP548Renderer::new);
         event.registerEntityRenderer(CAGE.get(), CageRenderer::new);
+        event.registerEntityRenderer(SEA_MONKEY.get(), SeaMonkeyRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.THERMOMETER_BLOCK_ENTITY.get(), ThermometerRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.INTERCOM_BLOCK_ENTITY.get(), PhoneCordRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.LARGE_SLIDING_DOOR_BLOCK_ENTITY.get(), LargeSlidingDoorRenderer::new);
@@ -205,7 +207,7 @@ public class ClientSetup {
     @SubscribeEvent
     public static void onRegisterFluidTypeExtensions(@NotNull RegisterClientExtensionsEvent event) {
         event.registerFluidType(new ClientSubstanceFluid(), SUBSTANCE_FLUID_TYPE.get());
-        event.registerFluidType(new ClientFluid(), SIMPLE_FLUID_TYPE.get());
+        event.registerFluidType(new ClientSimpleFluid(), SIMPLE_FLUID_TYPE.get());
     }
 
     @SubscribeEvent

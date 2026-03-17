@@ -101,6 +101,7 @@ public class BitterModelProvider extends ModelProvider {
         createDefaultCageLamp(blockModels, BitterBlocks.LIGHT_BLUE_CAGE_LAMP.get());
         createDefaultCageLamp(blockModels, BitterBlocks.CAGE_LAMP.get());
         blockModels.createParticleOnlyBlock(BitterBlocks.SUBSTANCE_FLUID_BLOCK.get());
+        blockModels.createParticleOnlyBlock(SIMPLE_FLUID_BLOCK.get());
         createTelevision(blockModels, BitterBlocks.LIGHT_GRAY_TELEVISION.get(), BitterBlocks.LIGHT_GRAY_WALL_TELEVISION.get());
         blockModels.blockStateOutput.accept(
                 MultiVariantGenerator.dispatch(BitterBlocks.SCP_330.get(), plainVariant(modLocation("block/scp_330")))

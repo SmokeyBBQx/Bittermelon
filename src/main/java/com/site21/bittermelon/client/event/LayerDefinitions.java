@@ -8,6 +8,7 @@ import com.site21.bittermelon.common.content.entities.scp1507.client.SCP1507Mode
 import com.site21.bittermelon.common.content.entities.scp548.client.SCP548Model;
 import com.site21.bittermelon.common.content.entities.scp650.client.SCP650Model;
 import com.site21.bittermelon.common.content.entities.scp939.client.SCP939Model;
+import com.site21.bittermelon.common.content.entities.seamonkey.client.SeaMonkeyModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -52,6 +53,11 @@ public class LayerDefinitions {
             "main"
     );
 
+    public static final ModelLayerLocation SEA_MONKEY_LAYER = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "sea_monkey"),
+            "main"
+    );
+
     @SubscribeEvent
     public static void registerLayerDefinitions(EntityRenderersEvent.@NotNull RegisterLayerDefinitions event) {
         event.registerLayerDefinition(SCP_131_LAYER, SCP131Model::createBodyLayer);
@@ -61,5 +67,6 @@ public class LayerDefinitions {
         event.registerLayerDefinition(CHICKEN_LAYER, ChickenModel::createBodyLayer);
         event.registerLayerDefinition(LARGE_SLIDING_DOOR_LAYER, LargeSlidingDoorModel::createBodyLayer);
         event.registerLayerDefinition(SCP_548_LAYER, SCP548Model::createBodyLayer);
+        event.registerLayerDefinition(SEA_MONKEY_LAYER, SeaMonkeyModel::createBodyLayer);
     }
 }

@@ -9,6 +9,7 @@ import com.site21.bittermelon.common.content.entities.scp1507.SCP1507;
 import com.site21.bittermelon.common.content.entities.scp548.SCP548;
 import com.site21.bittermelon.common.content.entities.scp650.SCP650;
 import com.site21.bittermelon.common.content.entities.scp939.SCP939;
+import com.site21.bittermelon.common.content.entities.seamonkey.SeaMonkey;
 import com.site21.bittermelon.common.content.items.scps.scp2398.SCP2398ProjectileItem;
 import com.site21.bittermelon.common.content.items.taser.TaserProjectile;
 import net.minecraft.core.registries.Registries;
@@ -74,6 +75,11 @@ public class BitterEntities {
             () -> EntityType.Builder.of(Cage::new, MobCategory.MISC)
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "cage"))));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<SeaMonkey>> SEA_MONKEY = ENTITY_TYPES.register("sea_monkey",
+            () -> EntityType.Builder.of(SeaMonkey::new, MobCategory.WATER_AMBIENT)
+                    .sized(0.3f, 0.3f)
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "sea_monkey"))));
+
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
         eventBus.addListener(BitterEntities::registerAttributes);
@@ -86,5 +92,6 @@ public class BitterEntities {
         event.put(SCP_131.get(), SCP131.createAttributes().build());
         event.put(SCP_1507.get(), SCP1507.createAttributes().build());
         event.put(SCP_548.get(), SCP548.createAttributes().build());
+        event.put(SEA_MONKEY.get(), SeaMonkey.createAttributes().build());
     }
 }

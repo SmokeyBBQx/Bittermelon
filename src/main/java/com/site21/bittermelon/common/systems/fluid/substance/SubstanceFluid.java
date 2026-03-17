@@ -1,4 +1,4 @@
-package com.site21.bittermelon.common.systems.fluid;
+package com.site21.bittermelon.common.systems.fluid.substance;
 
 import com.google.common.collect.Maps;
 import com.site21.bittermelon.common.content.blocks.properties.BitterStateProperties;
@@ -71,14 +71,17 @@ public class SubstanceFluid extends Fluid {
                 return;
             }
 
+            // Perhaps this shouldn't run when the fluid is flowing
+            fluidBE.tickReactions();
+
             if (spreadDownwards(level, pos, fluidBE)) return;
 
-            int tickInterval = (int) Math.ceil(fluidBE.getViscosity() / 1000.0);
-            if (tickInterval > 1 && level.getGameTime() % (tickInterval * 5L) != 0) {
-                Profiler.get().pop();
-                level.scheduleTick(pos, this, tickInterval);
-                return;
-            }
+//            int tickInterval = (int) Math.ceil(fluidBE.getViscosity() / 1000.0);
+//            if (tickInterval > 1 && level.getGameTime() % (tickInterval * 5L) != 0) {
+//                Profiler.get().pop();
+//                level.scheduleTick(pos, this, tickInterval);
+//                return;
+//            }
 
             int volume = fluidBE.getVolume();
             if (volume > SPREAD_THRESHOLD) {
@@ -279,7 +282,6 @@ public class SubstanceFluid extends Fluid {
 
         return blockState.canBeReplaced();
     }
-
 
     private void equalizeSubstances(@NotNull Level level, BlockPos pos, SubstanceFluidBlockEntity fluidBE) {
         Profiler.get().push("equalizeSubstances");

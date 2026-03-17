@@ -1,4 +1,4 @@
-package com.site21.bittermelon.common.systems.fluid;
+package com.site21.bittermelon.common.systems.fluid.simple;
 
 import com.site21.bittermelon.common.content.blocks.properties.BitterStateProperties;
 import net.minecraft.core.BlockPos;
@@ -7,10 +7,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -26,18 +24,18 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.site21.bittermelon.init.neoforge.BitterFluids.SUBSTANCE_FLUID;
+import static com.site21.bittermelon.init.neoforge.BitterFluids.SIMPLE_FLUID;
 
-public class SubstanceFluidBlock extends Block implements LiquidBlockContainer, EntityBlock {
+public class SimpleFluidBlock extends Block implements LiquidBlockContainer {
     public static final IntegerProperty LEVEL = BitterStateProperties.LEVEL;
     private final List<FluidState> stateCache;
-    private final SubstanceFluid fluid;
+    private final SimpleFluid fluid;
 
-    public SubstanceFluidBlock(Properties properties) {
+    public SimpleFluidBlock(Properties properties) {
         super(properties);
         registerDefaultState(getStateDefinition().any().setValue(LEVEL, 20));
         this.stateCache = new ArrayList<>();
-        this.fluid = SUBSTANCE_FLUID.get();
+        this.fluid = SIMPLE_FLUID.get();
 
         for (int i = 1; i < 20; i++) {
             stateCache.add(fluid.defaultFluidState().setValue(LEVEL, i));
@@ -49,11 +47,6 @@ public class SubstanceFluidBlock extends Block implements LiquidBlockContainer, 
     @Override
     protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
         builder.add(LEVEL);
-    }
-
-    @Override
-    public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
-        return new SubstanceFluidBlockEntity(pos, state);
     }
 
     @Override

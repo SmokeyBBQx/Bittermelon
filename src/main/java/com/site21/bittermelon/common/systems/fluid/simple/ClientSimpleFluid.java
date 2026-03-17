@@ -1,4 +1,4 @@
-package com.site21.bittermelon.common.systems.fluid;
+package com.site21.bittermelon.common.systems.fluid.simple;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -8,7 +8,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtension
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ClientFluid implements IClientFluidTypeExtensions {
+public class ClientSimpleFluid implements IClientFluidTypeExtensions {
     @Override
     public @NotNull ResourceLocation getStillTexture() {
         return ResourceLocation.withDefaultNamespace("block/water_still");

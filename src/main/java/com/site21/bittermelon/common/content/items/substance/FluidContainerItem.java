@@ -154,11 +154,11 @@ public class FluidContainerItem extends SubstanceContainerItem {
     }
 
     protected void transferSubstancesToBlock(BlockPos pos, @NotNull Level level, ItemStack stack, int volume) {
-        if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluidEntity) {
-            transferSubstances(stack, getTotalVolume(stack), volume,
-                    (substance, amount) -> fluidEntity.updateSubstance(substance));
-            playEmptySound(level, pos);
-        }
+//        if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluidEntity) {
+//            transferSubstances(stack, getTotalVolume(stack), volume,
+//                    (substance, amount) -> fluidEntity.updateSubstance(substance));
+//            playEmptySound(level, pos);
+//        }
     }
 
     protected void transferSubstancesFromBlock(BlockPos pos, @NotNull Level level, ItemStack stack) {

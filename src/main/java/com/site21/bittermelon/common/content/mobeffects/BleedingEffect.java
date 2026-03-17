@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.content.mobeffects;
 
 import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
-import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlockEntity;
+import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlockEntity;
 import com.site21.bittermelon.common.systems.medical.medicalstats.AnimalMedicalStats;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import net.minecraft.core.BlockPos;
@@ -48,7 +48,7 @@ public class BleedingEffect extends MobEffect {
             level.setBlock(pos, FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
         }
 
-        if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluid) {
+        if (level.getBlockEntity(pos) instanceof SubstanceFluidBlockEntity fluid) {
             fluid.updateSubstance(stack);
         }
 

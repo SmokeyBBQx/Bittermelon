@@ -1,5 +1,8 @@
-package com.site21.bittermelon.common.systems.fluid;
+package com.site21.bittermelon.common.systems.fluid.substance;
 
+import com.site21.bittermelon.common.systems.chemistry.Reaction;
+import com.site21.bittermelon.common.systems.chemistry.ReactionManager;
+import com.site21.bittermelon.common.systems.chemistry.Reactor;
 import com.site21.bittermelon.common.systems.substance.Substance;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import com.site21.bittermelon.util.ColorUtil;
@@ -14,18 +17,19 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.SUBSTANCE_FLUID_BLOCK_ENTITY;
 import static com.site21.bittermelon.init.neoforge.BitterFluids.SUBSTANCE_FLUID;
 import static net.minecraft.world.level.block.Block.UPDATE_ALL;
 
-public class SubstanceFluidBlockEntity extends BlockEntity {
+public class SubstanceFluidBlockEntity extends BlockEntity implements Reactor {
     private final List<SubstanceStack> substances;
+    private final List<Reaction> activeReactions;
+    private final List<Reaction> cachedReactions;
+    private boolean reactionsDirty;
+    private boolean searchDirty;
     private int cachedVolume;
     private int cachedColor;
     private int cachedAmount;
@@ -35,10 +39,53 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
         super(SUBSTANCE_FLUID_BLOCK_ENTITY.get(), pos, blockState);
 
         substances = new ArrayList<>();
+        activeReactions = new ArrayList<>();
+        cachedReactions = new ArrayList<>();
+        reactionsDirty = false;
         cachedVolume = -1;
         cachedColor = -1;
         cachedAmount = -1;
         cachedViscosity = -1;
+    }
+
+    public void tickReactions() {
+        if (searchDirty) {
+            searchReactions();
+            searchDirty = false;
+            reactionsDirty = false;
+        } else if (reactionsDirty) {
+            refreshReactions();
+            reactionsDirty = false;
+        }
+
+        Iterator<Reaction> iterator = activeReactions.iterator();
+        while (iterator.hasNext()) {
+            Reaction reaction = iterator.next();
+            if (!reaction.react(this, level, worldPosition)) {
+                cachedReactions.add(reaction);
+                iterator.remove();
+            }
+        }
+    }
+
+    /**
+     * Reactions are cached when they fail to react, which can happen if their conditions are no longer met.
+     * This method moves all cached reactions back to the active list, allowing them to be re-evaluated in the next tick.
+     * This is important to ensure that reactions can occur again if the conditions become favorable,
+     * without needing to be re-searched.
+     */
+    public void refreshReactions() {
+        activeReactions.addAll(cachedReactions);
+        cachedReactions.clear();
+    }
+
+    public void searchReactions() {
+        activeReactions.clear();
+        cachedReactions.clear();
+        if (substances.isEmpty()) return;
+
+        ReactionManager reactionManager = ReactionManager.getInstance();
+        activeReactions.addAll(reactionManager.findMatch(this, level, worldPosition));
     }
 
     public void updateSubstance(SubstanceStack substance) {
@@ -56,6 +103,7 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
         substances.add(substance);
         setChanged();
         updateFluidState();
+        searchDirty = true;
     }
 
     public void updateSubstanceNoUpdate(SubstanceStack substance) {
@@ -69,6 +117,7 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
 
         // Otherwise, add as a new substance
         substances.add(substance);
+        searchDirty = true;
     }
 
     public void transferSubstances(@NotNull List<SubstanceStack> substances) {
@@ -146,12 +195,16 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
     public void updateFluidState() {
         if (level == null) return;
         if (level.getBlockState(worldPosition).isAir()) return;
+
         int fluidLevel = Math.max(1, Mth.clamp(getVolume() / 50, 1, 19));
+        if (level.getFluidState(worldPosition).getAmount() != fluidLevel) {
+            BlockState currentState = level.getBlockState(worldPosition);
+            BlockState newState = currentState.setValue(SubstanceFluidBlock.LEVEL, fluidLevel);
 
-        BlockState currentState = level.getBlockState(worldPosition);
-        BlockState newState = currentState.setValue(SubstanceFluidBlock.LEVEL, fluidLevel);
+            level.setBlock(worldPosition, newState, UPDATE_ALL);
+        }
 
-        level.setBlock(worldPosition, newState, UPDATE_ALL);
+
         level.scheduleTick(worldPosition, SUBSTANCE_FLUID.get(), SUBSTANCE_FLUID.get().getTickDelay(level));
     }
 
@@ -182,10 +235,11 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
             if (substances.isEmpty()) {
                 cachedColor = Substance.DEFAULT_COLOR;
             } else {
-                Map<Integer, Integer> colors = new HashMap<>();
+                Map<Integer, Integer> colors = new HashMap<>(substances.size());
                 // Create a copy to avoid concurrent modification
                 List<SubstanceStack> substancesCopy = new ArrayList<>(substances);
                 for (SubstanceStack stack : substancesCopy) {
+                    if (stack == null) continue;
                     colors.put(stack.getSubstance().getColor(), stack.getVolume());
                 }
                 cachedColor = ColorUtil.mixColors(colors);
@@ -217,6 +271,7 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
     /**
      * Calculates the pressure based on the fluid's volume.
      * The pressure is defined as the difference between the full block volume and the current volume of the fluid.
+     *
      * @return The calculated pressure value.
      */
     public int getPressure() {
@@ -257,6 +312,11 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
     }
 
     @Override
+    public void onLoad() {
+        searchReactions();
+    }
+
+    @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
@@ -273,6 +333,6 @@ public class SubstanceFluidBlockEntity extends BlockEntity {
         cachedColor = -1;
         cachedAmount = -1;
         cachedViscosity = -1;
-        requestModelDataUpdate();
+        reactionsDirty = true;
     }
 }

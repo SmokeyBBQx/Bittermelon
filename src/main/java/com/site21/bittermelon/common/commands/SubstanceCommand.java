@@ -7,10 +7,10 @@ import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlockEn
 import com.site21.bittermelon.common.content.items.substance.SubstanceContainerItem;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosHandler;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosInstance;
-import com.site21.bittermelon.common.systems.fluid.SubstanceFluidBlockEntity;
+import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlockEntity;
 import com.site21.bittermelon.common.systems.substance.Substance;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
-import com.site21.bittermelon.init.custom.Substances;
+import com.site21.bittermelon.init.neoforge.BitterFluids;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -19,9 +19,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.material.FluidState;
 import org.jetbrains.annotations.NotNull;
 
+import static com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluid.LEVEL;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.SUBSTANCE_REGISTRY_KEY;
 
@@ -123,7 +127,7 @@ public class SubstanceCommand {
         }
 
 //        fluidBlockEntity.setTemperature(amount);
-        source.sendSuccess(() -> Component.literal("Temperature: " + fluidBlockEntity.getTemperature()), true);
+//        source.sendSuccess(() -> Component.literal("Temperature: " + fluidBlockEntity.getTemperature()), true);
         return 1;
     }
 
@@ -220,21 +224,24 @@ public class SubstanceCommand {
     }
 
     private static int addSubstanceFluid(@NotNull CommandSourceStack source, Holder<Substance> substance, int amount) {
+        Level level = source.getLevel();
         BlockPos pos = BlockPos.containing(source.getPosition());
-        BlockEntity blockEntity = source.getLevel().getBlockEntity(pos);
 
-        if (!(blockEntity instanceof SubstanceFluidBlockEntity fluidBlockEntity)) {
-            source.sendFailure(Component.literal("You must be standing on a fluid block to use this command."));
-            return 0;
+        if (!level.getFluidState(pos).is(BitterFluids.SUBSTANCE_FLUID.get())) {
+            FluidState newState = BitterFluids.SUBSTANCE_FLUID.get().defaultFluidState().setValue(LEVEL, 1);
+            level.setBlock(pos, newState.createLegacyBlock(), Block.UPDATE_CLIENTS);
         }
 
-        SubstanceStack stack = new SubstanceStack(substance, amount);
+        if (level.getBlockEntity(pos) instanceof SubstanceFluidBlockEntity fluidBE) {
+            SubstanceStack stack = new SubstanceStack(substance, amount);
 
-        fluidBlockEntity.updateSubstance(stack);
-        source.sendSuccess(() -> Component.literal(String.format("Added %d %s to the puddle", amount, stack.getSubstance().getName())), true);
-        source.sendSuccess(() -> Component.literal(fluidBlockEntity.getContentsDescription()), true);
-        return 1;
+            fluidBE.updateSubstance(stack);
+            source.sendSuccess(() -> Component.literal(String.format("Added %d %s to the puddle", amount, stack.getSubstance().getName())), true);
+            source.sendSuccess(() -> Component.literal(fluidBE.getContentsDescription()), true);
+            return 1;
+        }
 
+        return 0;
     }
 
     private static int spawnFluidBlock(@NotNull CommandSourceStack source) {
@@ -243,7 +250,7 @@ public class SubstanceCommand {
         source.getLevel().setBlock(pos, FLUID.get().defaultBlockState(), 3);
 
         if (source.getLevel().getBlockEntity(pos) instanceof FluidBlockEntity fluidBlockEntity) {
-            fluidBlockEntity.updateSubstance(new SubstanceStack(Substances.WATER.get(), 1));
+//            fluidBlockEntity.updateSubstance(new SubstanceStack(Substances.WATER.get(), 1));
         }
 
         return 1;

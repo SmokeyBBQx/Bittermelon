@@ -6,7 +6,7 @@ import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.character.networking.SyncActiveCharacter;
 import com.site21.bittermelon.common.systems.character.networking.SyncCharacters;
-import com.site21.bittermelon.common.systems.substance.reactions.Reactions;
+import com.site21.bittermelon.common.systems.chemistry.ReactionLoader;
 import com.site21.bittermelon.common.systems.telecomms.intercom.IntercomManager;
 import com.site21.bittermelon.common.systems.telecomms.intercom.networking.SyncIntercomList;
 import com.site21.bittermelon.init.neoforge.BitterEntities;
@@ -21,6 +21,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
@@ -34,6 +35,8 @@ import static com.site21.bittermelon.init.custom.Compartments.COMPARTMENTS;
 import static com.site21.bittermelon.init.custom.Drugs.DRUGS;
 import static com.site21.bittermelon.init.custom.LogicalOperators.LOGICAL_OPERATORS;
 import static com.site21.bittermelon.init.custom.Medias.MEDIA;
+import static com.site21.bittermelon.init.custom.ReactionConditions.REACTION_CONDITION_TYPES;
+import static com.site21.bittermelon.init.custom.ReactionEffects.REACTION_EFFECT_TYPES;
 import static com.site21.bittermelon.init.custom.Roles.ROLES;
 import static com.site21.bittermelon.init.custom.Substances.SUBSTANCES;
 import static com.site21.bittermelon.init.custom.VerbSets.VERB_SETS;
@@ -90,13 +93,19 @@ public class Bittermelon {
         PARTICLES.register(modEventBus);
         ANATOMIES.register(modEventBus);
         ENTITY_DATA_SERIALIZERS.register(modEventBus);
+        REACTION_CONDITION_TYPES.register(modEventBus);
+        REACTION_EFFECT_TYPES.register(modEventBus);
 
         modEventBus.addListener(BitterRegistries::registerRegistries);
         modEventBus.addListener(this::commonSetup);
     }
 
     private void commonSetup(final @NotNull FMLCommonSetupEvent event) {
-        event.enqueueWork(Reactions::initReactions);
+    }
+
+    @SubscribeEvent
+    public void onAddReloadListeners(AddServerReloadListenersEvent event) {
+        event.addListener(Bittermelon.resource("reactions"), new ReactionLoader(event.getRegistryAccess()));
     }
 
     @SubscribeEvent
