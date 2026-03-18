@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.custom.Substances.BLOOD;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.MEDICAL_STATS;
-import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
+import static com.site21.bittermelon.init.neoforge.BitterBlocks.SUBSTANCE_FLUID;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.CAN_SPILL;
 
 public class SyringeItem extends FluidContainerItem {
@@ -47,7 +47,7 @@ public class SyringeItem extends FluidContainerItem {
             BlockHitResult blockHit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
             BlockState blockState = level.getBlockState(blockHit.getBlockPos());
 
-            if (itemInHand.getOrDefault(CAN_SPILL, true) && !blockState.is(FLUID)) {
+            if (itemInHand.getOrDefault(CAN_SPILL, true) && !blockState.is(SUBSTANCE_FLUID)) {
                 return ItemUtils.startUsingInstantly(level, player, usedHand);
             }
         }

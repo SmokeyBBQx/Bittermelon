@@ -26,7 +26,6 @@ import net.minecraft.world.level.material.FluidState;
 import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluid.LEVEL;
-import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.SUBSTANCE_REGISTRY_KEY;
 
 public class SubstanceCommand {
@@ -58,8 +57,6 @@ public class SubstanceCommand {
                         .then(Commands.literal("show")
                                 .executes(context -> showFluidContents(context.getSource()))
                         )
-                        .then(Commands.literal("spawn")
-                                .executes(context -> spawnFluidBlock(context.getSource())))
                 )
                 .then(Commands.literal("container")
                         .then(Commands.literal("add")
@@ -242,17 +239,5 @@ public class SubstanceCommand {
         }
 
         return 0;
-    }
-
-    private static int spawnFluidBlock(@NotNull CommandSourceStack source) {
-        BlockPos pos = BlockPos.containing(source.getPosition());
-
-        source.getLevel().setBlock(pos, FLUID.get().defaultBlockState(), 3);
-
-        if (source.getLevel().getBlockEntity(pos) instanceof FluidBlockEntity fluidBlockEntity) {
-//            fluidBlockEntity.updateSubstance(new SubstanceStack(Substances.WATER.get(), 1));
-        }
-
-        return 1;
     }
 }

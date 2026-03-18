@@ -2,6 +2,7 @@ package com.site21.bittermelon.common.systems.chemistry;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.site21.bittermelon.common.systems.substance.SubstanceContainer;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -19,16 +20,16 @@ public record Reaction(
 ) {
     public static final Codec<Reaction> CODEC;
 
-    public boolean canOccur(Reactor reactor, Level level, BlockPos pos) {
+    public boolean canOccur(SubstanceContainer substanceContainer, Level level, BlockPos pos) {
         for (ReactionCondition condition : conditions) {
-            if (!condition.test(reactor, level, pos)) {
+            if (!condition.test(substanceContainer, level, pos)) {
                 return false;
             }
         }
 
         for (Reagent reagent : reagents) {
             boolean found = false;
-            for (SubstanceStack stack : reactor.getSubstances()) {
+            for (SubstanceStack stack : substanceContainer.getSubstances()) {
                 if (reagent.matches(stack)) {
                     found = true;
                     break;
@@ -40,17 +41,17 @@ public record Reaction(
         return true;
     }
 
-    public int getReactionRate(Reactor reactor, Level level, BlockPos pos) {
+    public int getReactionRate(SubstanceContainer substanceContainer, Level level, BlockPos pos) {
         return 100;
     }
 
-    public boolean react(Reactor reactor, Level level, BlockPos pos) {
+    public boolean react(SubstanceContainer substanceContainer, Level level, BlockPos pos) {
         Map<SubstanceStack, Reagent> reactants = new HashMap<>();
-        int scaledAmount = getReactionRate(reactor, level, pos);
+        int scaledAmount = getReactionRate(substanceContainer, level, pos);
 
         for (Reagent reagent : reagents) {
             boolean found = false;
-            for (SubstanceStack stack : reactor.getSubstances()) {
+            for (SubstanceStack stack : substanceContainer.getSubstances()) {
                 if (reagent.matches(stack)) {
                     reactants.put(stack, reagent);
                     if (reagent.proportion() > 0) {
@@ -67,14 +68,14 @@ public record Reaction(
         if (scaledAmount <= 0) return false;
 
         for (var entry : reactants.entrySet()) {
-            reactor.removeSubstanceNoUpdate(entry.getKey(), scaledAmount * entry.getValue().proportion());
+            substanceContainer.removeSubstanceNoUpdate(entry.getKey(), scaledAmount * entry.getValue().proportion());
         }
 
         for (ReactionEffect effect : effects) {
-            effect.apply(reactor, level, pos, scaledAmount);
+            effect.apply(substanceContainer, level, pos, scaledAmount);
         }
 
-        reactor.setChanged();
+        substanceContainer.setChanged();
         return true;
     }
 

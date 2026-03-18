@@ -2,8 +2,8 @@ package com.site21.bittermelon.common.systems.fluid.substance;
 
 import com.site21.bittermelon.common.systems.chemistry.Reaction;
 import com.site21.bittermelon.common.systems.chemistry.ReactionManager;
-import com.site21.bittermelon.common.systems.chemistry.Reactor;
 import com.site21.bittermelon.common.systems.substance.Substance;
+import com.site21.bittermelon.common.systems.substance.SubstanceContainer;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import com.site21.bittermelon.util.ColorUtil;
 import net.minecraft.core.BlockPos;
@@ -24,7 +24,7 @@ import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.SUBSTANCE
 import static com.site21.bittermelon.init.neoforge.BitterFluids.SUBSTANCE_FLUID;
 import static net.minecraft.world.level.block.Block.UPDATE_ALL;
 
-public class SubstanceFluidBlockEntity extends BlockEntity implements Reactor {
+public class SubstanceFluidBlockEntity extends BlockEntity implements SubstanceContainer {
     private final List<SubstanceStack> substances;
     private final List<Reaction> activeReactions;
     private final List<Reaction> cachedReactions;

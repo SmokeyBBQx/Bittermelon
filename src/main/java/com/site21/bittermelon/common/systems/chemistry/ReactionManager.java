@@ -2,6 +2,7 @@ package com.site21.bittermelon.common.systems.chemistry;
 
 import com.site21.bittermelon.common.systems.substance.Nature;
 import com.site21.bittermelon.common.systems.substance.Substance;
+import com.site21.bittermelon.common.systems.substance.SubstanceContainer;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -44,22 +45,22 @@ public class ReactionManager {
         substanceToReactions.clear();
     }
 
-    public Set<Reaction> findMatch(Reactor reactor, Level level, BlockPos pos) {
+    public Set<Reaction> findMatch(SubstanceContainer substanceContainer, Level level, BlockPos pos) {
         Set<Reaction> candidates = new HashSet<>();
 
-        for (Nature nature : reactor.getNatures()) {
+        for (Nature nature : substanceContainer.getNatures()) {
             Set<Reaction> indexed = natureToReactions.get(nature);
             if (indexed != null) candidates.addAll(indexed);
         }
 
-        for (SubstanceStack stack : reactor.getSubstances()) {
+        for (SubstanceStack stack : substanceContainer.getSubstances()) {
             Set<Reaction> indexed = substanceToReactions.get(stack.getSubstance());
             if (indexed != null) candidates.addAll(indexed);
         }
 
         Set<Reaction> result = new HashSet<>();
         for (Reaction reaction : candidates) {
-            if (reaction.canOccur(reactor, level, pos)) result.add(reaction);
+            if (reaction.canOccur(substanceContainer, level, pos)) result.add(reaction);
         }
 
         return result;

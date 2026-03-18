@@ -1,6 +1,6 @@
 package com.site21.bittermelon.common.content.mobeffects;
 
-import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
+import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlock;
 import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlockEntity;
 import com.site21.bittermelon.common.systems.medical.medicalstats.AnimalMedicalStats;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.custom.Substances.BLOOD;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.MEDICAL_STATS;
-import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
+import static com.site21.bittermelon.init.neoforge.BitterBlocks.SUBSTANCE_FLUID;
 import static net.minecraft.world.level.block.Block.UPDATE_ALL_IMMEDIATE;
 
 public class BleedingEffect extends MobEffect {
@@ -44,8 +44,8 @@ public class BleedingEffect extends MobEffect {
         }
 
 
-        if (!(existingState.getBlock() instanceof FluidBlock) && existingState.canBeReplaced()) {
-            level.setBlock(pos, FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
+        if (!(existingState.getBlock() instanceof SubstanceFluidBlock) && existingState.canBeReplaced()) {
+            level.setBlock(pos, SUBSTANCE_FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
         }
 
         if (level.getBlockEntity(pos) instanceof SubstanceFluidBlockEntity fluid) {

@@ -1,8 +1,9 @@
 package com.site21.bittermelon.common.content.blocks.scp.scp151;
 
-import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
+import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlock;
+import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlockEntity;
 import com.site21.bittermelon.common.systems.stumble.StumbleHandler;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import com.site21.bittermelon.init.custom.Substances;
@@ -25,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
+import static com.site21.bittermelon.init.neoforge.BitterBlocks.SUBSTANCE_FLUID;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.DROWNING;
 import static net.minecraft.world.level.block.Block.UPDATE_ALL_IMMEDIATE;
 
@@ -145,15 +146,15 @@ public class DrowningEffect extends MobEffect {
         BlockPos pos = player.getOnPos().above();
         BlockState existingState = player.level().getBlockState(pos);
 
-        if (!(existingState.getBlock() instanceof FluidBlock) && existingState.canBeReplaced()) {
-            player.level().setBlock(pos, FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
+        if (!(existingState.getBlock() instanceof SubstanceFluidBlock) && existingState.canBeReplaced()) {
+            player.level().setBlock(pos, SUBSTANCE_FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
         }
 
         // TODO: Reimplement substance transfer to blocks
-//        if (player.level().getBlockEntity(pos) instanceof FluidBlockEntity fluid) {
-//            fluid.updateSubstance(vomit);
-//            fluid.updateSubstance(water);
-//        }
+        if (player.level().getBlockEntity(pos) instanceof SubstanceFluidBlockEntity fluid) {
+            fluid.updateSubstance(vomit);
+            fluid.updateSubstance(water);
+        }
 
         player.level().playSound(null, player.getOnPos(), BitterSounds.SPLAT.value(), SoundSource.PLAYERS);
     }

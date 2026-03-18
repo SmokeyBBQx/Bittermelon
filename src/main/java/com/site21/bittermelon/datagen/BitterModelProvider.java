@@ -8,7 +8,6 @@ import com.site21.bittermelon.common.content.blocks.electronics.television.Stand
 import com.site21.bittermelon.common.content.blocks.poster.SmallPosterBlock;
 import com.site21.bittermelon.common.content.blocks.properties.Placement;
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlock;
-import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.common.content.items.substance.pill.PillShape;
 import com.site21.bittermelon.datagen.property.*;
 import com.site21.bittermelon.init.neoforge.BitterBlocks;
@@ -59,7 +58,6 @@ public class BitterModelProvider extends ModelProvider {
 
     @Override
     protected void registerModels(@NotNull BlockModelGenerators blockModels, @NotNull ItemModelGenerators itemModels) {
-        createFluid(blockModels);
         blockModels.createTrivialCube(BitterBlocks.SMALL_CARDBOARD_BOX.get());
         blockModels.createTrivialCube(BitterBlocks.ATM.get());
         createIndentedSmallBlock(blockModels, BitterBlocks.CONTAINMENT_PANEL.get());
@@ -100,7 +98,7 @@ public class BitterModelProvider extends ModelProvider {
         createDefaultCageLamp(blockModels, BitterBlocks.CYAN_CAGE_LAMP.get());
         createDefaultCageLamp(blockModels, BitterBlocks.LIGHT_BLUE_CAGE_LAMP.get());
         createDefaultCageLamp(blockModels, BitterBlocks.CAGE_LAMP.get());
-        blockModels.createParticleOnlyBlock(BitterBlocks.SUBSTANCE_FLUID_BLOCK.get());
+        blockModels.createParticleOnlyBlock(BitterBlocks.SUBSTANCE_FLUID.get());
         blockModels.createParticleOnlyBlock(SIMPLE_FLUID_BLOCK.get());
         createTelevision(blockModels, BitterBlocks.LIGHT_GRAY_TELEVISION.get(), BitterBlocks.LIGHT_GRAY_WALL_TELEVISION.get());
         blockModels.blockStateOutput.accept(
@@ -189,124 +187,6 @@ public class BitterModelProvider extends ModelProvider {
         generate3D2DItem(itemModels, REPAIR_TOOL.get());
         itemModels.generateFlatItem(DEBUG_WIRE.get(), ModelTemplates.FLAT_ITEM);
     }
-
-    public void createFluid(@NotNull BlockModelGenerators blockModels) {
-        blockModels.blockStateOutput.accept(
-                MultiPartGenerator.multiPart(FLUID.get())
-                        // Level 0
-                        .with(BlockModelGenerators.condition()
-                                        .term(FluidBlock.LEVEL, 0)
-                                        .term(FluidBlock.NORTH, false)
-                                        .term(FluidBlock.EAST, false)
-                                        .term(FluidBlock.SOUTH, false)
-                                        .term(FluidBlock.WEST, false)
-                                        .term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_0")))
-                        // Level 1
-                        .with(BlockModelGenerators.condition()
-                                        .term(FluidBlock.LEVEL, 1)
-                                        .term(FluidBlock.NORTH, false)
-                                        .term(FluidBlock.EAST, false)
-                                        .term(FluidBlock.SOUTH, false)
-                                        .term(FluidBlock.WEST, false)
-                                        .term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_1")))
-                        // Levels 3-10
-                        .with(BlockModelGenerators.condition().term(FluidBlock.LEVEL, 3).term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_2")))
-                        .with(BlockModelGenerators.condition().term(FluidBlock.LEVEL, 4).term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_3")))
-                        .with(BlockModelGenerators.condition().term(FluidBlock.LEVEL, 5).term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_4")))
-                        .with(BlockModelGenerators.condition().term(FluidBlock.LEVEL, 6).term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_5")))
-                        .with(BlockModelGenerators.condition().term(FluidBlock.LEVEL, 7).term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_6")))
-                        .with(BlockModelGenerators.condition().term(FluidBlock.LEVEL, 8).term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_7")))
-                        .with(BlockModelGenerators.condition().term(FluidBlock.LEVEL, 9).term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_8")))
-                        .with(BlockModelGenerators.condition().term(FluidBlock.LEVEL, 10).term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_9")))
-                        // Floating variants
-                        .with(BlockModelGenerators.condition()
-                                        .term(FluidBlock.NORTH, false)
-                                        .term(FluidBlock.EAST, false)
-                                        .term(FluidBlock.SOUTH, false)
-                                        .term(FluidBlock.WEST, false)
-                                        .term(FluidBlock.FLOATING, true),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_floating")))
-                        .with(BlockModelGenerators.condition()
-                                        .term(FluidBlock.NORTH, true)
-                                        .term(FluidBlock.EAST, false)
-                                        .term(FluidBlock.SOUTH, false)
-                                        .term(FluidBlock.WEST, false)
-                                        .term(FluidBlock.FLOATING, true),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_floating_n")))
-                        .with(BlockModelGenerators.condition()
-                                        .term(FluidBlock.NORTH, false)
-                                        .term(FluidBlock.EAST, true)
-                                        .term(FluidBlock.SOUTH, false)
-                                        .term(FluidBlock.WEST, false)
-                                        .term(FluidBlock.FLOATING, true),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_floating_e")))
-                        .with(BlockModelGenerators.condition()
-                                        .term(FluidBlock.NORTH, false)
-                                        .term(FluidBlock.EAST, false)
-                                        .term(FluidBlock.SOUTH, true)
-                                        .term(FluidBlock.WEST, false)
-                                        .term(FluidBlock.FLOATING, true),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_floating_s")))
-                        .with(BlockModelGenerators.condition()
-                                        .term(FluidBlock.NORTH, false)
-                                        .term(FluidBlock.EAST, false)
-                                        .term(FluidBlock.SOUTH, false)
-                                        .term(FluidBlock.WEST, true)
-                                        .term(FluidBlock.FLOATING, true),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_floating_w")))
-                        // Level 2 base
-                        .with(BlockModelGenerators.condition()
-                                        .term(FluidBlock.LEVEL, 2)
-                                        .term(FluidBlock.NORTH, false)
-                                        .term(FluidBlock.EAST, false)
-                                        .term(FluidBlock.SOUTH, false)
-                                        .term(FluidBlock.WEST, false)
-                                        .term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid")))
-                        // Direction variants
-                        .with(BlockModelGenerators.condition().term(FluidBlock.NORTH, true).term(FluidBlock.EAST, false).term(FluidBlock.SOUTH, false).term(FluidBlock.WEST, false).term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_n")))
-                        .with(BlockModelGenerators.condition().term(FluidBlock.NORTH, false).term(FluidBlock.EAST, true).term(FluidBlock.SOUTH, false).term(FluidBlock.WEST, false).term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_e")))
-                        .with(BlockModelGenerators.condition().term(FluidBlock.NORTH, false).term(FluidBlock.EAST, false).term(FluidBlock.SOUTH, true).term(FluidBlock.WEST, false).term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_s")))
-                        .with(BlockModelGenerators.condition().term(FluidBlock.NORTH, false).term(FluidBlock.EAST, false).term(FluidBlock.SOUTH, false).term(FluidBlock.WEST, true).term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_w")))
-                        .with(BlockModelGenerators.condition().term(FluidBlock.NORTH, true).term(FluidBlock.EAST, true).term(FluidBlock.SOUTH, false).term(FluidBlock.WEST, false).term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_ne")))
-                        .with(BlockModelGenerators.condition().term(FluidBlock.NORTH, true).term(FluidBlock.EAST, false).term(FluidBlock.SOUTH, true).term(FluidBlock.WEST, false).term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_ns")))
-                        .with(BlockModelGenerators.condition().term(FluidBlock.NORTH, true).term(FluidBlock.EAST, false).term(FluidBlock.SOUTH, false).term(FluidBlock.WEST, true).term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_nw")))
-                        .with(BlockModelGenerators.condition().term(FluidBlock.NORTH, false).term(FluidBlock.EAST, true).term(FluidBlock.SOUTH, true).term(FluidBlock.WEST, false).term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_es")))
-                        .with(BlockModelGenerators.condition().term(FluidBlock.NORTH, false).term(FluidBlock.EAST, true).term(FluidBlock.SOUTH, false).term(FluidBlock.WEST, true).term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_ew")))
-                        .with(BlockModelGenerators.condition().term(FluidBlock.NORTH, false).term(FluidBlock.EAST, false).term(FluidBlock.SOUTH, true).term(FluidBlock.WEST, true).term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_sw")))
-                        .with(BlockModelGenerators.condition().term(FluidBlock.NORTH, true).term(FluidBlock.EAST, true).term(FluidBlock.SOUTH, true).term(FluidBlock.WEST, false).term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_nes")))
-                        .with(BlockModelGenerators.condition().term(FluidBlock.NORTH, true).term(FluidBlock.EAST, true).term(FluidBlock.SOUTH, false).term(FluidBlock.WEST, true).term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_new")))
-                        .with(BlockModelGenerators.condition().term(FluidBlock.NORTH, true).term(FluidBlock.EAST, false).term(FluidBlock.SOUTH, true).term(FluidBlock.WEST, true).term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_nsw")))
-                        .with(BlockModelGenerators.condition().term(FluidBlock.NORTH, false).term(FluidBlock.EAST, true).term(FluidBlock.SOUTH, true).term(FluidBlock.WEST, true).term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_esw")))
-                        .with(BlockModelGenerators.condition().term(FluidBlock.NORTH, true).term(FluidBlock.EAST, true).term(FluidBlock.SOUTH, true).term(FluidBlock.WEST, true).term(FluidBlock.FLOATING, false),
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_nesw")))
-        );
-    }
-
 
     public void createSlidingDoor(@NotNull BlockModelGenerators blockModels, Block doorBlock) {
         TextureMapping textureMapping = TextureMapping.door(doorBlock);

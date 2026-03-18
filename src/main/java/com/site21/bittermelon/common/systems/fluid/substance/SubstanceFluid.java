@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import static com.site21.bittermelon.init.neoforge.BitterBlocks.SUBSTANCE_FLUID_BLOCK;
+import static com.site21.bittermelon.init.neoforge.BitterBlocks.SUBSTANCE_FLUID;
 
 public class SubstanceFluid extends Fluid {
     public static final IntegerProperty LEVEL = BitterStateProperties.LEVEL;
@@ -454,7 +454,7 @@ public class SubstanceFluid extends Fluid {
 
     @Override
     protected @NotNull BlockState createLegacyBlock(@NotNull FluidState state) {
-        return SUBSTANCE_FLUID_BLOCK.get().defaultBlockState().setValue(BitterStateProperties.LEVEL,
+        return SUBSTANCE_FLUID.get().defaultBlockState().setValue(BitterStateProperties.LEVEL,
                 state.getValue(LEVEL));
     }
 

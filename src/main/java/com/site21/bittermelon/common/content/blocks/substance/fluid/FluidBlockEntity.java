@@ -9,8 +9,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.FLUID_BLOCK_ENTITY;
-
+@Deprecated
 public class FluidBlockEntity extends BlockEntity {
     // Constants
     private static final int SPREAD_THRESHOLD = 16;
@@ -34,7 +33,7 @@ public class FluidBlockEntity extends BlockEntity {
     }
 
     public FluidBlockEntity(BlockPos pos, BlockState blockState) {
-        super(FLUID_BLOCK_ENTITY.get(), pos, blockState);
+        super(null, pos, blockState);
     }
 
 

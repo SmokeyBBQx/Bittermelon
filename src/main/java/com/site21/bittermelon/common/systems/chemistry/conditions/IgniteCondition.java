@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.systems.chemistry.conditions;
 
 import com.site21.bittermelon.common.systems.chemistry.ReactionCondition;
 import com.site21.bittermelon.common.systems.chemistry.ReactionConditionType;
-import com.site21.bittermelon.common.systems.chemistry.Reactor;
+import com.site21.bittermelon.common.systems.substance.SubstanceContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -18,7 +18,7 @@ public class IgniteCondition implements ReactionCondition {
     }
 
     @Override
-    public boolean test(Reactor reactor, Level level, BlockPos pos) {
+    public boolean test(SubstanceContainer substanceContainer, Level level, BlockPos pos) {
         BlockPos.MutableBlockPos neighborPos = new BlockPos.MutableBlockPos();
         for (Direction dir : Direction.values()) {
             neighborPos.setWithOffset(pos, dir);

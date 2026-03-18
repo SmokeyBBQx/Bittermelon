@@ -1,6 +1,7 @@
 package com.site21.bittermelon.common.systems.chemistry;
 
 import com.mojang.serialization.Codec;
+import com.site21.bittermelon.common.systems.substance.SubstanceContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
@@ -12,5 +13,5 @@ public interface ReactionEffect {
 
     ReactionEffectType<?> getType();
 
-    void apply(Reactor reactor, Level level, BlockPos pos, int amount);
+    void apply(SubstanceContainer substanceContainer, Level level, BlockPos pos, int amount);
 }

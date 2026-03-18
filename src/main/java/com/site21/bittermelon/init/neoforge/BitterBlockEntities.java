@@ -23,7 +23,6 @@ import com.site21.bittermelon.common.content.blocks.lights.emergencyexitlight.Em
 import com.site21.bittermelon.common.content.blocks.powergrid.distributionboard.DistributionBoardBlockEntity;
 import com.site21.bittermelon.common.content.blocks.scp.scp151.SCP151BlockEntity;
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlockEntity;
-import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.common.content.blocks.wallwriting.WallWritingBlockEntity;
 import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlockEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -36,10 +35,6 @@ import static com.site21.bittermelon.init.neoforge.BitterBlocks.*;
 
 public class BitterBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, Bittermelon.MOD_ID);
-
-    public static final Supplier<BlockEntityType<FluidBlockEntity>> FLUID_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
-            "fluid_block_entity",
-            () -> new BlockEntityType<>(FluidBlockEntity::new, false, FLUID.get()));
 
     public static final Supplier<BlockEntityType<BoxBlockEntity>> BOX_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
             "box_block_entity",
@@ -119,7 +114,7 @@ public class BitterBlockEntities {
 
     public static final Supplier<BlockEntityType<SubstanceFluidBlockEntity>> SUBSTANCE_FLUID_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
             "substance_fluid_block_entity",
-            () -> new BlockEntityType<>(SubstanceFluidBlockEntity::new, false, SUBSTANCE_FLUID_BLOCK.get()));
+            () -> new BlockEntityType<>(SubstanceFluidBlockEntity::new, false, SUBSTANCE_FLUID.get()));
 
     public static final Supplier<BlockEntityType<EmergencyExitLampBlockEntity>> EMERGENCY_EXIT_LAMP_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register(
             "emergency_exit_lamp_block_entity",

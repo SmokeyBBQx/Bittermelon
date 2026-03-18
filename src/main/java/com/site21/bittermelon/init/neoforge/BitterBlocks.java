@@ -30,7 +30,6 @@ import com.site21.bittermelon.common.content.blocks.powergrid.distributionboard.
 import com.site21.bittermelon.common.content.blocks.scp.scp151.SCP151Block;
 import com.site21.bittermelon.common.content.blocks.scp.scp330.SCP330Block;
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlock;
-import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
 import com.site21.bittermelon.common.content.blocks.wallwriting.WallWritingBlock;
 import com.site21.bittermelon.common.content.entities.cage.CageBlock;
 import com.site21.bittermelon.common.systems.fluid.simple.SimpleFluidBlock;
@@ -43,7 +42,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.MapColor;
-import net.neoforged.neoforge.common.util.DeferredSoundType;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.Contract;
@@ -67,20 +65,6 @@ public class BitterBlocks {
 
         return properties;
     }
-
-    public static final DeferredBlock<FluidBlock> FLUID = BLOCKS.registerBlock("fluid", FluidBlock::new, BlockBehaviour.Properties.of()
-            .mapColor(MapColor.WATER)
-            .noOcclusion()
-            .destroyTime(-1)
-            .sound(new DeferredSoundType(1.0f,
-                    1.0f,
-                    BitterSounds.SPLATTER::value,
-                    BitterSounds.SOGGY::value,
-                    BitterSounds.SPLAT::value,
-                    BitterSounds.SOGGY::value,
-                    BitterSounds.SPLATTER::value
-            ))
-    );
 
     public static final DeferredBlock<SmallBox> SMALL_CARDBOARD_BOX = BLOCKS.registerBlock("small_cardboard_box", SmallBox::new, BlockBehaviour.Properties.of()
             .destroyTime(-1)
@@ -175,7 +159,7 @@ public class BitterBlocks {
             .destroyTime(1.5f)
     );
 
-    public static final DeferredBlock<SubstanceFluidBlock> SUBSTANCE_FLUID_BLOCK = BLOCKS.registerBlock("substance_fluid_block", SubstanceFluidBlock::new, BlockBehaviour.Properties.of()
+    public static final DeferredBlock<SubstanceFluidBlock> SUBSTANCE_FLUID = BLOCKS.registerBlock("substance_fluid_block", SubstanceFluidBlock::new, BlockBehaviour.Properties.of()
             .mapColor(MapColor.WATER)
     );
 

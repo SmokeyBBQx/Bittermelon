@@ -2,8 +2,8 @@ package com.site21.bittermelon.common.systems.chemistry.effects;
 
 import com.site21.bittermelon.common.systems.chemistry.ReactionEffect;
 import com.site21.bittermelon.common.systems.chemistry.ReactionEffectType;
-import com.site21.bittermelon.common.systems.chemistry.Reactor;
 import com.site21.bittermelon.common.systems.substance.Substance;
+import com.site21.bittermelon.common.systems.substance.SubstanceContainer;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -36,11 +36,11 @@ public class SynthesisEffect implements ReactionEffect {
     }
 
     @Override
-    public void apply(Reactor reactor, Level level, BlockPos pos, int amount) {
+    public void apply(SubstanceContainer substanceContainer, Level level, BlockPos pos, int amount) {
         for (var entry : products.entrySet()) {
             SubstanceStack stack = entry.getKey().value().toStack();
             stack.setAmount(amount * entry.getValue());
-            reactor.updateSubstanceNoUpdate(stack);
+            substanceContainer.updateSubstanceNoUpdate(stack);
         }
     }
 

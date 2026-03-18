@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.systems.chemistry.effects;
 
 import com.site21.bittermelon.common.systems.chemistry.ReactionEffect;
 import com.site21.bittermelon.common.systems.chemistry.ReactionEffectType;
-import com.site21.bittermelon.common.systems.chemistry.Reactor;
+import com.site21.bittermelon.common.systems.substance.SubstanceContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -20,7 +20,7 @@ public record SpawnEntityEffect(EntityType<?> entityType, int maxAmount) impleme
     }
 
     @Override
-    public void apply(Reactor reactor, Level level, BlockPos pos, int amount) {
+    public void apply(SubstanceContainer substanceContainer, Level level, BlockPos pos, int amount) {
         int actualAmount = Math.min(amount / 10, maxAmount);
         RandomSource random = level.getRandom();
 

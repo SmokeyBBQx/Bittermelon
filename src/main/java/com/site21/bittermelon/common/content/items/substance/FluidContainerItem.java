@@ -1,8 +1,8 @@
 package com.site21.bittermelon.common.content.items.substance;
 
-import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlock;
-import com.site21.bittermelon.common.content.blocks.substance.fluid.FluidBlockEntity;
 import com.site21.bittermelon.common.systems.component.SubstanceContents;
+import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlock;
+import com.site21.bittermelon.common.systems.substance.SubstanceContainer;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.ChatFormatting;
@@ -33,12 +33,11 @@ import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static com.site21.bittermelon.init.neoforge.BitterBlocks.FLUID;
+import static com.site21.bittermelon.init.neoforge.BitterBlocks.SUBSTANCE_FLUID;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
 import static net.minecraft.world.level.block.Block.UPDATE_ALL_IMMEDIATE;
 
@@ -90,7 +89,7 @@ public class FluidContainerItem extends SubstanceContainerItem {
                 boolean currentSpillState = itemInHand.getOrDefault(CAN_SPILL, false);
                 itemInHand.set(CAN_SPILL, !currentSpillState);
                 // TODO: Lid sound
-            } else if (itemInHand.getOrDefault(CAN_SPILL, true) && !blockState.is(FLUID)) {
+            } else if (itemInHand.getOrDefault(CAN_SPILL, true) && !blockState.is(SUBSTANCE_FLUID)) {
                 // If the item can spill and the player isn't looking at a fluid block, start drinking
 
                 if (level.isClientSide) {
@@ -122,7 +121,7 @@ public class FluidContainerItem extends SubstanceContainerItem {
             }
 
             // If the container isn't full and the clicked block is a fluid block, try to fill from it
-            if (level.getBlockState(clickedPos).getBlock() instanceof FluidBlock) {
+            if (level.getBlockState(clickedPos).getBlock() instanceof SubstanceFluidBlock) {
                 transferSubstancesFromBlock(clickedPos, level, stack);
                 return InteractionResult.SUCCESS;
             }
@@ -138,12 +137,12 @@ public class FluidContainerItem extends SubstanceContainerItem {
 
         // Try to spill above the clicked block first, then on the clicked block if that fails
        if (clickedOnState.canBeReplaced()) {
-           if (!(clickedOnState.getBlock() instanceof FluidBlock)) {
-               level.setBlock(clickedOnPos, FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
+           if (!(clickedOnState.getBlock() instanceof SubstanceFluidBlock)) {
+               level.setBlock(clickedOnPos, SUBSTANCE_FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
            }
             transferSubstancesToBlock(clickedOnPos, level, stack, getLimitedTransferRate(stack));
         } else if (existingState.canBeReplaced()) {
-            level.setBlock(spillPos, FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
+            level.setBlock(spillPos, SUBSTANCE_FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
             transferSubstancesToBlock(spillPos, level, stack, getLimitedTransferRate(stack));
         } else {
             player.displayClientMessage(Component.literal("Can't spill here!").withStyle(ChatFormatting.RED), true);
@@ -154,20 +153,19 @@ public class FluidContainerItem extends SubstanceContainerItem {
     }
 
     protected void transferSubstancesToBlock(BlockPos pos, @NotNull Level level, ItemStack stack, int volume) {
-//        if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluidEntity) {
-//            transferSubstances(stack, getTotalVolume(stack), volume,
-//                    (substance, amount) -> fluidEntity.updateSubstance(substance));
-//            playEmptySound(level, pos);
-//        }
+        if (level.getBlockEntity(pos) instanceof SubstanceContainer fluidBE) {
+            transferSubstances(stack, getTotalVolume(stack), volume,
+                    (substance, amount) -> fluidBE.updateSubstance(substance));
+            playEmptySound(level, pos);
+        }
     }
 
     protected void transferSubstancesFromBlock(BlockPos pos, @NotNull Level level, ItemStack stack) {
-        if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluidEntity) {
+        if (level.getBlockEntity(pos) instanceof SubstanceContainer fluidBE) {
             int availableCapacity = getCapacity(stack) - getTotalVolume(stack);
             int transferRate = Math.min(getTransferRate(stack), availableCapacity);
 
-//            List<SubstanceStack> transferredSubstances = fluidEntity.transferSubstancesVolume(transferRate);
-            List<SubstanceStack> transferredSubstances = new ArrayList<>();
+            List<SubstanceStack> transferredSubstances = fluidBE.transferSubstancesByVolume(transferRate);
             SubstanceContents.Mutable mutableData = getMutableSubstanceData(stack);
 
             for (SubstanceStack substance : transferredSubstances) {
@@ -206,7 +204,7 @@ public class FluidContainerItem extends SubstanceContainerItem {
             SubstanceStack substance = iterator.next();
             if (substance == null) continue;
 
-            int proportion = totalVolume > 0 ? substance.getVolume() / totalVolume : 0;
+            int proportion = substance.getVolume() / totalVolume;
             int transferVolume = Math.min(transferRate * proportion, substance.getVolume());
 
             if (transferVolume > 0) {
@@ -236,7 +234,7 @@ public class FluidContainerItem extends SubstanceContainerItem {
     }
 
     public static int getMaxTransferRate(@NotNull ItemStack stack) {
-        return stack.getOrDefault(MAX_TRANSFER_RATE, 10);
+        return stack.getOrDefault(MAX_TRANSFER_RATE, 100);
     }
 
     public int getLimitedTransferRate(@NotNull ItemStack stack) {
@@ -324,10 +322,10 @@ public class FluidContainerItem extends SubstanceContainerItem {
     public void spill(ItemStack stack, @NotNull Level level, BlockPos pos, int volume) {
         BlockState existingState = level.getBlockState(pos);
 
-        if (existingState.getBlock() instanceof FluidBlock) {
+        if (existingState.getBlock() instanceof SubstanceFluidBlock) {
             transferSubstancesToBlock(pos, level, stack, volume);
         } else if (existingState.canBeReplaced()) {
-            level.setBlock(pos, FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
+            level.setBlock(pos, SUBSTANCE_FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
             transferSubstancesToBlock(pos, level, stack, volume);
         }
     }

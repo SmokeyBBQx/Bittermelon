@@ -27,8 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.FLUID_BLOCK_ENTITY;
-
+@Deprecated
 public class FluidBlock extends Block implements EntityBlock {
     public static final BooleanProperty NORTH = PipeBlock.NORTH;
     public static final BooleanProperty EAST = PipeBlock.EAST;
@@ -90,7 +89,8 @@ public class FluidBlock extends Block implements EntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pPos, @NotNull BlockState pState) {
-        return FLUID_BLOCK_ENTITY.get().create(pPos, pState);
+//        return FLUID_BLOCK_ENTITY.get().create(pPos, pState);
+        return null;
     }
 
 //    @Nullable

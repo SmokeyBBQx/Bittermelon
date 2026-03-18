@@ -116,7 +116,7 @@ public class SubstanceContainerItem extends BitterItem {
 
     @Override
     public int getBarColor(@NotNull ItemStack stack) {
-        float fillPercentage = getSubstanceData(stack).getTotalVolume() / getCapacity(stack);
+        float fillPercentage = (float) getSubstanceData(stack).getTotalVolume() / getCapacity(stack);
         if (fillPercentage < 0.5f) {
             return 0xFF0000 | (Math.round(510 * fillPercentage) << 8); // Red to Yellow
         } else {
