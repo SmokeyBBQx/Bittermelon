@@ -20,7 +20,9 @@ public record Reaction(
 ) {
     public static final Codec<Reaction> CODEC;
 
-    public boolean canOccur(SubstanceContainer substanceContainer, Level level, BlockPos pos) {
+    public boolean canOccur(SubstanceContainer substanceContainer, float temperature, Level level, BlockPos pos) {
+        if (temperature < minTemperature) return false;
+
         for (ReactionCondition condition : conditions) {
             if (!condition.test(substanceContainer, level, pos)) {
                 return false;
@@ -75,7 +77,7 @@ public record Reaction(
             effect.apply(substanceContainer, level, pos, scaledAmount);
         }
 
-        substanceContainer.setChanged();
+        substanceContainer.refresh();
         return true;
     }
 

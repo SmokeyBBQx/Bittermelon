@@ -157,4 +157,10 @@ public class BitterModelTemplates {
             Optional.of("_675"),
             TextureSlot.TEXTURE
     );
+
+    public static final ModelTemplate FIRE = new ModelTemplate(
+            Optional.of(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fire")),
+            Optional.of("_fire"),
+            TextureSlot.FIRE
+    );
 }

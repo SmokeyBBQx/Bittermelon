@@ -6,6 +6,7 @@ import com.site21.bittermelon.common.systems.substance.SubstanceContainer;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.util.profiling.Profiler;
 import net.minecraft.world.level.Level;
 
 import java.util.*;
@@ -46,6 +47,8 @@ public class ReactionManager {
     }
 
     public Set<Reaction> findMatch(SubstanceContainer substanceContainer, Level level, BlockPos pos) {
+        Profiler.get().push("findMatch");
+
         Set<Reaction> candidates = new HashSet<>();
 
         for (Nature nature : substanceContainer.getNatures()) {
@@ -60,9 +63,10 @@ public class ReactionManager {
 
         Set<Reaction> result = new HashSet<>();
         for (Reaction reaction : candidates) {
-            if (reaction.canOccur(substanceContainer, level, pos)) result.add(reaction);
+            if (reaction.canOccur(substanceContainer, substanceContainer.getTemperature(), level, pos)) result.add(reaction);
         }
 
+        Profiler.get().pop();
         return result;
     }
 }

@@ -14,11 +14,11 @@ public interface SubstanceContainer {
 
     void removeSubstanceNoUpdate(SubstanceStack stack, int amount);
 
-    void setChanged();
-
-    int getAmount();
+    void refresh();
 
     int getVolume();
+
+    float getTemperature();
 
     Collection<SubstanceStack> getSubstances();
 
@@ -44,7 +44,7 @@ public interface SubstanceContainer {
             }
         }
 
-        setChanged();
+        refresh();
         return transferred;
     }
 }

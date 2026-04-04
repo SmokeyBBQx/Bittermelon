@@ -5,9 +5,7 @@ import com.site21.bittermelon.common.systems.substance.Substance;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ARGB;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
@@ -51,32 +49,36 @@ public class ClientSubstanceFluid implements IClientFluidTypeExtensions {
     @Override
     public int getTintColor(@NotNull FluidState state, @NotNull BlockAndTintGetter getter, @NotNull BlockPos pos) {
         // TODO: This should be cached perhaps
+//        if (getter.getBlockEntity(pos) instanceof SubstanceFluidBlockEntity fluidBE) {
+//            int color = fluidBE.getColor();
+//            int alpha = ARGB.alpha(color);
+//            int red = 0, green = 0, blue = 0, count = 0;
+//
+//            for (Direction direction : Direction.values()) {
+//                BlockPos checkPos = pos.relative(direction);
+//                if (getter.getBlockEntity(checkPos) instanceof SubstanceFluidBlockEntity be) {
+//                    int c = be.getColor();
+//                    if (c == Substance.DEFAULT_COLOR) continue;
+//
+//                    red += ARGB.red(c);
+//                    green += ARGB.green(c);
+//                    blue += ARGB.blue(c);
+//                    count++;
+//                }
+//            }
+//
+//            if (count > 0 && color != Substance.DEFAULT_COLOR) {
+//                red += ARGB.red(color);
+//                green += ARGB.green(color);
+//                blue += ARGB.blue(color);
+//                count++;
+//            }
+//
+//            return count > 0 ? ARGB.color(alpha, red / count, green / count, blue / count) : color;
+//        }
+
         if (getter.getBlockEntity(pos) instanceof SubstanceFluidBlockEntity fluidBE) {
-            int color = fluidBE.getColor();
-            int alpha = ARGB.alpha(color);
-            int red = 0, green = 0, blue = 0, count = 0;
-
-            for (Direction direction : Direction.values()) {
-                BlockPos checkPos = pos.relative(direction);
-                if (getter.getBlockEntity(checkPos) instanceof SubstanceFluidBlockEntity be) {
-                    int c = be.getColor();
-                    if (c == Substance.DEFAULT_COLOR) continue;
-
-                    red += ARGB.red(c);
-                    green += ARGB.green(c);
-                    blue += ARGB.blue(c);
-                    count++;
-                }
-            }
-
-            if (count > 0 && color != Substance.DEFAULT_COLOR) {
-                red += ARGB.red(color);
-                green += ARGB.green(color);
-                blue += ARGB.blue(color);
-                count++;
-            }
-
-            return count > 0 ? ARGB.color(alpha, red / count, green / count, blue / count) : color;
+            return fluidBE.getColor();
         }
 
         return getTintColor();

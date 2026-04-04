@@ -5,10 +5,19 @@ import com.site21.bittermelon.common.content.items.scps.scp377.FortuneHandler;
 import com.site21.bittermelon.common.systems.blockdamage.BlockDamageUtil;
 import com.site21.bittermelon.common.systems.carry.CarryHandler;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
+import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluid;
+import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlockEntity;
 import com.site21.bittermelon.common.systems.stress.StressHandler;
+import com.site21.bittermelon.common.systems.substance.SubstanceMixture;
+import com.site21.bittermelon.common.systems.substance.SubstanceStack;
+import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDrownEvent;
@@ -17,11 +26,16 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 import static com.site21.bittermelon.init.custom.Anatomies.HUMAN;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.MEDICAL_STATS;
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.STAINS;
+import static com.site21.bittermelon.init.neoforge.BitterFluids.SUBSTANCE_FLUID;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class CommonEvents {
+    private static final int STAIN_TICK_INTERVAL = 20;
 
     @SubscribeEvent
     public static void onEntityTick(EntityTickEvent.@NotNull Post event) {
@@ -30,6 +44,7 @@ public class CommonEvents {
 
         if (entity instanceof LivingEntity livingEntity) {
             CarryHandler.tickCarrying(livingEntity);
+            tickStains(livingEntity);
         }
 
         if (entity instanceof Player player) {
@@ -40,6 +55,46 @@ public class CommonEvents {
                 player.getData(MEDICAL_STATS).tick(player);
             }
         }
+    }
+
+    public static void tickStains(LivingEntity entity) {
+        Level level = entity.level();
+        BlockPos pos = entity.blockPosition();
+
+        if (level.isClientSide) return;
+
+        if (entity.hasData(STAINS) && level.getGameTime() % STAIN_TICK_INTERVAL == 0) {
+            SubstanceMixture stains = entity.getData(STAINS);
+            stains.tickReactions(level, pos);
+
+            for (SubstanceStack stack : stains.getSubstances()) {
+                stack.getSubstance().onContact(stack, entity);
+            }
+
+            if (stains.getVolume() > 10 && level.random.nextFloat() > 0.1f) {
+                List<SubstanceStack> drippedSubstances = stains.spreadSubstancesByVolume(10);
+                if (drip(level, pos, drippedSubstances)) {
+                    stains.removeSubstances(drippedSubstances);
+                }
+            }
+        }
+    }
+
+    private static boolean drip(@NotNull Level level, BlockPos pos, List<SubstanceStack> substances) {
+        SubstanceFluid fluid = SUBSTANCE_FLUID.get();
+
+        if (level.getBlockState(pos).canBeReplaced() && level.getFluidState(pos).isEmpty()) {
+            level.setBlock(pos, fluid.defaultFluidState().createLegacyBlock(), Block.UPDATE_ALL);
+            level.playSound(null, pos, SoundEvents.POINTED_DRIPSTONE_DRIP_WATER,
+                    SoundSource.AMBIENT, 1.0f, 0.8f + level.random.nextFloat() * 0.4f);
+        }
+
+        if (level.getBlockEntity(pos) instanceof SubstanceFluidBlockEntity spreadBE) {
+            spreadBE.transferSubstances(substances);
+            return true;
+        }
+
+        return false;
     }
 
     @SubscribeEvent

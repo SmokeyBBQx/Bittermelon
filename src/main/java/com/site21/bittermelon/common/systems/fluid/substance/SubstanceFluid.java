@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.site21.bittermelon.common.content.blocks.properties.BitterStateProperties;
 import com.site21.bittermelon.common.systems.blockdamage.BlockDamageUtil;
 import com.site21.bittermelon.common.systems.substance.Substance;
+import com.site21.bittermelon.common.systems.substance.SubstanceMixture;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import com.site21.bittermelon.init.neoforge.BitterFluidTypes;
 import net.minecraft.core.BlockPos;
@@ -13,6 +14,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.profiling.Profiler;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
@@ -33,12 +36,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.STAINS;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.SUBSTANCE_FLUID;
 
 public class SubstanceFluid extends Fluid {
@@ -71,17 +72,9 @@ public class SubstanceFluid extends Fluid {
                 return;
             }
 
-            // Perhaps this shouldn't run when the fluid is flowing
             fluidBE.tickReactions();
 
             if (spreadDownwards(level, pos, fluidBE)) return;
-
-//            int tickInterval = (int) Math.ceil(fluidBE.getViscosity() / 1000.0);
-//            if (tickInterval > 1 && level.getGameTime() % (tickInterval * 5L) != 0) {
-//                Profiler.get().pop();
-//                level.scheduleTick(pos, this, tickInterval);
-//                return;
-//            }
 
             int volume = fluidBE.getVolume();
             if (volume > SPREAD_THRESHOLD) {
@@ -99,7 +92,7 @@ public class SubstanceFluid extends Fluid {
     @Override
     protected void randomTick(ServerLevel level, BlockPos pos, FluidState state, RandomSource random) {
         if (level.getBlockEntity(pos) instanceof SubstanceFluidBlockEntity fluidBE) {
-            exertPressure(fluidBE, level);
+//            exertPressure(fluidBE, level);
         }
     }
 
@@ -186,7 +179,7 @@ public class SubstanceFluid extends Fluid {
             neighborPos.setWithOffset(pos, direction);
             if (level.getBlockState(neighborPos).canBeReplaced()) {
                 positions.add(neighborPos.immutable());
-            } else if (canSpreadTo(level, neighborPos, fluidBE)) {
+            } else if (canSpreadHorizontally(level, neighborPos, fluidBE)) {
                 backupPositions.add(neighborPos.immutable());
             }
         }
@@ -271,7 +264,8 @@ public class SubstanceFluid extends Fluid {
         if (!neighborFluidState.isEmpty() && !neighborFluidState.is(this)) return false;
 
         if (level.getBlockEntity(pos) instanceof SubstanceFluidBlockEntity neighborBE) {
-            return neighborBE.getVolume() < FULL_BLOCK_VOLUME && Math.abs(neighborBE.getAmount() - fluidBE.getAmount()) > 1;
+//            return fluidBE.getVolume() - neighborBE.getVolume() >= 50;
+            return fluidBE.getVolume() > neighborBE.getVolume();
         }
 
         // Check if the block can be replaced by this fluid
@@ -288,14 +282,15 @@ public class SubstanceFluid extends Fluid {
 
         List<SubstanceFluidBlockEntity> fluids = new ArrayList<>(5);
         fluids.add(fluidBE);
-        int height = level.getFluidState(pos).getAmount();
+        int sourceVolume = fluidBE.getVolume();
         BlockPos.MutableBlockPos neighborPos = new BlockPos.MutableBlockPos();
 
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             neighborPos.setWithOffset(pos, direction);
-            if (level.getBlockEntity(neighborPos) instanceof SubstanceFluidBlockEntity neighborBE
-                    && level.getFluidState(neighborPos).getAmount() != height) {
-                fluids.add(neighborBE);
+            if (level.getBlockEntity(neighborPos) instanceof SubstanceFluidBlockEntity neighborBE) {
+                if (Math.abs(neighborBE.getVolume() - sourceVolume) > 50) {
+                    fluids.add(neighborBE);
+                }
             }
         }
 
@@ -311,6 +306,10 @@ public class SubstanceFluid extends Fluid {
             for (SubstanceStack stack : be.getSubstances()) {
                 totalsByType.merge(stack.getSubstance(), stack.getAmount(), Integer::sum);
             }
+//            if (level instanceof ServerLevel serverLevel) {
+//                serverLevel.sendParticles(ParticleTypes.BUBBLE, be.getBlockPos().getX() + 0.5, be.getBlockPos().getY() + 1,
+//                        be.getBlockPos().getZ() + 0.5, 1, 0, 0, 0, 0.1);
+//            }
         }
 
         for (int i = 0; i < fluidCount; i++) {
@@ -319,10 +318,78 @@ public class SubstanceFluid extends Fluid {
 
             for (var entry : totalsByType.entrySet()) {
                 int totalAmount = entry.getValue();
-                int baseAmount = totalAmount / fluidCount;
-                int remainder = totalAmount % fluidCount;
-                int amount = baseAmount + (i < remainder ? 1 : 0);
+                int amount = totalAmount / fluidCount;
 
+                // Prevents truncation but will infinitely try to equalize
+//                int remainder = totalAmount % fluidCount;
+//                int amount = baseAmount + (i < remainder ? 1 : 0);
+
+                if (amount > 0) {
+                    SubstanceStack newStack = entry.getKey().toStack();
+                    if (newStack != null) {
+                        newStack.setAmount(amount);
+                        newStacks.add(newStack);
+                    }
+                }
+            }
+
+            be.setSubstances(newStacks);
+        }
+
+        Profiler.get().pop();
+    }
+
+    private void equalizeSubstancesBFS(@NotNull Level level, BlockPos pos, SubstanceFluidBlockEntity fluidBE) {
+        Profiler.get().push("equalizeSubstances");
+
+        List<SubstanceFluidBlockEntity> fluids = new ArrayList<>();
+        Set<BlockPos> visited = new HashSet<>();
+        Queue<BlockPos> queue = new ArrayDeque<>();
+
+        queue.add(pos);
+        visited.add(pos);
+        int maxVisited = 256;
+
+        while (!queue.isEmpty() && visited.size() <= maxVisited) {
+            BlockPos current = queue.poll();
+
+            if (level.getBlockEntity(current) instanceof SubstanceFluidBlockEntity be) {
+                fluids.add(be);
+
+                for (Direction direction : Direction.Plane.HORIZONTAL) {
+                    BlockPos neighbor = current.relative(direction);
+                    if (!visited.contains(neighbor) && level.getBlockEntity(neighbor) instanceof SubstanceFluidBlockEntity) {
+                        visited.add(neighbor);
+                        queue.add(neighbor);
+                    }
+                }
+            }
+        }
+
+        if (fluids.size() < 2) {
+            Profiler.get().pop();
+            return;
+        }
+
+        int fluidCount = fluids.size();
+        Map<Substance, Integer> totalsByType = new HashMap<>();
+
+        for (SubstanceFluidBlockEntity be : fluids) {
+            for (SubstanceStack stack : be.getSubstances()) {
+                totalsByType.merge(stack.getSubstance(), stack.getAmount(), Integer::sum);
+            }
+
+//            if (level instanceof ServerLevel serverLevel) {
+//                serverLevel.sendParticles(ParticleTypes.BUBBLE, be.getBlockPos().getX() + 0.5, be.getBlockPos().getY() + 1,
+//                        be.getBlockPos().getZ() + 0.5, 1, 0, 0, 0, 0.1);
+//            }
+        }
+
+        for (SubstanceFluidBlockEntity be : fluids) {
+            List<SubstanceStack> newStacks = new ArrayList<>(totalsByType.size());
+
+            for (var entry : totalsByType.entrySet()) {
+                int amount = entry.getValue() / fluidCount;
                 if (amount > 0) {
                     SubstanceStack newStack = entry.getKey().toStack();
                     if (newStack != null) {
@@ -370,6 +437,32 @@ public class SubstanceFluid extends Fluid {
                 random.nextFloat() * 0.25F + 0.75F,
                 random.nextFloat() + 0.5F
         );
+    }
+
+    @Override
+    protected void entityInside(Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier) {
+        super.entityInside(level, pos, entity, effectApplier);
+
+        if (level.isClientSide) return;
+        if (level.getGameTime() % 20 != 0) return;
+        if (entity.getDeltaMovement().lengthSqr() == 0) return;
+        if (!(level.getBlockEntity(pos) instanceof SubstanceFluidBlockEntity fluidBE)) return;
+
+        int fluidVolume = fluidBE.getVolume();
+
+        SubstanceMixture stains = entity.getData(STAINS);
+        int stainHeadroom = 100 - stains.getVolume();
+        if (stainHeadroom <= 0) return;
+
+        float contactFactor = entity.isSprinting() ? 0.2f : 0.1f;
+        int absorb = Math.min(stainHeadroom, (int) (fluidVolume * contactFactor));
+        if (absorb <= 0) return;
+
+        List<SubstanceStack> absorbed = spreadSubstancesByVolume(fluidBE.getSubstances(), absorb, fluidVolume);
+        if (!absorbed.isEmpty()) {
+            fluidBE.removeSubstances(absorbed);
+            stains.transferSubstances(absorbed);
+        }
     }
 
     @Override

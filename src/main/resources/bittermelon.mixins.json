@@ -8,6 +8,7 @@
     "EntityMixin",
     "ItemEntityMixin",
     "ItemMixin",
+    "LivingEntityMixin",
     "PlayerMixin"
   ],
   "client": [

@@ -49,6 +49,7 @@ import static com.site21.bittermelon.init.neoforge.BitterItems.KEYCARD_READER;
 import static com.site21.bittermelon.init.neoforge.BitterItems.STICKY_NOTE;
 import static com.site21.bittermelon.init.neoforge.BitterItems.*;
 import static net.minecraft.client.data.models.BlockModelGenerators.*;
+import static net.minecraft.client.data.models.model.TextureMapping.getBlockTexture;
 
 public class BitterModelProvider extends ModelProvider {
 
@@ -98,7 +99,7 @@ public class BitterModelProvider extends ModelProvider {
         createDefaultCageLamp(blockModels, BitterBlocks.CYAN_CAGE_LAMP.get());
         createDefaultCageLamp(blockModels, BitterBlocks.LIGHT_BLUE_CAGE_LAMP.get());
         createDefaultCageLamp(blockModels, BitterBlocks.CAGE_LAMP.get());
-        blockModels.createParticleOnlyBlock(BitterBlocks.SUBSTANCE_FLUID.get());
+        createFluid(blockModels, SUBSTANCE_FLUID.get());
         blockModels.createParticleOnlyBlock(SIMPLE_FLUID_BLOCK.get());
         createTelevision(blockModels, BitterBlocks.LIGHT_GRAY_TELEVISION.get(), BitterBlocks.LIGHT_GRAY_WALL_TELEVISION.get());
         blockModels.blockStateOutput.accept(
@@ -115,6 +116,8 @@ public class BitterModelProvider extends ModelProvider {
         itemModels.generateFlatItem(WHISKEY_BOTTLE.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(SCP_109.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(SUBSTANCE_FLUID_BUCKET.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(SIMPLE_FLUID_BUCKET.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(SEA_MONKEY_BUCKET.get(), ModelTemplates.FLAT_ITEM);
 
         // Medical Items
         itemModels.generateFlatItem(SYRINGE.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
@@ -252,7 +255,7 @@ public class BitterModelProvider extends ModelProvider {
 
     public void createRedstoneDevice(@NotNull BlockModelGenerators blockModels, Block block, TexturedModel.@NotNull Provider modelProvider) {
         MultiVariant offVariant = plainVariant(modelProvider.create(block, blockModels.modelOutput));
-        ResourceLocation resourcelocation = TextureMapping.getBlockTexture(block, "_front_on");
+        ResourceLocation resourcelocation = getBlockTexture(block, "_front_on");
         MultiVariant onVariant = plainVariant(modelProvider.get(block)
                 .updateTextures(mapping -> mapping.put(TextureSlot.FRONT, resourcelocation))
                 .createWithSuffix(block, "_on", blockModels.modelOutput));
@@ -555,7 +558,7 @@ public class BitterModelProvider extends ModelProvider {
 
     public void createCageLamp(@NotNull BlockModelGenerators blockModels, Block block) {
         TextureMapping offTextureMapping = TextureMapping.defaultTexture(block);
-        ResourceLocation onLocation = TextureMapping.getBlockTexture(block, "_on");
+        ResourceLocation onLocation = getBlockTexture(block, "_on");
         TextureMapping onTextureMapping = offTextureMapping.copyAndUpdate(TextureSlot.TEXTURE, onLocation);
 
         createCageLamp(blockModels, block, offTextureMapping, onTextureMapping);
@@ -563,7 +566,7 @@ public class BitterModelProvider extends ModelProvider {
 
     public void createDefaultCageLamp(@NotNull BlockModelGenerators blockModels, Block block) {
         TextureMapping offTextureMapping = TextureMapping.defaultTexture(modLocation("block/cage_lamp"));
-        ResourceLocation onLocation = TextureMapping.getBlockTexture(block, "_on");
+        ResourceLocation onLocation = getBlockTexture(block, "_on");
         TextureMapping onTextureMapping = offTextureMapping.copyAndUpdate(TextureSlot.TEXTURE, onLocation);
 
         createCageLamp(blockModels, block, offTextureMapping, onTextureMapping);
@@ -639,6 +642,20 @@ public class BitterModelProvider extends ModelProvider {
                                 .select(Direction.SOUTH, wallVariant.with(Y_ROT_180))
                                 .select(Direction.WEST, wallVariant.with(Y_ROT_270)))
         );
+    }
+
+    public void createFluid(@NotNull BlockModelGenerators blockModels, @NotNull Block block) {
+        MultiVariant none = blockModels.createParticleOnlyBlockModel(block, block);
+
+        TextureMapping fireMapping = new TextureMapping().put(TextureSlot.FIRE, ResourceLocation.withDefaultNamespace("block/fire_0"));
+        MultiVariant full = plainVariant(FIRE.create(block, fireMapping, blockModels.modelOutput));
+
+        blockModels.blockStateOutput.accept(
+                MultiVariantGenerator.dispatch(block)
+                        .with(PropertyDispatch.initial(BlockStateProperties.LIT)
+                                .select(false, none)
+                                .select(true, full)
+        ));
     }
 
     @Contract(pure = true)

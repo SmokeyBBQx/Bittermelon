@@ -13,6 +13,8 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
@@ -30,12 +32,16 @@ import static com.site21.bittermelon.init.neoforge.BitterFluids.SUBSTANCE_FLUID;
 
 public class SubstanceFluidBlock extends Block implements LiquidBlockContainer, EntityBlock {
     public static final IntegerProperty LEVEL = BitterStateProperties.LEVEL;
+    public static final BooleanProperty LIT = BlockStateProperties.LIT;
+
+    private static final VoxelShape SHAPE = Shapes.box(0, 0, 0, 1, 0.05, 1);
     private final List<FluidState> stateCache;
     private final SubstanceFluid fluid;
 
+
     public SubstanceFluidBlock(Properties properties) {
         super(properties);
-        registerDefaultState(getStateDefinition().any().setValue(LEVEL, 20));
+        registerDefaultState(getStateDefinition().any().setValue(LEVEL, 20).setValue(LIT, false));
         this.stateCache = new ArrayList<>();
         this.fluid = SUBSTANCE_FLUID.get();
 
@@ -48,7 +54,7 @@ public class SubstanceFluidBlock extends Block implements LiquidBlockContainer, 
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
-        builder.add(LEVEL);
+        builder.add(LEVEL, LIT);
     }
 
     @Override
@@ -63,12 +69,12 @@ public class SubstanceFluidBlock extends Block implements LiquidBlockContainer, 
 
     @Override
     public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
-        return RenderShape.INVISIBLE;
+        return state.getValue(LIT) ? RenderShape.MODEL : RenderShape.INVISIBLE;
     }
 
     @Override
     public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
-        return Shapes.empty();
+        return state.getValue(LIT) ? SHAPE : Shapes.empty();
     }
 
     @Override

@@ -10,11 +10,15 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.common.CommonHooks;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
+import java.util.function.Consumer;
 
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.SUBSTANCE_REGISTRY;
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.SUBSTANCE_REGISTRY_KEY;
@@ -35,8 +39,14 @@ public class Substance {
         components = properties.components.build();
     }
 
-    public void onTouch(SubstanceStack stack, LivingEntity entity) {
-
+    public void onContact(SubstanceStack stack, LivingEntity entity) {
+        properties.onContactTick.accept(entity);
+        for (MobEffectInstance effect : properties.contactEffects) {
+            entity.addEffect(new MobEffectInstance(effect));
+        }
+        if (properties.applyDrugOnContact && properties.drug != null) {
+            DrugHelper.ingestDrug(entity, new DrugInstance(properties.drug, stack.getVolume()));
+        }
     }
 
     public void onConsume(SubstanceStack stack, LivingEntity entity) {
@@ -111,6 +121,9 @@ public class Substance {
         String flavor = "";
         String smell = "";
         Holder<Drug> drug;
+        Consumer<LivingEntity> onContactTick = entity -> {};
+        List<MobEffectInstance> contactEffects = new ArrayList<>();
+        private boolean applyDrugOnContact = false;
         private final DataComponentMap.Builder components = DataComponentMap.builder();
 
         public Properties nature(Nature nature, float intensity) {
@@ -155,6 +168,26 @@ public class Substance {
 
         public Properties drug(Holder<Drug> drug) {
             this.drug = drug;
+            return this;
+        }
+
+        public Properties onContactTick(Consumer<LivingEntity> effect) {
+            this.onContactTick = effect;
+            return this;
+        }
+
+        public Properties contactEffects(MobEffectInstance... effects) {
+            contactEffects = List.of(effects);
+            return this;
+        }
+
+        public Properties contactEffect(MobEffectInstance effect) {
+            this.contactEffects.add(effect);
+            return this;
+        }
+
+        public Properties applyDrugOnContact() {
+            this.applyDrugOnContact = true;
             return this;
         }
 

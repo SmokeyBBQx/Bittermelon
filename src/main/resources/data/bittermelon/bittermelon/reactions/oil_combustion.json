@@ -1,0 +1,27 @@
+{
+  "reagents": [
+    {
+      "proportion": 1,
+      "order": 1,
+      "nature_requirements": {},
+      "substance_requirements": [
+        "bittermelon:motor_oil"
+      ]
+    }
+  ],
+  "conditions": [],
+  "min_temperature": 473,
+  "temperature_change": 1.5,
+  "effects": [
+    {
+      "type": "bittermelon:synthesis",
+      "products": {
+        "bittermelon:water": 2
+      }
+    },
+    {
+      "type": "bittermelon:burn"
+    }
+  ]
+}
+
