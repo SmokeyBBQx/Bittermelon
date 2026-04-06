@@ -105,8 +105,8 @@ public class SCP718BlisterBlock extends Block {
 
         level.sendParticles(
                 new BlockParticleOption(ParticleTypes.BLOCK_CRUMBLE, state),
-                pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5,
-                10, 0.5, 0.5, 0.5, 0.0);
+                pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                30, 0.1, 0, 0.1, 0.2);
     }
 
     @Override
