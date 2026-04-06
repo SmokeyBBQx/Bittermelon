@@ -5,10 +5,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.chemistry.ReactionEffectType;
-import com.site21.bittermelon.common.systems.chemistry.effects.BurnEffect;
-import com.site21.bittermelon.common.systems.chemistry.effects.ExplosionEffect;
-import com.site21.bittermelon.common.systems.chemistry.effects.SpawnEntityEffect;
-import com.site21.bittermelon.common.systems.chemistry.effects.SynthesisEffect;
+import com.site21.bittermelon.common.systems.chemistry.effects.*;
 import com.site21.bittermelon.common.systems.substance.Substance;
 import com.site21.bittermelon.init.neoforge.BitterRegistries;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -44,5 +41,26 @@ public class ReactionEffects {
                                     .fieldOf("max_amount")
                                     .forGetter(SpawnEntityEffect::maxAmount)
                     ).apply(instance, SpawnEntityEffect::new))
+            ));
+
+    public static final DeferredHolder<ReactionEffectType<?>, ReactionEffectType<SetBlockEffect>> SET_BLOCK =
+            REACTION_EFFECT_TYPES.register("set_block", () -> new ReactionEffectType<>(
+                    RecordCodecBuilder.mapCodec(instance -> instance.group(
+                            BuiltInRegistries.BLOCK.byNameCodec()
+                                    .fieldOf("block")
+                                    .forGetter(SetBlockEffect::block)
+                    ).apply(instance, SetBlockEffect::new))
+            ));
+
+    public static final DeferredHolder<ReactionEffectType<?>, ReactionEffectType<ChanceSetBlockEffect>> CHANCE_SET_BLOCK =
+            REACTION_EFFECT_TYPES.register("chance_set_block", () -> new ReactionEffectType<>(
+                    RecordCodecBuilder.mapCodec(instance -> instance.group(
+                            BuiltInRegistries.BLOCK.byNameCodec()
+                                    .fieldOf("block")
+                                    .forGetter(ChanceSetBlockEffect::block),
+                            Codec.FLOAT
+                                    .fieldOf("chance")
+                                    .forGetter(ChanceSetBlockEffect::chance)
+                    ).apply(instance, ChanceSetBlockEffect::new))
             ));
 }

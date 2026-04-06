@@ -75,18 +75,18 @@ public class CommonEvents {
                 List<SubstanceStack> drippedSubstances = stains.spreadSubstancesByVolume(10);
                 if (drip(level, pos, drippedSubstances)) {
                     stains.removeSubstances(drippedSubstances);
+                    level.playSound(null, pos, SoundEvents.POINTED_DRIPSTONE_DRIP_WATER,
+                            SoundSource.AMBIENT, 1.0f, 0.8f + level.random.nextFloat() * 0.4f);
                 }
             }
         }
     }
 
-    private static boolean drip(@NotNull Level level, BlockPos pos, List<SubstanceStack> substances) {
+    public static boolean drip(@NotNull Level level, BlockPos pos, List<SubstanceStack> substances) {
         SubstanceFluid fluid = SUBSTANCE_FLUID.get();
 
         if (level.getBlockState(pos).canBeReplaced() && level.getFluidState(pos).isEmpty()) {
             level.setBlock(pos, fluid.defaultFluidState().createLegacyBlock(), Block.UPDATE_ALL);
-            level.playSound(null, pos, SoundEvents.POINTED_DRIPSTONE_DRIP_WATER,
-                    SoundSource.AMBIENT, 1.0f, 0.8f + level.random.nextFloat() * 0.4f);
         }
 
         if (level.getBlockEntity(pos) instanceof SubstanceFluidBlockEntity spreadBE) {

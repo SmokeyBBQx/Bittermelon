@@ -8,6 +8,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.Mth;
 import net.neoforged.neoforge.common.MutableDataComponentHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -90,7 +91,7 @@ public class SubstanceStack implements DataComponentHolder, MutableDataComponent
     }
 
     public int getVolume() {
-        return (int) (amount * substance.getMolarVolume() / 1000);
+        return Mth.ceil(amount * substance.getMolarVolume() / 1000);
     }
 
     public void setVolume(int volume) {

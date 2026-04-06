@@ -32,6 +32,7 @@ import com.site21.bittermelon.common.content.blocks.scp.scp330.SCP330Block;
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlock;
 import com.site21.bittermelon.common.content.blocks.wallwriting.WallWritingBlock;
 import com.site21.bittermelon.common.content.entities.cage.CageBlock;
+import com.site21.bittermelon.common.content.entities.scp718.SCP718BlisterBlock;
 import com.site21.bittermelon.common.systems.fluid.simple.SimpleFluidBlock;
 import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlock;
 import net.minecraft.sounds.SoundEvents;
@@ -270,5 +271,13 @@ public class BitterBlocks {
             .noOcclusion()
             .destroyTime(2.0f)
             .sound(SoundType.METAL)
+    );
+
+    public static final DeferredBlock<SCP718BlisterBlock> EYEBALL_BLISTER = BLOCKS.registerBlock("eyeball_blister", SCP718BlisterBlock::new, BlockBehaviour.Properties.of()
+            .noOcclusion()
+            .noCollission()
+            .destroyTime(0.5f)
+            .sound(SoundType.SLIME_BLOCK)
+            .offsetType(BlockBehaviour.OffsetType.XZ)
     );
 }

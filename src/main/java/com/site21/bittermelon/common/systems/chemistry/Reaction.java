@@ -16,7 +16,8 @@ public record Reaction(
         List<ReactionCondition> conditions,
         int minTemperature,
         int temperatureChange,
-        List<ReactionEffect> effects
+        List<ReactionEffect> effects,
+        List<ReactionEffect> finishEffects
 ) {
     public static final Codec<Reaction> CODEC;
 
@@ -44,7 +45,7 @@ public record Reaction(
     }
 
     public int getReactionRate(SubstanceContainer substanceContainer, Level level, BlockPos pos) {
-        return 100;
+        return 1;
     }
 
     public boolean react(SubstanceContainer substanceContainer, Level level, BlockPos pos) {
@@ -78,7 +79,26 @@ public record Reaction(
         }
 
         substanceContainer.refresh();
+
+        boolean fullyConsumed = true;
+        for (var entry : reactants.entrySet()) {
+            if (entry.getKey().getAmount() > 0) {
+                fullyConsumed = false;
+                break;
+            }
+        }
+
+        if (fullyConsumed) {
+            finish(substanceContainer, level, pos);
+        }
+
         return true;
+    }
+
+    public void finish(SubstanceContainer substanceContainer, Level level, BlockPos pos) {
+        for (ReactionEffect effect : finishEffects) {
+            effect.apply(substanceContainer, level, pos, 0);
+        }
     }
 
     static {
@@ -97,7 +117,10 @@ public record Reaction(
                         .forGetter(Reaction::temperatureChange),
                 ReactionEffect.CODEC.listOf()
                         .fieldOf("effects")
-                        .forGetter(Reaction::effects)
+                        .forGetter(Reaction::effects),
+                ReactionEffect.CODEC.listOf()
+                        .fieldOf("finish_effects")
+                        .forGetter(Reaction::finishEffects)
         ).apply(instance, Reaction::new));
     }
 }

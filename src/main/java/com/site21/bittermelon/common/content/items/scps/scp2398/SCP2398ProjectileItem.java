@@ -5,6 +5,7 @@ import com.site21.bittermelon.common.systems.blockdamage.BlockDamageUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -50,7 +51,7 @@ public class SCP2398ProjectileItem extends ThrownItemProjectile {
                 double offsetY = (random.nextDouble() - 0.5) * particleSpread;
                 double offsetZ = (random.nextDouble() - 0.5) * particleSpread;
 
-                ((net.minecraft.server.level.ServerLevel) level()).sendParticles(
+                ((ServerLevel) level()).sendParticles(
                         trailParticle,
                         x + offsetX,
                         y + offsetY,

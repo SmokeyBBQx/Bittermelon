@@ -163,4 +163,10 @@ public class BitterModelTemplates {
             Optional.of("_fire"),
             TextureSlot.FIRE
     );
+
+    public static final ModelTemplate EYEBALL_BLISTER = new ModelTemplate(
+            Optional.of(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/eyeball_blister")),
+            Optional.empty(),
+            TextureSlot.CROSS
+    );
 }

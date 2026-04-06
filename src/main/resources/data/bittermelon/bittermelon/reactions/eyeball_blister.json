@@ -1,0 +1,24 @@
+{
+  "reagents": [
+    {
+      "proportion": 1,
+      "order": 1,
+      "nature_requirements": {},
+      "substance_requirements": [
+        "bittermelon:eyeball_fluid"
+      ]
+    }
+  ],
+  "conditions": [],
+  "min_temperature": 0,
+  "temperature_change": 0,
+  "effects": [],
+  "finish_effects": [
+    {
+      "type": "bittermelon:chance_set_block",
+      "block": "bittermelon:eyeball_blister",
+      "chance": 0.3
+    }
+  ]
+}
+

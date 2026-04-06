@@ -149,5 +149,11 @@ public class Substances {
                     .color(0xFFB1A5C2)
                     .nature(Nature.WATER_BASED, 0.9f)
     ));
+
+    public static final DeferredHolder<Substance, Substance> EYEBALL_FLUID = SUBSTANCES.register("eyeball_fluid", () -> new Substance(
+            "Eyeball Fluid",
+            new Substance.Properties()
+                    .color(0x55FFFFFF)
+    ));
 }
 

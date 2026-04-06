@@ -8,6 +8,7 @@ import com.site21.bittermelon.common.content.blocks.electronics.television.Stand
 import com.site21.bittermelon.common.content.blocks.poster.SmallPosterBlock;
 import com.site21.bittermelon.common.content.blocks.properties.Placement;
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlock;
+import com.site21.bittermelon.common.content.entities.scp718.SCP718BlisterBlock;
 import com.site21.bittermelon.common.content.items.substance.pill.PillShape;
 import com.site21.bittermelon.datagen.property.*;
 import com.site21.bittermelon.init.neoforge.BitterBlocks;
@@ -110,6 +111,7 @@ public class BitterModelProvider extends ModelProvider {
                 MultiVariantGenerator.dispatch(BURROW.get(), plainVariant(modLocation("block/burrow")))
         );
         blockModels.createTrivialCube(BitterBlocks.CAGE.get());
+        createEyeballBlister(blockModels, BitterBlocks.EYEBALL_BLISTER.get());
 
         // SubstanceFluid Containers
         itemModels.generateFlatItem(BEER_BOTTLE.get(), ModelTemplates.FLAT_ITEM);
@@ -656,6 +658,24 @@ public class BitterModelProvider extends ModelProvider {
                                 .select(false, none)
                                 .select(true, full)
         ));
+    }
+
+    public void createEyeballBlister(BlockModelGenerators blockModels, Block block) {
+        blockModels.registerSimpleItemModel(block, Bittermelon.resource("block/eyeball_blister_2"));
+        MultiVariant age0 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_0",
+                TextureMapping.cross(Bittermelon.resource("block/eyeball_blister_0")), blockModels.modelOutput));
+        MultiVariant age1 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_1",
+                TextureMapping.cross(Bittermelon.resource("block/eyeball_blister_1")), blockModels.modelOutput));
+        MultiVariant age2 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_2",
+                TextureMapping.cross(Bittermelon.resource("block/eyeball_blister_2")), blockModels.modelOutput));
+
+        blockModels.blockStateOutput.accept(
+                MultiVariantGenerator.dispatch(block)
+                        .with(PropertyDispatch.initial(SCP718BlisterBlock.AGE)
+                                .select(0, age0)
+                                .select(1, age1)
+                                .select(2, age2))
+        );
     }
 
     @Contract(pure = true)

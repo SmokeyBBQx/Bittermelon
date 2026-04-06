@@ -22,17 +22,6 @@ public class ClientSubstanceFluid implements IClientFluidTypeExtensions {
 
     @Override
     public @NotNull ResourceLocation getStillTexture(@NotNull FluidState state, @NotNull BlockAndTintGetter getter, @NotNull BlockPos pos) {
-//        if (getter.getBlockEntity(pos) instanceof SubstanceFluidBlockEntity fluidBE) {
-//            float volume = fluidBE.getVolume();
-//            if (volume < 1f) {
-//                return ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid_1");
-//            } else if (volume < 2f) {
-//                return ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/fluid/fluid");
-//            } else {
-//                return this.getStillTexture();
-//            }
-//
-//        }
         return this.getStillTexture();
     }
 

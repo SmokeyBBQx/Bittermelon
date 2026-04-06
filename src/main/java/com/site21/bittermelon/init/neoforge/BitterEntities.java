@@ -4,10 +4,12 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.entities.ThrownItemProjectile;
 import com.site21.bittermelon.common.content.entities.cage.Cage;
 import com.site21.bittermelon.common.content.entities.chicken.Chicken;
+import com.site21.bittermelon.common.content.entities.fluidprojectile.FluidProjectile;
 import com.site21.bittermelon.common.content.entities.scp131.SCP131;
 import com.site21.bittermelon.common.content.entities.scp1507.SCP1507;
 import com.site21.bittermelon.common.content.entities.scp548.SCP548;
 import com.site21.bittermelon.common.content.entities.scp650.SCP650;
+import com.site21.bittermelon.common.content.entities.scp718.SCP718;
 import com.site21.bittermelon.common.content.entities.scp939.SCP939;
 import com.site21.bittermelon.common.content.entities.seamonkey.SeaMonkey;
 import com.site21.bittermelon.common.content.items.scps.scp2398.SCP2398ProjectileItem;
@@ -80,6 +82,16 @@ public class BitterEntities {
                     .sized(0.3f, 0.3f)
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "sea_monkey"))));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<SCP718>> SCP_718 = ENTITY_TYPES.register("scp_718",
+            () -> EntityType.Builder.of(SCP718::new, MobCategory.MONSTER)
+                    .sized(0.3f, 1.8f)
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, Bittermelon.resource("scp_718"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<FluidProjectile>> FLUID_PROJECTILE = ENTITY_TYPES.register("fluid_projectile",
+            () -> EntityType.Builder.<FluidProjectile>of(FluidProjectile::new, MobCategory.MISC)
+                    .sized(0.5f, 0.5f)
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, Bittermelon.resource("fluid_projectile"))));
+
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
         eventBus.addListener(BitterEntities::registerAttributes);
@@ -93,5 +105,6 @@ public class BitterEntities {
         event.put(SCP_1507.get(), SCP1507.createAttributes().build());
         event.put(SCP_548.get(), SCP548.createAttributes().build());
         event.put(SEA_MONKEY.get(), SeaMonkey.createAttributes().build());
+        event.put(SCP_718.get(), SCP718.createAttributes().build());
     }
 }

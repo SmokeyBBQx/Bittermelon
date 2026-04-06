@@ -42,7 +42,7 @@ public class SimpleFluid extends Fluid {
 
     public SimpleFluid(Supplier<? extends BucketItem> bucket) {
         this.bucket = bucket;
-        registerDefaultState(getStateDefinition().any().setValue(LEVEL, 20));
+        registerDefaultState(getStateDefinition().any().setValue(LEVEL, 1));
     }
 
     @Override

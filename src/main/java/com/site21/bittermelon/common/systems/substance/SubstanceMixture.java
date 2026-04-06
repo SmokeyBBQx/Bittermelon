@@ -132,16 +132,19 @@ public class SubstanceMixture implements SubstanceContainer {
         for (SubstanceStack stack : substances) {
             if (stack.canMergeWith(substance)) {
                 stack.modifyAmount(substance.getAmount());
+                markReactionsDirty();
                 return;
             }
         }
         substances.add(substance);
+        markSearchDirty();
     }
 
     public void transferSubstances(@NotNull List<SubstanceStack> newSubstances) {
         for (SubstanceStack stack : newSubstances) {
-            updateSubstance(stack.copy());
+            updateSubstanceNoUpdate(stack.copy());
         }
+        refresh();
     }
 
     public void removeSubstance(SubstanceStack substance, int amount) {
@@ -272,6 +275,10 @@ public class SubstanceMixture implements SubstanceContainer {
         }
 
         return spreadStacks;
+    }
+
+    public List<SubstanceStack> spreadSubstancesByPercentage(float percentage) {
+        return spreadSubstancesByVolume((int) (getVolume() * percentage));
     }
 
     static {

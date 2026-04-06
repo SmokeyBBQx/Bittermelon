@@ -13,10 +13,12 @@ import com.site21.bittermelon.common.content.blocks.flamingo.FlamingoBlockRender
 import com.site21.bittermelon.common.content.blocks.wallwriting.client.WallWritingRenderer;
 import com.site21.bittermelon.common.content.entities.cage.client.CageRenderer;
 import com.site21.bittermelon.common.content.entities.chicken.client.ChickenRenderer;
+import com.site21.bittermelon.common.content.entities.fluidprojectile.FluidProjectileRenderer;
 import com.site21.bittermelon.common.content.entities.scp131.client.SCP131Renderer;
 import com.site21.bittermelon.common.content.entities.scp1507.client.SCP1507Renderer;
 import com.site21.bittermelon.common.content.entities.scp548.client.SCP548Renderer;
 import com.site21.bittermelon.common.content.entities.scp650.client.SCP650Renderer;
+import com.site21.bittermelon.common.content.entities.scp718.client.SCP718Renderer;
 import com.site21.bittermelon.common.content.entities.scp939.client.SCP939Renderer;
 import com.site21.bittermelon.common.content.entities.seamonkey.client.SeaMonkeyRenderer;
 import com.site21.bittermelon.common.content.items.keycard.KeycardDecorator;
@@ -101,6 +103,8 @@ public class ClientSetup {
         event.registerEntityRenderer(SCP_548.get(), SCP548Renderer::new);
         event.registerEntityRenderer(CAGE.get(), CageRenderer::new);
         event.registerEntityRenderer(SEA_MONKEY.get(), SeaMonkeyRenderer::new);
+        event.registerEntityRenderer(SCP_718.get(), SCP718Renderer::new);
+        event.registerEntityRenderer(FLUID_PROJECTILE.get(), FluidProjectileRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.THERMOMETER_BLOCK_ENTITY.get(), ThermometerRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.INTERCOM_BLOCK_ENTITY.get(), PhoneCordRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.LARGE_SLIDING_DOOR_BLOCK_ENTITY.get(), LargeSlidingDoorRenderer::new);
