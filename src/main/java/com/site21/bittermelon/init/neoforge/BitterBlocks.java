@@ -275,9 +275,9 @@ public class BitterBlocks {
 
     public static final DeferredBlock<SCP718BlisterBlock> EYEBALL_BLISTER = BLOCKS.registerBlock("eyeball_blister", SCP718BlisterBlock::new, BlockBehaviour.Properties.of()
             .noOcclusion()
-            .noCollission()
             .destroyTime(0.5f)
             .sound(SoundType.SLIME_BLOCK)
             .offsetType(BlockBehaviour.OffsetType.XZ)
+            .dynamicShape()
     );
 }

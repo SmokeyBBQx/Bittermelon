@@ -9,7 +9,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -63,15 +62,13 @@ public class SCP718BlisterBlock extends Block {
                 level.removeBlock(pos, false);
                 SCP718 scp718 = SCP_718.get().create(level, EntitySpawnReason.NATURAL);
                 if (scp718 == null) return;
+
                 scp718.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
                 level.addFreshEntity(scp718);
-                level.playSound(null, pos, BitterSounds.SPLATTER.value(), SoundSource.BLOCKS, 1.0f,
-                        0.8f + level.random.nextFloat() * 0.4f);
-                level.sendParticles(
-                        new BlockParticleOption(ParticleTypes.BLOCK_CRUMBLE, state),
-                        pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5,
-                        10, 0.5, 0.5, 0.5, 0.0
-                );
+
+                if (level instanceof ServerLevel serverLevel) {
+                    makeSoundAndParticles(serverLevel, pos, state);
+                }
             }
         }
     }
@@ -84,19 +81,32 @@ public class SCP718BlisterBlock extends Block {
     @Override
     public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
         if (!entity.isSteppingCarefully()) {
-            destroyBlister(level, pos);
+            destroyBlister(level, pos, state);
         }
 
         super.stepOn(level, pos, state, entity);
     }
 
-    private void destroyBlister(Level level, BlockPos pos) {
+    private void destroyBlister(Level level, BlockPos pos, BlockState state) {
         if (level.isClientSide) return;
+
         level.removeBlock(pos, false);
         List<SubstanceStack> substances = List.of(new SubstanceStack(Substances.EYEBALL_FLUID, 50));
         CommonEvents.drip(level, pos, substances);
-        level.playSound(null, pos, SoundEvents.SLIME_BLOCK_BREAK, SoundSource.BLOCKS, 1.0f,
+
+        if (level instanceof ServerLevel serverLevel) {
+            makeSoundAndParticles(serverLevel, pos, state);
+        }
+    }
+
+    private void makeSoundAndParticles(ServerLevel level, BlockPos pos, BlockState state) {
+        level.playSound(null, pos, BitterSounds.SPLATTER.value(), SoundSource.BLOCKS, 1.0f,
                 0.8f + level.random.nextFloat() * 0.4f);
+
+        level.sendParticles(
+                new BlockParticleOption(ParticleTypes.BLOCK_CRUMBLE, state),
+                pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5,
+                10, 0.5, 0.5, 0.5, 0.0);
     }
 
     @Override
