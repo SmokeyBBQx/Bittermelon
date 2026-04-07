@@ -49,7 +49,7 @@ public class SCP718BlisterBlock extends Block {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+        return SHAPE.move(state.getOffset(pos));
     }
 
     @Override
