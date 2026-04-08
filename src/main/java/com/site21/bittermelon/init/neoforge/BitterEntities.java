@@ -5,6 +5,7 @@ import com.site21.bittermelon.common.content.entities.ThrownItemProjectile;
 import com.site21.bittermelon.common.content.entities.cage.Cage;
 import com.site21.bittermelon.common.content.entities.chicken.Chicken;
 import com.site21.bittermelon.common.content.entities.fluidprojectile.FluidProjectile;
+import com.site21.bittermelon.common.content.entities.mimicplayer.Mimic;
 import com.site21.bittermelon.common.content.entities.scp131.SCP131;
 import com.site21.bittermelon.common.content.entities.scp1507.SCP1507;
 import com.site21.bittermelon.common.content.entities.scp548.SCP548;
@@ -92,6 +93,11 @@ public class BitterEntities {
                     .sized(0.5f, 0.5f)
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, Bittermelon.resource("fluid_projectile"))));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<Mimic>> MIMIC = ENTITY_TYPES.register("mimic",
+            () -> EntityType.Builder.<Mimic>of(Mimic::new, MobCategory.CREATURE)
+                    .sized(0.6f, 1.8f)
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, Bittermelon.resource("mimic"))));
+
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
         eventBus.addListener(BitterEntities::registerAttributes);
@@ -106,5 +112,6 @@ public class BitterEntities {
         event.put(SCP_548.get(), SCP548.createAttributes().build());
         event.put(SEA_MONKEY.get(), SeaMonkey.createAttributes().build());
         event.put(SCP_718.get(), SCP718.createAttributes().build());
+        event.put(MIMIC.get(), Mimic.createAttributes().build());
     }
 }

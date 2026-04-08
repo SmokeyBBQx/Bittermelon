@@ -14,6 +14,8 @@ import com.site21.bittermelon.common.content.blocks.wallwriting.client.WallWriti
 import com.site21.bittermelon.common.content.entities.cage.client.CageRenderer;
 import com.site21.bittermelon.common.content.entities.chicken.client.ChickenRenderer;
 import com.site21.bittermelon.common.content.entities.fluidprojectile.FluidProjectileRenderer;
+import com.site21.bittermelon.common.content.entities.mimicplayer.Mimic;
+import com.site21.bittermelon.common.content.entities.mimicplayer.client.MimicRenderer;
 import com.site21.bittermelon.common.content.entities.scp131.client.SCP131Renderer;
 import com.site21.bittermelon.common.content.entities.scp1507.client.SCP1507Renderer;
 import com.site21.bittermelon.common.content.entities.scp548.client.SCP548Renderer;
@@ -47,10 +49,12 @@ import com.site21.bittermelon.networking.client.ClientPayloadHandler;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.context.ContextKey;
@@ -77,6 +81,10 @@ import static com.site21.bittermelon.init.neoforge.BitterFluids.SUBSTANCE_FLUID;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class ClientSetup {
+    private static final Map<PlayerSkin.Model, EntityRendererProvider<Mimic>> MIMIC_PROVIDERS = Map.of(
+            PlayerSkin.Model.WIDE, p_174098_ -> new MimicRenderer(p_174098_, false), PlayerSkin.Model.SLIM, p_174096_ -> new MimicRenderer(p_174096_, true)
+    );
+
     public static final ContextKey<Float> ENTITY_WIDTH = new ContextKey<>(
             Bittermelon.resource("entity_width")
     );
@@ -105,6 +113,9 @@ public class ClientSetup {
         event.registerEntityRenderer(SEA_MONKEY.get(), SeaMonkeyRenderer::new);
         event.registerEntityRenderer(SCP_718.get(), SCP718Renderer::new);
         event.registerEntityRenderer(FLUID_PROJECTILE.get(), FluidProjectileRenderer::new);
+        MIMIC_PROVIDERS.forEach(
+                (model, provider) -> event.registerEntityRenderer(MIMIC.get(), provider)
+        );
         event.registerBlockEntityRenderer(BitterBlockEntities.THERMOMETER_BLOCK_ENTITY.get(), ThermometerRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.INTERCOM_BLOCK_ENTITY.get(), PhoneCordRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.LARGE_SLIDING_DOOR_BLOCK_ENTITY.get(), LargeSlidingDoorRenderer::new);

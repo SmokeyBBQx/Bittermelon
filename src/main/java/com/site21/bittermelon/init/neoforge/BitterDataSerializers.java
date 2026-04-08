@@ -2,6 +2,7 @@ package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.entities.cage.client.BlockInfo;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -12,6 +13,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class BitterDataSerializers {
     public static final DeferredRegister<EntityDataSerializer<?>> ENTITY_DATA_SERIALIZERS =
@@ -28,6 +30,21 @@ public class BitterDataSerializers {
                 @Override
                 public List<BlockInfo> copy(List<BlockInfo> value) {
                     return new ArrayList<>(value);
+                }
+            }
+    );
+
+    public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<UUID>> UUID = ENTITY_DATA_SERIALIZERS.register(
+            "uuid",
+            () -> new EntityDataSerializer<>() {
+                @Override
+                public StreamCodec<? super RegistryFriendlyByteBuf, UUID> codec() {
+                    return UUIDUtil.STREAM_CODEC;
+                }
+
+                @Override
+                public UUID copy(UUID value) {
+                    return value;
                 }
             }
     );

@@ -22,5 +22,6 @@ public class BitterCommands {
         PrivilegeCommand.register(event.getDispatcher());
         BlockDamageCommand.register(event.getDispatcher());
         StressCommand.register(event.getDispatcher());
+        MimicPlayerTestCommand.register(event.getDispatcher());
     }
 }
