@@ -1,10 +1,12 @@
 package com.site21.bittermelon.mixin;
 
+import com.site21.bittermelon.common.content.entities.mimicplayer.Mimic;
 import com.site21.bittermelon.common.systems.stress.client.StressBarRenderer;
 import com.site21.bittermelon.init.neoforge.BitterAttachmentTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.contextualbar.ContextualBarRenderer;
+import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -16,7 +18,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 @Mixin(Gui.class)
-public class GuiMixin {
+public abstract class GuiMixin {
     @Shadow
     @Final
     private Minecraft minecraft;
@@ -48,5 +50,16 @@ public class GuiMixin {
 
         int stress = minecraft.player.getData(BitterAttachmentTypes.STRESS);
         return stress > 0;
+    }
+
+    @Inject(
+            method = "getCameraPlayer",
+            at = @At("RETURN"),
+            cancellable = true
+    )
+    private void onGetCameraPlayer(CallbackInfoReturnable<Player> cir) {
+        if (minecraft.getCameraEntity() instanceof Mimic mimic && mimic.getPlayer() != null) {
+            cir.setReturnValue(mimic.getPlayer());
+        }
     }
 }

@@ -7,12 +7,16 @@ import net.minecraft.client.model.HumanoidArmorModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.*;
 import net.minecraft.client.renderer.entity.state.PlayerRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -62,7 +66,8 @@ public class MimicRenderer extends LivingEntityRenderer<Mimic, PlayerRenderState
         return renderState.isCrouching ? vec3.add(0.0, renderState.scale * -2.0F / 16.0, 0.0) : vec3;
     }
 
-    private static HumanoidModel.ArmPose getArmPose(Mimic player, HumanoidArm arm) {
+    private static HumanoidModel.ArmPose getArmPose(Mimic mimic, HumanoidArm arm) {
+        Player player = mimic.getPlayer();
         ItemStack itemstack = player.getItemInHand(InteractionHand.MAIN_HAND);
         ItemStack itemstack1 = player.getItemInHand(InteractionHand.OFF_HAND);
         HumanoidModel.ArmPose humanoidmodel$armpose = getArmPose(player, itemstack, InteractionHand.MAIN_HAND);
@@ -74,7 +79,7 @@ public class MimicRenderer extends LivingEntityRenderer<Mimic, PlayerRenderState
         return player.getMainArm() == arm ? humanoidmodel$armpose : humanoidmodel$armpose1;
     }
 
-    private static HumanoidModel.ArmPose getArmPose(Mimic player, ItemStack stack, InteractionHand hand) {
+    private static HumanoidModel.ArmPose getArmPose(Player player, ItemStack stack, InteractionHand hand) {
         var extensions = net.neoforged.neoforge.client.extensions.common.IClientItemExtensions.of(stack);
         var armPose = extensions.getArmPose(player, hand, stack);
         if (armPose != null) {
@@ -191,6 +196,27 @@ public class MimicRenderer extends LivingEntityRenderer<Mimic, PlayerRenderState
             return entitytype == EntityType.PARROT ? compoundtag.read("Variant",
                     Parrot.Variant.LEGACY_CODEC).orElse(Parrot.Variant.RED_BLUE) : null;
         }
+    }
+
+    public void renderRightHand(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, ResourceLocation skinTexture, boolean isSleeveVisible, AbstractClientPlayer player) {
+        if(!net.neoforged.neoforge.client.ClientHooks.renderSpecificFirstPersonArm(poseStack, bufferSource, packedLight, player, HumanoidArm.RIGHT))
+            this.renderHand(poseStack, bufferSource, packedLight, skinTexture, this.model.rightArm, isSleeveVisible);
+    }
+
+    public void renderLeftHand(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, ResourceLocation skinTexture, boolean isSleeveVisible, AbstractClientPlayer player) {
+        if(!net.neoforged.neoforge.client.ClientHooks.renderSpecificFirstPersonArm(poseStack, bufferSource, packedLight, player, HumanoidArm.LEFT))
+            this.renderHand(poseStack, bufferSource, packedLight, skinTexture, this.model.leftArm, isSleeveVisible);
+    }
+
+    private void renderHand(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, ResourceLocation skinTexture, ModelPart arm, boolean isSleeveVisible) {
+        PlayerModel playermodel = this.getModel();
+        arm.resetPose();
+        arm.visible = true;
+        playermodel.leftSleeve.visible = isSleeveVisible;
+        playermodel.rightSleeve.visible = isSleeveVisible;
+        playermodel.leftArm.zRot = -0.1F;
+        playermodel.rightArm.zRot = 0.1F;
+        arm.render(poseStack, bufferSource.getBuffer(RenderType.entityTranslucent(skinTexture)), packedLight, OverlayTexture.NO_OVERLAY);
     }
 
     protected void setupRotations(PlayerRenderState renderState, PoseStack poseStack, float bodyRot, float scale) {

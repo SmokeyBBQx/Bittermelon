@@ -41,7 +41,13 @@ public class StressBarRenderer implements ContextualBarRenderer {
             width = (stress % 100) * 182 / 100;
         }
 
-        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, STRESS_BAR_BACKGROUND, x, y, 182, 5);
+        int shakeOffset = 0;
+        if (level >= 1) {
+            float time = (System.currentTimeMillis() % 1000) / 1000f;
+            shakeOffset = (int) (Math.sin(time * Math.PI * 10) * level / 2);
+        }
+
+        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, STRESS_BAR_BACKGROUND, x + shakeOffset, y, 182, 5);
 
         if (width > 0) {
             int color = ARGB.color(1 - player.getData(STRESS_RELIEF), 0xFFFFFF);
@@ -51,7 +57,7 @@ public class StressBarRenderer implements ContextualBarRenderer {
                     getStressBar(level),
                     182, 5,
                     0, 0,
-                    x, y,
+                    x + shakeOffset, y,
                     width, 5,
                     color
             );

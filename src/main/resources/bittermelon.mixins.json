@@ -22,6 +22,7 @@
     "HumanoidModelMixin",
     "ItemInHandRendererMixin",
     "LivingEntityRendererMixin",
+    "MouseHandlerMixin",
     "PlayerInfoMixin"
   ],
   "injectors": {

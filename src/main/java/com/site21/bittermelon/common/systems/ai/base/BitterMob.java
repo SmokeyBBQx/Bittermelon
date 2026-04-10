@@ -1,9 +1,7 @@
 package com.site21.bittermelon.common.systems.ai.base;
 
 import com.site21.bittermelon.common.systems.character.Character;
-import com.site21.bittermelon.common.systems.character.CharacterManager;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.network.protocol.game.DebugPackets;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
@@ -20,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
 public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob implements SmartBrainOwner<T>, NeedsUser {
@@ -147,17 +144,7 @@ public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob im
     }
 
     @Override
-    protected void sendDebugPackets() {
-        super.sendDebugPackets();
-        DebugPackets.sendEntityBrain(this);
-    }
-
-    @Override
     protected @NotNull SmartBrainProvider<T> brainProvider() {
         return new SmartBrainProvider<>((T) this);
-    }
-
-    @Override
-    protected void registerGoals() {
     }
 }

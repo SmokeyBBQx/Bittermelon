@@ -9,6 +9,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ENRAGED;
+
 public class MimicPlayerTestCommand {
 //    public static void register(@NotNull CommandDispatcher<CommandSourceStack> dispatcher) {
 //        dispatcher.register(Commands.literal("mimicplayer")
@@ -44,6 +46,8 @@ public class MimicPlayerTestCommand {
                     mimic.setPos(player.getX(), player.getY(), player.getZ());
                     level.addFreshEntity(mimic);
                     context.getSource().sendSuccess(() -> Component.nullToEmpty("MimicPlayer test command executed"), false);
+                    player.setCamera(mimic);
+                    player.setData(ENRAGED, true);
                     return 1;
                 })
         );

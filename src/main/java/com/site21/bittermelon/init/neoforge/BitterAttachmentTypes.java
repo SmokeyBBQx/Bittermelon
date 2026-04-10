@@ -112,4 +112,11 @@ public class BitterAttachmentTypes {
                     .sync(SubstanceMixture.STREAM_CODEC)
                     .build()
     );
+
+    public static final Supplier<AttachmentType<Boolean>> ENRAGED = ATTACHMENT_TYPES.register(
+            "enraged", () -> AttachmentType.builder(() -> false)
+                    .serialize(Codec.BOOL.fieldOf("enraged"))
+                    .sync(ByteBufCodecs.BOOL)
+                    .build()
+    );
 }

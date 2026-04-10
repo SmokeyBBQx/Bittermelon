@@ -17,7 +17,7 @@ public class StressUtil {
         float stressRelief = 1 - player.getData(STRESS_RELIEF);
         int effectiveDelta = Math.round(delta * stressRelief);
         int newStress = Mth.clamp(currentStress + effectiveDelta, 0, MAX_STRESS);
-        int levelIncrease = (newStress / 100) - (currentStress / 100);
+        int levelIncrease = (newStress - currentStress) / 100;
 
         if (levelIncrease > 0) {
             for (int i = 1; i <= levelIncrease; i++) {
@@ -25,7 +25,7 @@ public class StressUtil {
             }
         }
 
-        setStress(player, currentStress + delta);
+        setStress(player, newStress);
     }
 
     public static void setStress(@NotNull Player player, int stress) {

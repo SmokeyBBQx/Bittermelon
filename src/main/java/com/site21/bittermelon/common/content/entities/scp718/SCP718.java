@@ -1,6 +1,7 @@
 package com.site21.bittermelon.common.content.entities.scp718;
 
 import com.site21.bittermelon.common.content.entities.fluidprojectile.FluidProjectile;
+import com.site21.bittermelon.common.systems.ai.behavior.attack.InduceStress;
 import com.site21.bittermelon.common.systems.substance.SubstanceMixture;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import com.site21.bittermelon.init.custom.Substances;
@@ -10,23 +11,29 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
+import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.target.InvalidateAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetPlayerLookTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetRandomLookTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.target.TargetOrRetaliate;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
+import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class SCP718 extends Mob implements SmartBrainOwner<SCP718> {
-    public SCP718(EntityType<? extends Mob> entityType, Level level) {
+public class SCP718 extends PathfinderMob implements SmartBrainOwner<SCP718> {
+    public SCP718(EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level);
     }
 
@@ -36,15 +43,36 @@ public class SCP718 extends Mob implements SmartBrainOwner<SCP718> {
 
     @Override
     public List<? extends ExtendedSensor<? extends SCP718>> getSensors() {
-        return List.of(new NearbyPlayersSensor<>());
+        return List.of(
+                new NearbyPlayersSensor<>(),
+                new NearbyLivingEntitySensor<>()
+        );
     }
 
     @Override
     public BrainActivityGroup<? extends SCP718> getCoreTasks() {
         return BrainActivityGroup.coreTasks(
                 new LookAtTarget<>(),
-                new MoveToWalkTarget<>(),
-                new SetPlayerLookTarget<>()
+                new MoveToWalkTarget<>()
+        );
+    }
+
+    @Override
+    public BrainActivityGroup<? extends SCP718> getIdleTasks() {
+        return BrainActivityGroup.idleTasks(
+                new FirstApplicableBehaviour<>(
+                        new SetPlayerLookTarget<>(),
+                        new SetRandomLookTarget<>()
+                ),
+                new TargetOrRetaliate<>()
+        );
+    }
+
+    @Override
+    public BrainActivityGroup<? extends SCP718> getFightTasks() {
+        return BrainActivityGroup.fightTasks(
+                new InvalidateAttackTarget<>(),
+                new InduceStress<>()
         );
     }
 

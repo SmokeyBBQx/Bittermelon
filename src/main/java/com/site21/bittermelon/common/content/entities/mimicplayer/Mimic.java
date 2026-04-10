@@ -3,7 +3,6 @@ package com.site21.bittermelon.common.content.entities.mimicplayer;
 import com.site21.bittermelon.common.systems.ai.base.BitterMob;
 import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
-import com.site21.bittermelon.common.systems.ai.behavior.target.InvalidateAttackTarget;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.init.neoforge.BitterDataSerializers;
@@ -26,18 +25,21 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
+import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.WalkOrRunToWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.target.InvalidateAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetPlayerLookTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetRandomLookTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.TargetOrRetaliate;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
+import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
-import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -105,7 +107,7 @@ public class Mimic extends BitterMob<Mimic> {
     public List<? extends ExtendedSensor<? extends Mimic>> getSensors() {
         return List.of(
                 new NearbyLivingEntitySensor<>(),
-                new NearbyPlayersSensor<>()
+                new HurtBySensor<>()
         );
     }
 
@@ -113,23 +115,20 @@ public class Mimic extends BitterMob<Mimic> {
     public BrainActivityGroup<? extends Mimic> getCoreTasks() {
         return BrainActivityGroup.coreTasks(
                 new LookAtTarget<>(),
-                new WalkOrRunToWalkTarget<>(),
-                new TargetOrRetaliate<>()
-                        .attackablePredicate(target -> !target.isInvulnerable())
-                        .isAllyIf((mimic, target) -> false)
+                new WalkOrRunToWalkTarget<>()
         );
     }
 
     @Override
-    public BrainActivityGroup<? extends Mimic> getIdleTasks() {
+    public BrainActivityGroup<Mimic> getIdleTasks() {
         return BrainActivityGroup.idleTasks(
+                new FirstApplicableBehaviour<Mimic>(
+                        new TargetOrRetaliate<>(),
+                        new SetPlayerLookTarget<>(),
+                        new SetRandomLookTarget<>()),
                 new OneRandomBehaviour<>(
-                        new SetRandomLookTarget<>(),
-                        new SetPlayerLookTarget<>()
-                ),
-                new SetRandomWalkTarget<>()
-                        .setRadius(getRandom().nextInt(5, 20))
-        );
+                        new SetRandomWalkTarget<>(),
+                        new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))));
     }
 
     @Override
@@ -145,6 +144,7 @@ public class Mimic extends BitterMob<Mimic> {
     protected void customServerAiStep(@NotNull ServerLevel level) {
         super.customServerAiStep(level);
         updateSwingTime();
+        
     }
 
     public Player getPlayer() {
