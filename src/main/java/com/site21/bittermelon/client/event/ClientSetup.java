@@ -41,6 +41,7 @@ import com.site21.bittermelon.common.systems.personnel.registry.networking.AddPe
 import com.site21.bittermelon.common.systems.personnel.registry.networking.PersonnelClientPayloadHandler;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.RemovePersonnelEntry;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.UpdatePersonnelEntry;
+import com.site21.bittermelon.common.systems.rage.RageRenderer;
 import com.site21.bittermelon.datagen.property.*;
 import com.site21.bittermelon.init.neoforge.BitterBlockEntities;
 import com.site21.bittermelon.init.neoforge.BitterItems;
@@ -237,6 +238,8 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void registerGuiLayers(@NotNull RegisterGuiLayersEvent event) {
+        event.registerAbove(ResourceLocation.withDefaultNamespace("camera_overlays"),
+                Bittermelon.resource("rage_overlay"), new RageRenderer());
     }
 
     @SubscribeEvent

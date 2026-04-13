@@ -12,6 +12,7 @@ import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.economy.bank.AccountRegistry;
 import com.site21.bittermelon.common.systems.personnel.privilege.PrivilegeManager;
 import com.site21.bittermelon.common.systems.personnel.registry.PersonnelRegistry;
+import com.site21.bittermelon.common.systems.rage.RageHandler;
 import com.site21.bittermelon.common.systems.stumble.client.RiseKeyHandler;
 import com.site21.bittermelon.common.systems.stumble.client.RiseProgressBar;
 import com.site21.bittermelon.common.systems.telecomms.intercom.IntercomManager;
@@ -110,6 +111,12 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         RiseKeyHandler.tick();
+
+        Minecraft minecraft = Minecraft.getInstance();
+        Player player = minecraft.player;
+        if (player != null) {
+            RageHandler.clientTick(minecraft, player);
+        }
     }
 
     @SubscribeEvent

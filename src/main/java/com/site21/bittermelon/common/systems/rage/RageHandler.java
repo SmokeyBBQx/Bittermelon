@@ -2,8 +2,9 @@ package com.site21.bittermelon.common.systems.rage;
 
 import com.site21.bittermelon.common.content.entities.mimicplayer.Mimic;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
@@ -19,15 +20,20 @@ public class RageHandler {
     public static void tick(Level level, Player player) {
         if (level.isClientSide) return;
         long gameTime = level.getGameTime();
+
+        if (gameTime % RAGE_DECAY_INTERVAL != 0) return;
+        RageUtil.updateRage(player, -1);
+    }
+
+    public static void clientTick(Minecraft minecraft, Player player) {
+        long gameTime = player.level().getGameTime();
         int rage = player.getData(RAGE);
 
         if (rage > HEARTBEAT_THRESHOLD && gameTime % getHeartbeatDelay(rage) == 0) {
             float pitch = 1.0f + (rage - 20) / 100f;
-            player.playNotifySound(BitterSounds.SLOW_BEAT.value(), SoundSource.AMBIENT, 0.25f, pitch);
+            minecraft.getSoundManager().play(SimpleSoundInstance.forLocalAmbience(
+                    BitterSounds.SLOW_BEAT.value(), pitch, 0.25f));
         }
-
-        if (gameTime % RAGE_DECAY_INTERVAL != 0) return;
-        RageUtil.updateRage(player, -1);
     }
 
     public static void triggerRageEvent(LivingEntity entity, int amount) {
@@ -49,7 +55,7 @@ public class RageHandler {
         player.setCamera(mimic);
     }
 
-    private static int getHeartbeatDelay(int rage) {
+    public static int getHeartbeatDelay(int rage) {
         return 10 + (100 - rage) / 5;
     }
 }

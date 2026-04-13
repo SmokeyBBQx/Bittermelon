@@ -154,8 +154,10 @@ public class Mimic extends BitterMob<Mimic> {
         updateSwingTime();
 
         Player player = getPlayer();
-        if (player != null && player.getData(RAGE) < 50) {
-            discard();
+        if (player != null) {
+            if (player.getData(RAGE) < 50 || (player instanceof ServerPlayer sPlayer && sPlayer.getCamera() != this)) {
+                discard();
+            }
         }
     }
 
