@@ -21,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ACTIVE_CHANNEL;
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ENRAGED;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.ELECTROCUTED;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.TASERED;
 import static java.lang.Character.isLetter;
@@ -40,10 +41,6 @@ public class ChatHandler {
         Character character = CharacterManager.get(player.level()).getActiveCharacter(player);
         String message = event.getMessage().getString();
 
-        if (player.hasEffect(ELECTROCUTED) || player.hasEffect(TASERED)) {
-            message = formatElectrocuted(message, player.getRandom());
-        }
-
         event.setCanceled(true);
 
         if (character == null) {
@@ -61,6 +58,16 @@ public class ChatHandler {
     }
 
     public static void sendRPMessage(@NotNull Character character, ServerPlayer player, @NotNull String message, int range, String verb) {
+        if (player.hasEffect(ELECTROCUTED) || player.hasEffect(TASERED)) {
+            message = formatElectrocuted(message, player.getRandom());
+        }
+
+        if (player.getData(ENRAGED)) {
+            message = formatRage(message);
+            verb = VerbSets.HUMAN.get().shoutingVerb();
+            range = SHOUT_RANGE;
+        }
+
         int emoteColor = character.getEmoteColor();
         MutableComponent messageComponent = Component.empty();
 
@@ -127,7 +134,6 @@ public class ChatHandler {
     private static @NotNull String formatElectrocuted(@NotNull String text, RandomSource random) {
         StringBuilder result = new StringBuilder();
 
-        // Randomly applies effects to letters in the text
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
 
@@ -151,7 +157,6 @@ public class ChatHandler {
 
         switch (effect) {
             case 0 -> {
-                // Repeat the character 1 to 4 times
                 return String.valueOf(c).repeat(random.nextIntBetweenInclusive(1, 4));
             }
             case 1 -> {
@@ -161,5 +166,9 @@ public class ChatHandler {
                 return c + "--";
             }
         }
+    }
+
+    private static String formatRage(String text) {
+        return text.toUpperCase();
     }
 }
