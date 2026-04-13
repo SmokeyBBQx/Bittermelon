@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ENRAGED;
@@ -44,9 +45,8 @@ public class RageHandler {
         Mimic mimic = new Mimic(level, player);
         mimic.setPos(player.getX(), player.getY(), player.getZ());
         level.addFreshEntity(mimic);
+        player.setGameMode(GameType.SPECTATOR);
         player.setCamera(mimic);
-        player.setInvulnerable(true);
-        player.setInvisible(true);
     }
 
     private static int getHeartbeatDelay(int rage) {

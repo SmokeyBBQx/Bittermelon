@@ -14,6 +14,7 @@ import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
@@ -21,6 +22,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -47,6 +49,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ENRAGED;
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.RAGE;
 import static com.site21.bittermelon.init.neoforge.BitterEntities.MIMIC;
 
 public class Mimic extends BitterMob<Mimic> {
@@ -77,6 +81,10 @@ public class Mimic extends BitterMob<Mimic> {
         this(MIMIC.get(), level);
         this.player = player;
         getEntityData().set(PLAYER_UUID, player.getUUID());
+        setXRot(player.getXRot());
+        setYRot(player.getYRot());
+        setYHeadRot(player.getYHeadRot());
+        setYBodyRot(player.yBodyRot);
     }
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {
@@ -144,7 +152,30 @@ public class Mimic extends BitterMob<Mimic> {
     protected void customServerAiStep(@NotNull ServerLevel level) {
         super.customServerAiStep(level);
         updateSwingTime();
-        
+
+        Player player = getPlayer();
+        if (player != null && player.getData(RAGE) < 50) {
+            discard();
+        }
+    }
+
+    @Override
+    public void onRemoval(RemovalReason reason) {
+        super.onRemoval(reason);
+
+        Player player = getPlayer();
+        if (player == null) return;
+
+        player.setXRot(getXRot());
+        player.setYRot(getYRot());
+        player.setYHeadRot(getYHeadRot());
+        player.setYBodyRot(yBodyRot);
+        player.setData(ENRAGED, false);
+
+        if (player instanceof ServerPlayer serverPlayer) {
+            serverPlayer.setCamera(null);
+            serverPlayer.setGameMode(GameType.DEFAULT_MODE);
+        }
     }
 
     public Player getPlayer() {
