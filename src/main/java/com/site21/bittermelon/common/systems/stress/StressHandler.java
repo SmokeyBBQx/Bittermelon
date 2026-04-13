@@ -3,16 +3,17 @@ package com.site21.bittermelon.common.systems.stress;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.STRESS_RELIEF;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.EUPHORIA;
 
 public class StressHandler {
-    public static void tickStress(@NotNull Player player) {
+    public static void tickStress(Level level, @NotNull Player player) {
         if (player.getData(STRESS_RELIEF) == 0 || player.hasEffect(EUPHORIA)) return;
 
-        if (player.level().getGameTime() % 40 == 0) {
+        if (level.getGameTime() % 40 == 0) {
             StressUtil.updateStressRelief(player, -0.05f);
         }
     }

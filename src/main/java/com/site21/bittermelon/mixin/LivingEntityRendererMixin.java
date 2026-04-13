@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.RAGE;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.ELECTROCUTED;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.TASERED;
 
@@ -18,7 +19,7 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
 
     @Inject(method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V", at = @At("RETURN"))
     private void onExtractRenderState(@NotNull T entity, S renderState, float partialTick, CallbackInfo ci) {
-        if (entity.hasEffect(ELECTROCUTED) || entity.hasEffect(TASERED)) {
+        if (entity.hasEffect(ELECTROCUTED) || entity.hasEffect(TASERED) || entity.getData(RAGE) > 50) {
             renderState.isFullyFrozen = true;
         }
     }

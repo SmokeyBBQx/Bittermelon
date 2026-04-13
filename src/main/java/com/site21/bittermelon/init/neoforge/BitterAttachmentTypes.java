@@ -119,4 +119,11 @@ public class BitterAttachmentTypes {
                     .sync(ByteBufCodecs.BOOL)
                     .build()
     );
+
+    public static final Supplier<AttachmentType<Integer>> RAGE = ATTACHMENT_TYPES.register(
+            "rage", () -> AttachmentType.builder(() -> 0)
+                    .serialize(Codec.INT.fieldOf("rage"))
+                    .sync(ByteBufCodecs.INT)
+                    .build()
+    );
 }

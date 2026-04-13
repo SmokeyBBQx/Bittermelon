@@ -398,5 +398,11 @@
     "sounds": [
       "minecraft:block.chest.close"
     ]
+  },
+  "misc.slow_beat": {
+    "category": "ambient",
+    "sounds": [
+      "bittermelon:misc/slow_beat"
+    ]
   }
 }

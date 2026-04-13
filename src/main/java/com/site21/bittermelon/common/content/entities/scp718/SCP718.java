@@ -1,6 +1,7 @@
 package com.site21.bittermelon.common.content.entities.scp718;
 
 import com.site21.bittermelon.common.content.entities.fluidprojectile.FluidProjectile;
+import com.site21.bittermelon.common.systems.ai.behavior.attack.InduceRage;
 import com.site21.bittermelon.common.systems.ai.behavior.attack.InduceStress;
 import com.site21.bittermelon.common.systems.substance.SubstanceMixture;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
@@ -72,7 +73,8 @@ public class SCP718 extends PathfinderMob implements SmartBrainOwner<SCP718> {
     public BrainActivityGroup<? extends SCP718> getFightTasks() {
         return BrainActivityGroup.fightTasks(
                 new InvalidateAttackTarget<>(),
-                new InduceStress<>()
+                new InduceStress<>(),
+                new InduceRage<>().cooldownFor(entity -> 20)
         );
     }
 

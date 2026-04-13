@@ -7,6 +7,7 @@ import com.site21.bittermelon.common.systems.carry.CarryHandler;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluid;
 import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlockEntity;
+import com.site21.bittermelon.common.systems.rage.RageHandler;
 import com.site21.bittermelon.common.systems.stress.StressHandler;
 import com.site21.bittermelon.common.systems.substance.SubstanceMixture;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
@@ -40,25 +41,27 @@ public class CommonEvents {
     @SubscribeEvent
     public static void onEntityTick(EntityTickEvent.@NotNull Post event) {
         Entity entity = event.getEntity();
+        Level level = entity.level();
         FortuneHandler.onEntityTick(entity);
 
         if (entity instanceof LivingEntity livingEntity) {
             CarryHandler.tickCarrying(livingEntity);
-            tickStains(livingEntity);
+            tickStains(level, livingEntity);
         }
 
         if (entity instanceof Player player) {
-            StressHandler.tickStress(player);
+            StressHandler.tickStress(level, player);
             if (!player.hasData(MEDICAL_STATS)) {
                 player.setData(MEDICAL_STATS, HUMAN.get().toInstance(player));
             } else {
                 player.getData(MEDICAL_STATS).tick(player);
             }
+
+            RageHandler.tick(level, player);
         }
     }
 
-    public static void tickStains(LivingEntity entity) {
-        Level level = entity.level();
+    public static void tickStains(Level level, LivingEntity entity) {
         BlockPos pos = entity.blockPosition();
 
         if (level.isClientSide) return;

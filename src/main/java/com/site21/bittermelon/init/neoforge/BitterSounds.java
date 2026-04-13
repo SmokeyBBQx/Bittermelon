@@ -136,4 +136,6 @@ public class BitterSounds {
             SoundEvent::createVariableRangeEvent);
     public static final Holder<SoundEvent> SCP_377_EMPTY = SOUND_EVENTS.register("item.scp_377_empty",
             SoundEvent::createVariableRangeEvent);
+    public static final Holder<SoundEvent> SLOW_BEAT = SOUND_EVENTS.register("misc.slow_beat",
+            SoundEvent::createVariableRangeEvent);
 }
