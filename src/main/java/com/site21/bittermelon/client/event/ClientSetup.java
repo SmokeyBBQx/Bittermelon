@@ -20,6 +20,7 @@ import com.site21.bittermelon.common.content.entities.scp131.client.SCP131Render
 import com.site21.bittermelon.common.content.entities.scp1507.client.SCP1507Renderer;
 import com.site21.bittermelon.common.content.entities.scp548.client.SCP548Renderer;
 import com.site21.bittermelon.common.content.entities.scp650.client.SCP650Renderer;
+import com.site21.bittermelon.common.content.entities.scp718.client.EyeballOnPlayerLayer;
 import com.site21.bittermelon.common.content.entities.scp718.client.SCP718Renderer;
 import com.site21.bittermelon.common.content.entities.scp939.client.SCP939Renderer;
 import com.site21.bittermelon.common.content.entities.seamonkey.client.SeaMonkeyRenderer;
@@ -240,6 +241,15 @@ public class ClientSetup {
     public static void registerGuiLayers(@NotNull RegisterGuiLayersEvent event) {
         event.registerAbove(ResourceLocation.withDefaultNamespace("camera_overlays"),
                 Bittermelon.resource("rage_overlay"), new RageRenderer());
+    }
+
+    @SubscribeEvent
+    public static void addLayers(EntityRenderersEvent.AddLayers event) {
+        for (PlayerSkin.Model skin : event.getSkins()) {
+            if (event.getSkin(skin) instanceof PlayerRenderer playerRenderer) {
+                playerRenderer.addLayer(new EyeballOnPlayerLayer(playerRenderer, event.getEntityModels()));
+            }
+        }
     }
 
     @SubscribeEvent

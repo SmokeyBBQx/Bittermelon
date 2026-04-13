@@ -8,6 +8,7 @@ import com.site21.bittermelon.common.content.entities.scp1507.client.SCP1507Mode
 import com.site21.bittermelon.common.content.entities.scp548.client.SCP548Model;
 import com.site21.bittermelon.common.content.entities.scp650.client.SCP650Model;
 import com.site21.bittermelon.common.content.entities.scp718.client.SCP718Model;
+import com.site21.bittermelon.common.content.entities.scp718.client.SCP718SmallModel;
 import com.site21.bittermelon.common.content.entities.scp939.client.SCP939Model;
 import com.site21.bittermelon.common.content.entities.seamonkey.client.SeaMonkeyModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -64,6 +65,11 @@ public class LayerDefinitions {
             "main"
     );
 
+    public static final ModelLayerLocation SCP_718_SMALL_LAYER = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_718_small"),
+            "main"
+    );
+
     @SubscribeEvent
     public static void registerLayerDefinitions(EntityRenderersEvent.@NotNull RegisterLayerDefinitions event) {
         event.registerLayerDefinition(SCP_131_LAYER, SCP131Model::createBodyLayer);
@@ -75,5 +81,6 @@ public class LayerDefinitions {
         event.registerLayerDefinition(SCP_548_LAYER, SCP548Model::createBodyLayer);
         event.registerLayerDefinition(SEA_MONKEY_LAYER, SeaMonkeyModel::createBodyLayer);
         event.registerLayerDefinition(SCP_718_LAYER, SCP718Model::createBodyLayer);
+        event.registerLayerDefinition(SCP_718_SMALL_LAYER, SCP718SmallModel::createBodyLayer);
     }
 }
