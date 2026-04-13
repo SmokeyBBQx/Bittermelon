@@ -23,15 +23,8 @@ public class RageRenderer implements GuiLayer {
             float rage = (float) rageValue / 100;
             if (rage > 0) {
                 int beatInterval = RageHandler.getHeartbeatDelay(rageValue);
-                boolean pulse = player.level().getGameTime() % beatInterval == 0;
-
-                int base = (int) (rage * 255.0f);
-                float pulseFactor = 1.0f + (rage * 0.75f);
-
-                int amount = pulse ? (int) (base * pulseFactor) : base;
-                amount = Math.min(255, amount);
-
-                int color = ARGB.color(amount, 0, amount, amount);
+                long time = player.level().getGameTime();
+                int color = getColor(rage, beatInterval, time);
 
                 guiGraphics.blit(
                         RenderPipelines.VIGNETTE,
@@ -48,5 +41,23 @@ public class RageRenderer implements GuiLayer {
                 );
             }
         }
+    }
+
+    private static int getColor(float rage, int beatInterval, long time) {
+        int base = (int) Math.min(200, (rage * 255.0f));
+
+        int pulseWindow = Math.max(2, beatInterval / 3);
+        int phase = (int) (time % beatInterval);
+
+        float pulseStrength = 0.0f;
+        if (phase < pulseWindow) {
+            float t = phase / (float) Math.max(1, pulseWindow - 1);
+            pulseStrength = 1.0f - Math.abs((t * 2.0f) - 1.0f);
+        }
+
+        int amount = (int) (base * (1.0f + rage * 0.75f * pulseStrength));
+        amount = Math.min(255, amount);
+
+        return ARGB.color(amount, 0, amount, amount);
     }
 }
