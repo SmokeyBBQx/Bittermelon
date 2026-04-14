@@ -28,6 +28,7 @@ import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.InvalidateAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetPlayerLookTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetRandomLookTarget;
@@ -50,7 +51,7 @@ public class SCP718 extends PathfinderMob implements SmartBrainOwner<SCP718> {
     }
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 0.1).add(Attributes.MOVEMENT_SPEED, 0.1);
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 0.1).add(Attributes.MOVEMENT_SPEED, 0.075);
     }
 
     @Override
@@ -90,6 +91,8 @@ public class SCP718 extends PathfinderMob implements SmartBrainOwner<SCP718> {
     public BrainActivityGroup<? extends SCP718> getFightTasks() {
         return BrainActivityGroup.fightTasks(
                 new InvalidateAttackTarget<>(),
+                new SetWalkTargetToAttackTarget<>()
+                        .closeEnoughDist((entity, target) -> 12),
                 new InduceStress<>(),
                 new InduceRage<>().cooldownFor(entity -> 20)
         );
