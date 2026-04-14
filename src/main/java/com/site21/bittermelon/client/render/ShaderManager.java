@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelTargetBundle;
 import net.minecraft.client.renderer.PostChain;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.LinkedHashSet;
@@ -16,6 +17,7 @@ import java.util.Set;
  */
 public class ShaderManager {
     private static final ResourceLocation BLUR_SHADER = ResourceLocation.withDefaultNamespace("blur");
+    private static final ResourceLocation SPIDER_SHADER = ResourceLocation.withDefaultNamespace("spider");
     private static final Set<ResourceLocation> POST_EFFECTS = new LinkedHashSet<>();
 
     /**
@@ -43,6 +45,11 @@ public class ShaderManager {
 
         if (player.hasEffect(BitterMobEffects.EYE_IRRITATION)) {
             POST_EFFECTS.add(BLUR_SHADER);
+        }
+
+        MobEffectInstance eyeballEffect = player.getEffect(BitterMobEffects.EYEBALL_GROWTH);
+        if (eyeballEffect != null && eyeballEffect.getAmplifier() > 1) {
+            POST_EFFECTS.add(SPIDER_SHADER);
         }
     }
 }

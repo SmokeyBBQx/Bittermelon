@@ -2,6 +2,7 @@ package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.blocks.scp.scp151.DrowningEffect;
+import com.site21.bittermelon.common.content.entities.scp718.EyeballGrowthEffect;
 import com.site21.bittermelon.common.content.items.taser.TaserEffect;
 import com.site21.bittermelon.common.content.mobeffects.*;
 import com.site21.bittermelon.common.content.mobeffects.electrocuted.ElectrocutedEffect;
@@ -61,6 +62,5 @@ public class BitterMobEffects {
 
     public static final Holder<MobEffect> EUPHORIA = MOB_EFFECTS.register("euphoria", EuphoriaEffect::new);
 
-    public static final Holder<MobEffect> EYEBALL_GROWTH = MOB_EFFECTS.register("eyeball_growth",
-            () -> new BitterEffect(MobEffectCategory.HARMFUL, 0));
+    public static final Holder<MobEffect> EYEBALL_GROWTH = MOB_EFFECTS.register("eyeball_growth", EyeballGrowthEffect::new);
 }
