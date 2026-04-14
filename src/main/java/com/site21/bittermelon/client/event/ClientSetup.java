@@ -46,6 +46,7 @@ import com.site21.bittermelon.common.systems.rage.RageRenderer;
 import com.site21.bittermelon.datagen.property.*;
 import com.site21.bittermelon.init.neoforge.BitterBlockEntities;
 import com.site21.bittermelon.init.neoforge.BitterItems;
+import com.site21.bittermelon.init.neoforge.BitterMobEffects;
 import com.site21.bittermelon.init.neoforge.BitterParticles;
 import com.site21.bittermelon.networking.client.ClientPayloadHandler;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
@@ -60,6 +61,7 @@ import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.context.ContextKey;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
@@ -93,6 +95,10 @@ public class ClientSetup {
 
     public static final ContextKey<Map<String, Boolean>> LIMB_VISIBILITY = new ContextKey<>(
             Bittermelon.resource("limb_visibility")
+    );
+
+    public static final ContextKey<Boolean> EYEBALL_GROWTH = new ContextKey<>(
+            Bittermelon.resource("eyeball_growth")
     );
 
     @SubscribeEvent
@@ -152,6 +158,15 @@ public class ClientSetup {
                     }
 
                     state.setRenderData(LIMB_VISIBILITY, limbVisibility);
+                }
+        );
+
+        event.registerEntityModifier(
+                PlayerRenderer.class,
+                (entity, state) -> {
+                    MobEffectInstance eyeballEffect = entity.getEffect(BitterMobEffects.EYEBALL_GROWTH);
+                    boolean render = eyeballEffect != null && eyeballEffect.getAmplifier() > 0;
+                    state.setRenderData(EYEBALL_GROWTH, render);
                 }
         );
     }

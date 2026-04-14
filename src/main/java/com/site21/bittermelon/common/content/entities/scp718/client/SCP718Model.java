@@ -41,7 +41,7 @@ public class SCP718Model extends EntityModel<SCP718RenderState> {
     public void setupAnim(SCP718RenderState renderState) {
         super.setupAnim(renderState);
 
-        float scale = Math.min(1f, renderState.ageInTicks / 400f);
+        float scale = Math.min(1.0f, 0.2f + renderState.growth);
         eye.y = -23.0F * scale;
         stalk.yScale = scale;
 

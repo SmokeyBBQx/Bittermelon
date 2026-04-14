@@ -37,8 +37,7 @@ public class SCP718SmallModel extends SCP718Model {
 
     @Override
     public void setupAnim(SCP718RenderState renderState) {
-        super.setupAnim(renderState);
-
+        resetPose();
         eye.xRot = renderState.xRot * (float) (Math.PI / 180.0);
         eye.yRot = renderState.yRot * (float) (Math.PI / 180.0);
         eye.visible = renderState.deathTime == 0;

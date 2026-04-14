@@ -21,4 +21,10 @@ public class SCP718Renderer extends MobRenderer<SCP718, SCP718RenderState, SCP71
     public SCP718RenderState createRenderState() {
         return new SCP718RenderState();
     }
+
+    @Override
+    public void extractRenderState(SCP718 entity, SCP718RenderState reusedState, float partialTick) {
+        super.extractRenderState(entity, reusedState, partialTick);
+        reusedState.growth = entity.getGrowth();
+    }
 }

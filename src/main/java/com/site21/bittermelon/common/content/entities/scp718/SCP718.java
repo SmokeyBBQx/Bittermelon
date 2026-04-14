@@ -1,5 +1,6 @@
 package com.site21.bittermelon.common.content.entities.scp718;
 
+import com.mojang.serialization.Codec;
 import com.site21.bittermelon.common.content.entities.fluidprojectile.FluidProjectile;
 import com.site21.bittermelon.common.systems.ai.behavior.attack.InduceRage;
 import com.site21.bittermelon.common.systems.ai.behavior.attack.InduceStress;
@@ -7,6 +8,9 @@ import com.site21.bittermelon.common.systems.substance.SubstanceMixture;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import com.site21.bittermelon.init.custom.Substances;
 import net.minecraft.network.protocol.game.DebugPackets;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -16,6 +20,8 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
@@ -34,12 +40,23 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class SCP718 extends PathfinderMob implements SmartBrainOwner<SCP718> {
+    private static final int GROWTH_INTERVAL = 100;
+    private static final float GROWTH_RATE = 0.01f;
+    private static final EntityDataAccessor<Float> GROWTH = SynchedEntityData.defineId(SCP718.class,
+            EntityDataSerializers.FLOAT);
+
     public SCP718(EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level);
     }
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 0.1).add(Attributes.MOVEMENT_SPEED, 0.1);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(GROWTH, 0.0f);
     }
 
     @Override
@@ -83,34 +100,51 @@ public class SCP718 extends PathfinderMob implements SmartBrainOwner<SCP718> {
         super.tickDeath();
         if (deathTime <= 1) {
             level().playSound(null, blockPosition(), SoundEvents.DRAGON_FIREBALL_EXPLODE, SoundSource.HOSTILE, 0.5f, 2.0f);
-            summonFluid();
+            explodeFluid(level(), getX(), getEyeY(), getZ());
         }
     }
 
-    private void summonFluid() {
+    public static void explodeFluid(Level level, double x, double y, double z) {
         SubstanceMixture substanceMixture = new SubstanceMixture();
         substanceMixture.updateSubstanceNoUpdate(new SubstanceStack(Substances.EYEBALL_FLUID.get(), 100));
 
         float speed = 0.5f;
         float inaccuracy = 1.0f;
 
-        for (int x = -1; x <= 1; x++) {
-            for (int y = -1; y <= 1; y++) {
-                for (int z = -1; z <= 1; z++) {
-                    if (x == 0 && y == 0 && z == 0) continue;
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                for (int dz = -1; dz <= 1; dz++) {
+                    if (dx == 0 && dy == 0 && dz == 0) {
+                        continue;
+                    }
 
-                    FluidProjectile projectile = new FluidProjectile(level(), substanceMixture);
-                    projectile.setPos(getX(), getEyeY(), getZ());
+                    FluidProjectile projectile = new FluidProjectile(level, substanceMixture);
+                    projectile.setPos(x, y, z);
 
-                    double len = Math.sqrt(x * x + y * y + z * z);
-                    float vx = (float)(x / len);
-                    float vy = (float)(y / len);
-                    float vz = (float)(z / len);
+                    double len = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                    float vx = (float) (dx / len);
+                    float vy = (float) (dy / len);
+                    float vz = (float) (dz / len);
 
                     projectile.shoot(vx, vy, vz, speed, inaccuracy);
-                    level().addFreshEntity(projectile);
+                    level.addFreshEntity(projectile);
                 }
             }
+        }
+    }
+
+    public float getGrowth() {
+        return entityData.get(GROWTH);
+    }
+
+    public void setGrowth(float growth) {
+        entityData.set(GROWTH, growth);
+    }
+
+    public void grow() {
+        float growth = getGrowth();
+        if (growth < 1.0f) {
+            setGrowth(growth + GROWTH_RATE);
         }
     }
 
@@ -123,6 +157,10 @@ public class SCP718 extends PathfinderMob implements SmartBrainOwner<SCP718> {
     protected void customServerAiStep(@NotNull ServerLevel level) {
         super.customServerAiStep(level);
         tickBrain(this);
+
+        if (level.getGameTime() % GROWTH_INTERVAL == 0) {
+            grow();
+        }
     }
 
     @Override
@@ -134,5 +172,17 @@ public class SCP718 extends PathfinderMob implements SmartBrainOwner<SCP718> {
     @Override
     protected @NotNull SmartBrainProvider<SCP718> brainProvider() {
         return new SmartBrainProvider<>(this);
+    }
+
+    @Override
+    protected void addAdditionalSaveData(@NotNull ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.store("Growth", Codec.FLOAT, entityData.get(GROWTH));
+    }
+
+    @Override
+    protected void readAdditionalSaveData(@NotNull ValueInput input) {
+        super.readAdditionalSaveData(input);
+        entityData.set(GROWTH, input.read("Growth", Codec.FLOAT).orElse(0.0f));
     }
 }
