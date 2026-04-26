@@ -33,6 +33,7 @@ import com.site21.bittermelon.common.systems.component.screwdriver.ScrewdriverUs
 import com.site21.bittermelon.common.systems.component.temperature.HeatDecorator;
 import com.site21.bittermelon.common.systems.fluid.simple.ClientSimpleFluid;
 import com.site21.bittermelon.common.systems.fluid.substance.ClientSubstanceFluid;
+import com.site21.bittermelon.common.systems.medical.client.AnatomyPictureInPictureRenderer;
 import com.site21.bittermelon.common.systems.medical.networking.AddAndInsertCompartment;
 import com.site21.bittermelon.common.systems.medical.networking.InsertCompartment;
 import com.site21.bittermelon.common.systems.medical.networking.RemoveCompartment;
@@ -265,6 +266,14 @@ public class ClientSetup {
                 playerRenderer.addLayer(new EyeballOnPlayerLayer(playerRenderer, event.getEntityModels()));
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void registerPictureInPictureRenderers(@NotNull RegisterPictureInPictureRenderersEvent event) {
+        event.register(
+                AnatomyPictureInPictureRenderer.RenderState.class,
+                AnatomyPictureInPictureRenderer::new
+        );
     }
 
     @SubscribeEvent

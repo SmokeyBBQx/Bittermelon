@@ -7,7 +7,6 @@ import com.site21.bittermelon.common.systems.ai.behavior.attack.InduceStress;
 import com.site21.bittermelon.common.systems.substance.SubstanceMixture;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import com.site21.bittermelon.init.custom.Substances;
-import net.minecraft.network.protocol.game.DebugPackets;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -51,7 +50,9 @@ public class SCP718 extends PathfinderMob implements SmartBrainOwner<SCP718> {
     }
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {
-        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 0.1).add(Attributes.MOVEMENT_SPEED, 0.075);
+        return Mob.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, 0.1)
+                .add(Attributes.MOVEMENT_SPEED, 0.075);
     }
 
     @Override
@@ -164,12 +165,6 @@ public class SCP718 extends PathfinderMob implements SmartBrainOwner<SCP718> {
         if (level.getGameTime() % GROWTH_INTERVAL == 0) {
             grow();
         }
-    }
-
-    @Override
-    protected void sendDebugPackets() {
-        super.sendDebugPackets();
-        DebugPackets.sendEntityBrain(this);
     }
 
     @Override

@@ -668,13 +668,16 @@ public class BitterModelProvider extends ModelProvider {
                 TextureMapping.cross(Bittermelon.resource("block/eyeball_blister_1")), blockModels.modelOutput));
         MultiVariant age2 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_2",
                 TextureMapping.cross(Bittermelon.resource("block/eyeball_blister_2")), blockModels.modelOutput));
+        MultiVariant age3 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_3",
+                TextureMapping.cross(Bittermelon.resource("block/eyeball_blister_3")), blockModels.modelOutput));
 
         blockModels.blockStateOutput.accept(
                 MultiVariantGenerator.dispatch(block)
                         .with(PropertyDispatch.initial(SCP718BlisterBlock.AGE)
                                 .select(0, age0)
                                 .select(1, age1)
-                                .select(2, age2))
+                                .select(2, age2)
+                                .select(3, age3))
         );
     }
 

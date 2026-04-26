@@ -1,7 +1,6 @@
 package com.site21.bittermelon.common.events;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.content.entities.scp718.SCP718;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import net.minecraft.world.entity.LivingEntity;
@@ -13,8 +12,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.site21.bittermelon.init.neoforge.BitterMobEffects.EYEBALL_GROWTH;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class DeathEventHandler {
@@ -33,10 +30,6 @@ public class DeathEventHandler {
                 for (Character character : charactersToRemove) {
                     characterManager.removeCharacter(character.getId());
                 }
-            }
-
-            if (entity.hasEffect(EYEBALL_GROWTH)) {
-                SCP718.explodeFluid(entity.level(), entity.getX(), entity.getEyeY(), entity.getZ());
             }
         }
     }

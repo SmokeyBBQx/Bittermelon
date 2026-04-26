@@ -57,7 +57,8 @@ public class Mimic extends BitterMob<Mimic> {
     @Nullable
     private PlayerInfo playerInfo;
     private Player player;
-    private static final EntityDataAccessor<UUID> PLAYER_UUID = SynchedEntityData.defineId(Mimic.class, BitterDataSerializers.UUID.get());
+    private static final EntityDataAccessor<UUID> PLAYER_UUID =
+            SynchedEntityData.defineId(Mimic.class, BitterDataSerializers.UUID.get());
 
     public Mimic(EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level);
