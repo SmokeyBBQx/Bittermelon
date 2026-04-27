@@ -22,35 +22,35 @@ public class AnatomyModel {
     public static final StreamCodec<ByteBuf, AnatomyModel> STREAM_CODEC;
     public static final AnatomyModel EMPTY = new AnatomyModel(new HashMap<>());
 
-    private final Map<String, UUID> limbs;
+    private final Map<String, UUID> bodyParts;
 
-    public AnatomyModel(Map<String, UUID> limbs) {
-        this.limbs = limbs;
+    public AnatomyModel(Map<String, UUID> bodyParts) {
+        this.bodyParts = bodyParts;
     }
 
     public AnatomyModel() {
         this(new HashMap<>());
     }
 
-    public Map<String, UUID> getLimbs() {
-        return limbs;
+    public Map<String, UUID> getBodyParts() {
+        return bodyParts;
     }
 
-    public void addLimb(String name, UUID id) {
-        limbs.put(name, id);
+    public void addBodyPart(String name, UUID id) {
+        bodyParts.put(name, id);
     }
 
-    public Map<String, Boolean> getLimbVisibility() {
+    public Map<String, Boolean> getBodyPartVisibility() {
         Map<String, Boolean> visibility = new HashMap<>();
-        for (Map.Entry<String, UUID> entry : limbs.entrySet()) {
+        for (Map.Entry<String, UUID> entry : bodyParts.entrySet()) {
             visibility.put(entry.getKey(), entry.getValue() != null);
         }
         return visibility;
     }
 
-    private Map<String, Optional<UUID>> getLimbsAsOptional() {
+    private Map<String, Optional<UUID>> getBodyPartsAsOptional() {
         Map<String, Optional<UUID>> result = new HashMap<>();
-        for (Map.Entry<String, UUID> entry : limbs.entrySet()) {
+        for (Map.Entry<String, UUID> entry : bodyParts.entrySet()) {
             result.put(entry.getKey(), Optional.ofNullable(entry.getValue()));
         }
         return result;
@@ -58,11 +58,11 @@ public class AnatomyModel {
 
     @Contract("_ -> new")
     private static @NotNull AnatomyModel fromOptionalMap(Map<String, Optional<UUID>> map) {
-        Map<String, UUID> limbs = new HashMap<>();
+        Map<String, UUID> bodyParts = new HashMap<>();
         for (Map.Entry<String, Optional<UUID>> entry : map.entrySet()) {
-            limbs.put(entry.getKey(), entry.getValue().orElse(null));
+            bodyParts.put(entry.getKey(), entry.getValue().orElse(null));
         }
-        return new AnatomyModel(limbs);
+        return new AnatomyModel(bodyParts);
     }
 
     static {
@@ -72,8 +72,8 @@ public class AnatomyModel {
 
         CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.unboundedMap(Codec.STRING, OPTIONAL_UUID)
-                        .fieldOf("limbs")
-                        .forGetter(AnatomyModel::getLimbsAsOptional)
+                        .fieldOf("body_parts")
+                        .forGetter(AnatomyModel::getBodyPartsAsOptional)
         ).apply(instance, AnatomyModel::fromOptionalMap));
 
         STREAM_CODEC = StreamCodec.composite(
@@ -82,7 +82,7 @@ public class AnatomyModel {
                         ByteBufCodecs.STRING_UTF8,
                         UUIDUtil.STREAM_CODEC.apply(ByteBufCodecs::optional)
                 ),
-                AnatomyModel::getLimbsAsOptional,
+                AnatomyModel::getBodyPartsAsOptional,
                 AnatomyModel::fromOptionalMap
         );
     }

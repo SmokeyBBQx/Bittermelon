@@ -183,6 +183,7 @@ public class CompartmentWidget extends MovableResizableWidget {
 
     private void renderSlots(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         LayerData layer = getLayer();
+
         if (layer.getTexture() != null) {
             int width = layer.getWidth() * slotSize;
             int height = layer.getHeight() * slotSize;

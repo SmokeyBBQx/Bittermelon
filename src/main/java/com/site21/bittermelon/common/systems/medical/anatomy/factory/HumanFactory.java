@@ -31,11 +31,11 @@ public class HumanFactory implements AnatomyFactory {
 
         CompartmentInstance leftUpperArm = addCompartment(UPPER_ARM, wholeBody, 11, 7, 0);
         leftUpperArm.set(DISPLAY_NAME, "Left Upper Arm");
-        anatomyModel.addLimb("left_arm", leftUpperArm.getId());
+        anatomyModel.addBodyPart("left_arm", leftUpperArm.getId());
 
         CompartmentInstance rightUpperArm = addCompartment(UPPER_ARM, wholeBody, 0, 7, 0);
         rightUpperArm.set(DISPLAY_NAME, "Right Upper Arm");
-        anatomyModel.addLimb("right_arm", rightUpperArm.getId());
+        anatomyModel.addBodyPart("right_arm", rightUpperArm.getId());
 
         CompartmentInstance leftForearm = addCompartment(FOREARM, wholeBody, 11, 12, 0);
         leftForearm.set(DISPLAY_NAME, "Left Forearm");
@@ -53,8 +53,8 @@ public class HumanFactory implements AnatomyFactory {
         addCompartment(LIVER, torso, 0, 0, 1, 0);
         addCompartment(STOMACH, torso, 0, 0, 0, 0);
 
-        anatomyModel.addLimb("right_leg", null);
-        anatomyModel.addLimb("left_leg", null);
+        anatomyModel.addBodyPart("right_leg", null);
+        anatomyModel.addBodyPart("left_leg", null);
 
         CompartmentInstance gallBladder = GALLBLADDER.get().toInstance();
 

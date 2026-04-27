@@ -155,7 +155,7 @@ public class ClientSetup {
                 (entity, state) -> {
                     Map<String, Boolean> limbVisibility = null;
                     if (entity.hasData(MEDICAL_STATS)) {
-                        limbVisibility = entity.getData(MEDICAL_STATS).getAnatomyModel().getLimbVisibility();
+                        limbVisibility = entity.getData(MEDICAL_STATS).getAnatomyModel().getBodyPartVisibility();
                     }
 
                     state.setRenderData(LIMB_VISIBILITY, limbVisibility);
