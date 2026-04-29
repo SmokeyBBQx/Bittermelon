@@ -29,6 +29,7 @@ public class AnatomyModelWidget extends AbstractWidget {
     private final LivingEntity entity;
     private final HealthScreen screen;
     private final Model model;
+    private float xRot;
 
     public AnatomyModelWidget(int x, int y, int width, int height, float scale, LivingEntity entity, HealthScreen screen) {
         super(x, y, width, height, entity.getName());
@@ -56,7 +57,7 @@ public class AnatomyModelWidget extends AbstractWidget {
                 entity,
                 getModelPart(mouseX, mouseY),
                 new Vector3f(),
-                new Quaternionf(),
+                new Quaternionf().rotationY(xRot),
                 null,
                 getX(),
                 getY(),
@@ -86,7 +87,7 @@ public class AnatomyModelWidget extends AbstractWidget {
 
     public @Nullable String getModelPart(int mouseX, int mouseY) {
         Map<String, AABB> allBounds = new HashMap<>();
-        Matrix4f root = new Matrix4f().identity();
+        Matrix4f root = new Matrix4f().identity().rotateY(xRot);
 
         for (Map.Entry<String, ModelPart> entry : model.root().children.entrySet()) {
             collectPartBounds(entry.getValue(), root, entry.getKey(), allBounds);
@@ -106,7 +107,7 @@ public class AnatomyModelWidget extends AbstractWidget {
                     && mouseY >= bounds.minY && mouseY <= bounds.maxY;
 
             if (hovered) {
-                double area = (bounds.maxX - bounds.minX) * (bounds.maxY - bounds.minY);
+                double area = bounds.maxZ;
                 if (area < smallestArea) {
                     smallestArea = area;
                     best = entry.getKey();
@@ -126,8 +127,8 @@ public class AnatomyModelWidget extends AbstractWidget {
             if (bounds == null) continue;
 
             boundsOut.merge(name, bounds, (a, b) -> new AABB(
-                    Math.min(a.minX, b.minX), Math.min(a.minY, b.minY), 0,
-                    Math.max(a.maxX, b.maxX), Math.max(a.maxY, b.maxY), 0
+                    Math.min(a.minX, b.minX), Math.min(a.minY, b.minY), Math.min(a.minZ, b.minZ),
+                    Math.max(a.maxX, b.maxX), Math.max(a.maxY, b.maxY), Math.max(a.maxZ, b.maxZ)
             ));
         }
     }
@@ -135,6 +136,7 @@ public class AnatomyModelWidget extends AbstractWidget {
     private AABB projectCubeToScreen(ModelPart.Cube cube, Matrix4f transform) {
         float minX = Float.MAX_VALUE, minY = Float.MAX_VALUE;
         float maxX = -Float.MAX_VALUE, maxY = -Float.MAX_VALUE;
+        float minZ = Float.MAX_VALUE, maxZ = -Float.MAX_VALUE;
 
         float[] xs = {cube.minX / 16.0f, cube.maxX / 16.0f};
         float[] ys = {cube.minY / 16.0f, cube.maxY / 16.0f};
@@ -154,12 +156,14 @@ public class AnatomyModelWidget extends AbstractWidget {
                     minY = Math.min(minY, screenY);
                     maxX = Math.max(maxX, screenX);
                     maxY = Math.max(maxY, screenY);
+                    minZ = Math.min(minZ, corner.z);
+                    maxZ = Math.max(maxZ, corner.z);
                 }
             }
         }
 
         if (maxX <= minX || maxY <= minY) return null;
-        return new AABB(minX, minY, 0, maxX, maxY, 0);
+        return new AABB(minX, minY, minZ, maxX, maxY, maxZ);
     }
 
     @Override
@@ -168,6 +172,15 @@ public class AnatomyModelWidget extends AbstractWidget {
         if (part != null) {
             screen.addCompartmentSpace(MedicalStatsUtil.getBodyPart(part, screen.getMedicalStats()));
         }
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if (button == 0) {
+            xRot += (float) (dragX * -0.1);
+            return true;
+        }
+        return false;
     }
 
     @Override

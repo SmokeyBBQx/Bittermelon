@@ -45,10 +45,6 @@ public class HealthScreen extends Screen {
         initTools();
     }
 
-    @Override
-    protected void init() {
-    }
-
     private void initTools() {
         Player player = Minecraft.getInstance().player;
         if (player == null) return;
@@ -233,9 +229,11 @@ public class HealthScreen extends Screen {
             return heldTool.mouseDragged(mouseX, mouseY, button, dragX, dragY);
         }
 
-        if (activeWidget != null) {
+        if (activeWidget != null && activeWidget.isMouseOver(mouseX, mouseY)) {
             return activeWidget.mouseDragged(mouseX, mouseY, button, dragX, dragY);
         }
+
+        anatomyWidget.mouseDragged(mouseX, mouseY, button, dragX, dragY);
 
         return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
