@@ -146,6 +146,7 @@ public class BitterModelProvider extends ModelProvider {
         generateSCP377(itemModels);
         itemModels.generateFlatItem(SCP_377_1.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(SCP_2398.get(), ModelTemplates.FLAT_ITEM);
+        generate3D2DItem(itemModels, SCP_2398.get());
 
         // SCP Spawn Eggs
         itemModels.generateFlatItem(BitterItems.SCP_131_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
@@ -160,6 +161,7 @@ public class BitterModelProvider extends ModelProvider {
         itemModels.generateFlatItem(WIRE_CUTTERS.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         generate3D2DItem(itemModels, MOP.get());
         generate3D2DItem(itemModels, TASER.get());
+
 
         // Writing Utensils
         itemModels.generateFlatItem(PEN.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
