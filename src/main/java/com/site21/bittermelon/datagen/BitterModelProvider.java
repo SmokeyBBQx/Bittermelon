@@ -145,7 +145,6 @@ public class BitterModelProvider extends ModelProvider {
         itemModels.generateFlatItem(SCP_018.get(), ModelTemplates.FLAT_ITEM);
         generateSCP377(itemModels);
         itemModels.generateFlatItem(SCP_377_1.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(SCP_2398.get(), ModelTemplates.FLAT_ITEM);
         generate3D2DItem(itemModels, SCP_2398.get());
 
         // SCP Spawn Eggs
