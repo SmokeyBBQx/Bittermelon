@@ -7,6 +7,7 @@ import com.site21.bittermelon.common.systems.chemistry.ReactionConditionType;
 import com.site21.bittermelon.common.systems.chemistry.ReactionEffectType;
 import com.site21.bittermelon.common.systems.electronics.wiring.Signal;
 import com.site21.bittermelon.common.systems.medical.anatomy.Anatomy;
+import com.site21.bittermelon.common.systems.medical.client.compartmentrenderers.SpecialCompartmentRenderer;
 import com.site21.bittermelon.common.systems.medical.compartment.Compartment;
 import com.site21.bittermelon.common.systems.medical.drug.Drug;
 import com.site21.bittermelon.common.systems.roles.Role;
@@ -72,6 +73,12 @@ public class BitterRegistries {
             .sync(true)
             .create();
 
+    public static final ResourceKey<Registry<SpecialCompartmentRenderer>> COMPARTMENT_RENDERER =
+            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "compartment_renderer"));
+    public static final Registry<SpecialCompartmentRenderer> COMPARTMENT_RENDERER_TYPE = new RegistryBuilder<>(COMPARTMENT_RENDERER)
+            .sync(true)
+            .create();
+
     @SubscribeEvent
     public static void registerRegistries(@NotNull NewRegistryEvent event) {
         event.register(SUBSTANCE_REGISTRY);
@@ -84,5 +91,6 @@ public class BitterRegistries {
         event.register(ANATOMY_REGISTRY);
         event.register(REACTION_CONDITION_TYPE);
         event.register(REACTION_EFFECT_TYPE);
+        event.register(COMPARTMENT_RENDERER_TYPE);
     }
 }

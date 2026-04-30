@@ -1,5 +1,6 @@
 package com.site21.bittermelon.common.systems.medical.client;
 
+import com.site21.bittermelon.common.systems.medical.client.compartmentrenderers.SpecialCompartmentRenderer;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentUtil;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
@@ -35,6 +36,8 @@ public class CompartmentWidget extends MovableResizableWidget {
 
     private final CompartmentInstance compartment;
     private final HealthScreen screen;
+    private final SpecialCompartmentRenderer specialRenderer;
+    private final boolean overrideSlotRendering;
     private int layerIndex = 0;
     private int depth = 0;
     private int contentX;
@@ -54,6 +57,8 @@ public class CompartmentWidget extends MovableResizableWidget {
         super(x, y, width, height, Component.literal(compartment.getName()));
         this.compartment = compartment;
         this.screen = screen;
+        this.specialRenderer = compartment.getOrDefault(SPECIAL_COMPARTMENT_RENDERER, null);
+        this.overrideSlotRendering = compartment.getOrDefault(OVERRIDE_SLOT_RENDERING, false);
         initializeButtons();
         buttons = new Button[]{closeWidgetButton, collapseWidgetButton, increaseLayerButton, decreaseLayerButton};
         grid = CompartmentUtil.getLayerGrid(compartment, 0);
@@ -191,6 +196,11 @@ public class CompartmentWidget extends MovableResizableWidget {
                     width, height, width, height);
         }
 
+        if (specialRenderer != null) {
+            specialRenderer.render(guiGraphics, contentX, contentY, layer.getWidth() * slotSize,
+                    layer.getHeight() * slotSize, screen.getEntity());
+        }
+
         for (int row = 0; row < grid.length; row++) {
             for (int col = 0; col < grid[row].length; col++) {
                 LayerSlot slot = grid[row][col];
@@ -212,9 +222,10 @@ public class CompartmentWidget extends MovableResizableWidget {
         }
 
         // Slot texture
-        if (getLayer().getTexture() == null) {
+        if (!overrideSlotRendering && getLayer().getTexture() == null) {
             ResourceLocation texture = slot.getType().getTexture();
-            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, u, v, slotSize, slotSize, 1, 1, 16, 16);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, u, v, slotSize, slotSize,
+                    1, 1, 16, 16, 0xFFAC724C);
         }
 
         // Blood level overlay

@@ -1,0 +1,8 @@
+package com.site21.bittermelon.common.systems.medical.client.compartmentrenderers;
+
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.world.entity.Entity;
+
+public interface SpecialCompartmentRenderer {
+    void render(GuiGraphics graphics, int x, int y, int width, int height, Entity entity);
+}

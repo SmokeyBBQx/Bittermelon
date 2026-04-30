@@ -63,15 +63,11 @@ public class AnatomyPictureInPictureRenderer extends PictureInPictureRenderer<An
 //                255, OverlayTexture.RED_OVERLAY_V);
 
         for (ModelPart part : model.root().getAllParts()) {
-            int packedLight = part.visible ? 255 : 0;
-            boolean wasVisible = part.visible;
-            part.visible = true;
             int overlay = renderState.highlightedPart == null ? OverlayTexture.NO_OVERLAY :
                     part == model.root().getChild(renderState.highlightedPart) ? OverlayTexture.RED_OVERLAY_V : OverlayTexture.NO_OVERLAY;
             part.render(poseStack,
                     bufferSource.getBuffer(model.renderType(castRenderer.getTextureLocation(renderState.entityRenderState))),
-                    packedLight, overlay);
-            part.visible = wasVisible;
+                    255, overlay);
         }
 
 

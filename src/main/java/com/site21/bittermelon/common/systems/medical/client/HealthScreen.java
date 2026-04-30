@@ -40,8 +40,7 @@ public class HealthScreen extends Screen {
         this.entity = entity;
         this.compartmentWidgets = new ArrayList<>();
         this.instrumentWidgets = new ArrayList<>();
-        this.anatomyWidget = new AnatomyModelWidget(width / 2, 0, 200, 300,
-                100.0f, entity, this);
+        this.anatomyWidget = new AnatomyModelWidget(width / 2, 0, 200, 300, 100.0f, entity, this);
         initTools();
     }
 
