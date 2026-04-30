@@ -7,6 +7,7 @@ import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerSlot;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
+import com.site21.bittermelon.common.systems.medical.compartment.layer.SlotType;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.common.systems.medical.networking.AddAndInsertCompartment;
 import com.site21.bittermelon.common.systems.medical.networking.RemoveCompartment;
@@ -223,9 +224,11 @@ public class CompartmentWidget extends MovableResizableWidget {
 
         // Slot texture
         if (!overrideSlotRendering && getLayer().getTexture() == null) {
-            ResourceLocation texture = slot.getType().getTexture();
+            SlotType type = slot.getType();
+            ResourceLocation texture = type.getTexture();
+            int color = type == SlotType.SKIN ? 0xFFAC724C : -1;
             guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, u, v, slotSize, slotSize,
-                    1, 1, 16, 16, 0xFFAC724C);
+                    1, 1, 16, 16, color);
         }
 
         // Blood level overlay
