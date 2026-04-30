@@ -30,6 +30,7 @@ import static java.lang.Character.isLetter;
 public class ChatHandler {
     private static final Pattern EMOTE_PATTERN = Pattern.compile("\\*(.*?)\\*|([^*]+)");
     private static final int DEFAULT_GRAY = 0xFF808080;
+    public static final char MARKER_START = '\uE000';
 
     public static final int WHISPER_RANGE = 5;
     public static final int NORMAL_RANGE = 16;
@@ -93,7 +94,7 @@ public class ChatHandler {
             }
         }
 
-        sendMessage(messageComponent, player, range);
+        sendMessageWithDistanceAlpha(messageComponent, player, range);
 
         // Broadcast sound event for speech
         if (!player.level().isClientSide) {
@@ -117,6 +118,16 @@ public class ChatHandler {
         sendMessage(messageComponent, player, 16);
     }
 
+    public static void sendMessageWithDistanceAlpha(Component message, @NotNull ServerPlayer player, int range) {
+        for (ServerPlayer serverPlayer : player.getServer().getPlayerList().getPlayers()) {
+            double distance = player.distanceTo(serverPlayer);
+            if (distance <= range) {
+                float alpha = (float) ((range - distance) / range);
+                serverPlayer.sendSystemMessage(embedAlpha(message, alpha));
+            }
+        }
+    }
+
     public static void sendMessage(Component message, @NotNull ServerPlayer player, int range) {
         for (ServerPlayer serverPlayer : player.getServer().getPlayerList().getPlayers()) {
             if (player.distanceTo(serverPlayer) <= range) {
@@ -128,6 +139,25 @@ public class ChatHandler {
     public static void sendMessage(Component message, @NotNull ServerPlayer player) {
         for (ServerPlayer serverPlayer : player.getServer().getPlayerList().getPlayers()) {
             serverPlayer.sendSystemMessage(message);
+        }
+    }
+
+    public static Component embedAlpha(Component message, float alpha) {
+        // TODO: Hacky, maybe use map of message to alpha instead
+        String encoded = MARKER_START + String.valueOf(alpha) + '\uE001';
+        return message.copy().append(Component.literal(encoded));
+    }
+
+    public static float extractDistance(Component message) {
+        String raw = message.getString();
+        int startIdx = raw.indexOf(MARKER_START);
+        if (startIdx == -1) return 1;
+        try {
+            int endIdx = raw.indexOf('\uE001', startIdx);
+            if (endIdx == -1) return 1;
+            return Float.parseFloat(raw.substring(startIdx + 1, endIdx));
+        } catch (NumberFormatException e) {
+            return 1;
         }
     }
 
