@@ -32,10 +32,10 @@ import java.util.List;
 import static com.site21.bittermelon.init.neoforge.BitterEntities.SCP_718;
 
 public class SCP718BlisterBlock extends Block {
-    public static final IntegerProperty AGE = BlockStateProperties.AGE_3;
+    public static final IntegerProperty AGE = IntegerProperty.create("age", 0, 13);
     private static final VoxelShape SHAPE = Block.column(4.0, 0.0, 4.0);
     private static final float GROWTH_CHANCE = 0.5f;
-    private static final int MAX_AGE = 3;
+    private static final int MAX_AGE = 13;
 
     public SCP718BlisterBlock(Properties properties) {
         super(properties);
