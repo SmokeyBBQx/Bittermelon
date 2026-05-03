@@ -106,7 +106,10 @@ public abstract class ChatComponentMixin {
 
         int l1 = this.forEachLine(i, tickCount, focused, i1, (x, startY, endY, line, index, fade) -> {
             int textY = endY + k1;
-            float distanceAlpha = ChatHandler.extractDistance(allMessages.get(index).content());
+            float distanceAlpha = 1.0f;
+            if (index < allMessages.size()) {
+                distanceAlpha = ChatHandler.extractDistance(allMessages.get(index).content());
+            }
             guiGraphics.drawString(this.minecraft.font, line.content(), x, textY, ARGB.color(distanceAlpha * f1 * fade, -1));
         });
 
