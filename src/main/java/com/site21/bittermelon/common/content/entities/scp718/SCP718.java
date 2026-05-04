@@ -82,9 +82,10 @@ public class SCP718 extends PathfinderMob implements SmartBrainOwner<SCP718> {
         return BrainActivityGroup.idleTasks(
                 new FirstApplicableBehaviour<>(
                         new SetPlayerLookTarget<>(),
-                        new SetRandomLookTarget<>()
+                        new SetRandomLookTarget<>().cooldownFor(entity -> 500)
                 ),
-                new TargetOrRetaliate<>()
+                new TargetOrRetaliate<>(),
+                new InvalidateAttackTarget<>().invalidateIf((entity, target) -> target instanceof SCP718)
         );
     }
 
