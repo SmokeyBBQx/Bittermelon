@@ -9,7 +9,9 @@
     "ItemEntityMixin",
     "ItemMixin",
     "LivingEntityMixin",
-    "PlayerMixin"
+    "PlayerMixin",
+    "StyleMixin",
+    "StyleSerializerMixin"
   ],
   "client": [
     "ChatComponentMixin",

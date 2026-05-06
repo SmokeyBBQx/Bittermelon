@@ -1,6 +1,6 @@
 package com.site21.bittermelon.mixin;
 
-import com.site21.bittermelon.common.systems.chat.ChatHandler;
+import com.site21.bittermelon.common.systems.chat.AlphaContainer;
 import net.minecraft.client.GuiMessage;
 import net.minecraft.client.GuiMessageTag;
 import net.minecraft.client.Minecraft;
@@ -25,22 +25,49 @@ import java.util.List;
 
 @Mixin(ChatComponent.class)
 public abstract class ChatComponentMixin {
-    @Shadow @Final private List<GuiMessage> allMessages;
-    @Shadow @Final public Minecraft minecraft;
-    @Shadow @Final  private List<GuiMessage.Line> trimmedMessages;
-    @Shadow private int chatScrollbarPos;
-    @Shadow private boolean newMessageSinceScroll;
+    @Shadow
+    @Final
+    private List<GuiMessage> allMessages;
+    @Shadow
+    @Final
+    public Minecraft minecraft;
+    @Shadow
+    @Final
+    private List<GuiMessage.Line> trimmedMessages;
+    @Shadow
+    private int chatScrollbarPos;
+    @Shadow
+    private boolean newMessageSinceScroll;
 
-    @Shadow public abstract void refreshTrimmedMessages();
-    @Shadow protected abstract boolean isChatHidden();
-    @Shadow public abstract int getLinesPerPage();
-    @Shadow public abstract double getScale();
-    @Shadow public abstract int getWidth();
-    @Shadow protected abstract int getLineHeight();
-    @Shadow protected abstract double screenToChatX(double x);
-    @Shadow protected abstract double screenToChatY(double y);
-    @Shadow protected abstract int getMessageEndIndexAt(double x, double y);
-    @Shadow protected abstract int forEachLine(int linesPerPage, int tickCount, boolean focused, int bottomY, ChatComponent.LineConsumer action);
+    @Shadow
+    public abstract void refreshTrimmedMessages();
+
+    @Shadow
+    protected abstract boolean isChatHidden();
+
+    @Shadow
+    public abstract int getLinesPerPage();
+
+    @Shadow
+    public abstract double getScale();
+
+    @Shadow
+    public abstract int getWidth();
+
+    @Shadow
+    protected abstract int getLineHeight();
+
+    @Shadow
+    protected abstract double screenToChatX(double x);
+
+    @Shadow
+    protected abstract double screenToChatY(double y);
+
+    @Shadow
+    protected abstract int getMessageEndIndexAt(double x, double y);
+
+    @Shadow
+    protected abstract int forEachLine(int linesPerPage, int tickCount, boolean focused, int bottomY, ChatComponent.LineConsumer action);
 
     @Unique
     private int bittermelon$lastMessageCount = 1;
@@ -83,7 +110,7 @@ public abstract class ChatComponentMixin {
 
         ProfilerFiller profilerfiller = Profiler.get();
         profilerfiller.push("chat");
-        float f = (float)this.getScale();
+        float f = (float) this.getScale();
         int k = Mth.ceil(this.getWidth() / f);
         int l = guiGraphics.guiHeight();
         guiGraphics.pose().pushMatrix();
@@ -94,7 +121,7 @@ public abstract class ChatComponentMixin {
         float f1 = this.minecraft.options.chatOpacity().get().floatValue() * 0.9F + 0.1F;
         float f2 = this.minecraft.options.textBackgroundOpacity().get().floatValue();
         double d0 = this.minecraft.options.chatLineSpacing().get();
-        int k1 = (int)Math.round(-8.0 * (d0 + 1.0) + 4.0 * d0);
+        int k1 = (int) Math.round(-8.0 * (d0 + 1.0) + 4.0 * d0);
 
         this.forEachLine(i, tickCount, focused, i1, (x, startY, endY, line, index, fade) -> {
             guiGraphics.fill(x - 4, startY, x + k + 4 + 4, endY, ARGB.color(fade * f2, -16777216));
@@ -108,15 +135,15 @@ public abstract class ChatComponentMixin {
             int textY = endY + k1;
             float distanceAlpha = 1.0f;
             if (index < allMessages.size()) {
-                distanceAlpha = ChatHandler.extractDistance(allMessages.get(index).content());
+                distanceAlpha = ((AlphaContainer) allMessages.get(index).content().getStyle()).bittermelon$getAlpha();
             }
             guiGraphics.drawString(this.minecraft.font, line.content(), x, textY, ARGB.color(distanceAlpha * f1 * fade, -1));
         });
 
         long i2 = this.minecraft.getChatListener().queueSize();
         if (i2 > 0L) {
-            int j2 = (int)(128.0F * f1);
-            int k2 = (int)(255.0F * f2);
+            int j2 = (int) (128.0F * f1);
+            int k2 = (int) (255.0F * f2);
             guiGraphics.pose().pushMatrix();
             guiGraphics.pose().translate(0.0F, i1);
             guiGraphics.fill(-2, 0, k + 4, 9, k2 << 24);
