@@ -2,8 +2,8 @@ package com.site21.bittermelon.common.systems.medical.client;
 
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.common.systems.component.medical.MedicalInstrument;
 import com.site21.bittermelon.common.systems.medical.client.tool.InstrumentWidget;
+import com.site21.bittermelon.common.systems.medical.client.tool.InstrumentWidgets;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentUtil;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
@@ -48,12 +48,16 @@ public class HealthScreen extends Screen {
         Player player = Minecraft.getInstance().player;
         if (player == null) return;
 
-        player.getInventory().iterator().forEachRemaining(stack ->
-                stack.getComponents().iterator().forEachRemaining(component -> {
-                    if (component.value() instanceof MedicalInstrument instrument) {
-                        instrumentWidgets.add(instrument.createWidget(stack, 10, 10, 32, 32, this));
-                    }
-                }));
+        player.getInventory().iterator().forEachRemaining(stack -> {
+            if (stack.isEmpty()) return;
+
+            for (var entry : InstrumentWidgets.INSTRUMENT_WIDGETS.entrySet()) {
+                if (stack.has(entry.getKey())) {
+                    instrumentWidgets.add(entry.getValue().create(stack, 10, 10, 32, 32, this));
+                    break;
+                }
+            }
+        });
     }
 
     public boolean addCompartmentSpace(@NotNull CompartmentInstance instance) {

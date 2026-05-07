@@ -1,6 +1,0 @@
-{
-  "parent": "bittermelon:block/eyeball_blister",
-  "textures": {
-    "cross": "bittermelon:block/eyeball_blister_10"
-  }
-}

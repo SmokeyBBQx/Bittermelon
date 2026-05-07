@@ -65,7 +65,6 @@ public class Compartment {
         return instance.getCompartment() != Compartments.CUT.get();
     }
 
-
 //    public ItemStack createItemStack(@NotNull CompartmentInstance instance) {
 //        ItemStack stack = properties.item.value().getDefaultInstance();
 //        stack.set(BitterDataComponents.COMPARTMENT, instance.toData());
@@ -82,7 +81,6 @@ public class Compartment {
 
     public static class Properties {
         Holder<Item> item = Items.AIR.builtInRegistryHolder();
-        float defaultHealth = 0;
         Supplier<List<LayerData>> defaultLayers = List::of;
         private final EnumMap<MedicalAttribute, Float> attributes = new EnumMap<>(MedicalAttribute.class);
         private final DataComponentMap.Builder components = DataComponentMap.builder();
@@ -133,7 +131,7 @@ public class Compartment {
         }
 
         public Properties defaultHealth(float defaultHealth) {
-            this.defaultHealth = defaultHealth;
+            // TODO: Implement
             return this;
         }
 

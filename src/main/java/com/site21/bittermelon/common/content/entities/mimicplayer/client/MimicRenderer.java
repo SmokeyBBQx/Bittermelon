@@ -3,11 +3,13 @@ package com.site21.bittermelon.common.content.entities.mimicplayer.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.site21.bittermelon.common.content.entities.mimicplayer.Mimic;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidArmorModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -17,6 +19,8 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.*;
 import net.minecraft.client.renderer.entity.state.PlayerRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.DefaultPlayerSkin;
+import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -155,7 +159,7 @@ public class MimicRenderer extends LivingEntityRenderer<Mimic, PlayerRenderState
         reusedState.leftArmPose = getArmPose(entity, HumanoidArm.LEFT);
         reusedState.rightArmPose = getArmPose(entity, HumanoidArm.RIGHT);
 
-        reusedState.skin = entity.getSkin();
+        reusedState.skin = getSkin(entity);
         reusedState.arrowCount = entity.getArrowCount();
         reusedState.stingerCount = entity.getStingerCount();
         reusedState.useItemRemainingTicks = entity.getUseItemRemainingTicks();
@@ -182,6 +186,13 @@ public class MimicRenderer extends LivingEntityRenderer<Mimic, PlayerRenderState
                 this.itemModelResolver.updateForLiving(reusedState.heldOnHead, itemstack, ItemDisplayContext.HEAD, entity);
             }
         }
+    }
+
+    public PlayerSkin getSkin(Mimic mimic) {
+        // TODO: Cache this in the local mimic
+        Player player = mimic.getPlayer();
+        PlayerInfo info = Minecraft.getInstance().getConnection().getPlayerInfo(player.getUUID());;
+        return info == null ? DefaultPlayerSkin.get(player.getUUID()) : info.getSkin();
     }
 
     @Nullable

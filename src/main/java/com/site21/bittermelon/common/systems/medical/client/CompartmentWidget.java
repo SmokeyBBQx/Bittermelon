@@ -1,5 +1,6 @@
 package com.site21.bittermelon.common.systems.medical.client;
 
+import com.site21.bittermelon.common.systems.medical.client.compartmentrenderers.CompartmentRenderers;
 import com.site21.bittermelon.common.systems.medical.client.compartmentrenderers.SpecialCompartmentRenderer;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 import com.site21.bittermelon.common.systems.medical.compartment.CompartmentUtil;
@@ -38,7 +39,6 @@ public class CompartmentWidget extends MovableResizableWidget {
     private final CompartmentInstance compartment;
     private final HealthScreen screen;
     private final SpecialCompartmentRenderer specialRenderer;
-    private final boolean overrideSlotRendering;
     private int layerIndex = 0;
     private int depth = 0;
     private int contentX;
@@ -58,8 +58,7 @@ public class CompartmentWidget extends MovableResizableWidget {
         super(x, y, width, height, Component.literal(compartment.getName()));
         this.compartment = compartment;
         this.screen = screen;
-        this.specialRenderer = compartment.getOrDefault(SPECIAL_COMPARTMENT_RENDERER, null);
-        this.overrideSlotRendering = compartment.getOrDefault(OVERRIDE_SLOT_RENDERING, false);
+        this.specialRenderer = CompartmentRenderers.RENDERERS.get(compartment.getCompartmentHolder());
         initializeButtons();
         buttons = new Button[]{closeWidgetButton, collapseWidgetButton, increaseLayerButton, decreaseLayerButton};
         grid = CompartmentUtil.getLayerGrid(compartment, 0);
@@ -223,7 +222,7 @@ public class CompartmentWidget extends MovableResizableWidget {
         }
 
         // Slot texture
-        if (!overrideSlotRendering && getLayer().getTexture() == null) {
+        if (specialRenderer == null && getLayer().getTexture() == null) {
             SlotType type = slot.getType();
             ResourceLocation texture = type.getTexture();
             int color = type == SlotType.SKIN ? 0xFFAC724C : -1;

@@ -17,8 +17,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.List;
 
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.OVERRIDE_SLOT_RENDERING;
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.SPECIAL_COMPARTMENT_RENDERER;
 import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_REGISTRY_KEY;
 import static net.minecraft.world.item.Items.RED_WOOL;
 
@@ -64,8 +62,6 @@ public class Compartments {
                             LayerData.fromRegularShape("Brain Cavity", 8, 8, SlotType.CAVITY)
                     )
                     .item(Holder.direct(RED_WOOL))
-                    .component(SPECIAL_COMPARTMENT_RENDERER.get(), SpecialCompartmentRenderers.FACE_RENDERER.get())
-                    .component(OVERRIDE_SLOT_RENDERING.get(), true)
             )
     );
 

@@ -6,10 +6,6 @@ import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.init.neoforge.BitterDataSerializers;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.PlayerInfo;
-import net.minecraft.client.resources.DefaultPlayerSkin;
-import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -44,7 +40,6 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -54,8 +49,6 @@ import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.RAGE;
 import static com.site21.bittermelon.init.neoforge.BitterEntities.MIMIC;
 
 public class Mimic extends BitterMob<Mimic> {
-    @Nullable
-    private PlayerInfo playerInfo;
     private Player player;
     private static final EntityDataAccessor<UUID> PLAYER_UUID =
             SynchedEntityData.defineId(Mimic.class, BitterDataSerializers.UUID.get());
@@ -187,23 +180,6 @@ public class Mimic extends BitterMob<Mimic> {
         }
 
         return player;
-    }
-
-    @Nullable
-    protected PlayerInfo getPlayerInfo() {
-        if (playerInfo == null) {
-            Player player = getPlayer();
-            if (player == null) return null;
-
-            playerInfo = Minecraft.getInstance().getConnection().getPlayerInfo(player.getUUID());
-        }
-
-        return playerInfo;
-    }
-
-    public PlayerSkin getSkin() {
-        PlayerInfo info = getPlayerInfo();
-        return info == null ? DefaultPlayerSkin.get(getUUID()) : info.getSkin();
     }
 
     public boolean isModelPartShown(PlayerModelPart part) {

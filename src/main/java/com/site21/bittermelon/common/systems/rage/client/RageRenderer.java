@@ -1,5 +1,6 @@
-package com.site21.bittermelon.common.systems.rage;
+package com.site21.bittermelon.common.systems.rage.client;
 
+import com.site21.bittermelon.common.systems.rage.RageHandler;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
