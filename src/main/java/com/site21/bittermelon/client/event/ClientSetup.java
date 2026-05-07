@@ -216,6 +216,11 @@ public class ClientSetup {
                 ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "empty_377"),
                 Empty377.MAP_CODEC
         );
+
+        event.register(
+                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "open_1079"),
+                Open1079.MAP_CODEC
+        );
     }
 
     @SubscribeEvent

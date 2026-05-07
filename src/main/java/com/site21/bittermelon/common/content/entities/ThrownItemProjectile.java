@@ -36,7 +36,7 @@ import static net.minecraft.world.item.Items.SNOWBALL;
 
 public class ThrownItemProjectile extends ThrowableItemProjectile {
     private static final double BASE_GRAVITY = 0.03;
-    private static final double MAX_VELOCITY = 3;
+    private static final double MAX_VELOCITY = 2;
     private static final double BREAK_GLASS_VELOCITY = 1.5;
     private static final double BREAK_DOOR_VELOCITY = 2.5;
 
@@ -166,10 +166,10 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
 
         if ((state.is(Tags.Blocks.GLASS_BLOCKS) || state.is(Tags.Blocks.GLASS_PANES)) && getDeltaMovement().length() >= BREAK_GLASS_VELOCITY) {
             level().destroyBlock(pos, false, this);
-            return false;
+            return true;
         } else if (state.getBlock() instanceof DoorBlock && getDeltaMovement().length() >= BREAK_DOOR_VELOCITY) {
             level().destroyBlock(pos, true, this);
-            return false;
+            return true;
         } else if (state.getBlock() instanceof BellBlock block) {
             block.attemptToRing(level(), pos, result.getDirection());
         } else if (state.getBlock() instanceof ButtonBlock block) {

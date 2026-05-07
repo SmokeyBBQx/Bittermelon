@@ -12,6 +12,8 @@ import com.site21.bittermelon.common.content.items.mop.MopItem;
 import com.site21.bittermelon.common.content.items.repairtool.RepairToolItem;
 import com.site21.bittermelon.common.content.items.scps.SCP005Item;
 import com.site21.bittermelon.common.content.items.scps.SCP109Item;
+import com.site21.bittermelon.common.content.items.scps.scp1079.SCP1079CandyItem;
+import com.site21.bittermelon.common.content.items.scps.scp1079.SCP1079Item;
 import com.site21.bittermelon.common.content.items.scps.scp377.SCP3771Item;
 import com.site21.bittermelon.common.content.items.scps.scp377.SCP377CookieItem;
 import com.site21.bittermelon.common.content.items.scps.scp377.SCP377Item;
@@ -429,4 +431,24 @@ public class BitterItems {
                     .stacksTo(1)
                     .component(VOLUME, 50)
             ));
+
+    public static final DeferredItem<SCP1079Item> SCP_1079 = ITEMS.registerItem("scp_1079",
+            properties -> new SCP1079Item(
+                    properties.stacksTo(1)
+                            .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("Dr. Wondertainment's Bubblebath Bonbons!").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.LIGHT_PURPLE), Component.literal("[WARNING] Only one sweet is to be taken per sitting. Not suitable for children under 3 years").withStyle(ChatFormatting.DARK_GRAY)))
+                            )));
+
+    public static final DeferredItem<SCP1079CandyItem> SCP_1079_CANDY = ITEMS.register(
+            "scp_1079_candy",
+            registryName -> new SCP1079CandyItem(
+                    new Item.Properties()
+                            .food(new FoodProperties.Builder()
+                                    .nutrition(1)
+                                    .saturationModifier(1)
+                                    .alwaysEdible()
+                                    .build())
+                            .setId(ResourceKey.create(Registries.ITEM, registryName))
+                            .stacksTo(64)
+            )
+    );
 }
