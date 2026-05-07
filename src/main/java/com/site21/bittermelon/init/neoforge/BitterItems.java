@@ -438,9 +438,17 @@ public class BitterItems {
                             .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("Dr. Wondertainment's Bubblebath Bonbons!").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.LIGHT_PURPLE), Component.literal("[WARNING] Only one sweet is to be taken per sitting. Not suitable for children under 3 years").withStyle(ChatFormatting.DARK_GRAY)))
                             )));
 
-    public static final DeferredItem<SCP1079CandyItem> SCP_1079_CANDY = ITEMS.register("scp_1079_candy", registryName ->
-            new SCP1079CandyItem(new Item.Properties()
-                    .setId(ResourceKey.create(Registries.ITEM, registryName))
-                    .stacksTo(64)
-            ));
+    public static final DeferredItem<SCP1079CandyItem> SCP_1079_CANDY = ITEMS.register(
+            "scp_1079_candy",
+            registryName -> new SCP1079CandyItem(
+                    new Item.Properties()
+                            .food(new FoodProperties.Builder()
+                                    .nutrition(1)
+                                    .saturationModifier(1)
+                                    .alwaysEdible()
+                                    .build())
+                            .setId(ResourceKey.create(Registries.ITEM, registryName))
+                            .stacksTo(64)
+            )
+    );
 }
