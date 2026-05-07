@@ -146,6 +146,8 @@ public class BitterModelProvider extends ModelProvider {
         generateSCP377(itemModels);
         itemModels.generateFlatItem(SCP_377_1.get(), ModelTemplates.FLAT_ITEM);
         generate3D2DItem(itemModels, SCP_2398.get());
+        generateSCP1079(itemModels);
+        itemModels.generateFlatItem(SCP_1079_CANDY.get(), ModelTemplates.FLAT_ITEM);
 
         // SCP Spawn Eggs
         itemModels.generateFlatItem(BitterItems.SCP_131_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
@@ -192,6 +194,21 @@ public class BitterModelProvider extends ModelProvider {
         itemModels.generateFlatItem(SUTURE.get(), ModelTemplates.FLAT_ITEM);
         generate3D2DItem(itemModels, REPAIR_TOOL.get());
         itemModels.generateFlatItem(DEBUG_WIRE.get(), ModelTemplates.FLAT_ITEM);
+    }
+
+    public void generateSCP1079(@NotNull ItemModelGenerators itemModels) {
+        ItemModel.Unbaked model = ItemModelUtils.plainModel(itemModels.createFlatItemModel(SCP_1079.get(), ModelTemplates.FLAT_ITEM));
+        ItemModel.Unbaked open = ItemModelUtils.plainModel(
+                itemModels.createFlatItemModel(SCP_1079.get(), "_open", ModelTemplates.FLAT_ITEM));
+
+        itemModels.itemModelOutput.accept(
+                SCP_1079.get(),
+                new ConditionalItemModel.Unbaked(
+                        new Open1079(),
+                        model,
+                        open
+                )
+        );
     }
 
     public void createSlidingDoor(@NotNull BlockModelGenerators blockModels, Block doorBlock) {

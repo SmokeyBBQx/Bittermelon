@@ -33,6 +33,8 @@ public class BitterLanguageProvider extends LanguageProvider {
         addCustomItem(SCP_377_1, "Fortune");
         addCustomItem(SCP_377, "SCP-377");
         addCustomItem(SCP_151, "SCP-151");
+        addCustomItem(SCP_1079, "Bag of Bubblebath Bonbons");
+        addCustomItem(SCP_1079_CANDY, "Bubblegum Scented Bonbon");
         customItemTranslations.add(CHALK.get());
         customItemTranslations.add(HIGHLIGHTER.get());
         BitterItems.ITEMS.getEntries().forEach(this::addItemTranslation);

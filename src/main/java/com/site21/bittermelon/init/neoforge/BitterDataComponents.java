@@ -170,7 +170,7 @@ public class BitterDataComponents {
             builder -> builder.persistent(PillShape.CODEC).networkSynchronized(PillShape.STREAM_CODEC)
     );
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Fortune>> FORTUNE = DATA_COMPONENTS.registerComponentType(
+public static final DeferredHolder<DataComponentType<?>, DataComponentType<Fortune>> FORTUNE = DATA_COMPONENTS.registerComponentType(
             "fortune",
             builder -> builder.persistent(Fortune.CODEC)
     );
@@ -330,4 +330,14 @@ public class BitterDataComponents {
                     "override_slot_rendering",
                     builder -> builder.persistent(Codec.BOOL)
             );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> CANDY_COUNT = DATA_COMPONENTS.registerComponentType(
+            "candy_count",
+            builder -> builder.persistent(Codec.INT)
+    );
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> OPEN = DATA_COMPONENTS.registerComponentType(
+            "open",
+            builder -> builder.persistent(Codec.BOOL)
+    );
  }
