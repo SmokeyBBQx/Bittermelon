@@ -34,6 +34,8 @@ import com.site21.bittermelon.common.systems.component.temperature.HeatDecorator
 import com.site21.bittermelon.common.systems.fluid.simple.ClientSimpleFluid;
 import com.site21.bittermelon.common.systems.fluid.substance.ClientSubstanceFluid;
 import com.site21.bittermelon.common.systems.medical.client.AnatomyPictureInPictureRenderer;
+import com.site21.bittermelon.common.systems.medical.client.compartmentrenderers.CompartmentRenderers;
+import com.site21.bittermelon.common.systems.medical.client.tool.InstrumentWidgets;
 import com.site21.bittermelon.common.systems.medical.networking.AddAndInsertCompartment;
 import com.site21.bittermelon.common.systems.medical.networking.InsertCompartment;
 import com.site21.bittermelon.common.systems.medical.networking.RemoveCompartment;
@@ -43,7 +45,7 @@ import com.site21.bittermelon.common.systems.personnel.registry.networking.AddPe
 import com.site21.bittermelon.common.systems.personnel.registry.networking.PersonnelClientPayloadHandler;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.RemovePersonnelEntry;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.UpdatePersonnelEntry;
-import com.site21.bittermelon.common.systems.rage.RageRenderer;
+import com.site21.bittermelon.common.systems.rage.client.RageRenderer;
 import com.site21.bittermelon.datagen.property.*;
 import com.site21.bittermelon.init.neoforge.BitterBlockEntities;
 import com.site21.bittermelon.init.neoforge.BitterItems;
@@ -105,6 +107,8 @@ public class ClientSetup {
     @SubscribeEvent
     public static void fmlSetup(FMLClientSetupEvent event) {
         ItemBlockRenderTypes.setRenderLayer(SUBSTANCE_FLUID.get(), ChunkSectionLayer.TRANSLUCENT);
+        CompartmentRenderers.register();
+        InstrumentWidgets.register();
     }
 
     @SubscribeEvent

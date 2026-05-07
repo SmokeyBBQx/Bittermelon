@@ -13,12 +13,13 @@ import com.site21.bittermelon.common.content.entities.scp939.client.SCP939Model;
 import com.site21.bittermelon.common.content.entities.seamonkey.client.SeaMonkeyModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import org.jetbrains.annotations.NotNull;
 
-@EventBusSubscriber(modid = Bittermelon.MOD_ID)
+@EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class LayerDefinitions {
     public static final ModelLayerLocation SCP_131_LAYER = new ModelLayerLocation(
             ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_131"),

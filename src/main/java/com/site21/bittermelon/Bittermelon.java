@@ -38,7 +38,6 @@ import static com.site21.bittermelon.init.custom.Medias.MEDIA;
 import static com.site21.bittermelon.init.custom.ReactionConditions.REACTION_CONDITION_TYPES;
 import static com.site21.bittermelon.init.custom.ReactionEffects.REACTION_EFFECT_TYPES;
 import static com.site21.bittermelon.init.custom.Roles.ROLES;
-import static com.site21.bittermelon.init.custom.SpecialCompartmentRenderers.SPECIAL_COMPARTMENT_RENDERERS;
 import static com.site21.bittermelon.init.custom.Substances.SUBSTANCES;
 import static com.site21.bittermelon.init.custom.VerbSets.VERB_SETS;
 import static com.site21.bittermelon.init.neoforge.BitterActivity.ACTIVITY;
@@ -96,7 +95,6 @@ public class Bittermelon {
         ENTITY_DATA_SERIALIZERS.register(modEventBus);
         REACTION_CONDITION_TYPES.register(modEventBus);
         REACTION_EFFECT_TYPES.register(modEventBus);
-        SPECIAL_COMPARTMENT_RENDERERS.register(modEventBus);
 
         modEventBus.addListener(BitterRegistries::registerRegistries);
         modEventBus.addListener(this::commonSetup);

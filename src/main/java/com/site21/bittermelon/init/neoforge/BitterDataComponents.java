@@ -15,7 +15,6 @@ import com.site21.bittermelon.common.systems.component.screwdriver.Screwdriver;
 import com.site21.bittermelon.common.systems.component.temperature.HeatBehavior;
 import com.site21.bittermelon.common.systems.medical.blood.BloodData;
 import com.site21.bittermelon.common.systems.medical.blood.BloodInfo;
-import com.site21.bittermelon.common.systems.medical.client.compartmentrenderers.SpecialCompartmentRenderer;
 import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
 import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
 import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
@@ -34,8 +33,6 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.UUID;
-
-import static com.site21.bittermelon.init.neoforge.BitterRegistries.COMPARTMENT_RENDERER_TYPE;
 
 public class BitterDataComponents {
     public static final DeferredRegister.DataComponents DATA_COMPONENTS = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, Bittermelon.MOD_ID);
@@ -318,16 +315,4 @@ public class BitterDataComponents {
             "display_name",
             builder -> builder.persistent(Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8)
     );
-
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<SpecialCompartmentRenderer>>
-            SPECIAL_COMPARTMENT_RENDERER = DATA_COMPONENTS.registerComponentType(
-            "special_compartment_renderer",
-            builder -> builder.persistent(COMPARTMENT_RENDERER_TYPE.byNameCodec())
-    );
-
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> OVERRIDE_SLOT_RENDERING =
-            DATA_COMPONENTS.registerComponentType(
-                    "override_slot_rendering",
-                    builder -> builder.persistent(Codec.BOOL)
-            );
  }
