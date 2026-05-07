@@ -106,45 +106,6 @@ public class HealthScreen extends Screen {
                 heldTool.renderTool(guiGraphics, mouseX, mouseY);
             }
         }
-
-    }
-
-
-    private void renderDebugPartBounds(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-//        EntityRenderDispatcher dispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
-//        EntityRenderer<?, ?> renderer = dispatcher.getRenderer(entity);
-//        if (!(renderer instanceof LivingEntityRenderer<?, ?, ?> livingRenderer)) return;
-//
-//        LivingEntityRenderer<LivingEntity, LivingEntityRenderState, ?> castRenderer =
-//                (LivingEntityRenderer<LivingEntity, LivingEntityRenderState, ?>) livingRenderer;
-//        EntityModel<LivingEntityRenderState> model =
-//                (EntityModel<LivingEntityRenderState>) castRenderer.getModel();
-//
-//        float renderX = 150, renderY = 150, scale = 80.0f;
-//
-//        Map<String, AABB> allBounds = new HashMap<>();
-//        Matrix4f root = new Matrix4f().identity();
-//
-//        for (Map.Entry<String, ModelPart> entry : model.root().children.entrySet()) {
-//            collectPartBounds(entry.getValue(), root, entry.getKey(), scale, (int) renderX, (int) renderY, allBounds);
-//        }
-//
-//        for (Map.Entry<String, AABB> entry : allBounds.entrySet()) {
-//            AABB bounds = entry.getValue();
-//            int minX = (int) bounds.minX, minY = (int) bounds.minY;
-//            int maxX = (int) bounds.maxX, maxY = (int) bounds.maxY;
-//
-//            boolean hovered = mouseX >= minX && mouseX <= maxX
-//                    && mouseY >= minY && mouseY <= maxY;
-//
-//            guiGraphics.fill(minX, minY, maxX, maxY,
-//                    hovered ? 0x4400FF00 : 0x44FF0000);
-//            guiGraphics.renderOutline(minX, minY, maxX - minX, maxY - minY,
-//                    hovered ? 0xFF00FF00 : 0x80FF0000);
-//            if (hovered) {
-//                guiGraphics.drawString(font, entry.getKey(), minX, minY - 10, 0xFF00FF00);
-//            }
-//        }
     }
 
     @Override

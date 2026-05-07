@@ -21,6 +21,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
+import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.MutableDataComponentHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,7 +90,7 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
             return;
         }
 
-        updateCompartments();
+        updateCompartments(entity.level());
         updateEntityAttributes(entity);
         handleMobEffects(entity);
 
@@ -100,9 +101,13 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
         }
     }
 
-    private void updateCompartments() {
+    private void updateCompartments(Level level) {
         for (CompartmentInstance compartment : compartments.values()) {
-            compartment.tick(this);
+            if (compartment.shouldTick(this, level.getGameTime())) {
+                compartment.tick(this);
+            }
+
+            if (!compartment.isDirty()) continue;
 
             EnumMap<MedicalAttribute, Float> attributes = compartment.get(MEDICAL_ATTRIBUTES);
 
@@ -113,6 +118,8 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
                     instance.updateModifier(compartment.getId(), attributes.get(attribute));
                 }
             }
+
+            compartment.clearDirty();
         }
     }
 

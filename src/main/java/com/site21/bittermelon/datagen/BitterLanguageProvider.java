@@ -9,9 +9,7 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -26,13 +24,13 @@ public class BitterLanguageProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
-        addCustomItem(SCP_005,"SCP-005");
-        addCustomItem(SCP_109, "SCP-109");
-        addCustomItem(SCP_2398, "SCP-2398");
-        addCustomItem(SCP_018, "SCP-018");
+        addCustomItem(SCP_005,"Skeleton Key");
+        addCustomItem(SCP_109, "Canteen");
+        addCustomItem(SCP_2398, "Baseball Bat");
+        addCustomItem(SCP_018, "Super Ball");
         addCustomItem(SCP_377_1, "Fortune");
-        addCustomItem(SCP_377, "SCP-377");
-        addCustomItem(SCP_151, "SCP-151");
+        addCustomItem(SCP_377, "La Choy Fortune Cookies");
+        addCustomItem(SCP_151, "Ocean Painting");
         addCustomItem(SCP_1079, "Bag of Bubblebath Bonbons");
         addCustomItem(SCP_1079_CANDY, "Bubblegum Scented Bonbon");
         customItemTranslations.add(CHALK.get());

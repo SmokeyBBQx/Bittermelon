@@ -57,7 +57,12 @@ public class Compartment {
         return instance;
     }
 
-    public void tick(MedicalStats medicalStats, @NotNull CompartmentInstance instance) {}
+    protected boolean shouldTick(MedicalStats medicalStats, CompartmentInstance instance, long gameTime) {
+        return false;
+    }
+
+    public void tick(MedicalStats medicalStats, @NotNull CompartmentInstance instance) {
+    }
 
     public void onExtract(MedicalStats medicalStats, CompartmentInstance instance) {}
 

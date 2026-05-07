@@ -23,6 +23,7 @@ public class CompartmentInstance implements DataComponentHolder, MutableDataComp
     private final UUID id;
     private final String name;
     private final PatchedDataComponentMap components;
+    private boolean dirty = false;
 
     public CompartmentInstance(@NotNull Compartment compartment, UUID id, String name, PatchedDataComponentMap components) {
         this.compartment = compartment;
@@ -35,8 +36,20 @@ public class CompartmentInstance implements DataComponentHolder, MutableDataComp
         this(compartment.value(), id, name, PatchedDataComponentMap.fromPatch(compartment.value().components(), components));
     }
 
+    public boolean shouldTick(MedicalStats medicalStats, long gameTime) {
+        return compartment.shouldTick(medicalStats, this, gameTime);
+    }
+
     public void tick(MedicalStats medicalStats) {
         compartment.tick(medicalStats, this);
+    }
+
+    public void markDirty() {
+        dirty = true;
+    }
+
+    public void clearDirty() {
+        dirty = false;
     }
 
     public Compartment getCompartment() {
@@ -53,6 +66,10 @@ public class CompartmentInstance implements DataComponentHolder, MutableDataComp
 
     public String getName() {
         return name;
+    }
+
+    public boolean isDirty() {
+        return dirty;
     }
 
     public boolean tryToInsert(CompartmentInstance instance, int layerIndex, int x, int y, int z) {
