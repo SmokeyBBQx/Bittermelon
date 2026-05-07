@@ -9,6 +9,7 @@ import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
@@ -31,48 +32,50 @@ public class AnatomyPictureInPictureRenderer extends PictureInPictureRenderer<An
         return RenderState.class;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void renderToTexture(RenderState renderState, PoseStack poseStack) {
-        Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
-
         Minecraft mc = Minecraft.getInstance();
+        mc.gameRenderer.getLighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
         EntityRenderDispatcher dispatcher = mc.getEntityRenderDispatcher();
 
-        Vector3f vector3f = renderState.translation();
-        poseStack.translate(vector3f.x, vector3f.y, vector3f.z);
+        applyTransformations(poseStack, renderState, dispatcher);
+
+        EntityRenderer<?, ?> renderer = dispatcher.getRenderer(renderState.entity());
+        renderEntityModel(renderState, poseStack, (LivingEntityRenderer<LivingEntity, LivingEntityRenderState, ?>) renderer);
+    }
+
+    private void applyTransformations(PoseStack poseStack, RenderState renderState, EntityRenderDispatcher dispatcher) {
+        Vector3f translation = renderState.translation();
+        poseStack.translate(translation.x, translation.y, translation.z);
         poseStack.mulPose(renderState.rotation());
-        Quaternionf quaternionf = renderState.overrideCameraAngle();
-        if (quaternionf != null) {
-            dispatcher.overrideCameraOrientation(quaternionf.conjugate(new Quaternionf()).rotateY((float) Math.PI));
+
+        Quaternionf overrideCameraAngle = renderState.overrideCameraAngle();
+        if (overrideCameraAngle != null) {
+            dispatcher.overrideCameraOrientation(overrideCameraAngle.conjugate(new Quaternionf()).rotateY((float) Math.PI));
         }
+    }
 
+    @SuppressWarnings("unchecked")
+    private void renderEntityModel(RenderState renderState, PoseStack poseStack,
+                                   LivingEntityRenderer<LivingEntity, LivingEntityRenderState, ?> renderer) {
+        EntityModel<LivingEntityRenderState> model = (EntityModel<LivingEntityRenderState>) renderer.getModel();
+        ModelPart rootPart = model.root();
 
-        EntityRenderer<?, ?> renderer = dispatcher.getRenderer(renderState.entity);
-
-        if (!(renderer instanceof LivingEntityRenderer<?, ?, ?> livingRenderer)) return;
-
-        LivingEntityRenderer<LivingEntity, LivingEntityRenderState, ?> castRenderer =
-                (LivingEntityRenderer<LivingEntity, LivingEntityRenderState, ?>) livingRenderer;
-
-        EntityModel<LivingEntityRenderState> model =
-                (EntityModel<LivingEntityRenderState>) castRenderer.getModel();
-
-//        model.root().getChild(renderState.highlightedPart).visible = true;
-//        model.root().getChild(renderState.highlightedPart).render(poseStack,
-//                bufferSource.getBuffer(model.renderType(castRenderer.getTextureLocation(renderState.entityRenderState))),
-//                255, OverlayTexture.RED_OVERLAY_V);
-
-        for (ModelPart part : model.root().getAllParts()) {
-            int overlay = renderState.highlightedPart == null ? OverlayTexture.NO_OVERLAY :
-                    part == model.root().getChild(renderState.highlightedPart) ? OverlayTexture.RED_OVERLAY_V : OverlayTexture.NO_OVERLAY;
-            part.render(poseStack,
-                    bufferSource.getBuffer(model.renderType(castRenderer.getTextureLocation(renderState.entityRenderState))),
-                    255, overlay);
+        RenderType renderType = model.renderType(renderer.getTextureLocation(renderState.entityRenderState()));
+        for (ModelPart part : rootPart.getAllParts()) {
+            int overlay = getPartOverlay(renderState, part, rootPart);
+            part.render(poseStack, bufferSource.getBuffer(renderType), 255, overlay);
         }
+    }
 
-
-//        model.root().getChild(renderState.highlightedPart).visible = false;
-//        dispatcher.render(renderState.entityRenderState, 0.0, 0.0, 0.0, poseStack, bufferSource, 15728880);
+    private int getPartOverlay(RenderState renderState, ModelPart part, ModelPart rootPart) {
+        if (renderState.highlightedPart == null) {
+            return OverlayTexture.NO_OVERLAY;
+        }
+        return part == rootPart.getChild(renderState.highlightedPart) ?
+                OverlayTexture.RED_OVERLAY_V :
+                OverlayTexture.NO_OVERLAY;
     }
 
     @Override
