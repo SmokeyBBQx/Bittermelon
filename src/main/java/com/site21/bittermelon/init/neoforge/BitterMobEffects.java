@@ -63,4 +63,7 @@ public class BitterMobEffects {
     public static final Holder<MobEffect> EUPHORIA = MOB_EFFECTS.register("euphoria", EuphoriaEffect::new);
 
     public static final Holder<MobEffect> EYEBALL_GROWTH = MOB_EFFECTS.register("eyeball_growth", EyeballGrowthEffect::new);
+
+    public static final Holder<MobEffect> BUBBLE_BATH = MOB_EFFECTS.register("bubble_bath", BubbleBathEffect::new);
+
 }
