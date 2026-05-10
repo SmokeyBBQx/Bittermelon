@@ -25,7 +25,8 @@
     "ItemInHandRendererMixin",
     "LivingEntityRendererMixin",
     "MouseHandlerMixin",
-    "PlayerInfoMixin"
+    "PlayerInfoMixin",
+    "PlayerModelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -48,6 +48,8 @@ public class HumanFactory implements AnatomyFactory {
 
         CompartmentInstance rightHand = addCompartment(HAND, wholeBody, 0, 17, 0);
         rightHand.set(DISPLAY_NAME, "Right Hand");
+        anatomyModel.addBodyPart("right_hand", rightHand.getId());
+        anatomyModel.addBodyPart("left_hand", leftHand.getId());
 
         CompartmentInstance torso = addCompartment(TORSO, wholeBody, 3, 7, 0);
         addCompartment(LIVER, torso, 0, 0, 1, 0);

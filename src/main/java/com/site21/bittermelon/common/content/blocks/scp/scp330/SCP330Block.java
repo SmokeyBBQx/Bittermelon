@@ -1,5 +1,6 @@
 package com.site21.bittermelon.common.content.blocks.scp.scp330;
 
+import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -10,17 +11,17 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.MEDICAL_STATS;
 
 public class SCP330Block extends Block {
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
@@ -50,7 +51,14 @@ public class SCP330Block extends Block {
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
         if (level.isClientSide) return InteractionResult.PASS;
 
-        player.displayClientMessage(Component.literal("You find it impossible to not read the note saying, \"take no more than two, please!!\" ").withStyle(ChatFormatting.ITALIC), false);
+        player.displayClientMessage(Component.literal("You find it impossible to not read the note saying, " +
+                "\"take no more than two, please!!\" ").withStyle(ChatFormatting.ITALIC), false);
+
+        MedicalStats medicalStats = player.getData(MEDICAL_STATS);
+        medicalStats.removeLimb("left_hand");
+        medicalStats.removeLimb("right_hand");
+        player.syncData(MEDICAL_STATS);
+
         return InteractionResult.SUCCESS;
     }
 

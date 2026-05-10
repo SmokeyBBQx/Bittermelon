@@ -23,7 +23,7 @@ public class CompartmentInstance implements DataComponentHolder, MutableDataComp
     private final UUID id;
     private final String name;
     private final PatchedDataComponentMap components;
-    private boolean dirty = false;
+    private boolean dirty = true;
 
     public CompartmentInstance(@NotNull Compartment compartment, UUID id, String name, PatchedDataComponentMap components) {
         this.compartment = compartment;

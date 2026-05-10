@@ -21,6 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.function.Function;
+
 public class AnatomyPictureInPictureRenderer extends PictureInPictureRenderer<AnatomyPictureInPictureRenderer.RenderState> {
 
     public AnatomyPictureInPictureRenderer(MultiBufferSource.BufferSource bufferSource) {
@@ -63,17 +65,40 @@ public class AnatomyPictureInPictureRenderer extends PictureInPictureRenderer<An
         ModelPart rootPart = model.root();
 
         RenderType renderType = model.renderType(renderer.getTextureLocation(renderState.entityRenderState()));
-        for (ModelPart part : rootPart.getAllParts()) {
-            int overlay = getPartOverlay(renderState, part, rootPart);
-            part.render(poseStack, bufferSource.getBuffer(renderType), 255, overlay);
+        Function<String, ModelPart> partLookup = rootPart.createPartLookup();
+        for (ModelPart part : rootPart.children.values()) {
+            int overlay = getPartOverlay(renderState, part, partLookup);
+            renderPart(renderState, partLookup, part, poseStack, renderType, overlay);
         }
     }
 
-    private int getPartOverlay(RenderState renderState, ModelPart part, ModelPart rootPart) {
+    private void renderPart(RenderState renderState, Function<String, ModelPart> partLookup, ModelPart part,
+                            PoseStack poseStack, RenderType renderType, int overlay) {
+        // Copied from ModelPart.render with modifications to support part highlighting
+        if (part.visible) {
+            if (!part.cubes.isEmpty() || !part.children.isEmpty()) {
+                poseStack.pushPose();
+                part.translateAndRotate(poseStack);
+                if (!part.skipDraw) {
+                    part.compile(poseStack.last(), bufferSource.getBuffer(renderType), 255, overlay, -1);
+                }
+
+                for (ModelPart child : part.children.values()) {
+                    // TODO: If part of anatomy model, use getPartOverlay, otherwise use parent part's overlay
+                    int childOverlay = getPartOverlay(renderState, child, partLookup);
+                    renderPart(renderState, partLookup, child, poseStack, renderType, childOverlay);
+                }
+
+                poseStack.popPose();
+            }
+        }
+    }
+
+    private int getPartOverlay(RenderState renderState, ModelPart part, Function<String, ModelPart> partLookup) {
         if (renderState.highlightedPart == null) {
             return OverlayTexture.NO_OVERLAY;
         }
-        return part == rootPart.getChild(renderState.highlightedPart) ?
+        return part == partLookup.apply(renderState.highlightedPart) ?
                 OverlayTexture.RED_OVERLAY_V :
                 OverlayTexture.NO_OVERLAY;
     }

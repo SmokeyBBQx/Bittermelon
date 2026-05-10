@@ -70,6 +70,26 @@ public class AnatomyModelWidget extends AbstractWidget {
         guiGraphics.submitPictureInPictureRenderState(anatomyRenderState);
     }
 
+    private void renderDebugBounds(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        Map<String, AABB> bounds = new HashMap<>();
+        Matrix4f root = new Matrix4f().identity().rotateY(xRot);
+
+        for (Map.Entry<String, ModelPart> entry : model.root().children.entrySet()) {
+            if (!screen.getMedicalStats().getAnatomyModel().getBodyParts().containsKey(entry.getKey())) continue;
+            collectPartBounds(entry.getValue(), root, entry.getKey(), bounds);
+        }
+
+        String hoveredPart = getHoveredPart(mouseX, mouseY, bounds);
+
+        for (Map.Entry<String, AABB> entry : bounds.entrySet()) {
+            AABB b = entry.getValue();
+            int color = entry.getKey().equals(hoveredPart) ? 0x8000FF00 : 0x80FF0000;
+            guiGraphics.fill((int) b.minX, (int) b.minY, (int) b.maxX, (int) b.maxY, color);
+            guiGraphics.drawString(Minecraft.getInstance().font, entry.getKey(), (int) b.minX + 2,
+                    (int) b.minY + 2, 0xFFFFFFFF);
+        }
+    }
+
     @SuppressWarnings({"rawtypes", "unchecked"})
     private LivingEntityRenderState getLivingRenderState() {
         EntityRenderDispatcher dispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
@@ -90,6 +110,7 @@ public class AnatomyModelWidget extends AbstractWidget {
         Matrix4f root = new Matrix4f().identity().rotateY(xRot);
 
         for (Map.Entry<String, ModelPart> entry : model.root().children.entrySet()) {
+            if (!screen.getMedicalStats().getAnatomyModel().getBodyParts().containsKey(entry.getKey())) continue;
             collectPartBounds(entry.getValue(), root, entry.getKey(), allBounds);
         }
 
@@ -130,6 +151,11 @@ public class AnatomyModelWidget extends AbstractWidget {
                     Math.min(a.minX, b.minX), Math.min(a.minY, b.minY), Math.min(a.minZ, b.minZ),
                     Math.max(a.maxX, b.maxX), Math.max(a.maxY, b.maxY), Math.max(a.maxZ, b.maxZ)
             ));
+        }
+
+        for (Map.Entry<String, ModelPart> child : part.children.entrySet()) {
+            if (!screen.getMedicalStats().getAnatomyModel().getBodyParts().containsKey(child.getKey())) continue;
+            collectPartBounds(child.getValue(), local, child.getKey(), boundsOut);
         }
     }
 

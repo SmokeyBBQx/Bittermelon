@@ -25,8 +25,9 @@ public abstract class EntityModelMixin<T extends EntityRenderState> extends Mode
     @Inject(at = @At("HEAD"), method = "setupAnim(Lnet/minecraft/client/renderer/entity/state/EntityRenderState;)V")
     public void setupAnim(T renderState, CallbackInfo ci) {
         Map<String, Boolean> limbVisibility = renderState.getRenderDataOrDefault(ClientSetup.LIMB_VISIBILITY, new HashMap<>());
+        Function<String, ModelPart> partLookup = root().createPartLookup();
         for (Map.Entry<String, Boolean> entry : limbVisibility.entrySet()) {
-            root().getChild(entry.getKey()).visible = entry.getValue();
+            partLookup.apply(entry.getKey()).visible = entry.getValue();
         }
     }
 }

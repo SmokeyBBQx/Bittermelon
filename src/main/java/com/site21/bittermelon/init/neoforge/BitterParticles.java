@@ -15,7 +15,21 @@ import java.util.function.Supplier;
 public class BitterParticles {
     public static final DeferredRegister<ParticleType<?>> PARTICLES = DeferredRegister.create(BuiltInRegistries.PARTICLE_TYPE, Bittermelon.MOD_ID);
 
-    public static final Supplier<ParticleType<ColorParticleOption>> PLASTIC = PARTICLES.register("plastic", () -> new ParticleType<>(false) {
+    public static final Supplier<ParticleType<ColorParticleOption>> PLASTIC = PARTICLES.register("plastic",
+            () -> new ParticleType<>(false) {
+        @Override
+        public @NotNull MapCodec<ColorParticleOption> codec() {
+            return ColorParticleOption.codec((ParticleType<ColorParticleOption>) this);
+        }
+
+        @Override
+        public @NotNull StreamCodec<? super RegistryFriendlyByteBuf, ColorParticleOption> streamCodec() {
+            return ColorParticleOption.streamCodec((ParticleType<ColorParticleOption>) this);
+        }
+    });
+
+    public static final Supplier<ParticleType<ColorParticleOption>> FOAM = PARTICLES.register("foam",
+            () -> new ParticleType<>(false) {
         @Override
         public @NotNull MapCodec<ColorParticleOption> codec() {
             return ColorParticleOption.codec((ParticleType<ColorParticleOption>) this);

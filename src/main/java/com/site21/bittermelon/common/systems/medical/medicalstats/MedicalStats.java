@@ -192,12 +192,24 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
         return compartments;
     }
 
-    public void removeCompartment(@NotNull CompartmentInstance compartment) {
-        compartments.remove(compartment.getId());
+    public void removeCompartment(CompartmentInstance compartment) {
+        removeCompartment(compartment.getId());
     }
 
     public void removeCompartment(UUID compartmentId) {
+        anatomyModel.getBodyParts().replaceAll((key, value) ->
+                compartmentId.equals(value) ? null : value
+        );
+
         compartments.remove(compartmentId);
+    }
+
+    public void removeLimb(String limb) {
+        UUID compartmentId = anatomyModel.getBodyParts().get(limb);
+        if (compartmentId != null) {
+            anatomyModel.getBodyParts().put(limb, null);
+            compartments.remove(compartmentId);
+        }
     }
 
     public void addCompartment(CompartmentInstance compartment) {
