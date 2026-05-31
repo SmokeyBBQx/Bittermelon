@@ -102,6 +102,8 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
     }
 
     private void updateCompartments(Level level) {
+        // TODO: Handle update after compartment removal
+
         for (CompartmentInstance compartment : compartments.values()) {
             if (compartment.shouldTick(this, level.getGameTime())) {
                 compartment.tick(this);

@@ -3,6 +3,9 @@ package com.site21.bittermelon.client.event;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.client.LargeSlidingDoorModel;
 import com.site21.bittermelon.common.content.entities.chicken.client.ChickenModel;
+import com.site21.bittermelon.common.content.entities.scp025fr.client.SCP025FRBodyModel;
+import com.site21.bittermelon.common.content.entities.scp025fr.client.SCP025FRModel;
+import com.site21.bittermelon.common.content.entities.scp025fr.client.SCP025FRTailModel;
 import com.site21.bittermelon.common.content.entities.scp131.client.SCP131Model;
 import com.site21.bittermelon.common.content.entities.scp1507.client.SCP1507Model;
 import com.site21.bittermelon.common.content.entities.scp548.client.SCP548Model;
@@ -71,6 +74,21 @@ public class LayerDefinitions {
             "main"
     );
 
+    public static final ModelLayerLocation SCP_025_FR_LAYER = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_025_fr"),
+            "main"
+    );
+
+    public static final ModelLayerLocation SCP_025_FR_TAIL_LAYER = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_025_fr_tail"),
+            "main"
+    );
+
+    public static final ModelLayerLocation SCP_025_FR_BODY_LAYER = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_025_fr_body"),
+            "main"
+    );
+
     @SubscribeEvent
     public static void registerLayerDefinitions(EntityRenderersEvent.@NotNull RegisterLayerDefinitions event) {
         event.registerLayerDefinition(SCP_131_LAYER, SCP131Model::createBodyLayer);
@@ -83,5 +101,8 @@ public class LayerDefinitions {
         event.registerLayerDefinition(SEA_MONKEY_LAYER, SeaMonkeyModel::createBodyLayer);
         event.registerLayerDefinition(SCP_718_LAYER, SCP718Model::createBodyLayer);
         event.registerLayerDefinition(SCP_718_SMALL_LAYER, SCP718SmallModel::createBodyLayer);
+        event.registerLayerDefinition(SCP_025_FR_LAYER, SCP025FRModel::createBodyLayer);
+        event.registerLayerDefinition(SCP_025_FR_BODY_LAYER, SCP025FRBodyModel::createBodyLayer);
+        event.registerLayerDefinition(SCP_025_FR_TAIL_LAYER, SCP025FRTailModel::createBodyLayer);
     }
 }
