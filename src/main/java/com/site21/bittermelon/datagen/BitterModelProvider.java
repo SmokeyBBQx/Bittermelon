@@ -205,8 +205,8 @@ public class BitterModelProvider extends ModelProvider {
                 SCP_1079.get(),
                 new ConditionalItemModel.Unbaked(
                         new Open1079(),
-                        model,
-                        open
+                        open,
+                        model
                 )
         );
     }

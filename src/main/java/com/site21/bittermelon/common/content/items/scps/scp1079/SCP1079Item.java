@@ -17,7 +17,7 @@ import static com.site21.bittermelon.init.neoforge.BitterDataComponents.OPEN;
 import static com.site21.bittermelon.init.neoforge.BitterItems.*;
 
 public class SCP1079Item extends Item {
-    private static final int DEFAULT_CANDY_COUNT = 60;
+    private static final int DEFAULT_CANDY_COUNT = 8;
 
     public SCP1079Item(Properties properties) { super(properties); }
 
