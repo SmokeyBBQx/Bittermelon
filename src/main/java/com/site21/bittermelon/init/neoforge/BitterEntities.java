@@ -12,6 +12,7 @@ import com.site21.bittermelon.common.content.entities.scp1507.SCP1507;
 import com.site21.bittermelon.common.content.entities.scp548.SCP548;
 import com.site21.bittermelon.common.content.entities.scp650.SCP650;
 import com.site21.bittermelon.common.content.entities.scp718.SCP718;
+import com.site21.bittermelon.common.content.entities.scp815snake.SCP815Snake;
 import com.site21.bittermelon.common.content.entities.scp939.SCP939;
 import com.site21.bittermelon.common.content.entities.seamonkey.SeaMonkey;
 import com.site21.bittermelon.common.content.items.scps.scp2398.SCP2398ProjectileItem;
@@ -104,6 +105,12 @@ public class BitterEntities {
                     .sized(0.6f, 0.3f)
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, Bittermelon.resource("scp_025_fr"))));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<SCP815Snake>> SCP_815_SNAKE = ENTITY_TYPES.register("scp_815_snake",
+            () -> EntityType.Builder.of(SCP815Snake::new, MobCategory.MISC)
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_815_snake"))));
+
+
+
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
         eventBus.addListener(BitterEntities::registerAttributes);
@@ -120,5 +127,6 @@ public class BitterEntities {
         event.put(SCP_718.get(), SCP718.createAttributes().build());
         event.put(MIMIC.get(), Mimic.createAttributes().build());
         event.put(SCP_025_FR.get(), SCP025FR.createAttributes().build());
+        event.put(SCP_815_SNAKE.get(), SCP815Snake.createLivingAttributes().build());
     }
 }

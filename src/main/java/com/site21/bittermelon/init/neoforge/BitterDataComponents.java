@@ -167,7 +167,7 @@ public class BitterDataComponents {
             builder -> builder.persistent(PillShape.CODEC).networkSynchronized(PillShape.STREAM_CODEC)
     );
 
-public static final DeferredHolder<DataComponentType<?>, DataComponentType<Fortune>> FORTUNE = DATA_COMPONENTS.registerComponentType(
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Fortune>> FORTUNE = DATA_COMPONENTS.registerComponentType(
             "fortune",
             builder -> builder.persistent(Fortune.CODEC)
     );
@@ -325,4 +325,9 @@ public static final DeferredHolder<DataComponentType<?>, DataComponentType<Fortu
             "open",
             builder -> builder.persistent(Codec.BOOL)
     );
- }
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> OPEN_TIME = DATA_COMPONENTS.registerComponentType(
+            "open_time",
+            builder -> builder.persistent(Codec.LONG)
+    );
+}

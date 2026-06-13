@@ -12,6 +12,8 @@ import com.site21.bittermelon.common.content.entities.scp548.client.SCP548Model;
 import com.site21.bittermelon.common.content.entities.scp650.client.SCP650Model;
 import com.site21.bittermelon.common.content.entities.scp718.client.SCP718Model;
 import com.site21.bittermelon.common.content.entities.scp718.client.SCP718SmallModel;
+import com.site21.bittermelon.common.content.entities.scp815snake.SCP815Snake;
+import com.site21.bittermelon.common.content.entities.scp815snake.client.SCP815SnakeModel;
 import com.site21.bittermelon.common.content.entities.scp939.client.SCP939Model;
 import com.site21.bittermelon.common.content.entities.seamonkey.client.SeaMonkeyModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -89,6 +91,11 @@ public class LayerDefinitions {
             "main"
     );
 
+    public static final ModelLayerLocation SCP_815_SNAKE_LAYER = new ModelLayerLocation(
+            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_815_snake"),
+            "main"
+    );
+
     @SubscribeEvent
     public static void registerLayerDefinitions(EntityRenderersEvent.@NotNull RegisterLayerDefinitions event) {
         event.registerLayerDefinition(SCP_131_LAYER, SCP131Model::createBodyLayer);
@@ -104,5 +111,6 @@ public class LayerDefinitions {
         event.registerLayerDefinition(SCP_025_FR_LAYER, SCP025FRModel::createBodyLayer);
         event.registerLayerDefinition(SCP_025_FR_BODY_LAYER, SCP025FRBodyModel::createBodyLayer);
         event.registerLayerDefinition(SCP_025_FR_TAIL_LAYER, SCP025FRTailModel::createBodyLayer);
+        event.registerLayerDefinition(SCP_815_SNAKE_LAYER, SCP815SnakeModel::createBodyLayer);
     }
 }

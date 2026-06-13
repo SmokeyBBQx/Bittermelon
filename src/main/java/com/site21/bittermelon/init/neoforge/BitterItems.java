@@ -12,6 +12,7 @@ import com.site21.bittermelon.common.content.items.mop.MopItem;
 import com.site21.bittermelon.common.content.items.repairtool.RepairToolItem;
 import com.site21.bittermelon.common.content.items.scps.SCP005Item;
 import com.site21.bittermelon.common.content.items.scps.SCP109Item;
+import com.site21.bittermelon.common.content.items.scps.SCP815Item;
 import com.site21.bittermelon.common.content.items.scps.scp1079.SCP1079CandyItem;
 import com.site21.bittermelon.common.content.items.scps.scp1079.SCP1079Item;
 import com.site21.bittermelon.common.content.items.scps.scp377.SCP3771Item;
@@ -86,7 +87,7 @@ public class BitterItems {
     public static final DeferredItem<BlockItem> YELLOW_INSPECTION_POSTER = ITEMS.registerSimpleBlockItem(BitterBlocks.YELLOW_INSPECTION_POSTER);
     public static final DeferredItem<BlockItem> DISTRIBUTION_BOARD = ITEMS.registerSimpleBlockItem(BitterBlocks.DISTRIBUTION_BOARD);
     public static final DeferredItem<BlockItem> SCP_151 = ITEMS.registerSimpleBlockItem(BitterBlocks.SCP_151, new Item.Properties()
-                    .stacksTo(1).component(DataComponents.LORE, new ItemLore(List.of(Component.literal("The Painting").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Euclid").withStyle(ChatFormatting.GOLD)))));
+            .stacksTo(1).component(DataComponents.LORE, new ItemLore(List.of(Component.literal("The Painting").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Euclid").withStyle(ChatFormatting.GOLD)))));
     public static final DeferredItem<BlockItem> PERSONNEL_TERMINAL = ITEMS.registerSimpleBlockItem(BitterBlocks.PERSONNEL_TERMINAL);
     public static final DeferredItem<BlockItem> KEYCARD_PRINTER = ITEMS.registerSimpleBlockItem(BitterBlocks.KEYCARD_PRINTER);
     public static final DeferredItem<BlockItem> WINDOWED_SLIDING_DOOR = ITEMS.registerSimpleBlockItem(BitterBlocks.WINDOWED_SLIDING_DOOR);
@@ -110,7 +111,7 @@ public class BitterItems {
                     new Item.Properties().setId(ResourceKey.create(Registries.ITEM, registryName))));
     public static final DeferredItem<BlockItem> PLASTIC_FLAMINGO = ITEMS.registerSimpleBlockItem(BitterBlocks.PLASTIC_FLAMINGO);
     public static final DeferredItem<BlockItem> SCP_330 = ITEMS.registerSimpleBlockItem(BitterBlocks.SCP_330, new Item.Properties()
-                    .stacksTo(1).component(DataComponents.LORE, new ItemLore(List.of(Component.literal("Take Only Two").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Safe").withStyle(ChatFormatting.GREEN)))));
+            .stacksTo(1).component(DataComponents.LORE, new ItemLore(List.of(Component.literal("Take Only Two").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Safe").withStyle(ChatFormatting.GREEN)))));
     public static final DeferredItem<BlockItem> CAGE = ITEMS.registerSimpleBlockItem(BitterBlocks.CAGE);
     public static final DeferredItem<BlockItem> EYEBALL_BLISTER = ITEMS.registerSimpleBlockItem(BitterBlocks.EYEBALL_BLISTER);
 
@@ -167,25 +168,25 @@ public class BitterItems {
                             .stacksTo(1)
                             .setId(ResourceKey.create(Registries.ITEM, registryName))
                             .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("Ice Spider").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Euclid").withStyle(ChatFormatting.GOLD)))
-            )));
+                            )));
 
-    public static final DeferredItem<Item>  SCP_939_SPAWN_EGG = ITEMS.register("scp_939_spawn_egg", registryName ->
+    public static final DeferredItem<Item> SCP_939_SPAWN_EGG = ITEMS.register("scp_939_spawn_egg", registryName ->
             new SpawnEggItem(
                     BitterEntities.SCP_939.get(),
                     new Item.Properties()
                             .stacksTo(1)
                             .setId(ResourceKey.create(Registries.ITEM, registryName))
                             .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("With Many Voices").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Keter").withStyle(ChatFormatting.RED)))
-            )));
+                            )));
 
-    public static final DeferredItem<Item>  SCP_1507_SPAWN_EGG = ITEMS.register("scp_1507_spawn_egg", registryName ->
+    public static final DeferredItem<Item> SCP_1507_SPAWN_EGG = ITEMS.register("scp_1507_spawn_egg", registryName ->
             new SpawnEggItem(
                     BitterEntities.SCP_1507.get(),
                     new Item.Properties()
                             .stacksTo(1)
                             .setId(ResourceKey.create(Registries.ITEM, registryName))
                             .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("Pink Flamingos").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Euclid").withStyle(ChatFormatting.GOLD)))
-            )));
+                            )));
     public static final DeferredItem<Item> SCP_018 = ITEMS.register("scp_018", registryName ->
             new Item(new Item.Properties()
                     .stacksTo(1)
@@ -290,9 +291,9 @@ public class BitterItems {
     public static final DeferredItem<Item> HELLO_KITTY_CELLPHONE = ITEMS.registerSimpleItem("hello_kitty_cellphone");
 
     public static final DeferredItem<Item> SCP_2398 = ITEMS.registerSimpleItem("scp_2398", new Item.Properties()
-                    .stacksTo(1)
-                    .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("Home Run Bat").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Safe").withStyle(ChatFormatting.GREEN)))
-                    ));
+            .stacksTo(1)
+            .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("Home Run Bat").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Safe").withStyle(ChatFormatting.GREEN)))
+            ));
     public static final DeferredItem<Item> BASEBALL = ITEMS.registerSimpleItem("baseball");
 
     public static final DeferredItem<TestHeatedItem> CIGARETTE_BUTT = ITEMS.register("cigarette_butt", registryName ->
@@ -331,7 +332,7 @@ public class BitterItems {
             properties -> new SCP377Item(
                     properties.stacksTo(1)
                             .component(DataComponents.LORE, new ItemLore(List.of(Component.literal("Accurate Fortune Cookies").withStyle(ChatFormatting.ITALIC).withStyle(ChatFormatting.GRAY), Component.literal("Safe").withStyle(ChatFormatting.GREEN)))
-            )));
+                            )));
 
     public static final DeferredItem<SCP3771Item> SCP_377_1 = ITEMS.registerItem("scp_377_1", SCP3771Item::new);
 
@@ -451,4 +452,14 @@ public class BitterItems {
                             .stacksTo(64)
             )
     );
+
+    public static final DeferredItem<SCP815Item> SCP_815 = ITEMS.registerItem("scp_815",
+            properties -> new SCP815Item(
+                    properties.stacksTo(1)
+                            .component(DataComponents.LORE, new ItemLore(List.of(
+                                    Component.literal("[Label] Fancy's Salted Mixed Nuts")
+                                            .withStyle(ChatFormatting.ITALIC)
+                                            .withStyle(ChatFormatting.DARK_GRAY)
+                            )))
+            ));
 }
