@@ -27,15 +27,30 @@ public class SCP005Item extends Item {
         if (state.getBlock() instanceof DoorBlock doorBlock) {
             if (!level.isClientSide) {
                 boolean isOpen = state.getValue(BlockStateProperties.OPEN);
-                BlockState newState = state.setValue(BlockStateProperties.OPEN, !isOpen)
-                        .setValue(BlockStateProperties.POWERED, !isOpen);
-                level.setBlock(pos, newState, 3);
+                level.setBlock(pos, state.setValue(BlockStateProperties.OPEN, !isOpen)
+                        .setValue(BlockStateProperties.POWERED, !isOpen), 3);
                 level.playSound(null, pos,
                         isOpen ? doorBlock.type().doorClose() : doorBlock.type().doorOpen(),
                         SoundSource.BLOCKS, 1.0F, level.getRandom().nextFloat() * 0.1F + 0.9F);
             }
             return level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
         }
+
+        if (state.getBlock() instanceof LargeSlidingDoorBlock slidingDoor && !level.isClientSide) {
+            BlockPos masterPos = state.getValue(LargeSlidingDoorBlock.MASTER) ? pos : slidingDoor.findMasterBlock(level, pos);
+            if (masterPos == null) return InteractionResult.FAIL;
+
+            BlockState masterState = level.getBlockState(masterPos);
+            LargeSlidingDoorBlock.State doorState = masterState.getValue(LargeSlidingDoorBlock.STATE);
+
+            if (doorState == LargeSlidingDoorBlock.State.CLOSED)
+                slidingDoor.handleMoving(masterState, level, masterPos, true);
+            else if (doorState == LargeSlidingDoorBlock.State.OPEN)
+                slidingDoor.handleMoving(masterState, level, masterPos, false);
+        }
+
+        if (state.getBlock() instanceof LargeSlidingDoorBlock)
+            return level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
 
         return InteractionResult.PASS;
     }

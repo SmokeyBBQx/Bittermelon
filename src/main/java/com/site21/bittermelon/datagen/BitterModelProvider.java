@@ -148,6 +148,7 @@ public class BitterModelProvider extends ModelProvider {
         generate3D2DItem(itemModels, SCP_2398.get());
         generateSCP1079(itemModels);
         itemModels.generateFlatItem(SCP_1079_CANDY.get(), ModelTemplates.FLAT_ITEM);
+        generateSCP815(itemModels);
 
         // SCP Spawn Eggs
         itemModels.generateFlatItem(BitterItems.SCP_131_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
@@ -205,6 +206,21 @@ public class BitterModelProvider extends ModelProvider {
                 SCP_1079.get(),
                 new ConditionalItemModel.Unbaked(
                         new Open1079(),
+                        open,
+                        model
+                )
+        );
+    }
+
+    public void generateSCP815(@NotNull ItemModelGenerators itemModels) {
+        ItemModel.Unbaked model = ItemModelUtils.plainModel(itemModels.createFlatItemModel(SCP_815.get(), ModelTemplates.FLAT_ITEM));
+        ItemModel.Unbaked open = ItemModelUtils.plainModel(
+                itemModels.createFlatItemModel(SCP_815.get(), "_open", ModelTemplates.FLAT_ITEM));
+
+        itemModels.itemModelOutput.accept(
+                SCP_815.get(),
+                new ConditionalItemModel.Unbaked(
+                        new Open815(),
                         open,
                         model
                 )

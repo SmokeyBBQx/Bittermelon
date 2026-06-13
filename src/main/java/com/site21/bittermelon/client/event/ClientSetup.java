@@ -23,6 +23,7 @@ import com.site21.bittermelon.common.content.entities.scp548.client.SCP548Render
 import com.site21.bittermelon.common.content.entities.scp650.client.SCP650Renderer;
 import com.site21.bittermelon.common.content.entities.scp718.client.EyeballOnPlayerLayer;
 import com.site21.bittermelon.common.content.entities.scp718.client.SCP718Renderer;
+import com.site21.bittermelon.common.content.entities.scp815snake.client.SCP815SnakeRenderer;
 import com.site21.bittermelon.common.content.entities.scp939.client.SCP939Renderer;
 import com.site21.bittermelon.common.content.entities.seamonkey.client.SeaMonkeyRenderer;
 import com.site21.bittermelon.common.content.items.keycard.KeycardDecorator;
@@ -48,10 +49,7 @@ import com.site21.bittermelon.common.systems.personnel.registry.networking.Remov
 import com.site21.bittermelon.common.systems.personnel.registry.networking.UpdatePersonnelEntry;
 import com.site21.bittermelon.common.systems.rage.client.RageRenderer;
 import com.site21.bittermelon.datagen.property.*;
-import com.site21.bittermelon.init.neoforge.BitterBlockEntities;
-import com.site21.bittermelon.init.neoforge.BitterItems;
-import com.site21.bittermelon.init.neoforge.BitterMobEffects;
-import com.site21.bittermelon.init.neoforge.BitterParticles;
+import com.site21.bittermelon.init.neoforge.*;
 import com.site21.bittermelon.networking.client.ClientPayloadHandler;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -123,6 +121,7 @@ public class ClientSetup {
         event.registerEntityRenderer(SCP_1507.get(), SCP1507Renderer::new);
         event.registerEntityRenderer(TASER_PROJECTILE.get(), TaserProjectileRenderer::new);
         event.registerEntityRenderer(SCP_548.get(), SCP548Renderer::new);
+        event.registerEntityRenderer(SCP_815_SNAKE.get(), SCP815SnakeRenderer::new);
         event.registerEntityRenderer(CAGE.get(), CageRenderer::new);
         event.registerEntityRenderer(SEA_MONKEY.get(), SeaMonkeyRenderer::new);
         event.registerEntityRenderer(SCP_718.get(), SCP718Renderer::new);
@@ -138,6 +137,7 @@ public class ClientSetup {
         event.registerBlockEntityRenderer(BitterBlockEntities.WALL_WRITING_BLOCK_ENTITY.get(), WallWritingRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.TELEVISION_BLOCK_ENTITY.get(), TelevisionRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.PLASTIC_FLAMINGO_BLOCK_ENTITY.get(), FlamingoBlockRenderer::new);
+
     }
 
     @SubscribeEvent
@@ -223,6 +223,12 @@ public class ClientSetup {
                 ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "open_1079"),
                 Open1079.MAP_CODEC
         );
+
+        event.register(
+                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "open_815"),
+                Open815.MAP_CODEC
+        );
+
     }
 
     @SubscribeEvent
