@@ -49,6 +49,10 @@ import com.site21.bittermelon.common.systems.personnel.registry.networking.Remov
 import com.site21.bittermelon.common.systems.personnel.registry.networking.UpdatePersonnelEntry;
 import com.site21.bittermelon.common.systems.rage.client.RageRenderer;
 import com.site21.bittermelon.datagen.property.*;
+import com.site21.bittermelon.init.neoforge.BitterBlockEntities;
+import com.site21.bittermelon.init.neoforge.BitterItems;
+import com.site21.bittermelon.init.neoforge.BitterMobEffects;
+import com.site21.bittermelon.init.neoforge.BitterParticles;
 import com.site21.bittermelon.init.neoforge.*;
 import com.site21.bittermelon.networking.client.ClientPayloadHandler;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
