@@ -12,7 +12,8 @@ import com.site21.bittermelon.common.content.items.mop.MopItem;
 import com.site21.bittermelon.common.content.items.repairtool.RepairToolItem;
 import com.site21.bittermelon.common.content.items.scps.SCP005Item;
 import com.site21.bittermelon.common.content.items.scps.SCP109Item;
-import com.site21.bittermelon.common.content.items.scps.SCP815Item;
+import com.site21.bittermelon.common.content.items.scps.scp815.SCP815Item;
+import com.site21.bittermelon.common.content.items.scps.scp815.SCP815SnakeHandItem;
 import com.site21.bittermelon.common.content.items.scps.scp1079.SCP1079CandyItem;
 import com.site21.bittermelon.common.content.items.scps.scp1079.SCP1079Item;
 import com.site21.bittermelon.common.content.items.scps.scp377.SCP3771Item;
@@ -306,6 +307,9 @@ public class BitterItems {
                     .component(HEAT_BEHAVIOR, HeatBehavior.DEFAULT)));
 
     public static final DeferredItem<Item> KEYCARD = ITEMS.registerSimpleItem("keycard");
+
+    public static final DeferredItem<SCP815SnakeHandItem> SCP_815_SNAKE_HAND = ITEMS.registerItem(
+            "scp_815_snake_hand", SCP815SnakeHandItem::new);
 
     public static final DeferredItem<WritablePaper> WRITABLE_PAPER = ITEMS.registerItem("paper", WritablePaper::new);
 

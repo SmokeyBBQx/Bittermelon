@@ -1,7 +1,6 @@
 package com.site21.bittermelon;
 
 import com.mojang.logging.LogUtils;
-import com.site21.bittermelon.common.content.items.scps.SCP815Item;
 import com.site21.bittermelon.common.systems.atmosphere.data.AtmosLevelData;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
