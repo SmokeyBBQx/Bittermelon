@@ -149,6 +149,7 @@ public class BitterModelProvider extends ModelProvider {
         generateSCP1079(itemModels);
         itemModels.generateFlatItem(SCP_1079_CANDY.get(), ModelTemplates.FLAT_ITEM);
         generateSCP815(itemModels);
+        itemModels.generateFlatItem(SCP_815_SNAKE_HAND.get(), ModelTemplates.FLAT_ITEM);
 
         // SCP Spawn Eggs
         itemModels.generateFlatItem(BitterItems.SCP_131_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);

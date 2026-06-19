@@ -1,7 +1,6 @@
-package com.site21.bittermelon.common.content.items.scps;
+package com.site21.bittermelon.common.content.items.scps.scp815;
 
 import com.site21.bittermelon.common.content.entities.scp815snake.SCP815Snake;
-import com.site21.bittermelon.common.content.entities.seamonkey.SeaMonkey;
 import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlock;
 import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlockEntity;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
