@@ -38,17 +38,19 @@ public class SCP025FRPart extends PartEntity<SCP025FR> {
 
     public void movePart(SCP025FRPart[] parts, int index) {
         SCP025FRPart self = parts[index];
-        Vec3 facing = index == 0 ? getParent().position() : parts[index - 1].position();
+        Vec3 facing = index == 0
+                ? getParent().position()
+                : parts[index - 1].position();
         Vec3 dir = self.position().subtract(facing).normalize();
         self.setPos(facing.add(dir.scale(0.5)));
 
-        float yaw = (float) Math.atan2(-dir.x, dir.z);
+        float yaw = (float) Math.toDegrees(Math.atan2(-dir.x, dir.z));
         double horiz = Math.sqrt(dir.x * dir.x + dir.z * dir.z);
-        float pitch = (float) Math.atan2(dir.y, horiz);
+        float pitch = (float) Math.toDegrees(Math.atan2(dir.y, horiz));
+
         self.setYRot(yaw);
         self.setXRot(pitch);
     }
-
 
     @Override
     public EntityDimensions getDimensions(Pose pose) {

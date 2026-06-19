@@ -74,8 +74,8 @@ public class SCP025FRRenderer extends MobRenderer<SCP025FR, SCP025FRRenderState,
             poseStack.pushPose();
 
             poseStack.translate(pose.offset().x, pose.offset().y + 1.5, pose.offset().z);
-            poseStack.mulPose(Axis.YP.rotation(-pose.yRot()));
-            poseStack.mulPose(Axis.XP.rotation(-pose.xRot()));
+            poseStack.mulPose(Axis.YP.rotationDegrees(-pose.yRot()));
+            poseStack.mulPose(Axis.XP.rotationDegrees(-pose.xRot()));
             poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
 
             SCP025FRPartRenderState partState = new SCP025FRPartRenderState();
