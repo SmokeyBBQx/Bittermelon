@@ -167,7 +167,7 @@ public class StickyNoteBlock extends Block implements EntityBlock {
 
     @Override
     protected @NotNull InteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return InteractionResult.CONSUME;
         }
 
@@ -185,7 +185,7 @@ public class StickyNoteBlock extends Block implements EntityBlock {
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
-        if (level.isClientSide) return InteractionResult.CONSUME;
+        if (level.isClientSide()) return InteractionResult.CONSUME;
 
         Position position = getPosition(state, hitResult.getLocation(), pos);
 
@@ -200,7 +200,7 @@ public class StickyNoteBlock extends Block implements EntityBlock {
                         Component.literal(message).withStyle() :
                         Component.literal("Blank Note").withStyle(ChatFormatting.ITALIC)
                                 .withStyle(ChatFormatting.GRAY);
-                player.displayClientMessage(component, false);
+                player.sendSystemMessage(component);
                 return InteractionResult.CONSUME;
             }
         }

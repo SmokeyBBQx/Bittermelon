@@ -14,6 +14,13 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.sounds.SoundSource.BLOCKS;
 
+/**
+ * <strong>C2S</strong> <br>
+ * Replaces original text with updated text
+ * @param pos Position of sticky note
+ * @param message New text to replace original with
+ * @param noteIndex Which note is being edited
+ */
 public record UpdateStickyNote(BlockPos pos, String message, int noteIndex) implements CustomPacketPayload {
     public static final Type<UpdateStickyNote> TYPE = new Type<>(Identifier.fromNamespaceAndPath("bittermelon", "update_sticky_note"));
 

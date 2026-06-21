@@ -12,6 +12,12 @@ import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * <strong>S2C</strong> <br>
+ * Opens sticky note editing screen
+ * @param pos Position of sticky note
+ * @param noteIndex Which note is being edited
+ */
 public record OpenStickyNoteScreen(BlockPos pos, int noteIndex) implements CustomPacketPayload {
     public static final Type<OpenStickyNoteScreen> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "open_sticky_note_screen"));
 

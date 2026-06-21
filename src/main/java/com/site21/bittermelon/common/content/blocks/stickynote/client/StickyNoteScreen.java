@@ -6,6 +6,8 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
@@ -23,8 +25,7 @@ public class StickyNoteScreen extends Screen {
     private final StickyNoteBlockEntity stickyNote;
     private final int noteIndex;
     private String message;
-    @Nullable
-    private TextFieldHelper textField;
+    private @Nullable TextFieldHelper textField;
 
     public StickyNoteScreen(@NotNull StickyNoteBlockEntity stickyNote, int noteIndex) {
         super(Component.literal("Edit Sticky Note"));
@@ -47,9 +48,10 @@ public class StickyNoteScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-        GuiGraphicsExtractor.drawCenteredString(font, title, width / 2, height / 3 - 40, 0xFFFFFFFF);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
+
+        graphics.centeredText(font, title, width / 2, height / 3 - 40, 0xFFFFFFFF);
 
         List<FormattedCharSequence> wrappedLines = font.split(Component.literal(message), LINE_WIDTH);
         int startY = height / 3 - LINE_HEIGHT / 2;
@@ -59,18 +61,18 @@ public class StickyNoteScreen extends Screen {
             int lineWidth = font.width(line);
             int x = width / 2 - lineWidth / 2;
             int y = startY + i * LINE_HEIGHT;
-            GuiGraphicsExtractor.drawString(font, line, x, y, 0xFFFFFFFF, false);
+            graphics.text(font, line, x, y, 0xFFFFFFFF, false);
         }
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return textField != null && textField.keyPressed(keyCode) || super.keyPressed(keyCode, scanCode, modifiers);
+    public boolean keyPressed(KeyEvent event) {
+        return textField != null && textField.keyPressed(event) || super.keyPressed(event);
     }
 
     @Override
-    public boolean charTyped(char codePoint, int modifiers) {
-        if (textField != null) textField.charTyped(codePoint);
+    public boolean charTyped(CharacterEvent event) {
+        if (textField != null) textField.charTyped(event);
         return true;
     }
 
