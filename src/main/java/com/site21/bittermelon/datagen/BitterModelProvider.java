@@ -696,35 +696,35 @@ public class BitterModelProvider extends ModelProvider {
     }
 
     public void createEyeballBlister(BlockModelGenerators blockModels, Block block) {
-        blockModels.registerSimpleItemModel(block, Bittermelon.resource("block/eyeball_blister_2"));
+        blockModels.registerSimpleItemModel(block, Bittermelon.identifier("block/eyeball_blister_2"));
         MultiVariant age0 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_0",
-                TextureMapping.cross(Bittermelon.resource("block/eyeball_blister_0")), blockModels.modelOutput));
+                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_0")), blockModels.modelOutput));
         MultiVariant age1 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_1",
-                TextureMapping.cross(Bittermelon.resource("block/eyeball_blister_1")), blockModels.modelOutput));
+                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_1")), blockModels.modelOutput));
         MultiVariant age2 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_2",
-                TextureMapping.cross(Bittermelon.resource("block/eyeball_blister_2")), blockModels.modelOutput));
+                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_2")), blockModels.modelOutput));
         MultiVariant age3 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_3",
-                TextureMapping.cross(Bittermelon.resource("block/eyeball_blister_3")), blockModels.modelOutput));
+                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_3")), blockModels.modelOutput));
         MultiVariant age4 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_4",
-                TextureMapping.cross(Bittermelon.resource("block/eyeball_blister_4")), blockModels.modelOutput));
+                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_4")), blockModels.modelOutput));
         MultiVariant age5 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_5",
-                TextureMapping.cross(Bittermelon.resource("block/eyeball_blister_5")), blockModels.modelOutput));
+                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_5")), blockModels.modelOutput));
         MultiVariant age6 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_6",
-                TextureMapping.cross(Bittermelon.resource("block/eyeball_blister_6")), blockModels.modelOutput));
+                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_6")), blockModels.modelOutput));
         MultiVariant age7 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_7",
-                TextureMapping.cross(Bittermelon.resource("block/eyeball_blister_7")), blockModels.modelOutput));
+                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_7")), blockModels.modelOutput));
         MultiVariant age8 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_8",
-                TextureMapping.cross(Bittermelon.resource("block/eyeball_blister_8")), blockModels.modelOutput));
+                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_8")), blockModels.modelOutput));
         MultiVariant age9 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_9",
-                TextureMapping.cross(Bittermelon.resource("block/eyeball_blister_9")), blockModels.modelOutput));
+                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_9")), blockModels.modelOutput));
         MultiVariant age10 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_10",
-                TextureMapping.cross(Bittermelon.resource("block/eyeball_blister_10")), blockModels.modelOutput));
+                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_10")), blockModels.modelOutput));
         MultiVariant age11 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_11",
-                TextureMapping.cross(Bittermelon.resource("block/eyeball_blister_11")), blockModels.modelOutput));
+                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_11")), blockModels.modelOutput));
         MultiVariant age12 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_12",
-                TextureMapping.cross(Bittermelon.resource("block/eyeball_blister_12")), blockModels.modelOutput));
+                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_12")), blockModels.modelOutput));
         MultiVariant age13 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_13",
-                TextureMapping.cross(Bittermelon.resource("block/eyeball_blister_13")), blockModels.modelOutput));
+                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_13")), blockModels.modelOutput));
 
         blockModels.blockStateOutput.accept(
                 MultiVariantGenerator.dispatch(block)

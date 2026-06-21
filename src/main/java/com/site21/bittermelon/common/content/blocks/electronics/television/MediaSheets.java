@@ -10,10 +10,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MediaSheets {
-    public static final Identifier ATLAS_LOCATION = Bittermelon.resource("textures/atlas/media.png");
-    public static final Identifier ATLAS_INFO_LOCATION = Bittermelon.resource("media");
+    public static final Identifier ATLAS_LOCATION = Bittermelon.identifier("textures/atlas/media.png");
+    public static final Identifier ATLAS_INFO_LOCATION = Bittermelon.identifier("media");
     private static final Map<Identifier, Material> MEDIA_MATERIALS = new HashMap<>();
-    private static final Material DEFAULT_MATERIAL = new Material(ATLAS_LOCATION, Bittermelon.resource("default"));
+    private static final Material DEFAULT_MATERIAL = new Material(ATLAS_LOCATION, Bittermelon.identifier("default"));
 
     public static Material getMaterial(@NotNull Holder<Media> mediaHolder) {
         return MEDIA_MATERIALS.computeIfAbsent(mediaHolder.value().resource(), res -> new Material(ATLAS_LOCATION, res));

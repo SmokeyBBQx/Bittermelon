@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.content.items.scps.scp377.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.client.gui.ScreenHandler;
+import com.site21.bittermelon.client.gui.ScreenSetter;
 import com.site21.bittermelon.common.content.items.scps.scp377.Fortune;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -25,6 +25,6 @@ public record OpenSCP3771Screen(Fortune fortune) implements CustomPacketPayload 
     );
 
     public void handle(IPayloadContext ctx) {
-        ScreenHandler.displaySCP3771Screen(fortune);
+        ScreenSetter.displaySCP3771Screen(fortune);
     }
 }

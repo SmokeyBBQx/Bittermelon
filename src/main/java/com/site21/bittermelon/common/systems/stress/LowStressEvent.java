@@ -23,14 +23,14 @@ public enum LowStressEvent {
             float depletionAmount = -(0.1f + player.getRandom().nextFloat() * 0.3f);
             character.modifySkill(randomSkill, depletionAmount);
 
-            player.displayClientMessage(
+            player.sendSystemMessage(
                     Component.literal("Your mind is foggy and you have trouble remembering simple things.")
                             .withStyle(ChatFormatting.ITALIC)
                             .withStyle(ChatFormatting.RED)
                             .append(Component.literal(randomSkill.getSerializedName() +
                                             " skill decreased by " + String.format("%.2f", -depletionAmount))
-                                    .withStyle(ChatFormatting.GRAY)),
-                    false);
+                                    .withStyle(ChatFormatting.GRAY))
+            );
         }
     }),
 

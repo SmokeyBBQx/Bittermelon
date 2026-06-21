@@ -40,15 +40,14 @@ public class StumbleHandler {
     public static void stumble(@NotNull LivingEntity entity, int length, Vec3 pushDirection) {
         if (entity.hasEffect(FALLEN)) return;
 
-        if (entity.level().isClientSide) return;
+        if (entity.level().isClientSide()) return;
 
-        if (entity.getData(MEDICAL_STATS) instanceof MedicalStats medicalStats) {
-            int movement = (int) medicalStats.getMovement();
-            if (movement > 0) {
-                length /= movement;
-            } else {
-                length = -1;
-            }
+        MedicalStats medicalStats = entity.getData(MEDICAL_STATS);
+        int movement = (int) medicalStats.getMovement();
+        if (movement > 0) {
+            length /= movement;
+        } else {
+            length = -1;
         }
 
         entity.addEffect(new MobEffectInstance(FALLEN, MobEffectInstance.INFINITE_DURATION, 0, false, false));

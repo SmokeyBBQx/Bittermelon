@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public record CreateCharacter(UUID id, String name, String description, int emoteColor) implements CustomPacketPayload {
-    public static final Type<CreateCharacter> TYPE = new Type<>(Bittermelon.resource("create_character"));
+    public static final Type<CreateCharacter> TYPE = new Type<>(Bittermelon.identifier("create_character"));
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {

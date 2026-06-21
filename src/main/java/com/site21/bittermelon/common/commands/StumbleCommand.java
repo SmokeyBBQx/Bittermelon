@@ -7,6 +7,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.permissions.PermissionCheck;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
@@ -14,9 +16,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public class StumbleCommand {
+    public static final PermissionCheck PERMISSION_CHECK = new PermissionCheck.Require(Permissions.COMMANDS_ADMIN);
+
     public static void register(@NotNull CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("stumble")
-                .requires(source -> source.hasPermission(2))
+                .requires(Commands.hasPermission(PERMISSION_CHECK))
                 .then(Commands.argument("targets", EntityArgument.entities())
                         .executes(context -> stumble(context, EntityArgument.getEntities(context, "targets")))
                 )

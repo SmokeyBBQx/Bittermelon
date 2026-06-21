@@ -55,7 +55,7 @@ public class BitterRegistries {
             .sync(true)
             .create();
 
-    public static final ResourceKey<Registry<Anatomy>> ANATOMY_REGISTRY_KEY = ResourceKey.createRegistryKey(Bittermelon.resource("anatomies"));
+    public static final ResourceKey<Registry<Anatomy>> ANATOMY_REGISTRY_KEY = ResourceKey.createRegistryKey(Bittermelon.identifier("anatomies"));
     public static final Registry<Anatomy> ANATOMY_REGISTRY = new RegistryBuilder<>(ANATOMY_REGISTRY_KEY)
             .sync(true)
             .create();

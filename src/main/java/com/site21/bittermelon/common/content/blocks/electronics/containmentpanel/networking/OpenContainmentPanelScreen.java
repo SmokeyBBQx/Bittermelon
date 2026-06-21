@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.content.blocks.electronics.containmentpanel.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.client.gui.ScreenHandler;
+import com.site21.bittermelon.client.gui.ScreenSetter;
 import com.site21.bittermelon.common.content.blocks.electronics.containmentpanel.ContainmentPanelBlockEntity;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -30,7 +30,7 @@ public record OpenContainmentPanelScreen(BlockPos blockPos) implements CustomPac
         if (Minecraft.getInstance().player == null) return;
 
         if (Minecraft.getInstance().player.level().getBlockEntity(blockPos) instanceof ContainmentPanelBlockEntity blockEntity) {
-            ScreenHandler.displayContainmentPanelScreen(blockEntity, true);
+            ScreenSetter.displayContainmentPanelScreen(blockEntity, true);
         }
     }
 }

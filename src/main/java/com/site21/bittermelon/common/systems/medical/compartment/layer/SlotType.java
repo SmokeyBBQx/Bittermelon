@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public enum SlotType implements StringRepresentable {
     CAVITY(Identifier.withDefaultNamespace("textures/block/tinted_glass.png")),
-    SKIN(Bittermelon.resource("textures/gui/medical/skin.png")),
+    SKIN(Bittermelon.identifier("textures/gui/medical/skin.png")),
     MUSCLE(Identifier.withDefaultNamespace("textures/block/netherrack.png")),
     FAT(Identifier.withDefaultNamespace("textures/block/horn_coral_block.png")),
     MEMBRANE(Identifier.withDefaultNamespace("textures/block/dead_brain_coral_block.png")),

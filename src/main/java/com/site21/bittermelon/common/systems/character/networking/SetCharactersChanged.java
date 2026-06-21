@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
     * Notify the Character Manager that the characters have changed and mark dirty for saving.
  */
 public record SetCharactersChanged() implements CustomPacketPayload {
-    public static final Type<SetCharactersChanged> TYPE = new Type<>(Bittermelon.resource("set_characters_changed"));
+    public static final Type<SetCharactersChanged> TYPE = new Type<>(Bittermelon.identifier("set_characters_changed"));
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {

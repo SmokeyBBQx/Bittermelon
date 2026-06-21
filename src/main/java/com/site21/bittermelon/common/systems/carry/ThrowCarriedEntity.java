@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public record ThrowCarriedEntity(UUID uuid, UUID carriedId) implements CustomPacketPayload {
-    public static final Type<ThrowCarriedEntity> TYPE = new Type<>(Bittermelon.resource("throw_carried_entity"));
+    public static final Type<ThrowCarriedEntity> TYPE = new Type<>(Bittermelon.identifier("throw_carried_entity"));
 
     public static final StreamCodec<ByteBuf, ThrowCarriedEntity> STREAM_CODEC = StreamCodec.composite(
             UUIDUtil.STREAM_CODEC,

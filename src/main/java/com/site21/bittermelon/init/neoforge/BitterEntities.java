@@ -88,22 +88,22 @@ public class BitterEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<SCP718>> SCP_718 = ENTITY_TYPES.register("scp_718",
             () -> EntityType.Builder.of(SCP718::new, MobCategory.MONSTER)
                     .sized(0.3f, 1.8f)
-                    .build(ResourceKey.create(Registries.ENTITY_TYPE, Bittermelon.resource("scp_718"))));
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, Bittermelon.identifier("scp_718"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<FluidProjectile>> FLUID_PROJECTILE = ENTITY_TYPES.register("fluid_projectile",
             () -> EntityType.Builder.<FluidProjectile>of(FluidProjectile::new, MobCategory.MISC)
                     .sized(0.5f, 0.5f)
-                    .build(ResourceKey.create(Registries.ENTITY_TYPE, Bittermelon.resource("fluid_projectile"))));
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, Bittermelon.identifier("fluid_projectile"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Mimic>> MIMIC = ENTITY_TYPES.register("mimic",
             () -> EntityType.Builder.<Mimic>of(Mimic::new, MobCategory.CREATURE)
                     .sized(0.6f, 1.8f)
-                    .build(ResourceKey.create(Registries.ENTITY_TYPE, Bittermelon.resource("mimic"))));
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, Bittermelon.identifier("mimic"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SCP025FR>> SCP_025_FR = ENTITY_TYPES.register("scp_025_fr",
             () -> EntityType.Builder.of(SCP025FR::new, MobCategory.MONSTER)
                     .sized(0.6f, 0.3f)
-                    .build(ResourceKey.create(Registries.ENTITY_TYPE, Bittermelon.resource("scp_025_fr"))));
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, Bittermelon.identifier("scp_025_fr"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SCP815Snake>> SCP_815_SNAKE = ENTITY_TYPES.register("scp_815_snake",
             () -> EntityType.Builder.of(SCP815Snake::new, MobCategory.MISC)

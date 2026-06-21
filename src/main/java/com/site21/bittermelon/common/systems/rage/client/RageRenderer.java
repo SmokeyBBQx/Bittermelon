@@ -17,7 +17,6 @@ public class RageRenderer implements GuiLayer {
 
     @Override
     public void render(GuiGraphicsExtractor GuiGraphicsExtractor, DeltaTracker deltaTracker) {
-        if (!Minecraft.useFancyGraphics()) return;
         Player player = Minecraft.getInstance().player;
         if (player != null) {
             int rageValue = player.getData(RAGE);

@@ -51,7 +51,7 @@ public class AnatomyModelWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         AnatomyPictureInPictureRenderer.RenderState anatomyRenderState = new AnatomyPictureInPictureRenderer.RenderState(
                 getLivingRenderState(),
                 entity,
@@ -64,10 +64,10 @@ public class AnatomyModelWidget extends AbstractWidget {
                 width,
                 height,
                 scale,
-                GuiGraphicsExtractor.peekScissorStack()
+                guiGraphics.peekScissorStack()
         );
 
-        GuiGraphicsExtractor.submitPictureInPictureRenderState(anatomyRenderState);
+        guiGraphics.submitPictureInPictureRenderState(anatomyRenderState);
     }
 
     private void renderDebugBounds(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {

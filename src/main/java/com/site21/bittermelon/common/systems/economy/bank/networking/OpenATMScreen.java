@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.systems.economy.bank.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.client.gui.ScreenHandler;
+import com.site21.bittermelon.client.gui.ScreenSetter;
 import com.site21.bittermelon.common.systems.personnel.registry.PersonnelEntry;
 import com.site21.bittermelon.common.systems.personnel.registry.PersonnelRegistry;
 import io.netty.buffer.ByteBuf;
@@ -29,7 +29,7 @@ public record OpenATMScreen(int userID) implements CustomPacketPayload {
     public void handle(@NotNull IPayloadContext ctx) {
         PersonnelEntry entry = PersonnelRegistry.get(ctx.player().level()).getEntry(userID());
         if (entry != null) {
-            ScreenHandler.displayATMScreen(entry);
+            ScreenSetter.displayATMScreen(entry);
         }
     }
 }

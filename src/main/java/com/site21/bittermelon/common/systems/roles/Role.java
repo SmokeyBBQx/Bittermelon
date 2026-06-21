@@ -52,7 +52,7 @@ public class Role {
 
     public void onRoleAdded(Player player, Character character) {
         if (addMessage != null) {
-            player.displayClientMessage(addMessage, false);
+            player.sendSystemMessage(addMessage);
         }
     }
 }

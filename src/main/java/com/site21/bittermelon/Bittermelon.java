@@ -104,7 +104,7 @@ public class Bittermelon {
 
     @SubscribeEvent
     public void onAddReloadListeners(AddServerReloadListenersEvent event) {
-        event.addListener(Bittermelon.resource("reactions"), new ReactionLoader(event.getRegistryAccess()));
+        event.addListener(Bittermelon.identifier("reactions"), new ReactionLoader(event.getRegistryAccess()));
     }
 
     @SubscribeEvent
@@ -149,7 +149,7 @@ public class Bittermelon {
     }
 
     @Contract("_ -> new")
-    public static Identifier resource(String path) {
+    public static Identifier identifier(String path) {
         return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 }

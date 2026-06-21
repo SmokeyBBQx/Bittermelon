@@ -30,7 +30,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
-public class ScreenHandler {
+public class ScreenSetter {
     public static void displayATMScreen(PersonnelEntry entry) {
         Minecraft.getInstance().setScreen(new ATMScreen(entry));
     }

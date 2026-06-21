@@ -34,9 +34,9 @@ public class LoreOpeningOverlay {
         int centerY = mc.getWindow().getGuiScaledHeight() / 3;
         int alpha = (int) (calculateAlpha(elapsed) * 255) << 24;
 
-        GuiGraphicsExtractor graphics = event.getGuiGraphicsExtractor();
-        graphics.drawCenteredString(mc.font, getFormattedDate(), centerX, centerY, 0xFFAA00 | alpha);
-        graphics.drawCenteredString(mc.font, Component.literal(text), centerX, centerY + 20, 0xFFFFFF | alpha);
+        GuiGraphicsExtractor graphics = event.getGuiGraphics();
+        graphics.text(mc.font, getFormattedDate(), centerX, centerY, 0xFFAA00 | alpha);
+        graphics.text(mc.font, Component.literal(text), centerX, centerY + 20, 0xFFFFFF | alpha);
     }
 
     private static float calculateAlpha(long elapsed) {

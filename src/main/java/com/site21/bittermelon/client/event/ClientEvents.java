@@ -45,7 +45,7 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public static void onRenderLevelAfterEntities(RenderLevelStageEvent.@NotNull AfterEntities event) {
+    public static void onRenderLevelAfterEntities(RenderLevelStageEvent.AfterEntities event) {
         BlockDamageRenderer.renderDamaged(event.getLevel(), event.getPoseStack(), event.getCamera(), event.getRenderableSections());
     }
 
@@ -58,7 +58,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onRenderOverlayPost(RenderGuiLayerEvent.@NotNull Post event) {
-        RiseProgressBar.render(event.getGuiGraphicsExtractor());
+        RiseProgressBar.render(event.getGuiGraphics());
     }
 
     // TODO: Shit doesn't work

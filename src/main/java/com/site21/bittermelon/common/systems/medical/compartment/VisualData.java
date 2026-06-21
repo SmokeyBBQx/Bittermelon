@@ -74,7 +74,7 @@ public record VisualData(
     @Contract("_ -> new")
     public @NotNull VisualData withIcon(String name) {
         return new VisualData(this.x, this.y, this.width, this.height, this.scale,
-                Bittermelon.resource("textures/gui/organs/" + name + ".png"), this.color);
+                Bittermelon.identifier("textures/gui/organs/" + name + ".png"), this.color);
     }
 
     @Contract("_ -> new")

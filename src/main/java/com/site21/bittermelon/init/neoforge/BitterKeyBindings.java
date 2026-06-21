@@ -6,22 +6,23 @@ import net.minecraft.client.KeyMapping;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.jarjar.nio.util.Lazy;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.client.settings.KeyModifier;
+import net.neoforged.neoforge.common.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class BitterKeyBindings {
+    public static final KeyMapping.Category BITTERMELON_CATEGORY = new KeyMapping.Category(Bittermelon.identifier("category"));
 
     public static final Lazy<KeyMapping> HEALTH_SCREEN_KEY = Lazy.of(() ->
             new KeyMapping(
                     "Health Screen",
                     InputConstants.Type.KEYSYM,
                     GLFW.GLFW_KEY_H,
-                    "key.category.bittermelon"
+                    BITTERMELON_CATEGORY
             )
     );
 
@@ -32,7 +33,7 @@ public class BitterKeyBindings {
                     KeyModifier.ALT,
                     InputConstants.Type.KEYSYM,
                     GLFW.GLFW_KEY_Q,
-                    "key.category.bittermelon"
+                    BITTERMELON_CATEGORY
             )
     );
 
@@ -41,23 +42,15 @@ public class BitterKeyBindings {
                     "Character",
                     InputConstants.Type.KEYSYM,
                     GLFW.GLFW_KEY_C,
-                    "key.category.bittermelon"
+                    BITTERMELON_CATEGORY
             )
     );
 
-    public static final Lazy<KeyMapping> SCREAM_KEY = Lazy.of(() ->
-            new KeyMapping(
-                    "Scream",
-                    InputConstants.Type.KEYSYM,
-                    GLFW.GLFW_KEY_V,
-                    "key.category.bittermelon"
-            ));
-
     @SubscribeEvent
     public static void register(@NotNull RegisterKeyMappingsEvent event) {
+        event.registerCategory(BITTERMELON_CATEGORY);
         event.register(HEALTH_SCREEN_KEY.get());
         event.register(THROW_ITEM_KEY.get());
         event.register(CHARACTER_KEY.get());
-        event.register(SCREAM_KEY.get());
     }
 }

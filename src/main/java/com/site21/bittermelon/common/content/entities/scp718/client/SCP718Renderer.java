@@ -14,7 +14,7 @@ public class SCP718Renderer extends MobRenderer<SCP718, SCP718RenderState, SCP71
 
     @Override
     public Identifier getTextureLocation(SCP718RenderState renderState) {
-        return Bittermelon.resource("textures/entity/scp_718.png");
+        return Bittermelon.identifier("textures/entity/scp_718.png");
     }
 
     @Override

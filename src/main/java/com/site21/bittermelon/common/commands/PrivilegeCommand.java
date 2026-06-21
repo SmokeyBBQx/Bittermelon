@@ -3,18 +3,21 @@ package com.site21.bittermelon.common.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.site21.bittermelon.common.systems.personnel.privilege.PrivilegeGroup;
 import com.site21.bittermelon.common.systems.personnel.privilege.PrivilegeManager;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.permissions.PermissionCheck;
+import net.minecraft.server.permissions.Permissions;
 import org.jetbrains.annotations.NotNull;
 
 public class PrivilegeCommand {
+    public static final PermissionCheck PERMISSION_CHECK = new PermissionCheck.Require(Permissions.COMMANDS_ADMIN);
+
     public static void register(@NotNull CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("privilege")
-                .requires(source -> source.hasPermission(4))
+                .requires(Commands.hasPermission(PERMISSION_CHECK))
                 .then(Commands.literal("add")
                         .then(Commands.argument("name", StringArgumentType.string())
                                 .executes(PrivilegeCommand::addPrivilege)))
@@ -26,7 +29,7 @@ public class PrivilegeCommand {
         );
 
         dispatcher.register(Commands.literal("privilegegroup")
-                .requires(source -> source.hasPermission(4))
+                .requires(Commands.hasPermission(PERMISSION_CHECK))
                 .then(Commands.literal("create")
                         .then(Commands.argument("name", StringArgumentType.string())
                                 .executes(PrivilegeCommand::createGroup)))
@@ -57,7 +60,7 @@ public class PrivilegeCommand {
         );
     }
 
-    private static int addPrivilege(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int addPrivilege(CommandContext<CommandSourceStack> context) {
         String privilege = StringArgumentType.getString(context, "name");
         PrivilegeManager manager = PrivilegeManager.get(context.getSource().getServer());
 
@@ -70,7 +73,7 @@ public class PrivilegeCommand {
         }
     }
 
-    private static int removePrivilege(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int removePrivilege(CommandContext<CommandSourceStack> context) {
         String privilege = StringArgumentType.getString(context, "name");
         PrivilegeManager manager = PrivilegeManager.get(context.getSource().getServer());
 
@@ -83,7 +86,7 @@ public class PrivilegeCommand {
         }
     }
 
-    private static int listPrivileges(@NotNull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int listPrivileges(@NotNull CommandContext<CommandSourceStack> context) {
         PrivilegeManager manager = PrivilegeManager.get(context.getSource().getServer());
 
         if (manager.getPrivileges().isEmpty()) {
@@ -94,7 +97,7 @@ public class PrivilegeCommand {
         return 1;
     }
 
-    private static int createGroup(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int createGroup(CommandContext<CommandSourceStack> context) {
         String name = StringArgumentType.getString(context, "name");
         PrivilegeManager manager = PrivilegeManager.get(context.getSource().getServer());
 
@@ -108,7 +111,7 @@ public class PrivilegeCommand {
         }
     }
 
-    private static int removeGroup(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int removeGroup(CommandContext<CommandSourceStack> context) {
         String name = StringArgumentType.getString(context, "name");
         PrivilegeManager manager = PrivilegeManager.get(context.getSource().getServer());
 
@@ -122,7 +125,7 @@ public class PrivilegeCommand {
         }
     }
 
-    private static int addPrivilegeToGroup(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int addPrivilegeToGroup(CommandContext<CommandSourceStack> context) {
         String groupName = StringArgumentType.getString(context, "group");
         String privilege = StringArgumentType.getString(context, "privilege");
         PrivilegeManager manager = PrivilegeManager.get(context.getSource().getServer());
@@ -148,7 +151,7 @@ public class PrivilegeCommand {
         }
     }
 
-    private static int removePrivilegeFromGroup(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int removePrivilegeFromGroup(CommandContext<CommandSourceStack> context) {
         String groupName = StringArgumentType.getString(context, "group");
         String privilege = StringArgumentType.getString(context, "privilege");
         PrivilegeManager manager = PrivilegeManager.get(context.getSource().getServer());
@@ -169,7 +172,7 @@ public class PrivilegeCommand {
         }
     }
 
-    private static int addParentToGroup(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int addParentToGroup(CommandContext<CommandSourceStack> context) {
         String groupName = StringArgumentType.getString(context, "group");
         String parentName = StringArgumentType.getString(context, "parent");
         PrivilegeManager manager = PrivilegeManager.get(context.getSource().getServer());
@@ -202,7 +205,7 @@ public class PrivilegeCommand {
         }
     }
 
-    private static int removeParentFromGroup(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int removeParentFromGroup(CommandContext<CommandSourceStack> context) {
         String groupName = StringArgumentType.getString(context, "group");
         String parentName = StringArgumentType.getString(context, "parent");
         PrivilegeManager manager = PrivilegeManager.get(context.getSource().getServer());
@@ -223,7 +226,7 @@ public class PrivilegeCommand {
         }
     }
 
-    private static int listGroups(@NotNull CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int listGroups(@NotNull CommandContext<CommandSourceStack> context) {
         PrivilegeManager manager = PrivilegeManager.get(context.getSource().getServer());
 
         if (manager.getPrivilegeGroups().isEmpty()) {
@@ -234,7 +237,7 @@ public class PrivilegeCommand {
         return 1;
     }
 
-    private static int groupInfo(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+    private static int groupInfo(CommandContext<CommandSourceStack> context) {
         String name = StringArgumentType.getString(context, "name");
         PrivilegeManager manager = PrivilegeManager.get(context.getSource().getServer());
 
@@ -245,7 +248,6 @@ public class PrivilegeCommand {
         }
 
         context.getSource().sendSuccess(() -> Component.literal("Group: " + name), false);
-//        context.getSource().sendSuccess(() -> Component.literal("Privileges: " + String.join(", ", group.getPrivileges())), false);
         context.getSource().sendSuccess(() -> Component.literal("Parents: " + String.join(", ", group.getParents())), false);
 
         return 1;

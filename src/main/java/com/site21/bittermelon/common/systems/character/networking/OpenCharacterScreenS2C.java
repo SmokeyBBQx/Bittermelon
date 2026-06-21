@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.systems.character.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.client.gui.ScreenHandler;
+import com.site21.bittermelon.client.gui.ScreenSetter;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -25,6 +25,6 @@ public record OpenCharacterScreenS2C(int maxCharacters) implements CustomPacketP
     );
 
     public void handle(IPayloadContext ctx) {
-        ScreenHandler.displayCharacterScreen(maxCharacters);
+        ScreenSetter.displayCharacterScreen(maxCharacters);
     }
 }

@@ -32,7 +32,7 @@ public class FlamingoBlockRenderer implements BlockEntityRenderer<FlamingoBlockE
         poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
 
         VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entitySolid(
-                Bittermelon.resource("textures/entity/scp_1507.png")
+                Bittermelon.identifier("textures/entity/scp_1507.png")
         ));
 
         model.renderToBuffer(poseStack, vertexConsumer, packedLight, packedOverlay);

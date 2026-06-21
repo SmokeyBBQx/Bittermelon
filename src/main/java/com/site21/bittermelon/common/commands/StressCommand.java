@@ -10,6 +10,8 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.PermissionCheck;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
@@ -20,9 +22,11 @@ import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.STRESS;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.STRESS_RELIEF;
 
 public class StressCommand {
+    public static final PermissionCheck PERMISSION_CHECK = new PermissionCheck.Require(Permissions.COMMANDS_ADMIN);
+
     public static void register(@NotNull CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("stress")
-                .requires(source -> source.hasPermission(2))
+                .requires(Commands.hasPermission(PERMISSION_CHECK))
                 // /stress set <targets> <value>
                 .then(Commands.literal("set")
                         .then(Commands.argument("targets", EntityArgument.players())

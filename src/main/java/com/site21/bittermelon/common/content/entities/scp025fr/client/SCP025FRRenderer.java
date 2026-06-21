@@ -19,7 +19,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.entity.PartEntity;
 
 public class SCP025FRRenderer extends MobRenderer<SCP025FR, SCP025FRRenderState, SCP025FRModel> {
-    private static final Identifier TEXTURE = Bittermelon.resource("textures/entity/scp_025_fr.png");
+    private static final Identifier TEXTURE = Bittermelon.identifier("textures/entity/scp_025_fr.png");
     private final SCP025FRBodyModel bodyModel;
     private final SCP025FRTailModel tailModel;
 

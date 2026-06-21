@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.content.blocks.electronics.intercom.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.client.gui.ScreenHandler;
+import com.site21.bittermelon.client.gui.ScreenSetter;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.IntercomBlockEntity;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -30,7 +30,7 @@ public record OpenIntercomScreen(BlockPos blockPos) implements CustomPacketPaylo
         if (Minecraft.getInstance().player == null) return;
 
         if (Minecraft.getInstance().player.level().getBlockEntity(blockPos) instanceof IntercomBlockEntity blockEntity) {
-            ScreenHandler.displayIntercomScreen(blockEntity, true);
+            ScreenSetter.displayIntercomScreen(blockEntity, true);
         }
     }
 }

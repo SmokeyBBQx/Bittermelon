@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.content.items.wirecutters.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.client.gui.ScreenHandler;
+import com.site21.bittermelon.client.gui.ScreenSetter;
 import com.site21.bittermelon.common.systems.electronics.ElectronicDevice;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -30,7 +30,7 @@ public record OpenWireCutterScreen(BlockPos pos) implements CustomPacketPayload 
         if (Minecraft.getInstance().player == null) return;
 
         if (Minecraft.getInstance().player.level().getBlockEntity(pos) instanceof ElectronicDevice blockEntity) {
-            ScreenHandler.displayWireCutterScreen(blockEntity);
+            ScreenSetter.displayWireCutterScreen(blockEntity);
         }
     }
 }

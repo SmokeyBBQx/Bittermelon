@@ -95,15 +95,15 @@ public class ClientSetup {
     );
 
     public static final ContextKey<Float> ENTITY_WIDTH = new ContextKey<>(
-            Bittermelon.resource("entity_width")
+            Bittermelon.identifier("entity_width")
     );
 
     public static final ContextKey<Map<String, Boolean>> LIMB_VISIBILITY = new ContextKey<>(
-            Bittermelon.resource("limb_visibility")
+            Bittermelon.identifier("limb_visibility")
     );
 
     public static final ContextKey<Boolean> EYEBALL_GROWTH = new ContextKey<>(
-            Bittermelon.resource("eyeball_growth")
+            Bittermelon.identifier("eyeball_growth")
     );
 
     @SubscribeEvent
@@ -276,7 +276,7 @@ public class ClientSetup {
     @SubscribeEvent
     public static void registerGuiLayers(@NotNull RegisterGuiLayersEvent event) {
         event.registerAbove(Identifier.withDefaultNamespace("camera_overlays"),
-                Bittermelon.resource("rage_overlay"), new RageRenderer());
+                Bittermelon.identifier("rage_overlay"), new RageRenderer());
     }
 
     @SubscribeEvent

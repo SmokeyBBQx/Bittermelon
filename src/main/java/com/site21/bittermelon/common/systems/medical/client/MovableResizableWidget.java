@@ -1,6 +1,7 @@
 package com.site21.bittermelon.common.systems.medical.client;
 
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,19 +63,19 @@ public abstract class MovableResizableWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (isInResizeArea(mouseX, mouseY)) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (isInResizeArea(event.x(), event.y())) {
             isResizing = true;
-            resizeStartX = (int) mouseX;
-            resizeStartY = (int) mouseY;
+            resizeStartX = (int) event.x();
+            resizeStartY = (int) event.y();
             resizeStartWidth = width;
             return true;
         }
 
-        if (isInDragArea(mouseX, mouseY)) {
+        if (isInDragArea(event.x(), event.y())) {
             isDragging = true;
-            dragOffsetX = (int) (mouseX - getX());
-            dragOffsetY = (int) (mouseY - getY());
+            dragOffsetX = (int) (event.x() - getX());
+            dragOffsetY = (int) (event.y() - getY());
             return true;
         }
 
@@ -82,16 +83,16 @@ public abstract class MovableResizableWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+    public boolean mouseDragged(MouseButtonEvent event, double dx, double dy) {
         if (isDragging) {
-            setX((int) (mouseX - dragOffsetX));
-            setY((int) (mouseY - dragOffsetY));
+            setX((int) (event.x() - dragOffsetX));
+            setY((int) (event.y() - dragOffsetY));
             return true;
         }
 
         if (isResizing) {
-            int deltaX = (int) mouseX - resizeStartX;
-            int deltaY = (int) mouseY - resizeStartY;
+            int deltaX = (int) event.x() - resizeStartX;
+            int deltaY = (int) event.y() - resizeStartY;
 
             int delta = Math.max(Math.abs(deltaX), Math.abs(deltaY));
             if (deltaX < 0 || deltaY < 0) {
@@ -108,16 +109,16 @@ public abstract class MovableResizableWidget extends AbstractWidget {
             return true;
         }
 
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        return super.mouseDragged(event, dx, dy);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(MouseButtonEvent event) {
         boolean result = isDragging || isResizing;
         isDragging = false;
         isResizing = false;
 
-        return result || super.mouseReleased(mouseX, mouseY, button);
+        return result || super.mouseReleased(event);
     }
 
     protected void renderResizeHandle(net.minecraft.client.gui.GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {

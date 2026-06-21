@@ -18,8 +18,8 @@ import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.STRESS;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.STRESS_RELIEF;
 
 public class StressBarRenderer implements ContextualBarRenderer {
-    private static final Identifier STRESS_BAR_BACKGROUND = Bittermelon.resource("hud/stress_bar_background");
-    private static final Identifier STRESS_BAR_PROGRESS = Bittermelon.resource("hud/stress_bar_progress");
+    private static final Identifier STRESS_BAR_BACKGROUND = Bittermelon.identifier("hud/stress_bar_background");
+    private static final Identifier STRESS_BAR_PROGRESS = Bittermelon.identifier("hud/stress_bar_progress");
     private final Minecraft minecraft;
 
     public StressBarRenderer(Minecraft minecraft) {
@@ -27,7 +27,7 @@ public class StressBarRenderer implements ContextualBarRenderer {
     }
 
     @Override
-    public void renderBackground(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, DeltaTracker deltaTracker) {
+    public void extractBackground(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
         LocalPlayer player = minecraft.player;
         int x = left(minecraft.getWindow());
         int y = top(minecraft.getWindow());
@@ -47,12 +47,12 @@ public class StressBarRenderer implements ContextualBarRenderer {
             shakeOffset = (int) (Math.sin(time * Math.PI * 10) * level / 2);
         }
 
-        GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, STRESS_BAR_BACKGROUND, x + shakeOffset, y, 182, 5);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, STRESS_BAR_BACKGROUND, x + shakeOffset, y, 182, 5);
 
         if (width > 0) {
             int color = ARGB.color(1 - player.getData(STRESS_RELIEF), 0xFFFFFF);
 
-            GuiGraphicsExtractor.blitSprite(
+            graphics.blitSprite(
                     RenderPipelines.GUI_TEXTURED,
                     getStressBar(level),
                     182, 5,
@@ -64,18 +64,19 @@ public class StressBarRenderer implements ContextualBarRenderer {
         }
     }
 
-    @Contract("_ -> new")
-    private @NotNull Identifier getStressBar(int level) {
-        return level < 1 ? STRESS_BAR_PROGRESS : Bittermelon.resource("hud/stress_bar_progress_" + level);
-    }
-
-    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, DeltaTracker deltaTracker) {
+    @Override
+    public void extractRenderState(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
         LocalPlayer player = minecraft.player;
         int level = player.getData(STRESS) / 100;
         Component component = Component.literal("!".repeat(level));
-        int x = (GuiGraphicsExtractor.guiWidth() - minecraft.font.width(component)) / 2;
-        int y = GuiGraphicsExtractor.guiHeight() - 24 - 9 - 2;
+        int x = (graphics.guiWidth() - minecraft.font.width(component)) / 2;
+        int y = graphics.guiHeight() - 24 - 9 - 2;
         int color = ARGB.color(1 - player.getData(STRESS_RELIEF), 0xFFFFFF);
-        GuiGraphicsExtractor.drawString(minecraft.font, component, x, y, color, true);
+        graphics.text(minecraft.font, component, x, y, color, true);
+    }
+
+    @Contract("_ -> new")
+    private @NotNull Identifier getStressBar(int level) {
+        return level < 1 ? STRESS_BAR_PROGRESS : Bittermelon.identifier("hud/stress_bar_progress_" + level);
     }
 }

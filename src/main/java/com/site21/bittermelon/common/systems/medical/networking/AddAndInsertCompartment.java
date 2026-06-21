@@ -29,7 +29,7 @@ import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.MEDICAL
  */
 public record AddAndInsertCompartment(UUID entityUUID, UUID parentId, CompartmentInstance compartment, int layer,
                                       int x, int y, int z) implements CustomPacketPayload {
-    public static final Type<AddAndInsertCompartment> TYPE = new Type<>(Bittermelon.resource("add_and_insert_compartment"));
+    public static final Type<AddAndInsertCompartment> TYPE = new Type<>(Bittermelon.identifier("add_and_insert_compartment"));
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {

@@ -14,7 +14,7 @@ public class RageHandler {
     private static final int RAGE_DECAY_INTERVAL = 60;
 
     public static void tick(Level level, Player player) {
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
         long gameTime = level.getGameTime();
 
         if (gameTime % RAGE_DECAY_INTERVAL != 0) return;

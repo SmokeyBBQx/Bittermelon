@@ -15,7 +15,7 @@ import static com.site21.bittermelon.client.event.ClientSetup.EYEBALL_GROWTH;
 import static com.site21.bittermelon.client.event.LayerDefinitions.SCP_718_SMALL_LAYER;
 
 public class EyeballOnPlayerLayer extends RenderLayer<PlayerRenderState, PlayerModel> {
-    private static final Identifier TEXTURE = Bittermelon.resource("textures/entity/scp_718.png");
+    private static final Identifier TEXTURE = Bittermelon.identifier("textures/entity/scp_718.png");
     private final SCP718SmallModel model;
     private final SCP718RenderState eyeballState;
 

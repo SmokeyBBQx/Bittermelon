@@ -5,15 +5,15 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -53,9 +53,9 @@ public class AnatomyPictureInPictureRenderer extends PictureInPictureRenderer<An
         poseStack.mulPose(renderState.rotation());
 
         Quaternionf overrideCameraAngle = renderState.overrideCameraAngle();
-        if (overrideCameraAngle != null) {
-            dispatcher.overrideCameraOrientation(overrideCameraAngle.conjugate(new Quaternionf()).rotateY((float) Math.PI));
-        }
+//        if (overrideCameraAngle != null) {
+//            dispatcher.overrideCameraOrientation(overrideCameraAngle.conjugate(new Quaternionf()).rotateY((float) Math.PI));
+//        }
     }
 
     @SuppressWarnings("unchecked")

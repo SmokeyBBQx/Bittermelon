@@ -24,7 +24,7 @@ import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.MEDICAL
  * @param compartments
  */
 public record UpdateCompartments(UUID entityUUID, List<CompartmentInstance> compartments) implements CustomPacketPayload {
-    public static final Type<UpdateCompartments> TYPE = new Type<>(Bittermelon.resource("update_compartments"));
+    public static final Type<UpdateCompartments> TYPE = new Type<>(Bittermelon.identifier("update_compartments"));
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {

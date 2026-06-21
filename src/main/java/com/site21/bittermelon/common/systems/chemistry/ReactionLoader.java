@@ -12,7 +12,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import java.util.Map;
 
 public class ReactionLoader extends SimpleJsonResourceReloadListener<Reaction> {
-    public static final ResourceKey<Registry<Reaction>> REACTION_REGISTRY_KEY = ResourceKey.createRegistryKey(Bittermelon.resource("reactions"));
+    public static final ResourceKey<Registry<Reaction>> REACTION_REGISTRY_KEY = ResourceKey.createRegistryKey(Bittermelon.identifier("reactions"));
 
     public ReactionLoader(HolderLookup.Provider provider) {
         super(provider, Reaction.CODEC, REACTION_REGISTRY_KEY);

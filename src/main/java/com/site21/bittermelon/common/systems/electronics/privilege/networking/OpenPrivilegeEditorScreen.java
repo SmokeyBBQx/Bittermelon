@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.systems.electronics.privilege.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.client.gui.ScreenHandler;
+import com.site21.bittermelon.client.gui.ScreenSetter;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.StreamCodec;
@@ -27,7 +27,7 @@ public record OpenPrivilegeEditorScreen(BlockPos pos) implements CustomPacketPay
 
     public void handle(@NotNull IPayloadContext ctx) {
         if (ctx.player().level().getBlockEntity(pos) instanceof BlockEntity blockEntity) {
-            ScreenHandler.displayPrivilegeEditorScreen(blockEntity);
+            ScreenSetter.displayPrivilegeEditorScreen(blockEntity);
         }
     }
 }

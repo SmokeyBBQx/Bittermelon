@@ -41,7 +41,7 @@ public abstract class DamageGenerator {
      */
 
     public @Nullable DamageResult generateDamage(MedicalStats medicalStats, int area, int minDepth, int maxDepth, float damage, Character character, @NotNull LivingEntity entity) {
-        if (entity.level().isClientSide) return null;
+        if (entity.level().isClientSide()) return null;
 
 //        List<CompartmentInstance> initialCompartments = getInitialCompartments(medicalStats);
 //        if (initialCompartments.isEmpty()) return null;

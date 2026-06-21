@@ -13,7 +13,7 @@ import static net.minecraft.world.level.block.Block.UPDATE_ALL;
 
 // This might be such a bad solution, but I have no other way of forcing the rerender
 public record UpdateBlockAt(BlockPos pos) implements CustomPacketPayload {
-    public static final Type<UpdateBlockAt> TYPE = new Type<>(Bittermelon.resource("update_block_at"));
+    public static final Type<UpdateBlockAt> TYPE = new Type<>(Bittermelon.identifier("update_block_at"));
 
     @Override
     public Type<? extends CustomPacketPayload> type() {

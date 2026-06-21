@@ -24,7 +24,7 @@ import java.util.UUID;
  * @param layer Layer from which to extract the compartment
  */
 public record RemoveCompartment(UUID entityUUID, UUID parentId, UUID toRemoveId) implements CustomPacketPayload {
-    public static final Type<RemoveCompartment> TYPE = new Type<>(Bittermelon.resource("remove_compartment"));
+    public static final Type<RemoveCompartment> TYPE = new Type<>(Bittermelon.identifier("remove_compartment"));
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {
