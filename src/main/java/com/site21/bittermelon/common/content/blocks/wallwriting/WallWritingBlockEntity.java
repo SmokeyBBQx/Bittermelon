@@ -49,7 +49,7 @@ public class WallWritingBlockEntity extends BlockEntity {
 
     public boolean playerIsTooFarAwayToEdit(UUID uuid) {
         Player player = level.getPlayerByUUID(uuid);
-        return player == null || !player.canInteractWithBlock(this.getBlockPos(), 4.0f);
+        return player == null || !player.isWithinBlockInteractionRange(getBlockPos(), 4.0f);
     }
 
     @Override

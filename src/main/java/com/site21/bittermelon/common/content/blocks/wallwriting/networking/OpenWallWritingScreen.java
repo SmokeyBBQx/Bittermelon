@@ -13,6 +13,13 @@ import net.minecraft.world.item.DyeColor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * <strong>S2C</strong> <br>
+ * Opens wall writing screen
+ * @param pos Position of wall writing
+ * @param colorId ID of color
+ * @param isGlowing Whether text is glowing
+ */
 public record OpenWallWritingScreen(BlockPos pos, int colorId, boolean isGlowing) implements CustomPacketPayload {
     public static final Type<OpenWallWritingScreen> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "open_wall_writing_screen"));
 

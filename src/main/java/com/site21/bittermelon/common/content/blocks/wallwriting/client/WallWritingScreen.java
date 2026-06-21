@@ -6,16 +6,18 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.blockentity.SignRenderer;
+import net.minecraft.client.renderer.blockentity.AbstractSignRenderer;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.SignText;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
-import javax.annotation.Nullable;
 import java.util.stream.IntStream;
 
 
@@ -29,11 +31,10 @@ public class WallWritingScreen extends Screen {
     private final String[] messages;
     private int frame;
     private int line;
-    @Nullable
-    private TextFieldHelper textField;
+    private @Nullable TextFieldHelper textField;
 
     public WallWritingScreen(@NotNull WallWritingBlockEntity wallWriting) {
-        super(Component.literal("Write On Wall"));
+        super(Component.literal("wallwriting.edit"));
         this.wallWriting = wallWriting;
         text = wallWriting.getText();
         messages = IntStream.range(0, 4).mapToObj((i) -> text.getMessage(i, false)).map(Component::getString).toArray(String[]::new);
@@ -41,7 +42,7 @@ public class WallWritingScreen extends Screen {
 
     @Override
     protected void init() {
-        addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, (button) -> onClose()).bounds(
+        addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, (_) -> onClose()).bounds(
                 width / 2 - 100, height / 4 + 144, 200, 20).build());
         textField = new TextFieldHelper(() ->
                 messages[line],
@@ -59,32 +60,35 @@ public class WallWritingScreen extends Screen {
         }
     }
 
-    @Override
-    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-        GuiGraphicsExtractor.drawCenteredString(font, title, width / 2, 50, 16777215);
-
-        GuiGraphicsExtractor.pose().pushMatrix();
-        GuiGraphicsExtractor.pose().translate(width / 2.0f, 90.0f);
-        renderText(GuiGraphicsExtractor);
-        GuiGraphicsExtractor.pose().popMatrix();
+    private boolean isValid() {
+        return !wallWriting.isRemoved() && !wallWriting.playerIsTooFarAwayToEdit(minecraft.player.getUUID());
     }
 
     @Override
-    public void renderBackground(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(graphics, mouseX, mouseY, partialTick);
 
+        extractBackground(graphics, mouseX, mouseY, partialTick);
+
+        graphics.centeredText(font, title, width / 2, 50, 16777215);
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(width / 2.0f, 90.0f);
+        extractText(graphics);
+        graphics.pose().popMatrix();
+    }
+
+    public void extractBackground(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         int panelWidth = 100;
         int panelHeight = 50;
         int panelX = width / 2 - panelWidth / 2;
         int panelY = 90 - panelHeight / 2;
-        GuiGraphicsExtractor.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, 0x55000000);
+        graphics.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, 0x55000000);
     }
 
-    private void renderText(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor) {
-        setupRenderTransform(GuiGraphicsExtractor);
+    private void extractText(@NotNull GuiGraphicsExtractor graphics) {
+        setupRenderTransform(graphics);
 
-        int textColor = text.hasGlowingText() ? text.getColor().getTextColor() : SignRenderer.getDarkColor(text);
+        int textColor = text.hasGlowingText() ? text.getColor().getTextColor() : AbstractSignRenderer.getDarkColor(text);
         boolean showCursor = frame / 6 % 2 == 0;
         int cursorPos = textField.getCursorPos();
         int selectionPos = textField.getSelectionPos();
@@ -97,19 +101,19 @@ public class WallWritingScreen extends Screen {
             message = formatMessageForDisplay(message);
             int lineY = lineIndex * TEXT_LINE_HEIGHT - textBlockHeight;
 
-            renderTextLine(GuiGraphicsExtractor, message, lineY, textColor);
+            renderTextLine(graphics, message, lineY, textColor);
 
             if (lineIndex == line && cursorPos >= 0) {
                 int currentLineY = line * TEXT_LINE_HEIGHT - textBlockHeight;
-                renderCursorAndSelection(GuiGraphicsExtractor, message, currentLineY, cursorPos, selectionPos, textColor, showCursor);
+                renderCursorAndSelection(graphics, message, currentLineY, cursorPos, selectionPos, textColor, showCursor);
             }
         }
     }
 
-    private void setupRenderTransform(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor) {
-        GuiGraphicsExtractor.pose().translate(0.0F, 0.0F);
+    private void setupRenderTransform(@NotNull GuiGraphicsExtractor graphics) {
+        graphics.pose().translate(0.0F, 0.0F);
         Vector3f scale = TEXT_SCALE;
-        GuiGraphicsExtractor.pose().scale(scale.x(), scale.y());
+        graphics.pose().scale(scale.x(), scale.y());
     }
 
     private String formatMessageForDisplay(String message) {
@@ -119,12 +123,12 @@ public class WallWritingScreen extends Screen {
         return message;
     }
 
-    private void renderTextLine(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, String message, int lineY, int textColor) {
+    private void renderTextLine(@NotNull GuiGraphicsExtractor graphics, String message, int lineY, int textColor) {
         int textX = -font.width(message) / 2;
-        GuiGraphicsExtractor.drawString(font, message, textX, lineY, textColor, false);
+        graphics.text(font, message, textX, lineY, textColor, false);
     }
 
-    private void renderCursorAndSelection(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, String message, int lineY,
+    private void renderCursorAndSelection(@NotNull GuiGraphicsExtractor graphics, String message, int lineY,
                                           int cursorPos, int selectionPos, int textColor, boolean showCursor) {
         int messageWidth = font.width(message);
         int centerOffset = messageWidth / 2;
@@ -132,18 +136,18 @@ public class WallWritingScreen extends Screen {
         int cursorX = cursorOffset - centerOffset;
 
         if (showCursor) {
-            renderCursor(GuiGraphicsExtractor, message, cursorX, lineY, cursorPos, textColor);
+            renderCursor(graphics, message, cursorX, lineY, cursorPos, textColor);
         }
 
         if (selectionPos != cursorPos) {
-            renderSelectionHighlight(GuiGraphicsExtractor, message, lineY, cursorPos, selectionPos, centerOffset);
+            renderSelectionHighlight(graphics, message, lineY, cursorPos, selectionPos, centerOffset);
         }
     }
 
     private void renderCursor(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, @NotNull String message, int cursorX,
                               int lineY, int cursorPos, int textColor) {
         if (cursorPos >= message.length()) {
-            GuiGraphicsExtractor.drawString(font, "_", cursorX, lineY, textColor, false);
+            GuiGraphicsExtractor.text(font, "_", cursorX, lineY, textColor, false);
         } else {
             GuiGraphicsExtractor.fill(cursorX, lineY - 1, cursorX + 1, lineY + TEXT_LINE_HEIGHT, -16777216 | textColor);
         }
@@ -162,10 +166,6 @@ public class WallWritingScreen extends Screen {
                 lineY + TEXT_LINE_HEIGHT, -16776961);
     }
 
-    private boolean isValid() {
-        return !wallWriting.isRemoved() && !wallWriting.playerIsTooFarAwayToEdit(minecraft.player.getUUID());
-    }
-
     private void setMessage(String message) {
         messages[this.line] = message;
         text = text.setMessage(line, Component.literal(message));
@@ -174,13 +174,16 @@ public class WallWritingScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean keyPressed(KeyEvent event) {
+        assert textField != null;
+        int keyCode = event.input();
+
         if (keyCode == 265) {
             line = line - 1 & 3;
             textField.setCursorToEnd();
             return true;
         } else if (keyCode != 264 && keyCode != 257 && keyCode != 335) {
-            return textField.keyPressed(keyCode) || super.keyPressed(keyCode, scanCode, modifiers);
+            return textField.keyPressed(event) || super.keyPressed(event);
         } else {
             line = line + 1 & 3;
             textField.setCursorToEnd();
@@ -189,8 +192,9 @@ public class WallWritingScreen extends Screen {
     }
 
     @Override
-    public boolean charTyped(char codePoint, int modifiers) {
-        textField.charTyped(codePoint);
+    public boolean charTyped(CharacterEvent event) {
+        assert textField != null;
+        textField.charTyped(event);
         return true;
     }
 

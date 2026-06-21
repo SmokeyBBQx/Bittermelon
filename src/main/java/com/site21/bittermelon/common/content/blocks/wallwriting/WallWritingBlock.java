@@ -138,7 +138,7 @@ public class WallWritingBlock extends Block implements EntityBlock, SimpleWaterl
             return InteractionResult.SUCCESS;
         }
 
-        if (level.isClientSide) return InteractionResult.PASS;
+        if (level.isClientSide()) return InteractionResult.PASS;
 
         if (level.getBlockEntity(pos) instanceof WallWritingBlockEntity wallWriting && stack.getItem() instanceof WallWriter wallWriter) {
             if (wallWriter.tryApplyToWall(level, wallWriting, player, stack)) {

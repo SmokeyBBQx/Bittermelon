@@ -21,6 +21,12 @@ import java.util.List;
 
 import static net.minecraft.world.level.block.Block.UPDATE_CLIENTS;
 
+/**
+ * <strong>C2S</strong> <br>
+ * @param pos Position of wall writing
+ * @param text New text to replace original with
+ * @param isFinal Whether the player is finished editing
+ */
 public record UpdateWallWriting(BlockPos pos, String[] text, boolean isFinal) implements CustomPacketPayload {
     public static final Type<UpdateWallWriting> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "update_wall_writing"));
 

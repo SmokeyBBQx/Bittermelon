@@ -5,82 +5,90 @@ import com.mojang.math.Axis;
 import com.site21.bittermelon.common.content.blocks.wallwriting.WallWritingBlock;
 import com.site21.bittermelon.common.content.blocks.wallwriting.WallWritingBlockEntity;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.world.level.block.entity.SignText;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 
-import static net.minecraft.client.renderer.blockentity.SignRenderer.getDarkColor;
+import static net.minecraft.client.renderer.blockentity.AbstractSignRenderer.getDarkColor;
 
-
-public class WallWritingRenderer implements BlockEntityRenderer<WallWritingBlockEntity> {
+public class WallWritingRenderer implements BlockEntityRenderer<WallWritingBlockEntity, WallWritingRenderState> {
     private static final float TEXT_SCALE = 0.010416667f;
     private final Font font;
 
     public WallWritingRenderer(BlockEntityRendererProvider.@NotNull Context context) {
-        font = context.getFont();
+        font = context.font();
     }
 
     @Override
-    public void render(@NotNull WallWritingBlockEntity wallWriting, float partialTick, @NotNull PoseStack poseStack,
-                       @NotNull MultiBufferSource bufferSource, int packedLight, int packedOverlay, @NotNull Vec3 cameraPos) {
-        if (wallWriting.getText() == null) return;
+    public void extractRenderState(WallWritingBlockEntity blockEntity, WallWritingRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
+        state.text = blockEntity.getText();
+        state.facing = blockEntity.getBlockState().getValue(WallWritingBlock.FACING);
+        state.face = blockEntity.getBlockState().getValue(WallWritingBlock.FACE);
+    }
 
-        BlockState state = wallWriting.getBlockState();
+    @Override
+    public WallWritingRenderState createRenderState() {
+        return new WallWritingRenderState();
+    }
+
+    @Override
+    public void submit(WallWritingRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector,
+                       CameraRenderState cameraRenderState) {
+        if (state.text == null) return;
+
         poseStack.pushPose();
 
         poseStack.translate(0.5, 0.5, 0.5);
-        applyRotation(poseStack, state.getValue(WallWritingBlock.FACING), state.getValue(WallWritingBlock.FACE));
+        applyRotation(poseStack, state.facing, state.face);
         poseStack.translate(0, 0, -0.499);
         poseStack.scale(TEXT_SCALE, -TEXT_SCALE, TEXT_SCALE);
+
+        submitText(state, poseStack, submitNodeCollector);
+
+        poseStack.popPose();
+    }
+
+    private void submitText(WallWritingRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector) {
+        int color = state.text.getColor().getTextColor();
+        int darkColor = getDarkColor(state.text);
         int lineCount = 4;
         int startY = -lineCount * 10 / 2;
 
+        boolean glowing = state.text.hasGlowingText();
+        int outlineColor = glowing ? darkColor : 0;
+
         for (int line = 0; line < lineCount; line++) {
-            SignText text = wallWriting.getText();
-            Component message = text.getMessage(line, false);
+            Component message = state.text.getMessage(line, false);
 
             if (!message.getString().isEmpty()) {
                 FormattedCharSequence sequence = message.getVisualOrderText();
-                int x = -font.width(sequence) / 2;
-                int y = startY + line * 10;
-                int color = text.getColor().getTextColor();
+                float x = (float) (-font.width(sequence) / 2);
+                float y = (float) (startY + line * 10);
 
-                if (text.hasGlowingText()) {
-                    font.drawInBatch8xOutline(
-                            sequence,
-                            x,
-                            y,
-                            color,
-                            getDarkColor(text),
-                            poseStack.last().pose(),
-                            bufferSource,
-                            packedLight);
-                } else {
-                    font.drawInBatch(
-                            sequence,
-                            x,
-                            y,
-                            color,
-                            false,
-                            poseStack.last().pose(),
-                            bufferSource,
-                            Font.DisplayMode.POLYGON_OFFSET,
-                            0,
-                            packedLight
-                    );
-                }
+                submitNodeCollector.submitText(
+                        poseStack,
+                        x,
+                        y,
+                        sequence,
+                        false,
+                        Font.DisplayMode.POLYGON_OFFSET,
+                        state.lightCoords,
+                        color,
+                        0,
+                        outlineColor
+                );
             }
         }
-
-        poseStack.popPose();
     }
 
     private void applyRotation(PoseStack poseStack, Direction facing, @NotNull AttachFace attachFace) {

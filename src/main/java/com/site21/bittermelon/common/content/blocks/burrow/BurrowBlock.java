@@ -47,7 +47,7 @@ public class BurrowBlock extends Block implements EntityBlock {
     }
 
     @Override
-    protected void entityInside(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Entity entity, @NotNull InsideBlockEffectApplier effectApplier) {
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
         if (level.getBlockEntity(pos) instanceof BurrowBlockEntity burrow) {
             burrow.emergeEntity();
         }

@@ -24,7 +24,7 @@ public class DoorHelper {
         if (cooldowns.isOnCooldown(player.getMainHandItem()) ||
                 cooldowns.isOnCooldown(player.getOffhandItem())) return false;
 
-        if (level.isClientSide) return true;
+        if (level.isClientSide()) return true;
 
         level.playSound(null, player.getOnPos(), BitterSounds.KNOCK.value(), SoundSource.PLAYERS, 1.0f, 1.0f);
         LocalMessageHelper.sendEmoteMessage(level, player, 10, "knocks on the large sliding door.");
