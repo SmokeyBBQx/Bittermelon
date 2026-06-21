@@ -29,6 +29,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingBreatheEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
@@ -43,6 +44,7 @@ import java.util.List;
 import static com.site21.bittermelon.init.custom.Anatomies.HUMAN;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.*;
 import static com.site21.bittermelon.init.neoforge.BitterFluids.SUBSTANCE_FLUID;
+import static com.site21.bittermelon.init.neoforge.BitterMobEffects.DROWNING;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class CommonEvents {
@@ -173,6 +175,18 @@ public class CommonEvents {
             if (activeCharacter != null) {
                 PacketDistributor.sendToPlayer(player, new SyncActiveCharacter(activeCharacter.getId()));
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLivingBreathe(@NotNull LivingBreatheEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+
+        if (player.hasEffect(DROWNING)) {
+            if (player.getEffect(DROWNING).getAmplifier() > 9) {
+                event.setCanBreathe(false);
+            }
+            event.setRefillAirAmount(0);
         }
     }
 }

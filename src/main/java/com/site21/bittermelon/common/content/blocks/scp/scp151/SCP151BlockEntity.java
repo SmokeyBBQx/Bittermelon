@@ -34,7 +34,7 @@ public class SCP151BlockEntity extends BlockEntity {
     }
 
     public void tick() {
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide()) return;
 
         updateTimer++;
         if (updateTimer >= UPDATE_DELAY) {
@@ -55,7 +55,7 @@ public class SCP151BlockEntity extends BlockEntity {
                     player.hurtMarked = true;
                     Component message = Component.literal("You notice a peculiar blue painting. It resembles the sea.")
                             .withStyle(ChatFormatting.RED).withStyle(ChatFormatting.ITALIC);
-                    player.displayClientMessage(message, false);
+                    player.sendSystemMessage(message);
                     if (player instanceof ServerPlayer serverPlayer) {
                         serverPlayer.connection.send(new ClientboundSoundPacket(
                                 BitterSounds.SCARE_1,

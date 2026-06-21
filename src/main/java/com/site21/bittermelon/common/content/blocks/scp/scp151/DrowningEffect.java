@@ -51,9 +51,8 @@ public class DrowningEffect extends MobEffect {
             int newAmplifier = amplifier + 1;
             handleDrownProgression(player, newAmplifier);
 
-            Objects.requireNonNull(entity.getEffect(DROWNING)).update(
-                    new MobEffectInstance(DROWNING, ticksRemaining, newAmplifier, true, false, false));
-//                System.out.println("Progressing amplifier to: " + newAmplifier + " with " + ticksRemaining + " ticks remaining");
+        entity.getEffect(DROWNING).update(new MobEffectInstance(DROWNING, ticksRemaining, newAmplifier, true,
+                false, false));
         }
 
         handlePhysicalEffects(player, amplifier);
@@ -86,7 +85,7 @@ public class DrowningEffect extends MobEffect {
 
         if (!message.isBlank()) {
             Component component = Component.literal(message).withStyle(ChatFormatting.RED).withStyle(ChatFormatting.ITALIC);
-            player.displayClientMessage(component, false);
+            player.sendSystemMessage(component);
         }
     }
 
@@ -134,7 +133,7 @@ public class DrowningEffect extends MobEffect {
     }
 
     private void handleVomit(@NotNull Player player) {
-        if (player.level().isClientSide) return;
+        if (player.level().isClientSide()) return;
 
         sendVomitParticles(player);
 
