@@ -7,13 +7,12 @@ import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
-import org.jetbrains.annotations.NotNull;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class CommonSetup {
 
     @SubscribeEvent
-    public static void onModifyDefaultComponents(@NotNull ModifyDefaultComponentsEvent event) {
+    public static void onModifyDefaultComponents(ModifyDefaultComponentsEvent event) {
         event.modify(Items.IRON_SWORD, builder ->
                 builder.set(BitterDataComponents.SCALPEL.get(), new Scalpel(0.7f)));
         event.modify(Items.NETHERITE_SWORD, builder ->

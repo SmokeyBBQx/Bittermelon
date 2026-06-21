@@ -54,7 +54,7 @@ public class ExplosionHandler {
             return false;
         });
 
-        if (!event.getLevel().isClientSide) {
+        if (!event.getLevel().isClientSide()) {
             NeoForge.EVENT_BUS.post(new SyncSoundEvent(level,
                     new BlockPos(
                             (int) explosion.center().x,

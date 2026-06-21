@@ -1,30 +1,16 @@
 package com.site21.bittermelon;
 
 import com.mojang.logging.LogUtils;
-import com.site21.bittermelon.common.systems.atmosphere.data.AtmosLevelData;
-import com.site21.bittermelon.common.systems.character.Character;
-import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.common.systems.character.networking.SyncActiveCharacter;
-import com.site21.bittermelon.common.systems.character.networking.SyncCharacters;
 import com.site21.bittermelon.common.systems.chemistry.ReactionLoader;
-import com.site21.bittermelon.common.systems.telecomms.intercom.IntercomManager;
-import com.site21.bittermelon.common.systems.telecomms.intercom.networking.SyncIntercomList;
 import com.site21.bittermelon.init.neoforge.BitterEntities;
 import com.site21.bittermelon.init.neoforge.BitterRegistries;
-import com.site21.bittermelon.networking.server.SetLastTypingTime;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.tick.EntityTickEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -41,7 +27,6 @@ import static com.site21.bittermelon.init.custom.Substances.SUBSTANCES;
 import static com.site21.bittermelon.init.custom.VerbSets.VERB_SETS;
 import static com.site21.bittermelon.init.neoforge.BitterActivity.ACTIVITY;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ATTACHMENT_TYPES;
-import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.LAST_TYPING_TIME;
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.BLOCK_ENTITY_TYPES;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.BLOCKS;
 import static com.site21.bittermelon.init.neoforge.BitterCreativeTabs.CREATIVE_MODE_TABS;
@@ -105,47 +90,6 @@ public class Bittermelon {
     @SubscribeEvent
     public void onAddReloadListeners(AddServerReloadListenersEvent event) {
         event.addListener(Bittermelon.identifier("reactions"), new ReactionLoader(event.getRegistryAccess()));
-    }
-
-    @SubscribeEvent
-    public void onEntityTick(EntityTickEvent.@NotNull Post event) {
-        Level level = event.getEntity().level();
-        if (level.isClientSide()) return;
-        Character character = CharacterManager.get(level).getActiveCharacter(event.getEntity());
-        if (character != null) character.update(level);
-
-        Entity entity = event.getEntity();
-
-        if (entity.getExistingDataOrNull(LAST_TYPING_TIME) != null) {
-            long lastTypingTime = entity.getData(LAST_TYPING_TIME);
-            long timeSinceTyping = System.currentTimeMillis() - lastTypingTime;
-
-            if (timeSinceTyping > 5000) {
-                entity.removeData(LAST_TYPING_TIME);
-                PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new SetLastTypingTime(entity.getUUID(), -1));
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public void onPlayerJoin(PlayerEvent.@NotNull PlayerLoggedInEvent event) {
-//        shouldDisplayText = true;
-//        LoreOpeningOverlay.displayStartTime = System.currentTimeMillis();
-//        event.getEntity().playNotifySound(LOW_IMPACT.get(), SoundSource.MASTER, 1, 1);
-        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            Level level = serverPlayer.level();
-
-            AtmosLevelData.get(level).syncToClient();
-            PacketDistributor.sendToPlayer(serverPlayer, new SyncIntercomList(IntercomManager.get(level).getIntercomIDs()));
-
-            CharacterManager characterManager = CharacterManager.get(level);
-            PacketDistributor.sendToPlayer(serverPlayer, new SyncCharacters(characterManager.getCharacters()));
-
-            Character activeCharacter = characterManager.getActiveCharacter(serverPlayer);
-            if (activeCharacter != null) {
-                PacketDistributor.sendToPlayer(serverPlayer, new SyncActiveCharacter(activeCharacter.getId()));
-            }
-        }
     }
 
     @Contract("_ -> new")
