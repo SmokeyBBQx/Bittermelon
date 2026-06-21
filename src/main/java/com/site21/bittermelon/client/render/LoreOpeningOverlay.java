@@ -1,7 +1,7 @@
 package com.site21.bittermelon.client.render;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +34,7 @@ public class LoreOpeningOverlay {
         int centerY = mc.getWindow().getGuiScaledHeight() / 3;
         int alpha = (int) (calculateAlpha(elapsed) * 255) << 24;
 
-        GuiGraphics graphics = event.getGuiGraphics();
+        GuiGraphicsExtractor graphics = event.getGuiGraphicsExtractor();
         graphics.drawCenteredString(mc.font, getFormattedDate(), centerX, centerY, 0xFFAA00 | alpha);
         graphics.drawCenteredString(mc.font, Component.literal(text), centerX, centerY + 20, 0xFFFFFF | alpha);
     }

@@ -5,7 +5,7 @@ import com.site21.bittermelon.client.event.LayerDefinitions;
 import com.site21.bittermelon.common.content.entities.scp548.SCP548;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 public class SCP548Renderer extends MobRenderer<SCP548, SCP548RenderState, SCP548Model> {
@@ -14,8 +14,8 @@ public class SCP548Renderer extends MobRenderer<SCP548, SCP548RenderState, SCP54
     }
 
     @Override
-    public @NotNull ResourceLocation getTextureLocation(@NotNull SCP548RenderState scp548RenderState) {
-        return ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/entity/scp_548.png");
+    public @NotNull Identifier getTextureLocation(@NotNull SCP548RenderState scp548RenderState) {
+        return Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/entity/scp_548.png");
     }
 
     @Override

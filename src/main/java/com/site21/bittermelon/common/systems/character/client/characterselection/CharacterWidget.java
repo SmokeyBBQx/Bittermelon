@@ -8,7 +8,7 @@ import com.site21.bittermelon.common.systems.character.client.charactereditor.Ch
 import com.site21.bittermelon.common.systems.character.skin.SkinManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
@@ -20,7 +20,7 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,12 +28,12 @@ import static com.site21.bittermelon.common.systems.character.skin.SkinUtil.getA
 
 
 public class CharacterWidget extends AbstractWidget {
-    private static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/character_box");
-    private static final ResourceLocation BACKGROUND_HOVERED = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/character_box_hovered");
-    private static final ResourceLocation BACKGROUND_SELECTED = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/character_box_selected");
-    private static final ResourceLocation BACKGROUND_SELECTED_HOVERED = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/character_box_selected_hovered");
-    private static final ResourceLocation ADD_ICON = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/add_icon");
-    private static final ResourceLocation ADD_ICON_HOVERED = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/add_icon_hovered");
+    private static final Identifier BACKGROUND = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/character_box");
+    private static final Identifier BACKGROUND_HOVERED = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/character_box_hovered");
+    private static final Identifier BACKGROUND_SELECTED = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/character_box_selected");
+    private static final Identifier BACKGROUND_SELECTED_HOVERED = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/character_box_selected_hovered");
+    private static final Identifier ADD_ICON = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/add_icon");
+    private static final Identifier ADD_ICON_HOVERED = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/add_icon_hovered");
 
     private final Character character;
     private final CharacterSelectionScreen screen;
@@ -49,8 +49,8 @@ public class CharacterWidget extends AbstractWidget {
 
         int buttonSize = 16;
         editButton = BitterButton.builder(Component.literal(""), this::onEdit, new WidgetSprites(
-                        ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/edit_button"),
-                        ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/edit_button_highlighted")
+                        Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/edit_button"),
+                        Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/edit_button_highlighted")
                 ))
                 .bounds(getRight() - buttonSize - 4, getBottom() - buttonSize - 4, buttonSize, buttonSize)
                 .build();
@@ -72,23 +72,23 @@ public class CharacterWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         if (isHovered && !editButton.isHovered()) {
-            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, selected ? BACKGROUND_SELECTED_HOVERED : BACKGROUND_HOVERED, x, y, width, height);
+            GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, selected ? BACKGROUND_SELECTED_HOVERED : BACKGROUND_HOVERED, x, y, width, height);
         } else {
-            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, selected ? BACKGROUND_SELECTED : BACKGROUND, x, y, width, height);
+            GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, selected ? BACKGROUND_SELECTED : BACKGROUND, x, y, width, height);
         }
 
         if (character == null) {
-            renderCreateCharacter(guiGraphics);
+            renderCreateCharacter(GuiGraphicsExtractor);
         } else {
-            renderCharacter(guiGraphics);
+            renderCharacter(GuiGraphicsExtractor);
         }
 
-        editButton.render(guiGraphics, mouseX, mouseY, partialTick);
+        editButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
     }
 
-    private void renderCharacter(@NotNull GuiGraphics guiGraphics) {
+    private void renderCharacter(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor) {
         Font font = Minecraft.getInstance().font;
         String displayName = character.getName();
         int maxWidth = width - 10;
@@ -97,12 +97,12 @@ public class CharacterWidget extends AbstractWidget {
             displayName = font.plainSubstrByWidth(displayName, maxWidth - font.width("...")) + "...";
         }
 
-        guiGraphics.drawCenteredString(font, displayName, x + width / 2, y + 5, 0xFFFFFF);
+        GuiGraphicsExtractor.drawCenteredString(font, displayName, x + width / 2, y + 5, 0xFFFFFF);
 
         AbstractClientPlayer fakePlayer = getAbstractClientPlayer(character);
 
         InventoryScreen.renderEntityInInventoryFollowsAngle(
-                guiGraphics,
+                GuiGraphicsExtractor,
                 getX(),
                 getY() + 20,
                 getX() + getWidth(),
@@ -115,11 +115,11 @@ public class CharacterWidget extends AbstractWidget {
         );
     }
 
-    private void renderCreateCharacter(@NotNull GuiGraphics guiGraphics) {
+    private void renderCreateCharacter(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor) {
         if (isHovered) {
-            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, ADD_ICON_HOVERED, x, y, width, height);
+            GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, ADD_ICON_HOVERED, x, y, width, height);
         } else {
-            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, ADD_ICON, x, y, width, height);
+            GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, ADD_ICON, x, y, width, height);
         }
     }
 

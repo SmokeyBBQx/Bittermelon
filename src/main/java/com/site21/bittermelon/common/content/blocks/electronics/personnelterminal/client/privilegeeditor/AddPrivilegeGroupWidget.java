@@ -4,14 +4,14 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.blocks.electronics.personnelterminal.client.BitterButton;
 import com.site21.bittermelon.common.content.blocks.electronics.personnelterminal.client.PersonnelTerminalScreen;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 public class AddPrivilegeGroupWidget extends AbstractWidget {
@@ -60,13 +60,13 @@ public class AddPrivilegeGroupWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/button"),
+    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/button"),
                 x, y, width, height);
 
-        nameField.render(guiGraphics, mouseX, mouseY, partialTick);
-        addButton.render(guiGraphics, mouseX, mouseY, partialTick);
-        cancelButton.render(guiGraphics, mouseX, mouseY, partialTick);
+        nameField.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        addButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        cancelButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
     }
 
     @Override

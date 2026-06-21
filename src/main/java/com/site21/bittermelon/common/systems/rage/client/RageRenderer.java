@@ -3,9 +3,9 @@ package com.site21.bittermelon.common.systems.rage.client;
 import com.site21.bittermelon.common.systems.rage.RageHandler;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.client.gui.GuiLayer;
@@ -13,10 +13,10 @@ import net.neoforged.neoforge.client.gui.GuiLayer;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.RAGE;
 
 public class RageRenderer implements GuiLayer {
-    private static final ResourceLocation VIGNETTE_LOCATION = ResourceLocation.withDefaultNamespace("textures/misc/vignette.png");
+    private static final Identifier VIGNETTE_LOCATION = Identifier.withDefaultNamespace("textures/misc/vignette.png");
 
     @Override
-    public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+    public void render(GuiGraphicsExtractor GuiGraphicsExtractor, DeltaTracker deltaTracker) {
         if (!Minecraft.useFancyGraphics()) return;
         Player player = Minecraft.getInstance().player;
         if (player != null) {
@@ -27,17 +27,17 @@ public class RageRenderer implements GuiLayer {
                 long time = player.level().getGameTime();
                 int color = getColor(rage, beatInterval, time);
 
-                guiGraphics.blit(
+                GuiGraphicsExtractor.blit(
                         RenderPipelines.VIGNETTE,
                         VIGNETTE_LOCATION,
                         0,
                         0,
                         0.0F,
                         0.0F,
-                        guiGraphics.guiWidth(),
-                        guiGraphics.guiHeight(),
-                        guiGraphics.guiWidth(),
-                        guiGraphics.guiHeight(),
+                        GuiGraphicsExtractor.guiWidth(),
+                        GuiGraphicsExtractor.guiHeight(),
+                        GuiGraphicsExtractor.guiWidth(),
+                        GuiGraphicsExtractor.guiHeight(),
                         color
                 );
             }

@@ -12,12 +12,12 @@
 //import com.site21.bittermelon.init.custom.Compartments;
 //import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 //import net.minecraft.client.Minecraft;
-//import net.minecraft.client.gui.GuiGraphics;
+//import net.minecraft.client.gui.GuiGraphicsExtractor;
 //import net.minecraft.client.gui.components.Button;
 //import net.minecraft.client.gui.narration.NarrationElementOutput;
 //import net.minecraft.client.renderer.RenderPipelines;
 //import net.minecraft.network.chat.Component;
-//import net.minecraft.resources.ResourceLocation;
+//import net.minecraft.resources.Identifier;
 //import net.minecraft.util.Mth;
 //import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 //import org.jetbrains.annotations.NotNull;
@@ -31,13 +31,13 @@
 //import static com.site21.bittermelon.client.render.BitterRenderPipelines.*;
 //
 //public class CompartmentSpaceWidget extends MovableResizableWidget {
-//    public static final ResourceLocation WINDOW_TEXTURE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/healthscreen/surgery_window.png");
-//    public static final ResourceLocation WINDOW_SIDES_TEXTURE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/healthscreen/surgery_window_sides.png");
+//    public static final Identifier WINDOW_TEXTURE = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/healthscreen/surgery_window.png");
+//    public static final Identifier WINDOW_SIDES_TEXTURE = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/healthscreen/surgery_window_sides.png");
 //
-//    public static final ResourceLocation LAYER_TEXTURE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/healthscreen/layer.png");
-//    public static final ResourceLocation SELECTED_LAYER_TEXTURE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/healthscreen/selected_layer.png");
-//    public static final ResourceLocation INJURED_LAYER_TEXTURE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/healthscreen/injured_layer.png");
-//    public static final ResourceLocation INJURED_SELECTED_LAYER_TEXTURE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/healthscreen/injured_selected_layer.png");
+//    public static final Identifier LAYER_TEXTURE = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/healthscreen/layer.png");
+//    public static final Identifier SELECTED_LAYER_TEXTURE = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/healthscreen/selected_layer.png");
+//    public static final Identifier INJURED_LAYER_TEXTURE = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/healthscreen/injured_layer.png");
+//    public static final Identifier INJURED_SELECTED_LAYER_TEXTURE = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/healthscreen/injured_selected_layer.png");
 //
 //    private static final int HEADER_HEIGHT = 15;
 //    private static final int TILE_SIZE = 80;
@@ -71,7 +71,7 @@
 //    private List<CompartmentNodeWidget> sortedWidgets = null;
 //
 //    private final Button[] buttons;
-//    private ResourceLocation backgroundTexture;
+//    private Identifier backgroundTexture;
 //
 //    public CompartmentSpaceWidget(int x, int y, int width, int height, @NotNull CompartmentInstance compartment, HealthScreen healthScreen) {
 //        super(x, y, width, height, Component.literal(compartment.getName()));
@@ -223,7 +223,7 @@
 //    }
 //
 //    @Override
-//    protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+//    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
 //        List<CompartmentInstance> revealingCompartments = findRevealingCompartments();
 //
 //        CompartmentNodeWidget hoveredWidget = null;
@@ -232,25 +232,25 @@
 //            hoveredWidget = getHoveredWidget(revealingCompartments, mouseX, mouseY, contentX, contentY);
 //
 //            // Render only within content area
-//            guiGraphics.enableScissor(contentX, contentY, contentX + contentWidth, contentY + contentHeight);
+//            GuiGraphicsExtractor.enableScissor(contentX, contentY, contentX + contentWidth, contentY + contentHeight);
 //
-//            drawTiledBackground(guiGraphics, RenderPipelines.GUI_TEXTURED, backgroundTexture, 0xFFFFFFFF);
-//            renderWidgets(guiGraphics, mouseX, mouseY, partialTick, hoveredWidget);
-//            drawHoveredWidget(guiGraphics, mouseX, mouseY, partialTick, hoveredWidget);
-//            renderFog(guiGraphics, revealingCompartments);
+//            drawTiledBackground(GuiGraphicsExtractor, RenderPipelines.GUI_TEXTURED, backgroundTexture, 0xFFFFFFFF);
+//            renderWidgets(GuiGraphicsExtractor, mouseX, mouseY, partialTick, hoveredWidget);
+//            drawHoveredWidget(GuiGraphicsExtractor, mouseX, mouseY, partialTick, hoveredWidget);
+//            renderFog(GuiGraphicsExtractor, revealingCompartments);
 //
-//            renderLayerIndicators(guiGraphics);
-//            renderButtons(guiGraphics, mouseX, mouseY, partialTick);
+//            renderLayerIndicators(GuiGraphicsExtractor);
+//            renderButtons(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 //
-//            guiGraphics.disableScissor();
+//            GuiGraphicsExtractor.disableScissor();
 //        }
 //
-//        drawWindowFrame(guiGraphics);
-//        closeWidgetButton.render(guiGraphics, mouseX, mouseY, partialTick);
-//        collapseWidgetButton.render(guiGraphics, mouseX, mouseY, partialTick);
+//        drawWindowFrame(GuiGraphicsExtractor);
+//        closeWidgetButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+//        collapseWidgetButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 //
 //        // Draw title
-//        guiGraphics.drawString(
+//        GuiGraphicsExtractor.drawString(
 //                Minecraft.getInstance().font,
 //                getMessage(),
 //                x + 8,
@@ -260,7 +260,7 @@
 //
 //        // Draw hovered widget tooltip
 //        if (hoveredWidget != null && hoveredWidget.visible && isOpen) {
-//            hoveredWidget.drawHover(guiGraphics, mouseX, mouseY, partialTick, width, height);
+//            hoveredWidget.drawHover(GuiGraphicsExtractor, mouseX, mouseY, partialTick, width, height);
 //        }
 //    }
 //
@@ -279,20 +279,20 @@
 //        return revealingCompartments;
 //    }
 //
-//    private void renderButtons(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-//        increaseLayerButton.render(guiGraphics, mouseX, mouseY, partialTick);
-//        decreaseLayerButton.render(guiGraphics, mouseX, mouseY, partialTick);
-//        recenterButton.render(guiGraphics, mouseX, mouseY, partialTick);
+//    private void renderButtons(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+//        increaseLayerButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+//        decreaseLayerButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+//        recenterButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 //    }
 //
-//    private void renderWidgets(GuiGraphics guiGraphics, int mouseX, int mouseY,
+//    private void renderWidgets(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY,
 //                               float partialTick, CompartmentNodeWidget hoveredWidget) {
 //        sortWidgets();
 //
 //        for (CompartmentNodeWidget widget : sortedWidgets) {
 //            // Skip hovered widget to render it on top later
 //            if (hoveredWidget != null && hoveredWidget.equals(widget)) continue;
-//            widget.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+//            widget.renderWidget(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 //        }
 //    }
 //
@@ -304,7 +304,7 @@
 //        }
 //    }
 //
-//    private void drawHoveredWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CompartmentNodeWidget hoveredWidget) {
+//    private void drawHoveredWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick, CompartmentNodeWidget hoveredWidget) {
 //        if (hoveredWidget == null || !hoveredWidget.visible) return;
 //
 //        for (Button button : buttons) {
@@ -313,26 +313,26 @@
 //            }
 //        }
 //
-//        hoveredWidget.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+//        hoveredWidget.renderWidget(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 //    }
 //
-//    private void renderLayerIndicators(GuiGraphics guiGraphics) {
+//    private void renderLayerIndicators(GuiGraphicsExtractor GuiGraphicsExtractor) {
 //        for (int i = 0; i < layers.length; i++) {
 //            int indicatorX = x + width - 24;
 //            int indicatorY = y + 50 + i * 6;
 //
-//            ResourceLocation sprite = layerIndex == i ?
+//            Identifier sprite = layerIndex == i ?
 //                    isLayerInjured(i) ? INJURED_SELECTED_LAYER_TEXTURE : SELECTED_LAYER_TEXTURE :
 //                    isLayerInjured(i) ? INJURED_LAYER_TEXTURE : LAYER_TEXTURE;
 //
-//            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, sprite, indicatorX, indicatorY, 0, 0,
+//            GuiGraphicsExtractor.blit(RenderPipelines.GUI_TEXTURED, sprite, indicatorX, indicatorY, 0, 0,
 //                    11, 5, 11, 5);
 //        }
 //    }
 //
-//    private void drawTiledBackground(@NotNull GuiGraphics guiGraphics, RenderPipeline pipeline, ResourceLocation texture, int color) {
-//        guiGraphics.pose().pushMatrix();
-//        guiGraphics.pose().translate(contentX, contentY);
+//    private void drawTiledBackground(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, RenderPipeline pipeline, Identifier texture, int color) {
+//        GuiGraphicsExtractor.pose().pushMatrix();
+//        GuiGraphicsExtractor.pose().translate(contentX, contentY);
 //
 //        int tileOffsetX = (int) -scrollX / 5;
 //        int tileOffsetY = (int) -scrollY / 5;
@@ -351,7 +351,7 @@
 //                int y = startY + ((j - startTileY) * TILE_SIZE);
 //
 //                if (x + TILE_SIZE >= 0 && x <= contentWidth && y + TILE_SIZE >= 0 && y <= contentHeight) {
-//                    guiGraphics.blit(
+//                    GuiGraphicsExtractor.blit(
 //                            pipeline,
 //                            texture,
 //                            x, y,
@@ -364,30 +364,30 @@
 //            }
 //        }
 //
-//        guiGraphics.pose().popMatrix();
+//        GuiGraphicsExtractor.pose().popMatrix();
 //    }
 //
-//    private void drawWindowFrame(@NotNull GuiGraphics guiGraphics) {
+//    private void drawWindowFrame(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor) {
 //        // TODO: Ugly code but works
 //
-//        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, x, y, 0, 0, width / 2, 23, 256, 256);
-//        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, x + width / 2, y, 252 - width / 2, 0, width / 2, 23, 256, 256);
+//        GuiGraphicsExtractor.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, x, y, 0, 0, width / 2, 23, 256, 256);
+//        GuiGraphicsExtractor.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, x + width / 2, y, 252 - width / 2, 0, width / 2, 23, 256, 256);
 //
-//        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_SIDES_TEXTURE, x, y + 23, 0, 23, width / 2, height - 48, 256, 256);
-//        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_SIDES_TEXTURE, x + width / 2, y + 23, 256 - width / 2, 23, width / 2, height - 48, 256, 256);
+//        GuiGraphicsExtractor.blit(RenderPipelines.GUI_TEXTURED, WINDOW_SIDES_TEXTURE, x, y + 23, 0, 23, width / 2, height - 48, 256, 256);
+//        GuiGraphicsExtractor.blit(RenderPipelines.GUI_TEXTURED, WINDOW_SIDES_TEXTURE, x + width / 2, y + 23, 256 - width / 2, 23, width / 2, height - 48, 256, 256);
 //
-//        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, x, y + height - 25, 0, 130 - 5, width / 2, 15, 256, 256);
-//        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, x + width / 2, y + height - 25, 252 - width / 2, 130 - 5, width / 2, 15, 256, 256);
+//        GuiGraphicsExtractor.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, x, y + height - 25, 0, 130 - 5, width / 2, 15, 256, 256);
+//        GuiGraphicsExtractor.blit(RenderPipelines.GUI_TEXTURED, WINDOW_TEXTURE, x + width / 2, y + height - 25, 252 - width / 2, 130 - 5, width / 2, 15, 256, 256);
 //    }
 //
-//    private void renderFog(@NotNull GuiGraphics guiGraphics, @NotNull List<CompartmentInstance> revealingCompartments) {
+//    private void renderFog(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, @NotNull List<CompartmentInstance> revealingCompartments) {
 //        if (layerIndex == 0) return;
 //
 //        int lightFogColor = 0xAA000000;
 //        int darkFogColor = 0xF2000000;
 //
 //        if (revealingCompartments.isEmpty()) {
-//            guiGraphics.fill(contentX, contentY, contentX + contentWidth, contentY + contentHeight, darkFogColor);
+//            GuiGraphicsExtractor.fill(contentX, contentY, contentX + contentWidth, contentY + contentHeight, darkFogColor);
 //            return;
 //        }
 //
@@ -398,12 +398,12 @@
 //            float minRevealX = (float) (contentX + visualData.getX() - scrollX);
 //            float minRevealY = (float) (contentY + visualData.getY() - scrollY);
 //
-//            guiGraphics.pose().pushMatrix();
-//            guiGraphics.pose().translate(minRevealX, minRevealY);
-//            guiGraphics.pose().rotate(visualData.rotation);
-//            guiGraphics.pose().scale(scaleFactor, scaleFactor);
+//            GuiGraphicsExtractor.pose().pushMatrix();
+//            GuiGraphicsExtractor.pose().translate(minRevealX, minRevealY);
+//            GuiGraphicsExtractor.pose().rotate(visualData.rotation);
+//            GuiGraphicsExtractor.pose().scale(scaleFactor, scaleFactor);
 //
-//            guiGraphics.blit(
+//            GuiGraphicsExtractor.blit(
 //                    STENCIL_TEST_TEXTURED,
 //                    visualData.icon,
 //                    1, 1,
@@ -413,11 +413,11 @@
 //                    0x01FFFFFF
 //            );
 //
-//            guiGraphics.pose().popMatrix();
+//            GuiGraphicsExtractor.pose().popMatrix();
 //        }
 //
 //        // Render dark fog where stencil is 0 (everywhere else)
-//        guiGraphics.fill(STENCIL_FOG, contentX, contentY, contentX + contentWidth, contentY + contentHeight, lightFogColor);
+//        GuiGraphicsExtractor.fill(STENCIL_FOG, contentX, contentY, contentX + contentWidth, contentY + contentHeight, lightFogColor);
 //
 //        // Draw expanded areas around revealing compartments
 //        for (CompartmentInstance instance : revealingCompartments) {
@@ -428,7 +428,7 @@
 //            int revealWidth = (int) (visualData.getWidth() * scaleFactor);
 //            int revealHeight = (int) (visualData.getHeight() * scaleFactor);
 //
-//            guiGraphics.fill(
+//            GuiGraphicsExtractor.fill(
 //                    STENCIL_TEST,
 //                    minRevealX,
 //                    minRevealY,
@@ -438,11 +438,11 @@
 //        }
 //
 //        // Render light fog where stencil is 2 (expanded area)
-//        guiGraphics.fill(STENCIL_FOG, contentX, contentY, contentX + contentWidth, contentY + contentHeight, lightFogColor);
+//        GuiGraphicsExtractor.fill(STENCIL_FOG, contentX, contentY, contentX + contentWidth, contentY + contentHeight, lightFogColor);
 //
 //        // Alternatively, using previous layer's tiled background for fog
-////        ResourceLocation texture = layerIndex > 0 ? layers[layerIndex - 1].backgroundTexture() : layers[0].backgroundTexture();
-////        drawTiledBackground(guiGraphics, contentX, contentY, contentWidth, contentHeight, lightFogPipeline, texture, 0x55FFFFFF);
+////        Identifier texture = layerIndex > 0 ? layers[layerIndex - 1].backgroundTexture() : layers[0].backgroundTexture();
+////        drawTiledBackground(GuiGraphicsExtractor, contentX, contentY, contentWidth, contentHeight, lightFogPipeline, texture, 0x55FFFFFF);
 //    }
 //
 //    private boolean isLayerInjured(int layerIndex) {

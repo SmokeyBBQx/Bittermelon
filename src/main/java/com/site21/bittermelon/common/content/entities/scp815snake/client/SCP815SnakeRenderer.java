@@ -6,7 +6,7 @@ import com.site21.bittermelon.common.content.entities.scp815snake.SCP815Snake;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 public class SCP815SnakeRenderer extends LivingEntityRenderer<SCP815Snake, LivingEntityRenderState, SCP815SnakeModel> {
@@ -15,8 +15,8 @@ public class SCP815SnakeRenderer extends LivingEntityRenderer<SCP815Snake, Livin
     }
 
     @Override
-    public @NotNull ResourceLocation getTextureLocation(@NotNull LivingEntityRenderState livingEntityRenderState) {
-        return ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/entity/scp_815_snake.png");
+    public @NotNull Identifier getTextureLocation(@NotNull LivingEntityRenderState livingEntityRenderState) {
+        return Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/entity/scp_815_snake.png");
     }
 
     @Override

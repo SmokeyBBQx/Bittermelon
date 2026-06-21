@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.systems.character.skin;
 
 import com.site21.bittermelon.Bittermelon;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,12 +22,12 @@ public class SkinManager {
         initializeCache();
     }
 
-    public static @NotNull ResourceLocation loadSkin(String url, String imageName) {
+    public static @NotNull Identifier loadSkin(String url, String imageName) {
         return loadSkin(url, imageName, null);
     }
 
-    public static @NotNull ResourceLocation loadSkin(@NotNull String url, String imageName, Runnable callback) {
-        ResourceLocation location = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + imageName);
+    public static @NotNull Identifier loadSkin(@NotNull String url, String imageName, Runnable callback) {
+        Identifier location = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + imageName);
 
         File cacheFile = new File(CACHE_DIR, imageName + ".png");
 

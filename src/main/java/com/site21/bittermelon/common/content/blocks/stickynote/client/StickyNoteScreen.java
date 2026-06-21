@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.content.blocks.stickynote.client;
 
 import com.site21.bittermelon.common.content.blocks.stickynote.StickyNoteBlockEntity;
 import com.site21.bittermelon.common.content.blocks.stickynote.networking.UpdateStickyNote;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.Screen;
@@ -47,9 +47,9 @@ public class StickyNoteScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        guiGraphics.drawCenteredString(font, title, width / 2, height / 3 - 40, 0xFFFFFFFF);
+    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        GuiGraphicsExtractor.drawCenteredString(font, title, width / 2, height / 3 - 40, 0xFFFFFFFF);
 
         List<FormattedCharSequence> wrappedLines = font.split(Component.literal(message), LINE_WIDTH);
         int startY = height / 3 - LINE_HEIGHT / 2;
@@ -59,7 +59,7 @@ public class StickyNoteScreen extends Screen {
             int lineWidth = font.width(line);
             int x = width / 2 - lineWidth / 2;
             int y = startY + i * LINE_HEIGHT;
-            guiGraphics.drawString(font, line, x, y, 0xFFFFFFFF, false);
+            GuiGraphicsExtractor.drawString(font, line, x, y, 0xFFFFFFFF, false);
         }
     }
 

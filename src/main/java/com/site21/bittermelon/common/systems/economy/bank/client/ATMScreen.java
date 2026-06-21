@@ -6,7 +6,7 @@ import com.site21.bittermelon.common.systems.economy.bank.client.list.AccountLis
 import com.site21.bittermelon.common.systems.economy.bank.client.list.AccountUserEntry;
 import com.site21.bittermelon.common.systems.personnel.registry.PersonnelEntry;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -65,9 +65,9 @@ public class ATMScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-       super.render(guiGraphics, mouseX, mouseY, partialTick);
-        guiGraphics.drawString(
+    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+       super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        GuiGraphicsExtractor.drawString(
                 Minecraft.getInstance().font,
                 Component.literal("Welcome back, " + user.getName()),
                 5,
@@ -75,7 +75,7 @@ public class ATMScreen extends Screen {
                 0xFFFFFF
         );
 
-        guiGraphics.drawString(
+        GuiGraphicsExtractor.drawString(
                 Minecraft.getInstance().font,
                 Component.literal("Select Account"),
                 5,

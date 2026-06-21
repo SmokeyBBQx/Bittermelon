@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.systems.economy.bank.client.list;
 
 import com.site21.bittermelon.common.systems.economy.bank.Account;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
@@ -22,11 +22,11 @@ public class AccountManagerEntry extends AccountEntry {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int index, int top, int left, int width, int height,
+    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int index, int top, int left, int width, int height,
                        int mouseX, int mouseY, boolean hovered, float partialTick) {
-        super.render(guiGraphics, index, top, left, width, height, mouseX, mouseY, hovered, partialTick);
+        super.render(GuiGraphicsExtractor, index, top, left, width, height, mouseX, mouseY, hovered, partialTick);
 
-                    guiGraphics.drawString(
+                    GuiGraphicsExtractor.drawString(
                     Minecraft.getInstance().font,
                     Component.literal(String.format("| Balance: $%.2f", account.getBalance())),
                     left + 60,

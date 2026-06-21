@@ -7,7 +7,7 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.items.wire.WireItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -47,14 +47,14 @@ public class WireRenderer {
 
                 Component text = Component.literal("Wiring from " + deviceName);
                 Component portID = Component.literal("(" + port + ")").withStyle(ChatFormatting.GRAY);
-                GuiGraphics guiGraphics = event.getGuiGraphics();
+                GuiGraphicsExtractor GuiGraphicsExtractor = event.getGuiGraphicsExtractor();
                 Window window = minecraft.getWindow();
                 int width = window.getGuiScaledWidth();
                 int height = window.getGuiScaledHeight();
                 int x = width / 2;
                 int y = height - 45;
-                guiGraphics.drawCenteredString(minecraft.font, text, x, y, 0xFFFFFFFF);
-                guiGraphics.drawCenteredString(minecraft.font, portID, x, y + 10, 0xFFFFFFFF);
+                GuiGraphicsExtractor.drawCenteredString(minecraft.font, text, x, y, 0xFFFFFFFF);
+                GuiGraphicsExtractor.drawCenteredString(minecraft.font, portID, x, y + 10, 0xFFFFFFFF);
             }
         }
     }

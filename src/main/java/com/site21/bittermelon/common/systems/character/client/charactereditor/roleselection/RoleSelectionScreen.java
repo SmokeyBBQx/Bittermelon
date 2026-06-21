@@ -5,7 +5,7 @@ import com.site21.bittermelon.common.systems.character.client.characterselection
 import com.site21.bittermelon.common.systems.roles.FoundationRole;
 import com.site21.bittermelon.common.systems.roles.Role;
 import com.site21.bittermelon.common.systems.roles.networking.AddRole;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -102,24 +102,24 @@ public class RoleSelectionScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 
         if (selectedRole != null) {
-            renderSelectedRole(guiGraphics);
+            renderSelectedRole(GuiGraphicsExtractor);
         }
     }
 
-    public void renderSelectedRole(@NotNull GuiGraphics guiGraphics) {
+    public void renderSelectedRole(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor) {
         int x = listWidget.getRight() + 5;
         int y = selectedRole.y;
         Role role = selectedRole.getRole();
         int descriptionHeight = minecraft.font.wordWrapHeight(role.description, listWidget.getWidth());
 
-        guiGraphics.fill(x - 2, y - 2, x + listWidget.getWidth(), y + descriptionHeight + font.lineHeight + 12, 0x44000000);
+        GuiGraphicsExtractor.fill(x - 2, y - 2, x + listWidget.getWidth(), y + descriptionHeight + font.lineHeight + 12, 0x44000000);
 
-        guiGraphics.drawString(font, role.name, x, y, 0xFFFFFFFF);
-        guiGraphics.drawWordWrap(font, Component.literal(role.description), x, y + 15, listWidget.getWidth(), 0xFFFFFFFF);
+        GuiGraphicsExtractor.drawString(font, role.name, x, y, 0xFFFFFFFF);
+        GuiGraphicsExtractor.drawWordWrap(font, Component.literal(role.description), x, y + 15, listWidget.getWidth(), 0xFFFFFFFF);
     }
 
     public Character getCharacter() {

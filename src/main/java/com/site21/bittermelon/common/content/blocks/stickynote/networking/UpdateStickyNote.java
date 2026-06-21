@@ -6,7 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import static net.minecraft.sounds.SoundSource.BLOCKS;
 
 public record UpdateStickyNote(BlockPos pos, String message, int noteIndex) implements CustomPacketPayload {
-    public static final Type<UpdateStickyNote> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath("bittermelon", "update_sticky_note"));
+    public static final Type<UpdateStickyNote> TYPE = new Type<>(Identifier.fromNamespaceAndPath("bittermelon", "update_sticky_note"));
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {

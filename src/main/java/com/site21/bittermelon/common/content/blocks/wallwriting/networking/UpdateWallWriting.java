@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
@@ -22,7 +22,7 @@ import java.util.List;
 import static net.minecraft.world.level.block.Block.UPDATE_CLIENTS;
 
 public record UpdateWallWriting(BlockPos pos, String[] text, boolean isFinal) implements CustomPacketPayload {
-    public static final Type<UpdateWallWriting> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "update_wall_writing"));
+    public static final Type<UpdateWallWriting> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "update_wall_writing"));
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {

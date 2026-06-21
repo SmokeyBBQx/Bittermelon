@@ -4,7 +4,7 @@ import com.site21.bittermelon.common.systems.medical.client.CompartmentWidget;
 import com.site21.bittermelon.common.systems.medical.client.HealthScreen;
 import com.site21.bittermelon.common.systems.medical.client.interaction.SuturingWidget;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -17,11 +17,11 @@ public class SutureWidget extends InstrumentWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        super.renderWidget(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 
         if (suturingWidget != null) {
-            suturingWidget.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+            suturingWidget.renderWidget(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
         }
     }
 

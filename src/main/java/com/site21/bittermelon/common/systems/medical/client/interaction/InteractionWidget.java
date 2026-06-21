@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.systems.medical.client.interaction;
 
 import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +13,7 @@ public abstract class InteractionWidget extends AbstractWidget {
     }
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int i, int i1, float v) {
+    public void renderWidget(GuiGraphicsExtractor GuiGraphicsExtractor, int i, int i1, float v) {
 
     }
 

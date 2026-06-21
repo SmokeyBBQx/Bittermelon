@@ -5,7 +5,7 @@ import com.site21.bittermelon.client.event.LayerDefinitions;
 import com.site21.bittermelon.common.content.entities.scp131.SCP131;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -16,10 +16,10 @@ public class SCP131Renderer extends MobRenderer<SCP131, SCP131RenderState, SCP13
     }
 
     @Override
-    public @NotNull ResourceLocation getTextureLocation(@NotNull SCP131RenderState renderState) {
+    public @NotNull Identifier getTextureLocation(@NotNull SCP131RenderState renderState) {
         return renderState.variant == 0 ?
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/entity/scp_131_a.png") :
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/entity/scp_131_b.png");
+                Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/entity/scp_131_a.png") :
+                Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/entity/scp_131_b.png");
         }
 
     @Override

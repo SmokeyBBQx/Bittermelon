@@ -58,7 +58,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onRenderOverlayPost(RenderGuiLayerEvent.@NotNull Post event) {
-        RiseProgressBar.render(event.getGuiGraphics());
+        RiseProgressBar.render(event.getGuiGraphicsExtractor());
     }
 
     // TODO: Shit doesn't work

@@ -3,7 +3,7 @@ package com.site21.bittermelon.common.systems.economy.bank.client;
 import com.site21.bittermelon.common.systems.economy.bank.Account;
 import com.site21.bittermelon.common.systems.economy.bank.AccountRegistry;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -127,10 +127,10 @@ public class TransferScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 
-        guiGraphics.drawCenteredString(
+        GuiGraphicsExtractor.drawCenteredString(
                 font,
                 "Transfer Funds",
                 width / 2,
@@ -138,7 +138,7 @@ public class TransferScreen extends Screen {
                 0xFFFFFF
         );
 
-        guiGraphics.drawCenteredString(
+        GuiGraphicsExtractor.drawCenteredString(
                 font,
                 "Current Balance: " + account.getBalance(),
                 width / 2,

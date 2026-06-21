@@ -6,12 +6,12 @@ import com.site21.bittermelon.common.systems.atmosphere.data.AtmosLevelData;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record SyncAtmosInstance(AtmosInstance instance) implements CustomPacketPayload {
-    public static final Type<SyncAtmosInstance> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "sync_atmos_instance"));
+    public static final Type<SyncAtmosInstance> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "sync_atmos_instance"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncAtmosInstance> STREAM_CODEC = StreamCodec.composite(
             AtmosInstance.STREAM_CODEC,

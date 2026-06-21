@@ -7,10 +7,10 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -31,7 +31,7 @@ import static com.site21.bittermelon.init.neoforge.BitterBlocks.YELLOW_INSPECTIO
 @Mixin(Gui.class)
 public class CrosshairMixin {
     @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
-    private void renderCustomCrosshair(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
+    private void renderCustomCrosshair(GuiGraphicsExtractor GuiGraphicsExtractor, DeltaTracker deltaTracker, CallbackInfo ci) {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.level == null) return;
 
@@ -49,7 +49,7 @@ public class CrosshairMixin {
                 boolean hasNote = stickyNoteBlock.hasNoteAtPosition(position, blockState) && !note.isEmpty();
 
                 if (hasNote) {
-                    bittermelon$renderCustomCrosshairTexture(guiGraphics, minecraft);
+                    bittermelon$renderCustomCrosshairTexture(GuiGraphicsExtractor, minecraft);
                     ci.cancel();
                 }
                 return;
@@ -57,14 +57,14 @@ public class CrosshairMixin {
 
             // TODO: Inspectable tag is not working, need to figure out why
             if (blockState.is(INSPECTABLE) || blockState.is(YELLOW_INSPECTION_POSTER)) {
-                bittermelon$renderCustomCrosshairTexture(guiGraphics, minecraft);
+                bittermelon$renderCustomCrosshairTexture(GuiGraphicsExtractor, minecraft);
                 ci.cancel();
             }
         }
     }
 
     @Unique
-    private void bittermelon$renderCustomCrosshairTexture(GuiGraphics guiGraphics, @NotNull Minecraft minecraft) {
+    private void bittermelon$renderCustomCrosshairTexture(GuiGraphicsExtractor GuiGraphicsExtractor, @NotNull Minecraft minecraft) {
         Options options = minecraft.options;
 
         if (!options.getCameraType().isFirstPerson() ||
@@ -72,12 +72,12 @@ public class CrosshairMixin {
             return;
         }
 
-        ResourceLocation customCrosshairTexture = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "icon/inspect_crosshair");
+        Identifier customCrosshairTexture = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "icon/inspect_crosshair");
         int crosshairSize = 12;
         int screenWidth = minecraft.getWindow().getGuiScaledWidth();
         int screenHeight = minecraft.getWindow().getGuiScaledHeight();
 
-        guiGraphics.blitSprite(
+        GuiGraphicsExtractor.blitSprite(
                 RenderPipelines.GUI_TEXTURED,
                 customCrosshairTexture,
                 (screenWidth - crosshairSize) / 2,

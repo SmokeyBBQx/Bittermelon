@@ -2,11 +2,9 @@ package com.site21.bittermelon.common.content.blocks.electronics.personneltermin
 
 import com.site21.bittermelon.common.systems.personnel.registry.PersonnelEntry;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.network.chat.Component;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -52,12 +50,12 @@ public class PersonnelListWidget extends ListWidget<PersonnelListWidget.Entry> {
         }
 
         @Override
-        public void render(@NotNull GuiGraphics guiGraphics, int entryIdx, int top, int left, int entryWidth, int entryHeight,
+        public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int entryIdx, int top, int left, int entryWidth, int entryHeight,
                            int mouseX, int mouseY, boolean isMouseOver, float partialTick) {
             Minecraft mc = Minecraft.getInstance();
 
             if (isMouseOver && !isFocused()) {
-                guiGraphics.fill(left, top - 2, left + entryWidth, top + entryHeight + 2, 0xFFD3E3FD);
+                GuiGraphicsExtractor.fill(left, top - 2, left + entryWidth, top + entryHeight + 2, 0xFFD3E3FD);
             }
 
             Component name = Component.literal(entry.getName());
@@ -67,15 +65,15 @@ public class PersonnelListWidget extends ListWidget<PersonnelListWidget.Entry> {
 
             int leftX = left + 5;
             int y = top + 2;
-            guiGraphics.drawString(mc.font, name, leftX, y, nameColor, false);
-            guiGraphics.drawString(mc.font, occupation, leftX, y + 1 + mc.font.lineHeight, occupationColor, false);
+            GuiGraphicsExtractor.drawString(mc.font, name, leftX, y, nameColor, false);
+            GuiGraphicsExtractor.drawString(mc.font, occupation, leftX, y + 1 + mc.font.lineHeight, occupationColor, false);
 
             String idString = "ID: " + entry.getId();
             int idWidth = mc.font.width(idString);
             int idColor = 0xFFAAAAAA;
 
             int idX = left + entryWidth - idWidth - 5;
-            guiGraphics.drawString(mc.font, idString, idX, y, idColor, false);
+            GuiGraphicsExtractor.drawString(mc.font, idString, idX, y, idColor, false);
         }
     }
 }

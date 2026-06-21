@@ -8,12 +8,12 @@ import com.site21.bittermelon.common.systems.medical.networking.RemoveCompartmen
 import com.site21.bittermelon.init.custom.Compartments;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
@@ -36,13 +36,13 @@ public class SuturingWidget extends InteractionWidget {
     }
 
     @Override
-    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         int size = compartmentWidget.getSlotSize();
 
         for (Point point : suturePoints) {
-            guiGraphics.blitSprite(
+            GuiGraphicsExtractor.blitSprite(
                     RenderPipelines.GUI_TEXTURED,
-                    ResourceLocation.withDefaultNamespace("pending_invite/reject"),
+                    Identifier.withDefaultNamespace("pending_invite/reject"),
                     point.x(),
                     point.y(),
                     size,
@@ -52,16 +52,16 @@ public class SuturingWidget extends InteractionWidget {
 
         if (sutureStart != null) {
             float angle = (float) Math.atan2(mouseY - sutureStart.y(), mouseX - sutureStart.x());
-            guiGraphics.pose().pushMatrix();
-            guiGraphics.pose().rotateAbout(angle, sutureStart.x(), sutureStart.y());
-            guiGraphics.fill(
+            GuiGraphicsExtractor.pose().pushMatrix();
+            GuiGraphicsExtractor.pose().rotateAbout(angle, sutureStart.x(), sutureStart.y());
+            GuiGraphicsExtractor.fill(
                     sutureStart.x(),
                     sutureStart.y(),
                     (int) (sutureStart.x() + getDistance(sutureStart, new Point(mouseX, mouseY))),
                     sutureStart.y() + 1,
                     0xFFFFFFFF
             );
-            guiGraphics.pose().popMatrix();
+            GuiGraphicsExtractor.pose().popMatrix();
         }
     }
 

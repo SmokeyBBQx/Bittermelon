@@ -12,7 +12,7 @@ import com.site21.bittermelon.common.systems.personnel.registry.networking.Updat
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -24,7 +24,7 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -77,10 +77,10 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
         fields.add(notesField);
 
         editButton = BitterButton.builder(Component.literal(""), this::toggleEditMode, new WidgetSprites(
-                        ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/write_button"),
-                        ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/locked_button"),
-                        ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/write_button_highlighted"),
-                        ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/locked_button_highlighted")
+                        Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/write_button"),
+                        Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/locked_button"),
+                        Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/write_button_highlighted"),
+                        Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/locked_button_highlighted")
                 ))
                 .bounds(getX() + getWidth() - 30, getY() + getHeight() - 25, 20, 20)
                 .tooltip(Tooltip.create(Component.literal("Edit")))
@@ -98,9 +98,9 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
         buttons.add(cancelButton);
 
         privilegesButton = BitterButton.builder(Component.literal(""), this::viewPrivileges, new WidgetSprites(
-                        ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/keys_button"),
-                        ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/keys_button_disabled"),
-                        ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/keys_button_highlighted")
+                        Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/keys_button"),
+                        Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/keys_button_disabled"),
+                        Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/keys_button_highlighted")
                 ))
                 .bounds(getX() + 10, getY() + getHeight() - 25, 20, 20)
                 .tooltip(Tooltip.create(Component.literal("View Privileges")))
@@ -108,9 +108,9 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
         buttons.add(privilegesButton);
 
         deleteButton = BitterButton.builder(Component.literal(""), this::deleteEntry, new WidgetSprites(
-                        ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/trash_button"),
-                        ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/trash_button_disabled"),
-                        ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/trash_button_highlighted")
+                        Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/trash_button"),
+                        Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/trash_button_disabled"),
+                        Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/trash_button_highlighted")
                 ))
                 .bounds(getX() + getWidth() - 135, getY() + getHeight() - 25, 20, 20)
                 .tooltip(Tooltip.create(Component.literal("Delete Entry")))
@@ -179,21 +179,21 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/generic_background"),
+    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/generic_background"),
                 getX(), getY(), getWidth(), getHeight());
 
-        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/scp_logo"),
+        GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/scp_logo"),
                 x + width - 100, y, 100, 100);
 
         Font font = Minecraft.getInstance().font;
 
-        guiGraphics.pose().pushMatrix();
+        GuiGraphicsExtractor.pose().pushMatrix();
         int pictureStartX = getX() + 30;
         int pictureStartY = getY() + 10;
         float pictureScale = 4;
 
-        guiGraphics.pose().scale(pictureScale, pictureScale);
+        GuiGraphicsExtractor.pose().scale(pictureScale, pictureScale);
 
         int playerWidth = 13;
         int playerHeight = 19;
@@ -202,25 +202,25 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
         int bgWidth = playerWidth + 5;
         int bgHeight = playerHeight + 2;
 
-        ResourceLocation texture = ResourceLocation.withDefaultNamespace("textures/block/light_gray_concrete_powder.png");
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, bgX, bgY, 0, 0, bgWidth, bgHeight, 16, 16);
+        Identifier texture = Identifier.withDefaultNamespace("textures/block/light_gray_concrete_powder.png");
+        GuiGraphicsExtractor.blit(RenderPipelines.GUI_TEXTURED, texture, bgX, bgY, 0, 0, bgWidth, bgHeight, 16, 16);
 
-        renderPlayer(guiGraphics, (int) (pictureStartX / pictureScale), (int) (pictureStartY / pictureScale));
-        guiGraphics.pose().popMatrix();
+        renderPlayer(GuiGraphicsExtractor, (int) (pictureStartX / pictureScale), (int) (pictureStartY / pictureScale));
+        GuiGraphicsExtractor.pose().popMatrix();
 
         int startX = getX() + 10;
         int startY = getY() + pictureStartY + 40;
 
-        guiGraphics.pose().pushMatrix();
+        GuiGraphicsExtractor.pose().pushMatrix();
 
         int titleStartX = getX() + 90;
         int titleStartY = getY() + 10;
         float scale = 1.5f;
 
-        guiGraphics.pose().scale(scale, scale);
+        GuiGraphicsExtractor.pose().scale(scale, scale);
 
-        guiGraphics.drawString(font, entry.getName(), (int) (titleStartX / scale), (int) (titleStartY / scale), 0xFFFFFFFF);
-        guiGraphics.pose().popMatrix();
+        GuiGraphicsExtractor.drawString(font, entry.getName(), (int) (titleStartX / scale), (int) (titleStartY / scale), 0xFFFFFFFF);
+        GuiGraphicsExtractor.pose().popMatrix();
 
         String[] labels = {"ID: ", "Name:", "Position:", "Department:", "Notes:"};
         int maxLabelWidth = 0;
@@ -230,40 +230,40 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
         int fieldX = startX + maxLabelWidth + 5;
         int color = 0xFF545454;
 
-        guiGraphics.drawString(font, "ID: " + entry.getId(), titleStartX, titleStartY + 20, color, false);
-        guiGraphics.drawString(font, "Name:", startX, startY, color, false);
-        guiGraphics.drawString(font, "Position:", startX, startY + 20, color, false);
-        guiGraphics.drawString(font, "Department:", startX, startY + 40, color, false);
-        guiGraphics.drawString(font, "Notes:", startX, startY + 60, color, false);
+        GuiGraphicsExtractor.drawString(font, "ID: " + entry.getId(), titleStartX, titleStartY + 20, color, false);
+        GuiGraphicsExtractor.drawString(font, "Name:", startX, startY, color, false);
+        GuiGraphicsExtractor.drawString(font, "Position:", startX, startY + 20, color, false);
+        GuiGraphicsExtractor.drawString(font, "Department:", startX, startY + 40, color, false);
+        GuiGraphicsExtractor.drawString(font, "Notes:", startX, startY + 60, color, false);
 
-        privilegesButton.render(guiGraphics, mouseX, mouseY, partialTick);
+        privilegesButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 
         if (editMode && canEdit) {
-            fields.forEach(field -> field.render(guiGraphics, mouseX, mouseY, partialTick));
+            fields.forEach(field -> field.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick));
 
-            deleteButton.render(guiGraphics, mouseX, mouseY, partialTick);
-            saveButton.render(guiGraphics, mouseX, mouseY, partialTick);
-            cancelButton.render(guiGraphics, mouseX, mouseY, partialTick);
+            deleteButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+            saveButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+            cancelButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
         } else {
             int textColor = 0;
 
-            guiGraphics.drawString(font, entry.getName(), fieldX, startY, textColor, false);
-            guiGraphics.drawString(font, entry.getOccupation(), fieldX, startY + 20, textColor, false);
-            guiGraphics.drawString(font, entry.getDepartment(), fieldX, startY + 40, textColor, false);
-            guiGraphics.drawWordWrap(font, FormattedText.of(entry.getNotes()), fieldX, startY + 60, 200, textColor);
+            GuiGraphicsExtractor.drawString(font, entry.getName(), fieldX, startY, textColor, false);
+            GuiGraphicsExtractor.drawString(font, entry.getOccupation(), fieldX, startY + 20, textColor, false);
+            GuiGraphicsExtractor.drawString(font, entry.getDepartment(), fieldX, startY + 40, textColor, false);
+            GuiGraphicsExtractor.drawWordWrap(font, FormattedText.of(entry.getNotes()), fieldX, startY + 60, 200, textColor);
 
             if (canEdit) {
-                editButton.render(guiGraphics, mouseX, mouseY, partialTick);
+                editButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
             }
         }
     }
 
-    private void renderPlayer(@NotNull GuiGraphics guiGraphics, int startX, int startY) {
-        ResourceLocation texture = DefaultPlayerSkin.get(entry.getPlayerUUID()).texture();
+    private void renderPlayer(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int startX, int startY) {
+        Identifier texture = DefaultPlayerSkin.get(entry.getPlayerUUID()).texture();
 
         Character character = CharacterManager.get(Minecraft.getInstance().level).getCharacter(entry.getCharacterUUID());
         if (character != null && character.getPlayerInfo().isPresent()) {
-             texture = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + character.getId());
+             texture = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + character.getId());
         }
 
         int textureSize = 64;
@@ -271,25 +271,25 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
 
         int headSize = 8;
 
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX, startY, 8, 8, headSize, headSize, textureSize, textureSize);
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX, startY, 40, 8, headSize, headSize, textureSize, textureSize);
+        GuiGraphicsExtractor.blit(RenderPipelines.GUI_TEXTURED, texture, startX, startY, 8, 8, headSize, headSize, textureSize, textureSize);
+        GuiGraphicsExtractor.blit(RenderPipelines.GUI_TEXTURED, texture, startX, startY, 40, 8, headSize, headSize, textureSize, textureSize);
 
         int bodyWidth = 8;
         int bodyHeight = 12;
 
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX, lowerBodyStartY, 20, 20, bodyWidth, bodyHeight, textureSize, textureSize);
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX, lowerBodyStartY, 20, 36, bodyWidth, bodyHeight, textureSize, textureSize);
+        GuiGraphicsExtractor.blit(RenderPipelines.GUI_TEXTURED, texture, startX, lowerBodyStartY, 20, 20, bodyWidth, bodyHeight, textureSize, textureSize);
+        GuiGraphicsExtractor.blit(RenderPipelines.GUI_TEXTURED, texture, startX, lowerBodyStartY, 20, 36, bodyWidth, bodyHeight, textureSize, textureSize);
 
         int armWidth = 4;
         int armHeight = 12;
 
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX - 4, lowerBodyStartY, 44, 20, armWidth, armHeight, textureSize, textureSize);
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX - 4, lowerBodyStartY, 44, 36, armWidth, armHeight, textureSize, textureSize);
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX + 8, lowerBodyStartY, 36, 52, armWidth, armHeight, textureSize, textureSize);
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, startX + 8, lowerBodyStartY, 52, 52, armWidth, armHeight, textureSize, textureSize);
+        GuiGraphicsExtractor.blit(RenderPipelines.GUI_TEXTURED, texture, startX - 4, lowerBodyStartY, 44, 20, armWidth, armHeight, textureSize, textureSize);
+        GuiGraphicsExtractor.blit(RenderPipelines.GUI_TEXTURED, texture, startX - 4, lowerBodyStartY, 44, 36, armWidth, armHeight, textureSize, textureSize);
+        GuiGraphicsExtractor.blit(RenderPipelines.GUI_TEXTURED, texture, startX + 8, lowerBodyStartY, 36, 52, armWidth, armHeight, textureSize, textureSize);
+        GuiGraphicsExtractor.blit(RenderPipelines.GUI_TEXTURED, texture, startX + 8, lowerBodyStartY, 52, 52, armWidth, armHeight, textureSize, textureSize);
     }
 
-    private void renderPlayerOld(GuiGraphics guiGraphics) {
+    private void renderPlayerOld(GuiGraphicsExtractor GuiGraphicsExtractor) {
         if (Minecraft.getInstance().level != null) {
             GameProfile profile = new GameProfile(entry.getPlayerUUID(), entry.getName());
             AbstractClientPlayer fakePlayer = new AbstractClientPlayer(Minecraft.getInstance().level, profile) {
@@ -305,7 +305,7 @@ public class PersonnelEntryInfoWidget extends AbstractWidget {
             };
 
             InventoryScreen.renderEntityInInventoryFollowsAngle(
-                    guiGraphics,
+                    GuiGraphicsExtractor,
                     getX() + getWidth() - 60,
                     getY() + 20,
                     getX() + getWidth() - 10,

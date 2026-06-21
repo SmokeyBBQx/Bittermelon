@@ -2,7 +2,7 @@ package com.site21.bittermelon.client.gui;
 
 import net.minecraft.client.GuiMessageTag;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.gui.components.CommandSuggestions;
@@ -162,23 +162,23 @@ public class ChatWidget extends AbstractWidget {
     }
 
     @Override
-    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        guiGraphics.fill(2, this.height - 14, this.width - 2, this.height - 2, screen.getMinecraft().options.getBackgroundColor(Integer.MIN_VALUE));
-        screen.getMinecraft().gui.getChat().render(guiGraphics, screen.getMinecraft().gui.getGuiTicks(), mouseX, mouseY, true);
-        this.commandSuggestions.render(guiGraphics, mouseX, mouseY);
+    public void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor.fill(2, this.height - 14, this.width - 2, this.height - 2, screen.getMinecraft().options.getBackgroundColor(Integer.MIN_VALUE));
+        screen.getMinecraft().gui.getChat().render(GuiGraphicsExtractor, screen.getMinecraft().gui.getGuiTicks(), mouseX, mouseY, true);
+        this.commandSuggestions.render(GuiGraphicsExtractor, mouseX, mouseY);
         GuiMessageTag guimessagetag = screen.getMinecraft().gui.getChat().getMessageTagAt((double)mouseX, (double)mouseY);
         if (guimessagetag != null && guimessagetag.text() != null) {
-            guiGraphics.setTooltipForNextFrame(screen.getMinecraft().font, screen.getMinecraft().font.split(guimessagetag.text(), TOOLTIP_MAX_WIDTH), mouseX, mouseY);
+            GuiGraphicsExtractor.setTooltipForNextFrame(screen.getMinecraft().font, screen.getMinecraft().font.split(guimessagetag.text(), TOOLTIP_MAX_WIDTH), mouseX, mouseY);
         } else {
             Style style = this.getComponentStyleAt(mouseX, mouseY);
             if (style != null && style.getHoverEvent() != null) {
-                guiGraphics.renderComponentHoverEffect(screen.getMinecraft().font, style, mouseX, mouseY);
+                GuiGraphicsExtractor.renderComponentHoverEffect(screen.getMinecraft().font, style, mouseX, mouseY);
             }
         }
 
     }
 
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void renderBackground(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
     }
 
     public boolean isPauseScreen() {

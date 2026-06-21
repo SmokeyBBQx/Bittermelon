@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.content.mobeffects;
 
 import com.site21.bittermelon.Bittermelon;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
@@ -25,19 +25,19 @@ public class UnconsciousRenderer {
         // TODO: Gray shader
 
         if (player.hasEffect(UNCONSCIOUS)) {
-            GuiGraphics guiGraphics = event.getGuiGraphics();
+            GuiGraphicsExtractor GuiGraphicsExtractor = event.getGuiGraphicsExtractor();
 
-            guiGraphics.blit(
+            GuiGraphicsExtractor.blit(
                     RenderPipelines.VIGNETTE,
                     VIGNETTE_LOCATION,
                     0,
                     0,
                     0.0F,
                     0.0F,
-                    guiGraphics.guiWidth(),
-                    guiGraphics.guiHeight(),
-                    guiGraphics.guiWidth(),
-                    guiGraphics.guiHeight(),
+                    GuiGraphicsExtractor.guiWidth(),
+                    GuiGraphicsExtractor.guiHeight(),
+                    GuiGraphicsExtractor.guiWidth(),
+                    GuiGraphicsExtractor.guiHeight(),
                     0xFF000000 | (int) (10 * 255)
             );
 
@@ -45,7 +45,7 @@ public class UnconsciousRenderer {
                 int screenWidth = mc.getWindow().getGuiScaledWidth();
                 int screenHeight = mc.getWindow().getGuiScaledHeight();
 
-                guiGraphics.fill(0, 0, screenWidth, screenHeight, 0xFF000000);
+                GuiGraphicsExtractor.fill(0, 0, screenWidth, screenHeight, 0xFF000000);
             }
         }
     }

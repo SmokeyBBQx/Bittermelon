@@ -29,7 +29,7 @@ import net.minecraft.client.renderer.item.RangeSelectItemModel;
 import net.minecraft.client.renderer.item.SelectItemModel;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -44,11 +44,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.site21.bittermelon.datagen.BitterModelTemplates.*;
-import static com.site21.bittermelon.init.neoforge.BitterBlocks.LARGE_SLIDING_DOOR;
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.*;
+import static com.site21.bittermelon.init.neoforge.BitterBlocks.LARGE_SLIDING_DOOR;
+import static com.site21.bittermelon.init.neoforge.BitterItems.*;
 import static com.site21.bittermelon.init.neoforge.BitterItems.KEYCARD_READER;
 import static com.site21.bittermelon.init.neoforge.BitterItems.STICKY_NOTE;
-import static com.site21.bittermelon.init.neoforge.BitterItems.*;
 import static net.minecraft.client.data.models.BlockModelGenerators.*;
 import static net.minecraft.client.data.models.model.TextureMapping.getBlockTexture;
 
@@ -83,7 +83,7 @@ public class BitterModelProvider extends ModelProvider {
         createPainting(blockModels, BitterBlocks.SCP_151.get());
         blockModels.createTrivialCube(BitterBlocks.PERSONNEL_TERMINAL.get());
         blockModels.createTrivialCube(BitterBlocks.KEYCARD_PRINTER.get());
-        blockModels.createAirLikeBlock(BitterBlocks.WALL_WRITING.get(), ResourceLocation.withDefaultNamespace("white_concrete_powder"));
+        blockModels.createAirLikeBlock(BitterBlocks.WALL_WRITING.get(), Identifier.withDefaultNamespace("white_concrete_powder"));
         createStickyNote(blockModels);
         createKeycardReader(blockModels);
         createRedstoneDevice(blockModels, BitterBlocks.REDSTONE_DEVICE.get(), TexturedModel.ORIENTABLE);
@@ -259,7 +259,7 @@ public class BitterModelProvider extends ModelProvider {
         blockModels.blockStateOutput.accept(
                 MultiVariantGenerator.dispatch(DIRTY_FLOOR.get()).with(
                                 PropertyDispatch.initial(DirtyFloorBlock.DIRTINESS).generate((dirtiness) ->
-                                        plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/dirty_floor_" + dirtiness))))
+                                        plainVariant(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/dirty_floor_" + dirtiness))))
                         .with(ROTATION_HORIZONTAL_FACING));
     }
 
@@ -273,7 +273,7 @@ public class BitterModelProvider extends ModelProvider {
     public void createIndentedSmallBlock(@NotNull BlockModelGenerators blockModels, Block block) {
         blockModels.blockStateOutput.accept(
                 MultiVariantGenerator.dispatch(block,
-                                plainVariant(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/indented_small_block")))
+                                plainVariant(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/indented_small_block")))
                         .with(ROTATION_HORIZONTAL_FACING));
     }
 
@@ -292,9 +292,9 @@ public class BitterModelProvider extends ModelProvider {
 
     public void createRedstoneDevice(@NotNull BlockModelGenerators blockModels, Block block, TexturedModel.@NotNull Provider modelProvider) {
         MultiVariant offVariant = plainVariant(modelProvider.create(block, blockModels.modelOutput));
-        ResourceLocation resourcelocation = getBlockTexture(block, "_front_on");
+        Identifier Identifier = getBlockTexture(block, "_front_on");
         MultiVariant onVariant = plainVariant(modelProvider.get(block)
-                .updateTextures(mapping -> mapping.put(TextureSlot.FRONT, resourcelocation))
+                .updateTextures(mapping -> mapping.put(TextureSlot.FRONT, Identifier))
                 .createWithSuffix(block, "_on", blockModels.modelOutput));
 
         blockModels.blockStateOutput.accept(
@@ -361,7 +361,7 @@ public class BitterModelProvider extends ModelProvider {
                     boolean bottomRight = (i & 1) != 0;
 
                     String modelName = "sticky_note_" + String.format("%04d", Integer.parseInt(Integer.toBinaryString(i)));
-                    ResourceLocation modelLocation = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/sticky_note/" + modelName);
+                    Identifier modelLocation = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/sticky_note/" + modelName);
 
                     multiPartGenerator.with(
                             BlockModelGenerators.condition()
@@ -387,7 +387,7 @@ public class BitterModelProvider extends ModelProvider {
                     boolean bottomRight = (i & 1) != 0;
 
                     String modelName = "sticky_note_floor_" + String.format("%04d", Integer.parseInt(Integer.toBinaryString(i)));
-                    ResourceLocation modelLocation = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/sticky_note/" + modelName);
+                    Identifier modelLocation = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/sticky_note/" + modelName);
 
                     multiPartGenerator.with(
                             BlockModelGenerators.condition()
@@ -414,7 +414,7 @@ public class BitterModelProvider extends ModelProvider {
                     boolean bottomRight = (i & 1) != 0;
 
                     String modelName = "sticky_note_ceiling_" + String.format("%04d", Integer.parseInt(Integer.toBinaryString(i)));
-                    ResourceLocation modelLocation = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/sticky_note/" + modelName);
+                    Identifier modelLocation = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/sticky_note/" + modelName);
 
                     multiPartGenerator.with(
                             BlockModelGenerators.condition()
@@ -440,7 +440,7 @@ public class BitterModelProvider extends ModelProvider {
     }
 
     public void generateTintedSubstanceItem(@NotNull ItemModelGenerators itemModels, Item item) {
-        ResourceLocation model = itemModels.createFlatItemModel(item, ModelTemplates.FLAT_ITEM);
+        Identifier model = itemModels.createFlatItemModel(item, ModelTemplates.FLAT_ITEM);
         itemModels.itemModelOutput.accept(item, ItemModelUtils.tintedModel(model, new SubstanceColor()));
     }
 
@@ -595,7 +595,7 @@ public class BitterModelProvider extends ModelProvider {
 
     public void createCageLamp(@NotNull BlockModelGenerators blockModels, Block block) {
         TextureMapping offTextureMapping = TextureMapping.defaultTexture(block);
-        ResourceLocation onLocation = getBlockTexture(block, "_on");
+        Identifier onLocation = getBlockTexture(block, "_on");
         TextureMapping onTextureMapping = offTextureMapping.copyAndUpdate(TextureSlot.TEXTURE, onLocation);
 
         createCageLamp(blockModels, block, offTextureMapping, onTextureMapping);
@@ -603,7 +603,7 @@ public class BitterModelProvider extends ModelProvider {
 
     public void createDefaultCageLamp(@NotNull BlockModelGenerators blockModels, Block block) {
         TextureMapping offTextureMapping = TextureMapping.defaultTexture(modLocation("block/cage_lamp"));
-        ResourceLocation onLocation = getBlockTexture(block, "_on");
+        Identifier onLocation = getBlockTexture(block, "_on");
         TextureMapping onTextureMapping = offTextureMapping.copyAndUpdate(TextureSlot.TEXTURE, onLocation);
 
         createCageLamp(blockModels, block, offTextureMapping, onTextureMapping);
@@ -684,7 +684,7 @@ public class BitterModelProvider extends ModelProvider {
     public void createFluid(@NotNull BlockModelGenerators blockModels, @NotNull Block block) {
         MultiVariant none = blockModels.createParticleOnlyBlockModel(block, block);
 
-        TextureMapping fireMapping = new TextureMapping().put(TextureSlot.FIRE, ResourceLocation.withDefaultNamespace("block/fire_0"));
+        TextureMapping fireMapping = new TextureMapping().put(TextureSlot.FIRE, Identifier.withDefaultNamespace("block/fire_0"));
         MultiVariant full = plainVariant(FIRE.create(block, fireMapping, blockModels.modelOutput));
 
         blockModels.blockStateOutput.accept(

@@ -12,7 +12,7 @@ import com.site21.bittermelon.common.systems.telecomms.intercom.networking.SyncI
 import com.site21.bittermelon.init.neoforge.BitterEntities;
 import com.site21.bittermelon.init.neoforge.BitterRegistries;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -23,7 +23,6 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Contract;
@@ -109,13 +108,9 @@ public class Bittermelon {
     }
 
     @SubscribeEvent
-    public void onServerStarting(@NotNull ServerStartingEvent event) {
-    }
-
-    @SubscribeEvent
     public void onEntityTick(EntityTickEvent.@NotNull Post event) {
         Level level = event.getEntity().level();
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
         Character character = CharacterManager.get(level).getActiveCharacter(event.getEntity());
         if (character != null) character.update(level);
 
@@ -154,7 +149,7 @@ public class Bittermelon {
     }
 
     @Contract("_ -> new")
-    public static @NotNull ResourceLocation resource(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    public static Identifier resource(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 }

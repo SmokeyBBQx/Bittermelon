@@ -4,13 +4,15 @@ import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureContents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 public class SkinTexture extends SimpleTexture {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -21,7 +23,7 @@ public class SkinTexture extends SimpleTexture {
     private final SkinDownloader downloader;
     private boolean downloaded;
 
-    public SkinTexture(ResourceLocation location, File cacheFile, String imageUrl, Runnable onLoadCallback) {
+    public SkinTexture(Identifier location, File cacheFile, String imageUrl, Runnable onLoadCallback) {
         super(location);
         this.cacheFile = cacheFile;
         this.imageUrl = imageUrl;

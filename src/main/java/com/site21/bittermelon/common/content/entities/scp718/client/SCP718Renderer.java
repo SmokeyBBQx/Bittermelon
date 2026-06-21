@@ -5,7 +5,7 @@ import com.site21.bittermelon.client.event.LayerDefinitions;
 import com.site21.bittermelon.common.content.entities.scp718.SCP718;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class SCP718Renderer extends MobRenderer<SCP718, SCP718RenderState, SCP718Model> {
     public SCP718Renderer(EntityRendererProvider.Context context) {
@@ -13,7 +13,7 @@ public class SCP718Renderer extends MobRenderer<SCP718, SCP718RenderState, SCP71
     }
 
     @Override
-    public ResourceLocation getTextureLocation(SCP718RenderState renderState) {
+    public Identifier getTextureLocation(SCP718RenderState renderState) {
         return Bittermelon.resource("textures/entity/scp_718.png");
     }
 

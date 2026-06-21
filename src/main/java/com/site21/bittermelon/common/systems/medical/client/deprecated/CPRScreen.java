@@ -3,10 +3,10 @@
 //import com.site21.bittermelon.common.systems.character.Character;
 //import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 //import net.minecraft.client.Minecraft;
-//import net.minecraft.client.gui.GuiGraphics;
+//import net.minecraft.client.gui.GuiGraphicsExtractor;
 //import net.minecraft.client.gui.screens.Screen;
 //import net.minecraft.network.chat.Component;
-//import net.minecraft.resources.ResourceLocation;
+//import net.minecraft.resources.Identifier;
 //import net.minecraft.sounds.SoundEvents;
 //import net.minecraft.world.entity.player.Player;
 //import net.neoforged.api.distmarker.Dist;
@@ -18,7 +18,7 @@
 //public class CPRScreen extends Screen {
 //    private static final int CIRCLE_RADIUS = 40;
 //    // TODO: New indicator texture
-//    private static final ResourceLocation INDICATOR_TEXTURE = ResourceLocation.fromNamespaceAndPath("bittermelon", "textures/gui/sprites/medical/cpr_indicator.png");
+//    private static final Identifier INDICATOR_TEXTURE = Identifier.fromNamespaceAndPath("bittermelon", "textures/gui/sprites/medical/cpr_indicator.png");
 //    private static final int ICON_SIZE = 8;
 //    private static final float SUCCESS_ZONE_SIZE = 50f;
 //    private static final float GREAT_ZONE_SIZE = 10f;
@@ -81,7 +81,7 @@
 //    }
 //
 //    @Override
-//    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+//    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
 //        long currentTime = System.currentTimeMillis();
 //        float deltaTime = (currentTime - lastTime) / 1000f;
 //        lastTime = currentTime;
@@ -91,14 +91,14 @@
 //        int centerX = width / 2;
 //        int centerY = height / 2;
 //
-//        drawIndicator(guiGraphics, centerX, centerY);
+//        drawIndicator(GuiGraphicsExtractor, centerX, centerY);
 //
-//        drawArc(guiGraphics, centerX, centerY, 0, 360, 2, calculateRedTint());
-//        drawArc(guiGraphics, centerX, centerY, LEFT_SUCCESS_ZONE_START, SUCCESS_ZONE_SIZE, 3f,0xFF06D001);
-//        drawArc(guiGraphics, centerX, centerY, LEFT_GREAT_ZONE_START, GREAT_ZONE_SIZE, 3f, 0xFF06F500);
+//        drawArc(GuiGraphicsExtractor, centerX, centerY, 0, 360, 2, calculateRedTint());
+//        drawArc(GuiGraphicsExtractor, centerX, centerY, LEFT_SUCCESS_ZONE_START, SUCCESS_ZONE_SIZE, 3f,0xFF06D001);
+//        drawArc(GuiGraphicsExtractor, centerX, centerY, LEFT_GREAT_ZONE_START, GREAT_ZONE_SIZE, 3f, 0xFF06F500);
 //
-//        drawArc(guiGraphics, centerX, centerY, RIGHT_SUCCESS_ZONE_START, SUCCESS_ZONE_SIZE, 3f, 0xFF06D001);
-//        drawArc(guiGraphics, centerX, centerY, RIGHT_GREAT_ZONE_START, GREAT_ZONE_SIZE, 3f, 0xFF06F500);
+//        drawArc(GuiGraphicsExtractor, centerX, centerY, RIGHT_SUCCESS_ZONE_START, SUCCESS_ZONE_SIZE, 3f, 0xFF06D001);
+//        drawArc(GuiGraphicsExtractor, centerX, centerY, RIGHT_GREAT_ZONE_START, GREAT_ZONE_SIZE, 3f, 0xFF06F500);
 //    }
 //
 //
@@ -118,19 +118,19 @@
 //
 //    }
 //
-//    private void drawIndicator(@NotNull GuiGraphics guiGraphics, int centerX, int centerY) {
+//    private void drawIndicator(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int centerX, int centerY) {
 ////        float radians = (float) Math.toRadians(currentAngle);
 ////        double indicatorX = centerX + (CIRCLE_RADIUS * Math.cos(radians));
 ////        double indicatorY = centerY + (CIRCLE_RADIUS * Math.sin(radians));
 ////
-////        Matrix3x2fStack poseStack = guiGraphics.pose();
+////        Matrix3x2fStack poseStack = GuiGraphicsExtractor.pose();
 ////        poseStack.pushMatrix();
 ////
 ////        poseStack.translate(indicatorX, indicatorY, 0);
 ////        poseStack.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(currentAngle));
 ////        poseStack.translate(-ICON_SIZE / 2.0f, -ICON_SIZE /2.0f, 0);
 ////
-////        guiGraphics.blit(INDICATOR_TEXTURE,
+////        GuiGraphicsExtractor.blit(INDICATOR_TEXTURE,
 ////                0, 0,
 ////                0, 0,
 ////                ICON_SIZE, ICON_SIZE,
@@ -139,8 +139,8 @@
 ////        poseStack.popPose();
 //    }
 //
-//    private void drawArc(@NotNull GuiGraphics guiGraphics, int centerX, int centerY, float startAngle, float arcSize, float thickness, int color) {
-////        PoseStack poseStack = guiGraphics.pose();
+//    private void drawArc(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int centerX, int centerY, float startAngle, float arcSize, float thickness, int color) {
+////        PoseStack poseStack = GuiGraphicsExtractor.pose();
 ////        Matrix4f matrix = poseStack.last().pose();
 ////        thickness += thicknessIncrease;
 ////

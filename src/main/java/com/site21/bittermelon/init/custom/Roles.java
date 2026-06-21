@@ -4,7 +4,7 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.roles.FoundationRole;
 import com.site21.bittermelon.common.systems.roles.Role;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;
@@ -18,12 +18,12 @@ public class Roles {
             () -> new FoundationRole("Class-D", 0XFFF77C00, "Our most expensive asset", "Waste the Foundation's resources spent on training you by dying in under a minute.",
                     "Auxiliary and Expendable Resources Department", "Class-D")
                     .defaultRole()
-                    .skinLocation(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/character/skins/class_d.png")));
+                    .skinLocation(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/character/skins/class_d.png")));
 
     public static final Supplier<Role> ASSISTANT = ROLES.register("assistant",
             () -> new FoundationRole("Assistant", 0XFF755F52, "Glorified water boys", "", "N/A", "Assistant")
                     .defaultRole()
-                    .skinLocation(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/character/skins/assistant.png"))
+                    .skinLocation(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/character/skins/assistant.png"))
     );
 
     public static final Supplier<Role> SECURITY_TRAINEE = ROLES.register("security_trainee",
@@ -35,7 +35,7 @@ public class Roles {
                     "Security Department",
                     "Security Trainee")
                     .addMessage(Component.literal("Welcome to the Security Department. Make sure to read the wiki for info on how to get started."))
-                    .skinLocation(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/character/skins/security.png"))
+                    .skinLocation(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/character/skins/security.png"))
     );
 
     public static final Supplier<Role> SECURITY_GUARD = ROLES.register("security_guard",
@@ -47,7 +47,7 @@ public class Roles {
                     "Security Department",
                     "Security Guard")
                     .addMessage(Component.literal("Welcome to the Security Department. Make sure to read the wiki for info on how to get started."))
-                    .skinLocation(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/character/skins/security.png"))
+                    .skinLocation(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/character/skins/security.png"))
     );
 
     public static final Supplier<Role> RESEARCH_INTERN = ROLES.register("research_intern",
@@ -59,6 +59,6 @@ public class Roles {
                     "Scientific Department",
                     "Research Intern")
                     .addMessage(Component.literal("Welcome to the Scientific Department. Make sure to read the wiki for info on how to get started."))
-                    .skinLocation(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/character/skins/science.png"))
+                    .skinLocation(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/character/skins/science.png"))
     );
 }

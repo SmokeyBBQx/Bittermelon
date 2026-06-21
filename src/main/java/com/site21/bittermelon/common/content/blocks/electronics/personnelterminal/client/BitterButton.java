@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.content.blocks.electronics.personneltermin
 
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -13,8 +13,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -38,15 +36,15 @@ public class BitterButton extends Button {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         Minecraft minecraft = Minecraft.getInstance();
-//        guiGraphics.setColor(1.0F, 1.0F, 1.0F, this.alpha);
+//        GuiGraphicsExtractor.setColor(1.0F, 1.0F, 1.0F, this.alpha);
 //        RenderSystem.enableBlend();
 //        RenderSystem.enableDepthTest();
-        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprites.get(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
-//        guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, sprites.get(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+//        GuiGraphicsExtractor.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         int i = this.getFGColor();
-        this.renderString(guiGraphics, minecraft.font, i | Mth.ceil(this.alpha * 255.0F) << 24);
+        this.renderString(GuiGraphicsExtractor, minecraft.font, i | Mth.ceil(this.alpha * 255.0F) << 24);
     }
 
     public static BitterButton.@NotNull Builder builder(Component message, OnPress onPress, WidgetSprites sprites) {

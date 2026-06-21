@@ -11,7 +11,7 @@ import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 import com.site21.bittermelon.init.neoforge.BitterAttachmentTypes;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -84,35 +84,35 @@ public class HealthScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        anatomyWidget.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        anatomyWidget.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 
         for (CompartmentWidget widget : compartmentWidgets) {
             if (widget != activeWidget) {
-                widget.render(guiGraphics, mouseX, mouseY, partialTick);
+                widget.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
             }
         }
 
         if (activeWidget != null) {
-            activeWidget.render(guiGraphics, mouseX, mouseY, partialTick);
+            activeWidget.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
         }
 
-        renderHeldCompartment(guiGraphics, mouseX, mouseY);
+        renderHeldCompartment(GuiGraphicsExtractor, mouseX, mouseY);
 
         for (InstrumentWidget widget : instrumentWidgets) {
-            widget.render(guiGraphics, mouseX, mouseY, partialTick);
+            widget.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
             if (widget == heldTool) {
                 // Renders at mouse position if held
-                heldTool.renderTool(guiGraphics, mouseX, mouseY);
+                heldTool.renderTool(GuiGraphicsExtractor, mouseX, mouseY);
             }
         }
     }
 
     @Override
-    protected void renderBlurredBackground(@NotNull GuiGraphics guiGraphics) {
+    protected void renderBlurredBackground(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor) {
     }
 
-    private void renderHeldCompartment(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    private void renderHeldCompartment(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
         if (heldCompartment == null) return;
         if (heldCompartment.has(VISUAL_DATA)) return;
 
@@ -121,14 +121,14 @@ public class HealthScreen extends Screen {
 
         if (visualData.icon() != null) {
             float scaleFactor = visualData.scale();
-            guiGraphics.pose().pushMatrix();
-            guiGraphics.pose().translate(mouseX + visualData.x(), mouseY + visualData.y());
-            guiGraphics.pose().scale(scaleFactor, scaleFactor);
+            GuiGraphicsExtractor.pose().pushMatrix();
+            GuiGraphicsExtractor.pose().translate(mouseX + visualData.x(), mouseY + visualData.y());
+            GuiGraphicsExtractor.pose().scale(scaleFactor, scaleFactor);
 
-            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, visualData.icon(), 0, 0, 0, 0, 20,
+            GuiGraphicsExtractor.blit(RenderPipelines.GUI_TEXTURED, visualData.icon(), 0, 0, 0, 0, 20,
                     20, 20, 20);
 
-            guiGraphics.pose().popMatrix();
+            GuiGraphicsExtractor.pose().popMatrix();
         }
     }
 

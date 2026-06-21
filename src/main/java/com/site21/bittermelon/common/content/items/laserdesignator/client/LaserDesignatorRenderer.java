@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.Window;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.items.laserdesignator.LaserDesignatorItem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -34,13 +34,13 @@ public class LaserDesignatorRenderer {
                 int ySize = Math.abs(pos2.getY() - pos1.getY());
                 int zSize = Math.abs(pos2.getZ() - pos1.getZ());
                 Component text = Component.literal("(" + xSize + ", " + ySize + ", " + zSize + ")");
-                GuiGraphics guiGraphics = event.getGuiGraphics();
+                GuiGraphicsExtractor GuiGraphicsExtractor = event.getGuiGraphicsExtractor();
                 Window window = minecraft.getWindow();
                 int width = window.getGuiScaledWidth();
                 int height = window.getGuiScaledHeight();
                 int x = (width - minecraft.font.width(text)) / 2;
                 int y = height - 35;
-                guiGraphics.drawString(minecraft.font, text, x, y, 0xFFFFFF);
+                GuiGraphicsExtractor.drawString(minecraft.font, text, x, y, 0xFFFFFF);
             }
         }
     }

@@ -1,20 +1,20 @@
 package com.site21.bittermelon.common.systems.character.client.charactereditor;
 
 import com.site21.bittermelon.Bittermelon;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 
 public class ModelButton extends AbstractWidget {
-    private static final ResourceLocation WIDE_ICON = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/wide_model_button");
-    private static final ResourceLocation WIDE_ICON_HIGHLIGHTED = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/wide_model_button_highlighted");
-    private static final ResourceLocation SLIM_ICON = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/slim_model_button");
-    private static final ResourceLocation SLIM_ICON_HIGHLIGHTED = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/slim_model_button_highlighted");
+    private static final Identifier WIDE_ICON = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/wide_model_button");
+    private static final Identifier WIDE_ICON_HIGHLIGHTED = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/wide_model_button_highlighted");
+    private static final Identifier SLIM_ICON = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/slim_model_button");
+    private static final Identifier SLIM_ICON_HIGHLIGHTED = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/slim_model_button_highlighted");
 
     private final OnPress onPress;
     private boolean wide = true;
@@ -25,11 +25,11 @@ public class ModelButton extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         if (isHovered) {
-            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, wide ? WIDE_ICON_HIGHLIGHTED : SLIM_ICON_HIGHLIGHTED, x, y, width, height);
+            GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, wide ? WIDE_ICON_HIGHLIGHTED : SLIM_ICON_HIGHLIGHTED, x, y, width, height);
         } else {
-            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, wide ? WIDE_ICON : SLIM_ICON, x, y, width, height);
+            GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, wide ? WIDE_ICON : SLIM_ICON, x, y, width, height);
         }
     }
 

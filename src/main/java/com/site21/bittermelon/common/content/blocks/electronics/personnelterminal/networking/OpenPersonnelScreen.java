@@ -7,12 +7,12 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record OpenPersonnelScreen(BlockPos pos) implements CustomPacketPayload {
-    public static final Type<OpenPersonnelScreen> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "open_personnel_screen"));
+    public static final Type<OpenPersonnelScreen> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "open_personnel_screen"));
 
     public static final StreamCodec<ByteBuf, OpenPersonnelScreen> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC,

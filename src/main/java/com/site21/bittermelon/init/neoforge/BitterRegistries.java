@@ -12,8 +12,8 @@ import com.site21.bittermelon.common.systems.medical.drug.Drug;
 import com.site21.bittermelon.common.systems.roles.Role;
 import com.site21.bittermelon.common.systems.substance.Substance;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
@@ -22,35 +22,35 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Function;
 
 public class BitterRegistries {
-    public static final ResourceKey<Registry<Substance>> SUBSTANCE_REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "substances"));
+    public static final ResourceKey<Registry<Substance>> SUBSTANCE_REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "substances"));
     public static final Registry<Substance> SUBSTANCE_REGISTRY = new RegistryBuilder<>(SUBSTANCE_REGISTRY_KEY)
             .sync(true)
             .create();
 
-    public static final ResourceKey<Registry<VerbSet>> VERB_SET_REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "verb_sets"));
+    public static final ResourceKey<Registry<VerbSet>> VERB_SET_REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "verb_sets"));
     public static final Registry<VerbSet> VERB_SET_REGISTRY = new RegistryBuilder<>(VERB_SET_REGISTRY_KEY)
             .create();
 
-    public static final ResourceKey<Registry<Function<Float, Function<Signal, Signal>>>> LOGICAL_OPERATORS_REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "conditions"));
+    public static final ResourceKey<Registry<Function<Float, Function<Signal, Signal>>>> LOGICAL_OPERATORS_REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "conditions"));
     public static final Registry<Function<Float, Function<Signal, Signal>>> LOGICAL_OPERATORS_REGISTRY = new RegistryBuilder<>(LOGICAL_OPERATORS_REGISTRY_KEY)
             .sync(true)
             .create();
 
-    public static final ResourceKey<Registry<Compartment>> COMPARTMENT_REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "compartments"));
+    public static final ResourceKey<Registry<Compartment>> COMPARTMENT_REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "compartments"));
     public static final Registry<Compartment> COMPARTMENT_REGISTRY = new RegistryBuilder<>(COMPARTMENT_REGISTRY_KEY)
             .sync(true)
             .create();
 
-    public static final ResourceKey<Registry<Drug>> DRUG_REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "drugs"));
+    public static final ResourceKey<Registry<Drug>> DRUG_REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "drugs"));
     public static final Registry<Drug> DRUG_REGISTRY = new RegistryBuilder<>(DRUG_REGISTRY_KEY)
             .create();
 
-    public static final ResourceKey<Registry<Role>> ROLE_REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "roles"));
+    public static final ResourceKey<Registry<Role>> ROLE_REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "roles"));
     public static final Registry<Role> ROLE_REGISTRY = new RegistryBuilder<>(ROLE_REGISTRY_KEY)
             .sync(true)
             .create();
 
-    public static final ResourceKey<Registry<Media>> MEDIA_REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "media"));
+    public static final ResourceKey<Registry<Media>> MEDIA_REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "media"));
     public static final Registry<Media> MEDIA_REGISTRY = new RegistryBuilder<>(MEDIA_REGISTRY_KEY)
             .sync(true)
             .create();
@@ -61,13 +61,13 @@ public class BitterRegistries {
             .create();
 
     public static final ResourceKey<Registry<ReactionConditionType<?>>> REACTION_CONDITION_TYPE_KEY =
-            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "reaction_condition_type"));
+            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "reaction_condition_type"));
     public static final Registry<ReactionConditionType<?>> REACTION_CONDITION_TYPE = new RegistryBuilder<>(REACTION_CONDITION_TYPE_KEY)
             .sync(true)
             .create();
 
     public static final ResourceKey<Registry<ReactionEffectType<?>>> REACTION_EFFECT_TYPE_KEY =
-            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "reaction_effect_type"));
+            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "reaction_effect_type"));
     public static final Registry<ReactionEffectType<?>> REACTION_EFFECT_TYPE = new RegistryBuilder<>(REACTION_EFFECT_TYPE_KEY)
             .sync(true)
             .create();

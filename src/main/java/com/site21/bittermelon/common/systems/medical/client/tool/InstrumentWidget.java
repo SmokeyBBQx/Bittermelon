@@ -3,11 +3,11 @@ package com.site21.bittermelon.common.systems.medical.client.tool;
 import com.site21.bittermelon.common.systems.component.medical.MedicalInstrument;
 import com.site21.bittermelon.common.systems.medical.client.CompartmentWidget;
 import com.site21.bittermelon.common.systems.medical.client.HealthScreen;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,13 +26,13 @@ public abstract class InstrumentWidget extends AbstractWidget {
         this.screen = screen;
     }
 
-    protected Optional<ResourceLocation> getIcon() {
+    protected Optional<Identifier> getIcon() {
         return stack.get(componentType).icon();
     }
 
-    public void renderTool(GuiGraphics guiGraphics, int x, int y) {
+    public void renderTool(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y) {
         if (getIcon().isPresent()) {
-            guiGraphics.blit(
+            GuiGraphicsExtractor.blit(
                     getIcon().get(),
                     x,
                     y,
@@ -44,17 +44,17 @@ public abstract class InstrumentWidget extends AbstractWidget {
                     16
             );
         } else {
-            guiGraphics.pose().pushMatrix();
-            guiGraphics.pose().translate(x, y);
-            guiGraphics.pose().scale(width / 16f, height / 16f);
-            guiGraphics.renderItem(stack, 0, 0);
-            guiGraphics.pose().popMatrix();
+            GuiGraphicsExtractor.pose().pushMatrix();
+            GuiGraphicsExtractor.pose().translate(x, y);
+            GuiGraphicsExtractor.pose().scale(width / 16f, height / 16f);
+            GuiGraphicsExtractor.renderItem(stack, 0, 0);
+            GuiGraphicsExtractor.pose().popMatrix();
         }
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        renderTool(guiGraphics, x, y);
+    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        renderTool(GuiGraphicsExtractor, x, y);
     }
 
     public void onLayerChanged(CompartmentWidget widget) {

@@ -18,7 +18,7 @@ public interface HasBasicNeeds {
 
     default boolean wantsToDrink(@NotNull FluidBlockEntity fluid) {
 //        return fluid.getSubstances().stream().anyMatch(substanceStack ->
-//                substanceStack.getSubstanceHolder().is(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "liquid_water")));
+//                substanceStack.getSubstanceHolder().is(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "liquid_water")));
         return true;
     }
 

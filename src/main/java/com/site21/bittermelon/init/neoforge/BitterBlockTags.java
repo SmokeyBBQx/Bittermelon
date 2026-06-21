@@ -2,28 +2,28 @@ package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 
 public class BitterBlockTags {
     public static final TagKey<Block> PASSES_ATMOS = TagKey.create(
             Registries.BLOCK,
-            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "passes_atmos")
+            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "passes_atmos")
     );
 
     public static final TagKey<Block> INSPECTABLE = TagKey.create(
             Registries.BLOCK,
-            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "inspectable")
+            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "inspectable")
     );
 
     public static final TagKey<Block> UNREPAIRABLE = TagKey.create(
             Registries.BLOCK,
-            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "unrepairable")
+            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "unrepairable")
     );
 
     public static final TagKey<Block> BURROWABLE = TagKey.create(
             Registries.BLOCK,
-            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "burrowable")
+            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "burrowable")
     );
 }

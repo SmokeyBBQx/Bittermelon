@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import org.spongepowered.asm.mixin.Final;
@@ -40,7 +40,7 @@ public class ItemInHandRendererMixin {
     private void bittermelon$renderCarryingHands(PoseStack poseStack, MultiBufferSource buffer, float partialTick,
                                                  int packedLight, LocalPlayer player) {
         PlayerRenderer playerRenderer = (PlayerRenderer) entityRenderDispatcher.getRenderer(player);
-        ResourceLocation skin = player.getSkin().texture();
+        Identifier skin = player.getSkin().texture();
 
         Entity carried = CarryHandler.getCarried(player);
         if (carried == null) return;

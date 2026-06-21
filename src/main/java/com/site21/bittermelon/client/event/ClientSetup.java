@@ -53,7 +53,6 @@ import com.site21.bittermelon.init.neoforge.BitterBlockEntities;
 import com.site21.bittermelon.init.neoforge.BitterItems;
 import com.site21.bittermelon.init.neoforge.BitterMobEffects;
 import com.site21.bittermelon.init.neoforge.BitterParticles;
-import com.site21.bittermelon.init.neoforge.*;
 import com.site21.bittermelon.networking.client.ClientPayloadHandler;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -65,7 +64,7 @@ import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -185,7 +184,7 @@ public class ClientSetup {
     @SubscribeEvent
     public static void registerRangeProperties(@NotNull RegisterRangeSelectItemModelPropertyEvent event) {
         event.register(
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "substance_volume"),
+                Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "substance_volume"),
                 SubstanceVolume.MAP_CODEC
         );
     }
@@ -193,12 +192,12 @@ public class ClientSetup {
     @SubscribeEvent
     public static void registerItemTintSources(RegisterColorHandlersEvent.@NotNull ItemTintSources event) {
         event.register(
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "substance_color"),
+                Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "substance_color"),
                 SubstanceColor.MAP_CODEC
         );
 
         event.register(
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "base_color"),
+                Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "base_color"),
                 BaseColor.MAP_CODEC
         );
     }
@@ -206,7 +205,7 @@ public class ClientSetup {
     @SubscribeEvent
     public static void registerSelectProperties(@NotNull RegisterSelectItemModelPropertyEvent event) {
         event.register(
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "pill_shape"),
+                Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "pill_shape"),
                 StackPillShape.TYPE
         );
     }
@@ -214,22 +213,22 @@ public class ClientSetup {
     @SubscribeEvent
     public static void registerConditionalProperties(@NotNull RegisterConditionalItemModelPropertyEvent event) {
         event.register(
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "smokable_lit"),
+                Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "smokable_lit"),
                 SmokableLit.MAP_CODEC
         );
 
         event.register(
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "empty_377"),
+                Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "empty_377"),
                 Empty377.MAP_CODEC
         );
 
         event.register(
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "open_1079"),
+                Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "open_1079"),
                 Open1079.MAP_CODEC
         );
 
         event.register(
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "open_815"),
+                Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "open_815"),
                 Open815.MAP_CODEC
         );
 
@@ -276,7 +275,7 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void registerGuiLayers(@NotNull RegisterGuiLayersEvent event) {
-        event.registerAbove(ResourceLocation.withDefaultNamespace("camera_overlays"),
+        event.registerAbove(Identifier.withDefaultNamespace("camera_overlays"),
                 Bittermelon.resource("rage_overlay"), new RageRenderer());
     }
 

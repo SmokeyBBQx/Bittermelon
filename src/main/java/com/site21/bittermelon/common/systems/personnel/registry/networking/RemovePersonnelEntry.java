@@ -6,12 +6,12 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record RemovePersonnelEntry(int entryID) implements CustomPacketPayload {
-    public static final Type<RemovePersonnelEntry> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "remove_personnel_entry"));
+    public static final Type<RemovePersonnelEntry> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "remove_personnel_entry"));
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {

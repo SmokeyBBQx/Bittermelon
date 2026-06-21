@@ -1,16 +1,14 @@
 package com.site21.bittermelon.common.content.blocks.electronics.personnelterminal.client;
 
 import com.site21.bittermelon.Bittermelon;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class BaseTerminalScreen extends Screen {
@@ -79,19 +77,19 @@ public abstract class BaseTerminalScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        guiGraphics.fill(x, y, screenWidth, screenHeight, 0xFFF9FDFF);
-        guiGraphics.fill(x + 1, y + 1, screenWidth - 1, screenHeight - 1, 0xFFD6D6CE);
+    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor.fill(x, y, screenWidth, screenHeight, 0xFFF9FDFF);
+        GuiGraphicsExtractor.fill(x + 1, y + 1, screenWidth - 1, screenHeight - 1, 0xFFD6D6CE);
 
-        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/scp_logo"),
+        GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/scp_logo"),
                 widgetX + widgetX / 6, screenHeight / 4, 200, 200);
 
         for (Renderable renderable : renderables) {
-            renderable.render(guiGraphics, mouseX, mouseY, partialTick);
+            renderable.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
         }
 
-        guiGraphics.fillGradient(x + 2, y + 2, screenWidth - 2, 25, 0xFF2C02AC, 0xFF1084D0);
-        guiGraphics.drawString(font, getTitle().getString(), x + MARGIN, y + 5, 0xFFFFFF);
+        GuiGraphicsExtractor.fillGradient(x + 2, y + 2, screenWidth - 2, 25, 0xFF2C02AC, 0xFF1084D0);
+        GuiGraphicsExtractor.drawString(font, getTitle().getString(), x + MARGIN, y + 5, 0xFFFFFF);
     }
 
     @Override

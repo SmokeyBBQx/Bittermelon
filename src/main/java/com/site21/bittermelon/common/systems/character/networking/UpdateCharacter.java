@@ -7,12 +7,12 @@ import com.site21.bittermelon.common.systems.character.PlayerInfo;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record UpdateCharacter(Character character) implements CustomPacketPayload {
-    public static final Type<UpdateCharacter> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "update_character"));
+    public static final Type<UpdateCharacter> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "update_character"));
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {

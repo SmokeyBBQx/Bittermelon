@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.content.blocks.wallwriting.client;
 
 import com.site21.bittermelon.common.content.blocks.wallwriting.WallWritingBlockEntity;
 import com.site21.bittermelon.common.content.blocks.wallwriting.networking.UpdateWallWriting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.Screen;
@@ -60,29 +60,29 @@ public class WallWritingScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        guiGraphics.drawCenteredString(font, title, width / 2, 50, 16777215);
+    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        GuiGraphicsExtractor.drawCenteredString(font, title, width / 2, 50, 16777215);
 
-        guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(width / 2.0f, 90.0f);
-        renderText(guiGraphics);
-        guiGraphics.pose().popMatrix();
+        GuiGraphicsExtractor.pose().pushMatrix();
+        GuiGraphicsExtractor.pose().translate(width / 2.0f, 90.0f);
+        renderText(GuiGraphicsExtractor);
+        GuiGraphicsExtractor.pose().popMatrix();
     }
 
     @Override
-    public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+    public void renderBackground(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        super.renderBackground(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 
         int panelWidth = 100;
         int panelHeight = 50;
         int panelX = width / 2 - panelWidth / 2;
         int panelY = 90 - panelHeight / 2;
-        guiGraphics.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, 0x55000000);
+        GuiGraphicsExtractor.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, 0x55000000);
     }
 
-    private void renderText(@NotNull GuiGraphics guiGraphics) {
-        setupRenderTransform(guiGraphics);
+    private void renderText(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor) {
+        setupRenderTransform(GuiGraphicsExtractor);
 
         int textColor = text.hasGlowingText() ? text.getColor().getTextColor() : SignRenderer.getDarkColor(text);
         boolean showCursor = frame / 6 % 2 == 0;
@@ -97,19 +97,19 @@ public class WallWritingScreen extends Screen {
             message = formatMessageForDisplay(message);
             int lineY = lineIndex * TEXT_LINE_HEIGHT - textBlockHeight;
 
-            renderTextLine(guiGraphics, message, lineY, textColor);
+            renderTextLine(GuiGraphicsExtractor, message, lineY, textColor);
 
             if (lineIndex == line && cursorPos >= 0) {
                 int currentLineY = line * TEXT_LINE_HEIGHT - textBlockHeight;
-                renderCursorAndSelection(guiGraphics, message, currentLineY, cursorPos, selectionPos, textColor, showCursor);
+                renderCursorAndSelection(GuiGraphicsExtractor, message, currentLineY, cursorPos, selectionPos, textColor, showCursor);
             }
         }
     }
 
-    private void setupRenderTransform(@NotNull GuiGraphics guiGraphics) {
-        guiGraphics.pose().translate(0.0F, 0.0F);
+    private void setupRenderTransform(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor) {
+        GuiGraphicsExtractor.pose().translate(0.0F, 0.0F);
         Vector3f scale = TEXT_SCALE;
-        guiGraphics.pose().scale(scale.x(), scale.y());
+        GuiGraphicsExtractor.pose().scale(scale.x(), scale.y());
     }
 
     private String formatMessageForDisplay(String message) {
@@ -119,12 +119,12 @@ public class WallWritingScreen extends Screen {
         return message;
     }
 
-    private void renderTextLine(@NotNull GuiGraphics guiGraphics, String message, int lineY, int textColor) {
+    private void renderTextLine(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, String message, int lineY, int textColor) {
         int textX = -font.width(message) / 2;
-        guiGraphics.drawString(font, message, textX, lineY, textColor, false);
+        GuiGraphicsExtractor.drawString(font, message, textX, lineY, textColor, false);
     }
 
-    private void renderCursorAndSelection(@NotNull GuiGraphics guiGraphics, String message, int lineY,
+    private void renderCursorAndSelection(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, String message, int lineY,
                                           int cursorPos, int selectionPos, int textColor, boolean showCursor) {
         int messageWidth = font.width(message);
         int centerOffset = messageWidth / 2;
@@ -132,24 +132,24 @@ public class WallWritingScreen extends Screen {
         int cursorX = cursorOffset - centerOffset;
 
         if (showCursor) {
-            renderCursor(guiGraphics, message, cursorX, lineY, cursorPos, textColor);
+            renderCursor(GuiGraphicsExtractor, message, cursorX, lineY, cursorPos, textColor);
         }
 
         if (selectionPos != cursorPos) {
-            renderSelectionHighlight(guiGraphics, message, lineY, cursorPos, selectionPos, centerOffset);
+            renderSelectionHighlight(GuiGraphicsExtractor, message, lineY, cursorPos, selectionPos, centerOffset);
         }
     }
 
-    private void renderCursor(@NotNull GuiGraphics guiGraphics, @NotNull String message, int cursorX,
+    private void renderCursor(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, @NotNull String message, int cursorX,
                               int lineY, int cursorPos, int textColor) {
         if (cursorPos >= message.length()) {
-            guiGraphics.drawString(font, "_", cursorX, lineY, textColor, false);
+            GuiGraphicsExtractor.drawString(font, "_", cursorX, lineY, textColor, false);
         } else {
-            guiGraphics.fill(cursorX, lineY - 1, cursorX + 1, lineY + TEXT_LINE_HEIGHT, -16777216 | textColor);
+            GuiGraphicsExtractor.fill(cursorX, lineY - 1, cursorX + 1, lineY + TEXT_LINE_HEIGHT, -16777216 | textColor);
         }
     }
 
-    private void renderSelectionHighlight(@NotNull GuiGraphics guiGraphics, @NotNull String message, int lineY,
+    private void renderSelectionHighlight(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, @NotNull String message, int lineY,
                                           int cursorPos, int selectionPos, int centerOffset) {
         int selectionStart = Math.min(cursorPos, selectionPos);
         int selectionEnd = Math.max(cursorPos, selectionPos);
@@ -158,7 +158,7 @@ public class WallWritingScreen extends Screen {
         int highlightLeft = Math.min(startX, endX);
         int highlightRight = Math.max(startX, endX);
 
-        guiGraphics.fill(RenderPipelines.GUI_TEXT_HIGHLIGHT, highlightLeft, lineY, highlightRight,
+        GuiGraphicsExtractor.fill(RenderPipelines.GUI_TEXT_HIGHLIGHT, highlightLeft, lineY, highlightRight,
                 lineY + TEXT_LINE_HEIGHT, -16776961);
     }
 

@@ -4,27 +4,27 @@ import com.site21.bittermelon.Bittermelon;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;
 
 public enum SlotType implements StringRepresentable {
-    CAVITY(ResourceLocation.withDefaultNamespace("textures/block/tinted_glass.png")),
+    CAVITY(Identifier.withDefaultNamespace("textures/block/tinted_glass.png")),
     SKIN(Bittermelon.resource("textures/gui/medical/skin.png")),
-    MUSCLE(ResourceLocation.withDefaultNamespace("textures/block/netherrack.png")),
-    FAT(ResourceLocation.withDefaultNamespace("textures/block/horn_coral_block.png")),
-    MEMBRANE(ResourceLocation.withDefaultNamespace("textures/block/dead_brain_coral_block.png")),
-    BONE(ResourceLocation.withDefaultNamespace("textures/block/bone_block_side.png")),
-    BRAIN_TISSUE(ResourceLocation.withDefaultNamespace("textures/block/brain_coral_block.png")),
-    ORGAN(ResourceLocation.withDefaultNamespace("textures/block/brown_terracotta.png")),;
+    MUSCLE(Identifier.withDefaultNamespace("textures/block/netherrack.png")),
+    FAT(Identifier.withDefaultNamespace("textures/block/horn_coral_block.png")),
+    MEMBRANE(Identifier.withDefaultNamespace("textures/block/dead_brain_coral_block.png")),
+    BONE(Identifier.withDefaultNamespace("textures/block/bone_block_side.png")),
+    BRAIN_TISSUE(Identifier.withDefaultNamespace("textures/block/brain_coral_block.png")),
+    ORGAN(Identifier.withDefaultNamespace("textures/block/brown_terracotta.png")),;
 
-    private final ResourceLocation texture;
+    private final Identifier texture;
 
-    public ResourceLocation getTexture() {
+    public Identifier getTexture() {
         return texture;
     }
 
-    SlotType(ResourceLocation texture) {
+    SlotType(Identifier texture) {
         this.texture = texture;
     }
 

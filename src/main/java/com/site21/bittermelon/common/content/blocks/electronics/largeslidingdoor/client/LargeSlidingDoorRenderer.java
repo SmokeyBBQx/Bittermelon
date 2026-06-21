@@ -9,18 +9,14 @@ import com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor
 import com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.LargeSlidingDoorBlockEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 public class LargeSlidingDoorRenderer implements BlockEntityRenderer<LargeSlidingDoorBlockEntity> {
@@ -47,7 +43,7 @@ public class LargeSlidingDoorRenderer implements BlockEntityRenderer<LargeSlidin
         poseStack.mulPose(Axis.XP.rotationDegrees(180));
 
         Material material = new Material(TextureAtlas.LOCATION_BLOCKS,
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/large_sliding_door"));
+                Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/large_sliding_door"));
         VertexConsumer vertexConsumer = material.buffer(buffer, RenderType::entityCutout);
 
         model.setupAnim(smoothProgress);

@@ -23,7 +23,7 @@ public class Lacerations extends DamageGenerator {
 //                    CompartmentInstance laceration = new CompartmentInstance(INJURY.get(), damage, "Laceration", false);
 //                    laceration.initializeWithParent(target);
 //                    target.setHidden(false);
-//                    laceration.setIcon((ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/medical/slash.png")));
+//                    laceration.setIcon((Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/medical/slash.png")));
 //                    String message = "lacerating the " + target.getName().toLowerCase();
 //                    Bleed.generateBleed(laceration, medicalStats, laceration.getMaxHealth());
 //                    return new InjuryResult(laceration, message);

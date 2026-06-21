@@ -4,7 +4,7 @@
 //import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 //import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 //import com.site21.bittermelon.init.neoforge.BitterSounds;
-//import net.minecraft.client.gui.GuiGraphics;
+//import net.minecraft.client.gui.GuiGraphicsExtractor;
 //import net.minecraft.network.chat.Component;
 //import net.minecraft.world.item.ItemStack;
 //import net.neoforged.api.distmarker.Dist;
@@ -73,27 +73,27 @@
 //    }
 //
 //    @Override
-//    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-//        super.render(guiGraphics, mouseX, mouseY, partialTick);
+//    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+//        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 //
-//        drawDottedLine(guiGraphics, lineX + shakeX, startY + shakeY, endY + shakeY);
+//        drawDottedLine(GuiGraphicsExtractor, lineX + shakeX, startY + shakeY, endY + shakeY);
 //
-//        guiGraphics.pose().pushMatrix();
-//        guiGraphics.pose().translate(shakeXDraw, shakeYDraw);
+//        GuiGraphicsExtractor.pose().pushMatrix();
+//        GuiGraphicsExtractor.pose().translate(shakeXDraw, shakeYDraw);
 //        if (drawnPoints.size() > 1) {
 //            for (int i = 1; i < drawnPoints.size(); i++) {
 //                Point prev = drawnPoints.get(i - 1);
 //                Point curr = drawnPoints.get(i);
-//                guiGraphics.fill(prev.x - 1, prev.y - 1, curr.x + 1, curr.y + 1, isCompleting ? 0xFF1cba39 : 0xFFFF0000);
+//                GuiGraphicsExtractor.fill(prev.x - 1, prev.y - 1, curr.x + 1, curr.y + 1, isCompleting ? 0xFF1cba39 : 0xFFFF0000);
 //
 //                if (drawnPoints.get(i).y > endY + 5) {
 //                    isCompleting = true;
 //                }
 //            }
 //        }
-//        guiGraphics.pose().popMatrix();
+//        GuiGraphicsExtractor.pose().popMatrix();
 //
-//        guiGraphics.drawString(
+//        GuiGraphicsExtractor.drawString(
 //                this.minecraft.font,
 //                String.format("Accuracy: %.1f%%", calculateAccuracy() * 100),
 //                10,
@@ -102,14 +102,14 @@
 //        );
 //
 //
-//        guiGraphics.renderFakeItem(item, mouseX - 8, mouseY - 8);
+//        GuiGraphicsExtractor.renderFakeItem(item, mouseX - 8, mouseY - 8);
 //    }
 //
-//    private void drawDottedLine(GuiGraphics guiGraphics, int x, int startY, int endY) {
+//    private void drawDottedLine(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int startY, int endY) {
 //        int y = startY;
 //        while (y < endY) {
 //            int segmentEnd = Math.min(y + DOT_LENGTH, endY);
-//            guiGraphics.vLine(x, y, segmentEnd, -1);
+//            GuiGraphicsExtractor.vLine(x, y, segmentEnd, -1);
 //            y += DOT_LENGTH + DOT_GAP;
 //        }
 //    }

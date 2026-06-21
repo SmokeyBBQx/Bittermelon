@@ -6,7 +6,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
@@ -14,7 +14,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record PlaySlidingDoorStuckSound(BlockPos pos) implements CustomPacketPayload {
-    public static final Type<PlaySlidingDoorStuckSound> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "play_sliding_door_stuck_sound"));
+    public static final Type<PlaySlidingDoorStuckSound> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "play_sliding_door_stuck_sound"));
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {

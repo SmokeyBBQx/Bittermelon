@@ -2,11 +2,11 @@ package com.site21.bittermelon.common.content.blocks.electronics.personneltermin
 
 import com.site21.bittermelon.Bittermelon;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,7 +38,7 @@ public class DeletableListWidget<T extends DeletableListWidget.DeletableEntry> e
             return top - 2;
         }
 
-        private @Nullable ResourceLocation getDeleteButtonIcon(int mouseX, int mouseY) {
+        private @Nullable Identifier getDeleteButtonIcon(int mouseX, int mouseY) {
             if (!hasDeleteButton()) return null;
 
             int deleteButtonX = getDeleteButtonX();
@@ -46,9 +46,9 @@ public class DeletableListWidget<T extends DeletableListWidget.DeletableEntry> e
 
             if (mouseX >= deleteButtonX && mouseX <= deleteButtonX + BUTTON_SIZE &&
                     mouseY >= buttonY && mouseY <= buttonY + BUTTON_SIZE) {
-                return ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/trash_button_highlighted");
+                return Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/trash_button_highlighted");
             } else {
-                return ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/trash_button");
+                return Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/trash_button");
             }
         }
 
@@ -80,7 +80,7 @@ public class DeletableListWidget<T extends DeletableListWidget.DeletableEntry> e
         }
 
         @Override
-        public void render(@NotNull GuiGraphics guiGraphics, int entryIdx, int top, int left, int entryWidth, int entryHeight,
+        public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int entryIdx, int top, int left, int entryWidth, int entryHeight,
                            int mouseX, int mouseY, boolean isMouseOver, float partialTick) {
 
             this.left = left;
@@ -88,21 +88,21 @@ public class DeletableListWidget<T extends DeletableListWidget.DeletableEntry> e
             this.entryWidth = entryWidth;
 
             if (isMouseOver && !isFocused()) {
-                guiGraphics.fill(left, top - 2, left + entryWidth, top + entryHeight + 2, 0xFFD3E3FD);
+                GuiGraphicsExtractor.fill(left, top - 2, left + entryWidth, top + entryHeight + 2, 0xFFD3E3FD);
             }
 
-            ResourceLocation icon = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, getIconPath());
-            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, icon, left + 4, top, ICON_SIZE, ICON_SIZE);
+            Identifier icon = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, getIconPath());
+            GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, icon, left + 4, top, ICON_SIZE, ICON_SIZE);
 
             if (hasDeleteButton()) {
-                ResourceLocation deleteIcon = getDeleteButtonIcon(mouseX, mouseY);
+                Identifier deleteIcon = getDeleteButtonIcon(mouseX, mouseY);
                 if (deleteIcon != null) {
-                    guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, deleteIcon, getDeleteButtonX(), getButtonY(), BUTTON_SIZE, BUTTON_SIZE);
+                    GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, deleteIcon, getDeleteButtonX(), getButtonY(), BUTTON_SIZE, BUTTON_SIZE);
                 }
             }
 
             int textColor = isFocused() ? 0xFFFFFFFF : 0xFF000000;
-            guiGraphics.drawString(Minecraft.getInstance().font, getDisplayName(), left + TEXT_OFFSET, top + 2, textColor, false);
+            GuiGraphicsExtractor.drawString(Minecraft.getInstance().font, getDisplayName(), left + TEXT_OFFSET, top + 2, textColor, false);
         }
     }
 }

@@ -25,7 +25,7 @@ public class BluntForceTrauma extends DamageGenerator {
 //                    if (!target.isHidden()) {
 //                        bruise.setHidden(false);
 //                    }
-//                    bruise.setIcon((ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/medical/bruise.png")));
+//                    bruise.setIcon((Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/medical/bruise.png")));
 //                    String message = "bruising the " + target.getName().toLowerCase();
 //                    return new InjuryResult(bruise, message);
 //                }
@@ -42,7 +42,7 @@ public class BluntForceTrauma extends DamageGenerator {
 //                    if (!target.isHidden()) {
 //                        fracture.setHidden(false);
 //                    }
-//                    fracture.setIcon((ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/medical/fracture.png")));
+//                    fracture.setIcon((Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/sprites/medical/fracture.png")));
 //                    String message = "fracturing the " + target.getName().toLowerCase();
 //                    return new InjuryResult(fracture, message);
 //                }

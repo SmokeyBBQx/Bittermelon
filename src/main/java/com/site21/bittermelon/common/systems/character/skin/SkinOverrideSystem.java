@@ -2,15 +2,13 @@ package com.site21.bittermelon.common.systems.character.skin;
 
 import com.site21.bittermelon.Bittermelon;
 import net.minecraft.client.resources.PlayerSkin;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SkinOverrideSystem {
-    private static final ConcurrentHashMap<UUID, ResourceLocation> skinOverrides = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<UUID, Identifier> skinOverrides = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<UUID, String> pendingSkins = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<UUID, PlayerSkin.Model> modelOverrides = new ConcurrentHashMap<>();
 
@@ -19,7 +17,7 @@ public class SkinOverrideSystem {
         modelOverrides.put(playerUUID, modelType);
 
         SkinManager.loadSkin(skinUrl, String.valueOf(characterUUID), () -> {
-            ResourceLocation skinTexture = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + characterUUID);
+            Identifier skinTexture = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + characterUUID);
             skinOverrides.put(playerUUID, skinTexture);
             pendingSkins.remove(playerUUID);
         });
@@ -31,7 +29,7 @@ public class SkinOverrideSystem {
         modelOverrides.remove(playerUUID);
     }
 
-    public static ResourceLocation getOverriddenSkin(UUID playerUUID) {
+    public static Identifier getOverriddenSkin(UUID playerUUID) {
         return skinOverrides.get(playerUUID);
     }
 

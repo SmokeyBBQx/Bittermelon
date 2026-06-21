@@ -42,7 +42,7 @@ public class EyeIrritationClientRenderer {
 //            int duration =  player.getEffect(EYE_IRRITATION).getDuration();
 //            float vignetteAmplifier = duration > 200 ? 1 : (float) duration / 200;
 //
-//            renderVignette(event.getGuiGraphics(), 0, vignetteAmplifier, vignetteAmplifier);
+//            renderVignette(event.getGuiGraphicsExtractor(), 0, vignetteAmplifier, vignetteAmplifier);
 //        }
     }
 }

@@ -6,7 +6,7 @@ import com.site21.bittermelon.Bittermelon;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +19,7 @@ public record VisualData(
         int width,
         int height,
         float scale,
-        @Nullable ResourceLocation icon,
+        @Nullable Identifier icon,
         int color
 ) {
     public static final Codec<VisualData> CODEC;
@@ -28,11 +28,11 @@ public record VisualData(
 
     @SuppressWarnings({"OptionalUsedAsFieldOrParameterType"})
     @Contract(pure = true)
-    public VisualData(int x, int y, int width, int height, float scale, @NotNull Optional<ResourceLocation> icon, int color) {
+    public VisualData(int x, int y, int width, int height, float scale, @NotNull Optional<Identifier> icon, int color) {
         this(x, y, width, height, scale, icon.orElse(null), color);
     }
 
-    public VisualData(int x, int y, int width, int height, float scale, ResourceLocation icon) {
+    public VisualData(int x, int y, int width, int height, float scale, Identifier icon) {
         this(x, y, width, height, scale, icon, DEFAULT_COLOR);
     }
 
@@ -67,7 +67,7 @@ public record VisualData(
     }
 
     @Contract("_ -> new")
-    public @NotNull VisualData withIcon(ResourceLocation icon) {
+    public @NotNull VisualData withIcon(Identifier icon) {
         return new VisualData(this.x, this.y, this.width, this.height, this.scale, icon, this.color);
     }
 
@@ -89,7 +89,7 @@ public record VisualData(
                 Codec.INT.fieldOf("width").forGetter(VisualData::width),
                 Codec.INT.fieldOf("height").forGetter(VisualData::height),
                 Codec.FLOAT.fieldOf("scale").forGetter(VisualData::scale),
-                ResourceLocation.CODEC.optionalFieldOf("icon").forGetter(vd -> Optional.ofNullable(vd.icon)),
+                Identifier.CODEC.optionalFieldOf("icon").forGetter(vd -> Optional.ofNullable(vd.icon)),
                 Codec.INT.fieldOf("color").forGetter(VisualData::color)
         ).apply(instance, VisualData::new));
 
@@ -104,7 +104,7 @@ public record VisualData(
                 VisualData::height,
                 ByteBufCodecs.FLOAT,
                 VisualData::scale,
-                ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC),
+                ByteBufCodecs.optional(Identifier.STREAM_CODEC),
                 vd -> Optional.ofNullable(vd.icon),
                 ByteBufCodecs.INT,
                 VisualData::color,

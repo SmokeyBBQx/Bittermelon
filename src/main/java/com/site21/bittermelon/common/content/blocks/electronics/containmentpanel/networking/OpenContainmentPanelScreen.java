@@ -8,12 +8,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record OpenContainmentPanelScreen(BlockPos blockPos) implements CustomPacketPayload {
-    public static final Type<OpenContainmentPanelScreen> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "open_containment_panel_screen"));
+    public static final Type<OpenContainmentPanelScreen> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "open_containment_panel_screen"));
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {

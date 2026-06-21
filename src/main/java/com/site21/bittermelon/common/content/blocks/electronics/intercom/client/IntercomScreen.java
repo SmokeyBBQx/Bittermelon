@@ -7,16 +7,14 @@ import com.site21.bittermelon.common.content.blocks.electronics.intercom.network
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.networking.IntercomSpeakerUpdate;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.networking.IntercomTargetUpdate;
 import com.site21.bittermelon.common.systems.telecomms.intercom.IntercomManager;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 public class IntercomScreen extends Screen {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/intercom.png");
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/intercom.png");
 
     private final IntercomBlockEntity intercom;
     private final boolean canEdit;
@@ -179,7 +177,7 @@ public class IntercomScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    public void render(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
 
         graphics.blit(
@@ -281,7 +279,7 @@ public class IntercomScreen extends Screen {
             }
 
             @Override
-            public void render(@NotNull GuiGraphics graphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hovering, float partialTick) {
+            public void render(@NotNull GuiGraphicsExtractor graphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hovering, float partialTick) {
                 int textColor = hovering ? 0xFFFF55 : 0x0a1928;
                 graphics.drawString(screen.font, "> " + id, left + 5, top + 4, textColor);
             }

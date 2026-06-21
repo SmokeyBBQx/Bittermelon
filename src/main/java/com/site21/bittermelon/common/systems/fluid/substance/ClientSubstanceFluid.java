@@ -5,7 +5,7 @@ import com.site21.bittermelon.common.systems.substance.Substance;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
@@ -16,23 +16,23 @@ import org.joml.Vector4f;
 
 public class ClientSubstanceFluid implements IClientFluidTypeExtensions {
     @Override
-    public @NotNull ResourceLocation getStillTexture() {
-        return ResourceLocation.withDefaultNamespace("block/water_still");
+    public @NotNull Identifier getStillTexture() {
+        return Identifier.withDefaultNamespace("block/water_still");
     }
 
     @Override
-    public @NotNull ResourceLocation getStillTexture(@NotNull FluidState state, @NotNull BlockAndTintGetter getter, @NotNull BlockPos pos) {
+    public @NotNull Identifier getStillTexture(@NotNull FluidState state, @NotNull BlockAndTintGetter getter, @NotNull BlockPos pos) {
         return this.getStillTexture();
     }
 
     @Override
-    public @NotNull ResourceLocation getFlowingTexture() {
-        return ResourceLocation.withDefaultNamespace("block/water_flow");
+    public @NotNull Identifier getFlowingTexture() {
+        return Identifier.withDefaultNamespace("block/water_flow");
     }
 
     @Override
-    public @Nullable ResourceLocation getOverlayTexture() {
-        return ResourceLocation.withDefaultNamespace("block/water_overlay");
+    public @Nullable Identifier getOverlayTexture() {
+        return Identifier.withDefaultNamespace("block/water_overlay");
     }
 
     @Override

@@ -5,7 +5,7 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,7 +30,7 @@ public abstract class StyleMixin implements AlphaContainer {
     @Shadow @Final @Nullable ClickEvent clickEvent;
     @Shadow @Final @Nullable HoverEvent hoverEvent;
     @Shadow @Final @Nullable String insertion;
-    @Shadow @Final @Nullable ResourceLocation font;
+    @Shadow @Final @Nullable Identifier font;
 
     @Unique
     private float bittermelon$alpha = 1;

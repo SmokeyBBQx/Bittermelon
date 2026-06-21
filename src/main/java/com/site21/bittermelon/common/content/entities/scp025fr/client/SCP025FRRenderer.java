@@ -12,14 +12,14 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.state.HitboxRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.entity.PartEntity;
 
 public class SCP025FRRenderer extends MobRenderer<SCP025FR, SCP025FRRenderState, SCP025FRModel> {
-    private static final ResourceLocation TEXTURE = Bittermelon.resource("textures/entity/scp_025_fr.png");
+    private static final Identifier TEXTURE = Bittermelon.resource("textures/entity/scp_025_fr.png");
     private final SCP025FRBodyModel bodyModel;
     private final SCP025FRTailModel tailModel;
 
@@ -30,7 +30,7 @@ public class SCP025FRRenderer extends MobRenderer<SCP025FR, SCP025FRRenderState,
     }
 
     @Override
-    public ResourceLocation getTextureLocation(SCP025FRRenderState renderState) {
+    public Identifier getTextureLocation(SCP025FRRenderState renderState) {
         return TEXTURE;
     }
 

@@ -42,7 +42,7 @@ public class SCP151EffectRenderer {
 //
 //        if (player.hasEffect(DROWNING)) {
 //            float effectAmplifier = (player.getMaxAirSupply() - player.getAirSupply());
-//            renderVignette(event.getGuiGraphics(), effectAmplifier > 0 ? effectAmplifier / 30 : 0);
+//            renderVignette(event.getGuiGraphicsExtractor(), effectAmplifier > 0 ? effectAmplifier / 30 : 0);
 //        }
     }
 }

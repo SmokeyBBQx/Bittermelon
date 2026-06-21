@@ -2,13 +2,13 @@ package com.site21.bittermelon.common.systems.containment.client;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.blocks.electronics.containmentpanel.ContainmentPanelBlockEntity;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.PostChain;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.neoforge.BitterSounds.BOOT_UP_TUNE;
@@ -16,7 +16,7 @@ import static com.site21.bittermelon.init.neoforge.BitterSounds.TERMINAL_HUM;
 
 
 public class ContainmentPanelScreen extends Screen {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/containment_panel.png");
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/containment_panel.png");
     private static final int TEXTURE_WIDTH = 256;
     private static final int TEXTURE_HEIGHT = 166;
     private PostChain backgroundShader;
@@ -85,7 +85,7 @@ public class ContainmentPanelScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    public void render(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         graphics.drawString(this.font, this.title, leftPos + 8, topPos + 8, 4210752, false);
 
 //        graphics.fill((this.width - TEXTURE_WIDTH) / 2 - 20, this.topPos = (this.height - TEXTURE_HEIGHT) / 2 - 20, width - 200, height - 60, 0xFF000000 );
@@ -129,19 +129,19 @@ public class ContainmentPanelScreen extends Screen {
 //        renderShaders(partialTick);
     }
 
-    private void renderNoAccess(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        renderBackground(guiGraphics, mouseX, mouseY, partialTick);
-        guiGraphics.drawCenteredString(font, "*NO ACCESS*", width / 2, (int) (height / 2.5), 0xFFFF0000);
-        guiGraphics.drawCenteredString(font, "SCAN TO GAIN ACCESS", width / 2, height / 2, 0xFFFF0000);
+    private void renderNoAccess(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        renderBackground(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        GuiGraphicsExtractor.drawCenteredString(font, "*NO ACCESS*", width / 2, (int) (height / 2.5), 0xFFFF0000);
+        GuiGraphicsExtractor.drawCenteredString(font, "SCAN TO GAIN ACCESS", width / 2, height / 2, 0xFFFF0000);
     }
 
-    private void renderMainMenu(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    private void renderMainMenu(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 
-        guiGraphics.fill((this.width - TEXTURE_WIDTH) / 2 - 22, this.topPos = (this.height - TEXTURE_HEIGHT) / 2 - 22, width - 198, this.topPos = (this.height - TEXTURE_HEIGHT) / 2 - 20, 0xFFFFFF00);
-        guiGraphics.fill((this.width - TEXTURE_WIDTH) / 2 - 22, this.topPos = (this.height - TEXTURE_HEIGHT) / 2 - 22, (this.width - TEXTURE_WIDTH) / 2 - 20, height - 60, 0xFFFFFF00);
-        guiGraphics.fill(width - 198, this.topPos = (this.height - TEXTURE_HEIGHT) / 2 - 22, width - 200, height - 60, 0xFFFFFF00);
-        guiGraphics.fill((this.width - TEXTURE_WIDTH) / 2 - 22, height - 60, width - 198, height - 62, 0xFFFFFF00);
+        GuiGraphicsExtractor.fill((this.width - TEXTURE_WIDTH) / 2 - 22, this.topPos = (this.height - TEXTURE_HEIGHT) / 2 - 22, width - 198, this.topPos = (this.height - TEXTURE_HEIGHT) / 2 - 20, 0xFFFFFF00);
+        GuiGraphicsExtractor.fill((this.width - TEXTURE_WIDTH) / 2 - 22, this.topPos = (this.height - TEXTURE_HEIGHT) / 2 - 22, (this.width - TEXTURE_WIDTH) / 2 - 20, height - 60, 0xFFFFFF00);
+        GuiGraphicsExtractor.fill(width - 198, this.topPos = (this.height - TEXTURE_HEIGHT) / 2 - 22, width - 200, height - 60, 0xFFFFFF00);
+        GuiGraphicsExtractor.fill((this.width - TEXTURE_WIDTH) / 2 - 22, height - 60, width - 198, height - 62, 0xFFFFFF00);
 
     }
 

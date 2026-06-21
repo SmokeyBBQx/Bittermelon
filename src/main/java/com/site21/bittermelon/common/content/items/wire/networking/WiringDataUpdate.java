@@ -7,7 +7,7 @@ import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -20,7 +20,7 @@ import static com.site21.bittermelon.init.neoforge.BitterDataComponents.CORD_CON
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.PORT_ID;
 
 public record WiringDataUpdate(BlockPos portPos, String portID, UUID playerID, InteractionHand hand) implements CustomPacketPayload {
-    public static final Type<WiringDataUpdate> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "wiring_data_update"));
+    public static final Type<WiringDataUpdate> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "wiring_data_update"));
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {

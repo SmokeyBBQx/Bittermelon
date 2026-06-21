@@ -5,7 +5,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
 public record SetEntityPos(Vector3f pos, int entityID, float yaw) implements CustomPacketPayload {
-    public static final Type<SetEntityPos> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "set_entity_pos"));
+    public static final Type<SetEntityPos> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "set_entity_pos"));
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {

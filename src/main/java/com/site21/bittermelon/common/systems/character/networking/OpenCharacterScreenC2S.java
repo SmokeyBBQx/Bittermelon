@@ -5,7 +5,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public record OpenCharacterScreenC2S(UUID playerUUID) implements CustomPacketPayload {
-    public static final Type<OpenCharacterScreenC2S> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "open_character_screen_c2s"));
+    public static final Type<OpenCharacterScreenC2S> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "open_character_screen_c2s"));
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {

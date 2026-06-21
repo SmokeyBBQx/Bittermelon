@@ -5,7 +5,7 @@
 //import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 //import com.site21.bittermelon.init.neoforge.BitterSounds;
 //import net.minecraft.client.Minecraft;
-//import net.minecraft.client.gui.GuiGraphics;
+//import net.minecraft.client.gui.GuiGraphicsExtractor;
 //import net.minecraft.network.chat.Component;
 //import net.minecraft.world.item.ItemStack;
 //import net.neoforged.api.distmarker.Dist;
@@ -63,14 +63,14 @@
 //    }
 //
 //    @Override
-//    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-//        super.render(guiGraphics, mouseX, mouseY, partialTick);
+//    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+//        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 //
 //        bleedTime++;
 //
 //        for (BleedPoint point : bleedPoints) {
 //            int color = point.isClamped ? 0xFF00FF00 : 0xFFFF0000;
-//            guiGraphics.fill(point.x - 5, point.y - 5, point.x + 5 + bleedTime / 200,
+//            GuiGraphicsExtractor.fill(point.x - 5, point.y - 5, point.x + 5 + bleedTime / 200,
 //                    point.y + 5 + bleedTime / 200, color);
 //        }
 //    }

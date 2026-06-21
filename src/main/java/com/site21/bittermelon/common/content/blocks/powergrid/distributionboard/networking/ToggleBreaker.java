@@ -7,12 +7,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record ToggleBreaker(String breakerName, BlockPos boardPos) implements CustomPacketPayload {
-    public static final Type<ToggleBreaker> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "toggle_breaker"));
+    public static final Type<ToggleBreaker> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "toggle_breaker"));
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {

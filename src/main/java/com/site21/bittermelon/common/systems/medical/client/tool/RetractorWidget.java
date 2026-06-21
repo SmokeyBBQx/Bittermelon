@@ -6,7 +6,7 @@ import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInst
 import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
 import com.site21.bittermelon.init.custom.Compartments;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -22,12 +22,12 @@ public class RetractorWidget extends InstrumentWidget {
     }
 
     @Override
-    public void renderTool(@NotNull GuiGraphics guiGraphics, int x, int y) {
-        guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(x, y);
-        guiGraphics.pose().rotateAbout(horizontal ? 0.785f : -0.785f, 0, 0);
-        super.renderTool(guiGraphics, -16, -16);
-        guiGraphics.pose().popMatrix();
+    public void renderTool(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y) {
+        GuiGraphicsExtractor.pose().pushMatrix();
+        GuiGraphicsExtractor.pose().translate(x, y);
+        GuiGraphicsExtractor.pose().rotateAbout(horizontal ? 0.785f : -0.785f, 0, 0);
+        super.renderTool(GuiGraphicsExtractor, -16, -16);
+        GuiGraphicsExtractor.pose().popMatrix();
     }
 
     private void retract(@NotNull Point start, CompartmentWidget widget) {

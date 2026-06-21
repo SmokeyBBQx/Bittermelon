@@ -4,7 +4,7 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.entities.chicken.Chicken;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +28,7 @@ public class ChickenRenderer extends MobRenderer<Chicken, ChickenRenderState, Ch
     }
 
     @Override
-    public @NotNull ResourceLocation getTextureLocation(@NotNull ChickenRenderState renderState) {
-        return ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/entity/silkie_white.png");
+    public @NotNull Identifier getTextureLocation(@NotNull ChickenRenderState renderState) {
+        return Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/entity/silkie_white.png");
     }
 }

@@ -8,14 +8,14 @@
 //import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
 //import com.site21.bittermelon.init.neoforge.BitterSounds;
 //import net.minecraft.client.Minecraft;
-//import net.minecraft.client.gui.GuiGraphics;
+//import net.minecraft.client.gui.GuiGraphicsExtractor;
 //import net.minecraft.client.gui.components.AbstractWidget;
 //import net.minecraft.client.gui.narration.NarrationElementOutput;
 //import net.minecraft.client.renderer.RenderPipelines;
 //import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 //import net.minecraft.client.sounds.SoundManager;
 //import net.minecraft.network.chat.Component;
-//import net.minecraft.resources.ResourceLocation;
+//import net.minecraft.resources.Identifier;
 //import net.minecraft.util.ARGB;
 //import net.minecraft.util.Mth;
 //import net.minecraft.world.item.ItemStack;
@@ -27,12 +27,12 @@
 //import java.util.List;
 //
 //public class CompartmentNodeWidget extends AbstractWidget {
-//    private static final ResourceLocation TITLE_BOX_SPRITE = ResourceLocation.withDefaultNamespace("advancements/title_box");
-//    private static final ResourceLocation BOX_OBTAINED = ResourceLocation.withDefaultNamespace("advancements/box_obtained");
-//    private static final ResourceLocation BOX_UNOBTAINED = ResourceLocation.withDefaultNamespace("advancements/box_unobtained");
-//    private static final ResourceLocation FRAME_TASK = ResourceLocation.withDefaultNamespace("advancements/task_frame_unobtained");
-//    private static final ResourceLocation FRAME_CHALLENGE = ResourceLocation.withDefaultNamespace("advancements/challenge_frame_unobtained");
-//    private static final ResourceLocation FRAME_GOAL = ResourceLocation.withDefaultNamespace("advancements/goal_frame_unobtained");
+//    private static final Identifier TITLE_BOX_SPRITE = Identifier.withDefaultNamespace("advancements/title_box");
+//    private static final Identifier BOX_OBTAINED = Identifier.withDefaultNamespace("advancements/box_obtained");
+//    private static final Identifier BOX_UNOBTAINED = Identifier.withDefaultNamespace("advancements/box_unobtained");
+//    private static final Identifier FRAME_TASK = Identifier.withDefaultNamespace("advancements/task_frame_unobtained");
+//    private static final Identifier FRAME_CHALLENGE = Identifier.withDefaultNamespace("advancements/challenge_frame_unobtained");
+//    private static final Identifier FRAME_GOAL = Identifier.withDefaultNamespace("advancements/goal_frame_unobtained");
 //
 //    private final HealthScreen healthScreen;
 //    private final CompartmentInstance compartment;
@@ -40,7 +40,7 @@
 //    private int relativeX;
 //    private int relativeY;
 //    private NativeImage cachedImage = null;
-//    private ResourceLocation cachedImageLocation = null;
+//    private Identifier cachedImageLocation = null;
 //
 //    public CompartmentNodeWidget(int x, int y, int width, int height, Component message, HealthScreen healthScreen, CompartmentInstance compartment) {
 //        super(x, y, width, height, message);
@@ -67,15 +67,15 @@
 //    }
 //
 //    @Override
-//    protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+//    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
 ////        VisualData visualData = compartment.getVisualData();
 ////        if (visualData.isHidden) return;
 ////
-////        guiGraphics.pose().pushMatrix();
+////        GuiGraphicsExtractor.pose().pushMatrix();
 ////
-////        guiGraphics.pose().translate(getX(), getY());
-////        guiGraphics.pose().rotate(visualData.rotation);
-////        guiGraphics.pose().scale(visualData.scale, visualData.scale);
+////        GuiGraphicsExtractor.pose().translate(getX(), getY());
+////        GuiGraphicsExtractor.pose().rotate(visualData.rotation);
+////        GuiGraphicsExtractor.pose().scale(visualData.scale, visualData.scale);
 ////
 ////        if (visualData.icon != null) {
 ////            int width = visualData.width;
@@ -86,15 +86,15 @@
 ////            color = isHoveredOrFocused() ? ARGB.color(pulse, color) : color;
 ////
 ////            // Apparently the positions need to be offset by 1 for proper collision detection?
-////            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, visualData.icon, 1, 1, 0, 0, width, height, width, height, color);
+////            GuiGraphicsExtractor.blit(RenderPipelines.GUI_TEXTURED, visualData.icon, 1, 1, 0, 0, width, height, width, height, color);
 ////        } else {
-////            guiGraphics.renderFakeItem(new ItemStack(compartment.getItem()), 0, 0);
+////            GuiGraphicsExtractor.renderFakeItem(new ItemStack(compartment.getItem()), 0, 0);
 ////        }
 ////
-////        guiGraphics.pose().popMatrix();
+////        GuiGraphicsExtractor.pose().popMatrix();
 //    }
 //
-//    public void drawHover(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, int screenWidth, int screenHeight) {
+//    public void drawHover(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick, int screenWidth, int screenHeight) {
 //        boolean isRightSide = screenWidth + mouseX + getX() + 200 >= healthScreen.width;
 //
 //        // Calculate tooltip dimensions
@@ -108,19 +108,19 @@
 //
 //        // Render background box
 //        int boxHeight = 32 + tooltipLines.size() * 9;
-//        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, TITLE_BOX_SPRITE, boxX, tooltipY, tooltipWidth, boxHeight);
+//        GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, TITLE_BOX_SPRITE, boxX, tooltipY, tooltipWidth, boxHeight);
 //
 //        // Render health progress bar
-//        renderHealthBar(guiGraphics, boxX, getY(), tooltipWidth);
+//        renderHealthBar(GuiGraphicsExtractor, boxX, getY(), tooltipWidth);
 //
 //        // Render text
-//        renderTooltipText(guiGraphics, tooltipX, tooltipY, tooltipLines);
+//        renderTooltipText(GuiGraphicsExtractor, tooltipX, tooltipY, tooltipLines);
 //
 //        // Render icon
 //        if (compartment.getItem() != Items.AIR) {
-//            ResourceLocation frameSprite = getFrameSpriteForHealth();
-//            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, frameSprite, getX() + 3, getY(), 26, 26);
-//            guiGraphics.renderFakeItem(new ItemStack(compartment.getItem()), getX() + 8, getY() + 5);
+//            Identifier frameSprite = getFrameSpriteForHealth();
+//            GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, frameSprite, getX() + 3, getY(), 26, 26);
+//            GuiGraphicsExtractor.renderFakeItem(new ItemStack(compartment.getItem()), getX() + 8, getY() + 5);
 //        }
 //    }
 //
@@ -143,28 +143,28 @@
 //        return Math.max(tooltipWidth, nameLength) + 40;
 //    }
 //
-//    private void renderHealthBar(@NotNull GuiGraphics guiGraphics, int x, int y, int width) {
+//    private void renderHealthBar(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y, int width) {
 //        float healthRatio = compartment.getHealth() / compartment.getMaxHealth();
 //        int progressWidth = Mth.floor(healthRatio * width);
 //        int remainingWidth = width - progressWidth;
 //
-//        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, BOX_OBTAINED, 200, 26, 0, 0, x, y, progressWidth - 2, 26);
-//        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, BOX_UNOBTAINED, 200, 26, 200 - remainingWidth - 2, 0, x + progressWidth - 2, y, remainingWidth + 2, 26);
+//        GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, BOX_OBTAINED, 200, 26, 0, 0, x, y, progressWidth - 2, 26);
+//        GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, BOX_UNOBTAINED, 200, 26, 200 - remainingWidth - 2, 0, x + progressWidth - 2, y, remainingWidth + 2, 26);
 //
 //        if (healthRatio == 1) {
-//            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, BOX_OBTAINED, 200, 26, 198, 0, x + progressWidth - 2, y, 2, 26);
+//            GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, BOX_OBTAINED, 200, 26, 198, 0, x + progressWidth - 2, y, 2, 26);
 //        }
 //    }
 //
-//    private void renderTooltipText(@NotNull GuiGraphics guiGraphics, int x, int y, @NotNull List<Component> tooltipLines) {
-//        guiGraphics.drawString(Minecraft.getInstance().font, compartment.getName(), x + 5, y + 3, -1);
+//    private void renderTooltipText(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y, @NotNull List<Component> tooltipLines) {
+//        GuiGraphicsExtractor.drawString(Minecraft.getInstance().font, compartment.getName(), x + 5, y + 3, -1);
 //
 //        for (int i = 0; i < tooltipLines.size(); i++) {
-//            guiGraphics.drawString(Minecraft.getInstance().font, tooltipLines.get(i), x + 5, y + 20 + (i * 12), -1);
+//            GuiGraphicsExtractor.drawString(Minecraft.getInstance().font, tooltipLines.get(i), x + 5, y + 20 + (i * 12), -1);
 //        }
 //    }
 //
-//    private ResourceLocation getFrameSpriteForHealth() {
+//    private Identifier getFrameSpriteForHealth() {
 //        float healthPercent = compartment.getHealth() / compartment.getMaxHealth();
 //        if (healthPercent > 0.66f) {
 //            return FRAME_TASK;
@@ -228,15 +228,15 @@
 //        return false;
 //    }
 //
-//    private float getAlphaAtPixel(ResourceLocation resourceLocation, int x, int y) {
-//        if (cachedImage == null || !resourceLocation.equals(cachedImageLocation)) {
+//    private float getAlphaAtPixel(Identifier Identifier, int x, int y) {
+//        if (cachedImage == null || !Identifier.equals(cachedImageLocation)) {
 //            if (cachedImage != null) {
 //                cachedImage.close();
 //            }
 //
 //            try {
-//                cachedImage = NativeImage.read(Minecraft.getInstance().getResourceManager().getResource(resourceLocation).get().open());
-//                cachedImageLocation = resourceLocation;
+//                cachedImage = NativeImage.read(Minecraft.getInstance().getResourceManager().getResource(Identifier).get().open());
+//                cachedImageLocation = Identifier;
 //            } catch (IOException e) {
 //                throw new RuntimeException(e);
 //            }

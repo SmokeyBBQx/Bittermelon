@@ -6,7 +6,7 @@ import com.site21.bittermelon.common.systems.character.Character;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.resources.PlayerSkin;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,7 @@ public class SkinUtil {
     public static @Nullable @Unmodifiable AbstractClientPlayer getAbstractClientPlayer(@NotNull Character character) {
          if (character.getPlayerInfo().isPresent()) {
              return getAbstractClientPlayer(character.getEntityUUID(), character.getName(),
-                     ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + character.getId()),
+                     Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + character.getId()),
                      character.getPlayerInfo().get().getModel().toMinecraftModel());
          }
 
@@ -29,14 +29,14 @@ public class SkinUtil {
     public static @Nullable @Unmodifiable AbstractClientPlayer getAbstractClientPlayer(@NotNull Character character, PlayerSkin.Model model) {
         if (character.getPlayerInfo().isPresent()) {
             return getAbstractClientPlayer(character.getEntityUUID(), character.getName(),
-                    ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + character.getId()),
+                    Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + character.getId()),
                     model);
         }
 
         return null;
     }
 
-    public static @NotNull AbstractClientPlayer getAbstractClientPlayer(UUID playerUUID, String name, ResourceLocation skin, PlayerSkin.Model model) {
+    public static @NotNull AbstractClientPlayer getAbstractClientPlayer(UUID playerUUID, String name, Identifier skin, PlayerSkin.Model model) {
         AbstractClientPlayer fakePlayer;
 
         GameProfile profile = new GameProfile(playerUUID, name);

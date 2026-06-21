@@ -5,7 +5,7 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.IntercomBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
@@ -41,8 +41,8 @@ public class ActionTipRenderer {
             int x = width - 120 - font.width(text) / 2;
             int y = height - 15;
 
-            GuiGraphics guiGraphics = event.getGuiGraphics();
-            guiGraphics.drawString(font, text, x, y, 0xFFFFFF);
+            GuiGraphicsExtractor GuiGraphicsExtractor = event.getGuiGraphicsExtractor();
+            GuiGraphicsExtractor.drawString(font, text, x, y, 0xFFFFFF);
         }
     }
 }

@@ -4,7 +4,7 @@ import com.site21.bittermelon.common.systems.chat.AlphaContainer;
 import net.minecraft.client.GuiMessage;
 import net.minecraft.client.GuiMessageTag;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MessageSignature;
@@ -97,7 +97,7 @@ public abstract class ChatComponentMixin {
     }
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    public void render(GuiGraphics guiGraphics, int tickCount, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
+    public void render(GuiGraphicsExtractor GuiGraphicsExtractor, int tickCount, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
         // Just copied from ChatComponent#render - couldn't find a better way to modify the individual line alpha
 
         if (this.isChatHidden()) return;
@@ -112,10 +112,10 @@ public abstract class ChatComponentMixin {
         profilerfiller.push("chat");
         float f = (float) this.getScale();
         int k = Mth.ceil(this.getWidth() / f);
-        int l = guiGraphics.guiHeight();
-        guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().scale(f, f);
-        guiGraphics.pose().translate(4.0F, 0.0F);
+        int l = GuiGraphicsExtractor.guiHeight();
+        GuiGraphicsExtractor.pose().pushMatrix();
+        GuiGraphicsExtractor.pose().scale(f, f);
+        GuiGraphicsExtractor.pose().translate(4.0F, 0.0F);
         int i1 = Mth.floor((l - 40) / f);
         int j1 = this.getMessageEndIndexAt(this.screenToChatX(mouseX), this.screenToChatY(mouseY));
         float f1 = this.minecraft.options.chatOpacity().get().floatValue() * 0.9F + 0.1F;
@@ -124,10 +124,10 @@ public abstract class ChatComponentMixin {
         int k1 = (int) Math.round(-8.0 * (d0 + 1.0) + 4.0 * d0);
 
         this.forEachLine(i, tickCount, focused, i1, (x, startY, endY, line, index, fade) -> {
-            guiGraphics.fill(x - 4, startY, x + k + 4 + 4, endY, ARGB.color(fade * f2, -16777216));
+            GuiGraphicsExtractor.fill(x - 4, startY, x + k + 4 + 4, endY, ARGB.color(fade * f2, -16777216));
             GuiMessageTag tag = line.tag();
             if (tag != null) {
-                guiGraphics.fill(x - 4, startY, x - 2, endY, ARGB.color(fade * f1, tag.indicatorColor()));
+                GuiGraphicsExtractor.fill(x - 4, startY, x - 2, endY, ARGB.color(fade * f1, tag.indicatorColor()));
             }
         });
 
@@ -137,18 +137,18 @@ public abstract class ChatComponentMixin {
             if (index < allMessages.size()) {
                 distanceAlpha = ((AlphaContainer) allMessages.get(index).content().getStyle()).bittermelon$getAlpha();
             }
-            guiGraphics.drawString(this.minecraft.font, line.content(), x, textY, ARGB.color(distanceAlpha * f1 * fade, -1));
+            GuiGraphicsExtractor.drawString(this.minecraft.font, line.content(), x, textY, ARGB.color(distanceAlpha * f1 * fade, -1));
         });
 
         long i2 = this.minecraft.getChatListener().queueSize();
         if (i2 > 0L) {
             int j2 = (int) (128.0F * f1);
             int k2 = (int) (255.0F * f2);
-            guiGraphics.pose().pushMatrix();
-            guiGraphics.pose().translate(0.0F, i1);
-            guiGraphics.fill(-2, 0, k + 4, 9, k2 << 24);
-            guiGraphics.drawString(this.minecraft.font, Component.translatable("chat.queue", i2), 0, 1, ARGB.color(j2, -1));
-            guiGraphics.pose().popMatrix();
+            GuiGraphicsExtractor.pose().pushMatrix();
+            GuiGraphicsExtractor.pose().translate(0.0F, i1);
+            GuiGraphicsExtractor.fill(-2, 0, k + 4, 9, k2 << 24);
+            GuiGraphicsExtractor.drawString(this.minecraft.font, Component.translatable("chat.queue", i2), 0, 1, ARGB.color(j2, -1));
+            GuiGraphicsExtractor.pose().popMatrix();
         }
 
         if (focused) {
@@ -161,12 +161,12 @@ public abstract class ChatComponentMixin {
                 int k3 = i3 > 0 ? 170 : 96;
                 int l3 = newMessageSinceScroll ? 13382451 : 3355562;
                 int i4 = k + 4;
-                guiGraphics.fill(i4, -i3, i4 + 2, -i3 - j3, ARGB.color(k3, l3));
-                guiGraphics.fill(i4 + 2, -i3, i4 + 1, -i3 - j3, ARGB.color(k3, 13421772));
+                GuiGraphicsExtractor.fill(i4, -i3, i4 + 2, -i3 - j3, ARGB.color(k3, l3));
+                GuiGraphicsExtractor.fill(i4 + 2, -i3, i4 + 1, -i3 - j3, ARGB.color(k3, 13421772));
             }
         }
 
-        guiGraphics.pose().popMatrix();
+        GuiGraphicsExtractor.pose().popMatrix();
         profilerfiller.pop();
     }
 }

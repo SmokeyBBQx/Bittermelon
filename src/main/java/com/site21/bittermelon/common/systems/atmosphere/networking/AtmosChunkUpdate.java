@@ -6,7 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ATMOSPHERE;
 
 public record AtmosChunkUpdate(ChunkPos pos, AtmosBlockData data) implements CustomPacketPayload {
-    public static final Type<AtmosChunkUpdate> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "atmos_chunk_update"));
+    public static final Type<AtmosChunkUpdate> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "atmos_chunk_update"));
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {

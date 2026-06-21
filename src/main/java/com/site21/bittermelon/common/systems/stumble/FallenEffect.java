@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.systems.stumble;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.client.render.screenshake.StartScreenshake;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
@@ -25,7 +25,7 @@ public class FallenEffect extends MobEffect {
         super(MobEffectCategory.NEUTRAL, 0);
         addAttributeModifier(
                 Attributes.JUMP_STRENGTH,
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "effect.fallen"),
+                Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "effect.fallen"),
                 -1,
                 AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
         );

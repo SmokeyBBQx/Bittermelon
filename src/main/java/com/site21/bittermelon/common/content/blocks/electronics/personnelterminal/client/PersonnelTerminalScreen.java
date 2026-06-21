@@ -12,9 +12,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -24,12 +22,12 @@ import java.util.stream.Collectors;
 
 public class PersonnelTerminalScreen extends BaseTerminalScreen {
     public static final WidgetSprites BUTTON_SPRITES = new WidgetSprites(
-            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/button"),
-            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/button_disabled"),
-            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/button_highlighted")
+            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/button"),
+            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/button_disabled"),
+            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/button_highlighted")
     );
-    public static final ResourceLocation SCROLLER_SPRITE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/scroller");
-    public static final ResourceLocation SCROLLER_BACKGROUND_SPRITE = ResourceLocation.withDefaultNamespace("widget/scroller_background");
+    public static final Identifier SCROLLER_SPRITE = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/scroller");
+    public static final Identifier SCROLLER_BACKGROUND_SPRITE = Identifier.withDefaultNamespace("widget/scroller_background");
 
     private final PersonnelRegistry registry;
     private final PersonnelTerminalBlockEntity terminal;

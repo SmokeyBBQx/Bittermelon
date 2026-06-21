@@ -5,7 +5,7 @@ import com.site21.bittermelon.common.content.items.wirecutters.networking.CutWir
 import com.site21.bittermelon.common.systems.electronics.ElectronicDevice;
 import com.site21.bittermelon.common.systems.electronics.wiring.InputPort;
 import com.site21.bittermelon.common.systems.electronics.wiring.OutputPort;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,14 +17,14 @@ public class WireCutterScreen extends WiringScreen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 
-        guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(mouseX - 16, mouseY - 16);
-        guiGraphics.pose().scale(2.0f, 2.0f);
-        guiGraphics.renderFakeItem(WIRE_CUTTERS.toStack(), 0, 0);
-        guiGraphics.pose().popMatrix();
+        GuiGraphicsExtractor.pose().pushMatrix();
+        GuiGraphicsExtractor.pose().translate(mouseX - 16, mouseY - 16);
+        GuiGraphicsExtractor.pose().scale(2.0f, 2.0f);
+        GuiGraphicsExtractor.renderFakeItem(WIRE_CUTTERS.toStack(), 0, 0);
+        GuiGraphicsExtractor.pose().popMatrix();
     }
 
     @Override

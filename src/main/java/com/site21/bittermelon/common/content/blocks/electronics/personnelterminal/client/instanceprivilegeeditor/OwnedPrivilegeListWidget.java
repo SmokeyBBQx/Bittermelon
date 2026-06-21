@@ -3,10 +3,10 @@ package com.site21.bittermelon.common.content.blocks.electronics.personneltermin
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.blocks.electronics.personnelterminal.client.ListWidget;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -83,58 +83,58 @@ public class OwnedPrivilegeListWidget extends ListWidget<OwnedPrivilegeListWidge
         }
 
         @Override
-        public void render(@NotNull GuiGraphics guiGraphics, int entryIdx, int top, int left, int entryWidth, int entryHeight,
+        public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int entryIdx, int top, int left, int entryWidth, int entryHeight,
                            int mouseX, int mouseY, boolean isMouseOver, float partialTick) {
             this.left = left;
             this.top = top;
             this.entryWidth = entryWidth;
 
             if (isMouseOver && !isFocused()) {
-                guiGraphics.fill(left, top - 2, left + entryWidth, top + entryHeight + 2, 0xFFD3E3FD);
+                GuiGraphicsExtractor.fill(left, top - 2, left + entryWidth, top + entryHeight + 2, 0xFFD3E3FD);
             }
 
-            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, getIcon(), left + 4, top, 16, 16);
+            GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, getIcon(), left + 4, top, 16, 16);
 
             int toggleButtonX = getToggleButtonX();
             int deleteButtonX = getDeleteButtonX();
             int buttonY = getButtonY();
 
-            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, getToggleButtonIcon(mouseX, mouseY), toggleButtonX, buttonY, BUTTON_SIZE, BUTTON_SIZE);
-            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, getDeleteButtonIcon(mouseX, mouseY), deleteButtonX, buttonY, BUTTON_SIZE, BUTTON_SIZE);
+            GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, getToggleButtonIcon(mouseX, mouseY), toggleButtonX, buttonY, BUTTON_SIZE, BUTTON_SIZE);
+            GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, getDeleteButtonIcon(mouseX, mouseY), deleteButtonX, buttonY, BUTTON_SIZE, BUTTON_SIZE);
 
             int textColor = isFocused() ? 0xFFFFFFFF : 0xFF000000;
-            guiGraphics.drawString(Minecraft.getInstance().font, privilege, left + 22, top + 3, textColor, false);
+            GuiGraphicsExtractor.drawString(Minecraft.getInstance().font, privilege, left + 22, top + 3, textColor, false);
         }
 
-        public ResourceLocation getIcon() {
-            if (privilege.contains("group")) return ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/users");
+        public Identifier getIcon() {
+            if (privilege.contains("group")) return Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/users");
 
-            return ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/keys");
+            return Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/keys");
         }
 
-        public ResourceLocation getToggleButtonIcon(int mouseX, int mouseY) {
+        public Identifier getToggleButtonIcon(int mouseX, int mouseY) {
             int toggleButtonX = getToggleButtonX();
             int buttonY = getButtonY();
 
             if (mouseX >= toggleButtonX && mouseX <= toggleButtonX + BUTTON_SIZE &&
                     mouseY >= buttonY && mouseY <= buttonY + BUTTON_SIZE) {
-                return value ? ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/true_button_highlighted")
-                        : ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/false_button_highlighted");
+                return value ? Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/true_button_highlighted")
+                        : Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/false_button_highlighted");
             } else {
-                return value ? ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/true_button")
-                        : ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/false_button");
+                return value ? Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/true_button")
+                        : Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/false_button");
             }
         }
 
-        public ResourceLocation getDeleteButtonIcon(int mouseX, int mouseY) {
+        public Identifier getDeleteButtonIcon(int mouseX, int mouseY) {
             int deleteButtonX = getDeleteButtonX();
             int buttonY = getButtonY();
 
             if (mouseX >= deleteButtonX && mouseX <= deleteButtonX + BUTTON_SIZE &&
                     mouseY >= buttonY && mouseY <= buttonY + BUTTON_SIZE) {
-                return ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/trash_button_highlighted");
+                return Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/trash_button_highlighted");
             } else {
-                return ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/trash_button");
+                return Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/trash_button");
             }
         }
     }

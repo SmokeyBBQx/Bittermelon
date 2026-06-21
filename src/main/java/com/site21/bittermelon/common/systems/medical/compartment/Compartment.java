@@ -13,7 +13,7 @@ import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.common.CommonHooks;
@@ -77,7 +77,7 @@ public class Compartment {
 //    }
 
     public Holder<Compartment> builtInRegistryHolder() {
-        return COMPARTMENT_REGISTRY.get(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, id)).orElseThrow();
+        return COMPARTMENT_REGISTRY.get(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, id)).orElseThrow();
     }
 
     public DataComponentMap components() {

@@ -4,7 +4,7 @@ import com.site21.bittermelon.common.systems.medical.client.CompartmentWidget;
 import com.site21.bittermelon.common.systems.medical.client.HealthScreen;
 import com.site21.bittermelon.common.systems.medical.client.interaction.IncisionWidget;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -21,22 +21,22 @@ public class ScalpelWidget extends InstrumentWidget {
     }
 
     @Override
-    public void renderTool(@NotNull GuiGraphics guiGraphics, int x, int y) {
-        guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(x, y);
-        guiGraphics.pose().rotate(rotation);
-        guiGraphics.pose().translate(-16, -8);
-        super.renderTool(guiGraphics, 0, 0);
-        guiGraphics.pose().popMatrix();
+    public void renderTool(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y) {
+        GuiGraphicsExtractor.pose().pushMatrix();
+        GuiGraphicsExtractor.pose().translate(x, y);
+        GuiGraphicsExtractor.pose().rotate(rotation);
+        GuiGraphicsExtractor.pose().translate(-16, -8);
+        super.renderTool(GuiGraphicsExtractor, 0, 0);
+        GuiGraphicsExtractor.pose().popMatrix();
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         if (incisionWidget != null) {
-            incisionWidget.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+            incisionWidget.renderWidget(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
         }
 
-        super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+        super.renderWidget(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
     }
 
     @Override

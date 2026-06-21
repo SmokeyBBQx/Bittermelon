@@ -120,7 +120,7 @@ public abstract class MovableResizableWidget extends AbstractWidget {
         return result || super.mouseReleased(mouseX, mouseY, button);
     }
 
-    protected void renderResizeHandle(net.minecraft.client.gui.GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderResizeHandle(net.minecraft.client.gui.GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         if (!isOpen) return;
 
         int handleSize = 12;
@@ -131,28 +131,28 @@ public abstract class MovableResizableWidget extends AbstractWidget {
                 mouseY >= handleY && mouseY < getY() + height;
 
         int borderColor = isHovering || isResizing ? 0xFFFFFFFF : 0xFF888888;
-        guiGraphics.fill(handleX, getY() + height - 1, getX() + width, getY() + height, borderColor);
-        guiGraphics.fill(getX() + width - 1, handleY, getX() + width, getY() + height, borderColor);
+        GuiGraphicsExtractor.fill(handleX, getY() + height - 1, getX() + width, getY() + height, borderColor);
+        GuiGraphicsExtractor.fill(getX() + width - 1, handleY, getX() + width, getY() + height, borderColor);
 
         for (int i = 0; i < 3; i++) {
             int offset = i * 4;
-            guiGraphics.fill(getX() + width - handleSize + offset, getY() + height - 2,
+            GuiGraphicsExtractor.fill(getX() + width - handleSize + offset, getY() + height - 2,
                     getX() + width - handleSize + offset + 2, getY() + height, borderColor);
-            guiGraphics.fill(getX() + width - 2, getY() + height - handleSize + offset,
+            GuiGraphicsExtractor.fill(getX() + width - 2, getY() + height - handleSize + offset,
                     getX() + width, getY() + height - handleSize + offset + 2, borderColor);
         }
     }
 
-    protected void renderDragHandle(net.minecraft.client.gui.@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderDragHandle(net.minecraft.client.gui.@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         int headerHeight = getHeaderHeight();
         boolean isHovering = isInDragArea(mouseX, mouseY);
         int borderColor = isHovering || isDragging ? 0xFFFFFFFF : 0xFF888888;
 
-        guiGraphics.fill(getX(), getY(), getX() + width, getY() + getHeaderHeight(), 0xDD000000);
-        guiGraphics.fill(getX(), getY(), getX() + width, getY() + 1, borderColor); // Top
-        guiGraphics.fill(getX(), getY(), getX() + 1, getY() + headerHeight, borderColor); // Left
-        guiGraphics.fill(getX() + width - 1, getY(), getX() + width, getY() + headerHeight, borderColor); // Right
-        guiGraphics.fill(getX(), getY() + headerHeight - 1, getX() + width, getY() + headerHeight, borderColor);
+        GuiGraphicsExtractor.fill(getX(), getY(), getX() + width, getY() + getHeaderHeight(), 0xDD000000);
+        GuiGraphicsExtractor.fill(getX(), getY(), getX() + width, getY() + 1, borderColor); // Top
+        GuiGraphicsExtractor.fill(getX(), getY(), getX() + 1, getY() + headerHeight, borderColor); // Left
+        GuiGraphicsExtractor.fill(getX() + width - 1, getY(), getX() + width, getY() + headerHeight, borderColor); // Right
+        GuiGraphicsExtractor.fill(getX(), getY() + headerHeight - 1, getX() + width, getY() + headerHeight, borderColor);
 
 //        int dotSize = 2;
 //        int spacing = 4;
@@ -163,7 +163,7 @@ public abstract class MovableResizableWidget extends AbstractWidget {
 //            for (int j = -1; j <= 1; j++) {
 //                int dotX = centerX + i * spacing - dotSize / 2;
 //                int dotY = centerY + j * spacing - dotSize / 2;
-//                guiGraphics.fill(dotX, dotY, dotX + dotSize, dotY + dotSize, borderColor);
+//                GuiGraphicsExtractor.fill(dotX, dotY, dotX + dotSize, dotY + dotSize, borderColor);
 //            }
 //        }
     }

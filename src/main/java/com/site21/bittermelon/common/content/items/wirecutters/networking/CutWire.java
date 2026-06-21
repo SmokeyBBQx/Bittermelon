@@ -1,11 +1,11 @@
 package com.site21.bittermelon.common.content.items.wirecutters.networking;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.systems.electronics.ElectronicDevice;
-import com.site21.bittermelon.common.systems.electronics.wiring.Port;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.character.skills.Skill;
+import com.site21.bittermelon.common.systems.electronics.ElectronicDevice;
+import com.site21.bittermelon.common.systems.electronics.wiring.Port;
 import com.site21.bittermelon.common.systems.stumble.StumbleHandler;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import io.netty.buffer.ByteBuf;
@@ -14,7 +14,7 @@ import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -29,7 +29,7 @@ import java.util.UUID;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.ELECTROCUTED;
 
 public record CutWire(BlockPos pos, String portId, UUID playerId, boolean inputPort) implements CustomPacketPayload {
-    public static final Type<CutWire> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "cut_wire"));
+    public static final Type<CutWire> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "cut_wire"));
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {

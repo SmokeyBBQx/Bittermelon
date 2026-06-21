@@ -4,19 +4,19 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.electronics.ElectronicDevice;
 import com.site21.bittermelon.common.systems.electronics.wiring.InputPort;
 import com.site21.bittermelon.common.systems.electronics.wiring.OutputPort;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class WiringScreen extends Screen {
-    private static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "generic_background");
+    private static final Identifier BACKGROUND = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "generic_background");
 
     private final ElectronicDevice electronic;
     private List<PortButton> inputPorts;
@@ -90,14 +90,14 @@ public abstract class WiringScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 
         for (PortButton port : inputPorts) {
             String id = port.getPort().id;
             int x = port.getX() + port.getWidth() + 10;
             int y = port.getY() + port.getHeight() / 2;
-            guiGraphics.drawString(minecraft.font, id, x, y, 0xFFFFFFFF);
+            GuiGraphicsExtractor.drawString(minecraft.font, id, x, y, 0xFFFFFFFF);
         }
 
         for (PortButton port : outputPorts) {
@@ -105,17 +105,17 @@ public abstract class WiringScreen extends Screen {
             int textWidth = minecraft.font.width(id);
             int x = port.getX() - textWidth - 4;
             int y = port.getY() + port.getHeight() / 2;
-            guiGraphics.drawString(minecraft.font, id, x, y, 0xFFFFFFFF);
+            GuiGraphicsExtractor.drawString(minecraft.font, id, x, y, 0xFFFFFFFF);
         }
     }
 
 
     @Override
-    public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+    public void renderBackground(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        super.renderBackground(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
         int margin = 4;
 
-        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND, leftX - margin, height / 6 - margin * 4, backgroundWidth + margin * 2, backgroundHeight);
+        GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND, leftX - margin, height / 6 - margin * 4, backgroundWidth + margin * 2, backgroundHeight);
     }
 
     protected abstract void handleInputPortClick(@NotNull InputPort port);

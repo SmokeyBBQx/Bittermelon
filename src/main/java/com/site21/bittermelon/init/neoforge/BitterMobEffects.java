@@ -9,7 +9,7 @@ import com.site21.bittermelon.common.content.mobeffects.electrocuted.Electrocute
 import com.site21.bittermelon.common.systems.stumble.FallenEffect;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -32,11 +32,11 @@ public class BitterMobEffects {
     public static final Holder<MobEffect> STUN = MOB_EFFECTS.register("stun", () ->
             new BitterEffect(MobEffectCategory.HARMFUL, 0)
                     .addAttributeModifier(Attributes.MOVEMENT_SPEED,
-                            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "effect.movement_stun"),
+                            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "effect.movement_stun"),
                             -1,
                             AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
                     .addAttributeModifier(Attributes.JUMP_STRENGTH,
-                            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "effect.jump_stun"),
+                            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "effect.jump_stun"),
                             -1,
                             AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 

@@ -6,7 +6,7 @@ import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,7 +18,7 @@ import java.util.function.Function;
 
 @Mixin(EntityModel.class)
 public abstract class EntityModelMixin<T extends EntityRenderState> extends Model {
-    public EntityModelMixin(ModelPart root, Function<ResourceLocation, RenderType> renderType) {
+    public EntityModelMixin(ModelPart root, Function<Identifier, RenderType> renderType) {
         super(root, renderType);
     }
 

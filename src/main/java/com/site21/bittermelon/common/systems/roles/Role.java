@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.systems.roles;
 
 import com.site21.bittermelon.common.systems.character.Character;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 
 public class Role {
@@ -10,7 +10,7 @@ public class Role {
     public final int color;
     public final String quote;
     public final String description;
-    public ResourceLocation skinLocation;
+    public Identifier skinLocation;
     private boolean whitelisted = false;
     private boolean defaultRole = false;
     private Component addMessage;
@@ -37,7 +37,7 @@ public class Role {
         return this;
     }
 
-    public Role skinLocation(ResourceLocation skinLocation) {
+    public Role skinLocation(Identifier skinLocation) {
         this.skinLocation = skinLocation;
         return this;
     }

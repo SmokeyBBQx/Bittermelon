@@ -8,14 +8,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record SpliceInputWire(BlockPos connectorPos, BlockPos targetPos, String connectorID, String targetID) implements CustomPacketPayload {
-    public static final Type<SpliceInputWire> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "splice_input_wire"));
+    public static final Type<SpliceInputWire> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "splice_input_wire"));
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {

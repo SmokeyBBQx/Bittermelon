@@ -6,14 +6,14 @@ import com.site21.bittermelon.common.content.blocks.electronics.personneltermina
 import com.site21.bittermelon.common.systems.personnel.privilege.PrivilegeManager;
 import com.site21.bittermelon.common.systems.personnel.privilege.networking.AddPrivilege;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -96,14 +96,14 @@ public class PrivilegeWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/generic_background"),
+    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/generic_background"),
                 getX(), getY(), getWidth(), getHeight());
 
-        privilegeList.render(guiGraphics, mouseX, mouseY, partialTick);
-        searchField.render(guiGraphics, mouseX, mouseY, partialTick);
-        addPrivilegeButton.render(guiGraphics, mouseX, mouseY, partialTick);
-        inputField.render(guiGraphics, mouseX, mouseY, partialTick);
+        privilegeList.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        searchField.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        addPrivilegeButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        inputField.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
     }
 
     @Override

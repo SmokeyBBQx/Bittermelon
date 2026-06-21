@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.systems.containment.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
@@ -28,13 +28,13 @@ public class ScoreWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         float score = scoreSupplier.get();
 
         int textColor = getScoreColor(score);
 
         if (score > 60 || (tickCount / 10) % 2 == 0) {
-            guiGraphics.drawString(Minecraft.getInstance().font,
+            GuiGraphicsExtractor.drawString(Minecraft.getInstance().font,
                     label + ": " + String.format("%.1f%%", score),
                     getX(), getY() + 5,
                     textColor, false);
@@ -43,11 +43,11 @@ public class ScoreWidget extends AbstractWidget {
         int barWidth = 100;
         int filledWidth = (int) (barWidth * (score / 100f));
 
-        guiGraphics.fill(getX() + 110, getY() + 5,
+        GuiGraphicsExtractor.fill(getX() + 110, getY() + 5,
                 getX() + 110 + barWidth, getY() + 13,
                 0xFF555555);
 
-        guiGraphics.fill(getX() + 110, getY() + 5,
+        GuiGraphicsExtractor.fill(getX() + 110, getY() + 5,
                 getX() + 110 + filledWidth, getY() + 13,
                 textColor);
     }

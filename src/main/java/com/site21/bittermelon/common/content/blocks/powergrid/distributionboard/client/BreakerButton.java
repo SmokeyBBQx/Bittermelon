@@ -1,14 +1,14 @@
 package com.site21.bittermelon.common.content.blocks.powergrid.distributionboard.client;
 
 import com.site21.bittermelon.Bittermelon;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.neoforge.BitterSounds.BREAKER_SWITCH;
@@ -16,14 +16,14 @@ import static com.site21.bittermelon.init.neoforge.BitterSounds.BREAKER_SWITCH;
 public class BreakerButton extends AbstractWidget {
     private final OnPress onPress;
 
-    private final ResourceLocation onIcon;
-    private final ResourceLocation onHighlightedIcon;
-    private final ResourceLocation offIcon;
-    private final ResourceLocation offHighlightedIcon;
+    private final Identifier onIcon;
+    private final Identifier onHighlightedIcon;
+    private final Identifier offIcon;
+    private final Identifier offHighlightedIcon;
 
     private boolean on = false;
 
-    public BreakerButton(int x, int y, int width, int height, OnPress onPress, ResourceLocation onIcon, ResourceLocation onHighlightedIcon, ResourceLocation offIcon, ResourceLocation offHighlightedIcon) {
+    public BreakerButton(int x, int y, int width, int height, OnPress onPress, Identifier onIcon, Identifier onHighlightedIcon, Identifier offIcon, Identifier offHighlightedIcon) {
         super(x, y, width, height, Component.literal("Breaker"));
         this.onPress = onPress;
         this.onIcon = onIcon;
@@ -34,19 +34,19 @@ public class BreakerButton extends AbstractWidget {
 
     public BreakerButton(int x, int y, int width, int height, OnPress onPress) {
         this(x, y, width, height, onPress,
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "distributionboard/breaker_on"),
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "distributionboard/breaker_on_highlighted"),
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "distributionboard/breaker_off"),
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "distributionboard/breaker_off_highlighted")
+                Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "distributionboard/breaker_on"),
+                Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "distributionboard/breaker_on_highlighted"),
+                Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "distributionboard/breaker_off"),
+                Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "distributionboard/breaker_off_highlighted")
         );
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         if (isHovered) {
-            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, on ? onHighlightedIcon : offHighlightedIcon, x, y, width, height);
+            GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, on ? onHighlightedIcon : offHighlightedIcon, x, y, width, height);
         } else {
-            guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, on ? onIcon : offIcon, x, y, width, height);
+            GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, on ? onIcon : offIcon, x, y, width, height);
         }
     }
 

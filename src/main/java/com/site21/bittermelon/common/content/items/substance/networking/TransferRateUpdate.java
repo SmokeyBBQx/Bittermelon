@@ -6,7 +6,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -17,7 +17,7 @@ import static com.site21.bittermelon.common.content.items.substance.FluidContain
 public record TransferRateUpdate(int newRate, InteractionHand hand) implements CustomPacketPayload {
     // TODO: Somehow replace this with ItemStack instead of hand
 
-    public static final Type<TransferRateUpdate> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "transfer_rate_update"));
+    public static final Type<TransferRateUpdate> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "transfer_rate_update"));
 
     public static final StreamCodec<ByteBuf, TransferRateUpdate> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.INT,

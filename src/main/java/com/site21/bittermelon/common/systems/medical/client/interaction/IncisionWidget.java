@@ -11,7 +11,7 @@ import com.site21.bittermelon.common.systems.medical.networking.AddAndInsertComp
 import com.site21.bittermelon.init.custom.Compartments;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
@@ -45,9 +45,9 @@ public class IncisionWidget extends InteractionWidget {
     }
 
     @Override
-    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         for (Point point : drawnPoints) {
-            guiGraphics.fill(point.x() - 1, point.y() - 1, point.x() + 1, point.y() + 1, 0xFFFF0000);
+            GuiGraphicsExtractor.fill(point.x() - 1, point.y() - 1, point.x() + 1, point.y() + 1, 0xFFFF0000);
         }
     }
 

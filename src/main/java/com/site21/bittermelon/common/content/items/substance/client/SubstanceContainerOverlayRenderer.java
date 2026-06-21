@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.Window;
 import com.site21.bittermelon.common.content.items.substance.FluidContainerItem;
 import com.site21.bittermelon.common.content.items.substance.GasContainerItem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,23 +25,23 @@ public class SubstanceContainerOverlayRenderer {
             if (item instanceof FluidContainerItem) {
                 int transferRate = FluidContainerItem.getTransferRate(heldItem);
                 Component text = Component.literal("Transfer Rate: " + transferRate);
-                GuiGraphics guiGraphics = event.getGuiGraphics();
+                GuiGraphicsExtractor GuiGraphicsExtractor = event.getGuiGraphicsExtractor();
                 Window window = minecraft.getWindow();
                 int width = window.getGuiScaledWidth();
                 int height = window.getGuiScaledHeight();
                 int x = (width - minecraft.font.width(text)) / 2;
                 int y = height - 35;
-                guiGraphics.drawString(minecraft.font, text, x, y, 0xFFFFFF);
+                GuiGraphicsExtractor.drawString(minecraft.font, text, x, y, 0xFFFFFF);
             } else if (item instanceof GasContainerItem gasContainerItem) {
                 int releasePressure = gasContainerItem.getReleasePressure(heldItem);
                 Component text = Component.literal("Release Pressure: " + releasePressure + " kPa");
-                GuiGraphics guiGraphics = event.getGuiGraphics();
+                GuiGraphicsExtractor GuiGraphicsExtractor = event.getGuiGraphicsExtractor();
                 Window window = minecraft.getWindow();
                 int width = window.getGuiScaledWidth();
                 int height = window.getGuiScaledHeight();
                 int x = (width - minecraft.font.width(text)) / 2;
                 int y = height - 35;
-                guiGraphics.drawString(minecraft.font, text, x, y, 0xFFFFFF);
+                GuiGraphicsExtractor.drawString(minecraft.font, text, x, y, 0xFFFFFF);
             }
         }
     }

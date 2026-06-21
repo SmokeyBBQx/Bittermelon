@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.systems.medical.client;
 
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStatsUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.model.Model;
@@ -51,7 +51,7 @@ public class AnatomyModelWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void renderWidget(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         AnatomyPictureInPictureRenderer.RenderState anatomyRenderState = new AnatomyPictureInPictureRenderer.RenderState(
                 getLivingRenderState(),
                 entity,
@@ -64,13 +64,13 @@ public class AnatomyModelWidget extends AbstractWidget {
                 width,
                 height,
                 scale,
-                guiGraphics.peekScissorStack()
+                GuiGraphicsExtractor.peekScissorStack()
         );
 
-        guiGraphics.submitPictureInPictureRenderState(anatomyRenderState);
+        GuiGraphicsExtractor.submitPictureInPictureRenderState(anatomyRenderState);
     }
 
-    private void renderDebugBounds(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    private void renderDebugBounds(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
         Map<String, AABB> bounds = new HashMap<>();
         Matrix4f root = new Matrix4f().identity().rotateY(xRot);
 
@@ -84,8 +84,8 @@ public class AnatomyModelWidget extends AbstractWidget {
         for (Map.Entry<String, AABB> entry : bounds.entrySet()) {
             AABB b = entry.getValue();
             int color = entry.getKey().equals(hoveredPart) ? 0x8000FF00 : 0x80FF0000;
-            guiGraphics.fill((int) b.minX, (int) b.minY, (int) b.maxX, (int) b.maxY, color);
-            guiGraphics.drawString(Minecraft.getInstance().font, entry.getKey(), (int) b.minX + 2,
+            GuiGraphicsExtractor.fill((int) b.minX, (int) b.minY, (int) b.maxX, (int) b.maxY, color);
+            GuiGraphicsExtractor.drawString(Minecraft.getInstance().font, entry.getKey(), (int) b.minX + 2,
                     (int) b.minY + 2, 0xFFFFFFFF);
         }
     }

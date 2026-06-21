@@ -7,14 +7,14 @@ import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 public record RemoveAtmosInstance(UUID uuid) implements CustomPacketPayload {
-    public static final Type<RemoveAtmosInstance> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "remove_atmos_instance"));
+    public static final Type<RemoveAtmosInstance> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "remove_atmos_instance"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, RemoveAtmosInstance> STREAM_CODEC = StreamCodec.composite(
             UUIDUtil.STREAM_CODEC,

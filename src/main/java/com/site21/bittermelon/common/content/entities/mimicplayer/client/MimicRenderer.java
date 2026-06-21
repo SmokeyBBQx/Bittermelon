@@ -23,7 +23,7 @@ import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
@@ -129,7 +129,7 @@ public class MimicRenderer extends LivingEntityRenderer<Mimic, PlayerRenderState
         }
     }
 
-    public ResourceLocation getTextureLocation(PlayerRenderState renderState) {
+    public Identifier getTextureLocation(PlayerRenderState renderState) {
         return renderState.skin.texture();
     }
 
@@ -209,17 +209,17 @@ public class MimicRenderer extends LivingEntityRenderer<Mimic, PlayerRenderState
         }
     }
 
-    public void renderRightHand(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, ResourceLocation skinTexture, boolean isSleeveVisible, AbstractClientPlayer player) {
+    public void renderRightHand(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, Identifier skinTexture, boolean isSleeveVisible, AbstractClientPlayer player) {
         if(!net.neoforged.neoforge.client.ClientHooks.renderSpecificFirstPersonArm(poseStack, bufferSource, packedLight, player, HumanoidArm.RIGHT))
             this.renderHand(poseStack, bufferSource, packedLight, skinTexture, this.model.rightArm, isSleeveVisible);
     }
 
-    public void renderLeftHand(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, ResourceLocation skinTexture, boolean isSleeveVisible, AbstractClientPlayer player) {
+    public void renderLeftHand(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, Identifier skinTexture, boolean isSleeveVisible, AbstractClientPlayer player) {
         if(!net.neoforged.neoforge.client.ClientHooks.renderSpecificFirstPersonArm(poseStack, bufferSource, packedLight, player, HumanoidArm.LEFT))
             this.renderHand(poseStack, bufferSource, packedLight, skinTexture, this.model.leftArm, isSleeveVisible);
     }
 
-    private void renderHand(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, ResourceLocation skinTexture, ModelPart arm, boolean isSleeveVisible) {
+    private void renderHand(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, Identifier skinTexture, ModelPart arm, boolean isSleeveVisible) {
         PlayerModel playermodel = this.getModel();
         arm.resetPose();
         arm.visible = true;

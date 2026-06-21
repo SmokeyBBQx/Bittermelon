@@ -7,7 +7,7 @@ import net.minecraft.Util;
 import net.minecraft.client.GameNarrator;
 import net.minecraft.client.StringSplitter;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.font.TextFieldHelper;
 import net.minecraft.client.gui.screens.Screen;
@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.StringUtils;
@@ -30,7 +30,7 @@ import java.util.List;
 
 
 public class PaperEditScreenOld extends Screen {
-    public static final ResourceLocation PAPER_LOCATION = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/paper.png");
+    public static final Identifier PAPER_LOCATION = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/paper.png");
     private static final int TEXT_WIDTH = 114;
     private static final int TEXT_HEIGHT = 128;
     private static final int IMAGE_WIDTH = 192;
@@ -89,48 +89,48 @@ public class PaperEditScreenOld extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
         DisplayCache displayCache = this.getDisplayCache();
 
         for (LineInfo lineInfo : displayCache.lines) {
-            guiGraphics.pose().pushMatrix();
+            GuiGraphicsExtractor.pose().pushMatrix();
             float scale = lineInfo.scale;
-            guiGraphics.pose().scale(scale, scale, new Matrix3x2f());
-            guiGraphics.drawString(this.font, lineInfo.asComponent,
+            GuiGraphicsExtractor.pose().scale(scale, scale, new Matrix3x2f());
+            GuiGraphicsExtractor.drawString(this.font, lineInfo.asComponent,
                     (int) (lineInfo.x / scale),
                     (int) (lineInfo.y / scale),
                     -16777216, false);
-            guiGraphics.pose().popMatrix();
+            GuiGraphicsExtractor.pose().popMatrix();
         }
 
-        this.renderHighlight(guiGraphics, displayCache.selection);
-        this.renderCursor(guiGraphics, displayCache.cursor, displayCache.cursorAtEnd);
+        this.renderHighlight(GuiGraphicsExtractor, displayCache.selection);
+        this.renderCursor(GuiGraphicsExtractor, displayCache.cursor, displayCache.cursorAtEnd);
     }
 
-    public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderTransparentBackground(guiGraphics);
-        guiGraphics.blit(PAPER_LOCATION, (width - 250) / 2, 20, 2, 2, 0, 0, 250, 256);
+    public void renderBackground(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        this.renderTransparentBackground(GuiGraphicsExtractor);
+        GuiGraphicsExtractor.blit(PAPER_LOCATION, (width - 250) / 2, 20, 2, 2, 0, 0, 250, 256);
     }
 
-    private void renderCursor(GuiGraphics guiGraphics, Pos2i cursorPos, boolean isEndOfText) {
+    private void renderCursor(GuiGraphicsExtractor GuiGraphicsExtractor, Pos2i cursorPos, boolean isEndOfText) {
         if (this.frameTick / 6 % 2 == 0) {
             cursorPos = this.convertLocalToScreen(cursorPos);
             if (!isEndOfText) {
-                guiGraphics.fill(cursorPos.x, cursorPos.y - 1, cursorPos.x + 1, cursorPos.y + 9, -16777216);
+                GuiGraphicsExtractor.fill(cursorPos.x, cursorPos.y - 1, cursorPos.x + 1, cursorPos.y + 9, -16777216);
             } else {
-                guiGraphics.drawString(this.font, "_", cursorPos.x, cursorPos.y, 0, false);
+                GuiGraphicsExtractor.drawString(this.font, "_", cursorPos.x, cursorPos.y, 0, false);
             }
         }
     }
 
-    private void renderHighlight(GuiGraphics guiGraphics, Rect2i[] highlightAreas) {
+    private void renderHighlight(GuiGraphicsExtractor GuiGraphicsExtractor, Rect2i[] highlightAreas) {
         for(Rect2i rect2i : highlightAreas) {
             int i = rect2i.getX();
             int j = rect2i.getY();
             int k = i + rect2i.getWidth();
             int l = j + rect2i.getHeight();
-            guiGraphics.fill(RenderPipelines.GUI_TEXT_HIGHLIGHT, i, j, k, l, -16776961);
+            GuiGraphicsExtractor.fill(RenderPipelines.GUI_TEXT_HIGHLIGHT, i, j, k, l, -16776961);
         }
 
     }

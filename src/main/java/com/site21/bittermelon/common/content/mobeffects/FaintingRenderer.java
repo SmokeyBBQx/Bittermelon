@@ -2,9 +2,9 @@ package com.site21.bittermelon.common.content.mobeffects;
 
 import com.site21.bittermelon.Bittermelon;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -18,7 +18,7 @@ import static com.site21.bittermelon.init.neoforge.BitterMobEffects.FAINTING;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class FaintingRenderer {
-    public static final ResourceLocation VIGNETTE_LOCATION = ResourceLocation.withDefaultNamespace("textures/misc/vignette.png");
+    public static final Identifier VIGNETTE_LOCATION = Identifier.withDefaultNamespace("textures/misc/vignette.png");
 
     @SubscribeEvent
     public static void onRenderLevelStage(@NotNull RenderLevelStageEvent.AfterLevel event) {
@@ -57,19 +57,19 @@ public class FaintingRenderer {
         if (player.hasEffect(FAINTING)) {
             int amplifier = player.getEffect(FAINTING).getAmplifier();
             float vignetteAmplifier = amplifier > 0 ? (float) amplifier / 10 : 0;
-            GuiGraphics guiGraphics = event.getGuiGraphics();
+            GuiGraphicsExtractor GuiGraphicsExtractor = event.getGuiGraphicsExtractor();
 
-            guiGraphics.blit(
+            GuiGraphicsExtractor.blit(
                     RenderPipelines.VIGNETTE,
                     VIGNETTE_LOCATION,
                     0,
                     0,
                     0.0F,
                     0.0F,
-                    guiGraphics.guiWidth(),
-                    guiGraphics.guiHeight(),
-                    guiGraphics.guiWidth(),
-                    guiGraphics.guiHeight(),
+                    GuiGraphicsExtractor.guiWidth(),
+                    GuiGraphicsExtractor.guiHeight(),
+                    GuiGraphicsExtractor.guiWidth(),
+                    GuiGraphicsExtractor.guiHeight(),
                     0xFF000000 | (int) (vignetteAmplifier * 255)
             );
         }

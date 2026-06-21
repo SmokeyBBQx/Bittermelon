@@ -6,12 +6,12 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record RemoveIntercomFromClient(BlockPos pos) implements CustomPacketPayload {
-    public static final Type<RemoveIntercomFromClient> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "remove_intercom_from_client"));
+    public static final Type<RemoveIntercomFromClient> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "remove_intercom_from_client"));
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {

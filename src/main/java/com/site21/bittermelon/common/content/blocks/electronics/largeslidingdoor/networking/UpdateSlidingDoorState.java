@@ -7,7 +7,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -17,7 +17,7 @@ import static com.site21.bittermelon.common.content.blocks.electronics.largeslid
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.LARGE_SLIDING_DOOR;
 
 public record UpdateSlidingDoorState(BlockPos pos, LargeSlidingDoorBlock.State state) implements CustomPacketPayload {
-    public static final Type<UpdateSlidingDoorState> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "update_sliding_door_state"));
+    public static final Type<UpdateSlidingDoorState> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "update_sliding_door_state"));
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {

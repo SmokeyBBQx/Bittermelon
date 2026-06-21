@@ -17,7 +17,7 @@ public class RoleManager extends SavedData {
 //        HolderLookup.RegistryLookup<Role> roleLookup = lookupProvider.lookupOrThrow(BitterRegistries.ROLE_REGISTRY_KEY);
 //
 //        for (String roleKey : whitelistsTag.getAllKeys()) {
-//            ResourceLocation roleLocation = ResourceLocation.parse(roleKey);
+//            Identifier roleLocation = Identifier.parse(roleKey);
 //            ResourceKey<Role> roleResourceKey = ResourceKey.create(BitterRegistries.ROLE_REGISTRY_KEY, roleLocation);
 //            Optional<Holder.Reference<Role>> roleHolder = roleLookup.get(roleResourceKey);
 //

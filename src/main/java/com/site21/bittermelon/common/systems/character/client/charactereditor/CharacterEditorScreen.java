@@ -8,7 +8,7 @@ import com.site21.bittermelon.common.systems.character.client.charactereditor.ro
 import com.site21.bittermelon.common.systems.character.client.characterselection.CharacterSelectionScreen;
 import com.site21.bittermelon.common.systems.character.networking.UpdateCharacter;
 import com.site21.bittermelon.common.systems.character.skin.SkinManager;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.MultiLineEditBox;
@@ -19,7 +19,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +31,7 @@ import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderE
 
 
 public class CharacterEditorScreen extends Screen {
-    private static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/character_background");
+    private static final Identifier BACKGROUND = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "character/character_background");
     private static final int MARGIN = 15;
     private static final int SCREEN_WIDTH = 384;
     private static final int SCREEN_HEIGHT = 384;
@@ -57,7 +57,7 @@ public class CharacterEditorScreen extends Screen {
 
     private float rotationX = 0;
     private boolean isWideModel;
-    private ResourceLocation skin;
+    private Identifier skin;
 
     public CharacterEditorScreen(Character character, Screen previousScreen) {
         super(Component.literal("Character Editor"));
@@ -222,34 +222,34 @@ public class CharacterEditorScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        renderPlayer(guiGraphics);
-        renderLabels(guiGraphics);
+    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        renderPlayer(GuiGraphicsExtractor);
+        renderLabels(GuiGraphicsExtractor);
     }
 
-    private void renderLabels(@NotNull GuiGraphics guiGraphics) {
+    private void renderLabels(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor) {
         int startX = screenX + MARGIN + 120;
         int startY = screenY + MARGIN + 5;
         int spacing = font.lineHeight * 2 + 5;
 
-        guiGraphics.drawString(font, "Name:", startX, startY, TEXT_COLOR, false);
+        GuiGraphicsExtractor.drawString(font, "Name:", startX, startY, TEXT_COLOR, false);
         startY += spacing;
-        guiGraphics.drawString(font, "Emote Color:", startX, startY, TEXT_COLOR, false);
+        GuiGraphicsExtractor.drawString(font, "Emote Color:", startX, startY, TEXT_COLOR, false);
         startY += spacing;
-        guiGraphics.drawString(font, "Skin URL:", startX, startY, TEXT_COLOR, false);
+        GuiGraphicsExtractor.drawString(font, "Skin URL:", startX, startY, TEXT_COLOR, false);
         startY += spacing;
-        guiGraphics.drawString(font, "Description:", startX, startY, TEXT_COLOR, false);
+        GuiGraphicsExtractor.drawString(font, "Description:", startX, startY, TEXT_COLOR, false);
     }
 
     @Override
-    public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+    public void renderBackground(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        super.renderBackground(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 
-        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND, screenX, screenY, SCREEN_WIDTH, SCREEN_HEIGHT);
+        GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND, screenX, screenY, SCREEN_WIDTH, SCREEN_HEIGHT);
     }
 
-    private void renderPlayer(@NotNull GuiGraphics guiGraphics) {
+    private void renderPlayer(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor) {
         int playerX = screenX + MARGIN + 6;
         int playerY = screenY + MARGIN;
 
@@ -257,7 +257,7 @@ public class CharacterEditorScreen extends Screen {
                 skin, isWideModel ? PlayerSkin.Model.WIDE : PlayerSkin.Model.SLIM);
 
         renderEntityInInventoryFollowsAngle(
-                guiGraphics,
+                GuiGraphicsExtractor,
                 playerX,
                 playerY,
                 playerX + PLAYER_RENDER_WIDTH,
@@ -268,7 +268,7 @@ public class CharacterEditorScreen extends Screen {
         );
     }
 
-    public static void renderEntityInInventoryFollowsAngle(@NotNull GuiGraphics graphics, int x1, int y1, int x2, int y2, int scale, float yOffset, float horizontalRotation, float verticalRotation, @NotNull LivingEntity entity) {
+    public static void renderEntityInInventoryFollowsAngle(@NotNull GuiGraphicsExtractor graphics, int x1, int y1, int x2, int y2, int scale, float yOffset, float horizontalRotation, float verticalRotation, @NotNull LivingEntity entity) {
         float centerX = (float) (x1 + x2) / 2.0F;
         float centerY = (float) (y1 + y2) / 2.0F;
 

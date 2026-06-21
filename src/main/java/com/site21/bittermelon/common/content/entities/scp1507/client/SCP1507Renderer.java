@@ -4,9 +4,7 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.entities.scp1507.SCP1507;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.client.event.LayerDefinitions.SCP_1507_LAYER;
@@ -22,8 +20,8 @@ public class SCP1507Renderer extends MobRenderer<SCP1507, SCP1507RenderState, SC
     }
 
     @Override
-    public @NotNull ResourceLocation getTextureLocation(@NotNull SCP1507RenderState renderState) {
-        return ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/entity/scp_1507.png");
+    public @NotNull Identifier getTextureLocation(@NotNull SCP1507RenderState renderState) {
+        return Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/entity/scp_1507.png");
     }
 
     @Override

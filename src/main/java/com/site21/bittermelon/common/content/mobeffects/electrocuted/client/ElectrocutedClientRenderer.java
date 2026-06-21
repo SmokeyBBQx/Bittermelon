@@ -12,7 +12,8 @@ import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.init.neoforge.BitterMobEffects.*;
+import static com.site21.bittermelon.init.neoforge.BitterMobEffects.ELECTROCUTED;
+import static com.site21.bittermelon.init.neoforge.BitterMobEffects.TASERED;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class ElectrocutedClientRenderer {
@@ -53,7 +54,7 @@ public class ElectrocutedClientRenderer {
 //            }
 //
 //            float amplifier = instance.getAmplifier();
-//            renderVignette(event.getGuiGraphics(), 0, amplifier, amplifier);
+//            renderVignette(event.getGuiGraphicsExtractor(), 0, amplifier, amplifier);
 //        }
     }
 }

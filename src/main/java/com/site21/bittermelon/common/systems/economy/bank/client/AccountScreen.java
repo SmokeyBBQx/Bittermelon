@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.systems.economy.bank.client;
 
 import com.site21.bittermelon.common.systems.economy.bank.Account;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -56,10 +56,10 @@ public class AccountScreen extends Screen {
 
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 
-        guiGraphics.drawCenteredString(
+        GuiGraphicsExtractor.drawCenteredString(
                 font,
                 getTitle(),
                 width / 2,
@@ -67,7 +67,7 @@ public class AccountScreen extends Screen {
                 0xFFFFFF
         );
 
-        guiGraphics.drawCenteredString(
+        GuiGraphicsExtractor.drawCenteredString(
                 font,
                 Component.literal(String.format("Balance: $%.2f", account.getBalance())),
                 width / 2,

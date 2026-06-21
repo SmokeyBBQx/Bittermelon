@@ -8,7 +8,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public record SyncCharacters(Map<UUID, Character> characters) implements CustomPacketPayload {
-    public static final Type<SyncCharacters> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "sync_characters"));
+    public static final Type<SyncCharacters> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "sync_characters"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, Map<UUID, Character>> CHARACTER_MAP_CODEC =
             ByteBufCodecs.map(

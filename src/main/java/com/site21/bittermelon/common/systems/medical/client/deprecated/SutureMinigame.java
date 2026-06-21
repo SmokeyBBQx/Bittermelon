@@ -3,7 +3,7 @@
 //import com.site21.bittermelon.common.systems.character.Character;
 //import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
 //import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
-//import net.minecraft.client.gui.GuiGraphics;
+//import net.minecraft.client.gui.GuiGraphicsExtractor;
 //import net.minecraft.network.chat.Component;
 //import net.minecraft.world.item.ItemStack;
 //import net.neoforged.api.distmarker.Dist;
@@ -17,8 +17,8 @@
 //    }
 //
 //    @Override
-//    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-//        super.render(guiGraphics, mouseX, mouseY, partialTick);
+//    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+//        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 //
 //    }
 //}

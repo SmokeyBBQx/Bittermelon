@@ -6,9 +6,9 @@
 //import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
 //import com.site21.bittermelon.init.neoforge.BitterSounds;
 //import net.minecraft.client.Minecraft;
-//import net.minecraft.client.gui.GuiGraphics;
+//import net.minecraft.client.gui.GuiGraphicsExtractor;
 //import net.minecraft.network.chat.Component;
-//import net.minecraft.resources.ResourceLocation;
+//import net.minecraft.resources.Identifier;
 //import net.minecraft.world.item.ItemStack;
 //import net.neoforged.api.distmarker.Dist;
 //import net.neoforged.api.distmarker.OnlyIn;
@@ -17,7 +17,7 @@
 //
 //
 //public class RetractMinigame extends MedicalMinigame {
-//    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/retract_sprites.png");
+//    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/gui/retract_sprites.png");
 //    private boolean retracting = false;
 //    private int retractDown = height / 2 + 130;
 //    private int retractUp = height / 2 + 130;
@@ -34,17 +34,17 @@
 //    }
 //
 //    @Override
-//    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-//        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+//    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTicks) {
+//        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTicks);
 //        int centerX = width / 2 - 192;
 //        int centerY = height / 2 - 40;
 //        float scale = 4.0f;
 //
-//        guiGraphics.pose().pushMatrix();
-//        guiGraphics.pose().scale(scale, scale);
+//        GuiGraphicsExtractor.pose().pushMatrix();
+//        GuiGraphicsExtractor.pose().scale(scale, scale);
 //
 //        if (!retracting) {
-//            guiGraphics.blit(
+//            GuiGraphicsExtractor.blit(
 //                    TEXTURE,
 //                    (int) (centerX / scale),
 //                    (int) (centerY / scale) - 11,
@@ -56,7 +56,7 @@
 //                    40
 //            );
 //
-//            guiGraphics.blit(
+//            GuiGraphicsExtractor.blit(
 //                    TEXTURE,
 //                    (int) (centerX / scale),
 //                    (int) (centerY / scale) + 11,
@@ -68,7 +68,7 @@
 //                    40
 //            );
 //        } else {
-//            guiGraphics.blit(
+//            GuiGraphicsExtractor.blit(
 //                    TEXTURE,
 //                    (int) (centerX / scale),
 //                    (int) (retractUp / scale) - 11,
@@ -80,7 +80,7 @@
 //                    40
 //            );
 //
-//            guiGraphics.blit(
+//            GuiGraphicsExtractor.blit(
 //                    TEXTURE,
 //                    (int) (centerX / scale),
 //                    (int) (retractDown / scale) + 11,
@@ -93,7 +93,7 @@
 //            );
 //        }
 //
-//        guiGraphics.pose().popMatrix();
+//        GuiGraphicsExtractor.pose().popMatrix();
 //
 //        if (retractUp < height / 6) {
 //            isCompleting = true;
@@ -102,7 +102,7 @@
 //        String text = "PRESS SPACE TO RETRACT";
 //        int textWidth = Minecraft.getInstance().font.width(text);
 //        if (!retracting) {
-//            guiGraphics.drawString(
+//            GuiGraphicsExtractor.drawString(
 //                    Minecraft.getInstance().font,
 //                    Component.literal(text),
 //                    width / 2 - textWidth / 2,

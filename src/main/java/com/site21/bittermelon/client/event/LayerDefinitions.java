@@ -12,12 +12,11 @@ import com.site21.bittermelon.common.content.entities.scp548.client.SCP548Model;
 import com.site21.bittermelon.common.content.entities.scp650.client.SCP650Model;
 import com.site21.bittermelon.common.content.entities.scp718.client.SCP718Model;
 import com.site21.bittermelon.common.content.entities.scp718.client.SCP718SmallModel;
-import com.site21.bittermelon.common.content.entities.scp815snake.SCP815Snake;
 import com.site21.bittermelon.common.content.entities.scp815snake.client.SCP815SnakeModel;
 import com.site21.bittermelon.common.content.entities.scp939.client.SCP939Model;
 import com.site21.bittermelon.common.content.entities.seamonkey.client.SeaMonkeyModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -27,72 +26,72 @@ import org.jetbrains.annotations.NotNull;
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class LayerDefinitions {
     public static final ModelLayerLocation SCP_131_LAYER = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_131"),
+            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_131"),
             "main"
     );
 
     public static final ModelLayerLocation SCP_650_LAYER = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_650"),
+            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_650"),
             "main"
     );
 
     public static final ModelLayerLocation SCP_1507_LAYER = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_1507"),
+            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_1507"),
             "main"
     );
 
     public static final ModelLayerLocation SCP_939_LAYER = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_939"),
+            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_939"),
             "main"
     );
 
     public static final ModelLayerLocation CHICKEN_LAYER = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "chicken"),
+            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "chicken"),
             "main"
     );
 
     public static final ModelLayerLocation LARGE_SLIDING_DOOR_LAYER = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "large_sliding_door"),
+            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "large_sliding_door"),
             "main"
     );
 
     public static final ModelLayerLocation SCP_548_LAYER = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_548"),
+            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_548"),
             "main"
     );
 
     public static final ModelLayerLocation SEA_MONKEY_LAYER = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "sea_monkey"),
+            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "sea_monkey"),
             "main"
     );
 
     public static final ModelLayerLocation SCP_718_LAYER = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_718"),
+            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_718"),
             "main"
     );
 
     public static final ModelLayerLocation SCP_718_SMALL_LAYER = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_718_small"),
+            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_718_small"),
             "main"
     );
 
     public static final ModelLayerLocation SCP_025_FR_LAYER = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_025_fr"),
+            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_025_fr"),
             "main"
     );
 
     public static final ModelLayerLocation SCP_025_FR_TAIL_LAYER = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_025_fr_tail"),
+            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_025_fr_tail"),
             "main"
     );
 
     public static final ModelLayerLocation SCP_025_FR_BODY_LAYER = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_025_fr_body"),
+            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_025_fr_body"),
             "main"
     );
 
     public static final ModelLayerLocation SCP_815_SNAKE_LAYER = new ModelLayerLocation(
-            ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_815_snake"),
+            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_815_snake"),
             "main"
     );
 

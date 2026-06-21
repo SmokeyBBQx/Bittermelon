@@ -28,8 +28,8 @@ public final class LogicalOperator {
 //        String id = tag.getString("functionID");
 //        float config = tag.getFloat("configValue");
 //
-//        ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, id);
-//        Optional<Function<Float, Function<Signal, Signal>>> optionalLogicFunctionFunction = LOGICAL_OPERATORS_REGISTRY.getOptional(resourceLocation);
+//        Identifier Identifier = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, id);
+//        Optional<Function<Float, Function<Signal, Signal>>> optionalLogicFunctionFunction = LOGICAL_OPERATORS_REGISTRY.getOptional(Identifier);
 //
 //        if (optionalLogicFunctionFunction.isPresent()) {
 //            Function<Float, Function<Signal, Signal>> logicFunctionFunction = optionalLogicFunctionFunction.get();

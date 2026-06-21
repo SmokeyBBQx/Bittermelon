@@ -10,24 +10,24 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 import java.util.List;
 import java.util.function.Function;
 
 public class AppendagesLayer<S extends LivingEntityRenderState, M extends EntityModel<S>> extends RenderLayer<S, M> {
-    private final List<ResourceLocation> textures;
+    private final List<Identifier> textures;
 
     private final AppendagesLayer.DrawSelector<S, M> drawSelector;
-    private final Function<ResourceLocation, RenderType> bufferProvider;
+    private final Function<Identifier, RenderType> bufferProvider;
     private final boolean alwaysVisible;
 
     public AppendagesLayer(
             RenderLayerParent<S, M> renderer,
-            List<ResourceLocation> textures,
+            List<Identifier> textures,
             AppendagesLayer.DrawSelector<S, M> drawSelector,
-            Function<ResourceLocation, RenderType> bufferProvider,
+            Function<Identifier, RenderType> bufferProvider,
             boolean alwaysVisible
     ) {
         super(renderer);

@@ -3,7 +3,7 @@ package com.site21.bittermelon.common.content.items.gun.client;
 import com.mojang.blaze3d.platform.Window;
 import com.site21.bittermelon.common.content.items.gun.IGunItem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -28,7 +28,7 @@ public class AmmoCounterRenderer {
             int ammo = heldItem.getOrDefault(AMMO, 0);
             String text = ammo + "/" + maxAmmo;
 
-            GuiGraphics guiGraphics = event.getGuiGraphics();
+            GuiGraphicsExtractor GuiGraphicsExtractor = event.getGuiGraphicsExtractor();
             Window window = minecraft.getWindow();
 
             int width = window.getGuiScaledWidth();
@@ -36,7 +36,7 @@ public class AmmoCounterRenderer {
             int x = (width - minecraft.font.width(text)) / 2 + 105;
             int y = height - 15;
 
-            guiGraphics.drawString(minecraft.font, text, x, y, 0xFFFFFF);
+            GuiGraphicsExtractor.drawString(minecraft.font, text, x, y, 0xFFFFFF);
         }
     }
 }

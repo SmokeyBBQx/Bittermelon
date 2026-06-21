@@ -6,14 +6,14 @@ import com.site21.bittermelon.common.content.blocks.electronics.personneltermina
 import com.site21.bittermelon.common.systems.personnel.privilege.PrivilegeManager;
 import com.site21.bittermelon.common.systems.personnel.privilege.PrivilegeOwner;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -90,10 +90,10 @@ public abstract class PrivilegeEditorWidget extends AbstractWidget {
     protected @NotNull WidgetSprites createToggleSprites(boolean value) {
         String state = value ? "true" : "false";
         return new WidgetSprites(
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/" + state + "_button"),
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/" + state + "_button_disabled"),
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/" + state + "_button_highlighted"),
-                ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/" + state + "_button_focused")
+                Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/" + state + "_button"),
+                Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/" + state + "_button_disabled"),
+                Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/" + state + "_button_highlighted"),
+                Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/" + state + "_button_focused")
         );
     }
 
@@ -185,19 +185,19 @@ public abstract class PrivilegeEditorWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, ResourceLocation.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/generic_background"),
+    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/generic_background"),
                 getX(), getY(), getWidth(), getHeight());
 
         if (searchMode) {
-            searchList.render(guiGraphics, mouseX, mouseY, partialTick);
+            searchList.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
         } else {
-            privilegeList.render(guiGraphics, mouseX, mouseY, partialTick);
+            privilegeList.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
         }
 
-        inputField.render(guiGraphics, mouseX, mouseY, partialTick);
-        toggleButton.render(guiGraphics, mouseX, mouseY, partialTick);
-        addButton.render(guiGraphics, mouseX, mouseY, partialTick);
+        inputField.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        toggleButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        addButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
     }
 
     @Override
