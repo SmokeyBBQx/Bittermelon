@@ -18,6 +18,6 @@ public class StressHandler {
     }
 
     public static void triggerStressEvent(@NotNull Player player, int level) {
-        player.playSound(SoundEvents.ITEM_BREAK.value(), 1.0f, 0.5f - (level - 1) / 10f);
+        player.notifySound(SoundEvents.ITEM_BREAK.value(), 1.0f, 0.5f - (level - 1) / 10f);
     }
 }

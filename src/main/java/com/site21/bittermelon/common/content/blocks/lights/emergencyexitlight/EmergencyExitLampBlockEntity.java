@@ -19,14 +19,15 @@ public class EmergencyExitLampBlockEntity extends BlockEntity {
     public void tick() {
         if (!getBlockState().getValue(BlockStateProperties.LIT)) return;
 
-        if (level != null && !level.isClientSide) {
+        if (level != null && !level.isClientSide()) {
             if (level.getGameTime() % 20 == 0) {
                 double range = 3.5;
                 Vec3 pos = Vec3.atCenterOf(worldPosition);
 
                 for (Player player : level.players()) {
                     if (player.position().distanceTo(pos) <= range) {
-                        player.playNotifySound(BitterSounds.SCANNER_BEEP.value(), SoundSource.BLOCKS, 0.005f, 1.2f);
+                        // TODO: Find alternative for playNotifySound that only plays sound to specific player
+                        level.playPlayerSound(BitterSounds.SCANNER_BEEP.value(), SoundSource.BLOCKS, 0.005f, 1.2f);
                     }
                 }
             }

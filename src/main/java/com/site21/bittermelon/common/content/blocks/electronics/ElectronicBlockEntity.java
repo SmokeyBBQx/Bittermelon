@@ -63,7 +63,7 @@ public abstract class ElectronicBlockEntity extends BlockEntity implements Elect
     public void setRemoved() {
         super.setRemoved();
         if (level == null) return;
-        if (!level.isClientSide && level.isLoaded(worldPosition)) {
+        if (!level.isClientSide() && level.isLoaded(worldPosition)) {
             clearElectronicData(level);
         }
     }
@@ -75,7 +75,7 @@ public abstract class ElectronicBlockEntity extends BlockEntity implements Elect
     }
 
     public void syncToClient() {
-        if (level != null && !level.isClientSide) {
+        if (level != null && !level.isClientSide()) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         }
     }

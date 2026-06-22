@@ -39,7 +39,7 @@ public class DirtyFloorBlock extends Block {
     @Override
     public BlockState getStateForPlacement(@NotNull BlockPlaceContext context) {
         return this.defaultBlockState()
-                .setValue(FACING, Direction.Plane.HORIZONTAL.getRandomDirection(context.getLevel().random));
+                .setValue(FACING, Direction.Plane.HORIZONTAL.getRandomDirection(context.getLevel().getRandom()));
     }
 
     @Override

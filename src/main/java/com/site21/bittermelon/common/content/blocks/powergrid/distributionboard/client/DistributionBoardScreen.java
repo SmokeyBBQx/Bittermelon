@@ -10,7 +10,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,8 +58,8 @@ public class DistributionBoardScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(graphics, mouseX, mouseY, partialTick);
 
         for (int i = 1; i <= breakers.size(); i++) {
             String name = "WAY " + i;
@@ -68,10 +67,10 @@ public class DistributionBoardScreen extends Screen {
             int x = breaker.getX() + (breaker.getWidth() - minecraft.font.width(name)) / 2;
             int y = breaker.getY() - 20;
 
-            GuiGraphicsExtractor.drawString(minecraft.font, name, x, y, 0xFFFFFF);
+            graphics.text(minecraft.font, name, x, y, 0xFFFFFF);
         }
 
-        GuiGraphicsExtractor.drawString(minecraft.font, "Main Switch", mainSwitch.getX() + (mainSwitch.getWidth() - minecraft.font.width("Main Switch")) / 2, mainSwitch.getY() - 20, 0xFFFFFF);
+        graphics.text(minecraft.font, "Main Switch", mainSwitch.getX() + (mainSwitch.getWidth() - minecraft.font.width("Main Switch")) / 2, mainSwitch.getY() - 20, 0xFFFFFF);
     }
 
     private void toggleBreaker(String breaker) {

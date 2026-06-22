@@ -19,6 +19,7 @@ import com.site21.bittermelon.common.systems.telecomms.intercom.IntercomManager;
 import com.site21.bittermelon.common.systems.telecomms.intercom.networking.SyncIntercomList;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -41,6 +42,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.site21.bittermelon.common.content.blocks.dirtyfloor.DirtyBlocksHandler.tickDirtying;
 import static com.site21.bittermelon.init.custom.Anatomies.HUMAN;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.*;
 import static com.site21.bittermelon.init.neoforge.BitterFluids.SUBSTANCE_FLUID;
@@ -59,6 +61,10 @@ public class CommonEvents {
         if (entity instanceof LivingEntity livingEntity) {
             CarryHandler.tickCarrying(livingEntity);
             tickStains(level, livingEntity);
+
+            if (level instanceof ServerLevel serverLevel) {
+                tickDirtying(serverLevel, livingEntity);
+            }
         }
 
         if (entity instanceof Player player) {

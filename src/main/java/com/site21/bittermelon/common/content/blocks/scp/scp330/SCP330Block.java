@@ -49,10 +49,10 @@ public class SCP330Block extends Block {
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
-        if (level.isClientSide) return InteractionResult.PASS;
+        if (level.isClientSide()) return InteractionResult.PASS;
 
-        player.displayClientMessage(Component.literal("You find it impossible to not read the note saying, " +
-                "\"take no more than two, please!!\" ").withStyle(ChatFormatting.ITALIC), false);
+        player.sendSystemMessage(Component.literal("You find it impossible to not read the note saying, " +
+                "\"take no more than two, please!!\" ").withStyle(ChatFormatting.ITALIC));
 
         MedicalStats medicalStats = player.getData(MEDICAL_STATS);
         medicalStats.removeLimb("left_hand");
