@@ -12,6 +12,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -177,8 +178,8 @@ public class IntercomScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
-        super.render(graphics, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
 
         graphics.blit(
                 RenderPipelines.GUI_TEXTURED,
@@ -279,14 +280,14 @@ public class IntercomScreen extends Screen {
             }
 
             @Override
-            public void render(@NotNull GuiGraphicsExtractor graphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hovering, float partialTick) {
+            public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovering, float partialTick) {
                 int textColor = hovering ? 0xFFFF55 : 0x0a1928;
-                graphics.drawString(screen.font, "> " + id, left + 5, top + 4, textColor);
+                graphics.text(screen.font, "> " + id, getContentX() + 5, getContentY() + 4, textColor);
             }
 
             @Override
-            public boolean mouseClicked(double mouseX, double mouseY, int button) {
-                if (button == 0) {
+            public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+                if (event.button() == 0) {
                     screen.targetIDField.setValue(id);
                     screen.onTargetIDChanged(id);
                     return true;

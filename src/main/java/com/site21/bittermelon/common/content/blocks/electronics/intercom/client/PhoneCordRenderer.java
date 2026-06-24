@@ -4,122 +4,122 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.IntercomBlock;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.IntercomBlockEntity;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix4f;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Adapted from net.minecraft.client.renderer.entity.EntityRenderer#renderLeash()
  */
-public class PhoneCordRenderer implements BlockEntityRenderer<IntercomBlockEntity> {
+public class PhoneCordRenderer implements BlockEntityRenderer<IntercomBlockEntity, PhoneCordRenderState> {
+
     public PhoneCordRenderer(BlockEntityRendererProvider.Context context) {
         super();
     }
 
     @Override
-    public void render(@NotNull IntercomBlockEntity blockEntity, float partialTick, @NotNull PoseStack poseStack,
-                       @NotNull MultiBufferSource bufferSource, int packedLight, int packedOverlay, @NotNull Vec3 cameraPos) {
-        if (blockEntity.isPhonePickedUp() && blockEntity.getPhoneUser() != null) {
-            renderPhoneCord(blockEntity, partialTick, poseStack, bufferSource);
+    public PhoneCordRenderState createRenderState() {
+        return new PhoneCordRenderState();
+    }
+
+    @Override
+    public void extractRenderState(IntercomBlockEntity blockEntity, PhoneCordRenderState state, float partialTicks,
+                                   Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
+        Player player = blockEntity.getPhoneUser();
+
+        state.isPhonePickedUp = blockEntity.isPhonePickedUp();
+        state.playerPos = player.getRopeHoldPosition(partialTicks);
+        state.facing = blockEntity.getBlockState().getValue(IntercomBlock.FACING).getOpposite();
+
+        assert blockEntity.getLevel() != null;
+
+        BlockPos eyePos = BlockPos.containing(player.getEyePosition(partialTicks));
+        state.startBlockLight = player.isOnFire()
+                ? 15
+                : player.level().getBrightness(LightLayer.BLOCK, eyePos);
+        state.endBlockLight = blockEntity.getLevel().getBrightness(LightLayer.BLOCK, blockEntity.getBlockPos());
+        state.startSkyLight = player.level().getBrightness(LightLayer.SKY, eyePos);
+        state.endSkyLight = blockEntity.getLevel().getBrightness(LightLayer.SKY, blockEntity.getBlockPos());
+    }
+
+    @Override
+    public void submit(PhoneCordRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState cameraRenderState) {
+        if (state.isPhonePickedUp && state.playerPos != null) {
+            collector.submitCustomGeometry(poseStack, RenderTypes.leash(), (pose, buffer) -> renderCord(state, pose, buffer));
         }
     }
 
-    private void renderPhoneCord(@NotNull IntercomBlockEntity blockEntity, float partialTick,
-                                 @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource) {
-        poseStack.pushPose();
+    private void renderCord(PhoneCordRenderState state, PoseStack.Pose pose, VertexConsumer buffer) {
+        BlockPos phonePos = state.blockPos;
+        Direction facing = state.facing;
 
-        Vec3 playerHandPos = blockEntity.getPhoneUser().getRopeHoldPosition(partialTick);
+        float phoneOffsetX = facing.getStepX() * 0.5f;
+        float phoneOffsetZ = facing.getStepZ() * 0.5f;
 
-        BlockPos phonePos = blockEntity.getBlockPos();
-        Direction facing = blockEntity.getBlockState().getValue(IntercomBlock.FACING).getOpposite();
+        float phoneX = phonePos.getX() + 0.5f + phoneOffsetX;
+        float phoneY = phonePos.getY() + 0.5f;
+        float phoneZ = phonePos.getZ() + 0.5f + phoneOffsetZ;
 
-        Level level = blockEntity.getLevel();
-        if (level == null) return;
+        pose.translate(phoneOffsetX + 0.5f, 0.5f, phoneOffsetZ + 0.5f);
 
-        double phoneOffsetX = facing.getStepX() * 0.5;
-        double phoneOffsetZ = facing.getStepZ() * 0.5;
+        float dx = (float) (state.playerPos.x - phoneX);
+        float dy = (float) (state.playerPos.y - phoneY);
+        float dz = (float) (state.playerPos.z - phoneZ);
+        float cordThickness = 0.025f;
 
-        double phoneX = phonePos.getX() + 0.5 + phoneOffsetX;
-        double phoneY = phonePos.getY() + 0.5;
-        double phoneZ = phonePos.getZ() + 0.5 + phoneOffsetZ;
-
-        poseStack.translate(phoneOffsetX + 0.5, 0.5, phoneOffsetZ + 0.5);
-
-        float deltaX = (float) (playerHandPos.x - phoneX);
-        float deltaY = (float) (playerHandPos.y - phoneY);
-        float deltaZ = (float) (playerHandPos.z - phoneZ);
-        float cordThickness = 0.025F;
-
-        VertexConsumer vertexconsumer = bufferSource.getBuffer(RenderType.leash());
-        Matrix4f matrix4f = poseStack.last().pose();
-        float horizontalDistance = Mth.invSqrt(deltaX * deltaX + deltaZ * deltaZ) * cordThickness / 2.0F;
-        float offsetZ = deltaZ * horizontalDistance;
-        float offsetX = deltaX * horizontalDistance;
-
-        BlockPos phoneBlockPos = BlockPos.containing(phoneX, phoneY, phoneZ);
-        BlockPos playerBlockPos = BlockPos.containing(playerHandPos);
-
-        int phoneBlockLight = level.getBrightness(LightLayer.BLOCK, phoneBlockPos);
-        int playerBlockLight = level.getBrightness(LightLayer.BLOCK, playerBlockPos);
-        int phoneSkyLight = level.getBrightness(LightLayer.SKY, phoneBlockPos);
-        int playerSkyLight = level.getBrightness(LightLayer.SKY, playerBlockPos);
+        float horizontalDistance = Mth.invSqrt(dx * dx + dz * dz) * cordThickness / 2.0f;
+        float offsetZ = dz * horizontalDistance;
+        float offsetX = dx * horizontalDistance;
 
         for (int i = 0; i <= 24; i++) {
-            addVertexPair(vertexconsumer, matrix4f, deltaX, deltaY, deltaZ, phoneBlockLight, playerBlockLight,
-                    phoneSkyLight, playerSkyLight, cordThickness, cordThickness, offsetZ, offsetX, i, false);
+            addVertexPair(buffer, pose, dx, dy, dz, cordThickness, 0.05f, offsetZ, offsetX, i, false, state);
         }
 
         for (int j = 24; j >= 0; j--) {
-            addVertexPair(vertexconsumer, matrix4f, deltaX, deltaY, deltaZ, phoneBlockLight, playerBlockLight,
-                    phoneSkyLight, playerSkyLight, cordThickness, 0.0F, offsetZ, offsetX, j, true);
+            addVertexPair(buffer, pose, dx, dy, dz, cordThickness, 0.0f, offsetZ, offsetX, j, true, state);
         }
-
-        poseStack.popPose();
     }
 
     private static void addVertexPair(
-            @NotNull VertexConsumer buffer,
-            Matrix4f pose,
-            float deltaX,
-            float deltaY,
-            float deltaZ,
-            int startBlockLight,
-            int endBlockLight,
-            int startSkyLight,
-            int endSkyLight,
+            VertexConsumer buffer,
+            PoseStack.Pose pose,
+            float dx,
+            float dy,
+            float dz,
             float cordRadius,
             float taperRadius,
             float offsetX,
             float offsetZ,
             int segmentIndex,
-            boolean isBackFace
+            boolean isBackFace,
+            PhoneCordRenderState state
     ) {
-        float segmentProgress = (float)segmentIndex / 24.0F;
-        int interpolatedBlockLight = (int)Mth.lerp(segmentProgress, (float)startBlockLight, (float)endBlockLight);
-        int interpolatedSkyLight = (int)Mth.lerp(segmentProgress, (float)startSkyLight, (float)endSkyLight);
-        int packedLight = LightTexture.pack(interpolatedBlockLight, interpolatedSkyLight);
+        float segmentProgress = segmentIndex / 24.0f;
+        int blockLight = (int) Mth.lerp(segmentProgress, (float) state.startBlockLight, (float) state.endBlockLight);
+        int skyLight = (int) Mth.lerp(segmentProgress, (float) state.startSkyLight, (float) state.endSkyLight);
+        int packedLight = LightCoordsUtil.pack(blockLight, skyLight);
 
-        float brightnessMultiplier = segmentIndex % 2 == (isBackFace ? 1 : 0) ? 0.7F : 1.0F;
-        float gray = 0.25F * brightnessMultiplier;
+        float brightnessMultiplier = segmentIndex % 2 == (isBackFace ? 1 : 0) ? 0.7f : 1.0f;
+        float gray = 0.25f * brightnessMultiplier;
 
-        float xPos = deltaX * segmentProgress;
-        float yPos = deltaY > 0.0F ? deltaY * segmentProgress * segmentProgress : deltaY - deltaY * (1.0F - segmentProgress) * (1.0F - segmentProgress);
-        float zPos = deltaZ * segmentProgress;
+        float x = dx * segmentProgress;
+        float y = dy > 0.0f ? dy * segmentProgress * segmentProgress : dy - dy * (1.0f - segmentProgress) * (1.0f - segmentProgress);
+        float zPos = dz * segmentProgress;
 
-        buffer.addVertex(pose, xPos - offsetX, yPos + taperRadius, zPos + offsetZ).setColor(gray, gray, gray, 1.0F).setLight(packedLight);
-        buffer.addVertex(pose, xPos + offsetX, yPos + cordRadius - taperRadius, zPos - offsetZ).setColor(gray, gray, gray, 1.0F).setLight(packedLight);
+        buffer.addVertex(pose, x - offsetX, y + taperRadius, zPos + offsetZ).setColor(gray, gray, gray, 1.0f).setLight(packedLight);
+        buffer.addVertex(pose, x + offsetX, y + cordRadius - taperRadius, zPos - offsetZ).setColor(gray, gray, gray, 1.0f).setLight(packedLight);
     }
 
     @Override

@@ -17,7 +17,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -37,18 +37,18 @@ public class IntercomBlock extends IndentedSmallBlock implements EntityBlock {
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
-        if (level.isClientSide) return InteractionResult.PASS;
+        if (level.isClientSide()) return InteractionResult.PASS;
 
         if (player.isCrouching()) {
 
             if (player.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) > 2 * 2) {
-                player.displayClientMessage(Component.literal("Too far away to pick up the phone.").withStyle(ChatFormatting.RED), true);
+                player.sendSystemMessage(Component.literal("Too far away to pick up the phone.").withStyle(ChatFormatting.RED));
                 return InteractionResult.FAIL;
             }
 
             if (level.getBlockEntity(pos) instanceof IntercomBlockEntity intercom) {
                 if (intercom.isPhonePickedUp()) {
-                    player.displayClientMessage(Component.literal("Someone has already picked up the phone.").withStyle(ChatFormatting.RED), true);
+                    player.sendSystemMessage(Component.literal("Someone has already picked up the phone.").withStyle(ChatFormatting.RED));
                     return InteractionResult.FAIL;
                 }
 
@@ -56,7 +56,7 @@ public class IntercomBlock extends IndentedSmallBlock implements EntityBlock {
                 intercom.setPhoneUser(player);
                 phone.set(CORD_CONNECTION.get(), pos);
                 player.setItemInHand(InteractionHand.MAIN_HAND, phone);
-                player.displayClientMessage(Component.literal("You pick up the phone.").withStyle(ChatFormatting.GRAY), true);
+                player.sendSystemMessage(Component.literal("You pick up the phone.").withStyle(ChatFormatting.GRAY));
                 level.playSound(null, pos, SoundEvents.HEAVY_CORE_HIT, SoundSource.PLAYERS);
                 intercom.setPhonePickedUp(true);
             }
@@ -73,11 +73,11 @@ public class IntercomBlock extends IndentedSmallBlock implements EntityBlock {
 
     protected @NotNull InteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
         if (stack.getCount() < 1) return InteractionResult.TRY_WITH_EMPTY_HAND;
-        if (level.isClientSide) return InteractionResult.FAIL;
+        if (level.isClientSide()) return InteractionResult.FAIL;
 
         if (stack.getItem() instanceof IntercomPhoneItem) {
             stack.setCount(0);
-            player.displayClientMessage(Component.literal("You place the phone back.").withStyle(ChatFormatting.GRAY), true);
+            player.sendSystemMessage(Component.literal("You place the phone back.").withStyle(ChatFormatting.GRAY));
             level.playSound(null, pos, SoundEvents.HEAVY_CORE_HIT, SoundSource.PLAYERS);
             if (level.getBlockEntity(pos) instanceof IntercomBlockEntity intercom) {
                 intercom.setPhonePickedUp(false);
@@ -88,7 +88,7 @@ public class IntercomBlock extends IndentedSmallBlock implements EntityBlock {
         }
 
         if (player.isCrouching() && stack.getCount() > 0) {
-            player.displayClientMessage(Component.literal("You must have an empty hand to do that.").withStyle(ChatFormatting.RED), true);
+            player.sendSystemMessage(Component.literal("You must have an empty hand to do that.").withStyle(ChatFormatting.RED));
             return InteractionResult.FAIL;
         }
 

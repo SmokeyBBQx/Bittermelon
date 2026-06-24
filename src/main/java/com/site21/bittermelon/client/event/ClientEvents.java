@@ -3,6 +3,7 @@ package com.site21.bittermelon.client.event;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.client.render.ShaderManager;
 import com.site21.bittermelon.client.render.TypingIndicatorRenderer;
+import com.site21.bittermelon.common.content.blocks.electronics.intercom.client.PhoneTipRenderer;
 import com.site21.bittermelon.common.systems.atmosphere.client.AtmosFogRenderer;
 import com.site21.bittermelon.common.systems.atmosphere.data.AtmosLevelData;
 import com.site21.bittermelon.common.systems.blockdamage.client.BlockDamageRenderer;
@@ -59,6 +60,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onRenderOverlayPost(RenderGuiLayerEvent.@NotNull Post event) {
         RiseProgressBar.render(event.getGuiGraphics());
+        PhoneTipRenderer.renderPhoneTip(event.getGuiGraphics());
     }
 
     // TODO: Shit doesn't work

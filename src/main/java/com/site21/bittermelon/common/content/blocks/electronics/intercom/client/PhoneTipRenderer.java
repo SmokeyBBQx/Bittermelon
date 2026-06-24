@@ -1,7 +1,6 @@
 package com.site21.bittermelon.common.content.blocks.electronics.intercom.client;
 
 import com.mojang.blaze3d.platform.Window;
-import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.IntercomBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -11,16 +10,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 
+public class PhoneTipRenderer {
 
-@EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
-public class ActionTipRenderer {
-    @SubscribeEvent
-    public static void onRenderGUILayer(RenderGuiLayerEvent.Post event) {
+    // TODO: Replace with tooltip
+    public static void renderPhoneTip(GuiGraphicsExtractor graphics) {
         Minecraft mc = Minecraft.getInstance();
 
         HitResult hit = mc.hitResult;
@@ -41,8 +35,7 @@ public class ActionTipRenderer {
             int x = width - 120 - font.width(text) / 2;
             int y = height - 15;
 
-            GuiGraphicsExtractor GuiGraphicsExtractor = event.getGuiGraphicsExtractor();
-            GuiGraphicsExtractor.drawString(font, text, x, y, 0xFFFFFF);
+            graphics.text(font, text, x, y, 0xFFFFFF);
         }
     }
 }

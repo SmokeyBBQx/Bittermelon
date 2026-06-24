@@ -51,7 +51,7 @@ public class DetonatorBlockEntity extends ElectronicBlockEntity implements Elect
 //            payloadItem.detonate(level, worldPosition);
 //        }
 
-        if (level == null || level.isClientSide) return;
+        if (level.isClientSide()) return;
         level.explode(null, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(),
                 2.0f,
                 Level.ExplosionInteraction.TNT);

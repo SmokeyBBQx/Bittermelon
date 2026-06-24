@@ -1,11 +1,11 @@
 package com.site21.bittermelon.common.content.blocks.electronics.intercom;
 
-import com.site21.bittermelon.common.systems.electronics.ElectronicDevice;
 import com.site21.bittermelon.common.content.blocks.electronics.ElectronicBlockEntity;
+import com.site21.bittermelon.common.content.blocks.powergrid.distributionboard.DistributionBoardBlockEntity;
+import com.site21.bittermelon.common.systems.electronics.ElectronicDevice;
 import com.site21.bittermelon.common.systems.electronics.wiring.InputPort;
 import com.site21.bittermelon.common.systems.electronics.wiring.OutputPort;
 import com.site21.bittermelon.common.systems.electronics.wiring.Signal;
-import com.site21.bittermelon.common.content.blocks.powergrid.distributionboard.DistributionBoardBlockEntity;
 import com.site21.bittermelon.common.systems.syncsound.ISyncSoundListener;
 import com.site21.bittermelon.common.systems.syncsound.SyncSoundEvent;
 import com.site21.bittermelon.common.systems.syncsound.SyncSoundType;
@@ -69,7 +69,7 @@ public class IntercomBlockEntity extends ElectronicBlockEntity implements ISyncS
     public void onSyncSound(@NotNull SyncSoundEvent event) {
         if (!isOn() || !micOn || event.getSoundType() == SyncSoundType.SPEAKER) return;
 
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide()) return;
 
         if (canHearSound(event, getBlockPos(), isPhonePickedUp() ? 1 : LISTENING_RADIUS)) {
             IntercomManager.get(level).transmitMessage(event, targetID, level);
@@ -77,7 +77,7 @@ public class IntercomBlockEntity extends ElectronicBlockEntity implements ISyncS
     }
 
     public void transmitMessage(SyncSoundEvent event) {
-        if (!isOn() || !speakerOn || level == null || level.isClientSide) return;
+        if (!isOn() || !speakerOn || level == null || level.isClientSide()) return;
 
         Component intercomMessage = Component.literal("[INTERCOM]: ").append(event.getSoundDescription());
 
