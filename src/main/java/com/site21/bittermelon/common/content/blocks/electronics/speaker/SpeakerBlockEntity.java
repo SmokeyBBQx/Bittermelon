@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.content.blocks.electronics.speaker;
 
-import com.site21.bittermelon.common.systems.electronics.ElectronicDevice;
 import com.site21.bittermelon.common.content.blocks.electronics.ElectronicBlockEntity;
+import com.site21.bittermelon.common.systems.electronics.ElectronicDevice;
 import com.site21.bittermelon.common.systems.electronics.wiring.InputPort;
 import com.site21.bittermelon.common.systems.electronics.wiring.Signal;
 import com.site21.bittermelon.common.systems.syncsound.SyncSoundEvent;
@@ -34,7 +34,7 @@ public class SpeakerBlockEntity extends ElectronicBlockEntity implements Electro
     }
 
     private void broadcast(Signal signal) {
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide()) return;
 
         SyncSoundEvent event;
 

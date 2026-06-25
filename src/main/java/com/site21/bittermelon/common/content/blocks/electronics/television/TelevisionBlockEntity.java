@@ -1,13 +1,11 @@
 package com.site21.bittermelon.common.content.blocks.electronics.television;
 
-import com.site21.bittermelon.Bittermelon;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-import static com.site21.bittermelon.init.custom.Medias.*;
+import static com.site21.bittermelon.init.custom.Medias.MANAPHY;
 import static com.site21.bittermelon.init.neoforge.BitterBlockEntities.TELEVISION_BLOCK_ENTITY;
 
 public class TelevisionBlockEntity extends BlockEntity {
@@ -18,7 +16,7 @@ public class TelevisionBlockEntity extends BlockEntity {
     }
 
     public void tick() {
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide()) return;
 
     }
 

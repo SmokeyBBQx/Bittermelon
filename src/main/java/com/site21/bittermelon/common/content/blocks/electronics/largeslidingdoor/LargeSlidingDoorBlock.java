@@ -2,7 +2,6 @@ package com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoo
 
 import com.site21.bittermelon.common.content.blocks.DoorHelper;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
-import com.site21.bittermelon.util.LocalMessageHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -18,7 +17,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -41,7 +39,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -135,7 +132,7 @@ public class LargeSlidingDoorBlock extends Block implements EntityBlock {
 
         super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
 
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
         if (!state.getValue(MASTER)) return;
 
         boolean zAxis = state.getValue(Z_AXIS);
@@ -239,7 +236,7 @@ public class LargeSlidingDoorBlock extends Block implements EntityBlock {
 
     @Override
     protected @NotNull InteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
-        if (level.isClientSide) return InteractionResult.PASS;
+        if (level.isClientSide()) return InteractionResult.PASS;
 
         // FORCE OPEN LOGIC
         if (player.getCooldowns().isOnCooldown(stack)) return InteractionResult.TRY_WITH_EMPTY_HAND;
@@ -255,10 +252,9 @@ public class LargeSlidingDoorBlock extends Block implements EntityBlock {
         if (level.getBlockEntity(pos) instanceof LargeSlidingDoorBlockEntity door) {
             // Check if motors are on.
             if (door.isOn()) {
-                player.displayClientMessage(Component.literal("The door's motors prevent you from opening it by hand.")
+                player.sendSystemMessage(Component.literal("The door's motors prevent you from opening it by hand.")
                                 .withStyle(ChatFormatting.ITALIC)
-                                .withStyle(ChatFormatting.GRAY),
-                        true);
+                                .withStyle(ChatFormatting.GRAY));
                 return InteractionResult.FAIL;
             }
 

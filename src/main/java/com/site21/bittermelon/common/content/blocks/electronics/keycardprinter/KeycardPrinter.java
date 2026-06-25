@@ -26,7 +26,7 @@ public class KeycardPrinter extends Block {
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level,
                                                         @NotNull BlockPos pos, @NotNull Player player,
                                                         @NotNull BlockHitResult hitResult) {
-        if (level.isClientSide) return InteractionResult.PASS;
+        if (level.isClientSide()) return InteractionResult.PASS;
 
         Character character = CharacterManager.get(level).getActiveCharacter(player);
         if (character == null) return InteractionResult.FAIL;

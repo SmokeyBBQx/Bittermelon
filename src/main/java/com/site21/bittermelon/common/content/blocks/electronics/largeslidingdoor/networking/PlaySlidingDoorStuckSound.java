@@ -29,6 +29,12 @@ public record PlaySlidingDoorStuckSound(BlockPos pos) implements CustomPacketPay
 
     public void handle(@NotNull IPayloadContext ctx) {
         Level level = ctx.player().level();
-        level.playSound(null, pos, BitterSounds.LARGE_SLIDING_DOOR_STUCK.value(), SoundSource.BLOCKS, 0.4f, Mth.randomBetween(level.random, 0.9f, 1f));
+        level.playSound(
+                null,
+                pos,
+                BitterSounds.LARGE_SLIDING_DOOR_STUCK.value(),
+                SoundSource.BLOCKS,
+                0.4f,
+                Mth.randomBetween(level.getRandom(), 0.9f, 1f));
     }
 }

@@ -90,9 +90,8 @@ public class LargeSlidingDoorBlockEntity extends ElectronicBlockEntity implement
     }
 
     public float getDoorOpenAmount(float partialTick) {
-        return Mth.lerp(partialTick, this.lastProgress, this.doorProgress);
+        return Mth.lerp(partialTick, lastProgress, doorProgress);
     }
-
 
     public void tick() {
         if (level == null) return;
@@ -115,7 +114,7 @@ public class LargeSlidingDoorBlockEntity extends ElectronicBlockEntity implement
     }
 
     public void setDoorProgress(float doorProgress) {
-        this.doorProgress = Math.max(0, Math.min(1, doorProgress));
+        this.doorProgress = Math.clamp(doorProgress, 0, 1);
         setChanged();
     }
 
