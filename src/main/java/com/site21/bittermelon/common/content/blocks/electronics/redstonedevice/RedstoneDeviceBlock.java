@@ -52,7 +52,7 @@ public class RedstoneDeviceBlock extends Block implements EntityBlock {
 
     @Override
     protected void neighborChanged(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Block neighborBlock, @Nullable Orientation orientation, boolean movedByPiston) {
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
 
         boolean hasSignal = level.hasNeighborSignal(pos);
         if (state.getValue(POWERED) != hasSignal) {

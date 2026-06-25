@@ -3,7 +3,6 @@ package com.site21.bittermelon.common.content.blocks.electronics.slidingdoor;
 import com.site21.bittermelon.common.content.blocks.DoorHelper;
 import com.site21.bittermelon.common.content.blocks.properties.Placement;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
-import com.site21.bittermelon.util.LocalMessageHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -70,7 +69,7 @@ public class SlidingDoorBlock extends Block implements EntityBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> blockEntityType) {
         return (level0, pos, state0, blockEntity) -> {
-            if (level.isClientSide) {
+            if (level.isClientSide()) {
                 SlidingDoorBlockEntity.clientTick(level0, pos, state0, (SlidingDoorBlockEntity) blockEntity);
             } else {
                 SlidingDoorBlockEntity.serverTick(level0, pos, state0, (SlidingDoorBlockEntity) blockEntity);
@@ -172,10 +171,9 @@ public class SlidingDoorBlock extends Block implements EntityBlock {
                 setOpen(level, pos, true);
                 return InteractionResult.SUCCESS;
             } else if (blockEntity.isOn()) {
-                player.displayClientMessage(Component.literal("The door's motors prevent you from opening it by hand.")
+                player.sendSystemMessage(Component.literal("The door's motors prevent you from opening it by hand.")
                                 .withStyle(ChatFormatting.ITALIC)
-                                .withStyle(ChatFormatting.GRAY),
-                        true);
+                                .withStyle(ChatFormatting.GRAY));
                 return InteractionResult.PASS;
             }
         }
