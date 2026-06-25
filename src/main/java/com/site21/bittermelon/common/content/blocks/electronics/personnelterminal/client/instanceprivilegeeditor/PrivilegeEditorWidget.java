@@ -11,6 +11,9 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -21,6 +24,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public abstract class PrivilegeEditorWidget extends AbstractWidget {
+    private static final Identifier BACKGROUND = Bittermelon.identifier("retro/generic_background");
+
     protected final PrivilegeManager privilegeManager;
     protected final PrivilegeOwner privilegeOwner;
 
@@ -185,38 +190,37 @@ public abstract class PrivilegeEditorWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/generic_background"),
-                getX(), getY(), getWidth(), getHeight());
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND, getX(), getY(), getWidth(), getHeight());
 
         if (searchMode) {
-            searchList.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+            searchList.extractRenderState(graphics, mouseX, mouseY, partialTick);
         } else {
-            privilegeList.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+            privilegeList.extractRenderState(graphics, mouseX, mouseY, partialTick);
         }
 
-        inputField.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-        toggleButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-        addButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        inputField.extractRenderState(graphics, mouseX, mouseY, partialTick);
+        toggleButton.extractRenderState(graphics, mouseX, mouseY, partialTick);
+        addButton.extractRenderState(graphics, mouseX, mouseY, partialTick);
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (toggleButton.mouseClicked(mouseX, mouseY, button) ||
-                addButton.mouseClicked(mouseX, mouseY, button)) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (toggleButton.mouseClicked(event, doubleClick) ||
+                addButton.mouseClicked(event, doubleClick)) {
             return true;
         }
 
-        if (inputField.mouseClicked(mouseX, mouseY, button)) {
+        if (inputField.mouseClicked(event, doubleClick)) {
             enterSearchMode();
             return true;
         }
 
-        if (searchMode && searchList.mouseClicked(mouseX, mouseY, button)) {
+        if (searchMode && searchList.mouseClicked(event, doubleClick)) {
             return true;
         }
 
-        if (!searchMode && privilegeList.mouseClicked(mouseX, mouseY, button)) {
+        if (!searchMode && privilegeList.mouseClicked(event, doubleClick)) {
             privilegeList.setFocused(true);
             return true;
         }
@@ -226,20 +230,20 @@ public abstract class PrivilegeEditorWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean keyPressed(KeyEvent event) {
         if (searchMode) {
-            return inputField.keyPressed(keyCode, scanCode, modifiers) ||
-                    searchList.keyPressed(keyCode, scanCode, modifiers);
+            return inputField.keyPressed(event) ||
+                    searchList.keyPressed(event);
         } else {
-            return inputField.keyPressed(keyCode, scanCode, modifiers) ||
-                    privilegeList.keyPressed(keyCode, scanCode, modifiers) ||
-                    super.keyPressed(keyCode, scanCode, modifiers);
+            return inputField.keyPressed(event) ||
+                    privilegeList.keyPressed(event) ||
+                    super.keyPressed(event);
         }
     }
 
     @Override
-    public boolean charTyped(char codePoint, int modifiers) {
-        return inputField.charTyped(codePoint, modifiers) || super.charTyped(codePoint, modifiers);
+    public boolean charTyped(CharacterEvent event) {
+        return inputField.charTyped(event) || super.charTyped(event);
     }
 
     @Override

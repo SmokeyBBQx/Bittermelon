@@ -11,6 +11,9 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -22,6 +25,8 @@ import java.util.List;
 
 
 public class PrivilegeWidget extends AbstractWidget {
+    private static final Identifier BACKGROUND = Bittermelon.identifier("retro/generic_background");
+
     private final PrivilegeManager manager;
     private PrivilegeListWidget privilegeList;
     private EditBox searchField;
@@ -96,14 +101,13 @@ public class PrivilegeWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/generic_background"),
-                getX(), getY(), getWidth(), getHeight());
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND, getX(), getY(), getWidth(), getHeight());
 
-        privilegeList.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-        searchField.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-        addPrivilegeButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-        inputField.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        privilegeList.extractRenderState(graphics, mouseX, mouseY, partialTick);
+        searchField.extractRenderState(graphics, mouseX, mouseY, partialTick);
+        addPrivilegeButton.extractRenderState(graphics, mouseX, mouseY, partialTick);
+        inputField.extractRenderState(graphics, mouseX, mouseY, partialTick);
     }
 
     @Override
@@ -112,21 +116,21 @@ public class PrivilegeWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (privilegeList.mouseClicked(mouseX, mouseY, button)
-                || addPrivilegeButton.mouseClicked(mouseX, mouseY, button)) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (privilegeList.mouseClicked(event, doubleClick)
+                || addPrivilegeButton.mouseClicked(event, doubleClick)) {
             searchField.setFocused(false);
             inputField.setFocused(false);
             return true;
         }
 
-        if (searchField.mouseClicked(mouseX, mouseY, button))  {
+        if (searchField.mouseClicked(event, doubleClick))  {
             searchField.setFocused(true);
             inputField.setFocused(false);
             return true;
         }
 
-        if (inputField.mouseClicked(mouseX, mouseY, button)) {
+        if (inputField.mouseClicked(event, doubleClick)) {
             inputField.setFocused(true);
             searchField.setFocused(false);
             return true;
@@ -136,13 +140,13 @@ public class PrivilegeWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return searchField.keyPressed(keyCode, scanCode, modifiers) || inputField.keyPressed(keyCode, scanCode, modifiers);
+    public boolean keyPressed(KeyEvent event) {
+        return searchField.keyPressed(event) || inputField.keyPressed(event);
     }
 
     @Override
-    public boolean charTyped(char codePoint, int modifiers) {
-        return searchField.charTyped(codePoint, modifiers) || inputField.charTyped(codePoint, modifiers);
+    public boolean charTyped(CharacterEvent event) {
+        return searchField.charTyped(event) || inputField.charTyped(event);
     }
 
     @Override

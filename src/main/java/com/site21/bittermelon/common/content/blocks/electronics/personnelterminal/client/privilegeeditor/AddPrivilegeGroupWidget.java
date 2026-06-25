@@ -9,6 +9,9 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -60,33 +63,33 @@ public class AddPrivilegeGroupWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/button"),
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/button"),
                 x, y, width, height);
 
-        nameField.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-        addButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-        cancelButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        nameField.extractRenderState(graphics, mouseX, mouseY, partialTick);
+        addButton.extractRenderState(graphics, mouseX, mouseY, partialTick);
+        cancelButton.extractRenderState(graphics, mouseX, mouseY, partialTick);
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (nameField.mouseClicked(mouseX, mouseY, button)) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (nameField.mouseClicked(event, doubleClick)) {
             nameField.setFocused(true);
             return true;
         }
-        if (addButton.mouseClicked(mouseX, mouseY, button)) return true;
-        return cancelButton.mouseClicked(mouseX, mouseY, button);
+        if (addButton.mouseClicked(event, doubleClick)) return true;
+        return cancelButton.mouseClicked(event, doubleClick);
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return nameField.keyPressed(keyCode, scanCode, modifiers);
+    public boolean keyPressed(KeyEvent event) {
+        return nameField.keyPressed(event);
     }
 
     @Override
-    public boolean charTyped(char codePoint, int modifiers) {
-        return nameField.charTyped(codePoint, modifiers);
+    public boolean charTyped(CharacterEvent event) {
+        return nameField.charTyped(event);
     }
 
     @Override

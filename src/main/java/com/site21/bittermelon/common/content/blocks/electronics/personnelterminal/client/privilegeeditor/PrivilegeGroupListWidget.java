@@ -4,6 +4,7 @@ import com.site21.bittermelon.common.content.blocks.electronics.personneltermina
 import com.site21.bittermelon.common.systems.personnel.privilege.PrivilegeGroup;
 import com.site21.bittermelon.common.systems.personnel.privilege.networking.RemovePrivilegeGroup;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,7 +55,7 @@ public class PrivilegeGroupListWidget extends DeletableListWidget<PrivilegeGroup
         }
 
         @Override
-        protected boolean onNonDeleteClick(double mouseX, double mouseY, int button) {
+        protected boolean onNonDeleteClick(MouseButtonEvent event, boolean doubleClick) {
             screen.onGroupSelected(group);
             return true;
         }

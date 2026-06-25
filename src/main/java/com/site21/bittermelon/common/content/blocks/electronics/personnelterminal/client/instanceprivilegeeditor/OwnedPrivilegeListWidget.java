@@ -5,6 +5,7 @@ import com.site21.bittermelon.common.content.blocks.electronics.personneltermina
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -31,9 +32,6 @@ public class OwnedPrivilegeListWidget extends ListWidget<OwnedPrivilegeListWidge
 
         private final String privilege;
         private boolean value;
-        private int left = 0;
-        private int top = 0;
-        private int entryWidth = 0;
 
         public Entry(String privilege, boolean value) {
             this.privilege = privilege;
@@ -46,34 +44,29 @@ public class OwnedPrivilegeListWidget extends ListWidget<OwnedPrivilegeListWidge
         }
 
         private int getToggleButtonX() {
-            return left + entryWidth - 44;
+            return getRight()- 44;
         }
 
         private int getDeleteButtonX() {
-            return left + entryWidth - 22;
-        }
-
-        private int getButtonY() {
-            return top - 2;
+            return getRight() - 22;
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (button != 0) return false;
+        public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+            if (event.button() != 0) return false;
 
             int toggleButtonX = getToggleButtonX();
             int deleteButtonX = getDeleteButtonX();
-            int buttonY = getButtonY();
 
-            if (mouseX >= toggleButtonX && mouseX <= toggleButtonX + BUTTON_SIZE &&
-                    mouseY >= buttonY && mouseY <= buttonY + BUTTON_SIZE) {
+            if (event.x() >= toggleButtonX && event.x() <= toggleButtonX + BUTTON_SIZE &&
+                    event.y() >= getY() && event.y() <= getY() + BUTTON_SIZE) {
                 value = !value;
                 parent.setPrivilege(privilege, value);
                 return true;
             }
 
-            if (mouseX >= deleteButtonX && mouseX <= deleteButtonX + BUTTON_SIZE &&
-                    mouseY >= buttonY && mouseY <= buttonY + BUTTON_SIZE) {
+            if (event.x() >= deleteButtonX && event.x() <= deleteButtonX + BUTTON_SIZE &&
+                    event.y() >= getY() && event.y() <= getY() + BUTTON_SIZE) {
                 parent.removePrivilege(privilege);
                 removeEntry(this);
                 return true;
@@ -83,27 +76,21 @@ public class OwnedPrivilegeListWidget extends ListWidget<OwnedPrivilegeListWidge
         }
 
         @Override
-        public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int entryIdx, int top, int left, int entryWidth, int entryHeight,
-                           int mouseX, int mouseY, boolean isMouseOver, float partialTick) {
-            this.left = left;
-            this.top = top;
-            this.entryWidth = entryWidth;
-
-            if (isMouseOver && !isFocused()) {
-                GuiGraphicsExtractor.fill(left, top - 2, left + entryWidth, top + entryHeight + 2, 0xFFD3E3FD);
+        public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
+            if (isMouseOver(mouseX, mouseY) && !isFocused()) {
+                graphics.fill(getX(),getY() - 2, getRight(), getBottom(),0xFFD3E3FD);
             }
 
-            GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, getIcon(), left + 4, top, 16, 16);
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, getIcon(), getX() + 4, getY(), 16, 16);
 
             int toggleButtonX = getToggleButtonX();
             int deleteButtonX = getDeleteButtonX();
-            int buttonY = getButtonY();
 
-            GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, getToggleButtonIcon(mouseX, mouseY), toggleButtonX, buttonY, BUTTON_SIZE, BUTTON_SIZE);
-            GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, getDeleteButtonIcon(mouseX, mouseY), deleteButtonX, buttonY, BUTTON_SIZE, BUTTON_SIZE);
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, getToggleButtonIcon(mouseX, mouseY), toggleButtonX, getY(), BUTTON_SIZE, BUTTON_SIZE);
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, getDeleteButtonIcon(mouseX, mouseY), deleteButtonX, getY(), BUTTON_SIZE, BUTTON_SIZE);
 
             int textColor = isFocused() ? 0xFFFFFFFF : 0xFF000000;
-            GuiGraphicsExtractor.drawString(Minecraft.getInstance().font, privilege, left + 22, top + 3, textColor, false);
+            graphics.text(Minecraft.getInstance().font, privilege, getX() + 22, getY() + 3, textColor, false);
         }
 
         public Identifier getIcon() {
@@ -114,10 +101,9 @@ public class OwnedPrivilegeListWidget extends ListWidget<OwnedPrivilegeListWidge
 
         public Identifier getToggleButtonIcon(int mouseX, int mouseY) {
             int toggleButtonX = getToggleButtonX();
-            int buttonY = getButtonY();
 
             if (mouseX >= toggleButtonX && mouseX <= toggleButtonX + BUTTON_SIZE &&
-                    mouseY >= buttonY && mouseY <= buttonY + BUTTON_SIZE) {
+                    mouseY >= getY() && mouseY <= getY() + BUTTON_SIZE) {
                 return value ? Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/true_button_highlighted")
                         : Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/false_button_highlighted");
             } else {
@@ -128,10 +114,9 @@ public class OwnedPrivilegeListWidget extends ListWidget<OwnedPrivilegeListWidge
 
         public Identifier getDeleteButtonIcon(int mouseX, int mouseY) {
             int deleteButtonX = getDeleteButtonX();
-            int buttonY = getButtonY();
 
             if (mouseX >= deleteButtonX && mouseX <= deleteButtonX + BUTTON_SIZE &&
-                    mouseY >= buttonY && mouseY <= buttonY + BUTTON_SIZE) {
+                    mouseY >= getY() && mouseY <= getY() + BUTTON_SIZE) {
                 return Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/trash_button_highlighted");
             } else {
                 return Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/trash_button");

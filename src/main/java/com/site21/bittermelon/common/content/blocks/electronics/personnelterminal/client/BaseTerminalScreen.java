@@ -77,19 +77,19 @@ public abstract class BaseTerminalScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphicsExtractor.fill(x, y, screenWidth, screenHeight, 0xFFF9FDFF);
-        GuiGraphicsExtractor.fill(x + 1, y + 1, screenWidth - 1, screenHeight - 1, 0xFFD6D6CE);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+        graphics.fill(x, y, screenWidth, screenHeight, 0xFFF9FDFF);
+        graphics.fill(x + 1, y + 1, screenWidth - 1, screenHeight - 1, 0xFFD6D6CE);
 
-        GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/scp_logo"),
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/scp_logo"),
                 widgetX + widgetX / 6, screenHeight / 4, 200, 200);
 
         for (Renderable renderable : renderables) {
-            renderable.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+            renderable.extractRenderState(graphics, mouseX, mouseY, partialTick);
         }
 
-        GuiGraphicsExtractor.fillGradient(x + 2, y + 2, screenWidth - 2, 25, 0xFF2C02AC, 0xFF1084D0);
-        GuiGraphicsExtractor.drawString(font, getTitle().getString(), x + MARGIN, y + 5, 0xFFFFFF);
+        graphics.fillGradient(x + 2, y + 2, screenWidth - 2, 25, 0xFF2C02AC, 0xFF1084D0);
+        graphics.text(font, getTitle().getString(), x + MARGIN, y + 5, 0xFFFFFF);
     }
 
     @Override

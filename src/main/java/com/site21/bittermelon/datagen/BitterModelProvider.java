@@ -22,11 +22,12 @@ import net.minecraft.client.data.models.blockstates.MultiPartGenerator;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
 import net.minecraft.client.data.models.model.*;
-import net.minecraft.client.renderer.block.model.VariantMutator;
+import net.minecraft.client.renderer.block.dispatch.VariantMutator;
 import net.minecraft.client.renderer.item.ConditionalItemModel;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.item.RangeSelectItemModel;
 import net.minecraft.client.renderer.item.SelectItemModel;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
@@ -292,9 +293,9 @@ public class BitterModelProvider extends ModelProvider {
 
     public void createRedstoneDevice(@NotNull BlockModelGenerators blockModels, Block block, TexturedModel.@NotNull Provider modelProvider) {
         MultiVariant offVariant = plainVariant(modelProvider.create(block, blockModels.modelOutput));
-        Identifier Identifier = getBlockTexture(block, "_front_on");
+        Material material = getBlockTexture(block, "_front_on");
         MultiVariant onVariant = plainVariant(modelProvider.get(block)
-                .updateTextures(mapping -> mapping.put(TextureSlot.FRONT, Identifier))
+                .updateTextures(mapping -> mapping.put(TextureSlot.FRONT, material))
                 .createWithSuffix(block, "_on", blockModels.modelOutput));
 
         blockModels.blockStateOutput.accept(

@@ -5,6 +5,7 @@ import com.site21.bittermelon.common.content.blocks.electronics.personneltermina
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -41,8 +42,8 @@ public class PrivilegeSearchList extends ListWidget<PrivilegeSearchList.Entry> {
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (button == 0) {
+        public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+            if (event.button() == 0) {
                 ((PrivilegeSearchList) list).parent.setInput(privilege);
                 return true;
             }
@@ -50,19 +51,18 @@ public class PrivilegeSearchList extends ListWidget<PrivilegeSearchList.Entry> {
         }
 
         @Override
-        public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int entryIdx, int top, int left, int entryWidth, int entryHeight,
-                           int mouseX, int mouseY, boolean isMouseOver, float partialTick) {
-            if (isMouseOver && !isFocused()) {
-                GuiGraphicsExtractor.fill(left, top - 2, left + entryWidth, top + entryHeight + 2, 0xFFD3E3FD);
+        public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
+            if (isMouseOver(mouseX, mouseY) && !isFocused()) {
+                graphics.fill(getX(), getY() - 2, getContentRight(), getContentBottom() + 2, 0xFFD3E3FD);
             }
 
             Identifier icon = group ? Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/users")
                     : Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "retro/keys");
 
-            GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, icon, left + 4, top, 16, 16);
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, icon, getX() + 4, getY(), 16, 16);
 
             int textColor = isFocused() ? 0xFFFFFFFF : 0xFF000000;
-            GuiGraphicsExtractor.drawString(Minecraft.getInstance().font, privilege, left + 22, top + 2, textColor, false);
+            graphics.text(Minecraft.getInstance().font, privilege, getX() + 22, getY() + 2, textColor, false);
         }
     }
 }

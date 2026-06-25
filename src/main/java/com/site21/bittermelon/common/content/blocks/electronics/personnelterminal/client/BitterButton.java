@@ -1,7 +1,6 @@
 package com.site21.bittermelon.common.content.blocks.electronics.personnelterminal.client;
 
 import com.site21.bittermelon.init.neoforge.BitterSounds;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
@@ -12,7 +11,6 @@ import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -36,15 +34,14 @@ public class BitterButton extends Button {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        Minecraft minecraft = Minecraft.getInstance();
-//        GuiGraphicsExtractor.setColor(1.0F, 1.0F, 1.0F, this.alpha);
-//        RenderSystem.enableBlend();
-//        RenderSystem.enableDepthTest();
-        GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, sprites.get(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
-//        GuiGraphicsExtractor.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-        int i = this.getFGColor();
-        this.renderString(GuiGraphicsExtractor, minecraft.font, i | Mth.ceil(this.alpha * 255.0F) << 24);
+    protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        graphics.blitSprite(
+                RenderPipelines.GUI_TEXTURED,
+                sprites.get(active, isHoveredOrFocused()),
+                getX(), getY(),
+                getWidth(), getHeight());
+
+        extractDefaultLabel(graphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE));
     }
 
     public static BitterButton.@NotNull Builder builder(Component message, OnPress onPress, WidgetSprites sprites) {
@@ -74,7 +71,7 @@ public class BitterButton extends Button {
         private int width = 150;
         private int height = 20;
         private CreateNarration createNarration;
-        private WidgetSprites sprites;
+        private final WidgetSprites sprites;
 
         public Builder(Component message, OnPress onPress, WidgetSprites sprites) {
             this.createNarration = Button.DEFAULT_NARRATION;

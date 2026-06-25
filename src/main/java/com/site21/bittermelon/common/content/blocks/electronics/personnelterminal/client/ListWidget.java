@@ -1,22 +1,13 @@
 package com.site21.bittermelon.common.content.blocks.electronics.personnelterminal.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ObjectSelectionList;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 public class ListWidget<T extends ObjectSelectionList.Entry<T>> extends ObjectSelectionList<T> {
     public ListWidget(Minecraft minecraft, int width, int height, int y, int itemHeight) {
         super(minecraft, width, height, y, itemHeight);
         centerListVertically = false;
     }
-
-//    @Override
-//    protected int getScrollbarPosition() {
-//        return getX() + width - 12;
-//    }
 
     @Override
     public int getRowLeft() {
@@ -27,9 +18,9 @@ public class ListWidget<T extends ObjectSelectionList.Entry<T>> extends ObjectSe
         return width - 12;
     }
 
-    @Override
-    public void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        super.renderWidget(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+//    @Override
+//    public void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+//        super.renderWidget(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 
 //        if (this.scrollbarVisible()) {
 //            int l = this.getScrollbarPosition();
@@ -45,31 +36,39 @@ public class ListWidget<T extends ObjectSelectionList.Entry<T>> extends ObjectSe
 //            GuiGraphicsExtractor.blitSprite(BitterRenderPipelines.GUI_TEXTURED, PersonnelTerminalScreen.SCROLLER_SPRITE, l, k, 12, i1);
 //            RenderSystem.disableBlend();
 //        }
-    }
+//    }
+//
+//    @Override
+//    protected void renderListBackground(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor) {
+//        GuiGraphicsExtractor.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), 0xFFFFFFFF);
+//    }
 
-    @Override
-    protected void renderListBackground(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor) {
-        GuiGraphicsExtractor.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), 0xFFFFFFFF);
-    }
 
-    @Override
-    protected void renderItem(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick, int index, int left, int top, int width, int height) {
-        T e = this.getEntry(index);
-        e.renderBack(GuiGraphicsExtractor, index, top, left, width, height, mouseX, mouseY, Objects.equals(this.getHovered(), e), partialTick);
-        if (this.isSelectedItem(index)) {
-            int borderColor = e.isMouseOver(mouseX, mouseY) ? 0xFF938DD7 : 0xFF000000;
-            int i = this.isFocused() ? borderColor : -8355712;
-            this.renderSelection(GuiGraphicsExtractor, top, width, height, i, 0xFF0100AC);
-        }
+//    @Override
+//    protected void extractItem(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, T entry) {
+//        super.extractItem(graphics, mouseX, mouseY, a, entry);
+//
+//        entry.extractContent(graphics, mouseX, mouseY, Objects.equals(getHovered(), entry), a);
+//    }
+//
+//    @Override
+//    protected void renderItem(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick, int index, int left, int top, int width, int height) {
+//        T e = this.getEntry(index);
+//        e.renderBack(GuiGraphicsExtractor, index, top, left, width, height, mouseX, mouseY, Objects.equals(this.getHovered(), e), partialTick);
+//        if (this.isSelectedItem(index)) {
+//            int borderColor = e.isMouseOver(mouseX, mouseY) ? 0xFF938DD7 : 0xFF000000;
+//            int i = this.isFocused() ? borderColor : -8355712;
+//            this.renderSelection(GuiGraphicsExtractor, top, width, height, i, 0xFF0100AC);
+//        }
+//
+//        e.render(GuiGraphicsExtractor, index, top, left, width, height, mouseX, mouseY, Objects.equals(this.getHovered(), e), partialTick);
+//    }
 
-        e.render(GuiGraphicsExtractor, index, top, left, width, height, mouseX, mouseY, Objects.equals(this.getHovered(), e), partialTick);
-    }
-
-    @Override
-    protected void renderSelection(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int top, int width, int height, int outerColor, int innerColor) {
-        int minX = getRowLeft();
-        int maxX = x + getRowWidth();
-        GuiGraphicsExtractor.fill(minX, top - 2, maxX, top + height + 2, outerColor);
-        GuiGraphicsExtractor.fill(minX + 1, top - 1, maxX - 1, top + height + 1, innerColor);
-    }
+//    @Override
+//    protected void renderSelection(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int top, int width, int height, int outerColor, int innerColor) {
+//        int minX = getRowLeft();
+//        int maxX = x + getRowWidth();
+//        GuiGraphicsExtractor.fill(minX, top - 2, maxX, top + height + 2, outerColor);
+//        GuiGraphicsExtractor.fill(minX + 1, top - 1, maxX - 1, top + height + 1, innerColor);
+//    }
 }
