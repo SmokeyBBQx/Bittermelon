@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.Nullable;
 
 public class FlamingoBlockRenderer implements BlockEntityRenderer<FlamingoBlockEntity, FlamingoRenderState> {
+    private static final Identifier TEXTURE = Bittermelon.identifier("textures/entity/scp_1507.png");
     private final SCP1507Model model;
 
     public FlamingoBlockRenderer(BlockEntityRendererProvider.@NotNull Context context) {
@@ -35,6 +36,7 @@ public class FlamingoBlockRenderer implements BlockEntityRenderer<FlamingoBlockE
                                    Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
         state.rotation = blockEntity.getBlockState().getValue(BlockStateProperties.ROTATION_16);
+        state.scp1507RenderState = new SCP1507RenderState();
     }
 
     @Override
@@ -45,14 +47,11 @@ public class FlamingoBlockRenderer implements BlockEntityRenderer<FlamingoBlockE
         poseStack.mulPose(Axis.YP.rotationDegrees(state.rotation * -22.5f));
         poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
 
-        Identifier texture = Bittermelon.identifier("textures/entity/scp_1507.png");
-        SCP1507RenderState scp1507RenderState = new SCP1507RenderState();
-
         submitNodeCollector.submitModel(
                 model,
-                scp1507RenderState,
+                state.scp1507RenderState,
                 poseStack,
-                texture,
+                TEXTURE,
                 state.lightCoords,
                 OverlayTexture.NO_OVERLAY,
                 -1,
