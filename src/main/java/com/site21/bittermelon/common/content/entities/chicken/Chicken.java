@@ -7,8 +7,6 @@ import com.site21.bittermelon.common.systems.ai.behavior.basicneeds.HasBasicNeed
 import com.site21.bittermelon.common.systems.ai.behavior.misc.FeelsPain;
 import com.site21.bittermelon.common.systems.ai.behavior.social.Relationship;
 import com.site21.bittermelon.common.systems.ai.behavior.social.Socializable;
-import com.site21.bittermelon.common.systems.ai.sensors.NearbyDrinkableFluidsSensor;
-import com.site21.bittermelon.common.systems.ai.sensors.NearbyFoodSensor;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.combat.AttackTemplate;
 import com.site21.bittermelon.init.neoforge.BitterActivity;
@@ -91,9 +89,7 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
         return List.of(
                 new NearbyLivingEntitySensor<>(),
                 new NearbyItemsSensor<>(),
-                new HurtBySensor<>(),
-                new NearbyFoodSensor<>(),
-                new NearbyDrinkableFluidsSensor<>()
+                new HurtBySensor<>()
         );
     }
 
@@ -329,7 +325,7 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
 
     @Override
     public SoundEvent getPainSound(float pain) {
-        return SoundEvents.CHICKEN_SOUNDS.get(ChickenSoundVariants.SoundSet.CLASSIC).adultSounds().hurtSound().value();;
+        return SoundEvents.CHICKEN_SOUNDS.get(ChickenSoundVariants.SoundSet.CLASSIC).adultSounds().hurtSound().value();
     }
 
     public @NotNull List<AttackTemplate> getAttackTemplates() {

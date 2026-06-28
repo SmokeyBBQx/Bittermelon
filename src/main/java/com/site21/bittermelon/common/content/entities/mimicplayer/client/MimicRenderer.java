@@ -4,49 +4,48 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.site21.bittermelon.common.content.entities.mimicplayer.Mimic;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.HumanoidArmorModel;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.multiplayer.PlayerInfo;
-import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.ArmorModelSet;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.*;
-import net.minecraft.client.renderer.entity.state.PlayerRenderState;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.DefaultPlayerSkin;
-import net.minecraft.client.resources.PlayerSkin;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.animal.Parrot;
+import net.minecraft.world.entity.animal.parrot.Parrot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
+import net.minecraft.world.entity.player.PlayerSkin;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
-public class MimicRenderer extends LivingEntityRenderer<Mimic, PlayerRenderState, PlayerModel> {
-    public MimicRenderer(EntityRendererProvider.Context context, boolean useSlimModel) {
-        super(context, new PlayerModel(context.bakeLayer(useSlimModel ? ModelLayers.PLAYER_SLIM : ModelLayers.PLAYER),
-                useSlimModel), 0.5F);
+public class MimicRenderer extends LivingEntityRenderer<Mimic, AvatarRenderState, PlayerModel> {
+    public MimicRenderer(EntityRendererProvider.Context context, boolean slimSteve) {
+        super(context, new PlayerModel(context.bakeLayer(slimSteve ? ModelLayers.PLAYER_SLIM : ModelLayers.PLAYER), slimSteve), 0.5F);
         this.addLayer(
                 new HumanoidArmorLayer<>(
                         this,
-                        new HumanoidArmorModel<>(context.bakeLayer(useSlimModel ?
-                                ModelLayers.PLAYER_SLIM_INNER_ARMOR : ModelLayers.PLAYER_INNER_ARMOR)),
-                        new HumanoidArmorModel<>(context.bakeLayer(useSlimModel ?
-                                ModelLayers.PLAYER_SLIM_OUTER_ARMOR : ModelLayers.PLAYER_OUTER_ARMOR)),
+                        ArmorModelSet.bake(
+                                slimSteve ? ModelLayers.PLAYER_SLIM_ARMOR : ModelLayers.PLAYER_ARMOR, context.getModelSet(), part -> new PlayerModel(part, slimSteve)
+                        ),
                         context.getEquipmentRenderer()
                 )
         );
@@ -54,136 +53,135 @@ public class MimicRenderer extends LivingEntityRenderer<Mimic, PlayerRenderState
         this.addLayer(new ArrowLayer<>(this, context));
         this.addLayer(new Deadmau5EarsLayer(this, context.getModelSet()));
         this.addLayer(new CapeLayer(this, context.getModelSet(), context.getEquipmentAssets()));
-        this.addLayer(new CustomHeadLayer<>(this, context.getModelSet()));
+        this.addLayer(new CustomHeadLayer<>(this, context.getModelSet(), context.getPlayerSkinRenderCache()));
         this.addLayer(new WingsLayer<>(this, context.getModelSet(), context.getEquipmentRenderer()));
         this.addLayer(new ParrotOnShoulderLayer(this, context.getModelSet()));
         this.addLayer(new SpinAttackEffectLayer(this, context.getModelSet()));
         this.addLayer(new BeeStingerLayer<>(this, context));
     }
 
-    protected boolean shouldRenderLayers(PlayerRenderState renderState) {
-        return !renderState.isSpectator;
+    protected boolean shouldRenderLayers(AvatarRenderState state) {
+        return !state.isSpectator;
     }
 
-    public Vec3 getRenderOffset(PlayerRenderState renderState) {
-        Vec3 vec3 = super.getRenderOffset(renderState);
-        return renderState.isCrouching ? vec3.add(0.0, renderState.scale * -2.0F / 16.0, 0.0) : vec3;
+    public Vec3 getRenderOffset(AvatarRenderState state) {
+        Vec3 offset = super.getRenderOffset(state);
+        return state.isCrouching ? offset.add(0.0, state.scale * -2.0F / 16.0, 0.0) : offset;
     }
 
-    private static HumanoidModel.ArmPose getArmPose(Mimic mimic, HumanoidArm arm) {
-        Player player = mimic.getPlayer();
-        ItemStack itemstack = player.getItemInHand(InteractionHand.MAIN_HAND);
-        ItemStack itemstack1 = player.getItemInHand(InteractionHand.OFF_HAND);
-        HumanoidModel.ArmPose humanoidmodel$armpose = getArmPose(player, itemstack, InteractionHand.MAIN_HAND);
-        HumanoidModel.ArmPose humanoidmodel$armpose1 = getArmPose(player, itemstack1, InteractionHand.OFF_HAND);
-        if (humanoidmodel$armpose.isTwoHanded()) {
-            humanoidmodel$armpose1 = itemstack1.isEmpty() ? HumanoidModel.ArmPose.EMPTY : HumanoidModel.ArmPose.ITEM;
+    private static HumanoidModel.ArmPose getArmPose(Mimic avatar, HumanoidArm arm) {
+        ItemStack mainHandItem = avatar.getItemInHand(InteractionHand.MAIN_HAND);
+        ItemStack offHandItem = avatar.getItemInHand(InteractionHand.OFF_HAND);
+        HumanoidModel.ArmPose mainHandPose = getArmPose(avatar, mainHandItem, InteractionHand.MAIN_HAND);
+        HumanoidModel.ArmPose offHandPose = getArmPose(avatar, offHandItem, InteractionHand.OFF_HAND);
+        if (mainHandPose.isTwoHanded()) {
+            offHandPose = offHandItem.isEmpty() ? HumanoidModel.ArmPose.EMPTY : HumanoidModel.ArmPose.ITEM;
         }
 
-        return player.getMainArm() == arm ? humanoidmodel$armpose : humanoidmodel$armpose1;
+        return avatar.getMainArm() == arm ? mainHandPose : offHandPose;
     }
 
-    private static HumanoidModel.ArmPose getArmPose(Player player, ItemStack stack, InteractionHand hand) {
-        var extensions = net.neoforged.neoforge.client.extensions.common.IClientItemExtensions.of(stack);
-        var armPose = extensions.getArmPose(player, hand, stack);
+    private static HumanoidModel.ArmPose getArmPose(Mimic avatar, ItemStack itemInHand, InteractionHand hand) {
+        var extensions = net.neoforged.neoforge.client.extensions.common.IClientItemExtensions.of(itemInHand);
+        var armPose = extensions.getArmPose(avatar, hand, itemInHand);
         if (armPose != null) {
             return armPose;
         }
-        if (stack.isEmpty()) {
+        if (itemInHand.isEmpty()) {
             return HumanoidModel.ArmPose.EMPTY;
-        } else if (!player.swinging && stack.is(Items.CROSSBOW) && CrossbowItem.isCharged(stack)) {
+        } else if (!avatar.swinging && itemInHand.is(Items.CROSSBOW) && CrossbowItem.isCharged(itemInHand)) {
             return HumanoidModel.ArmPose.CROSSBOW_HOLD;
         } else {
-            if (player.getUsedItemHand() == hand && player.getUseItemRemainingTicks() > 0) {
-                ItemUseAnimation itemuseanimation = stack.getUseAnimation();
-                if (itemuseanimation == ItemUseAnimation.BLOCK) {
+            if (avatar.getUsedItemHand() == hand && avatar.getUseItemRemainingTicks() > 0) {
+                ItemUseAnimation anim = itemInHand.getUseAnimation();
+                if (anim == ItemUseAnimation.BLOCK) {
                     return HumanoidModel.ArmPose.BLOCK;
                 }
 
-                if (itemuseanimation == ItemUseAnimation.BOW) {
+                if (anim == ItemUseAnimation.BOW) {
                     return HumanoidModel.ArmPose.BOW_AND_ARROW;
                 }
 
-                if (itemuseanimation == ItemUseAnimation.SPEAR) {
-                    return HumanoidModel.ArmPose.THROW_SPEAR;
+                if (anim == ItemUseAnimation.TRIDENT) {
+                    return HumanoidModel.ArmPose.THROW_TRIDENT;
                 }
 
-                if (itemuseanimation == ItemUseAnimation.CROSSBOW) {
+                if (anim == ItemUseAnimation.CROSSBOW) {
                     return HumanoidModel.ArmPose.CROSSBOW_CHARGE;
                 }
 
-                if (itemuseanimation == ItemUseAnimation.SPYGLASS) {
+                if (anim == ItemUseAnimation.SPYGLASS) {
                     return HumanoidModel.ArmPose.SPYGLASS;
                 }
 
-                if (itemuseanimation == ItemUseAnimation.TOOT_HORN) {
+                if (anim == ItemUseAnimation.TOOT_HORN) {
                     return HumanoidModel.ArmPose.TOOT_HORN;
                 }
 
-                if (itemuseanimation == ItemUseAnimation.BRUSH) {
+                if (anim == ItemUseAnimation.BRUSH) {
                     return HumanoidModel.ArmPose.BRUSH;
+                }
+
+                if (anim == ItemUseAnimation.SPEAR) {
+                    return HumanoidModel.ArmPose.SPEAR;
                 }
             }
 
-            return HumanoidModel.ArmPose.ITEM;
+            SwingAnimation attack = itemInHand.get(DataComponents.SWING_ANIMATION);
+            if (attack != null && attack.type() == SwingAnimationType.STAB && avatar.swinging) {
+                return HumanoidModel.ArmPose.SPEAR;
+            } else {
+                return itemInHand.is(ItemTags.SPEARS) ? HumanoidModel.ArmPose.SPEAR : HumanoidModel.ArmPose.ITEM;
+            }
         }
     }
 
-    public Identifier getTextureLocation(PlayerRenderState renderState) {
-        return renderState.skin.texture();
+    public Identifier getTextureLocation(AvatarRenderState state) {
+        return state.skin.body().texturePath();
     }
 
-    protected void scale(PlayerRenderState renderState, PoseStack poseStack) {
-        float f = 0.9375F;
-        poseStack.scale(f, f, f);
+    protected void scale(AvatarRenderState state, PoseStack poseStack) {
+        float s = 0.9375F;
+        poseStack.scale(0.9375F, 0.9375F, 0.9375F);
     }
 
-    protected void renderNameTag(PlayerRenderState renderState, Component displayName, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+    protected void submitNameDisplay(AvatarRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
         poseStack.pushPose();
-        if (renderState.scoreText != null) {
-            super.renderNameTag(renderState, renderState.scoreText, poseStack, bufferSource, packedLight);
-            poseStack.translate(0.0F, 9.0F * 1.15F * 0.025F, 0.0F);
-        }
-
-        super.renderNameTag(renderState, displayName, poseStack, bufferSource, packedLight);
+        int offset = state.showExtraEars ? -10 : 0;
+        this.submitNameDisplay(state, poseStack, submitNodeCollector, camera, offset);
         poseStack.popPose();
     }
 
-    public PlayerRenderState createRenderState() {
-        return new PlayerRenderState();
+    public AvatarRenderState createRenderState() {
+        return new AvatarRenderState();
     }
 
-    public void extractRenderState(Mimic entity, PlayerRenderState reusedState, float partialTick) {
-        super.extractRenderState(entity, reusedState, partialTick);
-        HumanoidMobRenderer.extractHumanoidRenderState(entity, reusedState, partialTick, this.itemModelResolver);
-        reusedState.leftArmPose = getArmPose(entity, HumanoidArm.LEFT);
-        reusedState.rightArmPose = getArmPose(entity, HumanoidArm.RIGHT);
-
-        reusedState.skin = getSkin(entity);
-        reusedState.arrowCount = entity.getArrowCount();
-        reusedState.stingerCount = entity.getStingerCount();
-        reusedState.useItemRemainingTicks = entity.getUseItemRemainingTicks();
-        reusedState.swinging = entity.swinging;
-        reusedState.isSpectator = entity.isSpectator();
-
-        reusedState.showHat = entity.isModelPartShown(PlayerModelPart.HAT);
-        reusedState.showJacket = entity.isModelPartShown(PlayerModelPart.JACKET);
-        reusedState.showLeftPants = entity.isModelPartShown(PlayerModelPart.LEFT_PANTS_LEG);
-        reusedState.showRightPants = entity.isModelPartShown(PlayerModelPart.RIGHT_PANTS_LEG);
-        reusedState.showLeftSleeve = entity.isModelPartShown(PlayerModelPart.LEFT_SLEEVE);
-        reusedState.showRightSleeve = entity.isModelPartShown(PlayerModelPart.RIGHT_SLEEVE);
-        reusedState.showCape = entity.isModelPartShown(PlayerModelPart.CAPE);
+    public void extractRenderState(Mimic entity, AvatarRenderState state, float partialTicks) {
+        super.extractRenderState(entity, state, partialTicks);
+        HumanoidMobRenderer.extractHumanoidRenderState(entity, state, partialTicks, itemModelResolver);
+        state.leftArmPose = getArmPose(entity, HumanoidArm.LEFT);
+        state.rightArmPose = getArmPose(entity, HumanoidArm.RIGHT);
+        state.skin = getSkin(entity);
+        state.arrowCount = entity.getArrowCount();
+        state.stingerCount = entity.getStingerCount();
+        state.isSpectator = entity.isSpectator();
+        state.showHat = entity.isModelPartShown(PlayerModelPart.HAT);
+        state.showJacket = entity.isModelPartShown(PlayerModelPart.JACKET);
+        state.showLeftPants = entity.isModelPartShown(PlayerModelPart.LEFT_PANTS_LEG);
+        state.showRightPants = entity.isModelPartShown(PlayerModelPart.RIGHT_PANTS_LEG);
+        state.showLeftSleeve = entity.isModelPartShown(PlayerModelPart.LEFT_SLEEVE);
+        state.showRightSleeve = entity.isModelPartShown(PlayerModelPart.RIGHT_SLEEVE);
+        state.showCape = entity.isModelPartShown(PlayerModelPart.CAPE);
 
         Player player = entity.getPlayer();
-        reusedState.parrotOnLeftShoulder = getParrotOnShoulder(player, true);
-        reusedState.parrotOnRightShoulder = getParrotOnShoulder(player, false);
-        reusedState.id = entity.getId();
-        reusedState.name = player == null ? "None" : player.getGameProfile().getName();
-        reusedState.heldOnHead.clear();
-        if (reusedState.isUsingItem) {
-            ItemStack itemstack = entity.getItemInHand(reusedState.useItemHand);
+        state.parrotOnLeftShoulder = getParrotOnShoulder(player, true);
+        state.parrotOnRightShoulder = getParrotOnShoulder(player, false);
+        state.id = entity.getId();
+        state.heldOnHead.clear();
+        if (state.isUsingItem) {
+            ItemStack itemstack = entity.getItemInHand(state.useItemHand);
             if (itemstack.canPerformAction(net.neoforged.neoforge.common.ItemAbilities.SPYGLASS_SCOPE)) {
-                this.itemModelResolver.updateForLiving(reusedState.heldOnHead, itemstack, ItemDisplayContext.HEAD, entity);
+                this.itemModelResolver.updateForLiving(state.heldOnHead, itemstack, ItemDisplayContext.HEAD, entity);
             }
         }
     }
@@ -199,60 +197,56 @@ public class MimicRenderer extends LivingEntityRenderer<Mimic, PlayerRenderState
     private static Parrot.Variant getParrotOnShoulder(Player player, boolean leftShoulder) {
         if (player == null) return null;
 
-        CompoundTag compoundtag = leftShoulder ? player.getShoulderEntityLeft() : player.getShoulderEntityRight();
-        if (compoundtag.isEmpty()) {
-            return null;
-        } else {
-            EntityType<?> entitytype = compoundtag.read("id", EntityType.CODEC).orElse(null);
-            return entitytype == EntityType.PARROT ? compoundtag.read("Variant",
-                    Parrot.Variant.LEGACY_CODEC).orElse(Parrot.Variant.RED_BLUE) : null;
-        }
+        Optional<Parrot.Variant> variant = leftShoulder ? player.getShoulderParrotLeft() : player.getShoulderParrotRight();
+        return variant.orElse(null);
     }
 
-    public void renderRightHand(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, Identifier skinTexture, boolean isSleeveVisible, AbstractClientPlayer player) {
-        if(!net.neoforged.neoforge.client.ClientHooks.renderSpecificFirstPersonArm(poseStack, bufferSource, packedLight, player, HumanoidArm.RIGHT))
-            this.renderHand(poseStack, bufferSource, packedLight, skinTexture, this.model.rightArm, isSleeveVisible);
+    public void renderRightHand(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, Identifier p_445487_, boolean hasSleeve, net.minecraft.client.player.AbstractClientPlayer player) {
+        if(!net.neoforged.neoforge.client.ClientHooks.renderSpecificFirstPersonArm(poseStack, submitNodeCollector, lightCoords, player, HumanoidArm.RIGHT))
+            this.renderHand(poseStack, submitNodeCollector, lightCoords, p_445487_, this.model.rightArm, hasSleeve);
     }
 
-    public void renderLeftHand(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, Identifier skinTexture, boolean isSleeveVisible, AbstractClientPlayer player) {
-        if(!net.neoforged.neoforge.client.ClientHooks.renderSpecificFirstPersonArm(poseStack, bufferSource, packedLight, player, HumanoidArm.LEFT))
-            this.renderHand(poseStack, bufferSource, packedLight, skinTexture, this.model.leftArm, isSleeveVisible);
+    public void renderLeftHand(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, Identifier p_446675_, boolean hasSleeve, net.minecraft.client.player.AbstractClientPlayer player) {
+        if(!net.neoforged.neoforge.client.ClientHooks.renderSpecificFirstPersonArm(poseStack, submitNodeCollector, lightCoords, player, HumanoidArm.LEFT))
+            this.renderHand(poseStack, submitNodeCollector, lightCoords, p_446675_, this.model.leftArm, hasSleeve);
     }
 
-    private void renderHand(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, Identifier skinTexture, ModelPart arm, boolean isSleeveVisible) {
-        PlayerModel playermodel = this.getModel();
+    private void renderHand(
+            PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, Identifier skinTexture, ModelPart arm, boolean hasSleeve
+    ) {
+        PlayerModel model = this.getModel();
         arm.resetPose();
         arm.visible = true;
-        playermodel.leftSleeve.visible = isSleeveVisible;
-        playermodel.rightSleeve.visible = isSleeveVisible;
-        playermodel.leftArm.zRot = -0.1F;
-        playermodel.rightArm.zRot = 0.1F;
-        arm.render(poseStack, bufferSource.getBuffer(RenderType.entityTranslucent(skinTexture)), packedLight, OverlayTexture.NO_OVERLAY);
+        model.leftSleeve.visible = hasSleeve;
+        model.rightSleeve.visible = hasSleeve;
+        model.leftArm.zRot = -0.1F;
+        model.rightArm.zRot = 0.1F;
+        submitNodeCollector.submitModelPart(arm, poseStack, RenderTypes.entityTranslucent(skinTexture), lightCoords, OverlayTexture.NO_OVERLAY, null);
     }
 
-    protected void setupRotations(PlayerRenderState renderState, PoseStack poseStack, float bodyRot, float scale) {
-        float f = renderState.swimAmount;
-        float f1 = renderState.xRot;
-        if (renderState.isFallFlying) {
-            super.setupRotations(renderState, poseStack, bodyRot, scale);
-            float f2 = renderState.fallFlyingScale();
-            if (!renderState.isAutoSpinAttack) {
-                poseStack.mulPose(Axis.XP.rotationDegrees(f2 * (-90.0F - f1)));
+    protected void setupRotations(AvatarRenderState state, PoseStack poseStack, float bodyRot, float entityScale) {
+        float swimAmount = state.swimAmount;
+        float xRot = state.xRot;
+        if (state.isFallFlying) {
+            super.setupRotations(state, poseStack, bodyRot, entityScale);
+            float scale = state.fallFlyingScale();
+            if (!state.isAutoSpinAttack) {
+                poseStack.mulPose(Axis.XP.rotationDegrees(scale * (-90.0F - xRot)));
             }
 
-            if (renderState.shouldApplyFlyingYRot) {
-                poseStack.mulPose(Axis.YP.rotation(renderState.flyingYRot));
+            if (state.shouldApplyFlyingYRot) {
+                poseStack.mulPose(Axis.YP.rotation(state.flyingYRot));
             }
-        } else if (f > 0.0F) {
-            super.setupRotations(renderState, poseStack, bodyRot, scale);
-            float f4 = renderState.isInWater ? -90.0F - f1 : -90.0F;
-            float f3 = Mth.lerp(f, 0.0F, f4);
-            poseStack.mulPose(Axis.XP.rotationDegrees(f3));
-            if (renderState.isVisuallySwimming) {
+        } else if (swimAmount > 0.0F) {
+            super.setupRotations(state, poseStack, bodyRot, entityScale);
+            float targetXRot = state.isInWater ? -90.0F - xRot : -90.0F;
+            float xAngle = Mth.lerp(swimAmount, 0.0F, targetXRot);
+            poseStack.mulPose(Axis.XP.rotationDegrees(xAngle));
+            if (state.isVisuallySwimming) {
                 poseStack.translate(0.0F, -1.0F, 0.3F);
             }
         } else {
-            super.setupRotations(renderState, poseStack, bodyRot, scale);
+            super.setupRotations(state, poseStack, bodyRot, entityScale);
         }
     }
 }

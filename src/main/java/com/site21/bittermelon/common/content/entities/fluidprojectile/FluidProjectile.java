@@ -60,22 +60,20 @@ public class FluidProjectile extends Projectile {
     @Override
     public void recreateFromPacket(ClientboundAddEntityPacket packet) {
         super.recreateFromPacket(packet);
-        double d0 = packet.getXa();
-        double d1 = packet.getYa();
-        double d2 = packet.getZa();
+        Vec3 movement = packet.getMovement();
 
         for (int i = 0; i < 7; i++) {
-            double d3 = 0.4 + 0.1 * i;
-            level().addParticle(ParticleTypes.SPIT, getX(), getY(), getZ(), d0 * d3, d1, d2 * d3);
+            double k = 0.4 + 0.1 * i;
+            level().addParticle(ParticleTypes.SPIT, getX(), getY(), getZ(), movement.x * k, movement.y, movement.z * k);
         }
 
-        setDeltaMovement(d0, d1, d2);
+        setDeltaMovement(movement);
     }
 
     @Override
     protected void onHitBlock(BlockHitResult result) {
         super.onHitBlock(result);
-        if (level().isClientSide) return;
+        if (level().isClientSide()) return;
 
         CommonEvents.drip(level(), result.getBlockPos().above(), mixture.getSubstances());
         playSplashSound();
@@ -85,7 +83,7 @@ public class FluidProjectile extends Projectile {
     @Override
     protected void onHitEntity(EntityHitResult result) {
         super.onHitEntity(result);
-        if (level().isClientSide) return;
+        if (level().isClientSide()) return;
 
         if (result.getEntity() instanceof LivingEntity target) {
             SubstanceMixture stains = target.getData(STAINS);
@@ -101,7 +99,7 @@ public class FluidProjectile extends Projectile {
 
     private void playSplashSound() {
         level().playSound(null, blockPosition(), SoundEvents.BUCKET_EMPTY_FISH, getSoundSource(),
-                0.1f, 0.8f + level().random.nextFloat() * 0.4f);
+                0.1f, 0.8f + level().getRandom().nextFloat() * 0.4f);
     }
 
     @Override

@@ -7,6 +7,7 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 
 import java.util.List;
+import java.util.Set;
 
 public class SeaMonkeyModel extends EntityModel<LivingEntityRenderState> {
     public final ModelPart body;
@@ -30,6 +31,13 @@ public class SeaMonkeyModel extends EntityModel<LivingEntityRenderState> {
         PartDefinition appendages = body.addOrReplaceChild("appendages", CubeListBuilder.create().texOffs(-5, 11).addBox(-5.0F, 0.0F, -5.0F, 10.0F, 0.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offset(-1.0F, 0.0F, 8.0F));
 
         return LayerDefinition.create(meshdefinition, 32, 32);
+    }
+
+    public static LayerDefinition createAppendagesLayer() {
+        return createBodyLayer().apply(mesh -> {
+            mesh.getRoot().retainExactParts(Set.of("appendages"));
+            return mesh;
+        });
     }
 
     @Override

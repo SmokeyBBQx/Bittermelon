@@ -65,6 +65,11 @@ public class LayerDefinitions {
             "main"
     );
 
+    public static final ModelLayerLocation SEA_MONKEY_APPENDAGE_LAYER = new ModelLayerLocation(
+            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "sea_monkey_appendage"),
+            "main"
+    );
+
     public static final ModelLayerLocation SCP_718_LAYER = new ModelLayerLocation(
             Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_718"),
             "main"
@@ -105,6 +110,7 @@ public class LayerDefinitions {
         event.registerLayerDefinition(LARGE_SLIDING_DOOR_LAYER, LargeSlidingDoorModel::createBodyLayer);
         event.registerLayerDefinition(SCP_548_LAYER, SCP548Model::createBodyLayer);
         event.registerLayerDefinition(SEA_MONKEY_LAYER, SeaMonkeyModel::createBodyLayer);
+        event.registerLayerDefinition(SEA_MONKEY_APPENDAGE_LAYER, SeaMonkeyModel::createAppendagesLayer);
         event.registerLayerDefinition(SCP_718_LAYER, SCP718Model::createBodyLayer);
         event.registerLayerDefinition(SCP_718_SMALL_LAYER, SCP718SmallModel::createBodyLayer);
         event.registerLayerDefinition(SCP_025_FR_LAYER, SCP025FRModel::createBodyLayer);

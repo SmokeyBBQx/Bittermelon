@@ -2,14 +2,15 @@ package com.site21.bittermelon.common.content.entities.seamonkey.client;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.entities.seamonkey.SeaMonkey;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
 
 import java.util.List;
 
+import static com.site21.bittermelon.client.event.LayerDefinitions.SEA_MONKEY_APPENDAGE_LAYER;
 import static com.site21.bittermelon.client.event.LayerDefinitions.SEA_MONKEY_LAYER;
 
 public class SeaMonkeyRenderer extends MobRenderer<SeaMonkey, LivingEntityRenderState, SeaMonkeyModel> {
@@ -21,12 +22,13 @@ public class SeaMonkeyRenderer extends MobRenderer<SeaMonkey, LivingEntityRender
 
     public SeaMonkeyRenderer(EntityRendererProvider.Context context) {
         super(context, new SeaMonkeyModel(context.bakeLayer(SEA_MONKEY_LAYER)), 0.1f);
+        SeaMonkeyModel appendageModel = new SeaMonkeyModel(context.bakeLayer(SEA_MONKEY_APPENDAGE_LAYER));
         addLayer(
                 new AppendagesLayer<>(
                         this,
                         List.of(APPENDAGES_1, APPENDAGES_2, APPENDAGES_3, APPENDAGES_4),
-                        SeaMonkeyModel::getAppendages,
-                        RenderType::entityCutout,
+                        appendageModel,
+                        RenderTypes::entityCutout,
                         true
                 )
         );
