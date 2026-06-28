@@ -9,7 +9,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.PostChain;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import org.jetbrains.annotations.NotNull;
 
 import static com.site21.bittermelon.init.neoforge.BitterSounds.BOOT_UP_TUNE;
 import static com.site21.bittermelon.init.neoforge.BitterSounds.TERMINAL_HUM;
@@ -85,16 +84,16 @@ public class ContainmentPanelScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
-        graphics.drawString(this.font, this.title, leftPos + 8, topPos + 8, 4210752, false);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        graphics.text(this.font, this.title, leftPos + 8, topPos + 8, 4210752, false);
 
 //        graphics.fill((this.width - TEXTURE_WIDTH) / 2 - 20, this.topPos = (this.height - TEXTURE_HEIGHT) / 2 - 20, width - 200, height - 60, 0xFF000000 );
         graphics.fill(0, 0, width, height, 0xFF000000);
 
         if (!isBooted) {
             if (loadingProgress > 20) {
-                graphics.drawCenteredString(font, "SMART CONTAINMENT INTERFACE", width / 2, (int) (height / 2.5), 0xFF00FF00);
-                graphics.drawCenteredString(font, "4.0.5E", width / 2, height / 2, 0xFF00FF00);
+                graphics.centeredText(font, "SMART CONTAINMENT INTERFACE", width / 2, (int) (height / 2.5), 0xFF00FF00);
+                graphics.centeredText(font, "4.0.5E", width / 2, height / 2, 0xFF00FF00);
             }
 
             int barX = (width - LOADING_BAR_WIDTH) / 2;
@@ -105,38 +104,38 @@ public class ContainmentPanelScreen extends Screen {
             int progressWidth = (int)((loadingProgress / 100f) * LOADING_BAR_WIDTH);
             graphics.fill(barX, barY, barX + progressWidth, barY + LOADING_BAR_HEIGHT, 0xFF00FF00);
 
-            renderBackground(graphics, mouseX, mouseY, partialTick);
+            extractBackground(graphics, mouseX, mouseY, a);
 
             if (loadingProgress > 20) {
-                graphics.drawCenteredString(font, "SMART CONTAINMENT INTERFACE", width / 2, (int) (height / 2.5), 0xFF00FF00);
-                graphics.drawCenteredString(font, "4.0.5E", width / 2, height / 2, 0xFF00FF00);
+                graphics.centeredText(font, "SMART CONTAINMENT INTERFACE", width / 2, (int) (height / 2.5), 0xFF00FF00);
+                graphics.centeredText(font, "4.0.5E", width / 2, height / 2, 0xFF00FF00);
             }
             graphics.fill(barX - 1, barY - 1, barX + LOADING_BAR_WIDTH + 1, barY + LOADING_BAR_HEIGHT + 1, 0xFF001100);
-  
+
             graphics.fill(barX, barY, barX + progressWidth, barY + LOADING_BAR_HEIGHT, 0xFF00FF00);
 
         } else {
 
             if (hasAccess) {
-                renderMainMenu(graphics, mouseX, mouseY, partialTick);
-                renderMainMenu(graphics, mouseX, mouseY, partialTick);
+                extractMainMenu(graphics, mouseX, mouseY, a);
+                extractMainMenu(graphics, mouseX, mouseY, a);
             } else {
-                renderNoAccess(graphics, mouseX, mouseY, partialTick);
-                renderNoAccess(graphics, mouseX, mouseY, partialTick);
+                extractNoAccess(graphics, mouseX, mouseY, a);
+                extractNoAccess(graphics, mouseX, mouseY, a);
             }
         }
 
 //        renderShaders(partialTick);
     }
 
-    private void renderNoAccess(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        renderBackground(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-        GuiGraphicsExtractor.drawCenteredString(font, "*NO ACCESS*", width / 2, (int) (height / 2.5), 0xFFFF0000);
-        GuiGraphicsExtractor.drawCenteredString(font, "SCAN TO GAIN ACCESS", width / 2, height / 2, 0xFFFF0000);
+    private void extractNoAccess(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        extractBackground(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        GuiGraphicsExtractor.centeredText(font, "*NO ACCESS*", width / 2, (int) (height / 2.5), 0xFFFF0000);
+        GuiGraphicsExtractor.centeredText(font, "SCAN TO GAIN ACCESS", width / 2, height / 2, 0xFFFF0000);
     }
 
-    private void renderMainMenu(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+    private void extractMainMenu(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 
         GuiGraphicsExtractor.fill((this.width - TEXTURE_WIDTH) / 2 - 22, this.topPos = (this.height - TEXTURE_HEIGHT) / 2 - 22, width - 198, this.topPos = (this.height - TEXTURE_HEIGHT) / 2 - 20, 0xFFFFFF00);
         GuiGraphicsExtractor.fill((this.width - TEXTURE_WIDTH) / 2 - 22, this.topPos = (this.height - TEXTURE_HEIGHT) / 2 - 22, (this.width - TEXTURE_WIDTH) / 2 - 20, height - 60, 0xFFFFFF00);

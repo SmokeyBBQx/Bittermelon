@@ -8,7 +8,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
 
@@ -127,10 +126,10 @@ public class TransferScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
 
-        GuiGraphicsExtractor.drawCenteredString(
+        graphics.centeredText(
                 font,
                 "Transfer Funds",
                 width / 2,
@@ -138,7 +137,7 @@ public class TransferScreen extends Screen {
                 0xFFFFFF
         );
 
-        GuiGraphicsExtractor.drawCenteredString(
+        graphics.centeredText(
                 font,
                 "Current Balance: " + account.getBalance(),
                 width / 2,

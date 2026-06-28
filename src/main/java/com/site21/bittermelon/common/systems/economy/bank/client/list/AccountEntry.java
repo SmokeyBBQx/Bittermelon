@@ -6,7 +6,6 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class AccountEntry extends ContainerObjectSelectionList.Entry<AccountEntry> {
     protected final Account account;
@@ -18,25 +17,24 @@ public abstract class AccountEntry extends ContainerObjectSelectionList.Entry<Ac
     }
 
     @Override
-    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int index, int top, int left, int width, int height,
-                       int mouseX, int mouseY, boolean hovered, float partialTick) {
+    public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
         if (hovered) {
-            GuiGraphicsExtractor.fill(left, top, left + width, top + height - 2, 0x80808080);
+            graphics.fill(getContentX(), getContentY(), getContentRight(), getContentBottom() - 2, 0x80808080);
         }
 
-        GuiGraphicsExtractor.drawString(
+        graphics.text(
                 Minecraft.getInstance().font,
                 Component.literal("Account: " + account.getName()),
-                left + 5,
-                top + 5,
+                getContentX() + 5,
+                getContentY() + 5,
                 0xFFFFFF
         );
 
-        GuiGraphicsExtractor.drawString(
+        graphics.text(
                 Minecraft.getInstance().font,
                 Component.literal("ID: " + account.getId()),
-                left + 5,
-                top + 20,
+                getContentX() + 5,
+                getContentY() + 20,
                 0xFFFFFF
         );
     }

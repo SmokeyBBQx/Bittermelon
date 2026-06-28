@@ -54,12 +54,11 @@ public class AccountScreen extends Screen {
                 .build());
     }
 
-
     @Override
-    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
 
-        GuiGraphicsExtractor.drawCenteredString(
+        graphics.centeredText(
                 font,
                 getTitle(),
                 width / 2,
@@ -67,7 +66,7 @@ public class AccountScreen extends Screen {
                 0xFFFFFF
         );
 
-        GuiGraphicsExtractor.drawCenteredString(
+        graphics.centeredText(
                 font,
                 Component.literal(String.format("Balance: $%.2f", account.getBalance())),
                 width / 2,

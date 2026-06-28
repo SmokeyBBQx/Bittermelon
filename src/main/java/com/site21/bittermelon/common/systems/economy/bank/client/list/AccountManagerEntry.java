@@ -22,17 +22,16 @@ public class AccountManagerEntry extends AccountEntry {
     }
 
     @Override
-    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int index, int top, int left, int width, int height,
-                       int mouseX, int mouseY, boolean hovered, float partialTick) {
-        super.render(GuiGraphicsExtractor, index, top, left, width, height, mouseX, mouseY, hovered, partialTick);
+    public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
+        super.extractContent(graphics, mouseX, mouseY, hovered, a);
 
-                    GuiGraphicsExtractor.drawString(
-                    Minecraft.getInstance().font,
-                    Component.literal(String.format("| Balance: $%.2f", account.getBalance())),
-                    left + 60,
-                    top + 20,
-                    0xFFFFFF
-            );
+        graphics.text(
+                Minecraft.getInstance().font,
+                Component.literal(String.format("| Balance: $%.2f", account.getBalance())),
+                getContentX() + 60,
+                getContentY() + 20,
+                0xFFFFFF
+        );
     }
 
     @Override

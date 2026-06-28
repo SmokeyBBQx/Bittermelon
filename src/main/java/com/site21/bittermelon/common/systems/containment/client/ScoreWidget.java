@@ -28,13 +28,13 @@ public class ScoreWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         float score = scoreSupplier.get();
 
         int textColor = getScoreColor(score);
 
         if (score > 60 || (tickCount / 10) % 2 == 0) {
-            GuiGraphicsExtractor.drawString(Minecraft.getInstance().font,
+            graphics.text(Minecraft.getInstance().font,
                     label + ": " + String.format("%.1f%%", score),
                     getX(), getY() + 5,
                     textColor, false);
@@ -43,11 +43,11 @@ public class ScoreWidget extends AbstractWidget {
         int barWidth = 100;
         int filledWidth = (int) (barWidth * (score / 100f));
 
-        GuiGraphicsExtractor.fill(getX() + 110, getY() + 5,
+        graphics.fill(getX() + 110, getY() + 5,
                 getX() + 110 + barWidth, getY() + 13,
                 0xFF555555);
 
-        GuiGraphicsExtractor.fill(getX() + 110, getY() + 5,
+        graphics.fill(getX() + 110, getY() + 5,
                 getX() + 110 + filledWidth, getY() + 13,
                 textColor);
     }

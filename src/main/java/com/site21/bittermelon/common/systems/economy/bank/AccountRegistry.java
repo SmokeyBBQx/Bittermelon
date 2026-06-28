@@ -1,6 +1,7 @@
 package com.site21.bittermelon.common.systems.economy.bank;
 
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.personnel.registry.PersonnelEntry;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -120,7 +121,7 @@ public class AccountRegistry extends SavedData {
 
     static {
         TYPE = new SavedDataType<>(
-                "accounts",
+                Bittermelon.identifier("accounts"),
                 AccountRegistry::new,
                 RecordCodecBuilder.create(instance -> instance.group(
                         Account.CODEC.listOf().fieldOf("accounts")

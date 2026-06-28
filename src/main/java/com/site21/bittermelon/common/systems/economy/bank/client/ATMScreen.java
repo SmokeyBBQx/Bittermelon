@@ -9,8 +9,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -65,9 +67,10 @@ public class ATMScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-       super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-        GuiGraphicsExtractor.drawString(
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
+
+        graphics.text(
                 Minecraft.getInstance().font,
                 Component.literal("Welcome back, " + user.getName()),
                 5,
@@ -75,7 +78,7 @@ public class ATMScreen extends Screen {
                 0xFFFFFF
         );
 
-        GuiGraphicsExtractor.drawString(
+        graphics.text(
                 Minecraft.getInstance().font,
                 Component.literal("Select Account"),
                 5,
@@ -85,35 +88,37 @@ public class ATMScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        double mouseX = event.x();
+        double mouseY = event.y();
+
         if (searchBox.isMouseOver(mouseX, mouseY)) {
             searchBox.setFocused(true);
-            if (button == 0) {
-                searchBox.mouseClicked(mouseX, mouseY, button);
+            if (event.button() == 0) {
+                searchBox.mouseClicked(event, doubleClick);
             }
             return true;
         } else {
             searchBox.setFocused(false);
         }
 
-        return accountList.mouseClicked(mouseX, mouseY, button);
-    }
-
-
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (searchBox.isFocused()) {
-            return searchBox.keyPressed(keyCode, scanCode, modifiers);
-        }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return accountList.mouseClicked(event, doubleClick);
     }
 
     @Override
-    public boolean charTyped(char codePoint, int modifiers) {
+    public boolean keyPressed(KeyEvent event) {
         if (searchBox.isFocused()) {
-            return searchBox.charTyped(codePoint, modifiers);
+            return searchBox.keyPressed(event);
         }
-        return super.charTyped(codePoint, modifiers);
+        return super.keyPressed(event);
+    }
+
+    @Override
+    public boolean charTyped(CharacterEvent event) {
+        if (searchBox.isFocused()) {
+            return searchBox.charTyped(event);
+        }
+        return super.charTyped(event);
     }
 
     @Override

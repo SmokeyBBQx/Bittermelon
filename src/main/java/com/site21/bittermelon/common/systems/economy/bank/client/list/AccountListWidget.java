@@ -3,6 +3,7 @@ package com.site21.bittermelon.common.systems.economy.bank.client.list;
 import com.site21.bittermelon.common.systems.economy.bank.Account;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
+import net.minecraft.client.input.MouseButtonEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -52,11 +53,11 @@ public class AccountListWidget<E extends AccountEntry> extends ContainerObjectSe
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        AccountEntry entry = getEntryAtPosition(mouseX, mouseY);
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        AccountEntry entry = getEntryAtPosition(event.x(), event.y());
         if (entry == null) return false;
 
-        return entry.mouseClicked(mouseX, mouseY, button);
+        return entry.mouseClicked(event, doubleClick);
     }
 }
 
