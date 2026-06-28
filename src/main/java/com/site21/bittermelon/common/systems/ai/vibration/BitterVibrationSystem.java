@@ -3,7 +3,6 @@ package com.site21.bittermelon.common.systems.ai.vibration;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
-import net.minecraft.Util;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -16,6 +15,7 @@ import net.minecraft.tags.GameEventTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Mth;
+import net.minecraft.util.Util;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.ClipBlockStateContext;
@@ -54,51 +54,51 @@ public interface BitterVibrationSystem {
     int DEFAULT_VIBRATION_FREQUENCY = 0;
     /** @deprecated Neo: use the {@link net.neoforged.neoforge.registries.datamaps.builtin.NeoForgeDataMaps#VIBRATION_FREQUENCIES data map} instead. */
     @Deprecated
-    ToIntFunction<ResourceKey<GameEvent>> VIBRATION_FREQUENCY_FOR_EVENT = Util.make(new Reference2IntOpenHashMap<>(), p_316653_ -> {
-        p_316653_.defaultReturnValue(0);
-        p_316653_.put(GameEvent.STEP.key(), 1);
-        p_316653_.put(GameEvent.SWIM.key(), 1);
-        p_316653_.put(GameEvent.FLAP.key(), 1);
-        p_316653_.put(GameEvent.PROJECTILE_LAND.key(), 2);
-        p_316653_.put(GameEvent.HIT_GROUND.key(), 2);
-        p_316653_.put(GameEvent.SPLASH.key(), 2);
-        p_316653_.put(GameEvent.ITEM_INTERACT_FINISH.key(), 3);
-        p_316653_.put(GameEvent.PROJECTILE_SHOOT.key(), 3);
-        p_316653_.put(GameEvent.INSTRUMENT_PLAY.key(), 3);
-        p_316653_.put(GameEvent.ENTITY_ACTION.key(), 4);
-        p_316653_.put(GameEvent.ELYTRA_GLIDE.key(), 4);
-        p_316653_.put(GameEvent.UNEQUIP.key(), 4);
-        p_316653_.put(GameEvent.ENTITY_DISMOUNT.key(), 5);
-        p_316653_.put(GameEvent.EQUIP.key(), 5);
-        p_316653_.put(GameEvent.ENTITY_INTERACT.key(), 6);
-        p_316653_.put(GameEvent.SHEAR.key(), 6);
-        p_316653_.put(GameEvent.ENTITY_MOUNT.key(), 6);
-        p_316653_.put(GameEvent.ENTITY_DAMAGE.key(), 7);
-        p_316653_.put(GameEvent.DRINK.key(), 8);
-        p_316653_.put(GameEvent.EAT.key(), 8);
-        p_316653_.put(GameEvent.CONTAINER_CLOSE.key(), 9);
-        p_316653_.put(GameEvent.BLOCK_CLOSE.key(), 9);
-        p_316653_.put(GameEvent.BLOCK_DEACTIVATE.key(), 9);
-        p_316653_.put(GameEvent.BLOCK_DETACH.key(), 9);
-        p_316653_.put(GameEvent.CONTAINER_OPEN.key(), 10);
-        p_316653_.put(GameEvent.BLOCK_OPEN.key(), 10);
-        p_316653_.put(GameEvent.BLOCK_ACTIVATE.key(), 10);
-        p_316653_.put(GameEvent.BLOCK_ATTACH.key(), 10);
-        p_316653_.put(GameEvent.PRIME_FUSE.key(), 10);
-        p_316653_.put(GameEvent.NOTE_BLOCK_PLAY.key(), 10);
-        p_316653_.put(GameEvent.BLOCK_CHANGE.key(), 11);
-        p_316653_.put(GameEvent.BLOCK_DESTROY.key(), 12);
-        p_316653_.put(GameEvent.FLUID_PICKUP.key(), 12);
-        p_316653_.put(GameEvent.BLOCK_PLACE.key(), 13);
-        p_316653_.put(GameEvent.FLUID_PLACE.key(), 13);
-        p_316653_.put(GameEvent.ENTITY_PLACE.key(), 14);
-        p_316653_.put(GameEvent.LIGHTNING_STRIKE.key(), 14);
-        p_316653_.put(GameEvent.TELEPORT.key(), 14);
-        p_316653_.put(GameEvent.ENTITY_DIE.key(), 15);
-        p_316653_.put(GameEvent.EXPLODE.key(), 15);
+    ToIntFunction<ResourceKey<GameEvent>> VIBRATION_FREQUENCY_FOR_EVENT = Util.make(new Reference2IntOpenHashMap<>(), map -> {
+        map.defaultReturnValue(0);
+        map.put(GameEvent.STEP.key(), 1);
+        map.put(GameEvent.SWIM.key(), 1);
+        map.put(GameEvent.FLAP.key(), 1);
+        map.put(GameEvent.PROJECTILE_LAND.key(), 2);
+        map.put(GameEvent.HIT_GROUND.key(), 2);
+        map.put(GameEvent.SPLASH.key(), 2);
+        map.put(GameEvent.ITEM_INTERACT_FINISH.key(), 3);
+        map.put(GameEvent.PROJECTILE_SHOOT.key(), 3);
+        map.put(GameEvent.INSTRUMENT_PLAY.key(), 3);
+        map.put(GameEvent.ENTITY_ACTION.key(), 4);
+        map.put(GameEvent.ELYTRA_GLIDE.key(), 4);
+        map.put(GameEvent.UNEQUIP.key(), 4);
+        map.put(GameEvent.ENTITY_DISMOUNT.key(), 5);
+        map.put(GameEvent.EQUIP.key(), 5);
+        map.put(GameEvent.ENTITY_INTERACT.key(), 6);
+        map.put(GameEvent.SHEAR.key(), 6);
+        map.put(GameEvent.ENTITY_MOUNT.key(), 6);
+        map.put(GameEvent.ENTITY_DAMAGE.key(), 7);
+        map.put(GameEvent.DRINK.key(), 8);
+        map.put(GameEvent.EAT.key(), 8);
+        map.put(GameEvent.CONTAINER_CLOSE.key(), 9);
+        map.put(GameEvent.BLOCK_CLOSE.key(), 9);
+        map.put(GameEvent.BLOCK_DEACTIVATE.key(), 9);
+        map.put(GameEvent.BLOCK_DETACH.key(), 9);
+        map.put(GameEvent.CONTAINER_OPEN.key(), 10);
+        map.put(GameEvent.BLOCK_OPEN.key(), 10);
+        map.put(GameEvent.BLOCK_ACTIVATE.key(), 10);
+        map.put(GameEvent.BLOCK_ATTACH.key(), 10);
+        map.put(GameEvent.PRIME_FUSE.key(), 10);
+        map.put(GameEvent.NOTE_BLOCK_PLAY.key(), 10);
+        map.put(GameEvent.BLOCK_CHANGE.key(), 11);
+        map.put(GameEvent.BLOCK_DESTROY.key(), 12);
+        map.put(GameEvent.FLUID_PICKUP.key(), 12);
+        map.put(GameEvent.BLOCK_PLACE.key(), 13);
+        map.put(GameEvent.FLUID_PLACE.key(), 13);
+        map.put(GameEvent.ENTITY_PLACE.key(), 14);
+        map.put(GameEvent.LIGHTNING_STRIKE.key(), 14);
+        map.put(GameEvent.TELEPORT.key(), 14);
+        map.put(GameEvent.ENTITY_DIE.key(), 15);
+        map.put(GameEvent.EXPLODE.key(), 15);
 
         for (int i = 1; i <= 15; i++) {
-            p_316653_.put(getResonanceEventByFrequency(i), i);
+            map.put(getResonanceEventByFrequency(i), i);
         }
     });
 
@@ -304,12 +304,12 @@ public interface BitterVibrationSystem {
             }
         }
 
-        private static boolean areAdjacentChunksTicking(Level level, BlockPos pos) {
-            ChunkPos chunkpos = new ChunkPos(pos);
+        private static boolean areAdjacentChunksTicking(Level level, BlockPos listenerPos) {
+            ChunkPos listenerChunkPos = ChunkPos.containing(listenerPos);
 
-            for (int i = chunkpos.x - 1; i <= chunkpos.x + 1; i++) {
-                for (int j = chunkpos.z - 1; j <= chunkpos.z + 1; j++) {
-                    if (!level.shouldTickBlocksAt(ChunkPos.asLong(i, j)) || level.getChunkSource().getChunkNow(i, j) == null) {
+            for (int x = listenerChunkPos.x() - 1; x <= listenerChunkPos.x() + 1; x++) {
+                for (int z = listenerChunkPos.z() - 1; z <= listenerChunkPos.z() + 1; z++) {
+                    if (!level.shouldTickBlocksAt(ChunkPos.pack(x, z)) || level.getChunkSource().getChunkNow(x, z) == null) {
                         return false;
                     }
                 }

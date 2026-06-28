@@ -6,7 +6,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
-import net.tslat.smartbrainlib.object.MemoryTest;
+import net.tslat.smartbrainlib.library.object.MemoryTest;
 import net.tslat.smartbrainlib.util.BrainUtil;
 
 import java.util.ArrayList;

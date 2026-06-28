@@ -8,7 +8,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.player.Player;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
-import net.tslat.smartbrainlib.object.MemoryTest;
+import net.tslat.smartbrainlib.library.object.MemoryTest;
 import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.function.ToIntFunction;
 
 public class InduceRage<E extends LivingEntity> extends ExtendedBehaviour<E> {
-    private static final MemoryTest MEMORY_REQUIREMENTS = MemoryTest.builder(1)
+    private static final MemoryTest MEMORY_REQUIREMENTS = MemoryTest.builder()
             .hasMemory(MemoryModuleType.ATTACK_TARGET);
 
     protected ToIntFunction<E> rageAmountSupplier = entity -> 1;

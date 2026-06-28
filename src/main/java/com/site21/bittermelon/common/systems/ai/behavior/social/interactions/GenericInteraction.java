@@ -1,12 +1,12 @@
 package com.site21.bittermelon.common.systems.ai.behavior.social.interactions;
 
 import com.mojang.datafixers.util.Pair;
-import com.site21.bittermelon.common.systems.character.Character;
-import com.site21.bittermelon.common.systems.character.CharacterManager;
+import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.ai.base.NeedsUser;
 import com.site21.bittermelon.common.systems.ai.behavior.social.Relationship;
 import com.site21.bittermelon.common.systems.ai.behavior.social.Socializable;
-import com.site21.bittermelon.common.systems.ai.base.Need;
+import com.site21.bittermelon.common.systems.character.Character;
+import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
 import com.site21.bittermelon.util.LocalMessageHelper;
 import net.minecraft.network.chat.Component;
@@ -16,7 +16,7 @@ import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
-import net.tslat.smartbrainlib.object.MemoryTest;
+import net.tslat.smartbrainlib.library.object.MemoryTest;
 import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +28,10 @@ import java.util.function.BiPredicate;
 import java.util.function.ToIntBiFunction;
 
 public class GenericInteraction<E extends LivingEntity & Socializable & NeedsUser> extends ExtendedBehaviour<E> {
-    private static final MemoryTest MEMORY_REQUIREMENTS = MemoryTest.builder(4).hasMemory(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES).noMemory(BitterMemoryTypes.SOCIALIZE_TARGET.get()).usesMemories(MemoryModuleType.LOOK_TARGET, MemoryModuleType.WALK_TARGET);
+    private static final MemoryTest MEMORY_REQUIREMENTS = MemoryTest.builder()
+            .hasMemory(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES)
+            .noMemory(BitterMemoryTypes.SOCIALIZE_TARGET.get())
+            .usesMemories(MemoryModuleType.LOOK_TARGET, MemoryModuleType.WALK_TARGET);
 
     protected BiFunction<E, LivingEntity, Float> speedMod = (entity, partner) -> 1f;
     protected ToIntBiFunction<E, LivingEntity> closeEnoughDist = (entity, partner) -> 2;

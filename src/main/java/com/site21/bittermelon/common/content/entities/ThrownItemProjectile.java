@@ -254,7 +254,7 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
     }
 
     @Override
-    public @NotNull InteractionResult interact(@NotNull Player player, @NotNull InteractionHand hand) {
+    public InteractionResult interact(Player player, InteractionHand hand, Vec3 location) {
         if (level().isClientSide()) return InteractionResult.SUCCESS;
 
         player.addItem(getItem());

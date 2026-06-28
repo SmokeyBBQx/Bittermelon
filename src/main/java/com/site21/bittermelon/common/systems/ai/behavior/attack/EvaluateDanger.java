@@ -9,7 +9,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.GroupBehaviour;
-import net.tslat.smartbrainlib.object.SBLShufflingList;
+import net.tslat.smartbrainlib.library.object.SBLShufflingList;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

@@ -12,21 +12,21 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
-import net.tslat.smartbrainlib.api.core.sensor.PredicateSensor;
-import net.tslat.smartbrainlib.object.SquareRadius;
+import net.tslat.smartbrainlib.api.core.sensor.base.PredicateSensor;
+import net.tslat.smartbrainlib.library.object.SquareRadius;
 import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class NearbyDrinkableFluidsSensor<E extends Mob & HasBasicNeeds> extends PredicateSensor<FluidBlockEntity, E> {
+public class NearbyDrinkableFluidsSensor<E extends Mob & HasBasicNeeds> extends PredicateSensor<E, FluidBlockEntity> {
     private static final List<MemoryModuleType<?>> MEMORIES = ObjectArrayList.of(BitterMemoryTypes.NEARBY_DRINKABLE_FLUIDS.get());
 
     protected SquareRadius radius = new SquareRadius(32, 16);
 
     public NearbyDrinkableFluidsSensor() {
-        super((fluid, entity) -> entity.wantsToDrink(fluid));
+        super(HasBasicNeeds::wantsToDrink);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class NearbyDrinkableFluidsSensor<E extends Mob & HasBasicNeeds> extends 
 
             if (!(blockEntity instanceof FluidBlockEntity fluid)) continue;
 
-            if (this.predicate().test(fluid, entity)) {
+            if (this.predicate().test(entity, fluid)) {
                 fluids.add(fluid);
             }
         }

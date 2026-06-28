@@ -34,14 +34,14 @@ public class ObserversSensor<E extends Mob> extends ExtendedSensor<E> {
 
     @Override
     protected void doTick(@NotNull ServerLevel level, @NotNull E entity) {
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
         List<LivingEntity> observers = new ArrayList<>();
 
-        // Look for entities within the max distance range of the entity.
+        // Look for entities within the max distance range of the entity
         List<LivingEntity> potentialObservers = level.getEntitiesOfClass(LivingEntity.class,
                 entity.getBoundingBox().inflate(MAX_DISTANCE));
 
-        // Determine whether the potential observer is looking at the entity.
+        // Determine whether the potential observer is looking at the entity
         for (LivingEntity potentialObserver : potentialObservers) {
             if (isLookingAt(potentialObserver, entity)) observers.add(potentialObserver);
         }
@@ -55,7 +55,7 @@ public class ObserversSensor<E extends Mob> extends ExtendedSensor<E> {
 
     private boolean isLookingAt(@NotNull LivingEntity observer, @NotNull E target) {
         Vec3 observerPos = observer.getEyePosition();
-        // Get middle of target's model.
+        // Get middle of target's model
         Vec3 targetPos = target.position().add(0, target.getBbHeight() / 2, 0);
 
         Vec3 lookDirection;
@@ -65,7 +65,7 @@ public class ObserversSensor<E extends Mob> extends ExtendedSensor<E> {
             lookDirection = observer.getLookAngle();
         }
 
-        // Find dot to compare view vector alignment with target position.
+        // Find dot to compare view vector alignment with target position
         Vec3 toTarget = targetPos.subtract(observerPos).normalize();
         double dot = lookDirection.dot(toTarget);
 

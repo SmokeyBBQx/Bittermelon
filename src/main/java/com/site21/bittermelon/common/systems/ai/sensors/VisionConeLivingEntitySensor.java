@@ -8,9 +8,9 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
-import net.tslat.smartbrainlib.api.core.sensor.PredicateSensor;
-import net.tslat.smartbrainlib.object.FixedNearestVisibleLivingEntities;
-import net.tslat.smartbrainlib.object.SquareRadius;
+import net.tslat.smartbrainlib.api.core.sensor.base.PredicateSensor;
+import net.tslat.smartbrainlib.library.object.FixedNearestVisibleLivingEntities;
+import net.tslat.smartbrainlib.library.object.SquareRadius;
 import net.tslat.smartbrainlib.util.BrainUtil;
 import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +20,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class VisionConeLivingEntitySensor<E extends LivingEntity> extends PredicateSensor<LivingEntity, E> {
+public class VisionConeLivingEntitySensor<E extends LivingEntity> extends PredicateSensor<E, LivingEntity> {
     private static final List<MemoryModuleType<?>> MEMORIES = ObjectArrayList.of(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES);
 
     @Nullable
@@ -48,7 +48,7 @@ public class VisionConeLivingEntitySensor<E extends LivingEntity> extends Predic
         }
 
         List<LivingEntity> entities = EntityRetrievalUtil.getEntities(entity, radius.xzRadius(), radius.yRadius(),
-                radius.xzRadius(), LivingEntity.class, livingEntity -> predicate().test(livingEntity, entity));
+                radius.xzRadius(), LivingEntity.class, livingEntity -> predicate().test(entity, livingEntity));
 
         Predicate<LivingEntity> conePredicate = target -> isInVisionCone(entity, target);
         entities.removeIf(conePredicate.negate());

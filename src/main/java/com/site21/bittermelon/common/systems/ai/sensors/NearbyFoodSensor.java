@@ -10,20 +10,20 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
-import net.tslat.smartbrainlib.api.core.sensor.PredicateSensor;
-import net.tslat.smartbrainlib.object.SquareRadius;
+import net.tslat.smartbrainlib.api.core.sensor.base.PredicateSensor;
+import net.tslat.smartbrainlib.library.object.SquareRadius;
 import net.tslat.smartbrainlib.util.BrainUtil;
 import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 
 import java.util.List;
 
-public class NearbyFoodSensor<E extends Mob & HasBasicNeeds> extends PredicateSensor<E, ItemEntity,> {
+public class NearbyFoodSensor<E extends Mob & HasBasicNeeds> extends PredicateSensor<E, ItemEntity> {
     private static final List<MemoryModuleType<?>> MEMORIES = ObjectArrayList.of(BitterMemoryTypes.NEARBY_EDIBLE_ITEMS.get());
 
     protected SquareRadius radius = new SquareRadius(32, 16);
 
     public NearbyFoodSensor() {
-        super((item, entity) -> entity.wantsToEat(item.getItem()) && entity.hasLineOfSight(item));
+        super((entity, item) -> entity.wantsToEat(item.getItem()) && entity.hasLineOfSight(item));
     }
 
     @Override
@@ -44,7 +44,7 @@ public class NearbyFoodSensor<E extends Mob & HasBasicNeeds> extends PredicateSe
                 this.radius.yRadius(),
                 this.radius.xzRadius(),
                 ItemEntity.class,
-                item -> predicate().test(item, entity));
+                item -> predicate().test(entity, item));
 
         BrainUtil.setMemory(entity, BitterMemoryTypes.NEARBY_EDIBLE_ITEMS.get(), foodItems);
     }
