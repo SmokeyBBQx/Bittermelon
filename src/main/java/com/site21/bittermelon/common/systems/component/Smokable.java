@@ -39,7 +39,7 @@ public record Smokable(Holder<Item> buttItem, int smokeDuration, Holder<SoundEve
     public static final Smokable DEFAULT = new Smokable(CIGARETTE_BUTT, 30, Holder.direct(FIRE_AMBIENT));
 
     public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
-        if (level.isClientSide) return InteractionResult.PASS;
+        if (level.isClientSide()) return InteractionResult.PASS;
 
         // Determine the other hand
         InteractionHand otherHand = player.getUsedItemHand() == InteractionHand.MAIN_HAND
@@ -79,7 +79,7 @@ public record Smokable(Holder<Item> buttItem, int smokeDuration, Holder<SoundEve
 
     public @NotNull InteractionResult useOn(@NotNull UseOnContext context) {
         Level level = context.getLevel();
-        if (level.isClientSide) return InteractionResult.PASS;
+        if (level.isClientSide()) return InteractionResult.PASS;
 
         Player player = context.getPlayer();
         ItemStack stack = context.getItemInHand();
@@ -97,7 +97,7 @@ public record Smokable(Holder<Item> buttItem, int smokeDuration, Holder<SoundEve
     }
 
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
-        if (level.isClientSide || !stack.getOrDefault(LIT, false)) return stack;
+        if (level.isClientSide() || !stack.getOrDefault(LIT, false)) return stack;
 
         playSmokeSound(level, entity.getOnPos(), stack);
         addSmokeParticles(level, entity);
@@ -112,7 +112,7 @@ public record Smokable(Holder<Item> buttItem, int smokeDuration, Holder<SoundEve
 
     public boolean releaseUsing(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity, int timeLeft) {
         if (timeLeft > getUseDuration(stack, entity) / 4) return false;
-        if (level.isClientSide || !stack.getOrDefault(LIT, false)) return false;
+        if (level.isClientSide() || !stack.getOrDefault(LIT, false)) return false;
 
         playSmokeSound(level, entity.getOnPos(), stack);
         addSmokeParticles(level, entity);
@@ -128,7 +128,7 @@ public record Smokable(Holder<Item> buttItem, int smokeDuration, Holder<SoundEve
     }
 
     public void inventoryTick(@NotNull ItemStack stack, @NotNull ServerLevel level, @NotNull Entity entity, @Nullable EquipmentSlot slot) {
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
         if (slot != EquipmentSlot.HEAD || !stack.getOrDefault(LIT, false)) return;
 
         if (level.getGameTime() % SMOKE_TICK_INTERVAL == 0) {

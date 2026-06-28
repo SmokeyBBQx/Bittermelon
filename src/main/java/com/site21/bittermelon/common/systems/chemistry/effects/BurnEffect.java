@@ -32,12 +32,12 @@ public class BurnEffect implements ReactionEffect {
             if (!lit.get()) {
                 level.setBlock(pos, state.setValue(BlockStateProperties.LIT, true), UPDATE_ALL);
                 level.playSound(null, pos, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS, 1.0f,
-                        0.8f + level.random.nextFloat() * 0.4f);
+                        0.8f + level.getRandom().nextFloat() * 0.4f);
             }
         } else if (state.canBeReplaced()) {
             level.setBlock(pos, Blocks.FIRE.defaultBlockState(), UPDATE_ALL);
             level.playSound(null, pos, SoundEvents.FIRECHARGE_USE, SoundSource.BLOCKS, 1.0f,
-                    0.8f + level.random.nextFloat() * 0.4f);
+                    0.8f + level.getRandom().nextFloat() * 0.4f);
         }
     }
 }

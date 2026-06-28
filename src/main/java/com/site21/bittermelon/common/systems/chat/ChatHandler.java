@@ -97,7 +97,7 @@ public class ChatHandler {
         sendMessageWithDistanceAlpha(messageComponent, player, range);
 
         // Broadcast sound event for speech
-        if (!player.level().isClientSide) {
+        if (!player.level().isClientSide()) {
             NeoForge.EVENT_BUS.post(new SyncSoundEvent(player.level(), player.getOnPos(), SyncSoundType.SPEECH, messageComponent, range));
         }
     }
@@ -119,7 +119,7 @@ public class ChatHandler {
     }
 
     public static void sendMessageWithDistanceAlpha(MutableComponent message, @NotNull ServerPlayer player, int range) {
-        for (ServerPlayer serverPlayer : player.getServer().getPlayerList().getPlayers()) {
+        for (ServerPlayer serverPlayer : player.level().players()) {
             double distance = player.distanceTo(serverPlayer);
             if (distance <= range) {
                 float alpha = (float) ((range - distance) / range);
@@ -132,7 +132,7 @@ public class ChatHandler {
     }
 
     public static void sendMessage(Component message, @NotNull ServerPlayer player, int range) {
-        for (ServerPlayer serverPlayer : player.getServer().getPlayerList().getPlayers()) {
+        for (ServerPlayer serverPlayer : player.level().players()) {
             if (player.distanceTo(serverPlayer) <= range) {
                 serverPlayer.sendSystemMessage(message);
             }
@@ -140,7 +140,7 @@ public class ChatHandler {
     }
 
     public static void sendMessage(Component message, @NotNull ServerPlayer player) {
-        for (ServerPlayer serverPlayer : player.getServer().getPlayerList().getPlayers()) {
+        for (ServerPlayer serverPlayer : player.level().players()) {
             serverPlayer.sendSystemMessage(message);
         }
     }

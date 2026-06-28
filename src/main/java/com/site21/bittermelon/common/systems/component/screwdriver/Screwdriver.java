@@ -10,7 +10,6 @@ import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -23,7 +22,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
-import net.minecraft.world.item.component.UseCooldown;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
@@ -33,7 +31,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import static com.site21.bittermelon.init.neoforge.BitterSounds.*;
+import static com.site21.bittermelon.init.neoforge.BitterSounds.SCREWDRIVER_CLOSE;
+import static com.site21.bittermelon.init.neoforge.BitterSounds.SCREWDRIVER_OPEN;
 
 public record Screwdriver(int screwDuration, Holder<SoundEvent> screwSound) {
     public static final Codec<Screwdriver> CODEC;
@@ -45,7 +44,7 @@ public record Screwdriver(int screwDuration, Holder<SoundEvent> screwSound) {
         Level level = context.getLevel();
         BlockPos clickedPos = context.getClickedPos();
 
-        if (level.isClientSide || player == null) return InteractionResult.PASS;
+        if (level.isClientSide() || player == null) return InteractionResult.PASS;
 
         if (handleFumbling(player, level, clickedPos, context.getItemInHand())) return InteractionResult.PASS;
 
@@ -58,7 +57,7 @@ public record Screwdriver(int screwDuration, Holder<SoundEvent> screwSound) {
     }
 
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
-        if (level.isClientSide) return stack;
+        if (level.isClientSide()) return stack;
 
         if (entity instanceof Player player) {
             BlockPos targetPos = getTargetBlockPos(player);
@@ -68,10 +67,9 @@ public record Screwdriver(int screwDuration, Holder<SoundEvent> screwSound) {
                 panelDevice.togglePanel();
 
                 playPanelSound(level, targetPos, panelDevice.isPanelOpen());
-                player.displayClientMessage(Component.literal("You " + (panelDevice.isPanelOpen() ? "open" : "close") + " the panel.")
+                player.sendSystemMessage(Component.literal("You " + (panelDevice.isPanelOpen() ? "open" : "close") + " the panel.")
                                 .withStyle(ChatFormatting.ITALIC)
-                                .withStyle(ChatFormatting.GRAY),
-                        true);
+                                .withStyle(ChatFormatting.GRAY));
             }
         }
 
@@ -99,10 +97,9 @@ public record Screwdriver(int screwDuration, Holder<SoundEvent> screwSound) {
 
         if (player.getRandom().nextFloat() > 0.5f + electricalSkill / 10) {
             player.getCooldowns().addCooldown(stack, 20);
-            player.displayClientMessage(Component.literal("You fumble with the screwdriver.")
+            player.sendSystemMessage(Component.literal("You fumble with the screwdriver.")
                             .withStyle(ChatFormatting.ITALIC)
-                            .withStyle(ChatFormatting.RED),
-                    true);
+                            .withStyle(ChatFormatting.RED));
             level.playSound(null, pos, SoundEvents.ITEM_BREAK.value(), SoundSource.PLAYERS, 0.2f, 2.0f);
 
             return true;

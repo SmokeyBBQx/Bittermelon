@@ -27,7 +27,7 @@ public class CombatHandler {
     }
 
     public static void handleAttack(LivingEntity attacker, LivingEntity target, AttackTemplate attackTemplate) {
-        if (target == null || attacker.level().isClientSide) return;
+        if (target == null || attacker.level().isClientSide()) return;
 
         CharacterManager characterManager = CharacterManager.get(attacker.level());
         Character attackerCharacter = characterManager.getActiveCharacter(attacker);

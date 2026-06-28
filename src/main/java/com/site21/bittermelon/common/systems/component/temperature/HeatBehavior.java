@@ -66,7 +66,7 @@ public record HeatBehavior(int smokingPoint, int meltingPoint, int flashPoint, i
     }
 
     public void onEntityItemUpdate(@NotNull ItemStack stack, @NotNull ItemEntity entity, @NotNull Level level) {
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
 
         int temperature = stack.getOrDefault(TEMPERATURE, 273);
         if (canIgnite(entity) && level.getGameTime() % 20 == 0) {
