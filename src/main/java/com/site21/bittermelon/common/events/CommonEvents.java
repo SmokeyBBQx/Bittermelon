@@ -11,6 +11,7 @@ import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.character.networking.SyncActiveCharacter;
 import com.site21.bittermelon.common.systems.character.networking.SyncCharacters;
+import com.site21.bittermelon.common.systems.character.skills.SkillUpdater;
 import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluid;
 import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlockEntity;
 import com.site21.bittermelon.common.systems.rage.RageHandler;
@@ -69,16 +70,21 @@ public class CommonEvents {
             if (level instanceof ServerLevel serverLevel) {
                 tickDirtying(serverLevel, livingEntity);
             }
+
+            Character character = CharacterManager.get(entity.level()).getActiveCharacter(entity);
+            if (character != null) {
+                tickCharacter(livingEntity, character);
+            }
         }
 
         if (entity instanceof Player player) {
-            StressHandler.tickStress(level, player);
             if (!player.hasData(MEDICAL_STATS)) {
                 player.setData(MEDICAL_STATS, HUMAN.get().toInstance(player));
             } else {
                 player.getData(MEDICAL_STATS).tick(player);
             }
 
+            StressHandler.tickStress(level, player);
             RageHandler.tick(level, player);
         }
 
@@ -93,7 +99,11 @@ public class CommonEvents {
         }
     }
 
-    public static void tickStains(Level level, LivingEntity entity) {
+    private static void tickCharacter(LivingEntity entity, Character character) {
+        SkillUpdater.tickSkills(entity, character);
+    }
+
+    private static void tickStains(Level level, LivingEntity entity) {
         BlockPos pos = entity.blockPosition();
 
         if (level.isClientSide()) return;

@@ -32,7 +32,7 @@ public class SkinTexture extends SimpleTexture {
     }
 
     @Override
-    public @NotNull TextureContents loadContents(@NotNull ResourceManager resourceManager) throws IOException {
+    public @NotNull TextureContents loadContents(@NotNull ResourceManager resourceManager) {
         // Try cache first
         if (cacheFile != null && cacheFile.isFile()) {
             try (FileInputStream fis = new FileInputStream(cacheFile)) {

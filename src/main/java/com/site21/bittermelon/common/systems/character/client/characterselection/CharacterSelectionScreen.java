@@ -83,7 +83,7 @@ public class CharacterSelectionScreen extends Screen {
 
         ClientPacketDistributor.sendToServer(new SwitchCharacter(character.getEntityUUID(), character.getId()));
         characterManager.setActiveCharacter(minecraft.player, character.getId());
-        minecraft.player.displayClientMessage(Component.literal("Switched to: " + character.getName()).withStyle(ChatFormatting.GREEN), false);
+        minecraft.player.sendSystemMessage(Component.literal("Switched to: " + character.getName()).withStyle(ChatFormatting.GREEN));
 
         onClose();
     }

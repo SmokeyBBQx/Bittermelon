@@ -8,26 +8,33 @@ import com.site21.bittermelon.common.systems.character.client.charactereditor.ro
 import com.site21.bittermelon.common.systems.character.client.characterselection.CharacterSelectionScreen;
 import com.site21.bittermelon.common.systems.character.networking.UpdateCharacter;
 import com.site21.bittermelon.common.systems.character.skin.SkinManager;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.MultiLineEditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.resources.DefaultPlayerSkin;
-import net.minecraft.client.resources.PlayerSkin;
+import net.minecraft.core.ClientAsset;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.PlayerModelType;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import static com.site21.bittermelon.common.systems.character.skin.SkinUtil.getAbstractClientPlayer;
-import static net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventory;
 
 
 public class CharacterEditorScreen extends Screen {
@@ -57,7 +64,7 @@ public class CharacterEditorScreen extends Screen {
 
     private float rotationX = 0;
     private boolean isWideModel;
-    private Identifier skin;
+    private ClientAsset.Texture skin;
 
     public CharacterEditorScreen(Character character, Screen previousScreen) {
         super(Component.literal("Character Editor"));
@@ -70,7 +77,7 @@ public class CharacterEditorScreen extends Screen {
     protected void init() {
         screenX = (width - SCREEN_WIDTH) / 2;
         screenY = (height - SCREEN_HEIGHT / 2) / 2;
-        skin = DefaultPlayerSkin.get(minecraft.player.getUUID()).texture();
+        skin = DefaultPlayerSkin.get(minecraft.player.getUUID()).body();
 
         initializeFields();
         addConfirmAndCancelButtons();
@@ -127,7 +134,7 @@ public class CharacterEditorScreen extends Screen {
         character.getPlayerInfo().ifPresent(info -> {
             skin = SkinManager.loadSkin(info.getSkinURL(), character.getId().toString());
             urlField.setValue(info.getSkinURL());
-            boolean isWide = info.getModel().equals(PlayerInfo.SkinModel.WIDE);
+            boolean isWide = info.getModel().equals(PlayerModelType.WIDE);
             modelButton.setWide(isWide);
             isWideModel = isWide;
         });
@@ -164,7 +171,7 @@ public class CharacterEditorScreen extends Screen {
 
         String skinURL = urlField.getValue().trim();
         String description = descriptionField.getValue();
-        PlayerSkin.Model model = isWideModel ? PlayerSkin.Model.WIDE : PlayerSkin.Model.SLIM;
+        PlayerModelType model = isWideModel ? PlayerModelType.WIDE : PlayerModelType.SLIM;
 
         int emoteColor;
         try {
@@ -181,7 +188,7 @@ public class CharacterEditorScreen extends Screen {
     }
 
     private void updateOrCreateCharacter(boolean isNewCharacter, String name, String description, int emoteColor,
-                                         String skinURL, PlayerSkin.Model model) {
+                                         String skinURL, PlayerModelType model) {
         if (isNewCharacter) {
             character = new Character(minecraft.player.getUUID(), name, description, emoteColor);
             CharacterManager.get(minecraft.level).addCharacter(character);
@@ -196,9 +203,9 @@ public class CharacterEditorScreen extends Screen {
         character.getPlayerInfo().ifPresentOrElse(
                 info -> {
                     info.setSkinURL(skinURL);
-                    info.setModel(PlayerInfo.SkinModel.fromMinecraftModel(model));
+                    info.setModel(model);
                 },
-                () -> character.setPlayerInfo(new PlayerInfo(skinURL, PlayerInfo.SkinModel.fromMinecraftModel(model)))
+                () -> character.setPlayerInfo(new PlayerInfo(skinURL, model))
         );
     }
 
@@ -222,39 +229,38 @@ public class CharacterEditorScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-        renderPlayer(GuiGraphicsExtractor);
-        renderLabels(GuiGraphicsExtractor);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
+        extractPlayer(graphics);
+        extractLabels(graphics);
     }
 
-    private void renderLabels(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor) {
+    private void extractLabels(@NotNull GuiGraphicsExtractor graphics) {
         int startX = screenX + MARGIN + 120;
         int startY = screenY + MARGIN + 5;
         int spacing = font.lineHeight * 2 + 5;
 
-        GuiGraphicsExtractor.drawString(font, "Name:", startX, startY, TEXT_COLOR, false);
+        graphics.text(font, "Name:", startX, startY, TEXT_COLOR, false);
         startY += spacing;
-        GuiGraphicsExtractor.drawString(font, "Emote Color:", startX, startY, TEXT_COLOR, false);
+        graphics.text(font, "Emote Color:", startX, startY, TEXT_COLOR, false);
         startY += spacing;
-        GuiGraphicsExtractor.drawString(font, "Skin URL:", startX, startY, TEXT_COLOR, false);
+        graphics.text(font, "Skin URL:", startX, startY, TEXT_COLOR, false);
         startY += spacing;
-        GuiGraphicsExtractor.drawString(font, "Description:", startX, startY, TEXT_COLOR, false);
+        graphics.text(font, "Description:", startX, startY, TEXT_COLOR, false);
     }
 
     @Override
-    public void renderBackground(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-
-        GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND, screenX, screenY, SCREEN_WIDTH, SCREEN_HEIGHT);
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractBackground(graphics, mouseX, mouseY, a);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND, screenX, screenY, SCREEN_WIDTH, SCREEN_HEIGHT);
     }
 
-    private void renderPlayer(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor) {
+    private void extractPlayer(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor) {
         int playerX = screenX + MARGIN + 6;
         int playerY = screenY + MARGIN;
 
         AbstractClientPlayer fakePlayer = getAbstractClientPlayer(minecraft.player.getUUID(), nameField.getValue(),
-                skin, isWideModel ? PlayerSkin.Model.WIDE : PlayerSkin.Model.SLIM);
+                skin, isWideModel ? PlayerModelType.WIDE : PlayerModelType.SLIM);
 
         renderEntityInInventoryFollowsAngle(
                 GuiGraphicsExtractor,
@@ -268,55 +274,48 @@ public class CharacterEditorScreen extends Screen {
         );
     }
 
-    public static void renderEntityInInventoryFollowsAngle(@NotNull GuiGraphicsExtractor graphics, int x1, int y1, int x2, int y2, int scale, float yOffset, float horizontalRotation, float verticalRotation, @NotNull LivingEntity entity) {
-        float centerX = (float) (x1 + x2) / 2.0F;
-        float centerY = (float) (y1 + y2) / 2.0F;
+    public static void renderEntityInInventoryFollowsAngle(
+            GuiGraphicsExtractor graphics, int x0, int y0, int x1, int y1, int size, float offsetY, float xAngle, float yAngle, LivingEntity entity
+    ) {
+        Quaternionf rotation = new Quaternionf().rotateZ((float) Math.PI);
+        Quaternionf xRotation = new Quaternionf().rotateX(yAngle * 20.0f * (float) (Math.PI / 180.0));
+        rotation.mul(xRotation);
+        EntityRenderState renderState = extractRenderState(entity);
+        if (renderState instanceof LivingEntityRenderState livingRenderState) {
+            livingRenderState.bodyRot = 180.0f + xAngle * 20.0f;
+            livingRenderState.yRot = 180.0f + xAngle * 20.0f;
+            if (livingRenderState.pose != Pose.FALL_FLYING) {
+                livingRenderState.xRot = -yAngle * 20.0f;
+            } else {
+                livingRenderState.xRot = 0.0f;
+            }
 
-        graphics.enableScissor(x1, y1, x2, y2);
+            livingRenderState.boundingBoxWidth = livingRenderState.boundingBoxWidth / livingRenderState.scale;
+            livingRenderState.boundingBoxHeight = livingRenderState.boundingBoxHeight / livingRenderState.scale;
+            livingRenderState.scale = 1.0f;
+        }
 
-        Quaternionf baseRotation = (new Quaternionf()).rotateZ((float) Math.PI);
-        Quaternionf verticalTiltRotation = (new Quaternionf()).rotateX(verticalRotation * 20.0F * ((float) Math.PI / 180F));
-        baseRotation.mul(verticalTiltRotation);
+        Vector3f translation = new Vector3f(0.0F, renderState.boundingBoxHeight / 2.0F + offsetY, 0.0F);
+        graphics.entity(renderState, size, translation, rotation, xRotation, x0, y0, x1, y1);
+    }
 
-        float originalBodyRotation = entity.yBodyRot;
-        float originalYaw = entity.getYRot();
-        float originalPitch = entity.getXRot();
-        float originalHeadRotationOld = entity.yHeadRotO;
-        float originalHeadRotation = entity.yHeadRot;
-
-        float newBodyRotation = 180.0F + horizontalRotation * 20.0F;
-        float newYawRotation = 180.0F + horizontalRotation * 20.0F;
-        float newPitchRotation = -verticalRotation * 20.0F;
-
-        entity.yBodyRot = newBodyRotation;
-        entity.setYRot(newYawRotation);
-        entity.setXRot(newPitchRotation);
-        entity.yHeadRot = newBodyRotation;
-        entity.yHeadRotO = newBodyRotation;
-
-        float entityScale = entity.getScale();
-        Vector3f translation = new Vector3f(0.0F, entity.getBbHeight() / 2.0F + yOffset * entityScale, 0.0F);
-        float adjustedScale = (float) scale / entityScale;
-
-        renderEntityInInventory(graphics, x1, y1, x2, y2, adjustedScale, translation, baseRotation, verticalTiltRotation, entity);
-
-        entity.yBodyRot = originalBodyRotation;
-        entity.setYRot(originalYaw);
-        entity.setXRot(originalPitch);
-        entity.yHeadRotO = originalHeadRotationOld;
-        entity.yHeadRot = originalHeadRotation;
-
-        graphics.disableScissor();
+    private static EntityRenderState extractRenderState(LivingEntity entity) {
+        EntityRenderDispatcher entityRenderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
+        EntityRenderer<? super LivingEntity, ?> renderer = entityRenderDispatcher.getRenderer(entity);
+        EntityRenderState renderState = renderer.createRenderState(entity, 1.0f);
+        renderState.shadowPieces.clear();
+        renderState.outlineColor = 0;
+        return renderState;
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (isMouseInPlayerRenderArea(mouseX, mouseY)) {
-            rotationX -= (float) dragX * ROTATION_SENSITIVITY;
+    public boolean mouseDragged(MouseButtonEvent event, double dx, double dy) {
+        if (isMouseInPlayerRenderArea(event.x(), event.y())) {
+            rotationX -= (float) dx * ROTATION_SENSITIVITY;
             return true;
         }
 
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        return super.mouseDragged(event, dx, dy);
     }
 
     private boolean isMouseInPlayerRenderArea(double mouseX, double mouseY) {

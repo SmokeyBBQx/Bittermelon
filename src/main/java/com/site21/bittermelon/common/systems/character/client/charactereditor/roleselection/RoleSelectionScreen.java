@@ -10,6 +10,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
@@ -95,31 +96,31 @@ public class RoleSelectionScreen extends Screen {
     }
 
     public void setSelectedRole(RoleListWidget.@NotNull Entry role) {
-        int descriptionHeight = minecraft.font.wordWrapHeight(role.getRole().description, listWidget.getWidth());
+        int descriptionHeight = minecraft.font.wordWrapHeight(FormattedText.of(role.getRole().description), listWidget.getWidth());
         confirmButton.setY(role.y + font.lineHeight + descriptionHeight + 15);
         confirmButton.visible = true;
         selectedRole = role;
     }
 
     @Override
-    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
 
         if (selectedRole != null) {
-            renderSelectedRole(GuiGraphicsExtractor);
+            extractSelectedRole(graphics);
         }
     }
 
-    public void renderSelectedRole(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor) {
+    public void extractSelectedRole(@NotNull GuiGraphicsExtractor graphics) {
         int x = listWidget.getRight() + 5;
         int y = selectedRole.y;
         Role role = selectedRole.getRole();
-        int descriptionHeight = minecraft.font.wordWrapHeight(role.description, listWidget.getWidth());
+        int descriptionHeight = minecraft.font.wordWrapHeight(FormattedText.of(role.description), listWidget.getWidth());
 
-        GuiGraphicsExtractor.fill(x - 2, y - 2, x + listWidget.getWidth(), y + descriptionHeight + font.lineHeight + 12, 0x44000000);
+        graphics.fill(x - 2, y - 2, x + listWidget.getWidth(), y + descriptionHeight + font.lineHeight + 12, 0x44000000);
 
-        GuiGraphicsExtractor.drawString(font, role.name, x, y, 0xFFFFFFFF);
-        GuiGraphicsExtractor.drawWordWrap(font, Component.literal(role.description), x, y + 15, listWidget.getWidth(), 0xFFFFFFFF);
+        graphics.text(font, role.name, x, y, 0xFFFFFFFF);
+        graphics.textWithWordWrap(font, Component.literal(role.description), x, y + 15, listWidget.getWidth(), 0xFFFFFFFF);
     }
 
     public Character getCharacter() {

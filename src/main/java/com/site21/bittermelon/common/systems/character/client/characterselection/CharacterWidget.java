@@ -16,6 +16,7 @@ import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -72,20 +73,20 @@ public class CharacterWidget extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         if (isHovered && !editButton.isHovered()) {
-            GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, selected ? BACKGROUND_SELECTED_HOVERED : BACKGROUND_HOVERED, x, y, width, height);
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, selected ? BACKGROUND_SELECTED_HOVERED : BACKGROUND_HOVERED, x, y, width, height);
         } else {
-            GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, selected ? BACKGROUND_SELECTED : BACKGROUND, x, y, width, height);
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, selected ? BACKGROUND_SELECTED : BACKGROUND, x, y, width, height);
         }
 
         if (character == null) {
-            renderCreateCharacter(GuiGraphicsExtractor);
+            renderCreateCharacter(graphics);
         } else {
-            renderCharacter(GuiGraphicsExtractor);
+            renderCharacter(graphics);
         }
 
-        editButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        editButton.extractRenderState(graphics, mouseX, mouseY, a);
     }
 
     private void renderCharacter(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor) {
@@ -97,7 +98,7 @@ public class CharacterWidget extends AbstractWidget {
             displayName = font.plainSubstrByWidth(displayName, maxWidth - font.width("...")) + "...";
         }
 
-        GuiGraphicsExtractor.drawCenteredString(font, displayName, x + width / 2, y + 5, 0xFFFFFF);
+        GuiGraphicsExtractor.centeredText(font, displayName, x + width / 2, y + 5, 0xFFFFFF);
 
         AbstractClientPlayer fakePlayer = getAbstractClientPlayer(character);
 
@@ -124,9 +125,9 @@ public class CharacterWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0 && isHovered) {
-            if (editButton.mouseClicked(mouseX, mouseY, button)) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (event.button() == 0 && isHovered) {
+            if (editButton.mouseClicked(event, doubleClick)) {
                 return true;
             }
 

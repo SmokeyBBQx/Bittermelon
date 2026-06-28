@@ -1,8 +1,8 @@
 package com.site21.bittermelon.common.systems.character.skin;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.Util;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

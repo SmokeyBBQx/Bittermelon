@@ -1,6 +1,7 @@
 package com.site21.bittermelon.common.systems.character;
 
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.character.skin.SkinOverrideSystem;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -154,12 +155,12 @@ public class CharacterManager extends SavedData {
             setActiveCharacter(player, switchedTo.getId());
 //        }
 
-        switchedTo.getPlayerInfo().ifPresent(info -> SkinOverrideSystem.setSkinOverride(player.getUUID(), switchedTo.getId(), info.getSkinURL(), info.getModel().toMinecraftModel()));
+        switchedTo.getPlayerInfo().ifPresent(info -> SkinOverrideSystem.setSkinOverride(player.getUUID(), switchedTo.getId(), info.getSkinURL(), info.getModel()));
     }
 
     static {
         TYPE = new SavedDataType<>(
-                "characters",
+                Bittermelon.identifier("characters"),
                 CharacterManager::new,
                 RecordCodecBuilder.create(instance -> instance.group(
                         Character.CODEC.listOf().fieldOf("characters").forGetter(cm ->

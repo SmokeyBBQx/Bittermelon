@@ -4,10 +4,10 @@ import com.site21.bittermelon.Bittermelon;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import org.jetbrains.annotations.NotNull;
 
 
 public class ModelButton extends AbstractWidget {
@@ -25,11 +25,11 @@ public class ModelButton extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         if (isHovered) {
-            GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, wide ? WIDE_ICON_HIGHLIGHTED : SLIM_ICON_HIGHLIGHTED, x, y, width, height);
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, wide ? WIDE_ICON_HIGHLIGHTED : SLIM_ICON_HIGHLIGHTED, x, y, width, height);
         } else {
-            GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, wide ? WIDE_ICON : SLIM_ICON, x, y, width, height);
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, wide ? WIDE_ICON : SLIM_ICON, x, y, width, height);
         }
     }
 
@@ -47,12 +47,11 @@ public class ModelButton extends AbstractWidget {
     }
 
     @Override
-    public void onClick(double mouseX, double mouseY) {
+    public void onClick(MouseButtonEvent event, boolean doubleClick) {
         wide = !wide;
         onPress.onPress(this);
     }
 
-    
     public interface OnPress {
         void onPress(ModelButton button);
     }

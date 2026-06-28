@@ -13,7 +13,6 @@ import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.LevelResource;
 import org.jetbrains.annotations.NotNull;
 
@@ -120,14 +119,6 @@ public class Character {
         this.playerInfo = playerInfo;
     }
 
-    /**
-     * Updates the character's medical stats. Should be called periodically, e.g. each server tick.
-     * @param level The current game level.
-     */
-    public void update(@NotNull Level level) {
-        if (level.isClientSide) return;
-    }
-
     public EnumMap<Skill, Float> getSkills() {
         return skills;
     }
@@ -158,7 +149,7 @@ public class Character {
      * @param data The NBT data to save.
      * @param level The server level (world) to save the data in.
      */
-    public void savePlayerData(CompoundTag data, @NotNull ServerLevel level) {
+    public void savePlayerData(CompoundTag data, ServerLevel level) {
         try {
             Path dataDir = level.getServer().getWorldPath(LevelResource.ROOT).resolve("characterdata");
             Files.createDirectories(dataDir);
