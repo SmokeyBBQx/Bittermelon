@@ -11,10 +11,10 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
@@ -47,16 +47,21 @@ public class SCP025FR extends BitterMob<SCP025FR> {
     }
 
     @Override
-    public BrainActivityGroup<? extends SCP025FR> getCoreTasks() {
-        return BrainActivityGroup.coreTasks(
+    public List<? extends ExtendedSensor<?>> getSensors(SCP025FR owner) {
+        return List.of();
+    }
+
+    @Override
+    public List<? extends BehaviorControl<?>> getAlwaysRunningBehaviours(SCP025FR owner) {
+        return List.of(
                 new LookAtTarget<>(),
                 new MoveToWalkTarget<>()
         );
     }
 
     @Override
-    public BrainActivityGroup<? extends SCP025FR> getIdleTasks() {
-        return BrainActivityGroup.idleTasks(
+    public List<? extends BehaviorControl<?>> getIdleBehaviours(SCP025FR owner) {
+        return List.of(
                 new SetRandomWalkTarget<>()
         );
     }
@@ -69,11 +74,6 @@ public class SCP025FR extends BitterMob<SCP025FR> {
     @Override
     protected Map<Need, NeedInstance> initializeNeeds() {
         return Map.of();
-    }
-
-    @Override
-    public List<? extends ExtendedSensor<? extends SCP025FR>> getSensors() {
-        return List.of();
     }
 
     @Override

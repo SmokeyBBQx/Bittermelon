@@ -16,13 +16,13 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
@@ -106,7 +106,7 @@ public class Mimic extends BitterMob<Mimic> {
     }
 
     @Override
-    public List<? extends ExtendedSensor<? extends Mimic>> getSensors() {
+    public List<? extends ExtendedSensor<?>> getSensors(Mimic owner) {
         return List.of(
                 new NearbyLivingEntitySensor<>(),
                 new HurtBySensor<>()
@@ -114,28 +114,29 @@ public class Mimic extends BitterMob<Mimic> {
     }
 
     @Override
-    public BrainActivityGroup<? extends Mimic> getCoreTasks() {
-        return BrainActivityGroup.coreTasks(
+    public List<? extends BehaviorControl<?>> getAlwaysRunningBehaviours(Mimic owner) {
+        return List.of(
                 new LookAtTarget<>(),
                 new WalkOrRunToWalkTarget<>()
         );
     }
 
     @Override
-    public BrainActivityGroup<Mimic> getIdleTasks() {
-        return BrainActivityGroup.idleTasks(
+    public List<? extends BehaviorControl<?>> getIdleBehaviours(Mimic owner) {
+        return List.of(
                 new FirstApplicableBehaviour<Mimic>(
                         new TargetOrRetaliate<>(),
                         new SetPlayerLookTarget<>(),
                         new SetRandomLookTarget<>()),
                 new OneRandomBehaviour<>(
                         new SetRandomWalkTarget<>(),
-                        new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))));
+                        new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60)))
+        );
     }
 
     @Override
-    public BrainActivityGroup<? extends Mimic> getFightTasks() {
-        return BrainActivityGroup.fightTasks(
+    public List<? extends BehaviorControl<?>> getFightingBehaviours(Mimic owner) {
+        return List.of(
                 new InvalidateAttackTarget<>(),
                 new SetWalkTargetToAttackTarget<>(),
                 new AnimatableMeleeAttack<>(0)

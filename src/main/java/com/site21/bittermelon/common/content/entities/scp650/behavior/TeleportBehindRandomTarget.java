@@ -68,7 +68,7 @@ public class TeleportBehindRandomTarget<E extends SCP650> extends ExtendedBehavi
         BrainUtil.setForgettableMemory(entity, SCARE_TARGET.get(), randomPlayer, 2400);
 
         // REPEAT TORMENTING LOGIC
-        Map<UUID, Integer> timesScared = BrainUtil.memoryOrDefault(entity, TIMES_TARGET_SCARED.get(), HashMap::new);
+        Map<UUID, Integer> timesScared = BrainUtil.memoryOrDefault(entity, TIMES_TARGET_SCARED.get(), new HashMap<>());
         timesScared.compute(randomPlayer.getUUID(), (k, v) -> (v == null ? 0 : v) + 1);
         BrainUtil.setMemory(entity, TIMES_TARGET_SCARED.get(), timesScared);
 

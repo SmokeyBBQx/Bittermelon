@@ -38,7 +38,7 @@ public class InvalidateFoundTarget<E extends SCP650> extends ExtendedBehaviour<E
 
     @Override
     protected void start(@NotNull E entity) {
-        if (entity.level().isClientSide) return;
+        if (entity.level().isClientSide()) return;
         Player player = BrainUtil.getMemory(entity, SCARE_TARGET.get());
         List<LivingEntity> observers = BrainUtil.getMemory(entity, OBSERVERS.get());
 

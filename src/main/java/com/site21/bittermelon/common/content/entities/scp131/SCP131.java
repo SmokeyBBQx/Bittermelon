@@ -4,7 +4,6 @@ import com.site21.bittermelon.common.systems.ai.base.BitterMob;
 import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
 import com.site21.bittermelon.common.systems.character.Character;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -13,11 +12,11 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
@@ -28,6 +27,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetRandomLookTar
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -94,22 +94,29 @@ public class SCP131 extends BitterMob<SCP131> {
     }
 
     @Override
-    public @org.jetbrains.annotations.Nullable SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason spawnReason, @org.jetbrains.annotations.Nullable SpawnGroupData spawnGroupData) {
+    public @Nullable SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason spawnReason, @org.jetbrains.annotations.Nullable SpawnGroupData spawnGroupData) {
         setVariant(level.getRandom().nextInt(MAX_VARIANTS));
         return super.finalizeSpawn(level, difficulty, spawnReason, spawnGroupData);
     }
 
     @Override
-    public BrainActivityGroup<? extends SCP131> getCoreTasks() {
-        return BrainActivityGroup.coreTasks(
+    public List<? extends ExtendedSensor<?>> getSensors(SCP131 owner) {
+        return List.of(
+                new NearbyPlayersSensor<>()
+        );
+    }
+
+    @Override
+    public List<? extends BehaviorControl<?>> getAlwaysRunningBehaviours(SCP131 owner) {
+        return List.of(
                 new LookAtTarget<>(),
                 new MoveToWalkTarget<>()
         );
     }
 
     @Override
-    public BrainActivityGroup<? extends SCP131> getIdleTasks() {
-        return BrainActivityGroup.idleTasks(
+    public List<? extends BehaviorControl<?>> getIdleBehaviours(SCP131 owner) {
+        return List.of(
                 new OneRandomBehaviour<>(
                         new SetRandomLookTarget<>(),
                         new SetPlayerLookTarget<>()
@@ -120,10 +127,5 @@ public class SCP131 extends BitterMob<SCP131> {
                         new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))
                 )
         );
-    }
-
-    @Override
-    public List<? extends ExtendedSensor<? extends SCP131>> getSensors() {
-        return ObjectArrayList.of(new NearbyPlayersSensor<>());
     }
 }

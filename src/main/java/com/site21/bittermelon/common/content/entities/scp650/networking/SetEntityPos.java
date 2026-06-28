@@ -10,9 +10,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
-public record SetEntityPos(Vector3f pos, int entityID, float yaw) implements CustomPacketPayload {
+public record SetEntityPos(Vector3fc pos, int entityID, float yaw) implements CustomPacketPayload {
     public static final Type<SetEntityPos> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "set_entity_pos"));
 
     @Override
@@ -36,14 +36,14 @@ public record SetEntityPos(Vector3f pos, int entityID, float yaw) implements Cus
         if (entity == null) return;
 
         // Set both old and new position to same position to avoid tweening.
-        entity.xo = pos.x;
-        entity.yo = pos.y;
-        entity.zo = pos.z;
-        entity.xOld = pos.x;
-        entity.yOld = pos.y;
-        entity.zOld = pos.z;
+        entity.xo = pos.x();
+        entity.yo = pos.y();
+        entity.zo = pos.z();
+        entity.xOld = pos.x();
+        entity.yOld = pos.y();
+        entity.zOld = pos.z();
         entity.yRotO = yaw;
-        entity.setPos(pos.x, pos.y, pos.z);
+        entity.setPos(pos.x(), pos.y(), pos.z());
         entity.setYBodyRot(yaw);
         entity.setYHeadRot(yaw);
         entity.setYRot(yaw);

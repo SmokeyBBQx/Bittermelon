@@ -10,9 +10,9 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.level.Level;
-import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
@@ -55,16 +55,16 @@ public class SCP548 extends BitterMob<SCP548> {
     }
 
     @Override
-    public List<? extends ExtendedSensor<? extends SCP548>> getSensors() {
+    public List<? extends ExtendedSensor<?>> getSensors(SCP548 owner) {
         return List.of(
                 new NearbyLivingEntitySensor<>(),
-                new NearbyBlocksSensor<SCP548>().setRadius(4, 1)
+                new NearbyBlocksSensor<SCP548>().detectionRadius(4, 1)
         );
     }
 
     @Override
-    public BrainActivityGroup<? extends SCP548> getCoreTasks() {
-        return BrainActivityGroup.coreTasks(
+    public List<? extends BehaviorControl<?>> getAlwaysRunningBehaviours(SCP548 owner) {
+        return List.of(
                 new LookAtTarget<>(),
                 new MoveToWalkTarget<>(),
                 new AvoidEntity<>().avoiding((entity) -> true)
@@ -72,8 +72,8 @@ public class SCP548 extends BitterMob<SCP548> {
     }
 
     @Override
-    public BrainActivityGroup<? extends SCP548> getIdleTasks() {
-        return BrainActivityGroup.idleTasks(
+    public List<? extends BehaviorControl<?>> getIdleBehaviours(SCP548 owner) {
+        return List.of(
                 new OneRandomBehaviour<>(
                         new SetRandomLookTarget<>(),
                         new SetPlayerLookTarget<>()
@@ -85,10 +85,5 @@ public class SCP548 extends BitterMob<SCP548> {
                         new FindOrMakeBurrow()
                 )
         );
-    }
-
-    @Override
-    public BrainActivityGroup<? extends SCP548> getFightTasks() {
-        return super.getFightTasks();
     }
 }

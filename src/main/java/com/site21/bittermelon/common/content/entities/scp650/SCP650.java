@@ -4,22 +4,18 @@ import com.site21.bittermelon.common.content.entities.scp650.behavior.Invalidate
 import com.site21.bittermelon.common.content.entities.scp650.behavior.TeleportBehindRandomTarget;
 import com.site21.bittermelon.common.content.entities.scp650.client.SCP650Animation;
 import com.site21.bittermelon.common.systems.ai.sensors.ObserversSensor;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.animation.AnimationDefinition;
-import net.minecraft.network.protocol.game.DebugPackets;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.level.Level;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
-import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
-import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,17 +48,20 @@ public class SCP650 extends Mob implements SmartBrainOwner<SCP650> {
     }
 
     @Override
-    public List<? extends ExtendedSensor<? extends SCP650>> getSensors() {
-        return ObjectArrayList.of(new ObserversSensor<SCP650>().setScanRate(entity -> 10));
+    public List<? extends ExtendedSensor<?>> getSensors(SCP650 owner) {
+        return List.of(
+                new ObserversSensor<SCP650>().scanRate(entity -> 10)
+        );
     }
 
     @Override
-    public BrainActivityGroup<? extends SCP650> getCoreTasks() {
-        return BrainActivityGroup.coreTasks(
+    public List<? extends BehaviorControl<?>> getAlwaysRunningBehaviours(SCP650 owner) {
+        return List.of(
                 new TeleportBehindRandomTarget<>(),
                 new InvalidateFoundTarget<>()
         );
     }
+
 
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
@@ -118,27 +117,5 @@ public class SCP650 extends Mob implements SmartBrainOwner<SCP650> {
     @Override
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {
         return false;
-    }
-
-    @Override
-    protected void customServerAiStep(@NotNull ServerLevel level) {
-        super.customServerAiStep(level);
-        tickBrain(this);
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-    }
-
-    @Override
-    protected void sendDebugPackets() {
-        super.sendDebugPackets();
-        DebugPackets.sendEntityBrain(this);
-    }
-
-    @Override
-    protected @NotNull SmartBrainProvider<SCP650> brainProvider() {
-        return new SmartBrainProvider<>(this);
     }
 }
