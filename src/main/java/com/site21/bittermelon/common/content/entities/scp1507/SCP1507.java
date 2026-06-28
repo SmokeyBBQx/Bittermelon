@@ -31,12 +31,12 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
-import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.LeapAtTarget;
@@ -88,40 +88,40 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     }
 
     @Override
-    public List<? extends ExtendedSensor<? extends SCP1507>> getSensors() {
+    public List<? extends ExtendedSensor<?>> getSensors(SCP1507 owner) {
         return List.of(
                 new NearbyLivingEntitySensor<>(),
                 new HurtBySensor<>(),
-                new NearbyBlocksSensor<SCP1507>().setRadius(10, 2)
+                new NearbyBlocksSensor<SCP1507>().detectionRadius(10, 2)
         );
     }
 
     @Override
     protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
-        return new SmoothGroundNavigation( this, level);
+        return new SmoothGroundNavigation(this, level);
     }
 
     @Override
-    public BrainActivityGroup<? extends SCP1507> getCoreTasks() {
-        return BrainActivityGroup.coreTasks(
+    public List<? extends BehaviorControl<?>> getAlwaysRunningBehaviours(SCP1507 owner) {
+        return List.of(
                 new LookAtTarget<>(),
                 new MoveToWalkTarget<>(),
                 new InvalidateBreakTarget<>(),
                 new ReactToUnreachableTarget<>()
-                        .reaction((entity, towering) -> new FindBlockingBlock<>()),
+                        .reaction((_, _) -> new FindBlockingBlock<>()),
                 new LeapAndHurtBlock<SCP1507>(0)
                         .whenStarting(SCP1507::resetAttackTime)
                         .startCondition((entity) ->
                                 BrainUtil.getMemory(entity, BitterMemoryTypes.BREAK_TARGET.get()).distSqr(entity.getOnPos()) <= 4),
                 new TargetOrRetaliate<>()
                         .attackablePredicate(target -> !(target instanceof SCP1507))
-                        .alertAlliesWhen((owner, attacker) -> true)
+                        .alertAlliesWhen((_, _) -> true)
         );
     }
 
     @Override
-    public BrainActivityGroup<? extends SCP1507> getIdleTasks() {
-        return BrainActivityGroup.idleTasks(
+    public List<? extends BehaviorControl<?>> getIdleBehaviours(SCP1507 owner) {
+        return List.of(
                 new VerifyOrFindLeader<>(),
                 new TryToBecomeActive().cooldownForBetween(600, 1200),
                 new StopMovingWhenLookedAt(),
@@ -131,7 +131,7 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
                         new FirstApplicableBehaviour<>(
                                 new FollowEntity<>()
                                         .following((entity) -> BrainUtil.getMemory(entity, BitterMemoryTypes.LEADER.get()))
-                                        .stopFollowingWithin((entity, target) -> getFollowDistance(entity)),
+                                        .stopFollowingWithin((entity, _) -> getFollowDistance(entity)),
                                 new SetRandomWalkTarget<>().startCondition((SCP1507::isActive))
                         ),
                         new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))
@@ -140,8 +140,8 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     }
 
     @Override
-    public BrainActivityGroup<? extends SCP1507> getFightTasks() {
-        return BrainActivityGroup.fightTasks(
+    public List<? extends BehaviorControl<?>> getFightingBehaviours(SCP1507 owner) {
+        return List.of(
                 new InvalidateAttackTarget<>(),
                 new SetWalkTargetToAttackTarget<>(),
                 new OneRandomBehaviour<>(

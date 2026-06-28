@@ -21,7 +21,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -88,7 +87,7 @@ public class SCP718BlisterBlock extends Block {
     }
 
     private void destroyBlister(Level level, BlockPos pos, BlockState state) {
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
 
         level.removeBlock(pos, false);
         List<SubstanceStack> substances = List.of(new SubstanceStack(Substances.EYEBALL_FLUID, 50));
@@ -101,7 +100,7 @@ public class SCP718BlisterBlock extends Block {
 
     private void makeSoundAndParticles(ServerLevel level, BlockPos pos, BlockState state) {
         level.playSound(null, pos, BitterSounds.SPLATTER.value(), SoundSource.BLOCKS, 1.0f,
-                0.8f + level.random.nextFloat() * 0.4f);
+                0.8f + level.getRandom().nextFloat() * 0.4f);
 
         level.sendParticles(
                 new BlockParticleOption(ParticleTypes.BLOCK_CRUMBLE, state),

@@ -5,8 +5,6 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 public class SCP1507Model extends EntityModel<SCP1507RenderState> {
@@ -53,19 +51,17 @@ public class SCP1507Model extends EntityModel<SCP1507RenderState> {
         }
 
         float attackTime = renderState.attackTime;
-        float totalAttackDuration = 20f; // Total animation time
-        float attackPhase = 0.5f; // 60% of time for attack, 40% for recovery
+        float totalAttackDuration = 20f;
+        float attackPhase = 0.5f;
 
         if (attackTime > 0) {
             float progress = 1 - (attackTime / totalAttackDuration);
 
             if (progress < attackPhase) {
-                // Attack phase - ease out cubic
                 float attackProgress = progress / attackPhase;
                 float easedAngle = 1 - (float)Math.pow(1 - attackProgress, 3);
                 root().xRot = -easedAngle;
             } else {
-                // Recovery phase - ease in cubic
                 float recoveryProgress = (progress - attackPhase) / (1 - attackPhase);
                 float easedAngle = (float)Math.pow(1 - recoveryProgress, 3);
                 root().xRot = -easedAngle;

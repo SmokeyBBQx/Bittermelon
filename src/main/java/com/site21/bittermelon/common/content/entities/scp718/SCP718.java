@@ -18,12 +18,11 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
-import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
-import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
@@ -62,7 +61,7 @@ public class SCP718 extends PathfinderMob implements SmartBrainOwner<SCP718> {
     }
 
     @Override
-    public List<? extends ExtendedSensor<? extends SCP718>> getSensors() {
+    public List<? extends ExtendedSensor<?>> getSensors(SCP718 owner) {
         return List.of(
                 new NearbyPlayersSensor<>(),
                 new NearbyLivingEntitySensor<>()
@@ -70,33 +69,33 @@ public class SCP718 extends PathfinderMob implements SmartBrainOwner<SCP718> {
     }
 
     @Override
-    public BrainActivityGroup<? extends SCP718> getCoreTasks() {
-        return BrainActivityGroup.coreTasks(
+    public List<? extends BehaviorControl<?>> getAlwaysRunningBehaviours(SCP718 owner) {
+        return List.of(
                 new LookAtTarget<>(),
                 new MoveToWalkTarget<>()
         );
     }
 
     @Override
-    public BrainActivityGroup<? extends SCP718> getIdleTasks() {
-        return BrainActivityGroup.idleTasks(
+    public List<? extends BehaviorControl<?>> getIdleBehaviours(SCP718 owner) {
+        return List.of(
                 new FirstApplicableBehaviour<>(
                         new SetPlayerLookTarget<>(),
-                        new SetRandomLookTarget<>().cooldownFor(entity -> 500)
+                        new SetRandomLookTarget<>().cooldownFor(_ -> 500)
                 ),
                 new TargetOrRetaliate<>(),
-                new InvalidateAttackTarget<>().invalidateIf((entity, target) -> target instanceof SCP718)
+                new InvalidateAttackTarget<>().invalidateIf((_, target) -> target instanceof SCP718)
         );
     }
 
     @Override
-    public BrainActivityGroup<? extends SCP718> getFightTasks() {
-        return BrainActivityGroup.fightTasks(
+    public List<? extends BehaviorControl<?>> getFightingBehaviours(SCP718 owner) {
+        return List.of(
                 new InvalidateAttackTarget<>(),
                 new SetWalkTargetToAttackTarget<>()
-                        .closeEnoughDist((entity, target) -> 12),
+                        .closeEnoughDist((_, _) -> 12),
                 new InduceStress<>(),
-                new InduceRage<>().cooldownFor(entity -> 20)
+                new InduceRage<>().cooldownFor(_ -> 20)
         );
     }
 
@@ -161,16 +160,10 @@ public class SCP718 extends PathfinderMob implements SmartBrainOwner<SCP718> {
     @Override
     protected void customServerAiStep(@NotNull ServerLevel level) {
         super.customServerAiStep(level);
-        tickBrain(this);
 
         if (level.getGameTime() % GROWTH_INTERVAL == 0) {
             grow();
         }
-    }
-
-    @Override
-    protected @NotNull SmartBrainProvider<SCP718> brainProvider() {
-        return new SmartBrainProvider<>(this);
     }
 
     @Override
