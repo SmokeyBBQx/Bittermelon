@@ -65,6 +65,7 @@ import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.resources.PlayerSkin;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.context.ContextKey;
@@ -107,6 +108,10 @@ public class ClientSetup {
 
     public static final ContextKey<Boolean> EYEBALL_GROWTH = new ContextKey<>(
             Bittermelon.identifier("eyeball_growth")
+    );
+
+    public static final ContextKey<Map<BlockPos, Integer>> BLOCK_DAMAGE = new ContextKey<>(
+            Bittermelon.identifier("block_damage")
     );
 
     @SubscribeEvent
