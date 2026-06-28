@@ -2,6 +2,7 @@ package com.site21.bittermelon.common.events;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.items.scps.scp377.FortuneHandler;
+import com.site21.bittermelon.common.systems.atmosphere.AtmosHandler;
 import com.site21.bittermelon.common.systems.atmosphere.data.AtmosInstancesData;
 import com.site21.bittermelon.common.systems.atmosphere.networking.AtmosChunkUpdate;
 import com.site21.bittermelon.common.systems.blockdamage.BlockDamageUtil;
@@ -35,6 +36,7 @@ import net.neoforged.neoforge.event.entity.living.LivingBreatheEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
@@ -203,5 +205,12 @@ public class CommonEvents {
         // Sync the atmosphere data for the chunk to the player when they start tracking it
         PacketDistributor.sendToPlayer(event.getPlayer(),
                 new AtmosChunkUpdate(event.getPos(), event.getChunk().getData(ATMOSPHERE.get())));
+    }
+
+    @SubscribeEvent
+    public static void onBlockNotifyNeighbors(BlockEvent.NeighborNotifyEvent event) {
+        if (event.getLevel() instanceof ServerLevel serverLevel) {
+            AtmosHandler.onBlockUpdate(serverLevel, event.getPos());
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.site21.bittermelon.common.systems.atmosphere.data.AtmosBlockData;
 import com.site21.bittermelon.common.systems.atmosphere.data.AtmosInstancesData;
 import com.site21.bittermelon.common.systems.atmosphere.networking.AtmosChunkUpdate;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
+import com.site21.bittermelon.init.neoforge.BitterBlockTags;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
@@ -208,5 +209,22 @@ public final class AtmosHandler {
 
         // Sync the updated instance
         AtmosInstancesData.get(level).syncInstance(atmosInstance);
+    }
+
+    public static void onBlockUpdate(ServerLevel level, BlockPos pos) {
+        if (level.getBlockState(pos).is(BitterBlockTags.PASSES_ATMOS)) return;
+
+        LevelChunk chunk = level.getChunkAt(pos);
+        AtmosBlockData data = chunk.getData(ATMOSPHERE.get());
+
+        if (!level.getBlockState(pos).canBeReplaced() && !level.getBlockState(pos).is(BitterBlockTags.PASSES_ATMOS)) {
+            if (AtmosHandler.getAtmosInstanceAt(level, pos) != null) {
+                AtmosHandler.getAtmosInstanceAt(level, pos).removeBlock(pos.asLong(), level);
+            }
+            data.removeAtmosBlock(pos);
+        }
+
+        // TODO: Proper updating for doors
+        AtmosHandler.updateAtmosphereAt(level, pos);
     }
 }
