@@ -1,6 +1,7 @@
 package com.site21.bittermelon.common.systems.atmosphere.data;
 
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosInstance;
 import com.site21.bittermelon.common.systems.atmosphere.networking.CreateAtmosInstance;
 import com.site21.bittermelon.common.systems.atmosphere.networking.RemoveAtmosInstance;
@@ -18,12 +19,12 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class AtmosLevelData extends SavedData {
-    public static final SavedDataType<AtmosLevelData> TYPE;
-    private static AtmosLevelData clientInstance;
+public class AtmosInstancesData extends SavedData {
+    public static final SavedDataType<AtmosInstancesData> TYPE;
+    private static AtmosInstancesData clientInstance;
     private final Map<UUID, AtmosInstance> atmosInstances = new ConcurrentHashMap<>();
 
-    public static @NotNull AtmosLevelData get(@NotNull Level level) {
+    public static @NotNull AtmosInstancesData get(@NotNull Level level) {
         if (level instanceof ServerLevel serverLevel) {
             return serverLevel.getDataStorage().computeIfAbsent(TYPE);
         }
@@ -31,9 +32,9 @@ public class AtmosLevelData extends SavedData {
     }
 
     
-    private static AtmosLevelData getClient() {
+    private static AtmosInstancesData getClient() {
         if (clientInstance == null) {
-            clientInstance = new AtmosLevelData();
+            clientInstance = new AtmosInstancesData();
         }
         return clientInstance;
     }
@@ -79,13 +80,13 @@ public class AtmosLevelData extends SavedData {
 
     static {
         TYPE = new SavedDataType<>(
-                "atmosphere",
-                AtmosLevelData::new,
+                Bittermelon.identifier("atmos_instances"),
+                AtmosInstancesData::new,
                 RecordCodecBuilder.create(instance -> instance.group(
                                 AtmosInstance.CODEC.listOf().fieldOf("instances")
                                         .forGetter(data -> new ArrayList<>(data.atmosInstances.values())))
                         .apply(instance, instances -> {
-                            AtmosLevelData data = new AtmosLevelData();
+                            AtmosInstancesData data = new AtmosInstancesData();
                             for (AtmosInstance atmosInstance : instances) {
                                 data.atmosInstances.put(atmosInstance.getUUID(), atmosInstance);
                             }

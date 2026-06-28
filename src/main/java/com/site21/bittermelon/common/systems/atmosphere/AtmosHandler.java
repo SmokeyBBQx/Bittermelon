@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.systems.atmosphere;
 
 import com.site21.bittermelon.common.systems.atmosphere.data.AtmosBlockData;
-import com.site21.bittermelon.common.systems.atmosphere.data.AtmosLevelData;
+import com.site21.bittermelon.common.systems.atmosphere.data.AtmosInstancesData;
 import com.site21.bittermelon.common.systems.atmosphere.networking.AtmosChunkUpdate;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
@@ -40,7 +40,7 @@ public final class AtmosHandler {
      * @param pos The position at which to update the atmosphere.
      */
     public static void updateAtmosphereAt(@NotNull Level level, @NotNull BlockPos pos) {
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
 
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos(pos.getX(), pos.getY(), pos.getZ());
         Set<AtmosInstance> updatedInstances = new HashSet<>();
@@ -56,8 +56,9 @@ public final class AtmosHandler {
         }
 
         if (level instanceof ServerLevel serverLevel) {
-            ChunkPos chunkPos = new ChunkPos(pos);
-            PacketDistributor.sendToPlayersTrackingChunk(serverLevel, chunkPos, new AtmosChunkUpdate(chunkPos, level.getChunk(chunkPos.x, chunkPos.z).getData(ATMOSPHERE)));
+            ChunkPos chunkPos = new ChunkPos(pos.getX(), pos.getZ());
+            PacketDistributor.sendToPlayersTrackingChunk(serverLevel, chunkPos, new AtmosChunkUpdate(chunkPos,
+                    level.getChunk(chunkPos.x(), chunkPos.z()).getData(ATMOSPHERE)));
         }
     }
 
@@ -67,7 +68,7 @@ public final class AtmosHandler {
      * @param instance The atmosphere instance to remove.
      */
     public static void removeAtmosphere(@NotNull Level level, @NotNull AtmosInstance instance) {
-        AtmosLevelData.get(level).removeAtmosInstance(instance.getUUID());
+        AtmosInstancesData.get(level).removeAtmosInstance(instance.getUUID());
     }
 
     /**
@@ -79,7 +80,7 @@ public final class AtmosHandler {
      * @param gas The gas to release.
      */
     public static void releaseGas(@NotNull Level level, BlockPos pos, @NotNull SubstanceStack gas) {
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
 
         AtmosInstance instance = getAtmosInstanceAt(level, pos);
         if (instance != null) {
@@ -90,8 +91,9 @@ public final class AtmosHandler {
         }
 
         if (level instanceof ServerLevel serverLevel) {
-            ChunkPos chunkPos = new ChunkPos(pos);
-            PacketDistributor.sendToPlayersTrackingChunk(serverLevel, chunkPos, new AtmosChunkUpdate(chunkPos, level.getChunk(chunkPos.x, chunkPos.z).getData(ATMOSPHERE)));
+            ChunkPos chunkPos = new ChunkPos(pos.getX(), pos.getZ());
+            PacketDistributor.sendToPlayersTrackingChunk(serverLevel, chunkPos,
+                    new AtmosChunkUpdate(chunkPos, level.getChunk(chunkPos.x(), chunkPos.z()).getData(ATMOSPHERE)));
         }
     }
 
@@ -115,11 +117,11 @@ public final class AtmosHandler {
      * @param gasses The list of gases in the atmosphere instance.
      */
     public static void addAtmosphere(@NotNull Level level, BlockPos startPos, float temperature, List<SubstanceStack> gasses) {
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
 
         AtmosInstance newInstance = new AtmosInstance(temperature, gasses);
         updateAtmosphere(level, startPos, newInstance);
-        AtmosLevelData.get(level).addAtmosInstance(newInstance);
+        AtmosInstancesData.get(level).addAtmosInstance(newInstance);
     }
 
     /**
@@ -141,7 +143,7 @@ public final class AtmosHandler {
      * @param floodFill The set of blocks to include in the atmosphere instance.
      */
     public static void updateAtmosphere(@NotNull Level level, @NotNull AtmosInstance atmosInstance, @NotNull Set<BlockPos> floodFill) {
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
         Set<UUID> mergedInstances = new HashSet<>();
 
         // Convert floodFill BlockPos to LongSet for easier comparison
@@ -183,7 +185,7 @@ public final class AtmosHandler {
                 newInstance.addBlock(packedPos, level);
             }
 
-            AtmosLevelData.get(level).addAtmosInstance(newInstance);
+            AtmosInstancesData.get(level).addAtmosInstance(newInstance);
         }
 
         // Clear current blocks and reassign based on flood fill
@@ -205,6 +207,6 @@ public final class AtmosHandler {
         }
 
         // Sync the updated instance
-        AtmosLevelData.get(level).syncInstance(atmosInstance);
+        AtmosInstancesData.get(level).syncInstance(atmosInstance);
     }
 }

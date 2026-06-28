@@ -3,7 +3,7 @@ package com.site21.bittermelon.common.systems.atmosphere.networking;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosInstance;
-import com.site21.bittermelon.common.systems.atmosphere.data.AtmosLevelData;
+import com.site21.bittermelon.common.systems.atmosphere.data.AtmosInstancesData;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -32,7 +32,7 @@ public record UpdateAtmosGas(UUID uuid, SubstanceStack gas) implements CustomPac
     }
 
     public void handle(@NotNull IPayloadContext ctx) {
-            AtmosLevelData data = AtmosLevelData.get(ctx.player().level());
+            AtmosInstancesData data = AtmosInstancesData.get(ctx.player().level());
             AtmosInstance instance = data.getAtmosInstance(uuid);
             if (instance != null) {
                 instance.updateGas(gas, ctx.player().level());

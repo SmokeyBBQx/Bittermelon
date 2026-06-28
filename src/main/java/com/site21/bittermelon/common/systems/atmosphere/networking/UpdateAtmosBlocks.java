@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.systems.atmosphere.networking;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosInstance;
-import com.site21.bittermelon.common.systems.atmosphere.data.AtmosLevelData;
+import com.site21.bittermelon.common.systems.atmosphere.data.AtmosInstancesData;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -33,7 +33,7 @@ public record UpdateAtmosBlocks(UUID uuid, boolean add, long blockPos) implement
     }
 
     public void handle(@NotNull IPayloadContext ctx) {
-            AtmosLevelData data = AtmosLevelData.get(ctx.player().level());
+            AtmosInstancesData data = AtmosInstancesData.get(ctx.player().level());
             AtmosInstance instance = data.getAtmosInstance(uuid);
             if (instance != null) {
                 if (add) {

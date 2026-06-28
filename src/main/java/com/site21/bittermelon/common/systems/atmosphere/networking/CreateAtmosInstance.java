@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.systems.atmosphere.networking;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosInstance;
-import com.site21.bittermelon.common.systems.atmosphere.data.AtmosLevelData;
+import com.site21.bittermelon.common.systems.atmosphere.data.AtmosInstancesData;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -25,7 +25,7 @@ public record CreateAtmosInstance(AtmosInstance instance) implements CustomPacke
     }
 
     public void handle(@NotNull IPayloadContext ctx) {
-            AtmosLevelData data = AtmosLevelData.get(ctx.player().level());
+            AtmosInstancesData data = AtmosInstancesData.get(ctx.player().level());
             data.getAtmosInstances().put(instance.getUUID(), instance);
     }
 }

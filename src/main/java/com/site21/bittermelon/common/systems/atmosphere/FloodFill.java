@@ -13,7 +13,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 public final class FloodFill {
     // Based on Ad Astra's Floodfill Algorithm
@@ -51,7 +52,7 @@ public final class FloodFill {
     }
 
     public static @NotNull Set<BlockPos> run(@NotNull Level level, @NotNull BlockPos start, int limit, SolidBlockPredicate predicate) {
-        if (level.isClientSide) return Set.of();
+        if (level.isClientSide()) return Set.of();
         LongSet visited = new LongOpenHashSet(limit);
         LongArrayFIFOQueue queue = new LongArrayFIFOQueue(limit);
 

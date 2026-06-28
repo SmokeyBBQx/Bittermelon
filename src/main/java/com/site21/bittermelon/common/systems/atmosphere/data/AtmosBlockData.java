@@ -68,6 +68,6 @@ public class AtmosBlockData {
         if (uuid == null) {
             return null;
         }
-        return AtmosLevelData.get(level).getAtmosInstance(uuid);
+        return AtmosInstancesData.get(level).getAtmosInstance(uuid);
     }
 }

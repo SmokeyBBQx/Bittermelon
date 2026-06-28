@@ -19,7 +19,7 @@ public class AtmosEventHandler {
     @SubscribeEvent
     public static void onBlockUpdate(BlockEvent.@NotNull NeighborNotifyEvent event) {
         if (event.getLevel() instanceof Level level) {
-            if (level.isClientSide) return;
+            if (level.isClientSide()) return;
             BlockPos pos = event.getPos();
 
             if (level.getBlockState(pos).is(BitterBlockTags.PASSES_ATMOS)) return;

@@ -13,12 +13,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.IRenderableSection;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class BlockDamageRenderer {
 
-    public static void renderDamaged(Level level, @Nullable PoseStack poseStack, @NotNull Camera camera, @NotNull Iterable<? extends IRenderableSection> renderableSections) {
+    public static void renderDamaged(Level level, @Nullable PoseStack poseStack, Camera camera,
+                                     Iterable<? extends IRenderableSection> renderableSections) {
         Minecraft minecraft = Minecraft.getInstance();
         for (IRenderableSection section : renderableSections) {
             SectionRenderDispatcher.RenderSection renderSection = (SectionRenderDispatcher.RenderSection) section;

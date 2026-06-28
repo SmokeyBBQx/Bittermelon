@@ -18,7 +18,9 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static com.site21.bittermelon.util.SubstanceUtils.GAS_CONSTANT;
 
@@ -106,7 +108,7 @@ public class AtmosInstance {
      */
     public void addBlock(Long packedPos, @NotNull Level level) {
         blocks.add(packedPos);
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             PacketDistributor.sendToAllPlayers(new UpdateAtmosBlocks(uuid, true, packedPos));
         }
     }
@@ -119,7 +121,7 @@ public class AtmosInstance {
      */
     public void removeBlock(Long packedPos, @NotNull Level level) {
         blocks.remove(packedPos);
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             PacketDistributor.sendToAllPlayers(new UpdateAtmosBlocks(uuid, false, packedPos));
         }
     }
@@ -141,7 +143,7 @@ public class AtmosInstance {
      */
     public void setTemperature(float temperature, @NotNull Level level) {
         this.temperature = temperature;
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             PacketDistributor.sendToAllPlayers(new UpdateAtmosTemperature(uuid, temperature));
         }
     }
@@ -171,7 +173,7 @@ public class AtmosInstance {
         for (SubstanceStack stack : gases) {
             if (stack.canMergeWith(gas)) {
                 stack.modifyAmount(gas.getAmount());
-                if (!level.isClientSide) {
+                if (!level.isClientSide()) {
                     PacketDistributor.sendToAllPlayers(new UpdateAtmosGas(uuid, stack));
                 }
                 return;
@@ -179,7 +181,7 @@ public class AtmosInstance {
         }
 
         gases.add(gas);
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             PacketDistributor.sendToAllPlayers(new UpdateAtmosGas(uuid, gas));
         }
     }

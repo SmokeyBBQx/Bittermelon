@@ -5,7 +5,7 @@ import com.site21.bittermelon.client.render.ShaderManager;
 import com.site21.bittermelon.client.render.TypingIndicatorRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.client.PhoneTipRenderer;
 import com.site21.bittermelon.common.systems.atmosphere.client.AtmosFogRenderer;
-import com.site21.bittermelon.common.systems.atmosphere.data.AtmosLevelData;
+import com.site21.bittermelon.common.systems.atmosphere.data.AtmosInstancesData;
 import com.site21.bittermelon.common.systems.blockdamage.client.BlockDamageRenderer;
 import com.site21.bittermelon.common.systems.carry.CarryHandler;
 import com.site21.bittermelon.common.systems.carry.ThrowCarriedEntity;
@@ -40,7 +40,7 @@ public class ClientEvents {
         AccountRegistry.clearClientData();
         CharacterManager.clearClientData();
         PersonnelRegistry.clearClientData();
-        AtmosLevelData.clearClientData();
+        AtmosInstancesData.clearClientData();
         IntercomManager.clearClientData();
         PrivilegeManager.clearClientData();
     }

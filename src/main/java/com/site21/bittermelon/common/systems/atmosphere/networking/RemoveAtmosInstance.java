@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.systems.atmosphere.networking;
 
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.systems.atmosphere.data.AtmosLevelData;
+import com.site21.bittermelon.common.systems.atmosphere.data.AtmosInstancesData;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -23,7 +23,7 @@ public record RemoveAtmosInstance(UUID uuid) implements CustomPacketPayload {
     );
 
     public void handle(@NotNull IPayloadContext ctx) {
-            AtmosLevelData data = AtmosLevelData.get(ctx.player().level());
+            AtmosInstancesData data = AtmosInstancesData.get(ctx.player().level());
             data.getAtmosInstances().remove(uuid);
     }
 
