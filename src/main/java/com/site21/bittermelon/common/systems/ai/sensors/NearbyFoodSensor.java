@@ -17,7 +17,7 @@ import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 
 import java.util.List;
 
-public class NearbyFoodSensor<E extends Mob & HasBasicNeeds> extends PredicateSensor<ItemEntity, E> {
+public class NearbyFoodSensor<E extends Mob & HasBasicNeeds> extends PredicateSensor<E, ItemEntity,> {
     private static final List<MemoryModuleType<?>> MEMORIES = ObjectArrayList.of(BitterMemoryTypes.NEARBY_EDIBLE_ITEMS.get());
 
     protected SquareRadius radius = new SquareRadius(32, 16);

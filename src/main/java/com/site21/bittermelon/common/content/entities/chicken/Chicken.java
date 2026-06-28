@@ -1,23 +1,12 @@
 package com.site21.bittermelon.common.content.entities.chicken;
 
-import com.site21.bittermelon.common.content.entities.chicken.behavior.PluckAtRandomItem;
 import com.site21.bittermelon.common.systems.ai.base.BitterMob;
 import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
-import com.site21.bittermelon.common.systems.ai.behavior.attack.Attack;
-import com.site21.bittermelon.common.systems.ai.behavior.attack.LeapAtTarget;
-import com.site21.bittermelon.common.systems.ai.behavior.basicneeds.Drink;
-import com.site21.bittermelon.common.systems.ai.behavior.basicneeds.EatFood;
 import com.site21.bittermelon.common.systems.ai.behavior.basicneeds.HasBasicNeeds;
-import com.site21.bittermelon.common.systems.ai.behavior.basicneeds.Preen;
-import com.site21.bittermelon.common.systems.ai.behavior.mentalbreak.MurderousRage;
-import com.site21.bittermelon.common.systems.ai.behavior.mentalbreak.WarnHighStress;
-import com.site21.bittermelon.common.systems.ai.behavior.misc.Defecate;
 import com.site21.bittermelon.common.systems.ai.behavior.misc.FeelsPain;
 import com.site21.bittermelon.common.systems.ai.behavior.social.Relationship;
 import com.site21.bittermelon.common.systems.ai.behavior.social.Socializable;
-import com.site21.bittermelon.common.systems.ai.behavior.social.interactions.GenericInteraction;
-import com.site21.bittermelon.common.systems.ai.behavior.target.InvalidateAttackTarget;
 import com.site21.bittermelon.common.systems.ai.sensors.NearbyDrinkableFluidsSensor;
 import com.site21.bittermelon.common.systems.ai.sensors.NearbyFoodSensor;
 import com.site21.bittermelon.common.systems.character.Character;
@@ -30,25 +19,18 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.animal.chicken.ChickenSoundVariants;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
-import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
-import net.tslat.smartbrainlib.api.core.behaviour.custom.target.SetRandomLookTarget;
+import net.tslat.smartbrainlib.api.core.ActivityBuilder;
 import net.tslat.smartbrainlib.api.core.navigation.SmoothGroundNavigation;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.custom.NearbyItemsSensor;
@@ -61,9 +43,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.site21.bittermelon.common.systems.ai.base.Need.MOVEMENT;
-
-@SuppressWarnings("unchecked")
 public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPain, HasBasicNeeds {
     public float flap;
     public float flapSpeed;
@@ -108,7 +87,7 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
     }
 
     @Override
-    public List<? extends ExtendedSensor<? extends Chicken>> getSensors() {
+    public List<? extends ExtendedSensor<?>> getSensors(Chicken owner) {
         return List.of(
                 new NearbyLivingEntitySensor<>(),
                 new NearbyItemsSensor<>(),
@@ -118,151 +97,156 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
         );
     }
 
-    public Map<Activity, BrainActivityGroup<? extends Chicken>> getAdditionalTasks() {
-        Map<Activity, BrainActivityGroup<? extends Chicken>> tasks = new HashMap<>();
-        tasks.put(BitterActivity.PROCREATE.get(), getProcreateTasks());
-        tasks.put(Activity.REST, getRestTasks());
-        tasks.put(BitterActivity.SOCIALIZE.get(), getSocializeTasks());
-        tasks.put(BitterActivity.MENTAL_BREAK.get(), getMentalBreakTasks());
-        tasks.put(BitterActivity.EAT.get(), getEatTasks());
-        tasks.put(BitterActivity.DRINK.get(), getDrinkTasks());
-        tasks.put(BitterActivity.DEFECATE.get(), getDefecateTasks());
-        tasks.put(BitterActivity.EXPLORE.get(), getExploreTasks());
-        tasks.put(BitterActivity.GROOM.get(), getGroomTasks());
-        tasks.put(BitterActivity.RELAX.get(), getRelaxTasks());
-        tasks.put(BitterActivity.PLAY.get(), getPlayTasks());
-        return tasks;
+//    public Map<Activity, BehaviorControl<?>> getAdditionalTasks() {
+//        Map<Activity, BrainActivityGroup<? extends Chicken>> tasks = new HashMap<>();
+//        tasks.put(BitterActivity.PROCREATE.get(), getProcreateTasks());
+//        tasks.put(Activity.REST, getRestTasks());
+//        tasks.put(BitterActivity.SOCIALIZE.get(), getSocializeTasks());
+//        tasks.put(BitterActivity.MENTAL_BREAK.get(), getMentalBreakTasks());
+//        tasks.put(BitterActivity.EAT.get(), getEatTasks());
+//        tasks.put(BitterActivity.DRINK.get(), getDrinkTasks());
+//        tasks.put(BitterActivity.DEFECATE.get(), getDefecateTasks());
+//        tasks.put(BitterActivity.EXPLORE.get(), getExploreTasks());
+//        tasks.put(BitterActivity.GROOM.get(), getGroomTasks());
+//        tasks.put(BitterActivity.RELAX.get(), getRelaxTasks());
+//        tasks.put(BitterActivity.PLAY.get(), getPlayTasks());
+//        return tasks;
+//    }
+
+    @Override
+    public List<ActivityBuilder<? extends Chicken>> getAdditionalActivities(Chicken owner, Activity[] priorities) {
+        return super.getAdditionalActivities(owner, priorities);
     }
 
-    public BrainActivityGroup<? extends Chicken> getCoreTasks() {
-        return BrainActivityGroup.coreTasks(
-                new LookAtTarget<>(),
-                new MoveToWalkTarget<>()
-        );
-    }
-
-    public BrainActivityGroup<? extends Chicken> getIdleTasks() {
-        return BrainActivityGroup.idleTasks(
-                new SetRandomLookTarget<>(),
-                new OneRandomBehaviour<>(
-                        new SetRandomWalkTarget<>()
-                                .setRadius(getRandom().nextInt(1, 10)),
-                        new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))
-                )
-        );
-    }
-
-    public BrainActivityGroup<? extends Chicken> getFightTasks() {
-        return BrainActivityGroup.fightTasks(
-                new InvalidateAttackTarget<>(),
-                new SetWalkTargetToAttackTarget<>().stopIf(LivingEntity::isDeadOrDying),
-                new Attack<>(10, getAttackTemplates()).cooldownFor(entity -> 40),
-                new LeapAtTarget<>(10)
-        );
-    }
-
-    public BrainActivityGroup<? extends Chicken> getProcreateTasks() {
-        return new BrainActivityGroup<Chicken>(BitterActivity.PROCREATE.get()).behaviours(
-        );
-    }
-
-    public BrainActivityGroup<? extends Chicken> getRestTasks() {
-        return new BrainActivityGroup<Chicken>(Activity.REST).behaviours(
-        );
-    }
-
-    public BrainActivityGroup<? extends Chicken> getSocializeTasks() {
-        return new BrainActivityGroup<Chicken>(BitterActivity.SOCIALIZE.get()).behaviours(
-                new GenericInteraction<Chicken>()
-                        .closeEnoughDist((entity, partner) -> 8)
-                        .messages(List.of(" clucks at ")
-                        )
-        );
-    }
-
-    public BrainActivityGroup<? extends Chicken> getMentalBreakTasks() {
-        return new BrainActivityGroup<Chicken>(BitterActivity.MENTAL_BREAK.get()).behaviours(
-                new OneRandomBehaviour<Chicken>(
-                        new WarnHighStress<>(List.of(
-                                " cries out."
-                        )),
-                        new MurderousRage<>(true)
-                )
-                        .cooldownFor(entity -> 400),
-                new OneRandomBehaviour<>(
-                        new SetRandomWalkTarget<>()
-                                .setRadius(getRandom().nextInt(1, 10)),
-                        new Idle<>().runFor(entity -> 30)
-                )
-        );
-    }
-
-    public BrainActivityGroup<? extends Chicken> getEatTasks() {
-        return new BrainActivityGroup<Chicken>(BitterActivity.EAT.get()).behaviours(
-                        new EatFood<>()
-                );
-    }
-
-    public BrainActivityGroup<? extends Chicken> getDrinkTasks() {
-        return new BrainActivityGroup<Chicken>(BitterActivity.DRINK.get()).behaviours(
-                        new Drink<>()
-                );
-
-                // TODO: Instead of not attempting to drink at all if there is no source, make an attempt and have it expire with a message and then cooldown attempt
-
-    }
-
-    public BrainActivityGroup<? extends Chicken> getDefecateTasks() {
-        return new BrainActivityGroup<Chicken>(BitterActivity.DEFECATE.get()).behaviours(
-                new Defecate<>()
-        );
-    }
-
-    public BrainActivityGroup<? extends Chicken> getExploreTasks() {
-        return new BrainActivityGroup<Chicken>(BitterActivity.EXPLORE.get()).behaviours(
-                new OneRandomBehaviour<>(
-                        new SetRandomWalkTarget<>()
-                                .setRadius(getRandom().nextInt(5, 15)),
-                        new Idle<>().runFor(entity -> 30)
-                ).whenStarting(entity -> {
-                    if (entity instanceof Chicken chicken) {
-                        chicken.modifyNeed(MOVEMENT, -10.0f);
-                    }
-                })
-        );
-    }
-
-    public BrainActivityGroup<? extends Chicken> getGroomTasks() {
-        return new BrainActivityGroup<Chicken>(BitterActivity.GROOM.get()).behaviours(
-                new Preen<Chicken>(10)
-                        .messages(List.of(
-                                        " grooms itself.",
-                                        " tidies itself.",
-                                        " plucks at its feathers.",
-                                        " preens itself.",
-                                        " smooths its feathers.",
-                                        " arranges its plumage.",
-                                        " straightens its feathers.",
-                                        " fluffs its feathers.",
-                                        " fixes its plumage."
-                                )
-                        )
-                        .cooldownFor(entity -> 60)
-        );
-    }
-
-    public BrainActivityGroup<? extends Chicken> getRelaxTasks() {
-        return new BrainActivityGroup<Chicken>(BitterActivity.RELAX.get()).behaviours(
-
-        );
-    }
-
-    public BrainActivityGroup<? extends Chicken> getPlayTasks() {
-        return new BrainActivityGroup<Chicken>(BitterActivity.PLAY.get()).behaviours(
-                        // TODO: Plucking at mobs
-                        new PluckAtRandomItem<>().cooldownFor(entity -> 120)
-                );
-    }
+//    public BrainActivityGroup<? extends Chicken> getCoreTasks() {
+//        return BrainActivityGroup.coreTasks(
+//                new LookAtTarget<>(),
+//                new MoveToWalkTarget<>()
+//        );
+//    }
+//
+//    public BrainActivityGroup<? extends Chicken> getIdleTasks() {
+//        return BrainActivityGroup.idleTasks(
+//                new SetRandomLookTarget<>(),
+//                new OneRandomBehaviour<>(
+//                        new SetRandomWalkTarget<>()
+//                                .setRadius(getRandom().nextInt(1, 10)),
+//                        new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))
+//                )
+//        );
+//    }
+//
+//    public BrainActivityGroup<? extends Chicken> getFightTasks() {
+//        return BrainActivityGroup.fightTasks(
+//                new InvalidateAttackTarget<>(),
+//                new SetWalkTargetToAttackTarget<>().stopIf(LivingEntity::isDeadOrDying),
+//                new Attack<>(10, getAttackTemplates()).cooldownFor(entity -> 40),
+//                new LeapAtTarget<>(10)
+//        );
+//    }
+//
+//    public BrainActivityGroup<? extends Chicken> getProcreateTasks() {
+//        return new BrainActivityGroup<Chicken>(BitterActivity.PROCREATE.get()).behaviours(
+//        );
+//    }
+//
+//    public BrainActivityGroup<? extends Chicken> getRestTasks() {
+//        return new BrainActivityGroup<Chicken>(Activity.REST).behaviours(
+//        );
+//    }
+//
+//    public BrainActivityGroup<? extends Chicken> getSocializeTasks() {
+//        return new BrainActivityGroup<Chicken>(BitterActivity.SOCIALIZE.get()).behaviours(
+//                new GenericInteraction<Chicken>()
+//                        .closeEnoughDist((entity, partner) -> 8)
+//                        .messages(List.of(" clucks at ")
+//                        )
+//        );
+//    }
+//
+//    public BrainActivityGroup<? extends Chicken> getMentalBreakTasks() {
+//        return new BrainActivityGroup<Chicken>(BitterActivity.MENTAL_BREAK.get()).behaviours(
+//                new OneRandomBehaviour<Chicken>(
+//                        new WarnHighStress<>(List.of(
+//                                " cries out."
+//                        )),
+//                        new MurderousRage<>(true)
+//                )
+//                        .cooldownFor(entity -> 400),
+//                new OneRandomBehaviour<>(
+//                        new SetRandomWalkTarget<>()
+//                                .setRadius(getRandom().nextInt(1, 10)),
+//                        new Idle<>().runFor(entity -> 30)
+//                )
+//        );
+//    }
+//
+//    public BrainActivityGroup<? extends Chicken> getEatTasks() {
+//        return new BrainActivityGroup<Chicken>(BitterActivity.EAT.get()).behaviours(
+//                        new EatFood<>()
+//                );
+//    }
+//
+//    public BrainActivityGroup<? extends Chicken> getDrinkTasks() {
+//        return new BrainActivityGroup<Chicken>(BitterActivity.DRINK.get()).behaviours(
+//                        new Drink<>()
+//                );
+//
+//                // TODO: Instead of not attempting to drink at all if there is no source, make an attempt and have it expire with a message and then cooldown attempt
+//
+//    }
+//
+//    public BrainActivityGroup<? extends Chicken> getDefecateTasks() {
+//        return new BrainActivityGroup<Chicken>(BitterActivity.DEFECATE.get()).behaviours(
+//                new Defecate<>()
+//        );
+//    }
+//
+//    public BrainActivityGroup<? extends Chicken> getExploreTasks() {
+//        return new BrainActivityGroup<Chicken>(BitterActivity.EXPLORE.get()).behaviours(
+//                new OneRandomBehaviour<>(
+//                        new SetRandomWalkTarget<>()
+//                                .setRadius(getRandom().nextInt(5, 15)),
+//                        new Idle<>().runFor(entity -> 30)
+//                ).whenStarting(entity -> {
+//                    if (entity instanceof Chicken chicken) {
+//                        chicken.modifyNeed(MOVEMENT, -10.0f);
+//                    }
+//                })
+//        );
+//    }
+//
+//    public BrainActivityGroup<? extends Chicken> getGroomTasks() {
+//        return new BrainActivityGroup<Chicken>(BitterActivity.GROOM.get()).behaviours(
+//                new Preen<Chicken>(10)
+//                        .messages(List.of(
+//                                        " grooms itself.",
+//                                        " tidies itself.",
+//                                        " plucks at its feathers.",
+//                                        " preens itself.",
+//                                        " smooths its feathers.",
+//                                        " arranges its plumage.",
+//                                        " straightens its feathers.",
+//                                        " fluffs its feathers.",
+//                                        " fixes its plumage."
+//                                )
+//                        )
+//                        .cooldownFor(entity -> 60)
+//        );
+//    }
+//
+//    public BrainActivityGroup<? extends Chicken> getRelaxTasks() {
+//        return new BrainActivityGroup<Chicken>(BitterActivity.RELAX.get()).behaviours(
+//
+//        );
+//    }
+//
+//    public BrainActivityGroup<? extends Chicken> getPlayTasks() {
+//        return new BrainActivityGroup<Chicken>(BitterActivity.PLAY.get()).behaviours(
+//                        // TODO: Plucking at mobs
+//                        new PluckAtRandomItem<>().cooldownFor(entity -> 120)
+//                );
+//    }
 
     public void aiStep() {
         super.aiStep();
@@ -291,20 +275,23 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
         this.nextFlap = this.flyDist + this.flapSpeed / 2.0F;
     }
 
+    @Override
     protected SoundEvent getAmbientSound() {
-        return SoundEvents.CHICKEN_AMBIENT;
+        return SoundEvents.CHICKEN_SOUNDS.get(ChickenSoundVariants.SoundSet.CLASSIC).adultSounds().ambientSound().value();
     }
 
+    @Override
     protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
-        return SoundEvents.CHICKEN_HURT;
+        return SoundEvents.CHICKEN_SOUNDS.get(ChickenSoundVariants.SoundSet.CLASSIC).adultSounds().hurtSound().value();
     }
 
+    @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvents.CHICKEN_DEATH;
+        return SoundEvents.CHICKEN_SOUNDS.get(ChickenSoundVariants.SoundSet.CLASSIC).adultSounds().deathSound().value();
     }
 
     protected void playStepSound(@NotNull BlockPos pos, @NotNull BlockState block) {
-        this.playSound(SoundEvents.CHICKEN_STEP, 0.15F, 1.0F);
+        this.playSound(SoundEvents.CHICKEN_STEP.value(), 0.15F, 1.0F);
     }
 
     @Override
@@ -342,7 +329,7 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
 
     @Override
     public SoundEvent getPainSound(float pain) {
-        return SoundEvents.CHICKEN_HURT;
+        return SoundEvents.CHICKEN_SOUNDS.get(ChickenSoundVariants.SoundSet.CLASSIC).adultSounds().hurtSound().value();;
     }
 
     public @NotNull List<AttackTemplate> getAttackTemplates() {

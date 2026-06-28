@@ -1,8 +1,6 @@
 package com.site21.bittermelon.common.systems.ai.base;
 
 import com.site21.bittermelon.common.systems.character.Character;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
@@ -11,7 +9,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
-import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -19,11 +16,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("unchecked")
 public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob implements SmartBrainOwner<T>, NeedsUser {
     private Map<Need, NeedInstance> needs;
     private final int behaviorRandomness;
-    private List<Activity> cachedActivityPriorities = null;
+    private Activity[] cachedActivityPriorities = null;
 
     protected BitterMob(EntityType<? extends PathfinderMob> entityType, Level level, int behaviorRandomness) {
         super(entityType, level);
@@ -46,13 +42,13 @@ public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob im
     protected abstract Map<Need, NeedInstance> initializeNeeds();
 
     @Override
-    public List<Activity> getActivityPriorities() {
+    public Activity[] getActivityActivationPriority() {
         if (cachedActivityPriorities != null) return cachedActivityPriorities;
 
         List<NeedInstance> needs = new ArrayList<>(getNeeds().values());
 
         if (needs.isEmpty()) {
-            cachedActivityPriorities = ObjectArrayList.of(Activity.FIGHT, Activity.IDLE);
+            cachedActivityPriorities = new Activity[] {Activity.FIGHT, Activity.IDLE};
             return cachedActivityPriorities;
         }
 
@@ -63,12 +59,14 @@ public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob im
             Collections.shuffle(randomizedBehaviour);
         }
 
-        List<Activity> activities = new ArrayList<>();
-        activities.add(Activity.FIGHT);
-        activities.addAll(needs.stream().map(NeedInstance::getActivity).toList());
-        activities.add(Activity.IDLE);
+        Activity[] result = new Activity[needs.size() + 2];
+        result[0] = Activity.FIGHT;
+        for (int i = 0; i < needs.size(); i++) {
+            result[i + 1] = needs.get(i).getActivity();
+        }
+        result[result.length - 1] = Activity.IDLE;
 
-        cachedActivityPriorities = activities;
+        cachedActivityPriorities = result;
         return cachedActivityPriorities;
     }
 
@@ -135,16 +133,5 @@ public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob im
     @Override
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {
         return false;
-    }
-
-    @Override
-    protected void customServerAiStep(@NotNull ServerLevel level) {
-        super.customServerAiStep(level);
-        tickBrain((T) this);
-    }
-
-    @Override
-    protected @NotNull SmartBrainProvider<T> brainProvider() {
-        return new SmartBrainProvider<>((T) this);
     }
 }
