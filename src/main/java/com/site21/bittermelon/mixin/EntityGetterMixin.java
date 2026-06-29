@@ -19,18 +19,18 @@ import java.util.function.Predicate;
 @Mixin(EntityGetter.class)
 public interface EntityGetterMixin {
     @Inject(method = "getEntityCollisions", at = @At("HEAD"), cancellable = true)
-    default void overrideGetEntityCollisions(@Nullable Entity entity, AABB collisionBox, CallbackInfoReturnable<List<VoxelShape>> cir) {
-        if (collisionBox.getSize() < 1.0E-7) {
+    default void overrideGetEntityCollisions(@Nullable Entity source, AABB testArea, CallbackInfoReturnable<List<VoxelShape>> cir) {
+        if (testArea.getSize() < 1.0E-7) {
             cir.setReturnValue(List.of());
             return;
         }
 
         EntityGetter self = (EntityGetter) this;
-        Predicate<Entity> predicate = entity == null
+        Predicate<Entity> predicate = source == null
                 ? net.minecraft.world.entity.EntitySelector.CAN_BE_COLLIDED_WITH
-                : net.minecraft.world.entity.EntitySelector.NO_SPECTATORS.and(entity::canCollideWith);
+                : net.minecraft.world.entity.EntitySelector.NO_SPECTATORS.and(source::canCollideWith);
 
-        List<Entity> list = self.getEntities(entity, collisionBox.inflate(1.0E-7), predicate);
+        List<Entity> list = self.getEntities(source, testArea.inflate(1.0E-7), predicate);
         if (list.isEmpty()) {
             cir.setReturnValue(List.of());
             return;
@@ -39,7 +39,7 @@ public interface EntityGetterMixin {
         ImmutableList.Builder<VoxelShape> builder = ImmutableList.builder();
         for (Entity e : list) {
             if (e instanceof Cage cage) {
-                builder.addAll(cage.getCollisionShapes(entity));
+                builder.addAll(cage.getCollisionShapes(source));
             } else {
                 builder.add(Shapes.create(e.getBoundingBox()));
             }

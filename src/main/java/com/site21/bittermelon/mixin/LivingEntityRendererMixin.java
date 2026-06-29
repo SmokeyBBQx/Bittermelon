@@ -18,9 +18,9 @@ import static com.site21.bittermelon.init.neoforge.BitterMobEffects.TASERED;
 public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> {
 
     @Inject(method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V", at = @At("RETURN"))
-    private void onExtractRenderState(@NotNull T entity, S renderState, float partialTick, CallbackInfo ci) {
+    private void onExtractRenderState(@NotNull T entity, S state, float partialTicks, CallbackInfo ci) {
         if (entity.hasEffect(ELECTROCUTED) || entity.hasEffect(TASERED) || entity.getData(RAGE) > 50) {
-            renderState.isFullyFrozen = true;
+            state.isFullyFrozen = true;
         }
     }
 }

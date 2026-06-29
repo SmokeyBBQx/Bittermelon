@@ -7,7 +7,6 @@ import net.minecraft.resources.Identifier;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,11 +22,11 @@ public class SkinManager {
         initializeCache();
     }
 
-    public static @NotNull ClientAsset.Texture loadSkin(String url, String imageName) {
+    public static ClientAsset.Texture loadSkin(String url, String imageName) {
         return loadSkin(url, imageName, null);
     }
 
-    public static @NotNull ClientAsset.Texture loadSkin(@NotNull String url, String imageName, Runnable callback) {
+    public static ClientAsset.Texture loadSkin(String url, String imageName, Runnable callback) {
         Identifier location = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + imageName);
 
         File cacheFile = new File(CACHE_DIR, imageName + ".png");
@@ -36,6 +35,7 @@ public class SkinManager {
             SkinTexture texture = new SkinTexture(location, cacheFile, url, callback);
             Minecraft.getInstance().getTextureManager().registerAndLoad(location, texture);
         });
+
         return new ClientAsset.ResourceTexture(location);
     }
 

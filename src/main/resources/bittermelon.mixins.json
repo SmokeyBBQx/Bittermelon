@@ -8,7 +8,6 @@
     "EntityMixin",
     "ItemEntityMixin",
     "ItemMixin",
-    "LivingEntityMixin",
     "PlayerMixin",
     "StyleMixin",
     "StyleSerializerMixin"
@@ -18,13 +17,12 @@
     "ChatScreenMixin",
     "ContextualInfoExtender",
     "CrosshairMixin",
-    "EntityModelMixin",
     "GameRendererMixin",
     "GuiMixin",
     "HumanoidModelMixin",
     "ItemInHandRendererMixin",
     "LivingEntityRendererMixin",
-    "MouseHandlerMixin",
+    "ModelMixin",
     "PlayerInfoMixin",
     "PlayerModelMixin"
   ],

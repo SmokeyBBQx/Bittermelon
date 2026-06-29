@@ -23,7 +23,6 @@ public class ContextualInfoExtender implements IExtensibleEnum {
     static {
         var stressEntry = create("STRESS", $VALUES.length);
 
-        //noinspection ShadowFinalModification
         $VALUES = ArrayUtils.add($VALUES, stressEntry);
     }
 }

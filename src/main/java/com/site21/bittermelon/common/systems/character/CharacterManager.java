@@ -155,7 +155,8 @@ public class CharacterManager extends SavedData {
             setActiveCharacter(player, switchedTo.getId());
 //        }
 
-        switchedTo.getPlayerInfo().ifPresent(info -> SkinOverrideSystem.setSkinOverride(player.getUUID(), switchedTo.getId(), info.getSkinURL(), info.getModel()));
+        switchedTo.getPlayerInfo().ifPresent(info ->
+                SkinOverrideSystem.setSkinOverride(player.getUUID(), switchedTo.getId(), info.getSkinURL(), info.getModel()));
     }
 
     static {

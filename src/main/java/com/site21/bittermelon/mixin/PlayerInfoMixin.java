@@ -2,8 +2,9 @@ package com.site21.bittermelon.mixin;
 
 import com.site21.bittermelon.common.systems.character.skin.SkinOverrideSystem;
 import net.minecraft.client.multiplayer.PlayerInfo;
-import net.minecraft.client.resources.PlayerSkin;
-import net.minecraft.resources.Identifier;
+import net.minecraft.core.ClientAsset;
+import net.minecraft.world.entity.player.PlayerModelType;
+import net.minecraft.world.entity.player.PlayerSkin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -14,10 +15,10 @@ public class PlayerInfoMixin {
     @Inject(method = "getSkin", at = @At("HEAD"), cancellable = true)
     private void overrideSkin(CallbackInfoReturnable<PlayerSkin> cir) {
         PlayerInfo playerInfo = (PlayerInfo)(Object)this;
-        Identifier override = SkinOverrideSystem.getOverriddenSkin(playerInfo.getProfile().getId());
-        PlayerSkin.Model model = SkinOverrideSystem.getOverriddenModel(playerInfo.getProfile().getId());
+        ClientAsset.Texture override = SkinOverrideSystem.getOverriddenSkin(playerInfo.getProfile().id());
+        PlayerModelType model = SkinOverrideSystem.getOverriddenModel(playerInfo.getProfile().id());
         if (override != null) {
-            PlayerSkin customSkin = new PlayerSkin(override, null, null, null, model, true);
+            PlayerSkin customSkin = new PlayerSkin(override, null, null, model, true);
             cir.setReturnValue(customSkin);
         }
     }

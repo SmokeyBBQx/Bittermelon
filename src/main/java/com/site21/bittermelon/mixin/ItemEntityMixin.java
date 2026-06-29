@@ -14,7 +14,8 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.*;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.BURN_TIME;
+import static com.site21.bittermelon.init.neoforge.BitterDataComponents.HEAT_BEHAVIOR;
 
 @Mixin(ItemEntity.class)
 public abstract class ItemEntityMixin {
@@ -30,14 +31,13 @@ public abstract class ItemEntityMixin {
             method = "hurtServer",
             at = @At("HEAD"),
             argsOnly = true,
-            ordinal = 0
-    )
-    private float modifyDamageAmount(float amount, ServerLevel level, DamageSource damageSource) {
+            name = "damage")
+    private float modifyDamageAmount(float damage, ServerLevel level, DamageSource source) {
         ItemEntity self = (ItemEntity) (Object) this;
         if (self.isOnFire()) {
             return 0.0f;
         }
-        return amount;
+        return damage;
     }
 
     @Inject(method = "tick", at = @At("HEAD"))

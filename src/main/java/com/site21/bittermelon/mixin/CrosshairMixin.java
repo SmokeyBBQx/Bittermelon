@@ -30,8 +30,8 @@ import static com.site21.bittermelon.init.neoforge.BitterBlocks.YELLOW_INSPECTIO
 
 @Mixin(Gui.class)
 public class CrosshairMixin {
-    @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
-    private void renderCustomCrosshair(GuiGraphicsExtractor GuiGraphicsExtractor, DeltaTracker deltaTracker, CallbackInfo ci) {
+    @Inject(method = "extractCrosshair", at = @At("HEAD"), cancellable = true)
+    private void extractCustomCrosshair(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.level == null) return;
 
@@ -42,14 +42,14 @@ public class CrosshairMixin {
 
             if (blockState.getBlock() instanceof StickyNoteBlock stickyNoteBlock
                     && minecraft.level.getBlockEntity(pos) instanceof StickyNoteBlockEntity stickyNote) {
-                StickyNoteBlock.Position position = stickyNoteBlock.getPosition(blockState, blockHitResult.getLocation(), pos);
+                StickyNoteBlock.Position position = StickyNoteBlock.getPosition(blockState, blockHitResult.getLocation(), pos);
                 String note = stickyNote.getNotes()[position.ordinal()];
                 if (note == null) return;
 
                 boolean hasNote = stickyNoteBlock.hasNoteAtPosition(position, blockState) && !note.isEmpty();
 
                 if (hasNote) {
-                    bittermelon$renderCustomCrosshairTexture(GuiGraphicsExtractor, minecraft);
+                    bittermelon$renderCustomCrosshairTexture(graphics, minecraft);
                     ci.cancel();
                 }
                 return;
@@ -57,7 +57,7 @@ public class CrosshairMixin {
 
             // TODO: Inspectable tag is not working, need to figure out why
             if (blockState.is(INSPECTABLE) || blockState.is(YELLOW_INSPECTION_POSTER)) {
-                bittermelon$renderCustomCrosshairTexture(GuiGraphicsExtractor, minecraft);
+                bittermelon$renderCustomCrosshairTexture(graphics, minecraft);
                 ci.cancel();
             }
         }
