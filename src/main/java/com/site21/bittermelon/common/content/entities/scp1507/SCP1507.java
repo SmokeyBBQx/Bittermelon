@@ -182,7 +182,7 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     protected void tickDeath() {
         super.tickDeath();
         if (deathTime <= 1) {
-            makeShatterParticles(30);
+            makeShatterParticles(100);
         }
     }
 

@@ -39,6 +39,8 @@ public class SCP1507Model extends EntityModel<SCP1507RenderState> {
     public void setupAnim(@NotNull SCP1507RenderState renderState) {
         super.setupAnim(renderState);
 
+        root.visible = renderState.deathTime == 0;
+
         if (renderState.onGround) {
             float hopHeight = 8f;
             float hopSpeed = 1.5f;
