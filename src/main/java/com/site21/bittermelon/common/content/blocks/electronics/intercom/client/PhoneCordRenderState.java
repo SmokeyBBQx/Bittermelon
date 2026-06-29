@@ -5,7 +5,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 
 public class PhoneCordRenderState extends BlockEntityRenderState {
-    boolean isPhonePickedUp;
     Vec3 playerPos;
     Direction facing;
     public int startBlockLight = 0;

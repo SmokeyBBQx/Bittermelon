@@ -37,9 +37,10 @@ public class PhoneCordRenderer implements BlockEntityRenderer<IntercomBlockEntit
     public void extractRenderState(IntercomBlockEntity blockEntity, PhoneCordRenderState state, float partialTicks,
                                    Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
-        Player player = blockEntity.getPhoneUser();
 
-        state.isPhonePickedUp = blockEntity.isPhonePickedUp();
+        Player player = blockEntity.getPhoneUser();
+        if (player == null) return;
+
         state.playerPos = player.getRopeHoldPosition(partialTicks);
         state.facing = blockEntity.getBlockState().getValue(IntercomBlock.FACING).getOpposite();
 
@@ -56,7 +57,7 @@ public class PhoneCordRenderer implements BlockEntityRenderer<IntercomBlockEntit
 
     @Override
     public void submit(PhoneCordRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState cameraRenderState) {
-        if (state.isPhonePickedUp && state.playerPos != null) {
+        if (state.playerPos != null) {
             collector.submitCustomGeometry(poseStack, RenderTypes.leash(), (pose, buffer) -> renderCord(state, pose, buffer));
         }
     }
