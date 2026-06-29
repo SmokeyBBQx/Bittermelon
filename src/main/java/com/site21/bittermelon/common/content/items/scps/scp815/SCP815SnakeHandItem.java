@@ -17,7 +17,7 @@ public class SCP815SnakeHandItem extends Item {
 
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             SCP815Snake snake = BitterEntities.SCP_815_SNAKE.get().create(level, EntitySpawnReason.TRIGGERED);
             HitResult hit = player.pick(10.0, 0.0f, false);
             snake.teleportTo(hit.getLocation().x, hit.getLocation().y, hit.getLocation().z);

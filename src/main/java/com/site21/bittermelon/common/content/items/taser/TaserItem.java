@@ -44,7 +44,7 @@ public class TaserItem extends Item {
     @Override
     public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
         ItemStack stack = player.getItemInHand(usedHand);
-        if (level.isClientSide) return InteractionResult.PASS;
+        if (level.isClientSide()) return InteractionResult.PASS;
 
         List<Integer> taseProbes = stack.getOrDefault(TASE_PROBES, List.of());
         if (!taseProbes.isEmpty()) {
@@ -59,7 +59,10 @@ public class TaserItem extends Item {
                 level.playSound(null, player.getOnPos(), SoundEvents.CROSSBOW_LOADING_START.value(), SoundSource.PLAYERS, 1, 2);
                 return InteractionResult.SUCCESS;
             } else {
-                player.displayClientMessage(Component.literal("Prongs are still attached to the target. Shift + Right Click to remove.").withStyle(ChatFormatting.RED), true);
+                player.sendSystemMessage(Component
+                                .literal("Prongs are still attached to the target. Shift + Right Click to remove.")
+                                .withStyle(ChatFormatting.RED)
+                );
                 return InteractionResult.PASS;
             }
         }

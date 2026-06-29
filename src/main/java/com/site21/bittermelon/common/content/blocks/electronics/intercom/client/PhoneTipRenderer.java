@@ -14,7 +14,7 @@ import net.minecraft.world.phys.HitResult;
 public class PhoneTipRenderer {
 
     // TODO: Replace with tooltip
-    public static void renderPhoneTip(GuiGraphicsExtractor graphics) {
+    public static void extractPhoneTip(GuiGraphicsExtractor graphics) {
         Minecraft mc = Minecraft.getInstance();
 
         HitResult hit = mc.hitResult;

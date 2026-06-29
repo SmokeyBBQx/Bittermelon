@@ -90,14 +90,14 @@ public abstract class WiringScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
 
         for (PortButton port : inputPorts) {
             String id = port.getPort().id;
             int x = port.getX() + port.getWidth() + 10;
             int y = port.getY() + port.getHeight() / 2;
-            GuiGraphicsExtractor.drawString(minecraft.font, id, x, y, 0xFFFFFFFF);
+            graphics.text(minecraft.font, id, x, y, 0xFFFFFFFF);
         }
 
         for (PortButton port : outputPorts) {
@@ -105,17 +105,15 @@ public abstract class WiringScreen extends Screen {
             int textWidth = minecraft.font.width(id);
             int x = port.getX() - textWidth - 4;
             int y = port.getY() + port.getHeight() / 2;
-            GuiGraphicsExtractor.drawString(minecraft.font, id, x, y, 0xFFFFFFFF);
+            graphics.text(minecraft.font, id, x, y, 0xFFFFFFFF);
         }
     }
 
-
     @Override
-    public void renderBackground(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractBackground(graphics, mouseX, mouseY, a);
         int margin = 4;
-
-        GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND, leftX - margin, height / 6 - margin * 4, backgroundWidth + margin * 2, backgroundHeight);
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND, leftX - margin, height / 6 - margin * 4, backgroundWidth + margin * 2, backgroundHeight);
     }
 
     protected abstract void handleInputPortClick(@NotNull InputPort port);

@@ -15,7 +15,7 @@ public class FortuneHandler {
     private static final long ACTIVATION_DELAY = 100;
 
     public static void onEntityTick(@NotNull Entity entity) {
-        if (entity.level().isClientSide) return;
+        if (entity.level().isClientSide()) return;
         if (!(entity instanceof Player player)) return;
 
         if (entity.getExistingDataOrNull(FORTUNE_INSTANCES) != null) {
@@ -38,7 +38,7 @@ public class FortuneHandler {
     }
 
     private static boolean applyFortune(Player target, FortuneInstance instance, @NotNull Level level) {
-        if (level.isClientSide) return false;
+        if (level.isClientSide()) return false;
 
         if (level.getGameTime() - instance.readTime() >= ACTIVATION_DELAY) {
             instance.fortune().applyTo(target);

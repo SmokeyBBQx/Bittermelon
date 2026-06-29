@@ -72,7 +72,7 @@ public class GasContainerItem extends SubstanceContainerItem {
     public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
         super.inventoryTick(stack, level, entity, slot);
 
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
 
         if (getPressure(stack) > getMaxPressure(stack) * 1.10f) {
             level.explode(entity, entity.getX(), entity.getY(), entity.getZ(),
@@ -89,7 +89,7 @@ public class GasContainerItem extends SubstanceContainerItem {
     }
 
     public void transferGas(ItemStack stack, @NotNull Level level, @NotNull Entity entity) {
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
 
         AtmosInstance atmosInstance = AtmosHandler.getAtmosInstanceAt(level, entity.getOnPos());
         if (atmosInstance == null) {

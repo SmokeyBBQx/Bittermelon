@@ -40,7 +40,7 @@ public class SyringeItem extends FluidContainerItem {
                 && offhandItem.getItem() instanceof FluidContainerItem
                 && itemInHand.getOrDefault(CAN_SPILL, true)) {
 
-            if (!level.isClientSide && player.isShiftKeyDown()) {
+            if (!level.isClientSide() && player.isShiftKeyDown()) {
                 transferSubstancesToContainer(itemInHand, offhandItem, level, player);
             }
         } else {

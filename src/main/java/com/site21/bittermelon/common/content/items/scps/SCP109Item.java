@@ -46,7 +46,7 @@ public class SCP109Item extends FluidContainerItem {
     @Override
     public boolean onEntityItemUpdate(@NotNull ItemStack stack, @NotNull ItemEntity entity) {
         Level level = entity.level();
-        if (level.isClientSide) return false;
+        if (level.isClientSide()) return false;
         if (level.getGameTime() % 100 == 0) {
             if (stack.getOrDefault(CAN_SPILL, true)) {
                 spill(stack, level, entity.blockPosition(), (int) (getMaxTransferRate(stack) * entity.getRandom().nextFloat()));

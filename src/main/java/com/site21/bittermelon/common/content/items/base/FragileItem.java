@@ -24,7 +24,7 @@ public interface FragileItem {
 
     default void checkForBreak(ItemStack stack, @NotNull ItemEntity entity) {
         Level level = entity.level();
-        if (!level.isClientSide && !entity.isNoGravity() && entity.onGround()) {
+        if (!level.isClientSide() && !entity.isNoGravity() && entity.onGround()) {
             if (!stack.getOrDefault(HAS_LANDED.get(), false)) {
                 stack.set(HAS_LANDED.get(), true);
                 breakItem(entity, level);

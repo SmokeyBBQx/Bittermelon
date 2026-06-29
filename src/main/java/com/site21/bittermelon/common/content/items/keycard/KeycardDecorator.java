@@ -24,7 +24,7 @@ public class KeycardDecorator implements IItemDecorator {
         Minecraft mc = Minecraft.getInstance();
         PersonnelEntry entry = PersonnelRegistry.get(mc.level).getEntry(stack.get(BitterDataComponents.ID_NUMBER));
         if (entry == null) return false;
-        Identifier texture = DefaultPlayerSkin.get(entry.getPlayerUUID()).texture();
+        Identifier texture = DefaultPlayerSkin.get(entry.getPlayerUUID()).body().texturePath();
 
         Character character = CharacterManager.get(mc.level).getCharacter(entry.getCharacterUUID());
         if (character != null && character.getPlayerInfo().isPresent()) {

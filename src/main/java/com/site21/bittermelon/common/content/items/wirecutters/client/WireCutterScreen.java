@@ -17,14 +17,14 @@ public class WireCutterScreen extends WiringScreen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
 
-        GuiGraphicsExtractor.pose().pushMatrix();
-        GuiGraphicsExtractor.pose().translate(mouseX - 16, mouseY - 16);
-        GuiGraphicsExtractor.pose().scale(2.0f, 2.0f);
-        GuiGraphicsExtractor.renderFakeItem(WIRE_CUTTERS.toStack(), 0, 0);
-        GuiGraphicsExtractor.pose().popMatrix();
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(mouseX - 16, mouseY - 16);
+        graphics.pose().scale(2.0f, 2.0f);
+        graphics.fakeItem(WIRE_CUTTERS.toStack(), 0, 0);
+        graphics.pose().popMatrix();
     }
 
     @Override

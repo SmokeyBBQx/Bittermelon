@@ -4,6 +4,8 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.client.render.ShaderManager;
 import com.site21.bittermelon.client.render.TypingIndicatorRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.client.PhoneTipRenderer;
+import com.site21.bittermelon.common.content.items.wire.client.WireFeatureRenderer;
+import com.site21.bittermelon.common.content.items.wire.client.WireOverlayExtractor;
 import com.site21.bittermelon.common.systems.atmosphere.client.AtmosFogRenderer;
 import com.site21.bittermelon.common.systems.atmosphere.data.AtmosInstancesData;
 import com.site21.bittermelon.common.systems.blockdamage.client.BlockDamageExtractor;
@@ -46,6 +48,11 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
+    public static void onSubmitCustomGeometry(SubmitCustomGeometryEvent event) {
+        WireFeatureRenderer.submitConnectedWire(event.getPoseStack(), event.getSubmitNodeCollector());
+    }
+
+    @SubscribeEvent
     public static void onExtractLevelRenderState(ExtractLevelRenderStateEvent event) {
         BlockDamageExtractor.extractBlockDamageRenderStates(event.getRenderState(), event.getLevelRenderer(),
                 event.getFrustum(), event.getLevel());
@@ -60,12 +67,11 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onRenderOverlayPost(RenderGuiLayerEvent.@NotNull Post event) {
-        RiseProgressBar.render(event.getGuiGraphics());
-        PhoneTipRenderer.renderPhoneTip(event.getGuiGraphics());
+        RiseProgressBar.extract(event.getGuiGraphics());
+        PhoneTipRenderer.extractPhoneTip(event.getGuiGraphics());
+        WireOverlayExtractor.extractWiringOverlay(event.getGuiGraphics());
     }
 
-    // TODO: Shit doesn't work
-    // TODO: WHY DO YOU FAIL ME EVENTS
     @SubscribeEvent
     public static void onRenderLiving(RenderLivingEvent.@NotNull Post<?, ?, ?> event) {
         if (event.getRenderer().getModel() instanceof HumanoidModel<?> model) {

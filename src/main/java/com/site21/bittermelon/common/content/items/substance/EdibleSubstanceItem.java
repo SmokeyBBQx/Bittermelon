@@ -40,7 +40,7 @@ public class EdibleSubstanceItem extends SubstanceContainerItem {
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
         if (entity instanceof Player player) {
             if (!level.isClientSide()) {
-                player.displayClientMessage(getFlavorMessageComponent(stack), false);
+                player.sendSystemMessage(getFlavorMessageComponent(stack));
             }
         }
 

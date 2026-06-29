@@ -45,7 +45,7 @@ public class PowderedSubstanceItem extends SubstanceContainerItem {
             if (!level.isClientSide()) {
                 Component smell = getSmellMessageComponent(stack);
                 if (!smell.getString().isBlank()) {
-                    player.displayClientMessage(smell, false);
+                    player.sendSystemMessage(smell);
                 }
             }
         }

@@ -147,7 +147,7 @@ public class SCP2398Item extends Item {
     private void shootExplosiveProjectile(ItemStack stack, @NotNull LivingEntity target) {
         Level level = target.level();
 
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             float explosionScaleFactor = (float) target.getHitbox().getSize();
             float explosionPower = 2.0f * explosionScaleFactor;
 
@@ -162,9 +162,9 @@ public class SCP2398Item extends Item {
                     stack
             );
 
-            double angle = level.random.nextDouble() * Math.PI * 2;
-            double upwardBias = level.random.nextDouble() * 0.8;
-            double horizontalScale = 0.4 + (level.random.nextDouble() * 0.6);
+            double angle = level.getRandom().nextDouble() * Math.PI * 2;
+            double upwardBias = level.getRandom().nextDouble() * 0.8;
+            double horizontalScale = 0.4 + (level.getRandom().nextDouble() * 0.6);
 
 
             Vec3 direction = new Vec3(
@@ -198,9 +198,9 @@ public class SCP2398Item extends Item {
             serverLevel.sendParticles(ParticleTypes.SWEEP_ATTACK, x, y, z, 1, 0, 0, 0, 0);
 
             for (int i = 0; i < 4; i++) {
-                double offsetX = (level.random.nextDouble() - 0.5) * 0.8;
-                double offsetY = (level.random.nextDouble() - 0.5) * 0.5;
-                double offsetZ = (level.random.nextDouble() - 0.5) * 0.8;
+                double offsetX = (level.getRandom().nextDouble() - 0.5) * 0.8;
+                double offsetY = (level.getRandom().nextDouble() - 0.5) * 0.5;
+                double offsetZ = (level.getRandom().nextDouble() - 0.5) * 0.8;
 
                 serverLevel.sendParticles(
                         ParticleTypes.SWEEP_ATTACK,

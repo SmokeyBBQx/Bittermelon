@@ -21,7 +21,7 @@ public class SCP377CookieItem extends Item {
     public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
         ItemStack stack = player.getItemInHand(usedHand);
 
-        if (level.isClientSide) return InteractionResult.PASS;
+        if (level.isClientSide()) return InteractionResult.PASS;
 
         stack.consume(1, player);
 

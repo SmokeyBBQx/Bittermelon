@@ -15,7 +15,6 @@ import com.site21.bittermelon.common.content.items.scps.scp377.Fortune;
 import com.site21.bittermelon.common.content.items.scps.scp377.client.SCP3771Screen;
 import com.site21.bittermelon.common.content.items.wire.client.WireConnectionScreen;
 import com.site21.bittermelon.common.content.items.wirecutters.client.WireCutterScreen;
-import com.site21.bittermelon.common.content.items.writablepaper.client.PaperEditScreen;
 import com.site21.bittermelon.common.systems.character.client.characterselection.CharacterSelectionScreen;
 import com.site21.bittermelon.common.systems.containment.client.ContainmentPanelScreen;
 import com.site21.bittermelon.common.systems.economy.bank.client.ATMScreen;
@@ -26,7 +25,6 @@ import com.site21.bittermelon.common.systems.personnel.registry.PersonnelEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,10 +47,6 @@ public class ScreenSetter {
 
     public static void displayHealthScreen(@NotNull LivingEntity entity) {
         Minecraft.getInstance().setScreen(new HealthScreen(entity));
-    }
-
-    public static void displayPaperEditScreen(ItemStack paper) {
-        Minecraft.getInstance().setScreen(new PaperEditScreen(paper));
     }
 
     public static void displayPersonnelScreen(PersonnelTerminalBlockEntity terminalBlockEntity) {

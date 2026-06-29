@@ -34,7 +34,7 @@ public class SCP377Item extends Item {
             @NotNull InteractionHand usedHand) {
         ItemStack stack = player.getItemInHand(usedHand);
 
-        if (level.isClientSide)
+        if (level.isClientSide())
             return InteractionResult.PASS;
         int cookieCount = stack.getOrDefault(COOKIE_COUNT, DEFAULT_COOKIE_COUNT);
 
@@ -63,8 +63,9 @@ public class SCP377Item extends Item {
             return InteractionResult.SUCCESS;
         }
 
-        player.displayClientMessage(
-                Component.literal("Box empty..").withStyle(ChatFormatting.RED).withStyle(ChatFormatting.ITALIC), true);
+        player.sendSystemMessage(Component.literal("Box empty..")
+                .withStyle(ChatFormatting.RED)
+                .withStyle(ChatFormatting.ITALIC));
 
         return InteractionResult.PASS;
     }
@@ -74,7 +75,7 @@ public class SCP377Item extends Item {
             @Nullable EquipmentSlot slot) {
         super.inventoryTick(stack, level, entity, slot);
 
-        if (level.isClientSide)
+        if (level.isClientSide())
             return;
 
         if (level.getGameTime() - stack.getOrDefault(EMPTY_TIME, -1L) > REFILL_DELAY) {

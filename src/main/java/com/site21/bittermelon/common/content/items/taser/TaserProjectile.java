@@ -108,7 +108,7 @@ public class TaserProjectile extends Projectile {
         if (hookedIn instanceof LivingEntity livingEntity) {
             livingEntity.removeEffect(TASERED);
 
-            ClientboundStopSoundPacket stopSoundPacket = new ClientboundStopSoundPacket(BitterSounds.TASER.getKey().location(), SoundSource.PLAYERS);
+            ClientboundStopSoundPacket stopSoundPacket = new ClientboundStopSoundPacket(BitterSounds.TASER.getKey().identifier(), SoundSource.PLAYERS);
             AABB stopSoundArea = new AABB(livingEntity.getOnPos()).inflate(15);
             for (Player player : level().getEntitiesOfClass(Player.class, stopSoundArea)) {
                 if (player instanceof ServerPlayer serverPlayer) {

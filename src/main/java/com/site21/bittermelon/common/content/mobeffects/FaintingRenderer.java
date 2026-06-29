@@ -1,22 +1,10 @@
 package com.site21.bittermelon.common.content.mobeffects;
 
-import com.site21.bittermelon.Bittermelon;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.player.Player;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import net.neoforged.neoforge.client.event.ViewportEvent;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.init.neoforge.BitterMobEffects.FAINTING;
-
-@EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class FaintingRenderer {
     public static final Identifier VIGNETTE_LOCATION = Identifier.withDefaultNamespace("textures/misc/vignette.png");
 
@@ -47,45 +35,45 @@ public class FaintingRenderer {
 //        }
     }
 
-    @SubscribeEvent
-    public static void onRenderOverlay(RenderGuiEvent.@NotNull Pre event) {
-        Minecraft mc = Minecraft.getInstance();
-        Player player = mc.player;
-        if (player == null) return;
-
-
-        if (player.hasEffect(FAINTING)) {
-            int amplifier = player.getEffect(FAINTING).getAmplifier();
-            float vignetteAmplifier = amplifier > 0 ? (float) amplifier / 10 : 0;
-            GuiGraphicsExtractor GuiGraphicsExtractor = event.getGuiGraphicsExtractor();
-
-            GuiGraphicsExtractor.blit(
-                    RenderPipelines.VIGNETTE,
-                    VIGNETTE_LOCATION,
-                    0,
-                    0,
-                    0.0F,
-                    0.0F,
-                    GuiGraphicsExtractor.guiWidth(),
-                    GuiGraphicsExtractor.guiHeight(),
-                    GuiGraphicsExtractor.guiWidth(),
-                    GuiGraphicsExtractor.guiHeight(),
-                    0xFF000000 | (int) (vignetteAmplifier * 255)
-            );
-        }
-    }
-
-    @SubscribeEvent
-    public static void onComputeCameraAngles(ViewportEvent.ComputeCameraAngles event) {
-        Player player = Minecraft.getInstance().player;
-        if (player == null) return;
-
-        if (player.hasEffect(FAINTING)) {
-            float time = (float) (player.level().getGameTime() * 0.005);
-            float intensity = 5;
-            float roll = (float) (Math.sin(time * intensity) * intensity);
-
-            event.setRoll(roll);
-        }
-    }
+//    @SubscribeEvent
+//    public static void onRenderOverlay(RenderGuiEvent.@NotNull Pre event) {
+//        Minecraft mc = Minecraft.getInstance();
+//        Player player = mc.player;
+//        if (player == null) return;
+//
+//
+//        if (player.hasEffect(FAINTING)) {
+//            int amplifier = player.getEffect(FAINTING).getAmplifier();
+//            float vignetteAmplifier = amplifier > 0 ? (float) amplifier / 10 : 0;
+//            GuiGraphicsExtractor GuiGraphicsExtractor = event.getGuiGraphicsExtractor();
+//
+//            GuiGraphicsExtractor.blit(
+//                    RenderPipelines.VIGNETTE,
+//                    VIGNETTE_LOCATION,
+//                    0,
+//                    0,
+//                    0.0F,
+//                    0.0F,
+//                    GuiGraphicsExtractor.guiWidth(),
+//                    GuiGraphicsExtractor.guiHeight(),
+//                    GuiGraphicsExtractor.guiWidth(),
+//                    GuiGraphicsExtractor.guiHeight(),
+//                    0xFF000000 | (int) (vignetteAmplifier * 255)
+//            );
+//        }
+//    }
+//
+//    @SubscribeEvent
+//    public static void onComputeCameraAngles(ViewportEvent.ComputeCameraAngles event) {
+//        Player player = Minecraft.getInstance().player;
+//        if (player == null) return;
+//
+//        if (player.hasEffect(FAINTING)) {
+//            float time = (float) (player.level().getGameTime() * 0.005);
+//            float intensity = 5;
+//            float roll = (float) (Math.sin(time * intensity) * intensity);
+//
+//            event.setRoll(roll);
+//        }
+//    }
 }

@@ -73,7 +73,7 @@ public class FluidContainerItem extends SubstanceContainerItem {
                 && offhandItem.getItem() instanceof FluidContainerItem
                 && itemInHand.getOrDefault(CAN_SPILL, true)) {
 
-            if (!level.isClientSide && player.isShiftKeyDown()) {
+            if (!level.isClientSide() && player.isShiftKeyDown()) {
                 transferSubstancesToContainer(itemInHand, offhandItem, level, player);
             }
         } else {
@@ -92,7 +92,7 @@ public class FluidContainerItem extends SubstanceContainerItem {
             } else if (itemInHand.getOrDefault(CAN_SPILL, true) && !blockState.is(SUBSTANCE_FLUID)) {
                 // If the item can spill and the player isn't looking at a fluid block, start drinking
 
-                if (level.isClientSide) {
+                if (level.isClientSide()) {
                     playDrinkSound(level, player.getOnPos());
                 }
 
@@ -112,7 +112,7 @@ public class FluidContainerItem extends SubstanceContainerItem {
 
         if (!stack.getOrDefault(CAN_SPILL, true)) return InteractionResult.FAIL;
 
-        if (!level.isClientSide && player != null) {
+        if (!level.isClientSide() && player != null) {
             // If the container isn't empty and the player is sneaking, try to spill
             if (!isContainerEmpty(stack)) {
                 if (player.isShiftKeyDown()) {
@@ -145,7 +145,7 @@ public class FluidContainerItem extends SubstanceContainerItem {
             level.setBlock(spillPos, SUBSTANCE_FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
             transferSubstancesToBlock(spillPos, level, stack, getLimitedTransferRate(stack));
         } else {
-            player.displayClientMessage(Component.literal("Can't spill here!").withStyle(ChatFormatting.RED), true);
+            player.sendSystemMessage(Component.literal("Can't spill here!").withStyle(ChatFormatting.RED));
             return InteractionResult.PASS;
         }
 
@@ -283,7 +283,7 @@ public class FluidContainerItem extends SubstanceContainerItem {
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
         if (entity instanceof Player player) {
             if (!level.isClientSide()) {
-                player.displayClientMessage(getFlavorMessageComponent(stack), false);
+                player.sendSystemMessage(getFlavorMessageComponent(stack));
             }
         }
 
@@ -299,7 +299,7 @@ public class FluidContainerItem extends SubstanceContainerItem {
         if (getTotalVolume(stack) <= 0) return false;
 
         Level level = entity.level();
-        if (!level.isClientSide && !entity.isNoGravity() && entity.onGround()) {
+        if (!level.isClientSide() && !entity.isNoGravity() && entity.onGround()) {
             if (!stack.getOrDefault(HAS_LANDED.get(), false)) {
                 stack.set(HAS_LANDED.get(), true);
                 if (stack.getOrDefault(CAN_SPILL, true)) {

@@ -40,7 +40,7 @@ public class SCP2398ProjectileItem extends ThrownItemProjectile {
         super.tick();
 
         int particleFrequency = 2;
-        if (!level().isClientSide && tickCount % particleFrequency == 0) {
+        if (!level().isClientSide() && tickCount % particleFrequency == 0) {
             double x = this.getX();
             double y = this.getY();
             double z = this.getZ();
@@ -66,7 +66,7 @@ public class SCP2398ProjectileItem extends ThrownItemProjectile {
 
     @Override
     protected void onHitBlock(@NotNull BlockHitResult result) {
-        if (level().isClientSide) return;
+        if (level().isClientSide()) return;
 
         BlockPos pos = result.getBlockPos();
         ItemEntity itemEntity = new ItemEntity(level(), pos.getX(), pos.getY(), pos.getZ(), getItem());
@@ -102,7 +102,7 @@ public class SCP2398ProjectileItem extends ThrownItemProjectile {
 
     @Override
     protected void onHitEntity(@NotNull EntityHitResult result) {
-        if (level().isClientSide) return;
+        if (level().isClientSide()) return;
         Entity entity = result.getEntity();
 
         if (entity instanceof ItemEntity || entity instanceof SCP2398ProjectileItem) return;

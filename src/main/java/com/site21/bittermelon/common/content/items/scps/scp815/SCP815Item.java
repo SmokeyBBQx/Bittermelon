@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -25,7 +26,6 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import org.jetbrains.annotations.NotNull;
-import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -49,7 +49,7 @@ public class SCP815Item extends Item {
 
     // For Berry robots to open the can on the nearest player
     public static void openCanOnNearestPlayer(Level level, Vec3 origin, double range) {
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
         Player nearest = level.getNearestPlayer(origin.x, origin.y, origin.z, range, false);
         if (nearest == null) return;
         ItemStack dummy = new ItemStack(BitterItems.SCP_815.get());
@@ -60,7 +60,7 @@ public class SCP815Item extends Item {
     @Override
     public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player,
                                           @NotNull InteractionHand usedHand) {
-        if (level.isClientSide) return InteractionResult.PASS;
+        if (level.isClientSide()) return InteractionResult.PASS;
 
         ItemStack stack = player.getItemInHand(usedHand);
         if (isOpen(stack, level)) return InteractionResult.PASS;
@@ -76,7 +76,7 @@ public class SCP815Item extends Item {
 
     private static void openCan(ItemStack stack, Player player, Level level) {
         stack.set(BitterDataComponents.OPEN_TIME.get(), level.getGameTime());
-        player.displayClientMessage(MSG_OPEN, true);
+        player.sendSystemMessage(MSG_OPEN);
         player.getCooldowns().addCooldown(stack, 10);
         spawnSnakes(player, level);
         spawnBloodParticles(player, level);
@@ -99,14 +99,14 @@ public class SCP815Item extends Item {
         for (int i = 0; i < 4; i++) {
             SCP815Snake snake = new SCP815Snake(BitterEntities.SCP_815_SNAKE.get(), level);
             snake.setPos(
-                    mouth.x + look.x * 0.2 + (level.random.nextDouble() - 0.5) * 0.2,
+                    mouth.x + look.x * 0.2 + (level.getRandom().nextDouble() - 0.5) * 0.2,
                     mouth.y,
-                    mouth.z + look.z * 0.2 + (level.random.nextDouble() - 0.5) * 0.2
+                    mouth.z + look.z * 0.2 + (level.getRandom().nextDouble() - 0.5) * 0.2
             );
             snake.setDeltaMovement(
-                    look.x * 0.3 + (level.random.nextDouble() - 0.5) * 0.15,
-                    -0.3 - level.random.nextDouble() * 0.2,
-                    look.z * 0.3 + (level.random.nextDouble() - 0.5) * 0.15
+                    look.x * 0.3 + (level.getRandom().nextDouble() - 0.5) * 0.15,
+                    -0.3 - level.getRandom().nextDouble() * 0.2,
+                    look.z * 0.3 + (level.getRandom().nextDouble() - 0.5) * 0.15
             );
             snake.setInvulnerable(true);
             snake.setSilent(true);
@@ -122,9 +122,9 @@ public class SCP815Item extends Item {
         for (int i = 0; i < 400; i++) {
             serverLevel.sendParticles(BLOOD_PARTICLE,
                     origin.x, origin.y, origin.z, 0,
-                    look.x * 0.5 + level.random.nextGaussian() * 0.15,
-                    look.y * 0.2 + level.random.nextGaussian() * 0.15,
-                    look.z * 0.5 + level.random.nextGaussian() * 0.15,
+                    look.x * 0.5 + level.getRandom().nextGaussian() * 0.15,
+                    look.y * 0.2 + level.getRandom().nextGaussian() * 0.15,
+                    look.z * 0.5 + level.getRandom().nextGaussian() * 0.15,
                     1.0
             );
         }

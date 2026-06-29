@@ -42,7 +42,7 @@ public class RiseProgressBar {
         GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, STUN_BAR_PROGRESS, BAR_WIDTH, BAR_HEIGHT, 0, 0, x, y, progressWidth, BAR_HEIGHT);
     }
 
-    public static void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor) {
+    public static void extract(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor) {
         Player player = Minecraft.getInstance().player;
         if (player == null || !StumbleHandler.isStumbled(player)) return;
 

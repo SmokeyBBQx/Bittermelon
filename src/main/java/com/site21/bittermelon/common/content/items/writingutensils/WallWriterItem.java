@@ -48,7 +48,7 @@ public abstract class WallWriterItem extends BlockItem implements WallWriter {
         }
 
         if (level.getBlockEntity(pos) instanceof WallWritingBlockEntity wallWriting) {
-            if (!level.isClientSide) {
+            if (!level.isClientSide()) {
                 if (tryApplyToWall(level, wallWriting, player, context.getItemInHand())) {
                     level.sendBlockUpdated(pos, state, state, UPDATE_CLIENTS);
                 }
@@ -65,7 +65,7 @@ public abstract class WallWriterItem extends BlockItem implements WallWriter {
     @Override
     protected boolean updateCustomBlockEntityTag(@NotNull BlockPos pos, @NotNull Level level, @Nullable Player player, @NotNull ItemStack stack, @NotNull BlockState state) {
         boolean shouldUpdate = super.updateCustomBlockEntityTag(pos, level, player, stack, state);
-        if (!level.isClientSide && !shouldUpdate && player != null) {
+        if (!level.isClientSide() && !shouldUpdate && player != null) {
             if (level.getBlockEntity(pos) instanceof WallWritingBlockEntity wallWriting) {
                 if (player instanceof ServerPlayer serverPlayer) {
                     formatText(wallWriting, stack);

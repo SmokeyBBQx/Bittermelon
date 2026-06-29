@@ -35,7 +35,7 @@ public class MopItem extends FluidContainerItem {
         }
 
         if (usedHand == InteractionHand.MAIN_HAND && offhandItem.getItem() instanceof FluidContainerItem) {
-            if (!level.isClientSide) {
+            if (!level.isClientSide()) {
                 transferSubstancesToContainer(itemInHand, offhandItem, level, player);
             }
         }
@@ -50,7 +50,7 @@ public class MopItem extends FluidContainerItem {
         ItemStack stack = context.getItemInHand();
         BlockPos clickedPos = context.getClickedPos();
 
-        if (!level.isClientSide && player != null) {
+        if (!level.isClientSide() && player != null) {
             if (canMopAt(level, stack, clickedPos)) {
                 player.startUsingItem(context.getHand());
                 return InteractionResult.CONSUME;
@@ -84,7 +84,7 @@ public class MopItem extends FluidContainerItem {
 
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity) {
-        if (entity instanceof Player player && !level.isClientSide) {
+        if (entity instanceof Player player && !level.isClientSide()) {
             BlockPos targetPos = getTargetBlockPos(player);
 
             if (targetPos != null) {

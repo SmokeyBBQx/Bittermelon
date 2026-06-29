@@ -1,8 +1,8 @@
 package com.site21.bittermelon.common.content.items.wirecutters;
 
+import com.site21.bittermelon.common.content.items.wirecutters.networking.OpenWireCutterScreen;
 import com.site21.bittermelon.common.systems.electronics.ElectronicDevice;
 import com.site21.bittermelon.common.systems.electronics.PanelDevice;
-import com.site21.bittermelon.common.content.items.wirecutters.networking.OpenWireCutterScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -24,7 +24,7 @@ public class WireCuttersItem extends Item {
         BlockPos pos = context.getClickedPos();
         Player player = context.getPlayer();
 
-        if (player == null || level.isClientSide) return InteractionResult.FAIL;
+        if (player == null || level.isClientSide()) return InteractionResult.FAIL;
 
         if (level.getBlockEntity(pos) instanceof ElectronicDevice) {
             if (player instanceof ServerPlayer serverPlayer) {

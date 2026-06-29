@@ -2,10 +2,11 @@ package com.site21.bittermelon.common.content.items.taser;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -33,26 +34,29 @@ public class TaserProjectileRenderer extends EntityRenderer<TaserProjectile, Tas
     }
 
     @Override
-    public void render(@NotNull TaserProjectileRenderState renderState, @NotNull PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int packedLight) {
-        super.render(renderState, poseStack, bufferSource, packedLight);
+    public void submit(TaserProjectileRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+        super.submit(state, poseStack, collector, camera);
 
         poseStack.pushPose();
 
-        Vec3 shooterPos = renderState.shooterPos;
-        Vec3 projectilePos = renderState.projectilePos;
+        Vec3 shooterPos = state.shooterPos;
+        Vec3 projectilePos = state.projectilePos;
 
         float deltaX = (float) (shooterPos.x - projectilePos.x);
         float deltaY = (float) (shooterPos.y - projectilePos.y);
         float deltaZ = (float) (shooterPos.z - projectilePos.z);
 
-        VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.lineStrip());
-        PoseStack.Pose pose = poseStack.last();
-
-        int segments = 32;
-        for (int i = 0; i <= segments; i++) {
-            stringVertex(deltaX, deltaY, deltaZ, vertexConsumer, pose, (float) i / segments, (float) (i + 1) / segments);
-            stringVertex(deltaX + 0.1f, deltaY , deltaZ + 0.1f, vertexConsumer, pose, (float) i / segments, (float) (i + 1) / segments);
-        }
+        collector.submitCustomGeometry(
+                poseStack,
+                RenderTypes.lines(),
+                (pose, buffer) -> {
+                    int segments = 32;
+                    for (int i = 0; i <= segments; i++) {
+                        stringVertex(deltaX, deltaY, deltaZ, buffer, pose, (float) i / segments, (float) (i + 1) / segments);
+                        stringVertex(deltaX + 0.1f, deltaY , deltaZ + 0.1f, buffer, pose, (float) i / segments, (float) (i + 1) / segments);
+                    }
+                }
+        );
 
         poseStack.popPose();
     }

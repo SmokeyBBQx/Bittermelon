@@ -1,8 +1,8 @@
 package com.site21.bittermelon.common.content.items.wire;
 
+import com.site21.bittermelon.common.content.items.wire.networking.OpenWiringScreen;
 import com.site21.bittermelon.common.systems.electronics.ElectronicDevice;
 import com.site21.bittermelon.common.systems.electronics.PanelDevice;
-import com.site21.bittermelon.common.content.items.wire.networking.OpenWiringScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,7 +35,7 @@ public class WireItem extends Item {
         if (player == null) return InteractionResult.FAIL;
 
         if (level.getBlockEntity(pos) instanceof ElectronicDevice) {
-            if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+            if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
                 if (level.getBlockEntity(pos) instanceof PanelDevice panelDevice && !panelDevice.isPanelOpen()) return InteractionResult.FAIL;
                 PacketDistributor.sendToPlayer(serverPlayer, new OpenWiringScreen(pos, context.getHand()));
             }

@@ -29,7 +29,7 @@ public class LaserDesignatorItem extends Item {
     public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
         ItemStack heldItem = player.getItemInHand(usedHand);
 
-        if (level.isClientSide) return InteractionResult.PASS;
+        if (level.isClientSide()) return InteractionResult.PASS;
 
         BlockPos pos1 = heldItem.get(POSITION_1);
         BlockPos pos2 = heldItem.get(POSITION_2);
@@ -85,7 +85,7 @@ public class LaserDesignatorItem extends Item {
         ItemStack usedItem = context.getItemInHand();
         Player player = context.getPlayer();
         if (player == null) return InteractionResult.FAIL;
-        if (context.getLevel().isClientSide) return InteractionResult.FAIL;
+        if (context.getLevel().isClientSide()) return InteractionResult.FAIL;
 
         if (context.getLevel().getBlockEntity(context.getClickedPos()) instanceof ContainmentPanelBlockEntity blockEntity) {
             if (player.isCrouching()) {
@@ -93,17 +93,17 @@ public class LaserDesignatorItem extends Item {
                 usedItem.set(POSITION_1.get(), new BlockPos(boundingBox.minX(), boundingBox.minY(), boundingBox.minZ()));
                 usedItem.set(POSITION_2.get(), new BlockPos(boundingBox.maxX(), boundingBox.maxY(), boundingBox.maxZ()));
                 player.level().playSound(null, player.getOnPos(), SCANNER_BEEP.value(), SoundSource.PLAYERS, 0.5f, 0.8f);
-                player.displayClientMessage(Component.literal("Bounding box copied from containment panel.").withColor(3066993), true);
+                player.sendSystemMessage(Component.literal("Bounding box copied from containment panel.").withColor(3066993));
                 return InteractionResult.SUCCESS;
             }
         }
 
         if (player.isCrouching()) {
             context.getItemInHand().set(POSITION_2.get(), context.getClickedPos());
-            player.displayClientMessage(Component.literal("Position 2 set to " + context.getClickedPos().toShortString()).withColor(3066993), true);
+            player.sendSystemMessage(Component.literal("Position 2 set to " + context.getClickedPos().toShortString()).withColor(3066993));
         } else {
             context.getItemInHand().set(POSITION_1.get(), context.getClickedPos());
-            player.displayClientMessage(Component.literal("Position 1 set to " + context.getClickedPos().toShortString()).withColor(3066993), true);
+            player.sendSystemMessage(Component.literal("Position 1 set to " + context.getClickedPos().toShortString()).withColor(3066993));
         }
 
         playBeepSound(player);

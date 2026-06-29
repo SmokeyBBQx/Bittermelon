@@ -27,7 +27,7 @@ public class SCP3771Item extends Item {
     public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
         ItemStack stack = player.getItemInHand(usedHand);
 
-        if (level.isClientSide) return InteractionResult.PASS;
+        if (level.isClientSide()) return InteractionResult.PASS;
 
         if (!stack.getOrDefault(FORTUNE_READ, false)) {
             stack.set(FORTUNE_READ, true);
