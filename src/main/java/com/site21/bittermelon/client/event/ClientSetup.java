@@ -57,23 +57,23 @@ import com.site21.bittermelon.init.neoforge.BitterMobEffects;
 import com.site21.bittermelon.init.neoforge.BitterParticles;
 import com.site21.bittermelon.networking.client.ClientPayloadHandler;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
+import net.minecraft.client.entity.ClientAvatarEntity;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.block.FluidModel;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
-import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import net.minecraft.client.resources.PlayerSkin;
+import net.minecraft.client.resources.model.sprite.AtlasManager;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Avatar;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.PlayerModelType;
@@ -85,6 +85,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
+import net.neoforged.neoforge.client.renderstate.AvatarRenderStateModifier;
 import net.neoforged.neoforge.client.renderstate.RegisterRenderStateModifiersEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -94,12 +95,11 @@ import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.MEDICAL
 import static com.site21.bittermelon.init.neoforge.BitterEntities.*;
 import static com.site21.bittermelon.init.neoforge.BitterFluidTypes.SIMPLE_FLUID_TYPE;
 import static com.site21.bittermelon.init.neoforge.BitterFluidTypes.SUBSTANCE_FLUID_TYPE;
-import static com.site21.bittermelon.init.neoforge.BitterFluids.SUBSTANCE_FLUID;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class ClientSetup {
-    private static final Map<PlayerSkin.Model, EntityRendererProvider<Mimic>> MIMIC_PROVIDERS = Map.of(
-            PlayerSkin.Model.WIDE, p_174098_ -> new MimicRenderer(p_174098_, false), PlayerSkin.Model.SLIM, p_174096_ -> new MimicRenderer(p_174096_, true)
+    private static final Map<PlayerModelType, EntityRendererProvider<Mimic>> MIMIC_PROVIDERS = Map.of(
+            PlayerModelType.WIDE, p_174098_ -> new MimicRenderer(p_174098_, false), PlayerModelType.SLIM, p_174096_ -> new MimicRenderer(p_174096_, true)
     );
 
     public static final ContextKey<Float> ENTITY_WIDTH = new ContextKey<>(
@@ -120,7 +120,7 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void fmlSetup(FMLClientSetupEvent event) {
-        ItemBlockRenderTypes.setRenderLayer(SUBSTANCE_FLUID.get(), ChunkSectionLayer.TRANSLUCENT);
+//        ItemBlockRenderTypes.setRenderLayer(SUBSTANCE_FLUID.get(), ChunkSectionLayer.TRANSLUCENT);
         CompartmentRenderers.register();
         InstrumentWidgets.register();
     }
@@ -157,19 +157,19 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void registerRenderStateModifiers(@NotNull RegisterRenderStateModifiersEvent event) {
-        event.registerEntityModifier(
-                PlayerRenderer.class,
-                (entity, state) -> {
-                    Entity carriedEntity = CarryHandler.getCarried(entity);
-                    if (carriedEntity == null) {
-                        state.setRenderData(ENTITY_WIDTH, 0f);
-                        return;
-                    }
-
-                    float entityWidth = carriedEntity.getBbWidth();
-                    state.setRenderData(ENTITY_WIDTH, entityWidth);
+        event.registerAvatarEntityModifier(new AvatarRenderStateModifier() {
+            @Override
+            public <T extends Avatar & ClientAvatarEntity> void accept(T avatar, AvatarRenderState renderState) {
+                Entity carriedEntity = CarryHandler.getCarried(avatar);
+                if (carriedEntity == null) {
+                    renderState.setRenderData(ENTITY_WIDTH, 0f);
+                    return;
                 }
-        );
+
+                float entityWidth = carriedEntity.getBbWidth();
+                renderState.setRenderData(ENTITY_WIDTH, entityWidth);
+            }
+        });
 
         event.registerEntityModifier(
                 new TypeToken<LivingEntityRenderer<LivingEntity, LivingEntityRenderState, ?>>() {
@@ -184,12 +184,14 @@ public class ClientSetup {
                 }
         );
 
-        event.registerEntityModifier(
-                PlayerRenderer.class,
-                (entity, state) -> {
-                    MobEffectInstance eyeballEffect = entity.getEffect(BitterMobEffects.EYEBALL_GROWTH);
-                    boolean render = eyeballEffect != null && eyeballEffect.getAmplifier() > 0;
-                    state.setRenderData(EYEBALL_GROWTH, render);
+        event.registerAvatarEntityModifier(
+                new AvatarRenderStateModifier() {
+                    @Override
+                    public <T extends Avatar & ClientAvatarEntity> void accept(T avatar, AvatarRenderState renderState) {
+                        MobEffectInstance eyeballEffect = avatar.getEffect(BitterMobEffects.EYEBALL_GROWTH);
+                        boolean render = eyeballEffect != null && eyeballEffect.getAmplifier() > 0;
+                        renderState.setRenderData(EYEBALL_GROWTH, render);
+                    }
                 }
         );
     }
@@ -277,8 +279,8 @@ public class ClientSetup {
     }
 
     @SubscribeEvent
-    public static void registerAtlases(@NotNull RegisterMaterialAtlasesEvent event) {
-        event.register(MediaSheets.ATLAS_LOCATION, MediaSheets.ATLAS_INFO_LOCATION);
+    public static void registerAtlases(@NotNull RegisterTextureAtlasesEvent event) {
+        event.register(new AtlasManager.AtlasConfig(MediaSheets.ATLAS_LOCATION, MediaSheets.ATLAS_INFO_LOCATION, true));
     }
 
     @SubscribeEvent
