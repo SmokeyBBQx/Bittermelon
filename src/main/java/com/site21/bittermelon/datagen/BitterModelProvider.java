@@ -84,7 +84,7 @@ public class BitterModelProvider extends ModelProvider {
         createPainting(blockModels, BitterBlocks.SCP_151.get());
         blockModels.createTrivialCube(BitterBlocks.PERSONNEL_TERMINAL.get());
         blockModels.createTrivialCube(BitterBlocks.KEYCARD_PRINTER.get());
-        blockModels.createAirLikeBlock(BitterBlocks.WALL_WRITING.get(), Identifier.withDefaultNamespace("white_concrete_powder"));
+        blockModels.createAirLikeBlock(BitterBlocks.WALL_WRITING.get(), new Material(Identifier.withDefaultNamespace("white_concrete_powder")));
         createStickyNote(blockModels);
         createKeycardReader(blockModels);
         createRedstoneDevice(blockModels, BitterBlocks.REDSTONE_DEVICE.get(), TexturedModel.ORIENTABLE);
@@ -207,6 +207,7 @@ public class BitterModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(
                 SCP_1079.get(),
                 new ConditionalItemModel.Unbaked(
+                        Optional.empty(),
                         new Open1079(),
                         open,
                         model
@@ -222,6 +223,7 @@ public class BitterModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(
                 SCP_815.get(),
                 new ConditionalItemModel.Unbaked(
+                        Optional.empty(),
                         new Open815(),
                         open,
                         model
@@ -449,6 +451,7 @@ public class BitterModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(
                 POWDER.get(),
                 new RangeSelectItemModel.Unbaked(
+                        Optional.empty(),
                         new SubstanceVolume(),
                         1,
                         List.of(
@@ -457,7 +460,7 @@ public class BitterModelProvider extends ModelProvider {
                                         ItemModelUtils.tintedModel(
                                                 ModelTemplates.FLAT_ITEM.create(
                                                         modLocation("item/powder_1"),
-                                                        TextureMapping.layer0(modLocation("item/powder_1")),
+                                                        TextureMapping.layer0(new Material(modLocation("item/powder_1"))),
                                                         itemModels.modelOutput
                                                 ),
                                                 new SubstanceColor()
@@ -468,7 +471,7 @@ public class BitterModelProvider extends ModelProvider {
                                         ItemModelUtils.tintedModel(
                                                 ModelTemplates.FLAT_ITEM.create(
                                                         modLocation("item/powder_2"),
-                                                        TextureMapping.layer0(modLocation("item/powder_2")),
+                                                        TextureMapping.layer0(new Material(modLocation("item/powder_2"))),
                                                         itemModels.modelOutput
                                                 ),
                                                 new SubstanceColor()
@@ -479,7 +482,7 @@ public class BitterModelProvider extends ModelProvider {
                                         ItemModelUtils.tintedModel(
                                                 ModelTemplates.FLAT_ITEM.create(
                                                         modLocation("item/powder_3"),
-                                                        TextureMapping.layer0(modLocation("item/powder_3")),
+                                                        TextureMapping.layer0(new Material(modLocation("item/powder_3"))),
                                                         itemModels.modelOutput
                                                 ),
                                                 new SubstanceColor()
@@ -501,36 +504,37 @@ public class BitterModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(
                 item,
                 new SelectItemModel.Unbaked(
-                        new SelectItemModel.UnbakedSwitch(
+                        Optional.empty(),
+                        new SelectItemModel.UnbakedSwitch<>(
                                 new StackPillShape(),
                                 List.of(
-                                        new SelectItemModel.SwitchCase(
+                                        new SelectItemModel.SwitchCase<>(
                                                 List.of(PillShape.ROUND),
                                                 ItemModelUtils.tintedModel(
                                                         ModelTemplates.FLAT_ITEM.create(
                                                                 modLocation("item/pill_round"),
-                                                                TextureMapping.layer0(modLocation("item/pill_round")),
+                                                                TextureMapping.layer0(new Material(modLocation("item/pill_round"))),
                                                                 itemModels.modelOutput
                                                         ),
                                                         new Dye(0xFFFFFF)
                                                 )
                                         ),
-                                        new SelectItemModel.SwitchCase(
+                                        new SelectItemModel.SwitchCase<>(
                                                 List.of(PillShape.CAPSULE),
                                                 ItemModelUtils.tintedModel(itemModels.generateLayeredItem(
                                                                 modLocation("item/pill_capsule"),
-                                                                modLocation("item/pill_capsule"),
-                                                                modLocation("item/pill_capsule_overlay")
+                                                                new Material(modLocation("item/pill_capsule")),
+                                                                new Material(modLocation("item/pill_capsule_overlay"))
                                                         ),
                                                         new Dye(0xFFFFFF),
                                                         ItemModelUtils.constantTint(-1))
                                         ),
-                                        new SelectItemModel.SwitchCase(
+                                        new SelectItemModel.SwitchCase<>(
                                                 List.of(PillShape.OVAL),
                                                 ItemModelUtils.tintedModel(
                                                         ModelTemplates.FLAT_ITEM.create(
                                                                 modLocation("item/pill_oval"),
-                                                                TextureMapping.layer0(modLocation("item/pill_oval")),
+                                                                TextureMapping.layer0(new Material(modLocation("item/pill_oval"))),
                                                                 itemModels.modelOutput
                                                         ),
                                                         new Dye(0xFFFFFF)
@@ -556,9 +560,11 @@ public class BitterModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(
                 item,
                 ItemModelUtils.tintedModel(
-                        itemModels.generateLayeredItem(item,
-                                modLocation("item/highlighter_tip"),
-                                modLocation("item/highlighter")),
+                        itemModels.generateLayeredItem(
+                                item,
+                                new Material(modLocation("item/highlighter_tip")),
+                                new Material(modLocation("item/highlighter"))
+                        ),
                         ItemModelUtils.constantTint(-1),
                         new BaseColor(DyeColor.WHITE)
                 )
@@ -572,6 +578,7 @@ public class BitterModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(
                 item,
                 new ConditionalItemModel.Unbaked(
+                        Optional.empty(),
                         new SmokableLit(),
                         litModel,
                         model
@@ -587,6 +594,7 @@ public class BitterModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(
                 SCP_377.get(),
                 new ConditionalItemModel.Unbaked(
+                        Optional.empty(),
                         new Empty377(),
                         model,
                         emptyModel
@@ -596,16 +604,16 @@ public class BitterModelProvider extends ModelProvider {
 
     public void createCageLamp(@NotNull BlockModelGenerators blockModels, Block block) {
         TextureMapping offTextureMapping = TextureMapping.defaultTexture(block);
-        Identifier onLocation = getBlockTexture(block, "_on");
-        TextureMapping onTextureMapping = offTextureMapping.copyAndUpdate(TextureSlot.TEXTURE, onLocation);
+        Material onTexture = getBlockTexture(block, "_on");
+        TextureMapping onTextureMapping = offTextureMapping.copyAndUpdate(TextureSlot.TEXTURE, onTexture);
 
         createCageLamp(blockModels, block, offTextureMapping, onTextureMapping);
     }
 
     public void createDefaultCageLamp(@NotNull BlockModelGenerators blockModels, Block block) {
-        TextureMapping offTextureMapping = TextureMapping.defaultTexture(modLocation("block/cage_lamp"));
-        Identifier onLocation = getBlockTexture(block, "_on");
-        TextureMapping onTextureMapping = offTextureMapping.copyAndUpdate(TextureSlot.TEXTURE, onLocation);
+        TextureMapping offTextureMapping = TextureMapping.defaultTexture(new Material(modLocation("block/cage_lamp")));
+        Material onTexture = getBlockTexture(block, "_on");
+        TextureMapping onTextureMapping = offTextureMapping.copyAndUpdate(TextureSlot.TEXTURE, onTexture);
 
         createCageLamp(blockModels, block, offTextureMapping, onTextureMapping);
     }
@@ -685,7 +693,7 @@ public class BitterModelProvider extends ModelProvider {
     public void createFluid(@NotNull BlockModelGenerators blockModels, @NotNull Block block) {
         MultiVariant none = blockModels.createParticleOnlyBlockModel(block, block);
 
-        TextureMapping fireMapping = new TextureMapping().put(TextureSlot.FIRE, Identifier.withDefaultNamespace("block/fire_0"));
+        TextureMapping fireMapping = new TextureMapping().put(TextureSlot.FIRE, new Material(Identifier.withDefaultNamespace("block/fire_0")));
         MultiVariant full = plainVariant(FIRE.create(block, fireMapping, blockModels.modelOutput));
 
         blockModels.blockStateOutput.accept(
@@ -693,39 +701,39 @@ public class BitterModelProvider extends ModelProvider {
                         .with(PropertyDispatch.initial(BlockStateProperties.LIT)
                                 .select(false, none)
                                 .select(true, full)
-        ));
+                        ));
     }
 
     public void createEyeballBlister(BlockModelGenerators blockModels, Block block) {
         blockModels.registerSimpleItemModel(block, Bittermelon.identifier("block/eyeball_blister_2"));
         MultiVariant age0 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_0",
-                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_0")), blockModels.modelOutput));
+                TextureMapping.cross(new Material(Bittermelon.identifier("block/eyeball_blister_0"))), blockModels.modelOutput));
         MultiVariant age1 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_1",
-                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_1")), blockModels.modelOutput));
+                TextureMapping.cross(new Material(Bittermelon.identifier("block/eyeball_blister_1"))), blockModels.modelOutput));
         MultiVariant age2 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_2",
-                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_2")), blockModels.modelOutput));
+                TextureMapping.cross(new Material(Bittermelon.identifier("block/eyeball_blister_2"))), blockModels.modelOutput));
         MultiVariant age3 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_3",
-                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_3")), blockModels.modelOutput));
+                TextureMapping.cross(new Material(Bittermelon.identifier("block/eyeball_blister_3"))), blockModels.modelOutput));
         MultiVariant age4 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_4",
-                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_4")), blockModels.modelOutput));
+                TextureMapping.cross(new Material(Bittermelon.identifier("block/eyeball_blister_4"))), blockModels.modelOutput));
         MultiVariant age5 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_5",
-                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_5")), blockModels.modelOutput));
+                TextureMapping.cross(new Material(Bittermelon.identifier("block/eyeball_blister_5"))), blockModels.modelOutput));
         MultiVariant age6 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_6",
-                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_6")), blockModels.modelOutput));
+                TextureMapping.cross(new Material(Bittermelon.identifier("block/eyeball_blister_6"))), blockModels.modelOutput));
         MultiVariant age7 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_7",
-                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_7")), blockModels.modelOutput));
+                TextureMapping.cross(new Material(Bittermelon.identifier("block/eyeball_blister_7"))), blockModels.modelOutput));
         MultiVariant age8 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_8",
-                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_8")), blockModels.modelOutput));
+                TextureMapping.cross(new Material(Bittermelon.identifier("block/eyeball_blister_8"))), blockModels.modelOutput));
         MultiVariant age9 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_9",
-                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_9")), blockModels.modelOutput));
+                TextureMapping.cross(new Material(Bittermelon.identifier("block/eyeball_blister_9"))), blockModels.modelOutput));
         MultiVariant age10 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_10",
-                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_10")), blockModels.modelOutput));
+                TextureMapping.cross(new Material(Bittermelon.identifier("block/eyeball_blister_10"))), blockModels.modelOutput));
         MultiVariant age11 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_11",
-                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_11")), blockModels.modelOutput));
+                TextureMapping.cross(new Material(Bittermelon.identifier("block/eyeball_blister_11"))), blockModels.modelOutput));
         MultiVariant age12 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_12",
-                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_12")), blockModels.modelOutput));
+                TextureMapping.cross(new Material(Bittermelon.identifier("block/eyeball_blister_12"))), blockModels.modelOutput));
         MultiVariant age13 = plainVariant(BitterModelTemplates.EYEBALL_BLISTER.createWithSuffix(block, "_13",
-                TextureMapping.cross(Bittermelon.identifier("block/eyeball_blister_13")), blockModels.modelOutput));
+                TextureMapping.cross(new Material(Bittermelon.identifier("block/eyeball_blister_13"))), blockModels.modelOutput));
 
         blockModels.blockStateOutput.accept(
                 MultiVariantGenerator.dispatch(block)
@@ -744,7 +752,7 @@ public class BitterModelProvider extends ModelProvider {
                                 .select(11, age11)
                                 .select(12, age12)
                                 .select(13, age13)
-        ));
+                        ));
     }
 
     @Contract(pure = true)

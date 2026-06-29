@@ -2,6 +2,7 @@ package com.site21.bittermelon.common.systems.telecomms.intercom;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.IntercomBlockEntity;
 import com.site21.bittermelon.common.systems.syncsound.SyncSoundEvent;
 import com.site21.bittermelon.common.systems.telecomms.intercom.networking.AddIntercomToClient;
@@ -127,7 +128,7 @@ public class IntercomManager extends SavedData {
 
     static {
         TYPE = new SavedDataType<>(
-                "intercoms",
+                Bittermelon.identifier("intercoms"),
                 IntercomManager::new,
                 RecordCodecBuilder.create(instance -> instance.group(
                         Codec.unboundedMap(BlockPos.CODEC, Codec.STRING).fieldOf("intercomIDs")

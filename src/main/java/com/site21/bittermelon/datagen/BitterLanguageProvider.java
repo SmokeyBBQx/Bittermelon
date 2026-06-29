@@ -39,7 +39,7 @@ public class BitterLanguageProvider extends LanguageProvider {
         customItemTranslations.add(HIGHLIGHTER.get());
         BitterItems.ITEMS.getEntries().forEach(this::addItemTranslation);
         BitterMobEffects.MOB_EFFECTS.getEntries().forEach(effect ->
-                addEffect(effect, formatName(effect.getKey().location().getPath())));
+                addEffect(effect, formatName(effect.getKey().identifier().getPath())));
     }
 
     private void addCustomItem(@NotNull Supplier<? extends Item> key, String name) {
@@ -52,7 +52,7 @@ public class BitterLanguageProvider extends LanguageProvider {
             return;
         }
 
-        String key = itemHolder.getKey().location().getPath();
+        String key = itemHolder.getKey().identifier().getPath();
         String displayName = formatName(key);
         addItem(itemHolder, displayName);
     }
