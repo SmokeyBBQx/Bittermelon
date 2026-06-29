@@ -106,8 +106,8 @@ public class ClientEvents {
 
         TypingIndicatorRenderer.renderTypingIcon(
                 event.getPoseStack(),
-                event.getMultiBufferSource(),
-                event.getPackedLight()
+                event.getSubmitNodeCollector(),
+                event.getEntityRenderState().lightCoords
         );
     }
 

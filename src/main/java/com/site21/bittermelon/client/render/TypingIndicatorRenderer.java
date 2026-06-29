@@ -4,11 +4,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.site21.bittermelon.init.neoforge.BitterAttachmentTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.network.chat.Style;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix4f;
 
 public class TypingIndicatorRenderer {
 
@@ -17,7 +17,7 @@ public class TypingIndicatorRenderer {
         return entity.getExistingDataOrNull(BitterAttachmentTypes.LAST_TYPING_TIME) != null;
     }
 
-    public static void renderTypingIcon(@NotNull PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+    public static void renderTypingIcon(PoseStack poseStack, SubmitNodeCollector collector, int lightCoords) {
         poseStack.pushPose();
 
         String[] typingFrames = {"[.]", "[..]", "[...]"};
@@ -30,19 +30,18 @@ public class TypingIndicatorRenderer {
 
         poseStack.scale(scale, -scale, scale);
 
-        Matrix4f matrix = poseStack.last().pose();
         float centerX = -iconWidth / 2f;
 
-        font.drawInBatch(
-                icon,
+        collector.submitText(
+                poseStack,
                 centerX, 0,
-                0xFFFFFF,
+                FormattedCharSequence.forward(icon, Style.EMPTY),
                 false,
-                matrix,
-                bufferSource,
                 Font.DisplayMode.NORMAL,
+                lightCoords,
+                0xFFFFFF,
                 0,
-                packedLight
+                0
         );
 
         poseStack.popPose();
