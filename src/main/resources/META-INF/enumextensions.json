@@ -12,10 +12,10 @@
     {
       "enum": "net/minecraft/client/model/HumanoidModel$ArmPose",
       "name": "BITTERMELON_SCREW_POSE",
-      "constructor": "(ZLnet/neoforged/neoforge/client/IArmPoseTransformer;)V",
+      "constructor": "(ZZLnet/neoforged/neoforge/client/IArmPoseTransformer;)V",
       "parameters": {
-        "class": "com/site21/bittermelon/common/systems/component/screwdriver/ScrewdriverPose",
-        "field": "SCREW_POSE"
+          "class": "com/site21/bittermelon/common/systems/component/screwdriver/ScrewdriverPose",
+          "field": "SCREW_POSE"
       }
     },
     {

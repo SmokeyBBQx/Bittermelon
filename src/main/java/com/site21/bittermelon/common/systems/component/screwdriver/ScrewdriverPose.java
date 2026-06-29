@@ -10,6 +10,7 @@ public class ScrewdriverPose {
     public static final EnumProxy<HumanoidModel.ArmPose> SCREW_POSE = new EnumProxy<>(
             HumanoidModel.ArmPose.class,
             false,
+            false,
             (IArmPoseTransformer) ScrewdriverPose::applyCustomModelPose
     );
 
