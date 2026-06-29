@@ -22,7 +22,6 @@ import org.jspecify.annotations.Nullable;
 
 import static net.minecraft.world.level.block.DecoratedPotBlock.HORIZONTAL_FACING;
 
-
 public class SlidingDoorRenderer implements BlockEntityRenderer<SlidingDoorBlockEntity, SlidingDoorState> {
 
     public SlidingDoorRenderer(BlockEntityRendererProvider.Context context) {}
@@ -31,9 +30,8 @@ public class SlidingDoorRenderer implements BlockEntityRenderer<SlidingDoorBlock
     public void extractRenderState(SlidingDoorBlockEntity blockEntity, SlidingDoorState state, float partialTicks,
                                    Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
-        BlockState blockState = blockEntity.getBlockState();
-        if (blockState.getValue(SlidingDoorBlock.VISIBLE)) return;
 
+        BlockState blockState = blockEntity.getBlockState();
         Vec3 offset = calculateOffset(blockState.getValue(HORIZONTAL_FACING), blockEntity.getAnimationProgress(partialTicks));
         if (blockState.getValue(SlidingDoorBlock.HINGE) == DoorHingeSide.LEFT) {
             offset.scale(-1);
@@ -78,5 +76,10 @@ public class SlidingDoorRenderer implements BlockEntityRenderer<SlidingDoorBlock
             case WEST -> new Vec3(0, 0, -openAmount);
             default -> Vec3.ZERO;
         };
+    }
+
+    @Override
+    public boolean shouldRender(SlidingDoorBlockEntity blockEntity, Vec3 cameraPosition) {
+        return !blockEntity.getBlockState().getValue(SlidingDoorBlock.VISIBLE);
     }
 }
