@@ -10,13 +10,13 @@ import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,11 +36,11 @@ public class SuturingWidget extends InteractionWidget {
     }
 
     @Override
-    public void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         int size = compartmentWidget.getSlotSize();
 
         for (Point point : suturePoints) {
-            GuiGraphicsExtractor.blitSprite(
+            graphics.blitSprite(
                     RenderPipelines.GUI_TEXTURED,
                     Identifier.withDefaultNamespace("pending_invite/reject"),
                     point.x(),
@@ -52,41 +52,41 @@ public class SuturingWidget extends InteractionWidget {
 
         if (sutureStart != null) {
             float angle = (float) Math.atan2(mouseY - sutureStart.y(), mouseX - sutureStart.x());
-            GuiGraphicsExtractor.pose().pushMatrix();
-            GuiGraphicsExtractor.pose().rotateAbout(angle, sutureStart.x(), sutureStart.y());
-            GuiGraphicsExtractor.fill(
+            graphics.pose().pushMatrix();
+            graphics.pose().rotateAbout(angle, sutureStart.x(), sutureStart.y());
+            graphics.fill(
                     sutureStart.x(),
                     sutureStart.y(),
                     (int) (sutureStart.x() + getDistance(sutureStart, new Point(mouseX, mouseY))),
                     sutureStart.y() + 1,
                     0xFFFFFFFF
             );
-            GuiGraphicsExtractor.pose().popMatrix();
+            graphics.pose().popMatrix();
         }
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        Point hoveredSlot = compartmentWidget.getHoveredSlot((int) mouseX, (int) mouseY);
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        Point hoveredSlot = compartmentWidget.getHoveredSlot((int) event.x(), (int) event.y());
         if (hoveredSlot == null) return false;
 
-        UUID hoveredCompartmentId = compartmentWidget.getHoveredCompartment((int) mouseX, (int) mouseY);
+        UUID hoveredCompartmentId = compartmentWidget.getHoveredCompartment((int) event.x(), (int) event.y());
         if (hoveredCompartmentId == null) return true;
 
-        sutureStart = new Point((int) mouseX, (int) mouseY);
+        sutureStart = new Point((int) event.x(), (int) event.y());
 
         return true;
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+    public boolean mouseDragged(MouseButtonEvent event, double dx, double dy) {
         if (sutureStart == null) return false;
 
         int slotSize = compartmentWidget.getSlotSize();
 
-        Point newPoint = new Point((int) mouseX, (int) mouseY);
+        Point newPoint = new Point((int) event.x(), (int) event.y());
         if (getDistance(sutureStart, newPoint) > slotSize) {
-            if (makeSuture(mouseX, mouseY)) {
+            if (makeSuture(event.x(), event.y())) {
                 Point hoveredSlot = compartmentWidget.getHoveredSlot(sutureStart.x(), sutureStart.y());
                 if (hoveredSlot != null) {
                     suturePoints.add(new Point(compartmentWidget.getContentX() + hoveredSlot.x() * slotSize,
@@ -127,7 +127,7 @@ public class SuturingWidget extends InteractionWidget {
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(MouseButtonEvent event) {
         sutureStart = null;
         return true;
     }

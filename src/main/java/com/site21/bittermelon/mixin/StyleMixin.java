@@ -20,17 +20,28 @@ import java.util.Objects;
 
 @Mixin(Style.class)
 public abstract class StyleMixin implements AlphaContainer {
-    @Shadow @Final @Nullable TextColor color;
-    @Shadow @Final @Nullable Integer shadowColor;
-    @Shadow @Final @Nullable Boolean bold;
-    @Shadow @Final @Nullable Boolean italic;
-    @Shadow @Final @Nullable Boolean underlined;
-    @Shadow @Final @Nullable Boolean strikethrough;
-    @Shadow @Final @Nullable Boolean obfuscated;
-    @Shadow @Final @Nullable ClickEvent clickEvent;
-    @Shadow @Final @Nullable HoverEvent hoverEvent;
-    @Shadow @Final @Nullable String insertion;
-    @Shadow @Final @Nullable Identifier font;
+    @Shadow @Final @Nullable
+    private TextColor color;
+    @Shadow @Final @Nullable
+    private Integer shadowColor;
+    @Shadow @Final @Nullable
+    private Boolean bold;
+    @Shadow @Final @Nullable
+    private Boolean italic;
+    @Shadow @Final @Nullable
+    private Boolean underlined;
+    @Shadow @Final @Nullable
+    private Boolean strikethrough;
+    @Shadow @Final @Nullable
+    private Boolean obfuscated;
+    @Shadow @Final @Nullable
+    private ClickEvent clickEvent;
+    @Shadow @Final @Nullable
+    private HoverEvent hoverEvent;
+    @Shadow @Final @Nullable
+    private String insertion;
+    @Shadow @Final @Nullable
+    private Identifier font;
 
     @Unique
     private float bittermelon$alpha = 1;

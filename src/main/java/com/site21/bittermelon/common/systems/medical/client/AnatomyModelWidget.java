@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -51,7 +52,7 @@ public class AnatomyModelWidget extends AbstractWidget {
     }
 
     @Override
-    protected void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         AnatomyPictureInPictureRenderer.RenderState anatomyRenderState = new AnatomyPictureInPictureRenderer.RenderState(
                 getLivingRenderState(),
                 entity,
@@ -64,13 +65,13 @@ public class AnatomyModelWidget extends AbstractWidget {
                 width,
                 height,
                 scale,
-                guiGraphics.peekScissorStack()
+                graphics.peekScissorStack()
         );
 
-        guiGraphics.submitPictureInPictureRenderState(anatomyRenderState);
+        graphics.submitPictureInPictureRenderState(anatomyRenderState);
     }
 
-    private void renderDebugBounds(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
+    private void renderDebugBounds(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         Map<String, AABB> bounds = new HashMap<>();
         Matrix4f root = new Matrix4f().identity().rotateY(xRot);
 
@@ -84,8 +85,8 @@ public class AnatomyModelWidget extends AbstractWidget {
         for (Map.Entry<String, AABB> entry : bounds.entrySet()) {
             AABB b = entry.getValue();
             int color = entry.getKey().equals(hoveredPart) ? 0x8000FF00 : 0x80FF0000;
-            GuiGraphicsExtractor.fill((int) b.minX, (int) b.minY, (int) b.maxX, (int) b.maxY, color);
-            GuiGraphicsExtractor.drawString(Minecraft.getInstance().font, entry.getKey(), (int) b.minX + 2,
+            graphics.fill((int) b.minX, (int) b.minY, (int) b.maxX, (int) b.maxY, color);
+            graphics.text(Minecraft.getInstance().font, entry.getKey(), (int) b.minX + 2,
                     (int) b.minY + 2, 0xFFFFFFFF);
         }
     }
@@ -193,17 +194,17 @@ public class AnatomyModelWidget extends AbstractWidget {
     }
 
     @Override
-    public void onClick(double mouseX, double mouseY, int button) {
-        String part = getModelPart((int) mouseX, (int) mouseY);
+    public void onClick(MouseButtonEvent event, boolean doubleClick) {
+        String part = getModelPart((int) event.x(), (int) event.y());
         if (part != null) {
             screen.addCompartmentSpace(MedicalStatsUtil.getBodyPart(part, screen.getMedicalStats()));
         }
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (button == 0) {
-            xRot += (float) (dragX * -0.1);
+    public boolean mouseDragged(MouseButtonEvent event, double dx, double dy) {
+        if (event.button() == 0) {
+            xRot += (float) (dx * -0.1);
             return true;
         }
         return false;

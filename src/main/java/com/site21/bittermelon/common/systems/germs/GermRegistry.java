@@ -1,6 +1,7 @@
 package com.site21.bittermelon.common.systems.germs;
 
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.site21.bittermelon.Bittermelon;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
@@ -39,7 +40,7 @@ public class GermRegistry extends SavedData {
 
     static {
         TYPE = new SavedDataType<>(
-                "germs",
+                Bittermelon.identifier("germs"),
                 GermRegistry::new,
                 RecordCodecBuilder.create(instance -> instance.group(
                         Germ.CODEC.listOf().fieldOf("germs")

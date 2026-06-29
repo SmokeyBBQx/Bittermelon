@@ -1,6 +1,7 @@
 package com.site21.bittermelon.common.systems.personnel.registry;
 
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.AddPersonnelEntry;
 import net.minecraft.server.MinecraftServer;
@@ -108,7 +109,7 @@ public class PersonnelRegistry extends SavedData {
 
     static {
         TYPE = new SavedDataType<>(
-                "personnel",
+                Bittermelon.identifier("personnel"),
                 PersonnelRegistry::new,
                 RecordCodecBuilder.create(instance -> instance.group(
                         PersonnelEntry.CODEC.listOf().fieldOf("personnelEntries")

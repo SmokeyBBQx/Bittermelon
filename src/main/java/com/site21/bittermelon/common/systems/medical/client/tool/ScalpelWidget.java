@@ -6,6 +6,7 @@ import com.site21.bittermelon.common.systems.medical.client.interaction.Incision
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,60 +22,62 @@ public class ScalpelWidget extends InstrumentWidget {
     }
 
     @Override
-    public void renderTool(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y) {
-        GuiGraphicsExtractor.pose().pushMatrix();
-        GuiGraphicsExtractor.pose().translate(x, y);
-        GuiGraphicsExtractor.pose().rotate(rotation);
-        GuiGraphicsExtractor.pose().translate(-16, -8);
-        super.renderTool(GuiGraphicsExtractor, 0, 0);
-        GuiGraphicsExtractor.pose().popMatrix();
+    public void renderTool(@NotNull GuiGraphicsExtractor graphics, int x, int y) {
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(x, y);
+        graphics.pose().rotate(rotation);
+        graphics.pose().translate(-16, -8);
+        super.renderTool(graphics, 0, 0);
+        graphics.pose().popMatrix();
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         if (incisionWidget != null) {
-            incisionWidget.renderWidget(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+            incisionWidget.renderWidget(graphics, mouseX, mouseY, a);
         }
 
-        super.renderWidget(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        super.extractWidgetRenderState(graphics, mouseX, mouseY, a);
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        startX = mouseX;
-        startY = mouseY;
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        startX = event.x();
+        startY = event.y();
 
         if (incisionWidget == null) {
-            CompartmentWidget hoveredWidget = screen.getHoveredCompartmentWidget(mouseX, mouseY);
+            CompartmentWidget hoveredWidget = screen.getHoveredCompartmentWidget(event.x(), event.y());
             if (hoveredWidget != null) {
-                if (!hoveredWidget.isWithinContentArea((int) mouseX, (int) mouseY)) return false;
-                incisionWidget = new IncisionWidget((int) mouseX, (int) mouseY, efficiency, hoveredWidget, screen);
+                if (!hoveredWidget.isWithinContentArea((int) event.x(), (int) event.y())) return false;
+                incisionWidget = new IncisionWidget((int) event.x(), (int) event.y(), efficiency, hoveredWidget, screen);
                 return true;
             }
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event,  doubleClick);
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        rotation = (float) (Math.atan2(mouseY - startY, mouseX - startX) + Math.PI);
+    public boolean mouseDragged(MouseButtonEvent event, double dx, double dy) {
+        rotation = (float) (Math.atan2(event.y() - startY, event.x() - startX) + Math.PI);
 
         if (incisionWidget != null) {
-            return incisionWidget.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+            return incisionWidget.mouseDragged(event, dx, dy);
         }
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+
+        return super.mouseDragged(event, dx, dy);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(MouseButtonEvent event) {
         rotation = 0;
         if (incisionWidget != null) {
-            if (incisionWidget.mouseReleased(mouseX, mouseY, button)) {
+            if (incisionWidget.mouseReleased(event)) {
                 incisionWidget = null;
                 return true;
             }
         }
-        return super.mouseReleased(mouseX, mouseY, button);
+
+        return super.mouseReleased(event);
     }
 
     @Override

@@ -4,5 +4,5 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.entity.Entity;
 
 public interface SpecialCompartmentRenderer {
-    void render(GuiGraphicsExtractor graphics, int x, int y, int width, int height, Entity entity);
+    void extract(GuiGraphicsExtractor graphics, int x, int y, int width, int height, Entity entity);
 }

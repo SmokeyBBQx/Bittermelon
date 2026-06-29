@@ -121,7 +121,7 @@ public abstract class MovableResizableWidget extends AbstractWidget {
         return result || super.mouseReleased(event);
     }
 
-    protected void renderResizeHandle(net.minecraft.client.gui.GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+    protected void extractResizeHandle(net.minecraft.client.gui.GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         if (!isOpen) return;
 
         int handleSize = 12;
@@ -144,7 +144,7 @@ public abstract class MovableResizableWidget extends AbstractWidget {
         }
     }
 
-    protected void renderDragHandle(net.minecraft.client.gui.@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+    protected void extractDragHandle(net.minecraft.client.gui.@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         int headerHeight = getHeaderHeight();
         boolean isHovering = isInDragArea(mouseX, mouseY);
         int borderColor = isHovering || isDragging ? 0xFFFFFFFF : 0xFF888888;

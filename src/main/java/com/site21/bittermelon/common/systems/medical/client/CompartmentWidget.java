@@ -15,6 +15,7 @@ import com.site21.bittermelon.common.systems.medical.networking.RemoveCompartmen
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -171,33 +172,33 @@ public class CompartmentWidget extends MovableResizableWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         if (isOpen) {
-            GuiGraphicsExtractor.fill(x, y + getHeaderHeight(), getRight(), getBottom(), 0xDD000000);
-            renderSlots(GuiGraphicsExtractor, mouseX, mouseY);
-            renderCompartments(GuiGraphicsExtractor, mouseX, mouseY);
-            renderHoveredSlot(GuiGraphicsExtractor, mouseX, mouseY);
-            renderResizeHandle(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-            increaseLayerButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-            decreaseLayerButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+            graphics.fill(x, y + getHeaderHeight(), getRight(), getBottom(), 0xDD000000);
+            extractSlots(graphics, mouseX, mouseY);
+            extractCompartments(graphics, mouseX, mouseY);
+            extractHoveredSlot(graphics, mouseX, mouseY);
+            extractResizeHandle(graphics, mouseX, mouseY, partialTicks);
+            increaseLayerButton.extractRenderState(graphics, mouseX, mouseY, partialTicks);
+            decreaseLayerButton.extractRenderState(graphics, mouseX, mouseY, partialTicks);
         }
-        renderDragHandle(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-        collapseWidgetButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
-        closeWidgetButton.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+        extractDragHandle(graphics, mouseX, mouseY, partialTicks);
+        collapseWidgetButton.extractRenderState(graphics, mouseX, mouseY, partialTicks);
+        closeWidgetButton.extractRenderState(graphics, mouseX, mouseY, partialTicks);
     }
 
-    private void renderSlots(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
+    private void extractSlots(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         LayerData layer = getLayer();
 
         if (layer.getTexture() != null) {
             int width = layer.getWidth() * slotSize;
             int height = layer.getHeight() * slotSize;
-            GuiGraphicsExtractor.blit(RenderPipelines.GUI_TEXTURED, layer.getTexture(), contentX, contentY, 0, 0,
+            graphics.blit(RenderPipelines.GUI_TEXTURED, layer.getTexture(), contentX, contentY, 0, 0,
                     width, height, width, height);
         }
 
         if (specialRenderer != null) {
-            specialRenderer.render(GuiGraphicsExtractor, contentX, contentY, layer.getWidth() * slotSize,
+            specialRenderer.extract(graphics, contentX, contentY, layer.getWidth() * slotSize,
                     layer.getHeight() * slotSize, screen.getEntity());
         }
 
@@ -208,11 +209,11 @@ public class CompartmentWidget extends MovableResizableWidget {
                 int slotX = contentX + col * slotSize;
                 int slotY = contentY + row * slotSize;
 
-                renderSlot(slotX, slotY, col, row, slot, GuiGraphicsExtractor);
+                renderSlot(slotX, slotY, col, row, slot, graphics);
             }
         }
 
-        renderPlacementIndicator(GuiGraphicsExtractor, mouseX, mouseY);
+        renderPlacementIndicator(graphics, mouseX, mouseY);
     }
 
     private void renderSlot(int x, int y, int u, int v, @NotNull LayerSlot slot, @NotNull GuiGraphicsExtractor GuiGraphicsExtractor) {
@@ -243,7 +244,7 @@ public class CompartmentWidget extends MovableResizableWidget {
         }
     }
 
-    private void renderHoveredSlot(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
+    private void extractHoveredSlot(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
         Point hoveredSlot = getHoveredSlot(mouseX, mouseY);
         if (hoveredSlot != null) {
             int slotX = contentX + hoveredSlot.x() * slotSize;
@@ -272,7 +273,7 @@ public class CompartmentWidget extends MovableResizableWidget {
         }
     }
 
-    private void renderCompartments(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
+    private void extractCompartments(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
         MedicalStats medicalStats = screen.getMedicalStats();
         UUID hoveredCompartmentId = getHoveredCompartment(mouseX, mouseY);
 
@@ -310,8 +311,8 @@ public class CompartmentWidget extends MovableResizableWidget {
     private void renderCompartmentTooltip(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
     }
 
-    protected void renderDragHandle(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        super.renderDragHandle(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+    protected void extractDragHandle(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        super.extractDragHandle(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
 
         String name = screen.getMainCompartmentWidget().equals(this)
                 ? screen.getTargetName()
@@ -361,16 +362,16 @@ public class CompartmentWidget extends MovableResizableWidget {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         for (Button btn : buttons) {
-            if (btn.mouseClicked(mouseX, mouseY, button)) {
+            if (btn.mouseClicked(event, doubleClick)) {
                 return true;
             }
         }
 
-        CompartmentInstance hoveredCompartment = screen.getMedicalStats().getCompartment(getHoveredCompartment((int) mouseX, (int) mouseY));
+        CompartmentInstance hoveredCompartment = screen.getMedicalStats().getCompartment(getHoveredCompartment((int) event.x(), (int) event.y()));
         if (hoveredCompartment != null && hoveredCompartment.getCompartment().canExtract(hoveredCompartment, screen.getMedicalStats())) {
-            if (button == 0) {
+            if (event.button() == 0) {
                 ClientPacketDistributor.sendToServer(new RemoveCompartment(screen.getEntity().getUUID(),
                         compartment.getId(), hoveredCompartment.getId()));
                 screen.setHeldCompartment(hoveredCompartment);
@@ -380,12 +381,12 @@ public class CompartmentWidget extends MovableResizableWidget {
             }
         }
 
-        Point hoveredSlot = getHoveredSlot((int) mouseX, (int) mouseY);
+        Point hoveredSlot = getHoveredSlot((int) event.x(), (int) event.y());
         if (hoveredSlot != null) {
             return true;
         }
 
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, doubleClick);
     }
 
     @Override

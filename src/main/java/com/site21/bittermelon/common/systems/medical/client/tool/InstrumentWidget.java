@@ -30,9 +30,9 @@ public abstract class InstrumentWidget extends AbstractWidget {
         return stack.get(componentType).icon();
     }
 
-    public void renderTool(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y) {
+    public void renderTool(GuiGraphicsExtractor graphics, int x, int y) {
         if (getIcon().isPresent()) {
-            GuiGraphicsExtractor.blit(
+            graphics.blit(
                     getIcon().get(),
                     x,
                     y,
@@ -44,17 +44,17 @@ public abstract class InstrumentWidget extends AbstractWidget {
                     16
             );
         } else {
-            GuiGraphicsExtractor.pose().pushMatrix();
-            GuiGraphicsExtractor.pose().translate(x, y);
-            GuiGraphicsExtractor.pose().scale(width / 16f, height / 16f);
-            GuiGraphicsExtractor.renderItem(stack, 0, 0);
-            GuiGraphicsExtractor.pose().popMatrix();
+            graphics.pose().pushMatrix();
+            graphics.pose().translate(x, y);
+            graphics.pose().scale(width / 16f, height / 16f);
+            graphics.item(stack, 0, 0);
+            graphics.pose().popMatrix();
         }
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        renderTool(GuiGraphicsExtractor, x, y);
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        renderTool(graphics, x, y);
     }
 
     public void onLayerChanged(CompartmentWidget widget) {

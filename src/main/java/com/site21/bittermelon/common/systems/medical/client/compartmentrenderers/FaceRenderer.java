@@ -14,7 +14,7 @@ import net.minecraft.world.entity.player.Player;
 public class FaceRenderer implements SpecialCompartmentRenderer {
 
     @Override
-    public void render(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y, int width, int height, Entity entity) {
+    public void extract(GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y, int width, int height, Entity entity) {
         if (!(entity instanceof Player player)) return;
 
         Minecraft mc = Minecraft.getInstance();
@@ -26,7 +26,7 @@ public class FaceRenderer implements SpecialCompartmentRenderer {
         if (character != null && character.getPlayerInfo().isPresent()) {
             playerTexture = Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "skins/" + character.getId());
         } else {
-            playerTexture = DefaultPlayerSkin.get(player.getUUID()).texture();
+            playerTexture = DefaultPlayerSkin.get(player.getUUID()).body().texturePath();
         }
 
         GuiGraphicsExtractor.pose().pushMatrix();

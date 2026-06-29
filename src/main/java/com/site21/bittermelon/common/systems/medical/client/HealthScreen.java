@@ -13,6 +13,7 @@ import com.site21.bittermelon.init.neoforge.BitterAttachmentTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
@@ -84,32 +85,28 @@ public class HealthScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        anatomyWidget.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        anatomyWidget.extractRenderState(graphics, mouseX, mouseY, partialTicks);
 
         for (CompartmentWidget widget : compartmentWidgets) {
             if (widget != activeWidget) {
-                widget.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+                widget.extractRenderState(graphics, mouseX, mouseY, partialTicks);
             }
         }
 
         if (activeWidget != null) {
-            activeWidget.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+            activeWidget.extractRenderState(graphics, mouseX, mouseY, partialTicks);
         }
 
-        renderHeldCompartment(GuiGraphicsExtractor, mouseX, mouseY);
+        renderHeldCompartment(graphics, mouseX, mouseY);
 
         for (InstrumentWidget widget : instrumentWidgets) {
-            widget.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+            widget.extractRenderState(graphics, mouseX, mouseY, partialTicks);
             if (widget == heldTool) {
                 // Renders at mouse position if held
-                heldTool.renderTool(GuiGraphicsExtractor, mouseX, mouseY);
+                heldTool.renderTool(graphics, mouseX, mouseY);
             }
         }
-    }
-
-    @Override
-    protected void renderBlurredBackground(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor) {
     }
 
     private void renderHeldCompartment(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
@@ -133,11 +130,11 @@ public class HealthScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         CompartmentInstance previouslyHeld = heldCompartment;
 
         if (heldTool != null) {
-            if (!heldTool.mouseClicked(mouseX, mouseY, button)) {
+            if (!heldTool.mouseClicked(event, doubleClick)) {
                 heldTool = null;
             }
         } else {
@@ -150,35 +147,35 @@ public class HealthScreen extends Screen {
         }
 
         if (activeWidget != null) {
-            if (compartmentWidgetClick(activeWidget, previouslyHeld, mouseX, mouseY, button)) {
+            if (compartmentWidgetClick(activeWidget, previouslyHeld, event, doubleClick)) {
                 return true;
             }
         }
 
         for (CompartmentWidget widget : compartmentWidgets.reversed()) {
             if (widget == activeWidget) continue;
-            if (compartmentWidgetClick(widget, previouslyHeld, mouseX, mouseY, button)) {
+            if (compartmentWidgetClick(widget, previouslyHeld, event, doubleClick)) {
                 return true;
             }
         }
 
-        if (anatomyWidget.mouseClicked(mouseX, mouseY, button)) {
+        if (anatomyWidget.mouseClicked(event, doubleClick)) {
             return true;
         }
 
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, doubleClick);
     }
 
     private boolean compartmentWidgetClick(@NotNull CompartmentWidget widget, CompartmentInstance previouslyHeld,
-                                           double mouseX, double mouseY, int button) {
-        if (widget.mouseClicked(mouseX, mouseY, button)) {
+                                           MouseButtonEvent event, boolean doubleClick) {
+        if (widget.mouseClicked(event, doubleClick)) {
             // Ensure that removed compartments are not re-added as active
             if (compartmentWidgets.contains(widget)) {
                 activeWidget = widget;
             }
 
             if (previouslyHeld != null) {
-                if (widget.tryToPlace((int) mouseX, (int) mouseY, previouslyHeld)) {
+                if (widget.tryToPlace((int) event.x(), (int) event.y(), previouslyHeld)) {
                     heldCompartment = null;
                 }
             }
@@ -188,33 +185,33 @@ public class HealthScreen extends Screen {
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+    public boolean mouseDragged(MouseButtonEvent event, double dx, double dy) {
         if (heldTool != null) {
-            return heldTool.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+            return heldTool.mouseDragged(event, dx, dy);
         }
 
-        if (activeWidget != null && activeWidget.isMouseOver(mouseX, mouseY)) {
-            return activeWidget.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        if (activeWidget != null && activeWidget.isMouseOver(event.x(), event.y())) {
+            return activeWidget.mouseDragged(event, dx, dy);
         }
 
-        anatomyWidget.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        anatomyWidget.mouseDragged(event, dx, dy);
 
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        return super.mouseDragged(event, dx, dy);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(MouseButtonEvent event) {
         if (heldTool != null) {
-            return heldTool.mouseReleased(mouseX, mouseY, button);
+            return heldTool.mouseReleased(event);
         }
 
         if (activeWidget != null) {
-            boolean result = activeWidget.mouseReleased(mouseX, mouseY, button);
+            boolean result = activeWidget.mouseReleased(event);
 //            activeWidget = null;
             return result;
         }
 
-        return super.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(event);
     }
 
     @Override

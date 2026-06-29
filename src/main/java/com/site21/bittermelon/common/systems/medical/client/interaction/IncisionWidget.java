@@ -13,6 +13,7 @@ import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
@@ -45,18 +46,18 @@ public class IncisionWidget extends InteractionWidget {
     }
 
     @Override
-    public void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         for (Point point : drawnPoints) {
-            GuiGraphicsExtractor.fill(point.x() - 1, point.y() - 1, point.x() + 1, point.y() + 1, 0xFFFF0000);
+            graphics.fill(point.x() - 1, point.y() - 1, point.x() + 1, point.y() + 1, 0xFFFF0000);
         }
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if(compartmentWidget.getHoveredCompartment((int) mouseX, (int) mouseY) != null) return false;
+    public boolean mouseDragged(MouseButtonEvent event, double dx, double dy) {
+        if (compartmentWidget.getHoveredCompartment((int) event.x(), (int) event.y()) != null) return false;
 
-        if (button == 0) {
-            Point newPoint = new Point((int) mouseX, (int) mouseY);
+        if (event.button() == 0) {
+            Point newPoint = new Point((int) event.x(), (int) event.y());
             if (isPointFarEnough(newPoint)) {
                 drawnPoints.add(newPoint);
                 makeSound(BitterSounds.SCALPEL.value());
@@ -79,8 +80,8 @@ public class IncisionWidget extends InteractionWidget {
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (button == 0) {
+    public boolean mouseReleased(MouseButtonEvent event) {
+        if (event.button() == 0) {
             finishIncision();
             return true;
         }

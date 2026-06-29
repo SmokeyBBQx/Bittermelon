@@ -8,6 +8,7 @@ import com.site21.bittermelon.init.custom.Compartments;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,12 +23,12 @@ public class RetractorWidget extends InstrumentWidget {
     }
 
     @Override
-    public void renderTool(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int x, int y) {
-        GuiGraphicsExtractor.pose().pushMatrix();
-        GuiGraphicsExtractor.pose().translate(x, y);
-        GuiGraphicsExtractor.pose().rotateAbout(horizontal ? 0.785f : -0.785f, 0, 0);
-        super.renderTool(GuiGraphicsExtractor, -16, -16);
-        GuiGraphicsExtractor.pose().popMatrix();
+    public void renderTool(@NotNull GuiGraphicsExtractor graphics, int x, int y) {
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(x, y);
+        graphics.pose().rotateAbout(horizontal ? 0.785f : -0.785f, 0, 0);
+        super.renderTool(graphics, -16, -16);
+        graphics.pose().popMatrix();
     }
 
     private void retract(@NotNull Point start, CompartmentWidget widget) {
@@ -91,20 +92,20 @@ public class RetractorWidget extends InstrumentWidget {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 1) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (event.button() == 1) {
             horizontal = !horizontal;
             return true;
         }
 
-        CompartmentWidget hoveredWidget = screen.getHoveredCompartmentWidget(mouseX, mouseY);
+        CompartmentWidget hoveredWidget = screen.getHoveredCompartmentWidget(event.x(), event.y());
         if (hoveredWidget == null) return false;
 
-        CompartmentInstance slotInstance = screen.getMedicalStats().getCompartment(hoveredWidget.getHoveredCompartment((int) mouseX, (int) mouseY));
+        CompartmentInstance slotInstance = screen.getMedicalStats().getCompartment(hoveredWidget.getHoveredCompartment((int) event.x(), (int) event.y()));
         if (slotInstance == null) return false;
         if (!slotInstance.getCompartment().equals(Compartments.CUT.get())) return false;
 
-        Point hoveredSlot = hoveredWidget.getHoveredSlot((int) mouseX, (int) mouseY);
+        Point hoveredSlot = hoveredWidget.getHoveredSlot((int) event.x(), (int) event.y());
         if (hoveredSlot == null) return false;
 
         retract(hoveredSlot, hoveredWidget);

@@ -6,6 +6,7 @@ import com.site21.bittermelon.common.systems.medical.client.interaction.Suturing
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,21 +18,21 @@ public class SutureWidget extends InstrumentWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        super.renderWidget(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractWidgetRenderState(graphics, mouseX, mouseY, a);
 
         if (suturingWidget != null) {
-            suturingWidget.renderWidget(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+            suturingWidget.renderWidget(graphics, mouseX, mouseY, a);
         }
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        CompartmentWidget hoveredWidget = screen.getHoveredCompartmentWidget(mouseX, mouseY);
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        CompartmentWidget hoveredWidget = screen.getHoveredCompartmentWidget(event.x(), event.y());
         if (hoveredWidget == null) return false;
 
         if (suturingWidget == null) {
-            suturingWidget = new SuturingWidget((int) mouseX, (int) mouseY, screen, hoveredWidget);
+            suturingWidget = new SuturingWidget((int) event.x(), (int) event.y(), screen, hoveredWidget);
             return true;
         }
 
@@ -40,21 +41,21 @@ public class SutureWidget extends InstrumentWidget {
             return true;
         }
 
-        return suturingWidget.mouseClicked(mouseX, mouseY, button);
+        return suturingWidget.mouseClicked(event, doubleClick);
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+    public boolean mouseDragged(MouseButtonEvent event, double dx, double dy) {
         if (suturingWidget != null) {
-            return suturingWidget.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+            return suturingWidget.mouseDragged(event, dx, dy);
         }
         return false;
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(MouseButtonEvent event) {
         if (suturingWidget != null) {
-            return suturingWidget.mouseReleased(mouseX, mouseY, button);
+            return suturingWidget.mouseReleased(event);
         }
         return false;
     }

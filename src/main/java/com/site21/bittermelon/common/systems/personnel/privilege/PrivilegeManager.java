@@ -2,6 +2,7 @@ package com.site21.bittermelon.common.systems.personnel.privilege;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.personnel.privilege.networking.AddPrivilege;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -106,7 +107,7 @@ public class PrivilegeManager extends SavedData {
 
     static {
         TYPE = new SavedDataType<>(
-                "privileges",
+                Bittermelon.identifier("privileges"),
                 PrivilegeManager::new,
                 RecordCodecBuilder.create(instance -> instance.group(
                         PrivilegeGroup.CODEC.listOf().fieldOf("privilegeGroups")
