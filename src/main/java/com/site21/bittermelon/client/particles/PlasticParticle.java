@@ -1,23 +1,27 @@
 package com.site21.bittermelon.client.particles;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.*;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.SingleQuadParticle;
+import net.minecraft.client.particle.SpriteSet;
+import net.minecraft.client.renderer.state.level.QuadParticleRenderState;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.particles.ColorParticleOption;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.level.levelgen.synth.PerlinSimplexNoise;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 import java.util.List;
 
-public class PlasticParticle extends TextureSheetParticle {
+public class PlasticParticle extends SingleQuadParticle {
     private static final float SIZE = 0.001f;
     private static final float GRAVITY = 0.7f;
     private static final float FRICTION = 0.94f;
@@ -52,9 +56,9 @@ public class PlasticParticle extends TextureSheetParticle {
     private float dYaw;
     private float dRoll;
 
-    private PlasticParticle(@NotNull ColorParticleOption options, ClientLevel world, double x, double y, double z, double motionX, double motionY, double motionZ, SpriteSet sprites) {
-        super(world, x, y, z);
-        pickSprite(sprites);
+    private PlasticParticle(ColorParticleOption options, ClientLevel level, double x, double y, double z,
+                            double motionX, double motionY, double motionZ, TextureAtlasSprite sprite) {
+        super(level, x, y, z, sprite);
 
         particleRandom = random.nextInt();
         xd = motionX;
@@ -77,56 +81,43 @@ public class PlasticParticle extends TextureSheetParticle {
     }
 
     @Override
-    public void render(@NotNull VertexConsumer buffer, @NotNull Camera renderInfo, float partialTicks) {
-        Vec3 cameraPosition = renderInfo.getPosition();
+    protected void extractRotatedQuad(QuadParticleRenderState particleTypeRenderState, Camera camera, Quaternionf rotation, float partialTickTime) {
+        Quaternionf fullRotation = new Quaternionf(rotation);
+        fullRotation.rotateZ(Mth.lerp(partialTickTime, oRoll, roll));
+        fullRotation.rotateY(Mth.lerp(partialTickTime, oYaw, yaw));
+        fullRotation.rotateX(Mth.lerp(partialTickTime, oPitch, pitch));
 
-        // Compute interpolated position
-        float relX = (float) (Mth.lerp(partialTicks, xo, x) - cameraPosition.x());
-        float relY = (float) (Mth.lerp(partialTicks, yo, y) - cameraPosition.y());
-        float relZ = (float) (Mth.lerp(partialTicks, zo, z) - cameraPosition.z());
+        var pos = camera.position();
+        float relX = (float) (Mth.lerp(partialTickTime, xo, x) - pos.x());
+        float relY = (float) (Mth.lerp(partialTickTime, yo, y) - pos.y());
+        float relZ = (float) (Mth.lerp(partialTickTime, zo, z) - pos.z());
 
-        // Compute rotation
-        Quaternionf rotation = new Quaternionf();
-        rotation.rotateZ(Mth.lerp(partialTicks, oRoll, roll));
-        rotation.rotateY(Mth.lerp(partialTicks, oYaw, yaw));
-        rotation.rotateX(Mth.lerp(partialTicks, oPitch, pitch));
+        float size = getQuadSize(partialTickTime);
+        int color = ARGB.colorFromFloat(alpha, rCol, gCol, bCol);
+        int light = getLightCoords(partialTickTime);
+        SingleQuadParticle.Layer layer = getLayer();
 
-        // Define quad vertices
-        Vector3f[] vertices = new Vector3f[]{
-                new Vector3f(-1.0F, -1.0F, 0.0F),
-                new Vector3f(-1.0F, 1.0F, 0.0F),
-                new Vector3f(1.0F, 1.0F, 0.0F),
-                new Vector3f(1.0F, -1.0F, 0.0F)
-        };
+        particleTypeRenderState.add(
+                layer,
+                relX, relY, relZ,
+                fullRotation.x, fullRotation.y, fullRotation.z, fullRotation.w,
+                size,
+                getU0(), getU1(), getV0(), getV1(),
+                color, light
+        );
 
-        float size = getQuadSize(partialTicks);
+        Quaternionf backRotation = new Quaternionf(
+                -fullRotation.x, -fullRotation.y, -fullRotation.z, fullRotation.w
+        );
 
-        // Transform vertices
-        for (int i = 0; i < 4; ++i) {
-            Vector3f vertex = vertices[i];
-            vertex.rotate(rotation);
-            vertex.mul(size);
-            vertex.add(relX, relY, relZ);
-        }
-
-        // Get texture coordinates and light level
-        float minU = getU0();
-        float maxU = getU1();
-        float minV = getV0();
-        float maxV = getV1();
-        int lightLevel = getLightColor(partialTicks);
-
-        // Render front face
-        renderQuad(buffer, vertices, minU, maxU, minV, maxV, lightLevel);
-        // Render back face
-        renderQuad(buffer, new Vector3f[]{vertices[3], vertices[2], vertices[1], vertices[0]}, minU, maxU, minV, maxV, lightLevel);
-    }
-
-    private void renderQuad(@NotNull VertexConsumer buffer, Vector3f @NotNull [] vertices, float minU, float maxU, float minV, float maxV, int lightLevel) {
-        buffer.addVertex(vertices[0].x(), vertices[0].y(), vertices[0].z()).setUv(maxU, maxV).setColor(rCol, gCol, bCol, alpha).setLight(lightLevel);
-        buffer.addVertex(vertices[1].x(), vertices[1].y(), vertices[1].z()).setUv(maxU, minV).setColor(rCol, gCol, bCol, alpha).setLight(lightLevel);
-        buffer.addVertex(vertices[2].x(), vertices[2].y(), vertices[2].z()).setUv(minU, minV).setColor(rCol, gCol, bCol, alpha).setLight(lightLevel);
-        buffer.addVertex(vertices[3].x(), vertices[3].y(), vertices[3].z()).setUv(minU, maxV).setColor(rCol, gCol, bCol, alpha).setLight(lightLevel);
+        particleTypeRenderState.add(
+                layer,
+                relX, relY, relZ,
+                backRotation.x, backRotation.y, backRotation.z, backRotation.w,
+                size,
+                getU0(), getU1(), getV0(), getV1(),
+                color, light
+        );
     }
 
     @Override
@@ -167,20 +158,23 @@ public class PlasticParticle extends TextureSheetParticle {
     }
 
     @Override
-    public @NotNull ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+    protected Layer getLayer() {
+        return Layer.OPAQUE;
     }
 
     public static class Provider implements ParticleProvider<ColorParticleOption> {
-        private final SpriteSet sprite;
+        private final SpriteSet sprites;
 
         public Provider(SpriteSet spriteSet) {
-            sprite = spriteSet;
+            sprites = spriteSet;
         }
 
         @Override
-        public @Nullable Particle createParticle(@NotNull ColorParticleOption option, @NotNull ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-            return new PlasticParticle(option, level, x, y, z, xSpeed, ySpeed, zSpeed, sprite);
+        public @Nullable Particle createParticle(
+                ColorParticleOption options, ClientLevel level, double x, double y, double z, double xAux, double yAux,
+                double zAux, RandomSource random
+        ) {
+            return new PlasticParticle(options, level, x, y, z, xAux, yAux, zAux, sprites.get(random));
         }
     }
 }
