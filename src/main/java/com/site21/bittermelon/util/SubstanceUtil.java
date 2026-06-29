@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public final class SubstanceUtils {
+public final class SubstanceUtil {
     public static final float GAS_CONSTANT = 8.3144f; // 8.3144 L * kPa / K * mol
 
     /**
@@ -27,6 +27,6 @@ public final class SubstanceUtils {
      * @return the pressure in kPa
      */
     public static float getPressure(List<SubstanceStack> substances, float volume, float temperature) {
-        return SubstanceUtils.getTotalAmount(substances) * GAS_CONSTANT * temperature / volume;
+        return SubstanceUtil.getTotalAmount(substances) * GAS_CONSTANT * temperature / volume;
     }
 }

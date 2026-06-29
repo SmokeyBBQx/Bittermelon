@@ -6,7 +6,7 @@ import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInst
 import com.site21.bittermelon.common.systems.medical.damage.DamageResult;
 import com.site21.bittermelon.common.systems.medical.damage.InjuryResult;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
-import com.site21.bittermelon.util.LocalMessageHelper;
+import com.site21.bittermelon.util.LocalMessageUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
@@ -52,11 +52,11 @@ public class CombatHandler {
 
     private static void sendCombatMessages(@NotNull AttackResult result, Entity attacker, Entity target, @NotNull Character attackerCharacter, @NotNull Character targetCharacter, boolean hit) {
         int textColor = attackerCharacter.getEmoteColor();
-        LocalMessageHelper.sendLocalMessage(attacker, 10, Component.literal(result.message()).withColor(textColor));
+        LocalMessageUtil.sendLocalMessage(attacker, 10, Component.literal(result.message()).withColor(textColor));
 
         if (hit && result.damageResult() != null) {
             for (String amputationMessage : getAmputationMessages(targetCharacter, result.damageResult())) {
-                LocalMessageHelper.sendLocalMessage(target, 10, Component.literal(amputationMessage).withColor(0XD41313));
+                LocalMessageUtil.sendLocalMessage(target, 10, Component.literal(amputationMessage).withColor(0XD41313));
             }
         }
     }

@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.content.entities.scp939.behavior;
 
 import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.common.content.entities.scp939.SCP939;
-import com.site21.bittermelon.util.LocalMessageHelper;
+import com.site21.bittermelon.util.LocalMessageUtil;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -31,6 +31,6 @@ public class Lure<E extends SCP939> extends DelayedBehaviour<E> {
         Component lureLine = entity.getRandomLureLine();
         if (lureLine == null) return;
 
-        LocalMessageHelper.sendLocalMessage(entity, 32, lureLine);
+        LocalMessageUtil.sendLocalMessage(entity, 32, lureLine);
     }
 }

@@ -7,13 +7,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import static com.site21.bittermelon.util.LocalMessageHelper.sendLocalMessage;
+import static com.site21.bittermelon.util.LocalMessageUtil.sendLocalMessage;
 
 public class ThrowItem {
     public static void throwItem(@NotNull Player player) {

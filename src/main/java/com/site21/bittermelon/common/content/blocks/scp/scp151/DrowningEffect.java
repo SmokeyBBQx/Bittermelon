@@ -8,7 +8,7 @@ import com.site21.bittermelon.common.systems.stumble.StumbleHandler;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import com.site21.bittermelon.init.custom.Substances;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
-import com.site21.bittermelon.util.LocalMessageHelper;
+import com.site21.bittermelon.util.LocalMessageUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -127,7 +127,7 @@ public class DrowningEffect extends MobEffect {
 
             if (!message.isEmpty()) {
                 Component component = Component.literal(message).withColor(character.getEmoteColor());
-                LocalMessageHelper.sendLocalMessage(player, 10, component);
+                LocalMessageUtil.sendLocalMessage(player, 10, component);
             }
         }
     }

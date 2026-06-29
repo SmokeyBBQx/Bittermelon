@@ -7,7 +7,7 @@ import com.site21.bittermelon.common.systems.atmosphere.networking.UpdateAtmosGa
 import com.site21.bittermelon.common.systems.atmosphere.networking.UpdateAtmosTemperature;
 import com.site21.bittermelon.common.systems.substance.Substance;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
-import com.site21.bittermelon.util.SubstanceUtils;
+import com.site21.bittermelon.util.SubstanceUtil;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.UUIDUtil;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.site21.bittermelon.util.SubstanceUtils.GAS_CONSTANT;
+import static com.site21.bittermelon.util.SubstanceUtil.GAS_CONSTANT;
 
 public class AtmosInstance {
     private static final Codec<LongSet> LONG_SET_CODEC = Codec.LONG.listOf()
@@ -93,7 +93,7 @@ public class AtmosInstance {
      */
     public float getPressure() {
         if (blocks.isEmpty()) return 0;
-        return SubstanceUtils.getTotalAmount(gases) * GAS_CONSTANT * temperature / (blocks.size() * 1000);
+        return SubstanceUtil.getTotalAmount(gases) * GAS_CONSTANT * temperature / (blocks.size() * 1000);
     }
 
     public UUID getUUID() {

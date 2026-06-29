@@ -4,7 +4,7 @@ import com.site21.bittermelon.common.systems.atmosphere.AtmosHandler;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosInstance;
 import com.site21.bittermelon.common.systems.component.SubstanceContents;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
-import com.site21.bittermelon.util.SubstanceUtils;
+import com.site21.bittermelon.util.SubstanceUtil;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -43,7 +43,7 @@ public class GasContainerItem extends SubstanceContainerItem {
     }
 
     public float getPressure(ItemStack stack) {
-        return SubstanceUtils.getPressure(getSubstanceData(stack).substances(), getMaxPressure(stack), stack.getOrDefault(TEMPERATURE, 293));
+        return SubstanceUtil.getPressure(getSubstanceData(stack).substances(), getMaxPressure(stack), stack.getOrDefault(TEMPERATURE, 293));
     }
 
     @Override

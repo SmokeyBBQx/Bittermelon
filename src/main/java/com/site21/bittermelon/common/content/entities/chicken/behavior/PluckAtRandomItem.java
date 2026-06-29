@@ -5,7 +5,7 @@ import com.site21.bittermelon.common.content.entities.chicken.Chicken;
 import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.util.LocalMessageHelper;
+import com.site21.bittermelon.util.LocalMessageUtil;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -44,7 +44,7 @@ public class PluckAtRandomItem<E extends Chicken> extends ExtendedBehaviour<E> {
             Character entityCharacter = characterManager.getActiveCharacter(entity);
 
             if (entityCharacter != null) {
-                LocalMessageHelper.sendLocalMessage(entity, 10,
+                LocalMessageUtil.sendLocalMessage(entity, 10,
                         Component.literal(entityCharacter.getName() + " plucks at " + stack.getHoverName().getString().toLowerCase() + ".")
                                 .withColor(entityCharacter.getEmoteColor())
                 );

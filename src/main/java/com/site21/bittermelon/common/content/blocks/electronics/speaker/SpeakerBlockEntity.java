@@ -6,7 +6,7 @@ import com.site21.bittermelon.common.systems.electronics.wiring.InputPort;
 import com.site21.bittermelon.common.systems.electronics.wiring.Signal;
 import com.site21.bittermelon.common.systems.syncsound.SyncSoundEvent;
 import com.site21.bittermelon.common.systems.syncsound.SyncSoundType;
-import com.site21.bittermelon.util.LocalMessageHelper;
+import com.site21.bittermelon.util.LocalMessageUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -50,7 +50,7 @@ public class SpeakerBlockEntity extends ElectronicBlockEntity implements Electro
         if (event.getSoundEvent() != null) {
             level.playSound(null, worldPosition, event.getSoundEvent(), SoundSource.NEUTRAL, 0.1f, 1);
         }
-        LocalMessageHelper.sendLocalMessage(level, getBlockPos(), speakerRadius, speakerMessage);
+        LocalMessageUtil.sendLocalMessage(level, getBlockPos(), speakerRadius, speakerMessage);
     }
 
     @Override

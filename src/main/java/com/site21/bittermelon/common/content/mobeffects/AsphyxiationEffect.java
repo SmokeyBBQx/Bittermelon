@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.content.mobeffects;
 
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.util.LocalMessageHelper;
+import com.site21.bittermelon.util.LocalMessageUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
@@ -27,7 +27,7 @@ public class AsphyxiationEffect extends MobEffect {
         if (character != null) {
             Component message = Component.literal(character.getName() + " gasps for air.")
                     .withColor(character.getEmoteColor());
-            LocalMessageHelper.sendLocalMessage(entity, 10, message);
+            LocalMessageUtil.sendLocalMessage(entity, 10, message);
         }
 
         return true;

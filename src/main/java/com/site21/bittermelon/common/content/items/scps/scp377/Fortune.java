@@ -1,6 +1,6 @@
 package com.site21.bittermelon.common.content.items.scps.scp377;
 
-import com.site21.bittermelon.util.LocalMessageHelper;
+import com.site21.bittermelon.util.LocalMessageUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -31,7 +31,7 @@ public enum Fortune implements StringRepresentable {
     LIGHTNING("The weather is really just not your friend today.", player
             -> summonEntity(LIGHTNING_BOLT, player, player.getOnPos())),
     BROKEN_BONE("What breaks in a moment may take years to mend.", player
-            -> LocalMessageHelper.sendLocalMessage(player, 10, Component.literal(player.getName() +
+            -> LocalMessageUtil.sendLocalMessage(player, 10, Component.literal(player.getName() +
             " breaks several bones in their back. (Placeholder)"))),
     TELEPORT("This isn’t where you’re meant to be.", player
             -> {

@@ -8,7 +8,7 @@ import com.site21.bittermelon.common.systems.ai.behavior.social.Socializable;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
-import com.site21.bittermelon.util.LocalMessageHelper;
+import com.site21.bittermelon.util.LocalMessageUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
@@ -149,7 +149,7 @@ public class GenericInteraction<E extends LivingEntity & Socializable & NeedsUse
             if (entityCharacter != null && partnerCharacter != null) {
                 Random random = new Random();
                 String message = messages.get(random.nextInt(messages.size()));
-                LocalMessageHelper.sendLocalMessage(entity, 10,
+                LocalMessageUtil.sendLocalMessage(entity, 10,
                         Component.literal(entityCharacter.getName() + message + partnerCharacter.getName() + ".")
                                 .withColor(entityCharacter.getEmoteColor())
                 );

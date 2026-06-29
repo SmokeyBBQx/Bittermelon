@@ -1,11 +1,11 @@
 package com.site21.bittermelon.common.systems.ai.behavior.basicneeds;
 
 import com.mojang.datafixers.util.Pair;
+import com.site21.bittermelon.common.systems.ai.base.Need;
+import com.site21.bittermelon.common.systems.ai.base.NeedsUser;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.common.systems.ai.base.NeedsUser;
-import com.site21.bittermelon.common.systems.ai.base.Need;
-import com.site21.bittermelon.util.LocalMessageHelper;
+import com.site21.bittermelon.util.LocalMessageUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -45,7 +45,7 @@ public class Groom<E extends Mob & NeedsUser> extends DelayedBehaviour<E> {
             if (entityCharacter != null) {
                 Random random = new Random();
                 String message = messages.get(random.nextInt(messages.size()));
-                LocalMessageHelper.sendLocalMessage(entity, 10,
+                LocalMessageUtil.sendLocalMessage(entity, 10,
                         Component.literal(entityCharacter.getName() + message)
                                 .withColor(entityCharacter.getEmoteColor())
                 );

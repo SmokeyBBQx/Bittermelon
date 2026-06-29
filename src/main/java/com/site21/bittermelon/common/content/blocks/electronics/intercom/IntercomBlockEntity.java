@@ -10,7 +10,7 @@ import com.site21.bittermelon.common.systems.syncsound.ISyncSoundListener;
 import com.site21.bittermelon.common.systems.syncsound.SyncSoundEvent;
 import com.site21.bittermelon.common.systems.syncsound.SyncSoundType;
 import com.site21.bittermelon.common.systems.telecomms.intercom.IntercomManager;
-import com.site21.bittermelon.util.LocalMessageHelper;
+import com.site21.bittermelon.util.LocalMessageUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.chat.Component;
@@ -85,7 +85,7 @@ public class IntercomBlockEntity extends ElectronicBlockEntity implements ISyncS
         if (event.getSoundEvent() != null) {
             level.playSound(null, worldPosition, event.getSoundEvent(), SoundSource.NEUTRAL, 0.05f, 1);
         }
-        LocalMessageHelper.sendLocalMessage(level, getBlockPos(), isPhonePickedUp() ? 1 : speakerRadius, intercomMessage);
+        LocalMessageUtil.sendLocalMessage(level, getBlockPos(), isPhonePickedUp() ? 1 : speakerRadius, intercomMessage);
         InputPort connectedPort = findOutputPort("SOUND").getConnectedPort(level);
         if (connectedPort != null) {
             connectedPort.receive(new Signal(event));

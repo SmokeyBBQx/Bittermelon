@@ -24,7 +24,7 @@ import java.util.UUID;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.MEDICAL_STATS;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.FALLEN;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.STUN;
-import static com.site21.bittermelon.util.LocalMessageHelper.sendLocalMessage;
+import static com.site21.bittermelon.util.LocalMessageUtil.sendLocalMessage;
 
 public class StumbleHandler {
 

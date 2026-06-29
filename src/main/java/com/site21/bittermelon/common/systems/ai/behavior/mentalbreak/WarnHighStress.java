@@ -3,7 +3,7 @@ package com.site21.bittermelon.common.systems.ai.behavior.mentalbreak;
 import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.util.LocalMessageHelper;
+import com.site21.bittermelon.util.LocalMessageUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -36,7 +36,7 @@ public class WarnHighStress<E extends LivingEntity> extends ExtendedBehaviour<E>
             if (character == null) return;
 
             String message = this.messages.get(entity.getRandom().nextInt(messages.size()));
-            LocalMessageHelper.sendLocalMessage(entity, 10, Component.literal(character.getName() + message)
+            LocalMessageUtil.sendLocalMessage(entity, 10, Component.literal(character.getName() + message)
                     .withColor(character.getEmoteColor()));
         }
     }

@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.systems.component;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.site21.bittermelon.util.LocalMessageHelper;
+import com.site21.bittermelon.util.LocalMessageUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
@@ -164,7 +164,7 @@ public record Smokable(Holder<Item> buttItem, int smokeDuration, Holder<SoundEve
     }
 
     private void sendSwallowMessage(@NotNull Player player, @NotNull ItemStack smokableItem) {
-        LocalMessageHelper.sendEmoteMessage(player.level(), player, 5, "swallows " + smokableItem.getHoverName().getString() + ".");
+        LocalMessageUtil.sendEmoteMessage(player.level(), player, 5, "swallows " + smokableItem.getHoverName().getString() + ".");
     }
 
     private ItemStack getButtItem(@NotNull ItemStack stack) {

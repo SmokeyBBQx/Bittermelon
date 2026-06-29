@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.systems.ai.behavior.attack;
 
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.util.LocalMessageHelper;
+import com.site21.bittermelon.util.LocalMessageUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -58,7 +58,7 @@ public class YankItem<E extends Mob> extends AnimatableMeleeAttack<E> {
         if (entityCharacter != null && targetCharacter != null) {
             int textColor = entityCharacter.getEmoteColor();
 
-            LocalMessageHelper.sendLocalMessage(attacker, 10, Component.literal(
+            LocalMessageUtil.sendLocalMessage(attacker, 10, Component.literal(
                     entityCharacter.getName() + " yanks " + targetCharacter.getName() + "'s " +
                             item.getHoverName().getString().toLowerCase() + ".").withColor(textColor));
         }

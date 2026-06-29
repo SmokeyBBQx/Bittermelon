@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.content.blocks;
 
 import com.site21.bittermelon.init.neoforge.BitterSounds;
-import com.site21.bittermelon.util.LocalMessageHelper;
+import com.site21.bittermelon.util.LocalMessageUtil;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemCooldowns;
@@ -27,7 +27,7 @@ public class DoorHelper {
         if (level.isClientSide()) return true;
 
         level.playSound(null, player.getOnPos(), BitterSounds.KNOCK.value(), SoundSource.PLAYERS, 1.0f, 1.0f);
-        LocalMessageHelper.sendEmoteMessage(level, player, 10, "knocks on the large sliding door.");
+        LocalMessageUtil.sendEmoteMessage(level, player, 10, "knocks on the large sliding door.");
 
         for (int i = 0; i < 9; i++) {
             ItemStack stack = player.getInventory().getItem(i);

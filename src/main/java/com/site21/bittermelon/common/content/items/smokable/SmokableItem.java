@@ -1,16 +1,8 @@
 package com.site21.bittermelon.common.content.items.smokable;
 
 import com.site21.bittermelon.common.content.items.substance.SubstanceContainerItem;
-import com.site21.bittermelon.common.systems.character.Character;
-import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.component.Smokable;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -20,17 +12,12 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
-import net.minecraft.world.item.ItemUtils;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.LIT;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.SMOKABLE;
-import static com.site21.bittermelon.init.neoforge.BitterItemTags.LIGHTER;
-import static com.site21.bittermelon.util.LocalMessageHelper.sendLocalMessage;
 
 public class SmokableItem extends SubstanceContainerItem {
 
