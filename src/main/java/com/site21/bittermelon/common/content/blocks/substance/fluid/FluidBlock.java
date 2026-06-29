@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -112,9 +111,9 @@ public class FluidBlock extends Block implements EntityBlock {
         return true;
     }
 
-    @Override
-    protected void entityInside(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Entity entity, @NotNull InsideBlockEffectApplier effectApplier) {
-        if (level.isClientSide) return;
+//    @Override
+//    protected void entityInside(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Entity entity, @NotNull InsideBlockEffectApplier effectApplier) {
+//        if (level.isClientSide) return;
 
 //        if (level.getBlockEntity(pos) instanceof FluidBlockEntity fluidBlockEntity) {
 //            float slipperiness = fluidBlockEntity.getSlipperiness();
@@ -130,7 +129,7 @@ public class FluidBlock extends Block implements EntityBlock {
 //        }
 
         // TODO: Implement getting chemicals on skin
-    }
+//    }
 
     @Override
     public float getFriction(@NotNull BlockState state, @NotNull LevelReader level, @NotNull BlockPos pos, @Nullable Entity entity) {

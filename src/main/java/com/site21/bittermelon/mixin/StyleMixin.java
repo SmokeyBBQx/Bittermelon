@@ -1,11 +1,7 @@
 package com.site21.bittermelon.mixin;
 
 import com.site21.bittermelon.common.systems.chat.AlphaContainer;
-import net.minecraft.network.chat.ClickEvent;
-import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
-import net.minecraft.resources.Identifier;
+import net.minecraft.network.chat.*;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -41,7 +37,7 @@ public abstract class StyleMixin implements AlphaContainer {
     @Shadow @Final @Nullable
     private String insertion;
     @Shadow @Final @Nullable
-    private Identifier font;
+    private FontDescription font;
 
     @Unique
     private float bittermelon$alpha = 1;

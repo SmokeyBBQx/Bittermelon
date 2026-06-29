@@ -22,7 +22,7 @@ public class SutureWidget extends InstrumentWidget {
         super.extractWidgetRenderState(graphics, mouseX, mouseY, a);
 
         if (suturingWidget != null) {
-            suturingWidget.renderWidget(graphics, mouseX, mouseY, a);
+            suturingWidget.extractRenderState(graphics, mouseX, mouseY, a);
         }
     }
 

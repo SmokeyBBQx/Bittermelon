@@ -1,5 +1,6 @@
 {
   "asset_id": "bittermelon:entity/sevenam",
+  "baby_asset_id": "bittermelon:entity/sevenam",
   "spawn_conditions": [
     {
     "priority": 0

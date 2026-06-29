@@ -1,0 +1,5 @@
+{
+  "net/minecraft/network/chat/Style": [
+    "com/site21/bittermelon/common/systems/chat/AlphaContainer"
+  ]
+}

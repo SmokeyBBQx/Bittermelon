@@ -15,7 +15,7 @@ public class DirtyBlocksHandler {
     private static final float SPAWN_CHANCE = 0.001F;
 
     public static void tickDirtying(ServerLevel level, LivingEntity entity) {
-        if (!level.getGameRules().get(BitterGameRules.ENTITIES_MAKE_FLOORS_DIRTY_RULE)) return;
+        if (!level.getGameRules().get(BitterGameRules.ENTITIES_MAKE_FLOORS_DIRTY_RULE.get())) return;
         if (entity instanceof Player player) {
             if (player.isCreative() || player.isSpectator()) return;
         }

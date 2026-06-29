@@ -30,12 +30,12 @@ public class WireConnectionScreen extends WiringScreen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
-        super.render(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
 
         int spriteWidth = 26;
         int spriteHeight = 89;
-        GuiGraphicsExtractor.blitSprite(RenderPipelines.GUI_TEXTURED, WIRE_TERMINAL_SPRITE,
+        graphics.blitSprite(RenderPipelines.GUI_TEXTURED, WIRE_TERMINAL_SPRITE,
                 mouseX - spriteWidth / 2,
                 mouseY - spriteHeight / 7,
                 spriteWidth,

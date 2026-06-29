@@ -1,5 +1,6 @@
 package com.site21.bittermelon.mixin;
 
+import com.site21.bittermelon.common.systems.chat.AlphaContainer;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.multiplayer.chat.GuiMessage;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,6 +18,7 @@ public abstract class ChatComponentMixin {
     )
     private float modifyAlpha(ChatComponent.AlphaCalculator calculator, GuiMessage.Line line) {
         float original = calculator.calculate(line);
-        return original * line.parent().content().getStyle().bittermelon$getAlpha();;
+        AlphaContainer alphaContainer = line.parent().content().getStyle();
+        return original * alphaContainer.bittermelon$getAlpha();
     }
 }

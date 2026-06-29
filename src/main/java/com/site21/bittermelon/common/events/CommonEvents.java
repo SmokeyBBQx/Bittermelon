@@ -181,7 +181,7 @@ public class CommonEvents {
     }
 
     @SubscribeEvent
-    public void onPlayerJoin(PlayerEvent.@NotNull PlayerLoggedInEvent event) {
+    public static void onPlayerJoin(PlayerEvent.@NotNull PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             Level level = player.level();
 

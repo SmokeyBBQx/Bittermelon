@@ -1,49 +1,31 @@
 package com.site21.bittermelon.common.content.items.laserdesignator.client;
 
-import com.mojang.blaze3d.platform.Window;
-import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.content.items.laserdesignator.LaserDesignatorItem;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
-
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.POSITION_1;
-import static com.site21.bittermelon.init.neoforge.BitterDataComponents.POSITION_2;
-
-@EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class LaserDesignatorRenderer {
 
-    @SubscribeEvent
-    public static void onRenderGUILayer(RenderGuiLayerEvent.Post event) {
-        Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.player != null) {
-            ItemStack heldItem = minecraft.player.getMainHandItem();
-            if (heldItem.getItem() instanceof LaserDesignatorItem) {
-                BlockPos pos1 = heldItem.get(POSITION_1.get());
-                BlockPos pos2 = heldItem.get(POSITION_2.get());
-
-                if (pos1 == null || pos2 == null) return;
-
-                int xSize = Math.abs(pos2.getX() - pos1.getX());
-                int ySize = Math.abs(pos2.getY() - pos1.getY());
-                int zSize = Math.abs(pos2.getZ() - pos1.getZ());
-                Component text = Component.literal("(" + xSize + ", " + ySize + ", " + zSize + ")");
-                GuiGraphicsExtractor GuiGraphicsExtractor = event.getGuiGraphicsExtractor();
-                Window window = minecraft.getWindow();
-                int width = window.getGuiScaledWidth();
-                int height = window.getGuiScaledHeight();
-                int x = (width - minecraft.font.width(text)) / 2;
-                int y = height - 35;
-                GuiGraphicsExtractor.drawString(minecraft.font, text, x, y, 0xFFFFFF);
-            }
-        }
-    }
+//    public static void onRenderGUILayer(RenderGuiLayerEvent.Post event) {
+//        Minecraft minecraft = Minecraft.getInstance();
+//        if (minecraft.player != null) {
+//            ItemStack heldItem = minecraft.player.getMainHandItem();
+//            if (heldItem.getItem() instanceof LaserDesignatorItem) {
+//                BlockPos pos1 = heldItem.get(POSITION_1.get());
+//                BlockPos pos2 = heldItem.get(POSITION_2.get());
+//
+//                if (pos1 == null || pos2 == null) return;
+//
+//                int xSize = Math.abs(pos2.getX() - pos1.getX());
+//                int ySize = Math.abs(pos2.getY() - pos1.getY());
+//                int zSize = Math.abs(pos2.getZ() - pos1.getZ());
+//                Component text = Component.literal("(" + xSize + ", " + ySize + ", " + zSize + ")");
+//                GuiGraphicsExtractor GuiGraphicsExtractor = event.getGuiGraphicsExtractor();
+//                Window window = minecraft.getWindow();
+//                int width = window.getGuiScaledWidth();
+//                int height = window.getGuiScaledHeight();
+//                int x = (width - minecraft.font.width(text)) / 2;
+//                int y = height - 35;
+//                GuiGraphicsExtractor.drawString(minecraft.font, text, x, y, 0xFFFFFF);
+//            }
+//        }
+//    }
 
 //    @SubscribeEvent
 //    public static void onRenderLevel(@NotNull RenderLevelStageEvent event) {

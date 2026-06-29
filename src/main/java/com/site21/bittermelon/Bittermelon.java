@@ -34,6 +34,7 @@ import static com.site21.bittermelon.init.neoforge.BitterDataComponents.DATA_COM
 import static com.site21.bittermelon.init.neoforge.BitterDataSerializers.ENTITY_DATA_SERIALIZERS;
 import static com.site21.bittermelon.init.neoforge.BitterFluidTypes.FLUID_TYPES;
 import static com.site21.bittermelon.init.neoforge.BitterFluids.FLUIDS;
+import static com.site21.bittermelon.init.neoforge.BitterGameRules.GAME_RULES;
 import static com.site21.bittermelon.init.neoforge.BitterItems.ITEMS;
 import static com.site21.bittermelon.init.neoforge.BitterMemoryTypes.MEMORY_MODULE_TYPES;
 import static com.site21.bittermelon.init.neoforge.BitterMenus.MENUS;
@@ -79,6 +80,7 @@ public class Bittermelon {
         ENTITY_DATA_SERIALIZERS.register(modEventBus);
         REACTION_CONDITION_TYPES.register(modEventBus);
         REACTION_EFFECT_TYPES.register(modEventBus);
+        GAME_RULES.register(modEventBus);
 
         modEventBus.addListener(BitterRegistries::registerRegistries);
         modEventBus.addListener(this::commonSetup);
