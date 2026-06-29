@@ -34,7 +34,9 @@ import com.site21.bittermelon.common.systems.character.networking.UpdateCharacte
 import com.site21.bittermelon.common.systems.component.screwdriver.ScrewdriverUseAnimation;
 import com.site21.bittermelon.common.systems.component.temperature.HeatDecorator;
 import com.site21.bittermelon.common.systems.fluid.simple.ClientSimpleFluid;
-import com.site21.bittermelon.common.systems.fluid.substance.ClientSubstanceFluid;
+import com.site21.bittermelon.common.systems.fluid.substance.client.ClientSubstanceFluid;
+import com.site21.bittermelon.common.systems.fluid.substance.client.SubstanceFluidRenderer;
+import com.site21.bittermelon.common.systems.fluid.substance.client.SubstanceTintSource;
 import com.site21.bittermelon.common.systems.medical.client.AnatomyPictureInPictureRenderer;
 import com.site21.bittermelon.common.systems.medical.client.compartmentrenderers.CompartmentRenderers;
 import com.site21.bittermelon.common.systems.medical.client.tool.InstrumentWidgets;
@@ -57,6 +59,7 @@ import com.site21.bittermelon.networking.client.ClientPayloadHandler;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.block.FluidModel;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
@@ -65,6 +68,7 @@ import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.resources.PlayerSkin;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -301,6 +305,17 @@ public class ClientSetup {
         event.register(
                 AnatomyPictureInPictureRenderer.RenderState.class,
                 AnatomyPictureInPictureRenderer::new
+        );
+    }
+
+    @SubscribeEvent
+    public static void registerFluidModels(RegisterFluidModelsEvent event) {
+        FluidModel.Unbaked substanceModel = new FluidModel.Unbaked(
+                new Material(Identifier.withDefaultNamespace("block/water_still")),
+                new Material(Identifier.withDefaultNamespace("block/water_flow")),
+                new Material(Identifier.withDefaultNamespace("block/water_overlay")),
+                new SubstanceTintSource(),
+                new SubstanceFluidRenderer()
         );
     }
 

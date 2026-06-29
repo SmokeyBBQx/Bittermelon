@@ -443,7 +443,7 @@ public class SubstanceFluid extends Fluid {
     protected void entityInside(Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier) {
         super.entityInside(level, pos, entity, effectApplier);
 
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
         if (level.getGameTime() % 20 != 0) return;
         if (entity.getDeltaMovement().lengthSqr() == 0) return;
         if (!(level.getBlockEntity(pos) instanceof SubstanceFluidBlockEntity fluidBE)) return;
