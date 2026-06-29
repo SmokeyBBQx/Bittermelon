@@ -86,21 +86,26 @@ public class CommonEvents {
 
             StressHandler.tickStress(level, player);
             RageHandler.tick(level, player);
-        }
-
-        if (entity.getExistingDataOrNull(LAST_TYPING_TIME) != null) {
-            long lastTypingTime = entity.getData(LAST_TYPING_TIME);
-            long timeSinceTyping = System.currentTimeMillis() - lastTypingTime;
-
-            if (timeSinceTyping > 5000) {
-                entity.removeData(LAST_TYPING_TIME);
-                PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, new SetLastTypingTime(entity.getUUID(), -1));
-            }
+            updateTypingTime(player);
         }
     }
 
     private static void tickCharacter(LivingEntity entity, Character character) {
         SkillUpdater.tickSkills(entity, character);
+    }
+
+    private static void updateTypingTime(Player player) {
+        if (player.level().isClientSide()) return;
+
+        if (player.getExistingDataOrNull(LAST_TYPING_TIME) != null) {
+            long lastTypingTime = player.getData(LAST_TYPING_TIME);
+            long timeSinceTyping = System.currentTimeMillis() - lastTypingTime;
+
+            if (timeSinceTyping > 5000) {
+                player.removeData(LAST_TYPING_TIME);
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SetLastTypingTime(player.getUUID(), -1));
+            }
+        }
     }
 
     private static void tickStains(Level level, LivingEntity entity) {
