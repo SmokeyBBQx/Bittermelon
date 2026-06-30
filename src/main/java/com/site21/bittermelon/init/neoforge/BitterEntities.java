@@ -34,11 +34,13 @@ public class BitterEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<ThrownItemProjectile>> THROWN_ITEM_PROJECTILE = ENTITY_TYPES.register("thrown_item_projectile",
             () -> EntityType.Builder.<ThrownItemProjectile>of(ThrownItemProjectile::new, MobCategory.MISC)
                     .sized(0.5f, 0.5f)
+                    .noLootTable()
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "thrown_item_projectile"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SCP2398ProjectileItem>> SCP_2398_PROJECTILE = ENTITY_TYPES.register("scp_2398_projectile",
             () -> EntityType.Builder.<SCP2398ProjectileItem>of(SCP2398ProjectileItem::new, MobCategory.MISC)
                     .sized(0.5f, 0.5f)
+                    .noLootTable()
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_2398_projectile"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SCP939>> SCP_939 = ENTITY_TYPES.register("scp_939",
@@ -64,6 +66,7 @@ public class BitterEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<TaserProjectile>> TASER_PROJECTILE = ENTITY_TYPES.register("taser_projectile",
             () -> EntityType.Builder.<TaserProjectile>of(TaserProjectile::new, MobCategory.MISC)
                     .sized(0.5f, 0.5f)
+                    .noLootTable()
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "taser_projectile"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SCP1507>> SCP_1507 = ENTITY_TYPES.register("scp_1507",
@@ -78,6 +81,7 @@ public class BitterEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<Cage>> CAGE = ENTITY_TYPES.register("cage",
             () -> EntityType.Builder.of(Cage::new, MobCategory.MISC)
+                    .noLootTable()
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "cage"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SeaMonkey>> SEA_MONKEY = ENTITY_TYPES.register("sea_monkey",
@@ -93,11 +97,13 @@ public class BitterEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<FluidProjectile>> FLUID_PROJECTILE = ENTITY_TYPES.register("fluid_projectile",
             () -> EntityType.Builder.<FluidProjectile>of(FluidProjectile::new, MobCategory.MISC)
                     .sized(0.5f, 0.5f)
+                    .noLootTable()
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, Bittermelon.identifier("fluid_projectile"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Mimic>> MIMIC = ENTITY_TYPES.register("mimic",
             () -> EntityType.Builder.<Mimic>of(Mimic::new, MobCategory.CREATURE)
                     .sized(0.6f, 1.8f)
+                    .noLootTable()
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, Bittermelon.identifier("mimic"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SCP025FR>> SCP_025_FR = ENTITY_TYPES.register("scp_025_fr",
@@ -107,6 +113,8 @@ public class BitterEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<SCP815Snake>> SCP_815_SNAKE = ENTITY_TYPES.register("scp_815_snake",
             () -> EntityType.Builder.of(SCP815Snake::new, MobCategory.MISC)
+                    .sized(0.5f, 0.5f)
+                    .noLootTable()
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_815_snake"))));
 
 

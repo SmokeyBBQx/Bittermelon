@@ -564,4 +564,8 @@ public class BitterItems {
                                             .withStyle(ChatFormatting.DARK_GRAY)
                             )))
             ));
+
+    public static final DeferredItem<Item> METAL_ROD = ITEMS.registerSimpleItem("metal_rod");
+
+    public static final DeferredItem<Item> PINK_PLASTIC_SCRAP = ITEMS.registerSimpleItem("pink_plastic_scrap");
 }

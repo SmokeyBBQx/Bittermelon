@@ -197,6 +197,8 @@ public class BitterModelProvider extends ModelProvider {
         itemModels.generateFlatItem(SUTURE.get(), ModelTemplates.FLAT_ITEM);
         generate3D2DItem(itemModels, REPAIR_TOOL.get());
         itemModels.generateFlatItem(DEBUG_WIRE.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(METAL_ROD.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
+        itemModels.generateFlatItem(PINK_PLASTIC_SCRAP.get(), ModelTemplates.FLAT_ITEM);
     }
 
     public void generateSCP1079(@NotNull ItemModelGenerators itemModels) {
