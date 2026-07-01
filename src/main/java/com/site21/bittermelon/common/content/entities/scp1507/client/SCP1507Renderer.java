@@ -29,5 +29,7 @@ public class SCP1507Renderer extends MobRenderer<SCP1507, SCP1507RenderState, SC
         super.extractRenderState(entity, reusedState, partialTick);
         reusedState.attackTime = entity.getAttackTime() > 0 ? entity.getAttackTime() - partialTick : 0.0f;
         reusedState.onGround = entity.onGround();
+        reusedState.leftLegAttached = entity.isLeftLegAttached();
+        reusedState.rightLegAttached = entity.isRightLegAttached();
     }
 }
