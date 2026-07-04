@@ -2,8 +2,11 @@ package com.site21.bittermelon.common.content.blocks.lights;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -74,5 +77,21 @@ public class CageLampBlock extends Block implements SimpleWaterloggedBlock {
     @Override
     protected @NotNull FluidState getFluidState(@NotNull BlockState state) {
         return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
+    }
+
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        super.animateTick(state, level, pos, random);
+        if (random.nextInt(5) == 0) {
+            level.addParticle(
+                    ParticleTypes.MYCELIUM,
+                    pos.getX() + random.nextDouble(),
+                    pos.getY() + 0.5,
+                    pos.getZ() + random.nextDouble(),
+                    0.0,
+                    0.0,
+                    0.0
+            );
+        }
     }
 }
