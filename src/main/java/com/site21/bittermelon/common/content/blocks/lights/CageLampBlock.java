@@ -83,6 +83,8 @@ public class CageLampBlock extends Block implements SimpleWaterloggedBlock {
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         super.animateTick(state, level, pos, random);
+        if (!state.getValue(LIT)) return;
+
         if (random.nextInt(5) == 0) {
             level.addParticle(
                     ParticleTypes.MYCELIUM,
