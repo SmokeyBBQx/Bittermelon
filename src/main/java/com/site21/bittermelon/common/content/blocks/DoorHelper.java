@@ -27,7 +27,7 @@ public class DoorHelper {
         if (level.isClientSide) return true;
 
         level.playSound(null, player.getOnPos(), BitterSounds.KNOCK.value(), SoundSource.PLAYERS, 1.0f, 1.0f);
-        LocalMessageHelper.sendEmoteMessage(level, player, 10, "knocks on the large sliding door.");
+        LocalMessageHelper.sendEmoteMessage(level, player, 10, "knocks on the door.");
 
         for (int i = 0; i < 9; i++) {
             ItemStack stack = player.getInventory().getItem(i);
