@@ -48,8 +48,8 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public static void onSubmitCustomGeometry(SubmitCustomGeometryEvent event) {
-        WireFeatureRenderer.submitConnectedWire(event.getPoseStack(), event.getSubmitNodeCollector());
+    public static void onRenderPlayerPost(RenderPlayerEvent.Post<?> event) {
+        WireFeatureRenderer.submitWire(event.getRenderState(), event.getSubmitNodeCollector(), event.getPoseStack());
     }
 
     @SubscribeEvent

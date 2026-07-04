@@ -3,6 +3,7 @@ package com.site21.bittermelon.client.event;
 import com.google.common.reflect.TypeToken;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.client.particles.PlasticParticle;
+import com.site21.bittermelon.client.render.SleepRotations;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.client.PhoneCordRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.client.LargeSlidingDoorRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.slidingdoor.client.SlidingDoorRenderer;
@@ -29,6 +30,8 @@ import com.site21.bittermelon.common.content.entities.seamonkey.client.SeaMonkey
 import com.site21.bittermelon.common.content.items.keycard.KeycardDecorator;
 import com.site21.bittermelon.common.content.items.repairtool.RepairToolUseAnimation;
 import com.site21.bittermelon.common.content.items.taser.TaserProjectileRenderer;
+import com.site21.bittermelon.common.content.items.wire.client.WireFeatureRenderer;
+import com.site21.bittermelon.common.content.items.wire.client.WireState;
 import com.site21.bittermelon.common.systems.carry.CarryHandler;
 import com.site21.bittermelon.common.systems.character.networking.UpdateCharacter;
 import com.site21.bittermelon.common.systems.component.screwdriver.ScrewdriverUseAnimation;
@@ -115,11 +118,20 @@ public class ClientSetup {
             Bittermelon.identifier("block_damage")
     );
 
+    public static final ContextKey<SleepRotations.SleepTransform> SLEEP_TRANSFORM = new ContextKey<>(
+            Bittermelon.identifier("sleep_transform")
+    );
+
+    public static final ContextKey<WireState> WIRE_STATE = new ContextKey<>(
+            Bittermelon.identifier("wire_state")
+    );
+
     @SubscribeEvent
     public static void fmlSetup(FMLClientSetupEvent event) {
 //        ItemBlockRenderTypes.setRenderLayer(SUBSTANCE_FLUID.get(), ChunkSectionLayer.TRANSLUCENT);
         CompartmentRenderers.register();
         InstrumentWidgets.register();
+        SleepRotations.init();
     }
 
     @SubscribeEvent
@@ -154,6 +166,18 @@ public class ClientSetup {
 
     @SubscribeEvent
     public static void registerRenderStateModifiers(@NotNull RegisterRenderStateModifiersEvent event) {
+        event.registerEntityModifier(
+                new TypeToken<LivingEntityRenderer<LivingEntity, LivingEntityRenderState, ?>>() {},
+                (entity, state) -> state.setRenderData(SLEEP_TRANSFORM, SleepRotations.get(entity.getType()))
+        );
+
+        event.registerAvatarEntityModifier(new AvatarRenderStateModifier() {
+            @Override
+            public <T extends Avatar & ClientAvatarEntity> void accept(T avatar, AvatarRenderState renderState) {
+                renderState.setRenderData(WIRE_STATE, WireFeatureRenderer.extractWireState(avatar, renderState.partialTick));
+            }
+        });
+
         event.registerAvatarEntityModifier(new AvatarRenderStateModifier() {
             @Override
             public <T extends Avatar & ClientAvatarEntity> void accept(T avatar, AvatarRenderState renderState) {

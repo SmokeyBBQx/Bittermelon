@@ -3,40 +3,36 @@ package com.site21.bittermelon.common.content.items.wire.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.site21.bittermelon.common.content.items.wire.WireItem;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.Avatar;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 
+import static com.site21.bittermelon.client.event.ClientSetup.WIRE_STATE;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.CORD_CONNECTION;
 import static com.site21.bittermelon.init.neoforge.BitterDataComponents.PORT_ID;
 
 public class WireFeatureRenderer {
 
-    public static void submitConnectedWire(PoseStack poseStack, SubmitNodeCollector collector) {
-        Minecraft minecraft = Minecraft.getInstance();
-        Player player = minecraft.player;
-        if (player == null) return;
-
+    public static WireState extractWireState(Avatar player, float partialTicks) {
+        WireState state = new WireState();
         ItemStack heldItem = player.getMainHandItem();
-        if (!(heldItem.getItem() instanceof WireItem)) return;
+        if (!(heldItem.getItem() instanceof WireItem)) return state;
 
         BlockPos devicePos = heldItem.get(CORD_CONNECTION.get());
         String port = heldItem.get(PORT_ID.get());
 
-        if (devicePos == null || port == null) return;
+        if (devicePos == null || port == null) return state;
 
-        WireState state = new WireState();
-
-        float partialTicks = minecraft.getDeltaTracker().getRealtimeDeltaTicks();
         state.playerPos = player.getRopeHoldPosition(partialTicks);
         state.blockPos = Vec3.atCenterOf(devicePos);
+        state.offset = state.playerPos.subtract(player.getPosition(partialTicks));
         BlockPos eyePos = BlockPos.containing(player.getEyePosition(partialTicks));
         state.startBlockLight = player.isOnFire()
                 ? 15
@@ -45,8 +41,13 @@ public class WireFeatureRenderer {
         state.startSkyLight = player.level().getBrightness(LightLayer.SKY, eyePos);
         state.endSkyLight = player.level().getBrightness(LightLayer.SKY, devicePos);
 
+        return state;
+    }
+
+    public static void submitWire(AvatarRenderState state, SubmitNodeCollector collector, PoseStack poseStack) {
+        WireState wireState = state.getRenderData(WIRE_STATE);
         collector.submitCustomGeometry(poseStack, RenderTypes.leash(), (pose, buffer) ->
-                renderWire(pose, buffer, state));
+                renderWire(pose, buffer, wireState));
     }
 
     private static void renderWire(PoseStack.Pose pose, VertexConsumer buffer, WireState state) {
