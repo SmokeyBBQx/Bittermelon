@@ -1,6 +1,7 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.common.content.blocks.SeatBlock;
 import com.site21.bittermelon.common.content.blocks.burrow.BurrowBlock;
 import com.site21.bittermelon.common.content.blocks.container.smallbox.SmallBox;
 import com.site21.bittermelon.common.content.blocks.dirtyfloor.DirtyFloorBlock;
@@ -377,6 +378,14 @@ public class BitterBlocks {
                     .sound(SoundType.SLIME_BLOCK)
                     .offsetType(BlockBehaviour.OffsetType.XZ)
                     .dynamicShape()
+            )
+    );
+
+    public static final DeferredBlock<SeatBlock> BLACK_WOODEN_SEAT = BLOCKS.registerBlock(
+            "black_wooden_seat",
+            properties -> new SeatBlock(properties
+                    .destroyTime(1.5f)
+                    .sound(SoundType.WOOD)
             )
     );
 }

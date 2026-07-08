@@ -8,6 +8,9 @@ import net.minecraft.resources.Identifier;
 import java.util.Optional;
 
 public class BitterModelTemplates {
+    public static final TextureSlot CUSHION = TextureSlot.create("cushion");
+    public static final TextureSlot FRAME = TextureSlot.create("frame");
+
     public static final ModelTemplate SLIDING_DOOR_BOTTOM_LEFT = new ModelTemplate(
             Optional.of(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/sliding_door_bottom_left")),
             Optional.of("_bottom_left"),
@@ -168,5 +171,35 @@ public class BitterModelTemplates {
             Optional.of(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/eyeball_blister")),
             Optional.empty(),
             TextureSlot.CROSS
+    );
+
+    public static final ModelTemplate SEAT_TOP = new ModelTemplate(
+            Optional.of(Bittermelon.identifier("block/seat_top")),
+            Optional.of("_top"),
+            CUSHION, FRAME
+    );
+
+    public static final ModelTemplate SEAT_LEG_NE = new ModelTemplate(
+            Optional.of(Bittermelon.identifier("block/seat_leg_ne")),
+            Optional.of("_leg_ne"),
+            FRAME
+    );
+
+    public static final ModelTemplate SEAT_LEG_NW = new ModelTemplate(
+            Optional.of(Bittermelon.identifier("block/seat_leg_nw")),
+            Optional.of("_leg_nw"),
+            FRAME
+    );
+
+    public static final ModelTemplate SEAT_LEG_SE = new ModelTemplate(
+            Optional.of(Bittermelon.identifier("block/seat_leg_se")),
+            Optional.of("_leg_se"),
+            FRAME
+    );
+
+    public static final ModelTemplate SEAT_LEG_SW = new ModelTemplate(
+            Optional.of(Bittermelon.identifier("block/seat_leg_sw")),
+            Optional.of("_leg_sw"),
+            FRAME
     );
 }

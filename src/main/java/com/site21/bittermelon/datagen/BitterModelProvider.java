@@ -113,6 +113,7 @@ public class BitterModelProvider extends ModelProvider {
         );
         blockModels.createTrivialCube(BitterBlocks.CAGE.get());
         createEyeballBlister(blockModels, BitterBlocks.EYEBALL_BLISTER.get());
+        createWoodenSeat(blockModels, BitterBlocks.BLACK_WOODEN_SEAT.get(), "black");
 
         // SubstanceFluid Containers
         itemModels.generateFlatItem(BEER_BOTTLE.get(), ModelTemplates.FLAT_ITEM);
@@ -249,7 +250,7 @@ public class BitterModelProvider extends ModelProvider {
                                         BlockStateProperties.DOOR_HINGE,
                                         BlockStateProperties.OPEN,
                                         BlockStateProperties.DOUBLE_BLOCK_HALF
-                                ).generate((hinge, open, half) -> {
+                                ).generate((hinge, _, half) -> {
                                     if (half == DoubleBlockHalf.LOWER) {
                                         return hinge == DoorHingeSide.LEFT ? bottomLeft : bottomRight;
                                     } else {
@@ -755,6 +756,73 @@ public class BitterModelProvider extends ModelProvider {
                                 .select(12, age12)
                                 .select(13, age13)
                         ));
+    }
+
+    public void createWoodenSeat(BlockModelGenerators blockModels, Block block, String color) {
+        createSeat(
+                blockModels,
+                block,
+                new Material(Bittermelon.identifier("block/" + color + "_seat_cushion")),
+                new Material(Bittermelon.identifier("block/wooden_seat_frame"))
+        );
+    }
+
+    public void createSeat(BlockModelGenerators blockModels, Block block, Material cushion, Material frame) {
+        TextureMapping textureMapping = new TextureMapping().put(CUSHION, cushion).put(FRAME, frame);
+
+        // TODO: Reuse models across blocks
+
+        MultiVariant seatTop = plainVariant(SEAT_TOP.create(block, textureMapping, blockModels.modelOutput));
+        MultiVariant legNW = plainVariant(SEAT_LEG_NW.create(block, textureMapping, blockModels.modelOutput));
+        MultiVariant legNE = plainVariant(SEAT_LEG_NE.create(block, textureMapping, blockModels.modelOutput));
+        MultiVariant legSW = plainVariant(SEAT_LEG_SW.create(block, textureMapping, blockModels.modelOutput));
+        MultiVariant legSE = plainVariant(SEAT_LEG_SE.create(block, textureMapping, blockModels.modelOutput));
+
+        blockModels.blockStateOutput.accept(
+                MultiPartGenerator.multiPart(block)
+                        .with(
+                                condition().term(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH),
+                                seatTop
+                        )
+                        .with(
+                                condition().term(BlockStateProperties.HORIZONTAL_FACING, Direction.EAST),
+                                seatTop.with(Y_ROT_90)
+                        )
+                        .with(
+                                condition().term(BlockStateProperties.HORIZONTAL_FACING, Direction.SOUTH),
+                                seatTop.with(Y_ROT_180)
+                        )
+                        .with(
+                                condition().term(BlockStateProperties.HORIZONTAL_FACING, Direction.WEST),
+                                seatTop.with(Y_ROT_270)
+                        )
+                        .with(
+                                condition()
+                                        .term(BlockStateProperties.NORTH, false)
+                                        .term(BlockStateProperties.WEST, false),
+                                legNW
+                        )
+                        .with(
+                                condition()
+                                        .term(BlockStateProperties.NORTH, false)
+                                        .term(BlockStateProperties.EAST, false),
+                                legNE
+                        )
+                        .with(
+                                condition()
+                                        .term(BlockStateProperties.SOUTH, false)
+                                        .term(BlockStateProperties.WEST, false),
+                                legSW
+                        )
+                        .with(
+                                condition()
+                                        .term(BlockStateProperties.SOUTH, false)
+                                        .term(BlockStateProperties.EAST, false),
+                                legSE
+                        )
+        );
+
+        blockModels.registerSimpleItemModel(block, ModelLocationUtils.getModelLocation(block));
     }
 
     @Contract(pure = true)

@@ -143,6 +143,7 @@ public class BitterItems {
 
     public static final DeferredItem<BlockItem> CAGE = ITEMS.registerSimpleBlockItem(BitterBlocks.CAGE);
     public static final DeferredItem<BlockItem> EYEBALL_BLISTER = ITEMS.registerSimpleBlockItem(BitterBlocks.EYEBALL_BLISTER);
+    public static final DeferredItem<BlockItem> BLACK_WOODEN_SEAT = ITEMS.registerSimpleBlockItem(BitterBlocks.BLACK_WOODEN_SEAT);
 
     public static final DeferredItem<FluidContainerItem> BEER_BOTTLE = ITEMS.register("beer_bottle", registryName ->
             new GlassFluidContainerItem(new Item.Properties()
