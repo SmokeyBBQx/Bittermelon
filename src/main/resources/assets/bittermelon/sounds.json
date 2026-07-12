@@ -1,12 +1,12 @@
 {
   "container.metal_inventory": {
-    "category": "neutral",
+    "category": "ambient",
     "sounds": [
       "bittermelon:container/metal_inventory"
     ]
   },
   "container.toolbox_close": {
-    "category": "neutral",
+    "category": "ambient",
     "sounds": [
       "bittermelon:container/toolbox_close"
     ]
@@ -90,7 +90,7 @@
     ]
   },
   "misc.scanner_beep": {
-    "category": "players",
+    "category": "player",
     "sounds": [
       "bittermelon:misc/scanner_beep"
     ],
@@ -133,7 +133,7 @@
     ]
   },
   "misc.bat_impact": {
-    "category": "players",
+    "category": "player",
     "sounds": [
       "bittermelon:misc/bat_impact"
     ]
@@ -215,19 +215,19 @@
     ]
   },
   "item.taser": {
-    "category": "players",
+    "category": "player",
     "sounds": [
       "bittermelon:item/taser"
     ]
   },
   "item.taser_reload": {
-    "category": "players",
+    "category": "player",
     "sounds": [
       "bittermelon:item/taser_reload"
     ]
   },
   "item.taser_shoot": {
-    "category": "players",
+    "category": "player",
     "sounds": [
       "bittermelon:item/taser_shoot"
     ]
@@ -239,7 +239,7 @@
     ]
   },
   "misc.snort": {
-    "category": "players",
+    "category": "player",
     "sounds": [
       "bittermelon:misc/snort"
     ]
@@ -352,19 +352,19 @@
     ]
   },
   "item.wire_cutters": {
-    "category": "players",
+    "category": "player",
     "sounds": [
       "bittermelon:item/wire_cutters"
     ]
   },
   "item.screwdriver_open": {
-    "category": "players",
+    "category": "player",
     "sounds": [
       "bittermelon:item/screwdriver_open"
     ]
   },
   "item.screwdriver_close": {
-    "category": "players",
+    "category": "player",
     "sounds": [
       "bittermelon:item/screwdriver_close"
     ]
@@ -376,27 +376,33 @@
     ]
   },
   "misc.knock": {
-    "category": "players",
+    "category": "player",
     "sounds": [
       "bittermelon:misc/knock"
     ]
   },
   "container.toolbox_open": {
-    "category": "neutral",
+    "category": "ambient",
     "sounds": [
       "bittermelon:container/toolbox_open"
     ]
   },
   "item.scp_377_cookie_take": {
-    "category": "players",
+    "category": "player",
     "sounds": [
       "minecraft:entity.item.pickup"
     ]
   },
   "item.scp_377_empty": {
-    "category": "players",
+    "category": "player",
     "sounds": [
       "minecraft:block.chest.close"
+    ]
+  },
+  "entity.flamingo_honk": {
+    "category": "neutral",
+    "sounds": [
+      "bittermelon:entity/flamingo_honk"
     ]
   },
   "misc.slow_beat": {

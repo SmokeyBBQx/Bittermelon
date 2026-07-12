@@ -138,4 +138,6 @@ public class BitterSounds {
             SoundEvent::createVariableRangeEvent);
     public static final Holder<SoundEvent> SLOW_BEAT = SOUND_EVENTS.register("misc.slow_beat",
             SoundEvent::createVariableRangeEvent);
+    public static final Holder<SoundEvent> FLAMINGO_HONK = SOUND_EVENTS.register("entity.flamingo_honk",
+            SoundEvent::createVariableRangeEvent);
 }
