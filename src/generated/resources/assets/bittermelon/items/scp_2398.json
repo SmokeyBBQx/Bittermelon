@@ -9,7 +9,9 @@
         },
         "when": [
           "gui",
-          "fixed"
+          "ground",
+          "fixed",
+          "on_shelf"
         ]
       }
     ],
