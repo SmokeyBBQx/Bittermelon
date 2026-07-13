@@ -3,7 +3,7 @@ package com.site21.bittermelon.client.event;
 import com.google.common.reflect.TypeToken;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.client.particles.PlasticParticle;
-import com.site21.bittermelon.client.render.SleepRotations;
+import com.site21.bittermelon.client.render.SleepTransforms;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.client.PhoneCordRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.client.LargeSlidingDoorRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.slidingdoor.client.SlidingDoorRenderer;
@@ -118,7 +118,7 @@ public class ClientSetup {
             Bittermelon.identifier("block_damage")
     );
 
-    public static final ContextKey<SleepRotations.SleepTransform> SLEEP_TRANSFORM = new ContextKey<>(
+    public static final ContextKey<SleepTransforms.SleepTransform> SLEEP_TRANSFORM = new ContextKey<>(
             Bittermelon.identifier("sleep_transform")
     );
 
@@ -131,7 +131,7 @@ public class ClientSetup {
 //        ItemBlockRenderTypes.setRenderLayer(SUBSTANCE_FLUID.get(), ChunkSectionLayer.TRANSLUCENT);
         CompartmentRenderers.register();
         InstrumentWidgets.register();
-        SleepRotations.init();
+        SleepTransforms.init();
     }
 
     @SubscribeEvent
@@ -168,7 +168,7 @@ public class ClientSetup {
     public static void registerRenderStateModifiers(@NotNull RegisterRenderStateModifiersEvent event) {
         event.registerEntityModifier(
                 new TypeToken<LivingEntityRenderer<LivingEntity, LivingEntityRenderState, ?>>() {},
-                (entity, state) -> state.setRenderData(SLEEP_TRANSFORM, SleepRotations.get(entity.getType()))
+                (entity, state) -> state.setRenderData(SLEEP_TRANSFORM, SleepTransforms.get(entity.getType()))
         );
 
         event.registerAvatarEntityModifier(new AvatarRenderStateModifier() {

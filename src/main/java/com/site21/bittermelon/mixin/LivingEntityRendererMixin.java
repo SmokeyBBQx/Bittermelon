@@ -2,7 +2,7 @@ package com.site21.bittermelon.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import com.site21.bittermelon.client.render.SleepRotations;
+import com.site21.bittermelon.client.render.SleepTransforms;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
@@ -39,9 +39,9 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
     )
     private void redirectSleepFlip(PoseStack poseStack, org.joml.Quaternionfc rotation,
                                    S state, PoseStack outerPoseStack, float bodyRot, float entityScale) {
-        SleepRotations.SleepTransform transform = state.getRenderData(SLEEP_TRANSFORM);
-        if (transform != SleepRotations.SleepTransform.DEFAULT) {
-            poseStack.translate(0.0F, transform.yOffset(), 0.0F);
+        SleepTransforms.SleepTransform transform = state.getRenderDataOrDefault(SLEEP_TRANSFORM, SleepTransforms.SleepTransform.DEFAULT);
+        if (transform != SleepTransforms.SleepTransform.DEFAULT) {
+            poseStack.translate(transform.offset());
             poseStack.mulPose(Axis.XP.rotationDegrees(transform.rollDegrees()));
         } else {
             poseStack.mulPose(rotation);
