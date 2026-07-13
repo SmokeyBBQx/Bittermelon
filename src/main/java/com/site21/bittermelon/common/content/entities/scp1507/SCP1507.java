@@ -170,7 +170,9 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
                                         .whenStopping(SCP1507::attemptEmbedLeg),
                                 10),
                         Pair.of(new CollectivePush<>(10, 5.0, 0), 1)
-                ).whenStopping(SCP1507::setActive)
+                )
+                        .whenStopping(SCP1507::setActive)
+                        .startCondition(StumbleHandler::canMove)
         );
     }
 
@@ -257,7 +259,7 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     }
 
     public void attemptEmbedLeg() {
-        if (random.nextFloat() < 0.1f) {
+        if (random.nextFloat() < 0.025f) {
             StumbleHandler.stumble(this, MobEffectInstance.INFINITE_DURATION, getLookAngle());
             if (random.nextBoolean()) {
                 entityData.set(LEFT_LEG_ATTACHED, false);
@@ -333,6 +335,15 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     @Override
     protected float getSoundVolume() {
         return 0.2f;
+    }
+
+    @Override
+    public int getHeadRotSpeed() {
+        return StumbleHandler.isStunned(this) ? 0 : super.getHeadRotSpeed();
+    }
+
+    public int getMaxHeadYRot() {
+        return 0;
     }
 
     @Override
