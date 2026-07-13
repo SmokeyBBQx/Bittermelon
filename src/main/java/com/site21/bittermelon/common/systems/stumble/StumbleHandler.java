@@ -157,6 +157,11 @@ public class StumbleHandler {
         return livingEntity.hasEffect(FALLEN);
     }
 
+    public static boolean canMove(@NotNull Entity entity) {
+        if (!(entity instanceof LivingEntity livingEntity)) return false;
+        return !livingEntity.hasEffect(STUN);
+    }
+
     public static void clearStunned(@NotNull LivingEntity entity) {
         entity.removeEffect(STUN);
     }

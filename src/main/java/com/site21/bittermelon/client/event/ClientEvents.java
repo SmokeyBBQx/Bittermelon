@@ -10,6 +10,7 @@ import com.site21.bittermelon.common.systems.atmosphere.client.AtmosFogRenderer;
 import com.site21.bittermelon.common.systems.atmosphere.data.AtmosInstancesData;
 import com.site21.bittermelon.common.systems.blockdamage.client.BlockDamageExtractor;
 import com.site21.bittermelon.common.systems.carry.CarryHandler;
+import com.site21.bittermelon.common.systems.carry.CarryRenderer;
 import com.site21.bittermelon.common.systems.carry.ThrowCarriedEntity;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.economy.bank.AccountRegistry;
@@ -19,6 +20,7 @@ import com.site21.bittermelon.common.systems.rage.client.ClientRageHandler;
 import com.site21.bittermelon.common.systems.stumble.client.RiseKeyHandler;
 import com.site21.bittermelon.common.systems.stumble.client.RiseProgressBar;
 import com.site21.bittermelon.common.systems.telecomms.intercom.IntercomManager;
+import com.site21.bittermelon.init.neoforge.BitterAttachmentTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.util.TriState;
@@ -56,6 +58,21 @@ public class ClientEvents {
     public static void onExtractLevelRenderState(ExtractLevelRenderStateEvent event) {
         BlockDamageExtractor.extractBlockDamageRenderStates(event.getRenderState(), event.getLevelRenderer(),
                 event.getFrustum(), event.getLevel());
+    }
+
+    @SubscribeEvent
+    public static void submitCustomGeometry(SubmitCustomGeometryEvent event) {
+        CarryRenderer.renderCarriedEntity(event.getLevelRenderState().cameraRenderState, event.getPoseStack(), event.getSubmitNodeCollector());
+    }
+
+    @SubscribeEvent
+    public static void onRenderHands(RenderHandEvent event) {
+        Player player = Minecraft.getInstance().player;
+        if (player == null) return;
+
+        if (player.hasData(BitterAttachmentTypes.CARRIED_PASSENGER)) {
+            event.setCanceled(true);
+        }
     }
 
     @SubscribeEvent
