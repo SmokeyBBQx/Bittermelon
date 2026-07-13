@@ -1,6 +1,7 @@
 package com.site21.bittermelon.common.content.entities.scp1507;
 
 import com.mojang.datafixers.util.Pair;
+import com.site21.bittermelon.common.content.entities.scp1507.behavior.AwakenFlamingoBlocks;
 import com.site21.bittermelon.common.content.entities.scp1507.behavior.StopMovingWhenLookedAt;
 import com.site21.bittermelon.common.content.entities.scp1507.behavior.TryToBecomeActive;
 import com.site21.bittermelon.common.systems.ai.base.BitterMob;
@@ -29,6 +30,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -41,6 +43,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
@@ -133,7 +137,8 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     public List<? extends BehaviorControl<?>> getIdleBehaviours(SCP1507 owner) {
         return List.of(
                 new VerifyOrFindLeader<>(),
-                new TryToBecomeActive().cooldownForBetween(600, 1200),
+                new TryToBecomeActive()
+                        .cooldownForBetween(600, 1200),
                 new StopMovingWhenLookedAt(),
                 new FindRandomBreakTarget<>()
                         .cooldownForBetween(60, 120),
@@ -145,7 +150,10 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
                                 new SetRandomWalkTarget<>().startCondition((SCP1507::isActive))
                         ),
                         new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))
-                )
+                ),
+                new AwakenFlamingoBlocks()
+                        .cooldownForBetween(600, 1200)
+                        .startCondition(SCP1507::isActive)
         );
     }
 
@@ -240,9 +248,17 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
         return entityData.get(RIGHT_LEG_ATTACHED);
     }
 
+    public void setLeftLegAttached(boolean leftLegAttached) {
+        entityData.set(LEFT_LEG_ATTACHED, leftLegAttached);
+    }
+
+    public void setRightLegAttached(boolean rightLegAttached) {
+        entityData.set(RIGHT_LEG_ATTACHED, rightLegAttached);
+    }
+
     public void attemptEmbedLeg() {
         if (random.nextFloat() < 0.1f) {
-            StumbleHandler.stumble(this, 1000, getLookAngle());
+            StumbleHandler.stumble(this, MobEffectInstance.INFINITE_DURATION, getLookAngle());
             if (random.nextBoolean()) {
                 entityData.set(LEFT_LEG_ATTACHED, false);
             } else {
@@ -295,6 +311,8 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
         } else {
             entityData.set(RIGHT_LEG_ATTACHED, true);
         }
+
+        StumbleHandler.clearStunned(this);
     }
 
     @Override
@@ -315,5 +333,19 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     @Override
     protected float getSoundVolume() {
         return 0.2f;
+    }
+
+    @Override
+    protected void addAdditionalSaveData(@NotNull ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.putBoolean("LeftLegAttached", isLeftLegAttached());
+        output.putBoolean("RightLegAttached", isRightLegAttached());
+    }
+
+    @Override
+    protected void readAdditionalSaveData(@NotNull ValueInput input) {
+        super.readAdditionalSaveData(input);
+        setLeftLegAttached(input.getBooleanOr("LeftLegAttached", true));
+        setRightLegAttached(input.getBooleanOr("RightLegAttached", true));
     }
 }

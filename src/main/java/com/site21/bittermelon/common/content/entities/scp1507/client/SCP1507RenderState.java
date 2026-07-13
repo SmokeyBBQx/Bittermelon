@@ -5,6 +5,6 @@ import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 public class SCP1507RenderState extends LivingEntityRenderState {
     public float attackTime;
     public boolean onGround;
-    public boolean leftLegAttached;
-    public boolean rightLegAttached;
+    public boolean leftLegAttached = true;
+    public boolean rightLegAttached = true;
 }

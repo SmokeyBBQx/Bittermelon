@@ -54,7 +54,7 @@ public class FlamingoBlockRenderer implements BlockEntityRenderer<FlamingoBlockE
                 TEXTURE,
                 state.lightCoords,
                 OverlayTexture.NO_OVERLAY,
-                -1,
+                0,
                 state.breakProgress
         );
 
