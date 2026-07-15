@@ -1,6 +1,7 @@
 package com.site21.bittermelon.common.content.entities.scp1507.client;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.client.event.HealthStages;
 import com.site21.bittermelon.common.content.entities.scp1507.SCP1507;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
@@ -12,6 +13,7 @@ import static com.site21.bittermelon.client.event.LayerDefinitions.SCP_1507_LAYE
 public class SCP1507Renderer extends MobRenderer<SCP1507, SCP1507RenderState, SCP1507Model> {
     public SCP1507Renderer(EntityRendererProvider.Context context) {
         super(context, new SCP1507Model(context.bakeLayer(SCP_1507_LAYER)), 0.2f);
+        this.addLayer(new SCP1507CrackinessLayer(this));
     }
 
     @Override
@@ -31,5 +33,6 @@ public class SCP1507Renderer extends MobRenderer<SCP1507, SCP1507RenderState, SC
         reusedState.onGround = entity.onGround();
         reusedState.leftLegAttached = entity.isLeftLegAttached();
         reusedState.rightLegAttached = entity.isRightLegAttached();
+        reusedState.crackiness = HealthStages.SCP1507.byHealth((int) entity.getHealth());
     }
 }

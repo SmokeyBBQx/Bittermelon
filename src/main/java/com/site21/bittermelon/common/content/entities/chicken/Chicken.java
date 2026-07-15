@@ -52,7 +52,7 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
     private final Map<Character, Relationship> relationships;
 
     public Chicken(EntityType<? extends PathfinderMob> entityType, Level level) {
-        super(entityType, level, 3);
+        super(entityType, level);
         relationships = new HashMap<>();
     }
 
