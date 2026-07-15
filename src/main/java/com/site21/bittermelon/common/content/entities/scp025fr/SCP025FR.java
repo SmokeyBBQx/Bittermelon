@@ -30,7 +30,7 @@ public class SCP025FR extends BitterMob<SCP025FR> {
     private final SCP025FRPart[] parts;
 
     public SCP025FR(EntityType<? extends PathfinderMob> entityType, Level level) {
-        super(entityType, level, 2);
+        super(entityType, level);
         parts = new SCP025FRPart[9];
         for (int i = 0; i < parts.length; i++) {
             parts[i] = new SCP025FRPart(this);

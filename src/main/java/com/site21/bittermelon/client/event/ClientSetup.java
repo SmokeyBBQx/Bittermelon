@@ -3,7 +3,6 @@ package com.site21.bittermelon.client.event;
 import com.google.common.reflect.TypeToken;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.client.particles.PlasticParticle;
-import com.site21.bittermelon.client.render.SleepTransforms;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.client.PhoneCordRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.client.LargeSlidingDoorRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.slidingdoor.client.SlidingDoorRenderer;
@@ -161,7 +160,6 @@ public class ClientSetup {
         event.registerBlockEntityRenderer(BitterBlockEntities.WALL_WRITING_BLOCK_ENTITY.get(), WallWritingRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.TELEVISION_BLOCK_ENTITY.get(), TelevisionRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.PLASTIC_FLAMINGO_BLOCK_ENTITY.get(), FlamingoBlockRenderer::new);
-
     }
 
     @SubscribeEvent

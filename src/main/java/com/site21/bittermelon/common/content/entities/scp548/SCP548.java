@@ -32,7 +32,7 @@ import java.util.Map;
 
 public class SCP548 extends BitterMob<SCP548> {
     public SCP548(EntityType<? extends PathfinderMob> entityType, Level level) {
-        super(entityType, level, 1);
+        super(entityType, level);
     }
 
     public static AttributeSupplier.@NotNull Builder createAttributes() {

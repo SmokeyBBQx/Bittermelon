@@ -1,4 +1,4 @@
-package com.site21.bittermelon.client.render;
+package com.site21.bittermelon.client.event;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.phys.Vec3;
@@ -17,7 +17,7 @@ public final class SleepTransforms {
 
     public static void init() {
         register(SCP_1507.get(), new SleepTransforms.SleepTransform(90.0f, new Vec3(0.2, 0.0, 0)));
-        register(EntityType.PIG, new SleepTransforms.SleepTransform(90.0f, new Vec3(0.2, 0.0, 0)));
+        register(EntityType.PIG, new SleepTransforms.SleepTransform(90.0f, new Vec3(0.25, 0.0, 0)));
         register(EntityType.FOX, new SleepTransforms.SleepTransform(75.0f, new Vec3(0.175, 0.0, 0)));
     }
 

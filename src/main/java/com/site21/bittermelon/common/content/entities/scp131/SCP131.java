@@ -37,7 +37,7 @@ public class SCP131 extends BitterMob<SCP131> {
     private static final EntityDataAccessor<Integer> VARIANT = SynchedEntityData.defineId(SCP131.class, EntityDataSerializers.INT);
 
     public SCP131(EntityType<? extends PathfinderMob> entityType, Level level) {
-        super(entityType, level, 1);
+        super(entityType, level);
     }
 
     @Override

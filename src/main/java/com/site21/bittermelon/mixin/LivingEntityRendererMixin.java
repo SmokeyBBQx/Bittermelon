@@ -2,7 +2,7 @@ package com.site21.bittermelon.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import com.site21.bittermelon.client.render.SleepTransforms;
+import com.site21.bittermelon.client.event.SleepTransforms;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;

@@ -18,23 +18,17 @@ import java.util.Map;
 
 public abstract class BitterMob<T extends BitterMob<T>> extends PathfinderMob implements SmartBrainOwner<T>, NeedsUser {
     private Map<Need, NeedInstance> needs;
-    private final int behaviorRandomness;
+    private final int behaviorRandomness = 1;
     private Activity[] cachedActivityPriorities = null;
 
-    protected BitterMob(EntityType<? extends PathfinderMob> entityType, Level level, int behaviorRandomness) {
+    protected BitterMob(EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level);
-
-        this.behaviorRandomness = behaviorRandomness;
 //
 //        if (!level.isClientSide) {
 //            Character character = initializeCharacter();
 //            CharacterManager.get(level).addCharacter(character);
 //            CharacterManager.get(level).setActiveCharacter(this, character.getUUID());
 //        }
-    }
-
-    protected BitterMob(EntityType<? extends PathfinderMob> entityType, Level level) {
-        this(entityType, level, 1);
     }
 
     protected abstract Character initializeCharacter();

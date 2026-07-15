@@ -31,10 +31,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
@@ -76,9 +73,11 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     private static final EntityDataAccessor<Integer> ATTACK_TIME = SynchedEntityData.defineId(SCP1507.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> LEFT_LEG_ATTACHED = SynchedEntityData.defineId(SCP1507.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> RIGHT_LEG_ATTACHED = SynchedEntityData.defineId(SCP1507.class, EntityDataSerializers.BOOLEAN);
+    private Opinions opinions;
 
     public SCP1507(EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level);
+        opinions = new Opinions();
     }
 
     @Override
@@ -128,7 +127,8 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
                         .startCondition((entity) ->
                                 BrainUtil.getMemory(entity, BitterMemoryTypes.BREAK_TARGET.get()).distSqr(entity.getOnPos()) <= 4),
                 new TargetOrRetaliate<>()
-                        .attackablePredicate(target -> !(target instanceof SCP1507))
+                        .attackablePredicate(target -> !(target instanceof SCP1507)
+                                && opinions.get(OpinionSubject.of(target.getType())).respect() < 0.5f)
                         .alertAlliesWhen((_, _) -> true)
         );
     }
@@ -213,6 +213,7 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     public void onDamageTaken(@NotNull DamageContainer damageContainer) {
         super.onDamageTaken(damageContainer);
         makeShatterParticles(Math.min(100, (int) (damageContainer.getNewDamage() * 5)));
+        opinions.reactToDamage(damageContainer.getSource(), damageContainer.getNewDamage() / 10);
     }
 
     private void makeShatterParticles(int count) {
@@ -297,6 +298,8 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
             float pitch = 1.0f + (random.nextFloat() - random.nextFloat()) * 0.2f;
             playSound(SoundEvents.IRON_GOLEM_REPAIR, 1.0f, pitch);
             stack.consume(1, player);
+            opinions.adjust(OpinionSubject.of(player.getType()), 0.025f, 0.025f);
+
             return InteractionResult.SUCCESS;
         }
 
@@ -315,6 +318,12 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
         }
 
         StumbleHandler.clearStunned(this);
+        opinions.adjust(OpinionSubject.of(player.getType()), 0.05f, 0.05f);
+    }
+
+    @Override
+    protected boolean considersEntityAsAlly(Entity other) {
+        return opinions.get(OpinionSubject.of(other.getType())).respect() > 0.5f || super.considersEntityAsAlly(other);
     }
 
     @Override
@@ -351,6 +360,7 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
         super.addAdditionalSaveData(output);
         output.putBoolean("LeftLegAttached", isLeftLegAttached());
         output.putBoolean("RightLegAttached", isRightLegAttached());
+        output.store("opinions", Opinions.CODEC, opinions);
     }
 
     @Override
@@ -358,5 +368,6 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
         super.readAdditionalSaveData(input);
         setLeftLegAttached(input.getBooleanOr("LeftLegAttached", true));
         setRightLegAttached(input.getBooleanOr("RightLegAttached", true));
+        opinions = input.read("opinions", Opinions.CODEC).orElse(new Opinions());
     }
 }
