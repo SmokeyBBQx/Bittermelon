@@ -66,4 +66,6 @@ public class BitterMobEffects {
 
     public static final Holder<MobEffect> BUBBLE_BATH = MOB_EFFECTS.register("bubble_bath", BubbleBathEffect::new);
 
+    public static final Holder<MobEffect> BROKEN_JAW = MOB_EFFECTS.register("broken_jaw", BrokenJawEffect::new);
+
 }
