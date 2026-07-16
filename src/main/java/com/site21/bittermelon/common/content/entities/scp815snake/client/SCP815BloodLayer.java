@@ -13,7 +13,7 @@ import static com.site21.bittermelon.client.event.ClientSetup.BROKEN_JAW;
 
 
 public class SCP815BloodLayer extends RenderLayer<AvatarRenderState, PlayerModel> {
-    private static final Identifier SCP815_BLOOD = Bittermelon.identifier("textures/entity/815_bloody_layer.png");
+    private static final Identifier SCP_815_BLOOD = Bittermelon.identifier("textures/entity/815_bloody_layer.png");
 
     public SCP815BloodLayer(RenderLayerParent<AvatarRenderState, PlayerModel> renderer) {
         super(renderer);
@@ -22,4 +22,6 @@ public class SCP815BloodLayer extends RenderLayer<AvatarRenderState, PlayerModel
     @Override
     public void submit(PoseStack poseStack, SubmitNodeCollector collector, int lightCoords, AvatarRenderState state, float yRot, float xRot) {
         if (!Boolean.TRUE.equals(state.getRenderData(BROKEN_JAW))) return;
+        renderColoredCutoutModel(getParentModel(), SCP_815_BLOOD, poseStack, collector, lightCoords, state, -1, 1);
+    }
 }

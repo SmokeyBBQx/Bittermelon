@@ -95,7 +95,6 @@ import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.MEDICAL
 import static com.site21.bittermelon.init.neoforge.BitterEntities.*;
 import static com.site21.bittermelon.init.neoforge.BitterFluidTypes.SIMPLE_FLUID_TYPE;
 import static com.site21.bittermelon.init.neoforge.BitterFluidTypes.SUBSTANCE_FLUID_TYPE;
-import static com.site21.bittermelon.init.neoforge.BitterMobEffects.BROKEN_JAW;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class ClientSetup {
@@ -156,7 +155,7 @@ public class ClientSetup {
         event.registerEntityRenderer(SCP_718.get(), SCP718Renderer::new);
         event.registerEntityRenderer(FLUID_PROJECTILE.get(), FluidProjectileRenderer::new);
         MIMIC_PROVIDERS.forEach(
-                (model, provider) -> event.registerEntityRenderer(MIMIC.get(), provider)
+                (_, provider) -> event.registerEntityRenderer(MIMIC.get(), provider)
         );
         event.registerEntityRenderer(SCP_025_FR.get(), SCP025FRRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.THERMOMETER_BLOCK_ENTITY.get(), ThermometerRenderer::new);
