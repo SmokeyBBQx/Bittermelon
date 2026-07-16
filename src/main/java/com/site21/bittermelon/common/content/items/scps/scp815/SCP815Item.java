@@ -89,6 +89,7 @@ public class SCP815Item extends Item {
             }
         });
         player.addEffect(new MobEffectInstance(BitterMobEffects.BLEEDING, 200000, 1, false, false));
+        player.addEffect(new MobEffectInstance(BitterMobEffects.BROKEN_JAW, 200000, 0, false, false));
     }
 
     private static void spawnSnakes(Player player, Level level) {

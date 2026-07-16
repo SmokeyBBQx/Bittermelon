@@ -23,6 +23,7 @@ import com.site21.bittermelon.common.content.entities.scp548.client.SCP548Render
 import com.site21.bittermelon.common.content.entities.scp650.client.SCP650Renderer;
 import com.site21.bittermelon.common.content.entities.scp718.client.EyeballOnPlayerLayer;
 import com.site21.bittermelon.common.content.entities.scp718.client.SCP718Renderer;
+import com.site21.bittermelon.common.content.entities.scp815snake.client.SCP815BloodLayer;
 import com.site21.bittermelon.common.content.entities.scp815snake.client.SCP815SnakeRenderer;
 import com.site21.bittermelon.common.content.entities.scp939.client.SCP939Renderer;
 import com.site21.bittermelon.common.content.entities.seamonkey.client.SeaMonkeyRenderer;
@@ -94,6 +95,7 @@ import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.MEDICAL
 import static com.site21.bittermelon.init.neoforge.BitterEntities.*;
 import static com.site21.bittermelon.init.neoforge.BitterFluidTypes.SIMPLE_FLUID_TYPE;
 import static com.site21.bittermelon.init.neoforge.BitterFluidTypes.SUBSTANCE_FLUID_TYPE;
+import static com.site21.bittermelon.init.neoforge.BitterMobEffects.BROKEN_JAW;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class ClientSetup {
@@ -123,6 +125,10 @@ public class ClientSetup {
 
     public static final ContextKey<WireState> WIRE_STATE = new ContextKey<>(
             Bittermelon.identifier("wire_state")
+    );
+
+    public static final ContextKey<Boolean> BROKEN_JAW = new ContextKey<>(
+            Bittermelon.identifier("broken_jaw")
     );
 
     @SubscribeEvent
@@ -210,6 +216,17 @@ public class ClientSetup {
                         MobEffectInstance eyeballEffect = avatar.getEffect(BitterMobEffects.EYEBALL_GROWTH);
                         boolean render = eyeballEffect != null && eyeballEffect.getAmplifier() > 0;
                         renderState.setRenderData(EYEBALL_GROWTH, render);
+                    }
+                }
+        );
+
+        event.registerAvatarEntityModifier(
+                new AvatarRenderStateModifier() {
+                    @Override
+                    public <T extends Avatar & ClientAvatarEntity> void accept(T avatar, AvatarRenderState renderState) {
+                        MobEffectInstance brokenJawEffect = avatar.getEffect(BitterMobEffects.BROKEN_JAW);
+                        boolean render = brokenJawEffect != null;
+                        renderState.setRenderData(BROKEN_JAW, render);
                     }
                 }
         );
@@ -318,6 +335,7 @@ public class ClientSetup {
         for (PlayerModelType skin : event.getSkins()) {
             AvatarRenderer<AbstractClientPlayer> renderer = event.getPlayerRenderer(skin);
             renderer.addLayer(new EyeballOnPlayerLayer(renderer, event.getEntityModels()));
+            renderer.addLayer(new SCP815BloodLayer(renderer));
         }
     }
 
