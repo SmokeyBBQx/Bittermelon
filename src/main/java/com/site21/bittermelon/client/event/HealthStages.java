@@ -24,5 +24,5 @@ public class HealthStages {
 
         }
     }
-        public static final HealthStage SCP1507 = new HealthStage(3, 0, 0);
+        public static final HealthStage SCP1507 = new HealthStage(5, 3, 0);
     }
