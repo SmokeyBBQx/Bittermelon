@@ -13,9 +13,11 @@ public class PartInstance {
     private final Map<Vec3, PartInstance> attachedParts;
     private PartInstance parent;
     private final List<Wound> wounds;
+    private LimbSlot limbSlot;
 
-    public PartInstance(BodyPart bodyPart) {
+    public PartInstance(BodyPart bodyPart, LimbSlot limbSlot) {
         this.bodyPart = bodyPart;
+        this.limbSlot = limbSlot;
         this.attachedParts = new HashMap<>();
         this.wounds = new ArrayList<>();
     }
@@ -50,5 +52,13 @@ public class PartInstance {
 
     public Holder<BodyPart> getPartHolder() {
         return bodyPart.builtInRegistryHolder();
+    }
+
+    public LimbSlot getLimbSlot() {
+        return limbSlot;
+    }
+
+    public void setLimbSlot(LimbSlot limbSlot) {
+        this.limbSlot = limbSlot;
     }
 }

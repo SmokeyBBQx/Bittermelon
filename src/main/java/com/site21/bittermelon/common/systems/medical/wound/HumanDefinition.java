@@ -7,13 +7,13 @@ import static com.site21.bittermelon.init.custom.BodyParts.*;
 public class HumanDefinition implements AnatomyDefinition {
     @Override
     public HealthContainer createHealthContainer(Entity entity) {
-        PartInstance torso = TORSO.get().toInstance();
+        PartInstance torso = TORSO.get().toInstance(LimbSlot.BODY);
         HealthContainer healthContainer = new HealthContainer(torso);
-        PartInstance leftArm = LEFT_ARM.get().toInstance();
-        PartInstance rightArm = RIGHT_ARM.get().toInstance();
-        PartInstance leftLeg = LEFT_LEG.get().toInstance();
-        PartInstance rightLeg = RIGHT_LEG.get().toInstance();
-        PartInstance head = HEAD.get().toInstance();
+        PartInstance leftArm = LEFT_ARM.get().toInstance(LimbSlot.LEFT_ARM);
+        PartInstance rightArm = RIGHT_ARM.get().toInstance(LimbSlot.RIGHT_ARM);
+        PartInstance leftLeg = LEFT_LEG.get().toInstance(LimbSlot.LEFT_LEG);
+        PartInstance rightLeg = RIGHT_LEG.get().toInstance(LimbSlot.RIGHT_LEG);
+        PartInstance head = HEAD.get().toInstance(LimbSlot.HEAD);
         torso.attachPart(TORSO.get().attachmentPoints().get(0), head);
         torso.attachPart(TORSO.get().attachmentPoints().get(1), rightArm);
         torso.attachPart(TORSO.get().attachmentPoints().get(2), leftArm);

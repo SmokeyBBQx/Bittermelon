@@ -17,9 +17,12 @@ public record BodyPart(
         Vec3 pivot,
         AABB boundingBox
 ) {
+    public PartInstance toInstance(LimbSlot limbSlot) {
+        return new PartInstance(this, limbSlot);
+    }
 
     public PartInstance toInstance() {
-        return new PartInstance(this);
+        return toInstance(LimbSlot.NONE);
     }
 
     public Holder<BodyPart> builtInRegistryHolder() {

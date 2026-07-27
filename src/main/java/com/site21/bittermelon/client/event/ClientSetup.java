@@ -97,7 +97,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-import static com.site21.bittermelon.common.systems.medical.wound.BodyPartModels.MODELS;
+import static com.site21.bittermelon.common.systems.medical.wound.BodyPartModels.registerBodyPartModel;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.HEALTH_CONTAINER;
 import static com.site21.bittermelon.init.neoforge.BitterEntities.*;
 import static com.site21.bittermelon.init.neoforge.BitterFluidTypes.SIMPLE_FLUID_TYPE;
@@ -353,12 +353,12 @@ public class ClientSetup {
             renderer.addLayer(new SCP815BloodLayer(renderer));
             renderer.addLayer(new LimbRenderLayer<>(renderer));
             PlayerModel model = renderer.getModel();
-            MODELS.put(BodyParts.HEAD, model.head);
-            MODELS.put(BodyParts.TORSO, model.body);
-            MODELS.put(BodyParts.RIGHT_ARM, model.rightArm);
-            MODELS.put(BodyParts.LEFT_ARM, model.leftArm);
-            MODELS.put(BodyParts.RIGHT_LEG, model.rightLeg);
-            MODELS.put(BodyParts.LEFT_LEG, model.leftLeg);
+            registerBodyPartModel(BodyParts.HEAD, model.head);
+            registerBodyPartModel(BodyParts.TORSO, model.body);
+            registerBodyPartModel(BodyParts.RIGHT_ARM, model.rightArm);
+            registerBodyPartModel(BodyParts.LEFT_ARM, model.leftArm);
+            registerBodyPartModel(BodyParts.RIGHT_LEG, model.rightLeg);
+            registerBodyPartModel(BodyParts.LEFT_LEG, model.leftLeg);
         }
     }
 

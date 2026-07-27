@@ -1,7 +1,5 @@
 package com.site21.bittermelon.common.systems.medical.wound;
 
-import com.site21.bittermelon.init.custom.BodyParts;
-
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -15,7 +13,6 @@ public class HealthContainer {
         this.root = root;
         this.parts = new ArrayList<>();
         this.limbs = new EnumMap<>(LimbSlot.class);
-        limbs.put(LimbSlot.LEFT_ARM, new PartInstance(BodyParts.LEFT_ARM.get()));
     }
 
     public PartInstance getRoot() {

@@ -15,6 +15,7 @@ import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Map;
+import java.util.function.Function;
 
 public class LimbRenderLayer<S extends EntityRenderState, M extends EntityModel<? super S>> extends RenderLayer<S, M> {
     public LimbRenderLayer(RenderLayerParent<S, M> renderer) {
@@ -25,25 +26,33 @@ public class LimbRenderLayer<S extends EntityRenderState, M extends EntityModel<
     public void submit(PoseStack poseStack, SubmitNodeCollector collector, int lightCoords, S state, float yRot, float xRot) {
         PartInstance root = state.getRenderDataOrDefault(ClientSetup.ROOT_PART, BodyParts.EMPTY.get().toInstance());
 
-        getParentModel().setupAnim(state);
+        Function<String, ModelPart> partLookup = getParentModel().root().createPartLookup();
 
         if (!root.getBodyPart().equals(BodyParts.EMPTY.get())) {
-            renderPart(root, poseStack, collector, lightCoords);
+            renderPart(partLookup, root, poseStack, collector, lightCoords);
         }
     }
 
-    private void renderPart(PartInstance part, PoseStack poseStack, SubmitNodeCollector collector, int lightCoords) {
+    private void renderPart(Function<String, ModelPart> partLookup, PartInstance part, PoseStack poseStack, SubmitNodeCollector collector, int lightCoords) {
+        ModelPart equivalentPart = partLookup.apply(part.getLimbSlot().identifier);
+        if (equivalentPart == null) return;
         ModelPart modelPart = BodyPartModels.MODELS.get(part.getBodyPart().builtInRegistryHolder());
+        Vec3 rest = BodyPartModels.REST_POSITIONS.get(part.getBodyPart().builtInRegistryHolder());
         poseStack.pushPose();
+
+        modelPart.x = (float) (equivalentPart.x - rest.x);
+        modelPart.y = (float) (equivalentPart.y - rest.y);
+        modelPart.z = (float) (equivalentPart.z - rest.z);
+        modelPart.xRot = equivalentPart.xRot;
+        modelPart.yRot = equivalentPart.yRot;
+        modelPart.zRot = equivalentPart.zRot;
+        modelPart.xScale = equivalentPart.xScale;
+        modelPart.yScale = equivalentPart.yScale;
+        modelPart.zScale = equivalentPart.zScale;
+
         modelPart.translateAndRotate(poseStack);
 
         collector.submitCustomGeometry(poseStack, RenderTypes.entitySolid(DefaultPlayerSkin.getDefaultTexture()), ((pose, buffer) -> {
-            if (part.getParent() != null) {
-                modelPart.x = 0;
-                modelPart.y = 0;
-                modelPart.z = 0;
-            }
-
             modelPart.compile(
                     pose,
                     buffer,
@@ -53,15 +62,17 @@ public class LimbRenderLayer<S extends EntityRenderState, M extends EntityModel<
             );
         }));
 
+        poseStack.popPose();
+
         for (Map.Entry<Vec3, PartInstance> entry : part.getAttachedParts().entrySet()) {
             poseStack.pushPose();
             Vec3 attachmentPoint = entry.getKey();
             poseStack.translate(attachmentPoint.x / 16,  attachmentPoint.y / 16, attachmentPoint.z / 16);
-            renderPart(entry.getValue(), poseStack, collector, lightCoords);
+            renderPart(partLookup, entry.getValue(), poseStack, collector, lightCoords);
             poseStack.popPose();
         }
 
-        poseStack.popPose();
+
 //        collector.submitCustomGeometry(poseStack, RenderTypes.entityCutout(clientWound.identifier()), ((pose, buffer) -> {
 //            poseStack.pushPose();
 //            poseStack.scale(1.25f, 1.25f, 1.25f);
