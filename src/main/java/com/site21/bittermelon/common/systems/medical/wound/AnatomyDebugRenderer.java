@@ -3,7 +3,6 @@ package com.site21.bittermelon.common.systems.medical.wound;
 import com.site21.bittermelon.init.neoforge.BitterAttachmentTypes;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.debug.DebugRenderer;
 import net.minecraft.gizmos.GizmoStyle;
@@ -15,7 +14,6 @@ import net.minecraft.world.phys.Vec3;
 
 public class AnatomyDebugRenderer implements DebugRenderer.SimpleDebugRenderer {
     private final Minecraft minecraft;
-
     public AnatomyDebugRenderer(Minecraft minecraft) {
         this.minecraft = minecraft;
     }
@@ -40,14 +38,13 @@ public class AnatomyDebugRenderer implements DebugRenderer.SimpleDebugRenderer {
     private void showHitboxes(Entity entity, HealthContainer healthContainer, float partialTicks) {
         Vec3 position = entity.getPosition(partialTicks);
         int mainColor = -16711936;
-        double size = 0.25;
+        double size = 0.1;
+
         PartInstance root = healthContainer.getRoot();
         for (Vec3 attachmentPoint : root.getBodyPart().attachmentPoints()) {
             attachmentPoint = attachmentPoint.scale(1 / 16.0);
             AABB aabb = new AABB(attachmentPoint.x, attachmentPoint.y, attachmentPoint.z,
                     attachmentPoint.x + size, attachmentPoint.y + size, attachmentPoint.z + size);
-            ModelPart modelPart = BodyPartModels.MODELS.get(root.getBodyPart().builtInRegistryHolder());
-            position = position.add(0, modelPart.y / 16, 0);
             Gizmos.cuboid(aabb.move(position), GizmoStyle.stroke(mainColor));
         }
     }

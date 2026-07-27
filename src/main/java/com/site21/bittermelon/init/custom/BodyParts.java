@@ -30,7 +30,7 @@ public class BodyParts {
     public static final DeferredHolder<BodyPart, BodyPart> TORSO = BODY_PARTS.register("torso",
             () -> humanPart(
                     new int[][]{{20, 20, 8, 12}, {32, 20, 8, 12}, {16, 20, 4, 12}, {28, 20, 4, 12}},
-                    ImmutableList.of(new Vec3(0.5, 0, 0), new Vec3(-5, 0, 0), new Vec3(-2, 0, 0)),
+                    ImmutableList.of(new Vec3(0, 0, 0), new Vec3(-5, 2, 0), new Vec3(5, 2, 0), new Vec3(-2, 12, 0), new Vec3(2, 12, 0)),
                     new Vec3(0, 0, 0),
                     new AABB(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5)
             )

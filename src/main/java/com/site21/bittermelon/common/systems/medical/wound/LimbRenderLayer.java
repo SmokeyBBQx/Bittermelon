@@ -25,16 +25,25 @@ public class LimbRenderLayer<S extends EntityRenderState, M extends EntityModel<
     public void submit(PoseStack poseStack, SubmitNodeCollector collector, int lightCoords, S state, float yRot, float xRot) {
         PartInstance root = state.getRenderDataOrDefault(ClientSetup.ROOT_PART, BodyParts.EMPTY.get().toInstance());
 
+        getParentModel().setupAnim(state);
+
         if (!root.getBodyPart().equals(BodyParts.EMPTY.get())) {
             renderPart(root, poseStack, collector, lightCoords);
         }
     }
 
     private void renderPart(PartInstance part, PoseStack poseStack, SubmitNodeCollector collector, int lightCoords) {
+        ModelPart modelPart = BodyPartModels.MODELS.get(part.getBodyPart().builtInRegistryHolder());
+        poseStack.pushPose();
+        modelPart.translateAndRotate(poseStack);
+
         collector.submitCustomGeometry(poseStack, RenderTypes.entitySolid(DefaultPlayerSkin.getDefaultTexture()), ((pose, buffer) -> {
-            poseStack.pushPose();
-            ModelPart modelPart = BodyPartModels.MODELS.get(part.getBodyPart().builtInRegistryHolder());
-            modelPart.translateAndRotate(poseStack);
+            if (part.getParent() != null) {
+                modelPart.x = 0;
+                modelPart.y = 0;
+                modelPart.z = 0;
+            }
+
             modelPart.compile(
                     pose,
                     buffer,
@@ -42,7 +51,6 @@ public class LimbRenderLayer<S extends EntityRenderState, M extends EntityModel<
                     OverlayTexture.NO_OVERLAY,
                     -1
             );
-            poseStack.popPose();
         }));
 
         for (Map.Entry<Vec3, PartInstance> entry : part.getAttachedParts().entrySet()) {
@@ -53,7 +61,7 @@ public class LimbRenderLayer<S extends EntityRenderState, M extends EntityModel<
             poseStack.popPose();
         }
 
-
+        poseStack.popPose();
 //        collector.submitCustomGeometry(poseStack, RenderTypes.entityCutout(clientWound.identifier()), ((pose, buffer) -> {
 //            poseStack.pushPose();
 //            poseStack.scale(1.25f, 1.25f, 1.25f);
