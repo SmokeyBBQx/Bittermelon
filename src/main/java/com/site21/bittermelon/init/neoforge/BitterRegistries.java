@@ -9,6 +9,7 @@ import com.site21.bittermelon.common.systems.electronics.wiring.Signal;
 import com.site21.bittermelon.common.systems.medical.anatomy.Anatomy;
 import com.site21.bittermelon.common.systems.medical.compartment.Compartment;
 import com.site21.bittermelon.common.systems.medical.drug.Drug;
+import com.site21.bittermelon.common.systems.medical.wound.BodyPart;
 import com.site21.bittermelon.common.systems.roles.Role;
 import com.site21.bittermelon.common.systems.substance.Substance;
 import net.minecraft.core.Registry;
@@ -72,6 +73,11 @@ public class BitterRegistries {
             .sync(true)
             .create();
 
+    public static final ResourceKey<Registry<BodyPart>> BODY_PART_REGISTRY_KEY = ResourceKey.createRegistryKey(Bittermelon.identifier("body_parts"));
+    public static final Registry<BodyPart> BODY_PART_REGISTRY = new RegistryBuilder<>(BODY_PART_REGISTRY_KEY)
+            .sync(true)
+            .create();
+
     @SubscribeEvent
     public static void registerRegistries(@NotNull NewRegistryEvent event) {
         event.register(SUBSTANCE_REGISTRY);
@@ -84,5 +90,6 @@ public class BitterRegistries {
         event.register(ANATOMY_REGISTRY);
         event.register(REACTION_CONDITION_TYPE);
         event.register(REACTION_EFFECT_TYPE);
+        event.register(BODY_PART_REGISTRY);
     }
 }

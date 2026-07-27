@@ -17,23 +17,13 @@ import java.util.UUID;
 /**
  * Represents the physical parts of the anatomy, used for rendering and other interactions with the game.
  */
-public class AnatomyModel {
+public record AnatomyModel(Map<String, UUID> bodyParts) {
     public static final Codec<AnatomyModel> CODEC;
     public static final StreamCodec<ByteBuf, AnatomyModel> STREAM_CODEC;
     public static final AnatomyModel EMPTY = new AnatomyModel(new HashMap<>());
 
-    private final Map<String, UUID> bodyParts;
-
-    public AnatomyModel(Map<String, UUID> bodyParts) {
-        this.bodyParts = bodyParts;
-    }
-
     public AnatomyModel() {
         this(new HashMap<>());
-    }
-
-    public Map<String, UUID> getBodyParts() {
-        return bodyParts;
     }
 
     public void addBodyPart(String name, UUID id) {

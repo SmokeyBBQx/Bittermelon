@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import static com.site21.bittermelon.init.custom.Anatomies.ANATOMIES;
+import static com.site21.bittermelon.init.custom.BodyParts.BODY_PARTS;
 import static com.site21.bittermelon.init.custom.Compartments.COMPARTMENTS;
 import static com.site21.bittermelon.init.custom.Drugs.DRUGS;
 import static com.site21.bittermelon.init.custom.LogicalOperators.LOGICAL_OPERATORS;
@@ -81,6 +82,7 @@ public class Bittermelon {
         REACTION_CONDITION_TYPES.register(modEventBus);
         REACTION_EFFECT_TYPES.register(modEventBus);
         GAME_RULES.register(modEventBus);
+        BODY_PARTS.register(modEventBus);
 
         modEventBus.addListener(BitterRegistries::registerRegistries);
         modEventBus.addListener(this::commonSetup);

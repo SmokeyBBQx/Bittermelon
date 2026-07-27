@@ -7,7 +7,9 @@ import com.site21.bittermelon.common.systems.atmosphere.data.AtmosBlockData;
 import com.site21.bittermelon.common.systems.blockdamage.BlockDamageData;
 import com.site21.bittermelon.common.systems.electronics.wiring.WireNetwork;
 import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.common.systems.medical.wound.HealthContainer;
 import com.site21.bittermelon.common.systems.substance.SubstanceMixture;
+import com.site21.bittermelon.init.custom.BodyParts;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.util.ExtraCodecs;
@@ -55,10 +57,6 @@ public class BitterAttachmentTypes {
                     .serialize(Codec.FLOAT.fieldOf("stress_relief"))
                     .sync(ByteBufCodecs.FLOAT)
                     .build()
-    );
-
-    public static final Supplier<AttachmentType<Integer>> FEAR = ATTACHMENT_TYPES.register(
-            "fear", () -> AttachmentType.builder(() -> 0).serialize(Codec.INT.fieldOf("fear")).build()
     );
 
     public static final Supplier<AttachmentType<Long>> LAST_TYPING_TIME = ATTACHMENT_TYPES.register(
@@ -124,6 +122,11 @@ public class BitterAttachmentTypes {
             "rage", () -> AttachmentType.builder(() -> 0)
                     .serialize(Codec.INT.fieldOf("rage"))
                     .sync(ByteBufCodecs.INT)
+                    .build()
+    );
+
+    public static final Supplier<AttachmentType<HealthContainer>> HEALTH_CONTAINER = ATTACHMENT_TYPES.register(
+            "health_container", () -> AttachmentType.builder(() -> new HealthContainer(BodyParts.EMPTY.get().toInstance()))
                     .build()
     );
 }

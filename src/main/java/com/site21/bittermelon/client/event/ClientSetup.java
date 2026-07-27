@@ -47,6 +47,8 @@ import com.site21.bittermelon.common.systems.medical.networking.AddAndInsertComp
 import com.site21.bittermelon.common.systems.medical.networking.InsertCompartment;
 import com.site21.bittermelon.common.systems.medical.networking.RemoveCompartment;
 import com.site21.bittermelon.common.systems.medical.networking.UpdateCompartments;
+import com.site21.bittermelon.common.systems.medical.wound.LimbRenderLayer;
+import com.site21.bittermelon.common.systems.medical.wound.PartInstance;
 import com.site21.bittermelon.common.systems.personnel.privilege.networking.*;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.AddPersonnelEntry;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.PersonnelClientPayloadHandler;
@@ -54,10 +56,12 @@ import com.site21.bittermelon.common.systems.personnel.registry.networking.Remov
 import com.site21.bittermelon.common.systems.personnel.registry.networking.UpdatePersonnelEntry;
 import com.site21.bittermelon.common.systems.rage.client.RageRenderer;
 import com.site21.bittermelon.datagen.property.*;
+import com.site21.bittermelon.init.custom.BodyParts;
 import com.site21.bittermelon.init.neoforge.*;
 import com.site21.bittermelon.networking.client.ClientPayloadHandler;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
 import net.minecraft.client.entity.ClientAvatarEntity;
+import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.block.FluidModel;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -91,7 +95,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.MEDICAL_STATS;
+import static com.site21.bittermelon.common.systems.medical.wound.BodyPartModels.MODELS;
+import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.HEALTH_CONTAINER;
 import static com.site21.bittermelon.init.neoforge.BitterEntities.*;
 import static com.site21.bittermelon.init.neoforge.BitterFluidTypes.SIMPLE_FLUID_TYPE;
 import static com.site21.bittermelon.init.neoforge.BitterFluidTypes.SUBSTANCE_FLUID_TYPE;
@@ -128,6 +133,10 @@ public class ClientSetup {
 
     public static final ContextKey<Boolean> BROKEN_JAW = new ContextKey<>(
             Bittermelon.identifier("broken_jaw")
+    );
+
+    public static final ContextKey<PartInstance> ROOT_PART = new ContextKey<>(
+            Bittermelon.identifier("root_part")
     );
 
     @SubscribeEvent
@@ -199,12 +208,17 @@ public class ClientSetup {
                 new TypeToken<LivingEntityRenderer<LivingEntity, LivingEntityRenderState, ?>>() {
                 },
                 (entity, state) -> {
-                    Map<String, Boolean> limbVisibility = null;
-                    if (entity.hasData(MEDICAL_STATS)) {
-                        limbVisibility = entity.getData(MEDICAL_STATS).getAnatomyModel().getBodyPartVisibility();
+//                    Map<String, Boolean> limbVisibility = null;
+//                    if (entity.hasData(MEDICAL_STATS)) {
+//                        limbVisibility = entity.getData(MEDICAL_STATS).getAnatomyModel().getBodyPartVisibility();
+//                    }
+//
+//                    state.setRenderData(LIMB_VISIBILITY, limbVisibility);
+
+                    if (entity.hasData(HEALTH_CONTAINER)) {
+                        state.setRenderData(ROOT_PART, entity.getData(HEALTH_CONTAINER).getRoot());
                     }
 
-                    state.setRenderData(LIMB_VISIBILITY, limbVisibility);
                 }
         );
 
@@ -335,6 +349,9 @@ public class ClientSetup {
             AvatarRenderer<AbstractClientPlayer> renderer = event.getPlayerRenderer(skin);
             renderer.addLayer(new EyeballOnPlayerLayer(renderer, event.getEntityModels()));
             renderer.addLayer(new SCP815BloodLayer(renderer));
+            renderer.addLayer(new LimbRenderLayer<>(renderer));
+            PlayerModel model = renderer.getModel();
+            MODELS.put(BodyParts.TORSO, model.body);
         }
     }
 

@@ -86,7 +86,7 @@ public record VisualData(
         CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.INT.fieldOf("x").forGetter(VisualData::x),
                 Codec.INT.fieldOf("y").forGetter(VisualData::y),
-                Codec.INT.fieldOf("width").forGetter(VisualData::width),
+                Codec.INT.fieldOf("texW").forGetter(VisualData::width),
                 Codec.INT.fieldOf("height").forGetter(VisualData::height),
                 Codec.FLOAT.fieldOf("scale").forGetter(VisualData::scale),
                 Identifier.CODEC.optionalFieldOf("icon").forGetter(vd -> Optional.ofNullable(vd.icon)),

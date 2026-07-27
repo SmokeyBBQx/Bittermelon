@@ -29,7 +29,7 @@ public class AnatomyModelWidget extends AbstractWidget {
     private final float scale;
     private final LivingEntity entity;
     private final HealthScreen screen;
-    private final Model model;
+    private final Model<?> model;
     private float xRot;
 
     public AnatomyModelWidget(int x, int y, int width, int height, float scale, LivingEntity entity, HealthScreen screen) {
@@ -40,7 +40,7 @@ public class AnatomyModelWidget extends AbstractWidget {
         this.model = getModel(entity);
     }
 
-    private static Model getModel(LivingEntity entity) {
+    private static Model<?> getModel(LivingEntity entity) {
         EntityRenderDispatcher dispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
         EntityRenderer<?, ?> renderer = dispatcher.getRenderer(entity);
 
@@ -76,7 +76,7 @@ public class AnatomyModelWidget extends AbstractWidget {
         Matrix4f root = new Matrix4f().identity().rotateY(xRot);
 
         for (Map.Entry<String, ModelPart> entry : model.root().children.entrySet()) {
-            if (!screen.getMedicalStats().getAnatomyModel().getBodyParts().containsKey(entry.getKey())) continue;
+            if (!screen.getMedicalStats().getAnatomyModel().bodyParts().containsKey(entry.getKey())) continue;
             collectPartBounds(entry.getValue(), root, entry.getKey(), bounds);
         }
 
@@ -111,7 +111,7 @@ public class AnatomyModelWidget extends AbstractWidget {
         Matrix4f root = new Matrix4f().identity().rotateY(xRot);
 
         for (Map.Entry<String, ModelPart> entry : model.root().children.entrySet()) {
-            if (!screen.getMedicalStats().getAnatomyModel().getBodyParts().containsKey(entry.getKey())) continue;
+            if (!screen.getMedicalStats().getAnatomyModel().bodyParts().containsKey(entry.getKey())) continue;
             collectPartBounds(entry.getValue(), root, entry.getKey(), allBounds);
         }
 
@@ -155,7 +155,7 @@ public class AnatomyModelWidget extends AbstractWidget {
         }
 
         for (Map.Entry<String, ModelPart> child : part.children.entrySet()) {
-            if (!screen.getMedicalStats().getAnatomyModel().getBodyParts().containsKey(child.getKey())) continue;
+            if (!screen.getMedicalStats().getAnatomyModel().bodyParts().containsKey(child.getKey())) continue;
             collectPartBounds(child.getValue(), local, child.getKey(), boundsOut);
         }
     }

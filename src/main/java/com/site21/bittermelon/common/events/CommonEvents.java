@@ -14,6 +14,7 @@ import com.site21.bittermelon.common.systems.character.networking.SyncCharacters
 import com.site21.bittermelon.common.systems.character.skills.SkillUpdater;
 import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluid;
 import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlockEntity;
+import com.site21.bittermelon.common.systems.medical.wound.HumanDefinition;
 import com.site21.bittermelon.common.systems.rage.RageHandler;
 import com.site21.bittermelon.common.systems.stress.StressHandler;
 import com.site21.bittermelon.common.systems.substance.SubstanceMixture;
@@ -82,6 +83,10 @@ public class CommonEvents {
                 player.setData(MEDICAL_STATS, HUMAN.get().toInstance(player));
             } else {
                 player.getData(MEDICAL_STATS).tick(player);
+            }
+
+            if (!player.hasData(HEALTH_CONTAINER)) {
+                player.setData(HEALTH_CONTAINER, new HumanDefinition().createHealthContainer(player));
             }
 
             StressHandler.tickStress(level, player);
