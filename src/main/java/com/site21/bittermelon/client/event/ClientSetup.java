@@ -47,6 +47,7 @@ import com.site21.bittermelon.common.systems.medical.networking.AddAndInsertComp
 import com.site21.bittermelon.common.systems.medical.networking.InsertCompartment;
 import com.site21.bittermelon.common.systems.medical.networking.RemoveCompartment;
 import com.site21.bittermelon.common.systems.medical.networking.UpdateCompartments;
+import com.site21.bittermelon.common.systems.medical.wound.AnatomyDebugRenderer;
 import com.site21.bittermelon.common.systems.medical.wound.LimbRenderLayer;
 import com.site21.bittermelon.common.systems.medical.wound.PartInstance;
 import com.site21.bittermelon.common.systems.personnel.privilege.networking.*;
@@ -60,6 +61,7 @@ import com.site21.bittermelon.init.custom.BodyParts;
 import com.site21.bittermelon.init.neoforge.*;
 import com.site21.bittermelon.networking.client.ClientPayloadHandler;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.ClientAvatarEntity;
 import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -351,8 +353,18 @@ public class ClientSetup {
             renderer.addLayer(new SCP815BloodLayer(renderer));
             renderer.addLayer(new LimbRenderLayer<>(renderer));
             PlayerModel model = renderer.getModel();
+            MODELS.put(BodyParts.HEAD, model.head);
             MODELS.put(BodyParts.TORSO, model.body);
+            MODELS.put(BodyParts.RIGHT_ARM, model.rightArm);
+            MODELS.put(BodyParts.LEFT_ARM, model.leftArm);
+            MODELS.put(BodyParts.RIGHT_LEG, model.rightLeg);
+            MODELS.put(BodyParts.LEFT_LEG, model.leftLeg);
         }
+    }
+
+    @SubscribeEvent
+    public static void registerDebugRenderers(RegisterDebugRenderersEvent event) {
+        event.register(new AnatomyDebugRenderer(Minecraft.getInstance()));
     }
 
     @SubscribeEvent

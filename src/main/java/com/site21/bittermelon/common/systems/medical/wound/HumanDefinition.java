@@ -14,7 +14,10 @@ public class HumanDefinition implements AnatomyDefinition {
         PartInstance leftLeg = LEFT_LEG.get().toInstance();
         PartInstance rightLeg = RIGHT_LEG.get().toInstance();
         PartInstance head = HEAD.get().toInstance();
+        torso.attachPart(TORSO.get().attachmentPoints().get(1), rightArm);
+        rightArm.setParent(torso);
         healthContainer.addPart(torso);
+        healthContainer.addPart(rightArm);
         return healthContainer;
     }
 }

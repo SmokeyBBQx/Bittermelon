@@ -12,6 +12,9 @@ import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.DefaultPlayerSkin;
+import net.minecraft.world.phys.Vec3;
+
+import java.util.Map;
 
 public class LimbRenderLayer<S extends EntityRenderState, M extends EntityModel<? super S>> extends RenderLayer<S, M> {
     public LimbRenderLayer(RenderLayerParent<S, M> renderer) {
@@ -39,14 +42,17 @@ public class LimbRenderLayer<S extends EntityRenderState, M extends EntityModel<
                     OverlayTexture.NO_OVERLAY,
                     -1
             );
+            poseStack.popPose();
+        }));
 
-            for (PartInstance attached : part.getAttachedParts().values()) {
-                renderPart(attached, poseStack, collector, lightCoords);
-            }
-
+        for (Map.Entry<Vec3, PartInstance> entry : part.getAttachedParts().entrySet()) {
+            poseStack.pushPose();
+            Vec3 attachmentPoint = entry.getKey();
+            poseStack.translate(attachmentPoint.x / 16,  attachmentPoint.y / 16, attachmentPoint.z / 16);
+            renderPart(entry.getValue(), poseStack, collector, lightCoords);
             poseStack.popPose();
         }
-        ));
+
 
 //        collector.submitCustomGeometry(poseStack, RenderTypes.entityCutout(clientWound.identifier()), ((pose, buffer) -> {
 //            poseStack.pushPose();
