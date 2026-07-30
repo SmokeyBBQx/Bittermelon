@@ -48,7 +48,7 @@ import com.site21.bittermelon.common.systems.medical.networking.InsertCompartmen
 import com.site21.bittermelon.common.systems.medical.networking.RemoveCompartment;
 import com.site21.bittermelon.common.systems.medical.networking.UpdateCompartments;
 import com.site21.bittermelon.common.systems.medical.wound.AnatomyDebugRenderer;
-import com.site21.bittermelon.common.systems.medical.wound.LimbRenderLayer;
+import com.site21.bittermelon.common.systems.medical.wound.LimbLayer;
 import com.site21.bittermelon.common.systems.medical.wound.PartInstance;
 import com.site21.bittermelon.common.systems.personnel.privilege.networking.*;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.AddPersonnelEntry;
@@ -351,7 +351,7 @@ public class ClientSetup {
             AvatarRenderer<AbstractClientPlayer> renderer = event.getPlayerRenderer(skin);
             renderer.addLayer(new EyeballOnPlayerLayer(renderer, event.getEntityModels()));
             renderer.addLayer(new SCP815BloodLayer(renderer));
-            renderer.addLayer(new LimbRenderLayer<>(renderer));
+            renderer.addLayer(new LimbLayer<>(renderer));
             PlayerModel model = renderer.getModel();
             registerBodyPartModel(BodyParts.HEAD, model.head);
             registerBodyPartModel(BodyParts.TORSO, model.body);

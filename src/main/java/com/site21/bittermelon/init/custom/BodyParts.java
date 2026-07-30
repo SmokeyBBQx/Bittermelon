@@ -18,7 +18,7 @@ public class BodyParts {
             () -> new BodyPart(
                     0,
                     0,
-                    new int[0][0],
+                    new int[][]{{8, 8, 8, 8}, {24, 8, 8, 8}, {0, 8, 8, 8}, {16, 8, 8, 8}},
                     TissueType.NONE,
                     0,
                     ImmutableList.of(),

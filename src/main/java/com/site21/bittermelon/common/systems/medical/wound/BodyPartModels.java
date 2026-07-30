@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class BodyPartModels {
     public static final Map<Holder<BodyPart>, ModelPart> MODELS = new HashMap<>();
-    public static final Map<Holder<BodyPart>, Vec3> REST_POSITIONS = new HashMap<>();
+    public static final Map<Holder<BodyPart>, Vec3> REST_OFFSETS = new HashMap<>();
 
     public ModelPart get(Holder<BodyPart> holder) {
         return MODELS.get(holder);
@@ -17,6 +17,6 @@ public class BodyPartModels {
 
     public static void registerBodyPartModel(Holder<BodyPart> bodyPart, ModelPart modelPart) {
         MODELS.put(bodyPart, modelPart);
-        REST_POSITIONS.put(bodyPart, new Vec3(modelPart.x, modelPart.y, modelPart.z));
+        REST_OFFSETS.put(bodyPart, new Vec3(modelPart.x, modelPart.y, modelPart.z));
     }
 }

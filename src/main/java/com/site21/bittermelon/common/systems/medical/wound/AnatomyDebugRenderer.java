@@ -30,7 +30,7 @@ public class AnatomyDebugRenderer implements DebugRenderer.SimpleDebugRenderer {
                 float entityPartialTicks = minecraft
                         .getDeltaTracker()
                         .getGameTimeDeltaPartialTick(!minecraft.level.tickRateManager().isEntityFrozen(entity));
-                showHitboxes(entity, entity.getData(BitterAttachmentTypes.HEALTH_CONTAINER), entityPartialTicks);
+//                showHitboxes(entity, entity.getData(BitterAttachmentTypes.HEALTH_CONTAINER), entityPartialTicks);
             }
         }
     }

@@ -3,10 +3,7 @@ package com.site21.bittermelon.common.systems.medical.wound;
 import net.minecraft.core.Holder;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PartInstance {
     private final BodyPart bodyPart;
@@ -20,6 +17,7 @@ public class PartInstance {
         this.limbSlot = limbSlot;
         this.attachedParts = new HashMap<>();
         this.wounds = new ArrayList<>();
+        wounds.add(new Wound(UUID.randomUUID(), bodyPart.uvs()[0][0], bodyPart.uvs()[0][1], 0));
     }
 
     public BodyPart getBodyPart() {

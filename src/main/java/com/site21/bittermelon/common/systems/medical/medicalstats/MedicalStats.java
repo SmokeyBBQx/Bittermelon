@@ -199,7 +199,7 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
     }
 
     public void removeCompartment(UUID compartmentId) {
-        anatomyModel.getBodyParts().replaceAll((key, value) ->
+        anatomyModel.bodyParts().replaceAll((key, value) ->
                 compartmentId.equals(value) ? null : value
         );
 
@@ -207,9 +207,9 @@ public class MedicalStats implements DataComponentHolder, MutableDataComponentHo
     }
 
     public void removeLimb(String limb) {
-        UUID compartmentId = anatomyModel.getBodyParts().get(limb);
+        UUID compartmentId = anatomyModel.bodyParts().get(limb);
         if (compartmentId != null) {
-            anatomyModel.getBodyParts().put(limb, null);
+            anatomyModel.bodyParts().put(limb, null);
             compartments.remove(compartmentId);
         }
     }

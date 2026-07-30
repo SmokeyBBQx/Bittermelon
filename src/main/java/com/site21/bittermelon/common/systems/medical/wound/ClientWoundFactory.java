@@ -27,16 +27,16 @@ public class ClientWoundFactory {
 
     public static List<Pixel> testPixels(BodyPart part) {
         return List.of(
-                new Pixel(0, 0, 0xFF00000),
-                new Pixel(1, 0, 0xFF00000),
-                new Pixel(2, 0, 0xFF00000),
-                new Pixel(3, 0, 0xFF00000),
-                new Pixel(4, 0, 0xFF00000),
-                new Pixel(5, 0, 0xFF00000),
-                new Pixel(6, 0, 0xFF00000),
-                new Pixel(7, 0, 0xFF00000),
-                new Pixel(8, 0, 0xFF00000),
-                new Pixel(9, 0, 0xFF00000)
+                new Pixel(0, 0, 0xAAFF0000),
+                new Pixel(1, 0, 0xAAFF0000),
+                new Pixel(2, 0, 0xAAFF0000),
+                new Pixel(3, 0, 0xAAFF0000),
+                new Pixel(4, 0, 0xAAFF0000),
+                new Pixel(5, 0, 0xAAFF0000),
+                new Pixel(6, 0, 0xAAFF0000),
+                new Pixel(7, 0, 0xAAFF0000),
+                new Pixel(8, 0, 0xAAFF0000),
+                new Pixel(9, 0, 0xAAFF0000)
         );
     }
 }

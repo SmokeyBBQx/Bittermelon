@@ -13,7 +13,7 @@ public class MedicalStatsUtil {
      * @return The CompartmentInstance corresponding to the specified body part.
      */
     public static CompartmentInstance getBodyPart(String partName, MedicalStats stats) {
-        UUID limbId = stats.getAnatomyModel().getBodyParts().get(partName);
+        UUID limbId = stats.getAnatomyModel().bodyParts().get(partName);
         CompartmentInstance limb = stats.getCompartment(limbId);
 
         if (limb == null) {
@@ -30,7 +30,7 @@ public class MedicalStatsUtil {
      * @return The UUID of the body part corresponding to the specified name.
      */
     public static UUID getBodyPartId(String partName, MedicalStats stats) {
-        UUID id = stats.getAnatomyModel().getBodyParts().get(partName);
+        UUID id = stats.getAnatomyModel().bodyParts().get(partName);
 
         if (id == null) {
             throw new IllegalArgumentException("Body part " + partName + " does not exist in the provided MedicalStats.");
