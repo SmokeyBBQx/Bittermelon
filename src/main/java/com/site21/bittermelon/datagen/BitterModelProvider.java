@@ -159,6 +159,7 @@ public class BitterModelProvider extends ModelProvider {
         itemModels.generateFlatItem(BitterItems.SCP_650_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(BitterItems.SCP_939_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(BitterItems.SCP_1507_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(SCP_718_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
 
         // Tools and Equipment
         itemModels.generateFlatItem(LASER_DESIGNATOR.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
