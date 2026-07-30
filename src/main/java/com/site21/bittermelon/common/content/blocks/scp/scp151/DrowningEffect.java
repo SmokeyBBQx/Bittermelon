@@ -2,35 +2,120 @@ package com.site21.bittermelon.common.content.blocks.scp.scp151;
 
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlock;
-import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlockEntity;
 import com.site21.bittermelon.common.systems.stumble.StumbleHandler;
-import com.site21.bittermelon.common.systems.substance.SubstanceStack;
-import com.site21.bittermelon.init.custom.Substances;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import com.site21.bittermelon.util.LocalMessageUtil;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
-import static com.site21.bittermelon.init.neoforge.BitterBlocks.SUBSTANCE_FLUID;
 import static com.site21.bittermelon.init.neoforge.BitterMobEffects.DROWNING;
-import static net.minecraft.world.level.block.Block.UPDATE_ALL_IMMEDIATE;
 
 public class DrowningEffect extends MobEffect {
+
+    private static final int MAX_STAGE = 9;
+    private static final int EARLY_STAGE_INTERVAL = 5000;
+    private static final int LATE_STAGE_INTERVAL = 400;
+    private static final int LATE_STAGE_START = 4;
+
+    private static final float FILLER_CHANCE = 0.03f;
+    private static final float COUGH_CHANCE = 0.35f;
+    private static final int COUGH_COOLDOWN_TICKS = 30;
+    private static final int COUGH_STAGE_MIN = 4;
+    private static final int COUGH_STAGE_MAX = 5;
+
+    private static final String[][] PROGRESSION_MESSAGES = {
+            {},
+            {"Your chest tightens and each breath comes out as a wheeze."},
+            {},
+            {"Your heart races and the world starts to spin."},
+            {"Saltwater burns the back of your throat. You cough and gag violently."},
+            {"You hack desperately but the water stays trapped in your lungs."},
+            {"More water rushes in. Your thoughts become foggy and slow."},
+            {"A deep chill spreads through your body."},
+            {"Your vision fades to black as consciousness slips away."},
+            {"The struggle leaves your body. You feel strangely peaceful."}
+    };
+
+    private static final String[][] FILLER_MESSAGES = {
+            {},
+            {
+                    "Your breathing feels... off.",
+                    "You can't seem to take a satisfying breath.",
+                    "A strange tightness settles in your chest.",
+                    "You clear your throat, but the feeling remains."
+            },
+            {
+                    "You cough into your hand.",
+                    "Your throat feels oddly damp.",
+                    "A dry cough interrupts your breathing."
+            },
+            {
+                    "You can't catch your breath.",
+                    "Each breath feels smaller than the last.",
+                    "You begin breathing faster without realizing it."
+            },
+            {
+                    "You cough up salty fluid.",
+                    "A sharp taste of salt fills your mouth.",
+                    "Something wet rattles deep inside your lungs."
+            },
+            {
+                    "No matter how hard you cough, your lungs remain heavy.",
+                    "Your breathing turns wet and ragged.",
+                    "Every breath crackles."
+            },
+            {
+                    "Your fingertips begin to tingle.",
+                    "The room won't stop spinning.",
+                    "Your thoughts come slower than they should."
+            },
+            {
+                    "Every breath sounds like water.",
+                    "You hear waves that aren't there.",
+                    "Your chest feels completely full."
+            },
+            {
+                    "Your legs refuse to cooperate.",
+                    "Your vision narrows to a tunnel.",
+                    "Your lungs burn."
+            },
+            {
+                    "Your body finally stops fighting.",
+                    "The weight in your lungs becomes strangely comforting.",
+                    "You stop reaching for air."
+            }
+    };
+
+    private static final String[] COUGH_MESSAGES = {
+            "%s coughs!",
+            "%s hacks violently!",
+            "%s doubles over, coughing!",
+            "%s sputters and coughs!",
+            "%s coughs up water!"
+    };
+
+    private final Map<UUID, Set<Integer>> fillerStagesShown = new HashMap<>();
+    private final Map<UUID, Integer> lastCoughIndex = new HashMap<>();
+    private final Map<UUID, Integer> lastCoughTick = new HashMap<>();
+
     public DrowningEffect() {
         super(MobEffectCategory.HARMFUL, 0x2E2E2E);
     }
@@ -44,141 +129,112 @@ public class DrowningEffect extends MobEffect {
     public boolean applyEffectTick(@NotNull ServerLevel level, @NotNull LivingEntity entity, int amplifier) {
         if (!(entity instanceof Player player)) return true;
 
-        int ticksRemaining = Objects.requireNonNull(entity.getEffect(DROWNING)).getDuration();
-        int progressionInterval = amplifier < 4 ? 5000 : 400;
-
-        if (ticksRemaining % progressionInterval == 0) {
-            int newAmplifier = amplifier + 1;
-            handleDrownProgression(player, newAmplifier);
-
-        entity.getEffect(DROWNING).update(new MobEffectInstance(DROWNING, ticksRemaining, newAmplifier, true,
-                false, false));
+        if (amplifier == 0) {
+            fillerStagesShown.remove(player.getUUID());
         }
 
-        handlePhysicalEffects(player, amplifier);
+        int ticksRemaining = Objects.requireNonNull(entity.getEffect(DROWNING)).getDuration();
+        int progressionInterval = amplifier < LATE_STAGE_START ? EARLY_STAGE_INTERVAL : LATE_STAGE_INTERVAL;
+
+        if (ticksRemaining % progressionInterval == 0) {
+            int nextStage = amplifier + 1;
+            advanceStage(player, nextStage);
+            entity.getEffect(DROWNING).update(new MobEffectInstance(DROWNING, ticksRemaining, nextStage, true, false, false));
+        } else {
+            tryShowFillerMessage(player, amplifier);
+        }
+
+        tryCough(player, amplifier);
+        applyAirLoss(player, amplifier);
         return true;
     }
 
-    private void handleDrownProgression(Player player, int level) {
-        String message = "";
-        if (level == 1) {
-            message = "Your chest tightens and each breath comes out as a wheeze.";
-        } else if (level == 3) {
-            message = "Your heart races and the world starts to spin.";
-        } else if (level == 4) {
-            message = "Saltwater burns down your throat. You cough and gag violently.";
-            playHeartBeatSound(player);
-        } else if (level == 5) {
-            message = "You hack desperately but the water stays trapped in your lungs.";
-        } else if (level == 6) {
-            message = "More water rushes in. Your thoughts become foggy and slow.";
-            StumbleHandler.stumble(player);
-        } else if (level == 7) {
-            message = "A deep chill spreads through your body.";
-           playHeartBeatSound(player);
-        } else if (level == 8) {
-            message = "Your vision fades to black as consciousness slips away.";
-            StumbleHandler.stumble(player, -1, player.getLookAngle());
-        } else if (level == 9) {
-            message = "The struggle leaves your body. You feel strangely peaceful.";
-        }
+    private void advanceStage(Player player, int stage) {
+        stringAt(PROGRESSION_MESSAGES, stage).ifPresent(message -> sendMessage(player, message, ChatFormatting.RED));
 
-        if (!message.isBlank()) {
-            Component component = Component.literal(message).withStyle(ChatFormatting.RED).withStyle(ChatFormatting.ITALIC);
-            player.sendSystemMessage(component);
+        switch (stage) {
+            case 4, 7 -> playHeartBeatSound(player);
+            case 6 -> StumbleHandler.stumble(player);
+            case 8 -> StumbleHandler.stumble(player, -1, player.getLookAngle());
         }
+    }
+
+    private void tryShowFillerMessage(Player player, int stage) {
+        if (stage <= 0 || stage > MAX_STAGE) return;
+
+        String[] pool = FILLER_MESSAGES[stage];
+        if (pool.length == 0) return;
+
+        Set<Integer> shownStages = fillerStagesShown.computeIfAbsent(player.getUUID(), k -> new HashSet<>());
+        if (shownStages.contains(stage)) return;
+
+        RandomSource random = player.level().getRandom();
+        if (random.nextFloat() > FILLER_CHANCE) return;
+
+        sendMessage(player, pickRandom(random, pool), ChatFormatting.RED);
+        shownStages.add(stage);
+    }
+
+    private void tryCough(Player player, int stage) {
+        if (stage < COUGH_STAGE_MIN || stage > COUGH_STAGE_MAX) return;
+
+        UUID id = player.getUUID();
+        int currentTick = player.tickCount;
+        boolean offCooldown = currentTick - lastCoughTick.getOrDefault(id, -COUGH_COOLDOWN_TICKS) >= COUGH_COOLDOWN_TICKS;
+        if (!offCooldown) return;
+
+        RandomSource random = player.level().getRandom();
+        if (random.nextFloat() > COUGH_CHANCE) return;
+
+        lastCoughTick.put(id, currentTick);
+        player.level().playSound(null, player.getOnPos(), BitterSounds.MALE_COUGH.value(), SoundSource.PLAYERS);
+
+        Character character = CharacterManager.get(player.level()).getActiveCharacter(player);
+        if (character == null) return;
+
+        int index = pickNonRepeatingIndex(random, COUGH_MESSAGES.length, lastCoughIndex.get(id));
+        lastCoughIndex.put(id, index);
+
+        String message = String.format(COUGH_MESSAGES[index], character.getName());
+        LocalMessageUtil.sendLocalMessage(player, 10, Component.literal(message).withColor(character.getEmoteColor()));
+    }
+
+    private void applyAirLoss(Player player, int stage) {
+        if (stage < LATE_STAGE_START) return;
+        player.setAirSupply(player.getAirSupply() - 2);
+        player.hurtMarked = true;
     }
 
     private void playHeartBeatSound(Player player) {
-        if (player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.connection.send(new ClientboundSoundPacket(
-                    BitterSounds.HEART_BEAT,
-                    SoundSource.AMBIENT,
-                    player.getX(),
-                    player.getY(),
-                    player.getZ(),
-                    0.3f,
-                    1,
-                    player.level().getRandom().nextLong()));
-        }
+        if (!(player instanceof ServerPlayer serverPlayer)) return;
+
+        serverPlayer.connection.send(new ClientboundSoundPacket(
+                BitterSounds.HEART_BEAT,
+                SoundSource.AMBIENT,
+                player.getX(), player.getY(), player.getZ(),
+                0.3f, 1, player.level().getRandom().nextLong()));
     }
 
-    private void handlePhysicalEffects(Player player, int amplifier) {
-        if (amplifier >= 4) {
-            player.setAirSupply(player.getAirSupply() - 2);
-            player.hurtMarked = true;
-        }
-
-        Character character = CharacterManager.get(player.level()).getActiveCharacter(player);
-        String message = "";
-
-        if (amplifier < 9 && amplifier > 0) {
-            if (player.level().getRandom().nextFloat() > 0.8f) {
-                player.level().playSound(null, player.getOnPos(), BitterSounds.MALE_COUGH.value(), SoundSource.PLAYERS);
-                if (character != null) {
-                    message = character.getName() + " coughs!";
-                }
-            } else if (player.level().getRandom().nextFloat() > 0.98f && amplifier > 4) {
-                handleVomit(player);
-                if (character != null) {
-                    message = character.getName() + " vomits!";
-                }
-            }
-
-            if (!message.isEmpty()) {
-                Component component = Component.literal(message).withColor(character.getEmoteColor());
-                LocalMessageUtil.sendLocalMessage(player, 10, component);
-            }
-        }
+    private void sendMessage(Player player, String message, ChatFormatting color) {
+        player.sendSystemMessage(Component.literal(message).withStyle(color).withStyle(ChatFormatting.ITALIC));
     }
 
-    private void handleVomit(@NotNull Player player) {
-        if (player.level().isClientSide()) return;
-
-        sendVomitParticles(player);
-
-        SubstanceStack vomit = new SubstanceStack(Substances.VOMIT.get(), 1);
-        vomit.setVolume(3);
-        SubstanceStack water = new SubstanceStack(Substances.WATER.get(), 1);
-        water.setVolume(1);
-
-        BlockPos pos = player.getOnPos().above();
-        BlockState existingState = player.level().getBlockState(pos);
-
-        if (!(existingState.getBlock() instanceof SubstanceFluidBlock) && existingState.canBeReplaced()) {
-            player.level().setBlock(pos, SUBSTANCE_FLUID.get().defaultBlockState(), UPDATE_ALL_IMMEDIATE);
-        }
-
-        // TODO: Reimplement substance transfer to blocks
-        if (player.level().getBlockEntity(pos) instanceof SubstanceFluidBlockEntity fluid) {
-            fluid.updateSubstance(vomit);
-            fluid.updateSubstance(water);
-        }
-
-        player.level().playSound(null, player.getOnPos(), BitterSounds.SPLAT.value(), SoundSource.PLAYERS);
+    private java.util.Optional<String> stringAt(String[][] pools, int index) {
+        if (index < 0 || index >= pools.length || pools[index].length == 0) return java.util.Optional.empty();
+        return java.util.Optional.of(pools[index][0]);
     }
 
-    private void sendVomitParticles(@NotNull Player player) {
-        if (player.level() instanceof ServerLevel serverLevel) {
-            double x = player.getX();
-            double y = player.getY() + 0.1;
-            double z = player.getZ();
+    private String pickRandom(RandomSource random, String[] pool) {
+        return pool[random.nextInt(pool.length)];
+    }
 
-            for (int i = 0; i < 10; i++) {
-                double offsetX = (player.level().getRandom().nextDouble() - 0.5) * 0.8;
-                double offsetY = player.level().getRandom().nextDouble() * 0.3;
-                double offsetZ = (player.level().getRandom().nextDouble() - 0.5) * 0.8;
+    private int pickNonRepeatingIndex(RandomSource random, int poolSize, Integer previousIndex) {
+        if (poolSize <= 1) return 0;
 
-                serverLevel.sendParticles(
-                        net.minecraft.core.particles.ParticleTypes.ITEM_SLIME,
-                        x + offsetX,
-                        y + offsetY,
-                        z + offsetZ,
-                        1,
-                        0, 0, 0,
-                        0.01
-                );
-            }
+        int index = random.nextInt(poolSize);
+        while (previousIndex != null && index == previousIndex) {
+            index = random.nextInt(poolSize);
         }
+        return index;
     }
 }
