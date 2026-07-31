@@ -8,6 +8,8 @@ import com.site21.bittermelon.common.content.entities.scp025fr.client.SCP025FRMo
 import com.site21.bittermelon.common.content.entities.scp025fr.client.SCP025FRTailModel;
 import com.site21.bittermelon.common.content.entities.scp131.client.SCP131Model;
 import com.site21.bittermelon.common.content.entities.scp1507.client.SCP1507Model;
+import com.site21.bittermelon.common.content.entities.scp250.SCP250;
+import com.site21.bittermelon.common.content.entities.scp250.client.SCP250Model;
 import com.site21.bittermelon.common.content.entities.scp548.client.SCP548Model;
 import com.site21.bittermelon.common.content.entities.scp650.client.SCP650Model;
 import com.site21.bittermelon.common.content.entities.scp718.client.SCP718Model;
@@ -60,6 +62,11 @@ public class LayerDefinitions {
             "main"
     );
 
+    public static final ModelLayerLocation SCP_250_LAYER = new ModelLayerLocation(
+            Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_250"),
+            "main"
+    );
+
     public static final ModelLayerLocation SEA_MONKEY_LAYER = new ModelLayerLocation(
             Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "sea_monkey"),
             "main"
@@ -103,6 +110,7 @@ public class LayerDefinitions {
     @SubscribeEvent
     public static void registerLayerDefinitions(EntityRenderersEvent.@NotNull RegisterLayerDefinitions event) {
         event.registerLayerDefinition(SCP_131_LAYER, SCP131Model::createBodyLayer);
+        event.registerLayerDefinition(SCP_250_LAYER, SCP250Model::createBodyLayer);
         event.registerLayerDefinition(SCP_650_LAYER, SCP650Model::createBodyLayer);
         event.registerLayerDefinition(SCP_1507_LAYER, SCP1507Model::createBodyLayer);
         event.registerLayerDefinition(SCP_939_LAYER, SCP939Model::createBodyLayer);

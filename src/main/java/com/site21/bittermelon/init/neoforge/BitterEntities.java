@@ -9,6 +9,7 @@ import com.site21.bittermelon.common.content.entities.mimicplayer.Mimic;
 import com.site21.bittermelon.common.content.entities.scp025fr.SCP025FR;
 import com.site21.bittermelon.common.content.entities.scp131.SCP131;
 import com.site21.bittermelon.common.content.entities.scp1507.SCP1507;
+import com.site21.bittermelon.common.content.entities.scp250.SCP250;
 import com.site21.bittermelon.common.content.entities.scp548.SCP548;
 import com.site21.bittermelon.common.content.entities.scp650.SCP650;
 import com.site21.bittermelon.common.content.entities.scp718.SCP718;
@@ -47,6 +48,11 @@ public class BitterEntities {
             () -> EntityType.Builder.of(SCP939::new, MobCategory.MONSTER)
                     .sized(0.9f, 0.9f)
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_939"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<SCP250>> SCP_250 = ENTITY_TYPES.register("scp_250",
+            () -> EntityType.Builder.of(SCP250::new, MobCategory.MONSTER)
+                    .sized(1.0f, 3.0f)
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_250"))));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Chicken>> CHICKEN = ENTITY_TYPES.register("chicken",
             () -> EntityType.Builder.of(Chicken::new, MobCategory.AMBIENT)
@@ -124,6 +130,7 @@ public class BitterEntities {
 
     private static void registerAttributes(@NotNull EntityAttributeCreationEvent event) {
         event.put(SCP_939.get(), SCP939.createAttributes().build());
+        event.put(SCP_250.get(), SCP939.createAttributes().build());
         event.put(CHICKEN.get(), Chicken.createAttributes().build());
         event.put(SCP_650.get(), SCP650.createAttributes().build());
         event.put(SCP_131.get(), SCP131.createAttributes().build());
