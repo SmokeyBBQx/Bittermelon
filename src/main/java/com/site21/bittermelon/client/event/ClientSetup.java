@@ -19,6 +19,7 @@ import com.site21.bittermelon.common.content.entities.mimicplayer.client.MimicRe
 import com.site21.bittermelon.common.content.entities.scp025fr.client.SCP025FRRenderer;
 import com.site21.bittermelon.common.content.entities.scp131.client.SCP131Renderer;
 import com.site21.bittermelon.common.content.entities.scp1507.client.SCP1507Renderer;
+import com.site21.bittermelon.common.content.entities.scp250.client.SCP250Renderer;
 import com.site21.bittermelon.common.content.entities.scp548.client.SCP548Renderer;
 import com.site21.bittermelon.common.content.entities.scp650.client.SCP650Renderer;
 import com.site21.bittermelon.common.content.entities.scp718.client.EyeballOnPlayerLayer;
@@ -153,6 +154,7 @@ public class ClientSetup {
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.@NotNull RegisterRenderers event) {
         event.registerEntityRenderer(SCP_939.get(), SCP939Renderer::new);
+        event.registerEntityRenderer(SCP_250.get(), SCP250Renderer::new);
         event.registerEntityRenderer(CHICKEN.get(), ChickenRenderer::new);
         event.registerEntityRenderer(THROWN_ITEM_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(SCP_2398_PROJECTILE.get(), ThrownItemRenderer::new);
