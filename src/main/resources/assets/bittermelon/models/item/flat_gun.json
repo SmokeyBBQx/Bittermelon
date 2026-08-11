@@ -1,0 +1,24 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "bittermelon:item/handgun"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [0, 90, 0],
+      "translation": [0, 8, 0]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [0, 90, 0],
+      "translation": [0, 8, 0]
+    },
+    "firstperson_righthand": {
+      "translation": [4.25, 6.25, -7.5],
+      "scale": [1.5, 1.5, 1]
+    },
+    "firstperson_lefthand": {
+      "translation": [4.25, 6.25, -7.5],
+      "scale": [1.5, 1.5, 1]
+    }
+  }
+}

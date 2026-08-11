@@ -3,6 +3,7 @@ package com.site21.bittermelon.common.content.entities.mimicplayer.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.site21.bittermelon.common.content.entities.mimicplayer.Mimic;
+import com.site21.bittermelon.common.systems.medical.bodypart.LimbLayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -58,6 +59,7 @@ public class MimicRenderer extends LivingEntityRenderer<Mimic, AvatarRenderState
         this.addLayer(new ParrotOnShoulderLayer(this, context.getModelSet()));
         this.addLayer(new SpinAttackEffectLayer(this, context.getModelSet()));
         this.addLayer(new BeeStingerLayer<>(this, context));
+        this.addLayer(new LimbLayer<>(this));
     }
 
     protected boolean shouldRenderLayers(AvatarRenderState state) {
@@ -189,6 +191,8 @@ public class MimicRenderer extends LivingEntityRenderer<Mimic, AvatarRenderState
     public PlayerSkin getSkin(Mimic mimic) {
         // TODO: Cache this in the local mimic
         Player player = mimic.getPlayer();
+        if (player == null) return DefaultPlayerSkin.getDefaultSkin();
+
         PlayerInfo info = Minecraft.getInstance().getConnection().getPlayerInfo(player.getUUID());;
         return info == null ? DefaultPlayerSkin.get(player.getUUID()) : info.getSkin();
     }

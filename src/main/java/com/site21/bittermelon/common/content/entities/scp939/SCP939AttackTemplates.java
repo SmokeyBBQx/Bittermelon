@@ -1,11 +1,11 @@
 package com.site21.bittermelon.common.content.entities.scp939;
 
 import com.site21.bittermelon.common.systems.combat.AttackTemplate;
-import com.site21.bittermelon.common.systems.medical.compartment.CompartmentTag;
-import com.site21.bittermelon.common.systems.medical.damage.generators.BluntForceTrauma;
-import com.site21.bittermelon.common.systems.medical.damage.generators.Lacerations;
-import com.site21.bittermelon.common.systems.medical.damage.generators.Stab;
-import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.common.systems.medical.legacy.compartment.CompartmentTag;
+import com.site21.bittermelon.common.systems.medical.legacy.damage.generators.BluntForceTrauma;
+import com.site21.bittermelon.common.systems.medical.legacy.damage.generators.Lacerations;
+import com.site21.bittermelon.common.systems.medical.legacy.damage.generators.Stab;
+import com.site21.bittermelon.common.systems.medical.legacy.medicalstats.MedicalStats;
 import com.site21.bittermelon.common.systems.stumble.StumbleHandler;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.world.phys.Vec3;

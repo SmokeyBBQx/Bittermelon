@@ -95,6 +95,12 @@ public class BitterModelTemplates {
             TextureSlot.LAYER0
     );
 
+    public static final ModelTemplate FLAT_GUN = new ModelTemplate(
+            Optional.of(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "item/flat_gun")),
+            Optional.empty(),
+            TextureSlot.LAYER0
+    );
+
     public static final ModelTemplate CAGE_LAMP_SIDE_ON = new ModelTemplate(
             Optional.of(Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "block/cage_lamp_side")),
             Optional.of("_side_on"),

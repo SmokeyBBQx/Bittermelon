@@ -13,13 +13,13 @@ import com.site21.bittermelon.common.systems.component.medical.Scalpel;
 import com.site21.bittermelon.common.systems.component.medical.Suture;
 import com.site21.bittermelon.common.systems.component.screwdriver.Screwdriver;
 import com.site21.bittermelon.common.systems.component.temperature.HeatBehavior;
-import com.site21.bittermelon.common.systems.medical.blood.BloodData;
-import com.site21.bittermelon.common.systems.medical.blood.BloodInfo;
-import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
-import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
-import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
-import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
-import com.site21.bittermelon.common.systems.medical.drug.DrugInstance;
+import com.site21.bittermelon.common.systems.medical.legacy.blood.BloodData;
+import com.site21.bittermelon.common.systems.medical.legacy.blood.BloodInfo;
+import com.site21.bittermelon.common.systems.medical.legacy.compartment.MedicalAttribute;
+import com.site21.bittermelon.common.systems.medical.legacy.compartment.VisualData;
+import com.site21.bittermelon.common.systems.medical.legacy.compartment.layer.LayerData;
+import com.site21.bittermelon.common.systems.medical.legacy.compartment.layer.Point;
+import com.site21.bittermelon.common.systems.medical.legacy.drug.DrugInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentType;
@@ -261,7 +261,7 @@ public class BitterDataComponents {
     );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Point>> PIVOT = DATA_COMPONENTS.registerComponentType(
-            "pivot",
+            "offset",
             builder -> builder
                     .persistent(Point.CODEC)
                     .networkSynchronized(Point.STREAM_CODEC)

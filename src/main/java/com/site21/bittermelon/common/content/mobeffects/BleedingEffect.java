@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.content.mobeffects;
 
 import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlock;
 import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlockEntity;
-import com.site21.bittermelon.common.systems.medical.medicalstats.AnimalMedicalStats;
+import com.site21.bittermelon.common.systems.medical.legacy.medicalstats.AnimalMedicalStats;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;

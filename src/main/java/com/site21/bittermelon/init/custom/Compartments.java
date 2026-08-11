@@ -1,13 +1,13 @@
 package com.site21.bittermelon.init.custom;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.systems.medical.compartment.Compartment;
-import com.site21.bittermelon.common.systems.medical.compartment.MedicalAttribute;
-import com.site21.bittermelon.common.systems.medical.compartment.VisualData;
-import com.site21.bittermelon.common.systems.medical.compartment.layer.LayerData;
-import com.site21.bittermelon.common.systems.medical.compartment.layer.Point;
-import com.site21.bittermelon.common.systems.medical.compartment.layer.SlotPoint;
-import com.site21.bittermelon.common.systems.medical.compartment.layer.SlotType;
+import com.site21.bittermelon.common.systems.medical.legacy.compartment.Compartment;
+import com.site21.bittermelon.common.systems.medical.legacy.compartment.MedicalAttribute;
+import com.site21.bittermelon.common.systems.medical.legacy.compartment.VisualData;
+import com.site21.bittermelon.common.systems.medical.legacy.compartment.layer.LayerData;
+import com.site21.bittermelon.common.systems.medical.legacy.compartment.layer.Point;
+import com.site21.bittermelon.common.systems.medical.legacy.compartment.layer.SlotPoint;
+import com.site21.bittermelon.common.systems.medical.legacy.compartment.layer.SlotType;
 import com.site21.bittermelon.init.neoforge.BitterDataComponents;
 import com.site21.bittermelon.init.neoforge.BitterItems;
 import net.minecraft.core.Holder;

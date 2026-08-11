@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.content.items.medical.tools;
 
 import com.site21.bittermelon.common.content.items.substance.FluidContainerItem;
-import com.site21.bittermelon.common.systems.medical.medicalstats.AnimalMedicalStats;
+import com.site21.bittermelon.common.systems.medical.legacy.medicalstats.AnimalMedicalStats;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;

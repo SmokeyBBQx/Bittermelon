@@ -1,8 +1,8 @@
 package com.site21.bittermelon.common.content.compartments;
 
-import com.site21.bittermelon.common.systems.medical.compartment.Compartment;
-import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
-import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.common.systems.medical.legacy.compartment.Compartment;
+import com.site21.bittermelon.common.systems.medical.legacy.compartment.CompartmentInstance;
+import com.site21.bittermelon.common.systems.medical.legacy.medicalstats.MedicalStats;
 import org.jetbrains.annotations.NotNull;
 
 public class EyeballBlister extends Compartment {

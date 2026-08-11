@@ -56,4 +56,7 @@ public class BitterMemoryTypes {
 
     public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<BlockPos>> BREAK_TARGET = MEMORY_MODULE_TYPES.register("break_target",
             () -> new MemoryModuleType<>(Optional.of(BlockPos.CODEC)));
+
+    public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<BlockPos>> AWAKEN_TARGET = MEMORY_MODULE_TYPES.register("awaken_target",
+            () -> new MemoryModuleType<>(Optional.of(BlockPos.CODEC)));
 }

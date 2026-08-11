@@ -33,7 +33,8 @@ import com.site21.bittermelon.common.systems.electronics.privilege.networking.Op
 import com.site21.bittermelon.common.systems.electronics.privilege.networking.RemovePrivilegeForBE;
 import com.site21.bittermelon.common.systems.electronics.privilege.networking.SetPrivilegeForBE;
 import com.site21.bittermelon.common.systems.fluid.substance.UpdateBlockAt;
-import com.site21.bittermelon.common.systems.medical.networking.*;
+import com.site21.bittermelon.common.systems.medical.legacy.networking.*;
+import com.site21.bittermelon.common.systems.medical.wound.networking.WoundPacket;
 import com.site21.bittermelon.common.systems.personnel.privilege.networking.*;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.AddPersonnelEntry;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.RemovePersonnelEntry;
@@ -571,6 +572,12 @@ public class PayloadRegistration {
                 UpdateBlockAt.TYPE,
                 UpdateBlockAt.STREAM_CODEC,
                 UpdateBlockAt::handle
+        );
+
+        registrar.playToClient(
+                WoundPacket.TYPE,
+                WoundPacket.STREAM_CODEC,
+                WoundPacket::handle
         );
     }
 }

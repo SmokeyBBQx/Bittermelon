@@ -2,7 +2,7 @@ package com.site21.bittermelon.common.systems.stumble;
 
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.common.systems.medical.legacy.medicalstats.MedicalStats;
 import com.site21.bittermelon.init.neoforge.BitterMobEffects;
 import com.site21.bittermelon.networking.client.ClearForcedPose;
 import com.site21.bittermelon.networking.client.SetForcedPose;

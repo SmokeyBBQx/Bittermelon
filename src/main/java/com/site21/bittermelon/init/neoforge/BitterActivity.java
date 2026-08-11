@@ -22,4 +22,5 @@ public class BitterActivity {
     public static final DeferredHolder<Activity, Activity> GROOM = ACTIVITY.register("groom", () -> new Activity("groom"));
     public static final DeferredHolder<Activity, Activity> PLAY = ACTIVITY.register("play", () -> new Activity("play"));
     public static final DeferredHolder<Activity, Activity> RELAX = ACTIVITY.register("relax", () -> new Activity("relax"));
+    public static final DeferredHolder<Activity, Activity> AWAKEN = ACTIVITY.register("awaken", () -> new Activity("awaken"));
 }

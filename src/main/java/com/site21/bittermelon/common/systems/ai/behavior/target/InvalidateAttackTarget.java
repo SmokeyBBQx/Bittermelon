@@ -1,6 +1,6 @@
 package com.site21.bittermelon.common.systems.ai.behavior.target;
 
-import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.common.systems.medical.legacy.medicalstats.MedicalStats;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 

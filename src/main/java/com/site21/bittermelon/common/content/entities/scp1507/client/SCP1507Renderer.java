@@ -30,6 +30,7 @@ public class SCP1507Renderer extends MobRenderer<SCP1507, SCP1507RenderState, SC
     public void extractRenderState(@NotNull SCP1507 entity, @NotNull SCP1507RenderState reusedState, float partialTick) {
         super.extractRenderState(entity, reusedState, partialTick);
         reusedState.attackTime = entity.getAttackTime() > 0 ? entity.getAttackTime() - partialTick : 0.0f;
+        reusedState.awakenTime = entity.getAwakenTime() > 0 ? entity.getAwakenTime() - partialTick : 0.0f;
         reusedState.onGround = entity.onGround();
         reusedState.leftLegAttached = entity.isLeftLegAttached();
         reusedState.rightLegAttached = entity.isRightLegAttached();

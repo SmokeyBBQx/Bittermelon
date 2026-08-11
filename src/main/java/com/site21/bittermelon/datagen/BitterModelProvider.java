@@ -152,6 +152,7 @@ public class BitterModelProvider extends ModelProvider {
         itemModels.generateFlatItem(SCP_1079_CANDY.get(), ModelTemplates.FLAT_ITEM);
         generateSCP815(itemModels);
         itemModels.generateFlatItem(SCP_815_SNAKE_HAND.get(), ModelTemplates.FLAT_ITEM);
+        generateHandgun(itemModels);
 
         // SCP Spawn Eggs
         itemModels.generateFlatItem(BitterItems.SCP_131_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
@@ -228,6 +229,22 @@ public class BitterModelProvider extends ModelProvider {
                 new ConditionalItemModel.Unbaked(
                         Optional.empty(),
                         new Open815(),
+                        open,
+                        model
+                )
+        );
+    }
+
+    public void generateHandgun(@NotNull ItemModelGenerators itemModels) {
+        ItemModel.Unbaked model = ItemModelUtils.plainModel(itemModels.createFlatItemModel(HANDGUN.get(), FLAT_GUN));
+        ItemModel.Unbaked open = ItemModelUtils.plainModel(
+                itemModels.createFlatItemModel(HANDGUN.get(), "_shooting", FLAT_GUN));
+
+        itemModels.itemModelOutput.accept(
+                HANDGUN.get(),
+                new ConditionalItemModel.Unbaked(
+                        Optional.empty(),
+                        new OnCooldown(),
                         open,
                         model
                 )

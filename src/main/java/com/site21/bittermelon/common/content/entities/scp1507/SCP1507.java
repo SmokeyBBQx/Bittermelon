@@ -2,6 +2,7 @@ package com.site21.bittermelon.common.content.entities.scp1507;
 
 import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.common.content.entities.scp1507.behavior.AwakenFlamingoBlocks;
+import com.site21.bittermelon.common.content.entities.scp1507.behavior.FindFlamingoBlocks;
 import com.site21.bittermelon.common.content.entities.scp1507.behavior.StopMovingWhenLookedAt;
 import com.site21.bittermelon.common.content.entities.scp1507.behavior.TryToBecomeActive;
 import com.site21.bittermelon.common.systems.ai.base.BitterMob;
@@ -44,6 +45,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
+import net.tslat.smartbrainlib.api.core.ActivityBuilder;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.LeapAtTarget;
@@ -71,6 +73,7 @@ import static net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH;
 
 public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP1507> {
     private static final EntityDataAccessor<Integer> ATTACK_TIME = SynchedEntityData.defineId(SCP1507.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> AWAKEN_TIME = SynchedEntityData.defineId(SCP1507.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> LEFT_LEG_ATTACHED = SynchedEntityData.defineId(SCP1507.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> RIGHT_LEG_ATTACHED = SynchedEntityData.defineId(SCP1507.class, EntityDataSerializers.BOOLEAN);
     private Opinions opinions;
@@ -115,6 +118,22 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     }
 
     @Override
+    public Activity[] getActivityActivationPriority() {
+        return new Activity[] {Activity.FIGHT, BitterActivity.AWAKEN.get(), Activity.IDLE};
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Override
+    public ActivityBuilder<? extends SCP1507> getActivityGroupFor(Activity activity) {
+        ActivityBuilder<? extends SCP1507> builder = ActivityBuilder.create(activity);
+        if (activity.equals(BitterActivity.AWAKEN.get())) {
+            builder.behaviours((List)getAwakenBehaviours(this))
+                    .requireAndClearMemoriesOnUse(BitterMemoryTypes.AWAKEN_TARGET.get());
+        }
+        return builder;
+    }
+
+    @Override
     public List<? extends BehaviorControl<?>> getAlwaysRunningBehaviours(SCP1507 owner) {
         return List.of(
                 new LookAtTarget<>(),
@@ -151,8 +170,8 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
                         ),
                         new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))
                 ),
-                new AwakenFlamingoBlocks()
-                        .cooldownForBetween(600, 1200)
+                new FindFlamingoBlocks()
+                        .cooldownForBetween(100, 200)
                         .startCondition(SCP1507::isActive)
         );
     }
@@ -176,6 +195,12 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
         );
     }
 
+    public List<? extends BehaviorControl<?>> getAwakenBehaviours(SCP1507 ignoredOwner) {
+        return List.of(
+                new AwakenFlamingoBlocks()
+        );
+    }
+
     @Override
     public void aiStep() {
         super.aiStep();
@@ -183,12 +208,18 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
         if (currentAttackTime > 0) {
             entityData.set(ATTACK_TIME, currentAttackTime - 1);
         }
+
+        int currentAwakenTime = getAwakenTime();
+        if (currentAwakenTime > 0) {
+            entityData.set(AWAKEN_TIME, currentAwakenTime - 1);
+        }
     }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(ATTACK_TIME, 0);
+        builder.define(AWAKEN_TIME, 0);
         builder.define(LEFT_LEG_ATTACHED, true);
         builder.define(RIGHT_LEG_ATTACHED, true);
     }
@@ -199,6 +230,14 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
 
     public static void resetAttackTime(@NotNull SCP1507 entity) {
         entity.entityData.set(ATTACK_TIME, 20);
+    }
+
+    public int getAwakenTime() {
+        return entityData.get(AWAKEN_TIME);
+    }
+
+    public void resetAwakenTime() {
+        entityData.set(AWAKEN_TIME, 120);
     }
 
     @Override
@@ -236,7 +275,7 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     }
 
     public static boolean isActive(LivingEntity entity) {
-        return Boolean.TRUE.equals(BrainUtil.getMemory(entity, BitterMemoryTypes.ACTIVE.get()));
+        return BrainUtil.memoryOrDefault(entity, BitterMemoryTypes.ACTIVE.get(), true);
     }
 
     public static void setActive(LivingEntity entity) {

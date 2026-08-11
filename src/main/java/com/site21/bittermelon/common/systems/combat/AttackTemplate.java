@@ -1,9 +1,9 @@
 package com.site21.bittermelon.common.systems.combat;
 
 import com.mojang.datafixers.util.Pair;
-import com.site21.bittermelon.common.systems.medical.compartment.CompartmentTag;
-import com.site21.bittermelon.common.systems.medical.damage.DamageGenerator;
-import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.common.systems.medical.legacy.compartment.CompartmentTag;
+import com.site21.bittermelon.common.systems.medical.legacy.damage.DamageGenerator;
+import com.site21.bittermelon.common.systems.medical.legacy.medicalstats.MedicalStats;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Contract;

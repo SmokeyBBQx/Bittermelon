@@ -2,10 +2,10 @@ package com.site21.bittermelon.common.systems.combat;
 
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
-import com.site21.bittermelon.common.systems.medical.damage.DamageResult;
-import com.site21.bittermelon.common.systems.medical.damage.InjuryResult;
-import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.common.systems.medical.legacy.compartment.CompartmentInstance;
+import com.site21.bittermelon.common.systems.medical.legacy.damage.DamageResult;
+import com.site21.bittermelon.common.systems.medical.legacy.damage.InjuryResult;
+import com.site21.bittermelon.common.systems.medical.legacy.medicalstats.MedicalStats;
 import com.site21.bittermelon.util.LocalMessageUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

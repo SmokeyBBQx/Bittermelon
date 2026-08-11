@@ -1,9 +1,9 @@
 package com.site21.bittermelon.common.systems.substance;
 
 import com.mojang.serialization.Codec;
-import com.site21.bittermelon.common.systems.medical.drug.Drug;
-import com.site21.bittermelon.common.systems.medical.drug.DrugHelper;
-import com.site21.bittermelon.common.systems.medical.drug.DrugInstance;
+import com.site21.bittermelon.common.systems.medical.legacy.drug.Drug;
+import com.site21.bittermelon.common.systems.medical.legacy.drug.DrugHelper;
+import com.site21.bittermelon.common.systems.medical.legacy.drug.DrugInstance;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;

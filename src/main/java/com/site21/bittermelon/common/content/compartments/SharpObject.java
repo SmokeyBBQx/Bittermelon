@@ -1,10 +1,6 @@
 package com.site21.bittermelon.common.content.compartments;
 
-import com.site21.bittermelon.common.systems.medical.compartment.Compartment;
-import com.site21.bittermelon.common.systems.medical.compartment.CompartmentInstance;
-import org.jetbrains.annotations.NotNull;
-
-import static com.site21.bittermelon.init.custom.Compartments.CUT;
+import com.site21.bittermelon.common.systems.medical.legacy.compartment.Compartment;
 
 public class SharpObject extends Compartment {
     public SharpObject(String id, Properties properties) {

@@ -5,6 +5,7 @@ import com.site21.bittermelon.common.content.items.DebugWire;
 import com.site21.bittermelon.common.content.items.IntercomPhoneItem;
 import com.site21.bittermelon.common.content.items.StickyNote;
 import com.site21.bittermelon.common.content.items.TestHeatedItem;
+import com.site21.bittermelon.common.content.items.gun.Handgun;
 import com.site21.bittermelon.common.content.items.handheldsysteminterface.HandheldSystemInterface;
 import com.site21.bittermelon.common.content.items.laserdesignator.LaserDesignatorItem;
 import com.site21.bittermelon.common.content.items.medical.tools.SyringeItem;
@@ -569,4 +570,6 @@ public class BitterItems {
     public static final DeferredItem<Item> METAL_ROD = ITEMS.registerSimpleItem("metal_rod");
 
     public static final DeferredItem<Item> PINK_PLASTIC_SCRAP = ITEMS.registerSimpleItem("pink_plastic_scrap");
+
+    public static final DeferredItem<Handgun> HANDGUN = ITEMS.registerItem("handgun", Handgun::new);
 }

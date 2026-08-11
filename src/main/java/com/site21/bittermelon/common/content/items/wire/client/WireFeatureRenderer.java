@@ -46,6 +46,8 @@ public class WireFeatureRenderer {
 
     public static void submitWire(AvatarRenderState state, SubmitNodeCollector collector, PoseStack poseStack) {
         WireState wireState = state.getRenderData(WIRE_STATE);
+        if (wireState == null) return;
+
         collector.submitCustomGeometry(poseStack, RenderTypes.leash(), (pose, buffer) ->
                 renderWire(pose, buffer, wireState));
     }

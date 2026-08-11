@@ -1,6 +1,7 @@
 package com.site21.bittermelon.common.events;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.common.content.entities.mimicplayer.Mimic;
 import com.site21.bittermelon.common.content.items.scps.scp377.FortuneHandler;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosHandler;
 import com.site21.bittermelon.common.systems.atmosphere.data.AtmosInstancesData;
@@ -14,7 +15,8 @@ import com.site21.bittermelon.common.systems.character.networking.SyncCharacters
 import com.site21.bittermelon.common.systems.character.skills.SkillUpdater;
 import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluid;
 import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlockEntity;
-import com.site21.bittermelon.common.systems.medical.wound.HumanDefinition;
+import com.site21.bittermelon.common.systems.medical.anatomy.HumanDefinition;
+import com.site21.bittermelon.common.systems.medical.wound.HitCalculator;
 import com.site21.bittermelon.common.systems.rage.RageHandler;
 import com.site21.bittermelon.common.systems.stress.StressHandler;
 import com.site21.bittermelon.common.systems.substance.SubstanceMixture;
@@ -27,6 +29,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Avatar;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -35,6 +38,7 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingBreatheEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
@@ -78,15 +82,17 @@ public class CommonEvents {
             }
         }
 
+        if (entity instanceof Avatar || entity instanceof Mimic) {
+            if (!entity.hasData(HEALTH_CONTAINER)) {
+                entity.setData(HEALTH_CONTAINER, new HumanDefinition().createHealthContainer(entity));
+            }
+        }
+
         if (entity instanceof Player player) {
             if (!player.hasData(MEDICAL_STATS)) {
                 player.setData(MEDICAL_STATS, HUMAN.get().toInstance(player));
             } else {
                 player.getData(MEDICAL_STATS).tick(player);
-            }
-
-            if (!player.hasData(HEALTH_CONTAINER)) {
-                player.setData(HEALTH_CONTAINER, new HumanDefinition().createHealthContainer(player));
             }
 
             StressHandler.tickStress(level, player);
@@ -188,6 +194,11 @@ public class CommonEvents {
                 }
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void onEntityDamage(LivingDamageEvent.Pre event) {
+        HitCalculator.damageEntity(event);
     }
 
     @SubscribeEvent

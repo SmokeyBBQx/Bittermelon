@@ -74,5 +74,25 @@ public class SCP1507Model extends EntityModel<SCP1507RenderState> {
         } else {
             root().xRot = 0;
         }
+
+        if (renderState.awakenTime > 0) {
+            float maxYRot = 0.9f;
+            float length = 40f;
+            float turnDuration = 6f;
+
+            float t = renderState.ageInTicks % length;
+            float half = length / 2f;
+            float localT = t % half;
+            boolean turningRight = (t < half);
+
+            float targetYRot = turningRight ? maxYRot : -maxYRot;
+            float prevYRot = turningRight ? -maxYRot : maxYRot;
+            float progress = Mth.clamp(localT / turnDuration, 0f, 1f);
+            float eased = progress < 0.5f ?  2 * progress * progress : (float) (1 - Math.pow(-2 * progress + 2, 2) / 2);
+
+            root().yRot = Mth.lerp(eased, prevYRot, targetYRot);
+        }
+
     }
+
 }

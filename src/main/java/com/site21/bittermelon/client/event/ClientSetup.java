@@ -40,16 +40,16 @@ import com.site21.bittermelon.common.systems.fluid.simple.ClientSimpleFluid;
 import com.site21.bittermelon.common.systems.fluid.substance.client.ClientSubstanceFluid;
 import com.site21.bittermelon.common.systems.fluid.substance.client.SubstanceFluidRenderer;
 import com.site21.bittermelon.common.systems.fluid.substance.client.SubstanceTintSource;
-import com.site21.bittermelon.common.systems.medical.client.AnatomyPictureInPictureRenderer;
-import com.site21.bittermelon.common.systems.medical.client.compartmentrenderers.CompartmentRenderers;
-import com.site21.bittermelon.common.systems.medical.client.tool.InstrumentWidgets;
-import com.site21.bittermelon.common.systems.medical.networking.AddAndInsertCompartment;
-import com.site21.bittermelon.common.systems.medical.networking.InsertCompartment;
-import com.site21.bittermelon.common.systems.medical.networking.RemoveCompartment;
-import com.site21.bittermelon.common.systems.medical.networking.UpdateCompartments;
-import com.site21.bittermelon.common.systems.medical.wound.AnatomyDebugRenderer;
-import com.site21.bittermelon.common.systems.medical.wound.LimbLayer;
-import com.site21.bittermelon.common.systems.medical.wound.PartInstance;
+import com.site21.bittermelon.common.systems.medical.anatomy.client.AnatomyDebugRenderer;
+import com.site21.bittermelon.common.systems.medical.bodypart.LimbLayer;
+import com.site21.bittermelon.common.systems.medical.bodypart.PartInstance;
+import com.site21.bittermelon.common.systems.medical.legacy.client.AnatomyPictureInPictureRenderer;
+import com.site21.bittermelon.common.systems.medical.legacy.client.compartmentrenderers.CompartmentRenderers;
+import com.site21.bittermelon.common.systems.medical.legacy.client.tool.InstrumentWidgets;
+import com.site21.bittermelon.common.systems.medical.legacy.networking.AddAndInsertCompartment;
+import com.site21.bittermelon.common.systems.medical.legacy.networking.InsertCompartment;
+import com.site21.bittermelon.common.systems.medical.legacy.networking.RemoveCompartment;
+import com.site21.bittermelon.common.systems.medical.legacy.networking.UpdateCompartments;
 import com.site21.bittermelon.common.systems.personnel.privilege.networking.*;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.AddPersonnelEntry;
 import com.site21.bittermelon.common.systems.personnel.registry.networking.PersonnelClientPayloadHandler;
@@ -81,6 +81,7 @@ import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Avatar;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.PlayerModelType;
 import net.minecraft.world.item.Item;
@@ -97,7 +98,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-import static com.site21.bittermelon.common.systems.medical.wound.BodyPartModels.registerBodyPartModel;
+import static com.site21.bittermelon.common.systems.medical.bodypart.client.BodyPartModels.registerBodyPartModel;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.HEALTH_CONTAINER;
 import static com.site21.bittermelon.init.neoforge.BitterEntities.*;
 import static com.site21.bittermelon.init.neoforge.BitterFluidTypes.SIMPLE_FLUID_TYPE;
@@ -298,6 +299,10 @@ public class ClientSetup {
                 Open815.MAP_CODEC
         );
 
+        event.register(
+                Bittermelon.identifier("on_cooldown"),
+                OnCooldown.MAP_CODEC
+        );
     }
 
     @SubscribeEvent
@@ -360,6 +365,16 @@ public class ClientSetup {
             registerBodyPartModel(BodyParts.RIGHT_LEG, model.rightLeg);
             registerBodyPartModel(BodyParts.LEFT_LEG, model.leftLeg);
         }
+
+        LivingEntityRenderer<?, ?, ?> skeletonRenderer = (LivingEntityRenderer<?, ?, ?>) event.getRenderer(EntityType.SKELETON);
+        registerBodyPartModel(BodyParts.SKELETON_LEFT_ARM,
+                skeletonRenderer.getModel().root().getChild("left_arm"),
+                Identifier.withDefaultNamespace("textures/entity/skeleton/skeleton.png"));
+
+        LivingEntityRenderer<?, ?, ?> zombieRenderer = (LivingEntityRenderer<?, ?, ?>) event.getRenderer(EntityType.ZOMBIE);
+        registerBodyPartModel(BodyParts.ZOMBIE_RIGHT_ARM,
+                zombieRenderer.getModel().root().getChild("right_arm"),
+                Identifier.withDefaultNamespace("textures/entity/zombie/zombie.png"));
     }
 
     @SubscribeEvent

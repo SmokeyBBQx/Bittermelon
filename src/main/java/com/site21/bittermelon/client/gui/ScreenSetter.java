@@ -20,7 +20,7 @@ import com.site21.bittermelon.common.systems.containment.client.ContainmentPanel
 import com.site21.bittermelon.common.systems.economy.bank.client.ATMScreen;
 import com.site21.bittermelon.common.systems.electronics.ElectronicDevice;
 import com.site21.bittermelon.common.systems.electronics.privilege.client.PrivilegeEditorScreen;
-import com.site21.bittermelon.common.systems.medical.client.HealthScreen;
+import com.site21.bittermelon.common.systems.medical.legacy.client.HealthScreen;
 import com.site21.bittermelon.common.systems.personnel.registry.PersonnelEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;

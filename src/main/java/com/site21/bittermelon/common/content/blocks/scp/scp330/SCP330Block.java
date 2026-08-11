@@ -1,6 +1,6 @@
 package com.site21.bittermelon.common.content.blocks.scp.scp330;
 
-import com.site21.bittermelon.common.systems.medical.medicalstats.MedicalStats;
+import com.site21.bittermelon.common.systems.medical.legacy.medicalstats.MedicalStats;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

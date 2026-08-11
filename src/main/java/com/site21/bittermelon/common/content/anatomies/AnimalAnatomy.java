@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.content.anatomies;
 
-import com.site21.bittermelon.common.systems.medical.anatomy.Anatomy;
-import com.site21.bittermelon.common.systems.medical.anatomy.factory.AnatomyFactory;
+import com.site21.bittermelon.common.systems.medical.legacy.anatomy.Anatomy;
+import com.site21.bittermelon.common.systems.medical.legacy.anatomy.factory.AnatomyFactory;
 
 public class AnimalAnatomy extends Anatomy {
 
