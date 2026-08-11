@@ -13,6 +13,8 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
@@ -103,8 +105,13 @@ public class SCP718 extends PathfinderMob implements SmartBrainOwner<SCP718> {
     protected void tickDeath() {
         super.tickDeath();
         if (deathTime <= 1) {
-            level().playSound(null, blockPosition(), SoundEvents.DRAGON_FIREBALL_EXPLODE, SoundSource.HOSTILE, 0.5f, 2.0f);
-            explodeFluid(level(), getX(), getEyeY(), getZ());
+            DamageSource lastDamageSource = getLastDamageSource();
+            boolean killedByCommand = lastDamageSource != null && lastDamageSource.is(DamageTypes.GENERIC_KILL);
+
+            if (!killedByCommand) {
+                level().playSound(null, blockPosition(), SoundEvents.DRAGON_FIREBALL_EXPLODE, SoundSource.HOSTILE, 0.5f, 2.0f);
+                explodeFluid(level(), getX(), getEyeY(), getZ());
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package com.site21.bittermelon.datagen;
 
+import com.site21.bittermelon.common.content.entities.scp250.SCP250;
 import com.site21.bittermelon.init.neoforge.BitterEntities;
 import com.site21.bittermelon.init.neoforge.BitterItems;
 import net.minecraft.core.HolderLookup;
@@ -33,6 +34,7 @@ public class BitterEntityLootProvider extends EntityLootSubProvider {
     @Override
     public void generate() {
         add(SCP_939.get(), LootTable.lootTable());
+        add(SCP_250.get(), LootTable.lootTable());
         add(CHICKEN.get(), LootTable.lootTable());
         add(SCP_650.get(), LootTable.lootTable());
         add(SCP_131.get(), LootTable.lootTable());
