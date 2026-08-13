@@ -271,6 +271,23 @@ public class BitterItems {
                             ))
     );
 
+    public static final DeferredItem<Item> SCP_025_FR_SPAWN_EGG = ITEMS.registerItem(
+            "scp_025_fr_spawn_egg",
+            properties ->
+                    new SpawnEggItem(properties
+                            .spawnEgg(BitterEntities.SCP_025_FR.get())
+                            .stacksTo(1)
+                            .component(DataComponents.LORE, new ItemLore(
+                                    List.of(
+                                            Component.literal("Deadly Silence")
+                                                    .withStyle(ChatFormatting.ITALIC)
+                                                    .withStyle(ChatFormatting.GRAY),
+                                            Component.literal("Euclid")
+                                                    .withStyle(ChatFormatting.GOLD)
+                                    ))
+                            ))
+    );
+
     public static final DeferredItem<Item> SCP_018 = ITEMS.register("scp_018", registryName ->
             new Item(new Item.Properties()
                     .stacksTo(1)
