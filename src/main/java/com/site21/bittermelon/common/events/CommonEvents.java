@@ -1,7 +1,6 @@
 package com.site21.bittermelon.common.events;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.content.entities.mimicplayer.Mimic;
 import com.site21.bittermelon.common.content.items.scps.scp377.FortuneHandler;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosHandler;
 import com.site21.bittermelon.common.systems.atmosphere.data.AtmosInstancesData;
@@ -15,7 +14,6 @@ import com.site21.bittermelon.common.systems.character.networking.SyncCharacters
 import com.site21.bittermelon.common.systems.character.skills.SkillUpdater;
 import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluid;
 import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlockEntity;
-import com.site21.bittermelon.common.systems.medical.anatomy.HumanDefinition;
 import com.site21.bittermelon.common.systems.medical.wound.HitCalculator;
 import com.site21.bittermelon.common.systems.rage.RageHandler;
 import com.site21.bittermelon.common.systems.stress.StressHandler;
@@ -29,7 +27,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Avatar;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -46,6 +43,7 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -82,11 +80,11 @@ public class CommonEvents {
             }
         }
 
-        if (entity instanceof Avatar || entity instanceof Mimic) {
-            if (!entity.hasData(HEALTH_CONTAINER)) {
-                entity.setData(HEALTH_CONTAINER, new HumanDefinition().createHealthContainer(entity));
-            }
-        }
+//        if (entity instanceof Avatar || entity instanceof Mimic) {
+//            if (!entity.hasData(HEALTH_CONTAINER)) {
+//                entity.setData(HEALTH_CONTAINER, new HumanDefinition().createHealthContainer(entity));
+//            }
+//        }
 
         if (entity instanceof Player player) {
             if (!player.hasData(MEDICAL_STATS)) {
@@ -99,6 +97,12 @@ public class CommonEvents {
             RageHandler.tick(level, player);
             updateTypingTime(player);
         }
+    }
+
+    @SubscribeEvent
+    public static void onLevelTick(LevelTickEvent.Post event) {
+        if (event.getLevel().isClientSide()) return;
+        PhysicsManager.updatePhysicsSpace(event.getLevel().dimension());
     }
 
     private static void tickCharacter(LivingEntity entity, Character character) {

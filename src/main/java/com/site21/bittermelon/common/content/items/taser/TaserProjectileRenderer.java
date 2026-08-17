@@ -42,9 +42,9 @@ public class TaserProjectileRenderer extends EntityRenderer<TaserProjectile, Tas
         Vec3 shooterPos = state.shooterPos;
         Vec3 projectilePos = state.projectilePos;
 
-        float deltaX = (float) (shooterPos.x - projectilePos.x);
-        float deltaY = (float) (shooterPos.y - projectilePos.y);
-        float deltaZ = (float) (shooterPos.z - projectilePos.z);
+        float dx = (float) (shooterPos.x - projectilePos.x);
+        float dy = (float) (shooterPos.y - projectilePos.y);
+        float dz = (float) (shooterPos.z - projectilePos.z);
 
         collector.submitCustomGeometry(
                 poseStack,
@@ -52,8 +52,8 @@ public class TaserProjectileRenderer extends EntityRenderer<TaserProjectile, Tas
                 (pose, buffer) -> {
                     int segments = 32;
                     for (int i = 0; i <= segments; i++) {
-                        stringVertex(deltaX, deltaY, deltaZ, buffer, pose, (float) i / segments, (float) (i + 1) / segments);
-                        stringVertex(deltaX + 0.1f, deltaY , deltaZ + 0.1f, buffer, pose, (float) i / segments, (float) (i + 1) / segments);
+                        stringVertex(dx, dy, dz, buffer, pose, (float) i / segments, (float) (i + 1) / segments);
+                        stringVertex(dx + 0.1f, dy , dz + 0.1f, buffer, pose, (float) i / segments, (float) (i + 1) / segments);
                     }
                 }
         );
@@ -61,17 +61,23 @@ public class TaserProjectileRenderer extends EntityRenderer<TaserProjectile, Tas
         poseStack.popPose();
     }
 
-    private static void stringVertex(float x, float y, float z, @NotNull VertexConsumer consumer, PoseStack.Pose pose, float stringFraction, float nextStringFraction) {
-        float currentX = x * stringFraction;
-        float currentY = y * (stringFraction * stringFraction + stringFraction) * 0.5F;
-        float currentZ = z * stringFraction;
-        float deltaX = x * nextStringFraction + currentX;
-        float deltaY = y * (nextStringFraction * nextStringFraction + nextStringFraction) * 0.5F + 0.25F - currentY;
-        float deltaZ = z * nextStringFraction + currentZ;
-        float normalLength = Mth.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
-        deltaX /= normalLength;
-        deltaY /= normalLength;
-        deltaZ /= normalLength;
-        consumer.addVertex(pose, currentX, currentY, currentZ).setColor(0xFF444444).setNormal(pose, deltaX, deltaY, deltaZ);
+    private static void stringVertex(float x, float y, float z, @NotNull VertexConsumer consumer, PoseStack.Pose pose, float t, float tNext) {
+        float x0 = x * t;
+        float y0 = y * (t * t + t) * 0.5f;
+        float z0 = z * t;
+
+        float nx = x * tNext + x0;
+        float ny = y * (tNext * tNext + tNext) * 0.5f + 0.25f - y0;
+        float nz = z * tNext + z0;
+
+        float length = Mth.sqrt(nx * nx + ny * ny + nz * nz);
+        nx /= length;
+        ny /= length;
+        nz /= length;
+
+        consumer.addVertex(pose, x0, y0, z0)
+                .setColor(0xFF444444)
+                .setNormal(pose, nx, ny, nz)
+                .setLineWidth(5.0f);
     }
 }

@@ -16,6 +16,7 @@ import com.site21.bittermelon.common.content.entities.chicken.client.ChickenRend
 import com.site21.bittermelon.common.content.entities.fluidprojectile.FluidProjectileRenderer;
 import com.site21.bittermelon.common.content.entities.mimicplayer.Mimic;
 import com.site21.bittermelon.common.content.entities.mimicplayer.client.MimicRenderer;
+import com.site21.bittermelon.common.content.entities.ragdoll.client.RagdollRenderer;
 import com.site21.bittermelon.common.content.entities.scp025fr.client.SCP025FRRenderer;
 import com.site21.bittermelon.common.content.entities.scp131.client.SCP131Renderer;
 import com.site21.bittermelon.common.content.entities.scp1507.client.SCP1507Renderer;
@@ -172,6 +173,7 @@ public class ClientSetup {
                 (_, provider) -> event.registerEntityRenderer(MIMIC.get(), provider)
         );
         event.registerEntityRenderer(SCP_025_FR.get(), SCP025FRRenderer::new);
+        event.registerEntityRenderer(RAGDOLL.get(), RagdollRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.THERMOMETER_BLOCK_ENTITY.get(), ThermometerRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.INTERCOM_BLOCK_ENTITY.get(), PhoneCordRenderer::new);
         event.registerBlockEntityRenderer(BitterBlockEntities.LARGE_SLIDING_DOOR_BLOCK_ENTITY.get(), LargeSlidingDoorRenderer::new);

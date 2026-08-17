@@ -31,6 +31,7 @@ repositories {
         }
         filter { includeGroupAndSubgroups('com.geckolib') }
     }
+    mavenCentral()
 }
 
 base {
@@ -125,6 +126,9 @@ configurations {
 dependencies {
     implementation "net.tslat:smartbrainlib-neoforge-${minecraft_version}:${sbl_version}"
     implementation "com.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
+    implementation("com.github.stephengold:Libbulletjme-Windows64:23.1.0")
+    runtimeOnly("com.github.stephengold:Libbulletjme-Windows64:23.1.0:SpDebug")
+    implementation("io.github.electrostat-lab:snaploader:1.1.1-stable")
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

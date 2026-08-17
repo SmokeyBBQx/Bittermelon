@@ -6,6 +6,7 @@ import com.site21.bittermelon.common.content.entities.cage.Cage;
 import com.site21.bittermelon.common.content.entities.chicken.Chicken;
 import com.site21.bittermelon.common.content.entities.fluidprojectile.FluidProjectile;
 import com.site21.bittermelon.common.content.entities.mimicplayer.Mimic;
+import com.site21.bittermelon.common.content.entities.ragdoll.RagdollEntity;
 import com.site21.bittermelon.common.content.entities.scp025fr.SCP025FR;
 import com.site21.bittermelon.common.content.entities.scp131.SCP131;
 import com.site21.bittermelon.common.content.entities.scp1507.SCP1507;
@@ -122,6 +123,12 @@ public class BitterEntities {
                     .sized(0.5f, 0.2f)
                     .noLootTable()
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_815_snake"))));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<RagdollEntity>> RAGDOLL = ENTITY_TYPES.register("ragdoll",
+            () -> EntityType.Builder.of(RagdollEntity::new, MobCategory.MISC)
+                    .sized(0.6f, 1.8f)
+                    .noLootTable()
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, Bittermelon.identifier("ragdoll"))));
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);

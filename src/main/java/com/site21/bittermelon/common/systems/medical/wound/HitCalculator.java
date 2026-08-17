@@ -10,6 +10,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
@@ -34,7 +35,7 @@ public class HitCalculator {
 
         HealthContainer healthContainer = target.getData(HEALTH_CONTAINER);
 
-        if (source.getEntity() instanceof LivingEntity attacker) {
+        if (source.getDirectEntity() instanceof Entity attacker) {
             Vec3 from = attacker.getEyePosition();
             Vec3 to = from.add(attacker.getLookAngle().scale(32));
 

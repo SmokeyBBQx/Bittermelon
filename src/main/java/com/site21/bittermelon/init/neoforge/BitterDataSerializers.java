@@ -2,6 +2,7 @@ package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.entities.cage.client.BlockInfo;
+import com.site21.bittermelon.common.content.entities.ragdoll.client.RagdollTransformation;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -45,6 +46,21 @@ public class BitterDataSerializers {
                 @Override
                 public UUID copy(UUID value) {
                     return value;
+                }
+            }
+    );
+
+    public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<List<RagdollTransformation>>> RAGDOLL_TRANSFORMATIONS = ENTITY_DATA_SERIALIZERS.register(
+            "ragdoll_transformations",
+            () -> new EntityDataSerializer<>() {
+                @Override
+                public StreamCodec<? super RegistryFriendlyByteBuf, List<RagdollTransformation>> codec() {
+                    return RagdollTransformation.STREAM_CODEC.apply(ByteBufCodecs.list());
+                }
+
+                @Override
+                public List<RagdollTransformation> copy(List<RagdollTransformation> value) {
+                    return new ArrayList<>(value);
                 }
             }
     );

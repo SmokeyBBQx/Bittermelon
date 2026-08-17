@@ -4,6 +4,12 @@ import com.mojang.logging.LogUtils;
 import com.site21.bittermelon.common.systems.chemistry.ReactionLoader;
 import com.site21.bittermelon.init.neoforge.BitterEntities;
 import com.site21.bittermelon.init.neoforge.BitterRegistries;
+import electrostatic4j.snaploader.LibraryInfo;
+import electrostatic4j.snaploader.LoadingCriterion;
+import electrostatic4j.snaploader.NativeBinaryLoader;
+import electrostatic4j.snaploader.filesystem.DirectoryPath;
+import electrostatic4j.snaploader.platform.NativeDynamicLibrary;
+import electrostatic4j.snaploader.platform.util.PlatformPredicate;
 import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -50,11 +56,23 @@ public class Bittermelon {
     public static final String MOD_ID = "bittermelon";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public Bittermelon(IEventBus modEventBus) {
+    public Bittermelon(IEventBus modEventBus) throws Exception {
+        LibraryInfo info = new LibraryInfo(null, "bulletjme", DirectoryPath.USER_DIR);
+        NativeBinaryLoader loader = new NativeBinaryLoader(info);
+        NativeDynamicLibrary[] libraries = {
+                new NativeDynamicLibrary("native/linux/arm64", PlatformPredicate.LINUX_ARM_64),
+                new NativeDynamicLibrary("native/linux/arm32", PlatformPredicate.LINUX_ARM_32),
+                new NativeDynamicLibrary("native/linux/x86_64", PlatformPredicate.LINUX_X86_64),
+                new NativeDynamicLibrary("native/osx/arm64", PlatformPredicate.MACOS_ARM_64),
+                new NativeDynamicLibrary("native/osx/x86_64", PlatformPredicate.MACOS_X86_64),
+                new NativeDynamicLibrary("native/windows/arm64", PlatformPredicate.WIN_ARM_64),
+                new NativeDynamicLibrary("native/windows/x86_64", PlatformPredicate.WIN_X86_64)
+        };
+        loader.registerNativeLibraries(libraries).initPlatformLibrary();
+        loader.loadLibrary(LoadingCriterion.CLEAN_EXTRACTION);
         NeoForge.EVENT_BUS.register(this);
 
         BitterEntities.register(modEventBus);
-
         ITEMS.register(modEventBus);
         DATA_COMPONENTS.register(modEventBus);
         SOUND_EVENTS.register(modEventBus);
