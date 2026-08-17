@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import com.site21.bittermelon.Bittermelon;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -40,4 +41,10 @@ public class BitterParticles {
             return ColorParticleOption.streamCodec((ParticleType<ColorParticleOption>) this);
         }
     });
+
+    public static final Supplier<SimpleParticleType> KAPOW = PARTICLES.register("kapow",
+            () -> new SimpleParticleType(false));
+
+    public static final Supplier<SimpleParticleType> BOOM = PARTICLES.register("boom",
+            () -> new SimpleParticleType(false));
 }

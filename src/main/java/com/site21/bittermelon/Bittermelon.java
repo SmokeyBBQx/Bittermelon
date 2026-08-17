@@ -1,6 +1,7 @@
 package com.site21.bittermelon;
 
 import com.mojang.logging.LogUtils;
+import com.site21.bittermelon.common.content.items.clownhammer.ClownHammer;
 import com.site21.bittermelon.common.systems.chemistry.ReactionLoader;
 import com.site21.bittermelon.init.neoforge.BitterEntities;
 import com.site21.bittermelon.init.neoforge.BitterRegistries;
@@ -71,6 +72,7 @@ public class Bittermelon {
         loader.registerNativeLibraries(libraries).initPlatformLibrary();
         loader.loadLibrary(LoadingCriterion.CLEAN_EXTRACTION);
         NeoForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.addListener(ClownHammer::onEntityInteract);
 
         BitterEntities.register(modEventBus);
         ITEMS.register(modEventBus);

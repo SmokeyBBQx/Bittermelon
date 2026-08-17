@@ -2,6 +2,8 @@ package com.site21.bittermelon.client.event;
 
 import com.google.common.reflect.TypeToken;
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.client.particles.BoomParticle;
+import com.site21.bittermelon.client.particles.KapowParticle;
 import com.site21.bittermelon.client.particles.PlasticParticle;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.client.PhoneCordRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.client.LargeSlidingDoorRenderer;
@@ -346,6 +348,8 @@ public class ClientSetup {
     @SubscribeEvent
     public static void registerParticleProviders(@NotNull RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(BitterParticles.PLASTIC.get(), PlasticParticle.Provider::new);
+        event.registerSpriteSet(BitterParticles.KAPOW.get(), KapowParticle.Provider::new);
+        event.registerSpriteSet(BitterParticles.BOOM.get(), BoomParticle.Provider::new);
     }
 
     @SubscribeEvent

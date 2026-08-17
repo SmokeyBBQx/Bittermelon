@@ -169,6 +169,7 @@ public class BitterModelProvider extends ModelProvider {
         itemModels.generateFlatItem(WIRE_CUTTERS.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         generate3D2DItem(itemModels, MOP.get());
         generate3D2DItem(itemModels, TASER.get());
+        generate3D2DItem(itemModels, CLOWN_HAMMER.get());
 
 
         // Writing Utensils
@@ -235,6 +236,13 @@ public class BitterModelProvider extends ModelProvider {
                         model
                 )
         );
+    }
+
+    public void generateClownHammer(@NotNull ItemModelGenerators itemModels) {
+        ItemModel.Unbaked model = ItemModelUtils.plainModel(
+                itemModels.createFlatItemModel(BitterItems.CLOWN_HAMMER.get(), ModelTemplates.FLAT_ITEM));
+
+        itemModels.itemModelOutput.accept(BitterItems.CLOWN_HAMMER.get(), model);
     }
 
     public void generateHandgun(@NotNull ItemModelGenerators itemModels) {
