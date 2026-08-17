@@ -21,9 +21,14 @@ public class RagdollEntity extends Entity {
     public Ragdoll ragdoll;
     public static final EntityDataAccessor<List<RagdollTransformation>> PART_TRANSFORMATIONS =
             SynchedEntityData.defineId(RagdollEntity.class, BitterDataSerializers.RAGDOLL_TRANSFORMATIONS.get());
+    private Vector3f pushDirection = new Vector3f();
 
     public RagdollEntity(EntityType<?> type, Level level) {
         super(type, level);
+    }
+
+    public void addMotion(Vector3f motion) {
+        this.pushDirection = pushDirection.add(motion);
     }
 
     @Override
@@ -49,6 +54,9 @@ public class RagdollEntity extends Entity {
         }
 
         ragdoll.updateLocalWorldCollision(level(), blockPosition());
+
+        ragdoll.addUniformVelocity(pushDirection);
+        pushDirection = new Vector3f();
 
         Vector3f torsoPos = new Vector3f();
         ragdoll.getPart(1).getPhysicsLocation(torsoPos);

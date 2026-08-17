@@ -1,6 +1,8 @@
 package com.site21.bittermelon.common.content.entities.ragdoll;
 
 import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.collision.PhysicsCollisionEvent;
+import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.joints.Constraint;
 import com.jme3.bullet.joints.Point2PointJoint;
@@ -17,7 +19,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Ragdoll {
+public class Ragdoll implements PhysicsCollisionListener {
     private final PhysicsSpace physicsSpace;
     private final List<PhysicsRigidBody> parts = new ArrayList<>();
     private final List<Constraint> joints = new ArrayList<>();
@@ -47,26 +49,26 @@ public class Ragdoll {
         body.setCcdMotionThreshold(0.1f);
         body.setCcdSweptSphereRadius(0.1f);
         body.setCollisionGroup(2);
-        body.setCollideWithGroups(1);
+        body.setCollideWithGroups(3);
         return body;
     }
 
     private void positionParts(Vector3f origin) {
-        parts.get(0).setPhysicsLocation(origin.add(0, 0.41f, 0));
-        parts.get(1).setPhysicsLocation(origin.add(0, 0, 0));
-        parts.get(2).setPhysicsLocation(origin.add(-0.369f, 0.375f, 0.0f));
-        parts.get(3).setPhysicsLocation(origin.add(0.369f, 0.375f, 0.0f));
-        parts.get(4).setPhysicsLocation(origin.add(-0.13f, -0.42f, 0.0f));
-        parts.get(5).setPhysicsLocation(origin.add(0.13f, -0.42f, 0.0f));
+        parts.get(1).setPhysicsLocation(new Vector3f(origin));
+        parts.get(0).setPhysicsLocation(new Vector3f(origin).add(0.0f, 0.64f, 0.0f));
+        parts.get(2).setPhysicsLocation(new Vector3f(origin).add(-0.369f, 0.025f, 0.0f));
+        parts.get(3).setPhysicsLocation(new Vector3f(origin).add(0.369f, 0.025f, 0.0f));
+        parts.get(4).setPhysicsLocation(new Vector3f(origin).add(-0.13f, -0.77f, 0.0f));
+        parts.get(5).setPhysicsLocation(new Vector3f(origin).add(0.13f, -0.77f, 0.0f));
     }
 
     private void connectJoints() {
         // neck
-        addJoint(0, new Vector3f(0, 0.41f, 0), new Vector3f(0.0F, -0.23F, 0.0F));
+        addJoint(0, new Vector3f(0, 0.41f, 0), new Vector3f(0.0f, -0.23f, 0.0f));
 
         // shoulders
         addJoint(2, new Vector3f(-0.369f, 0.375f, 0.0f), new Vector3f(0.0f, 0.35f, 0.0f));
-        addJoint(3, new Vector3f(0.369f, 0.375f, 0.0f), new Vector3f(0.0F, 0.35f, 0.0f));
+        addJoint(3, new Vector3f(0.369f, 0.375f, 0.0f), new Vector3f(0.0f, 0.35f, 0.0f));
 
         // hips
         addJoint(4, new Vector3f(-0.13f, -0.42f, 0.0f), new Vector3f(0.0f, 0.35f, 0.0f));
@@ -176,5 +178,10 @@ public class Ragdoll {
         for (Constraint joint : joints) {
             physicsSpace.removeJoint(joint);
         }
+    }
+
+    @Override
+    public void collision(PhysicsCollisionEvent event) {
+
     }
 }

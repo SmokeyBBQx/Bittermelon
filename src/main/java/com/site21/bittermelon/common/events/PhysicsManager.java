@@ -22,7 +22,12 @@ public class PhysicsManager {
 
     private static PhysicsSpace createSpace() {
         PhysicsSpace space = new PhysicsSpace(PhysicsSpace.BroadphaseType.DBVT);
-        space.setGravity(new Vector3f(0, -9.81f, 0));
+        space.setForceUpdateAllAabbs(false);
+        space.setGravity(new Vector3f(0.0f, -9.81f, 0.0f));
+        space.getSolverInfo().setNumIterations(16);
+        space.setMaxSubSteps(4);
+        space.setAccuracy(0.016666668f);
+        space.getSolverInfo().setSplitImpulseEnabled(true);
         return space;
     }
 }

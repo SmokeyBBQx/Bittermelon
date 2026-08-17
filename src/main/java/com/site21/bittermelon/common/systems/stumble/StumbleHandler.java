@@ -1,8 +1,11 @@
 package com.site21.bittermelon.common.systems.stumble;
 
+import com.jme3.math.Vector3f;
+import com.site21.bittermelon.common.content.entities.ragdoll.RagdollEntity;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.medical.legacy.medicalstats.MedicalStats;
+import com.site21.bittermelon.init.neoforge.BitterEntities;
 import com.site21.bittermelon.init.neoforge.BitterMobEffects;
 import com.site21.bittermelon.networking.client.ClearForcedPose;
 import com.site21.bittermelon.networking.client.SetForcedPose;
@@ -11,6 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
@@ -50,10 +54,16 @@ public class StumbleHandler {
             length = -1;
         }
 
-        entity.addEffect(new MobEffectInstance(FALLEN, MobEffectInstance.INFINITE_DURATION, 0, false, false));
-        motion(entity, pushDirection);
-        addStunEffect(entity, length);
-        announceFall(entity);
+        RagdollEntity ragdoll = BitterEntities.RAGDOLL.get().create(entity.level(), EntitySpawnReason.EVENT);
+        ragdoll.setPos(entity.position().x, entity.position().y + 1, entity.position().z);
+        ragdoll.addMotion(new Vector3f((float) pushDirection.x, 0, (float) pushDirection.z));
+        entity.level().addFreshEntity(ragdoll);
+        entity.discard();
+
+//        entity.addEffect(new MobEffectInstance(FALLEN, MobEffectInstance.INFINITE_DURATION, 0, false, false));
+//        motion(entity, pushDirection);
+//        addStunEffect(entity, length);
+//        announceFall(entity);
     }
 
     /**

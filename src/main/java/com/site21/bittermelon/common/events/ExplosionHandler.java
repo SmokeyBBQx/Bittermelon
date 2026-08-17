@@ -1,11 +1,15 @@
 package com.site21.bittermelon.common.events;
 
+import com.jme3.math.Vector3f;
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.common.content.entities.mimicplayer.Mimic;
+import com.site21.bittermelon.common.content.entities.ragdoll.RagdollEntity;
 import com.site21.bittermelon.common.content.items.scps.scp2398.SCP2398Item;
 import com.site21.bittermelon.common.systems.blockdamage.BlockDamageUtil;
 import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlockEntity;
 import com.site21.bittermelon.common.systems.syncsound.SyncSoundEvent;
 import com.site21.bittermelon.common.systems.syncsound.SyncSoundType;
+import com.site21.bittermelon.init.neoforge.BitterEntities;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -13,6 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
@@ -53,6 +58,17 @@ public class ExplosionHandler {
             }
             return false;
         });
+
+        for (Entity entity : affectedEntities) {
+            if (entity instanceof Mimic mimic) {
+                Vec3 dir = mimic.position().subtract(explosion.center());
+                RagdollEntity ragdoll = BitterEntities.RAGDOLL.get().create(entity.level(), EntitySpawnReason.EVENT);
+                ragdoll.setPos(entity.position().x, entity.position().y + 1, entity.position().z);
+                ragdoll.addMotion(new Vector3f((float) dir.x, (float) dir.y, (float) dir.z).mult(explosion.radius()));
+                entity.level().addFreshEntity(ragdoll);
+                entity.discard();
+            }
+        }
 
         if (!event.getLevel().isClientSide()) {
             NeoForge.EVENT_BUS.post(new SyncSoundEvent(level,

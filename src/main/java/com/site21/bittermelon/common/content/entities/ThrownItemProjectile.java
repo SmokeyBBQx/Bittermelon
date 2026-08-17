@@ -1,6 +1,10 @@
 package com.site21.bittermelon.common.content.entities;
 
+import com.jme3.math.Vector3f;
+import com.site21.bittermelon.common.content.entities.mimicplayer.Mimic;
+import com.site21.bittermelon.common.content.entities.ragdoll.RagdollEntity;
 import com.site21.bittermelon.common.content.items.scps.scp2398.SCP2398Item;
+import com.site21.bittermelon.init.neoforge.BitterEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -10,6 +14,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -214,6 +219,15 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
             dmg *= getItem().getCount();
             dmg /= getItem().getMaxStackSize() / 4f;
             entity.hurtServer(level, damageSources().thrown(this, getOwner()), dmg);
+
+            if (velocity.length() > 0.5 && entity instanceof Mimic) {
+                Vec3 dir = entity.position().subtract(position());
+                RagdollEntity ragdoll = BitterEntities.RAGDOLL.get().create(entity.level(), EntitySpawnReason.EVENT);
+                ragdoll.setPos(entity.position().x, entity.position().y + 1, entity.position().z);
+                ragdoll.addMotion(new Vector3f((float) dir.x, (float) dir.y, (float) dir.z).mult(20));
+                entity.level().addFreshEntity(ragdoll);
+                entity.discard();
+            }
         }
 
         if (getItem().getItem() instanceof SCP2398Item) {

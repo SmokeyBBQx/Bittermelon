@@ -59,21 +59,31 @@ public class RagdollRenderer extends EntityRenderer<RagdollEntity, RagdollRender
 
     }
 
-    private void submitPart(RagdollRenderState state, int index, ModelPart part, PoseStack poseStack, SubmitNodeCollector collector) {
+    private void submitPart(RagdollRenderState state, int i, ModelPart part, PoseStack poseStack, SubmitNodeCollector collector) {
         poseStack.pushPose();
 
-        Vector3f pos = state.partPositions[index];
+        Vector3f pos = state.partPositions[i];
         poseStack.translate(pos.x, pos.y, pos.z);
 
         Quaternionf rotation = new Quaternionf(
-                state.partRotations[index].getX(),
-                state.partRotations[index].getY(),
-                state.partRotations[index].getZ(),
-                state.partRotations[index].getW()
+                state.partRotations[i].getX(),
+                state.partRotations[i].getY(),
+                state.partRotations[i].getZ(),
+                state.partRotations[i].getW()
         );
         poseStack.mulPose(rotation);
         poseStack.mulPose(Axis.XP.rotationDegrees(180.0f));
+
         poseStack.translate(-part.x / 16.0f, -part.y / 16.0f, -part.z / 16.0f);
+
+        float offsetY = switch (i) {
+            case 0 -> 4.0f / 16.0f;
+            case 1, 4, 5 -> -6.0f / 16.0f;
+            case 2, 3 -> -4.0f / 16.0f;
+            default -> 0.0f;
+        };
+        poseStack.translate(0.0f, offsetY, 0.0f);
+
         collector.submitModelPart(part, poseStack, RenderTypes.entityCutout(DefaultPlayerSkin.getDefaultTexture()), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
 
         poseStack.popPose();
