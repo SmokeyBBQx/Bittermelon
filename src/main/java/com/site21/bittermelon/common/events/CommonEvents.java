@@ -102,7 +102,7 @@ public class CommonEvents {
     @SubscribeEvent
     public static void onLevelTick(LevelTickEvent.Post event) {
         if (event.getLevel().isClientSide()) return;
-        PhysicsManager.updatePhysicsSpace(event.getLevel().dimension());
+        PhysicsManager.updatePhysicsSystem(event.getLevel().dimension());
     }
 
     private static void tickCharacter(LivingEntity entity, Character character) {

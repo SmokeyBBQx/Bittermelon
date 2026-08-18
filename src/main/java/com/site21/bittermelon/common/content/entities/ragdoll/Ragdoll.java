@@ -1,99 +1,115 @@
 package com.site21.bittermelon.common.content.entities.ragdoll;
 
-import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.collision.PhysicsCollisionEvent;
-import com.jme3.bullet.collision.PhysicsCollisionListener;
-import com.jme3.bullet.collision.shapes.BoxCollisionShape;
-import com.jme3.bullet.joints.Constraint;
-import com.jme3.bullet.joints.Point2PointJoint;
-import com.jme3.bullet.objects.PhysicsRigidBody;
-import com.jme3.math.Vector3f;
+import com.github.stephengold.joltjni.*;
+import com.github.stephengold.joltjni.enumerate.EActivation;
+import com.github.stephengold.joltjni.enumerate.EConstraintSpace;
+import com.github.stephengold.joltjni.enumerate.EMotionType;
+import com.github.stephengold.joltjni.enumerate.ESwingType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Ragdoll implements PhysicsCollisionListener {
-    private final PhysicsSpace physicsSpace;
-    private final List<PhysicsRigidBody> parts = new ArrayList<>();
+import static com.site21.bittermelon.common.events.PhysicsManager.MOVING_LAYER;
+import static com.site21.bittermelon.common.events.PhysicsManager.NON_MOVING_LAYER;
+
+public class Ragdoll {
+    private final PhysicsSystem physicsSystem;
+    private final List<Body> parts = new ArrayList<>();
     private final List<Constraint> joints = new ArrayList<>();
-    private final List<PhysicsRigidBody> localStaticCollision = new ArrayList<>();
+    private final List<Body> localStaticCollision = new ArrayList<>();
     private static final int COLLISION_RADIUS = 3;
 
-    public Ragdoll(PhysicsSpace physicsSpace, Vector3f pos) {
-        this.physicsSpace = physicsSpace;
-        parts.add(makeBody(new BoxCollisionShape(0.25f, 0.25f, 0.25f), 10.0f));
-        parts.add(makeBody(new BoxCollisionShape(0.24f, 0.375f, 0.129f), 30.0f));
-        parts.add(makeBody(new BoxCollisionShape(0.15f, 0.45f, 0.15f), 1.0f));
-        parts.add(makeBody(new BoxCollisionShape(0.15f, 0.45f, 0.15f), 1.0f));
-        parts.add(makeBody(new BoxCollisionShape(0.15f, 0.45f, 0.15f), 1.0f));
-        parts.add(makeBody(new BoxCollisionShape(0.15f, 0.45f, 0.15f), 1.0f));
+    public Ragdoll(PhysicsSystem physicsSystem, Vec3 pos) {
+        this.physicsSystem = physicsSystem;
+        BodyCreationSettings bcs = new BodyCreationSettings();
+        bcs.setMotionType(EMotionType.Dynamic);
+        bcs.setObjectLayer(MOVING_LAYER);
+        bcs.setFriction(0.5f);
+        bcs.setRestitution(0.3f);
 
-        positionParts(pos);
-
-        for (PhysicsRigidBody body : parts) {
-            physicsSpace.addCollisionObject(body);
-        }
+        makeBody(bcs, 0.25f, 0.25f, 0.25f, 10.0f, pos, new Vec3(0.0f, 0.64f, 0.0f));
+        makeBody(bcs, 0.24f, 0.375f, 0.129f, 30.0f, pos, new Vec3(0.0f, 0.125f, 0.0f));
+        makeBody(bcs, 0.15f, 0.45f, 0.15f, 1.0f, pos, new Vec3(-0.369f, -0.375f, 0.0f));
+        makeBody(bcs, 0.15f, 0.45f, 0.15f, 1.0f, pos, new Vec3(0.369f, -0.375f, 0.0f));
+        makeBody(bcs, 0.15f, 0.45f, 0.15f, 1.0f, pos, new Vec3(-0.13f, -0.77f, 0.0f));
+        makeBody(bcs, 0.15f, 0.45f, 0.15f, 1.0f, pos, new Vec3(0.13f, -0.77f, 0.0f));
 
         connectJoints();
     }
 
-    private PhysicsRigidBody makeBody(BoxCollisionShape shape, float mass) {
-        PhysicsRigidBody body = new PhysicsRigidBody(shape, mass);
-        body.setCcdMotionThreshold(0.1f);
-        body.setCcdSweptSphereRadius(0.1f);
-        body.setCollisionGroup(2);
-        body.setCollideWithGroups(3);
-        return body;
-    }
+    private void makeBody(BodyCreationSettings bcs, float xHalfExtent, float yHalfExtent, float zHalfExtent, float mass, Vec3 origin, Vec3 offset) {
+        bcs.setShape(new BoxShape(xHalfExtent, yHalfExtent, zHalfExtent));
 
-    private void positionParts(Vector3f origin) {
-        parts.get(1).setPhysicsLocation(new Vector3f(origin));
-        parts.get(0).setPhysicsLocation(new Vector3f(origin).add(0.0f, 0.64f, 0.0f));
-        parts.get(2).setPhysicsLocation(new Vector3f(origin).add(-0.369f, 0.025f, 0.0f));
-        parts.get(3).setPhysicsLocation(new Vector3f(origin).add(0.369f, 0.025f, 0.0f));
-        parts.get(4).setPhysicsLocation(new Vector3f(origin).add(-0.13f, -0.77f, 0.0f));
-        parts.get(5).setPhysicsLocation(new Vector3f(origin).add(0.13f, -0.77f, 0.0f));
+        bcs.setPosition(origin.getX() + offset.getX(), origin.getY() + offset.getY(), origin.getZ() + offset.getZ());
+
+        BodyInterface bi = physicsSystem.getBodyInterface();
+        Body body = bi.createBody(bcs);
+        bi.addBody(body, EActivation.Activate);
+        parts.add(body);
     }
 
     private void connectJoints() {
+        SwingTwistConstraintSettings settings = new SwingTwistConstraintSettings();
+
         // neck
-        addJoint(0, new Vector3f(0, 0.41f, 0), new Vector3f(0.0f, -0.23f, 0.0f));
+        addJoint(settings, 0, new Vec3(0, 0.41f, 0), new Vec3(0.0f, -0.23f, 0.0f), 80f, 120f, 80f);
 
         // shoulders
-        addJoint(2, new Vector3f(-0.369f, 0.375f, 0.0f), new Vector3f(0.0f, 0.35f, 0.0f));
-        addJoint(3, new Vector3f(0.369f, 0.375f, 0.0f), new Vector3f(0.0f, 0.35f, 0.0f));
+        addJoint(settings, 2, new Vec3(-0.369f, 0.375f, 0.0f), new Vec3(0.0f, 0.35f, 0.0f), 120f, 175f, 175f);
+        addJoint(settings, 3, new Vec3(0.369f, 0.375f, 0.0f), new Vec3(0.0f, 0.35f, 0.0f), 120f, 175f, 175f);
 
         // hips
-        addJoint(4, new Vector3f(-0.13f, -0.42f, 0.0f), new Vector3f(0.0f, 0.35f, 0.0f));
-        addJoint(5, new Vector3f(0.13f, -0.42f, 0.0f), new Vector3f(0.0f, 0.35f, 0.0f));
+        addJoint(settings, 4, new Vec3(-0.13f, -0.42f, 0.0f), new Vec3(0.0f, 0.35f, 0.0f), 80f, 140f, 100f);
+        addJoint(settings, 5, new Vec3(0.13f, -0.42f, 0.0f), new Vec3(0.0f, 0.35f, 0.0f), 80f, 140f, 100f);
     }
 
-    private void addJoint(int i, Vector3f torsoPoint, Vector3f partPoint) {
-        PhysicsRigidBody torso = parts.get(1);
-        PhysicsRigidBody body = parts.get(i);
+    private void addJoint(SwingTwistConstraintSettings settings, int i, Vec3 attachmentPoint, Vec3 pivot, float twist, float swingY, float swingZ) {
+        settings.setSpace(EConstraintSpace.LocalToBodyCom);
+        settings.setSwingType(ESwingType.Pyramid);
+        settings.setPosition1(attachmentPoint.toRVec3());
+        settings.setPosition2(pivot.toRVec3());
 
-        Point2PointJoint joint = new Point2PointJoint(torso, body, torsoPoint, partPoint);
-        joint.setDamping(1.0f);
-        joint.setCollisionBetweenLinkedBodies(false);
-        joints.add(joint);
-        physicsSpace.addJoint(joint);
+        Vec3 primaryAxis = new com.github.stephengold.joltjni.Vec3(0, 1, 0);
+        Vec3 secondaryAxis = new com.github.stephengold.joltjni.Vec3(1, 0, 0);
+        settings.setTwistAxis1(primaryAxis);
+        settings.setPlaneAxis1(secondaryAxis);
+        settings.setTwistAxis2(primaryAxis);
+        settings.setPlaneAxis2(secondaryAxis);
+
+        settings.setTwistMinAngle((float) Math.toRadians(-twist));
+        settings.setTwistMaxAngle((float) Math.toRadians(twist));
+        settings.setPlaneHalfConeAngle((float) Math.toRadians(swingY));
+        settings.setNormalHalfConeAngle((float) Math.toRadians(swingZ));
+
+        Body torso = parts.get(1);
+        Body body = parts.get(i);
+        TwoBodyConstraint constraint = settings.create(torso, body);
+        joints.add(constraint);
+        physicsSystem.addConstraint(constraint);
     }
 
     public void updateLocalWorldCollision(Level level, BlockPos center) {
+        BodyInterface bi = physicsSystem.getBodyInterface();
         // TODO: only rebuild when relevant
-        for (PhysicsRigidBody body : localStaticCollision) {
-            physicsSpace.removeCollisionObject(body);
+        for (Body body : localStaticCollision) {
+            bi.removeBody(body.getId());
+            bi.destroyBody(body.getId());
         }
         localStaticCollision.clear();
 
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+
+        BodyCreationSettings bcs = new BodyCreationSettings();
+        bcs.setMotionType(EMotionType.Static);
+        bcs.setObjectLayer(NON_MOVING_LAYER);
+        bcs.setFriction(0.9f);
+        bcs.setRestitution(0.0f);
 
         for (int dx = -COLLISION_RADIUS; dx <= COLLISION_RADIUS; dx++) {
             for (int dy = -COLLISION_RADIUS; dy <= COLLISION_RADIUS; dy++) {
@@ -107,35 +123,33 @@ public class Ragdoll implements PhysicsCollisionListener {
                     if (shape.isEmpty()) continue;
 
                     for (AABB box : shape.toAabbs()) {
-                        Vector3f halfExtents = new Vector3f(
-                                (float) (box.getXsize() / 2),
-                                (float) (box.getYsize() / 2),
-                                (float) (box.getZsize() / 2)
+                        Vec3 halfExtents = new Vec3(
+                                box.getXsize() / 2,
+                                box.getYsize() / 2,
+                                box.getZsize() / 2
                         );
 
-                        if (halfExtents.x <= 0f || halfExtents.y <= 0f || halfExtents.z <= 0f) continue;
+                        if (halfExtents.getX() <= 0 || halfExtents.getY() <= 0 || halfExtents.getZ() <= 0) continue;
 
-                        PhysicsRigidBody body = createBlockBody(box, halfExtents, pos);
-                        physicsSpace.addCollisionObject(body);
-                        localStaticCollision.add(body);
+                        createBlockBody(bcs, box, halfExtents, pos);
                     }
                 }
             }
         }
     }
 
-    private static @NonNull PhysicsRigidBody createBlockBody(AABB box, Vector3f halfExtents, BlockPos.MutableBlockPos pos) {
-        PhysicsRigidBody body = new PhysicsRigidBody(new BoxCollisionShape(halfExtents), 0f);
-        body.setPhysicsLocation(
-                new Vector3f(
-                        (float) (pos.getX() + (box.minX + box.getXsize()) / 2f),
-                        (float) (pos.getY() + (box.minY + box.getYsize()) / 2f),
-                        (float) (pos.getZ() + (box.minZ + box.getZsize()) / 2f)
-                )
+    private void createBlockBody(BodyCreationSettings bcs, AABB box, Vec3 halfExtents, BlockPos.MutableBlockPos pos) {
+        bcs.setShape(new BoxShape(halfExtents));
+        bcs.setPosition(
+                (pos.getX() + (box.minX + box.getXsize()) / 2f),
+                (pos.getY() + (box.minY + box.getYsize()) / 2f),
+                (pos.getZ() + (box.minZ + box.getZsize()) / 2f)
         );
-        body.setFriction(0.9f);
-        body.setRestitution(0.0f);
-        return body;
+
+        BodyInterface bi = physicsSystem.getBodyInterface();
+        Body body = bi.createBody(bcs);
+        bi.addBody(body, EActivation.DontActivate);
+        localStaticCollision.add(body);
     }
 
     private boolean isSurrounded(Level level, BlockPos pos) {
@@ -148,40 +162,28 @@ public class Ragdoll implements PhysicsCollisionListener {
         return true;
     }
 
-    public PhysicsRigidBody getPart(int i) {
+    public Body getPart(int i) {
         return parts.get(i);
     }
 
-    public void setUserObject(Object user) {
-        for (PhysicsRigidBody body : parts) {
-            body.setUserObject(user);
-        }
-    }
-
-    public void addUniformVelocity(Vector3f delta) {
-        Vector3f v = new Vector3f();
-
-        for (PhysicsRigidBody body : parts) {
-            body.activate(true);
-            body.getLinearVelocity(v);
-            body.setLinearVelocity(v.add(delta));
+    public void addUniformVelocity(Vec3 delta) {
+        for (Body body : parts) {
+            body.addForce(delta);
         }
     }
 
     public void destroy() {
-        for (PhysicsRigidBody body : localStaticCollision) {
-            physicsSpace.removeCollisionObject(body);
+        BodyInterface bi = physicsSystem.getBodyInterface();
+        for (Body body : localStaticCollision) {
+            bi.removeBody(body.getId());
+            bi.destroyBody(body.getId());
         }
-        for (PhysicsRigidBody body : parts) {
-            physicsSpace.removeCollisionObject(body);
+        for (Body body : parts) {
+            bi.removeBody(body.getId());
+            bi.destroyBody(body.getId());
         }
         for (Constraint joint : joints) {
-            physicsSpace.removeJoint(joint);
+            physicsSystem.removeConstraint(joint);
         }
-    }
-
-    @Override
-    public void collision(PhysicsCollisionEvent event) {
-
     }
 }

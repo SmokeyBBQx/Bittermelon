@@ -1,6 +1,6 @@
 package com.site21.bittermelon.common.content.entities.ragdoll.client;
 
-import com.jme3.math.Vector3f;
+import com.github.stephengold.joltjni.RVec3;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.site21.bittermelon.common.content.entities.ragdoll.RagdollEntity;
@@ -42,7 +42,13 @@ public class RagdollRenderer extends EntityRenderer<RagdollEntity, RagdollRender
         super.extractRenderState(entity, state, partialTicks);
         List<RagdollTransformation> transformations = entity.getPartTransformations();
         for (int i = 0; i < 6; i++) {
-            state.partPositions[i] = transformations.get(i).interpolatedPos(partialTicks, state.partPositions[i]).subtract(new Vector3f((float) entity.position().x, (float) entity.position().y, (float) entity.position().z));
+            RVec3 interpolatedPos = transformations.get(i).interpolatedPos(partialTicks, state.partPositions[i]);
+            RVec3 local = new RVec3(
+                    interpolatedPos.xx() - entity.position().x,
+                    interpolatedPos.yy() - entity.position().y,
+                    interpolatedPos.zz() - entity.position().z
+            );
+            state.partPositions[i] = local;
             state.partRotations[i] = transformations.get(i).interpolatedRot(partialTicks, state.partRotations[i]);
         }
     }
@@ -62,8 +68,8 @@ public class RagdollRenderer extends EntityRenderer<RagdollEntity, RagdollRender
     private void submitPart(RagdollRenderState state, int i, ModelPart part, PoseStack poseStack, SubmitNodeCollector collector) {
         poseStack.pushPose();
 
-        Vector3f pos = state.partPositions[i];
-        poseStack.translate(pos.x, pos.y, pos.z);
+        RVec3 pos = state.partPositions[i];
+        poseStack.translate(pos.xx(), pos.yy(), pos.zz());
 
         Quaternionf rotation = new Quaternionf(
                 state.partRotations[i].getX(),

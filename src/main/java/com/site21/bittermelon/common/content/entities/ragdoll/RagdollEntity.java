@@ -1,5 +1,7 @@
 package com.site21.bittermelon.common.content.entities.ragdoll;
 
+import com.github.stephengold.joltjni.RVec3;
+import com.github.stephengold.joltjni.Vec3;
 import com.jme3.math.Vector3f;
 import com.site21.bittermelon.common.content.entities.ragdoll.client.RagdollTransformation;
 import com.site21.bittermelon.common.events.PhysicsManager;
@@ -21,14 +23,14 @@ public class RagdollEntity extends Entity {
     public Ragdoll ragdoll;
     public static final EntityDataAccessor<List<RagdollTransformation>> PART_TRANSFORMATIONS =
             SynchedEntityData.defineId(RagdollEntity.class, BitterDataSerializers.RAGDOLL_TRANSFORMATIONS.get());
-    private Vector3f pushDirection = new Vector3f();
+    private Vec3 pushDirection = new Vec3();
 
     public RagdollEntity(EntityType<?> type, Level level) {
         super(type, level);
     }
 
     public void addMotion(Vector3f motion) {
-        this.pushDirection = pushDirection.add(motion);
+        this.pushDirection = new Vec3(motion.x + pushDirection.getX(), motion.y + pushDirection.getY(), motion.z + pushDirection.getZ());
     }
 
     @Override
@@ -47,20 +49,18 @@ public class RagdollEntity extends Entity {
         }
 
         if (ragdoll == null) {
-            Vector3f startPos = new Vector3f((float) getX(), (float) getY(), (float) getZ());
-            ragdoll = new Ragdoll(PhysicsManager.getPhysicsSpace(level().dimension()), startPos);
-            ragdoll.setUserObject(this);
-            ragdoll.addUniformVelocity(new Vector3f(0.5f, 0, 0.5f));
+            Vec3 startPos = new Vec3((float) getX(), (float) getY(), (float) getZ());
+            ragdoll = new Ragdoll(PhysicsManager.getPhysicsSystem(level().dimension()), startPos);
+            ragdoll.addUniformVelocity(new Vec3(0.5f, 0, 0.5f));
         }
 
         ragdoll.updateLocalWorldCollision(level(), blockPosition());
 
         ragdoll.addUniformVelocity(pushDirection);
-        pushDirection = new Vector3f();
+        pushDirection = new Vec3();
 
-        Vector3f torsoPos = new Vector3f();
-        ragdoll.getPart(1).getPhysicsLocation(torsoPos);
-        setPosRaw(torsoPos.x, torsoPos.y, torsoPos.z);
+        RVec3 torsoPos =  ragdoll.getPart(1).getPosition();
+        setPosRaw(torsoPos.xx(), torsoPos.yy(), torsoPos.zz());
 
         List<RagdollTransformation> updated = new ArrayList<>(6);
         for (int i = 0; i < 6; i++) {

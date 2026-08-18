@@ -1,5 +1,7 @@
 package com.site21.bittermelon;
 
+import com.github.stephengold.joltjni.Jolt;
+import com.github.stephengold.joltjni.JoltPhysicsObject;
 import com.mojang.logging.LogUtils;
 import com.site21.bittermelon.common.systems.chemistry.ReactionLoader;
 import com.site21.bittermelon.init.neoforge.BitterEntities;
@@ -57,19 +59,7 @@ public class Bittermelon {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public Bittermelon(IEventBus modEventBus) throws Exception {
-        LibraryInfo info = new LibraryInfo(null, "bulletjme", DirectoryPath.USER_DIR);
-        NativeBinaryLoader loader = new NativeBinaryLoader(info);
-        NativeDynamicLibrary[] libraries = {
-                new NativeDynamicLibrary("native/linux/arm64", PlatformPredicate.LINUX_ARM_64),
-                new NativeDynamicLibrary("native/linux/arm32", PlatformPredicate.LINUX_ARM_32),
-                new NativeDynamicLibrary("native/linux/x86_64", PlatformPredicate.LINUX_X86_64),
-                new NativeDynamicLibrary("native/osx/arm64", PlatformPredicate.MACOS_ARM_64),
-                new NativeDynamicLibrary("native/osx/x86_64", PlatformPredicate.MACOS_X86_64),
-                new NativeDynamicLibrary("native/windows/arm64", PlatformPredicate.WIN_ARM_64),
-                new NativeDynamicLibrary("native/windows/x86_64", PlatformPredicate.WIN_X86_64)
-        };
-        loader.registerNativeLibraries(libraries).initPlatformLibrary();
-        loader.loadLibrary(LoadingCriterion.CLEAN_EXTRACTION);
+        initJolt();
         NeoForge.EVENT_BUS.register(this);
 
         BitterEntities.register(modEventBus);
@@ -104,6 +94,30 @@ public class Bittermelon {
 
         modEventBus.addListener(BitterRegistries::registerRegistries);
         modEventBus.addListener(this::commonSetup);
+    }
+
+    private void initJolt() throws Exception {
+        LibraryInfo info = new LibraryInfo(null, "joltjni", DirectoryPath.USER_DIR);
+        NativeBinaryLoader loader = new NativeBinaryLoader(info);
+
+        NativeDynamicLibrary[] libraries = {
+                new NativeDynamicLibrary("linux/aarch64/com/github/stephengold", PlatformPredicate.LINUX_ARM_64),
+                new NativeDynamicLibrary("linux/armhf/com/github/stephengold", PlatformPredicate.LINUX_ARM_32),
+                new NativeDynamicLibrary("linux/x86-64/com/github/stephengold", PlatformPredicate.LINUX_X86_64),
+                new NativeDynamicLibrary("osx/aarch64/com/github/stephengold", PlatformPredicate.MACOS_ARM_64),
+                new NativeDynamicLibrary("osx/x86-64/com/github/stephengold", PlatformPredicate.MACOS_X86_64),
+                new NativeDynamicLibrary("windows/aarch64/com/github/stephengold", PlatformPredicate.WIN_ARM_64),
+                new NativeDynamicLibrary("windows/x86-64/com/github/stephengold", PlatformPredicate.WIN_X86_64)
+        };
+        loader.registerNativeLibraries(libraries).initPlatformLibrary();
+        loader.loadLibrary(LoadingCriterion.CLEAN_EXTRACTION);
+        JoltPhysicsObject.startCleaner();
+        Jolt.registerDefaultAllocator();
+        Jolt.installDefaultAssertCallback();
+        Jolt.installDefaultTraceCallback();
+        boolean success = Jolt.newFactory();
+        assert success;
+        Jolt.registerTypes();
     }
 
     private void commonSetup(final @NotNull FMLCommonSetupEvent event) {

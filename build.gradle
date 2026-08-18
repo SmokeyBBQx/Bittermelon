@@ -127,8 +127,12 @@ dependencies {
     implementation "net.tslat:smartbrainlib-neoforge-${minecraft_version}:${sbl_version}"
     implementation "com.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
     implementation("com.github.stephengold:Libbulletjme-Windows64:23.1.0")
-    runtimeOnly("com.github.stephengold:Libbulletjme-Windows64:23.1.0:SpDebug")
+
+    implementation("com.github.stephengold:jolt-jni-Windows64:6.0.0")
+    runtimeOnly("com.github.stephengold:jolt-jni-Windows64:6.0.0:DebugSp")
+
     implementation("io.github.electrostat-lab:snaploader:1.1.1-stable")
+    runtimeOnly("com.github.oshi:oshi-core:6.9.0")
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
