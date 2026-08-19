@@ -1,6 +1,5 @@
 package com.site21.bittermelon.common.systems.stumble;
 
-import com.jme3.math.Vector3f;
 import com.site21.bittermelon.common.content.entities.ragdoll.RagdollEntity;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
@@ -56,7 +55,7 @@ public class StumbleHandler {
 
         RagdollEntity ragdoll = BitterEntities.RAGDOLL.get().create(entity.level(), EntitySpawnReason.EVENT);
         ragdoll.setPos(entity.position().x, entity.position().y + 1, entity.position().z);
-        ragdoll.addMotion(new Vector3f((float) pushDirection.x, 0, (float) pushDirection.z));
+        ragdoll.addMotion(new Vec3(pushDirection.x, 0, pushDirection.z));
         entity.level().addFreshEntity(ragdoll);
         entity.discard();
 
