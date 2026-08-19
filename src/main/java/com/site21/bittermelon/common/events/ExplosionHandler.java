@@ -1,6 +1,5 @@
 package com.site21.bittermelon.common.events;
 
-import com.jme3.math.Vector3f;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.entities.mimicplayer.Mimic;
 import com.site21.bittermelon.common.content.entities.ragdoll.RagdollEntity;
@@ -60,13 +59,15 @@ public class ExplosionHandler {
         });
 
         for (Entity entity : affectedEntities) {
-            if (entity instanceof Mimic mimic) {
-                Vec3 dir = mimic.position().subtract(explosion.center());
+            Vec3 force = entity.position().subtract(explosion.center()).normalize().scale(explosion.radius() * 5);
+            if (entity instanceof Mimic) {
                 RagdollEntity ragdoll = BitterEntities.RAGDOLL.get().create(entity.level(), EntitySpawnReason.EVENT);
                 ragdoll.setPos(entity.position().x, entity.position().y + 1, entity.position().z);
-                ragdoll.addMotion(new Vector3f((float) dir.x, (float) dir.y, (float) dir.z).mult(explosion.radius()));
+                ragdoll.addMotion(force);
                 entity.level().addFreshEntity(ragdoll);
                 entity.discard();
+            } else if (entity instanceof RagdollEntity ragdoll) {
+                ragdoll.addMotion(force);
             }
         }
 

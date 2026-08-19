@@ -2,9 +2,8 @@ package com.site21.bittermelon.common.content.entities.ragdoll;
 
 import com.github.stephengold.joltjni.RVec3;
 import com.github.stephengold.joltjni.Vec3;
-import com.jme3.math.Vector3f;
 import com.site21.bittermelon.common.content.entities.ragdoll.client.RagdollTransformation;
-import com.site21.bittermelon.common.events.PhysicsManager;
+import com.site21.bittermelon.common.physics.PhysicsManager;
 import com.site21.bittermelon.init.neoforge.BitterDataSerializers;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -27,9 +26,12 @@ public class RagdollEntity extends Entity {
 
     public RagdollEntity(EntityType<?> type, Level level) {
         super(type, level);
+        if (!level.isClientSide()) {
+            PhysicsManager.getPhysicsLevel(level.dimension()).addRagdoll(this);
+        }
     }
 
-    public void addMotion(Vector3f motion) {
+    public void addMotion(net.minecraft.world.phys.Vec3 motion) {
         this.pushDirection = new Vec3(motion.x + pushDirection.getX(), motion.y + pushDirection.getY(), motion.z + pushDirection.getZ());
     }
 
@@ -50,11 +52,8 @@ public class RagdollEntity extends Entity {
 
         if (ragdoll == null) {
             Vec3 startPos = new Vec3((float) getX(), (float) getY(), (float) getZ());
-            ragdoll = new Ragdoll(PhysicsManager.getPhysicsSystem(level().dimension()), startPos);
-            ragdoll.addUniformVelocity(new Vec3(0.5f, 0, 0.5f));
+            ragdoll = new Ragdoll(PhysicsManager.getPhysicsLevel(level().dimension()).system(), startPos);
         }
-
-        ragdoll.updateLocalWorldCollision(level(), blockPosition());
 
         ragdoll.addUniformVelocity(pushDirection);
         pushDirection = new Vec3();
@@ -112,6 +111,7 @@ public class RagdollEntity extends Entity {
         super.remove(reason);
         if (ragdoll != null && !level().isClientSide()) {
             ragdoll.destroy();
+            PhysicsManager.getPhysicsLevel(level()).removeRagdoll(this);
             ragdoll = null;
         }
     }

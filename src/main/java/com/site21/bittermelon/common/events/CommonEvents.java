@@ -2,6 +2,7 @@ package com.site21.bittermelon.common.events;
 
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.items.scps.scp377.FortuneHandler;
+import com.site21.bittermelon.common.physics.PhysicsManager;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosHandler;
 import com.site21.bittermelon.common.systems.atmosphere.data.AtmosInstancesData;
 import com.site21.bittermelon.common.systems.atmosphere.networking.AtmosChunkUpdate;
@@ -30,7 +31,9 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -40,6 +43,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
@@ -102,7 +106,7 @@ public class CommonEvents {
     @SubscribeEvent
     public static void onLevelTick(LevelTickEvent.Post event) {
         if (event.getLevel().isClientSide()) return;
-        PhysicsManager.updatePhysicsSystem(event.getLevel().dimension());
+        PhysicsManager.updatePhysicsLevel(event.getLevel());
     }
 
     private static void tickCharacter(LivingEntity entity, Character character) {
@@ -166,6 +170,21 @@ public class CommonEvents {
     public static void onBreakBlock(BreakBlockEvent event) {
         if (event.isCanceled()) return;
         BlockDamageUtil.clearDamage(event.getLevel(), event.getPos());
+
+        if (!(event.getLevel() instanceof Level level) || level.isClientSide()) return;
+        PhysicsManager.getPhysicsLevel(level).markDirty(event.getPos());
+    }
+
+    @SubscribeEvent
+    public static void onPlaceBlock(BlockEvent.EntityPlaceEvent event) {
+        if (!(event.getLevel() instanceof Level level) || level.isClientSide()) return;
+        PhysicsManager.getPhysicsLevel(level).markDirty(event.getPos());
+    }
+
+    @SubscribeEvent
+    public static void onMultiPlaceBlock(BlockEvent.EntityMultiPlaceEvent event) {
+        if (!(event.getLevel() instanceof Level level) || level.isClientSide()) return;
+        PhysicsManager.getPhysicsLevel(level).markDirty(event.getPos());
     }
 
     @SubscribeEvent
@@ -240,6 +259,14 @@ public class CommonEvents {
         // Sync the atmosphere data for the chunk to the player when they start tracking it
         PacketDistributor.sendToPlayer(event.getPlayer(),
                 new AtmosChunkUpdate(event.getPos(), event.getChunk().getData(ATMOSPHERE.get())));
+    }
+
+    @SubscribeEvent
+    public static void onChunkUnload(ChunkEvent.Unload event) {
+        LevelAccessor levelAccessor = event.getLevel();
+        if (levelAccessor.isClientSide() || !(levelAccessor instanceof Level level)) return;
+        ChunkPos pos = event.getChunk().getPos();
+        PhysicsManager.getPhysicsLevel(level.dimension()).unloadChunk(pos);
     }
 
     @SubscribeEvent
