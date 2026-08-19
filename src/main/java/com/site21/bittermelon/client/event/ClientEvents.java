@@ -1,9 +1,12 @@
 package com.site21.bittermelon.client.event;
 
+import com.github.stephengold.joltjni.Quat;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.client.render.ShaderManager;
 import com.site21.bittermelon.client.render.TypingIndicatorRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.client.PhoneTipRenderer;
+import com.site21.bittermelon.common.content.entities.ragdoll.RagdollEntity;
+import com.site21.bittermelon.common.content.entities.ragdoll.client.RagdollTransformation;
 import com.site21.bittermelon.common.content.items.wire.client.WireFeatureRenderer;
 import com.site21.bittermelon.common.content.items.wire.client.WireOverlayExtractor;
 import com.site21.bittermelon.common.systems.atmosphere.client.AtmosFogRenderer;
@@ -35,6 +38,8 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
 public class ClientEvents {
@@ -161,5 +166,20 @@ public class ClientEvents {
             carriedEntity.stopRiding();
             ClientPacketDistributor.sendToServer(new ThrowCarriedEntity(player.getUUID(), carriedEntity.getUUID()));
         }
+    }
+
+    @SubscribeEvent
+    public static void onComputeCameraAngles(ViewportEvent.ComputeCameraAngles event) {
+        if (!(event.getCamera().entity() instanceof RagdollEntity ragdoll)) return;
+
+        RagdollTransformation headTransform = ragdoll.getPartTransformations().getFirst();
+        Quat rot = headTransform.interpolatedRot((float) event.getPartialTick(), new Quat());
+
+        Quaternionf q = new Quaternionf(rot.getX(), rot.getY(), rot.getZ(), rot.getW()).normalize();
+
+        Vector3f euler = q.getEulerAnglesYXZ(new Vector3f());
+        event.setPitch((float) Math.toDegrees(euler.x));
+        event.setYaw((float) -Math.toDegrees(euler.y));
+        event.setRoll((float) Math.toDegrees(euler.z));
     }
 }

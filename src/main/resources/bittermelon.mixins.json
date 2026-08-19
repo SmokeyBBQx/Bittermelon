@@ -12,6 +12,7 @@
     "StyleSerializerMixin"
   ],
   "client": [
+    "CameraMixin",
     "ChatComponentMixin",
     "ChatScreenMixin",
     "ContextualInfoExtender",
