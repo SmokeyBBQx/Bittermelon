@@ -1,6 +1,7 @@
 package com.site21.bittermelon.common.events;
 
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.common.content.items.clownhammer.ClownHammer;
 import com.site21.bittermelon.common.content.items.scps.scp377.FortuneHandler;
 import com.site21.bittermelon.common.physics.PhysicsManager;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosHandler;
@@ -185,6 +186,13 @@ public class CommonEvents {
     public static void onMultiPlaceBlock(BlockEvent.EntityMultiPlaceEvent event) {
         if (!(event.getLevel() instanceof Level level) || level.isClientSide()) return;
         PhysicsManager.getPhysicsLevel(level).markDirty(event.getPos());
+    }
+
+    @SubscribeEvent
+    public static void onClownHammerBreak(BreakBlockEvent event) {
+        if (event.getPlayer().getMainHandItem().getItem() instanceof ClownHammer) {
+            event.setCanceled(true);
+        }
     }
 
     @SubscribeEvent

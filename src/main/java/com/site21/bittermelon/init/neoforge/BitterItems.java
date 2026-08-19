@@ -1,10 +1,8 @@
 package com.site21.bittermelon.init.neoforge;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.content.items.DebugWire;
-import com.site21.bittermelon.common.content.items.IntercomPhoneItem;
-import com.site21.bittermelon.common.content.items.StickyNote;
-import com.site21.bittermelon.common.content.items.TestHeatedItem;
+import com.site21.bittermelon.common.content.items.*;
+import com.site21.bittermelon.common.content.items.clownhammer.ClownHammer;
 import com.site21.bittermelon.common.content.items.gun.Handgun;
 import com.site21.bittermelon.common.content.items.handheldsysteminterface.HandheldSystemInterface;
 import com.site21.bittermelon.common.content.items.laserdesignator.LaserDesignatorItem;
@@ -53,12 +51,12 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.component.Consumable;
-import net.minecraft.world.item.component.DyedItemColor;
-import net.minecraft.world.item.component.ItemLore;
-import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.item.component.*;
 import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -267,6 +265,23 @@ public class BitterItems {
                                                     .withStyle(ChatFormatting.GRAY),
                                             Component.literal("Keter")
                                                     .withStyle(ChatFormatting.RED)
+                                    ))
+                            ))
+    );
+
+    public static final DeferredItem<Item> SCP_025_FR_SPAWN_EGG = ITEMS.registerItem(
+            "scp_025_fr_spawn_egg",
+            properties ->
+                    new SpawnEggItem(properties
+                            .spawnEgg(BitterEntities.SCP_025_FR.get())
+                            .stacksTo(1)
+                            .component(DataComponents.LORE, new ItemLore(
+                                    List.of(
+                                            Component.literal("Deadly Silence")
+                                                    .withStyle(ChatFormatting.ITALIC)
+                                                    .withStyle(ChatFormatting.GRAY),
+                                            Component.literal("Euclid")
+                                                    .withStyle(ChatFormatting.GOLD)
                                     ))
                             ))
     );
@@ -589,4 +604,13 @@ public class BitterItems {
     public static final DeferredItem<Item> PINK_PLASTIC_SCRAP = ITEMS.registerSimpleItem("pink_plastic_scrap");
 
     public static final DeferredItem<Handgun> HANDGUN = ITEMS.registerItem("handgun", Handgun::new);
+
+    public static final DeferredItem<ClownHammer> CLOWN_HAMMER = ITEMS.registerItem("clown_hammer", properties ->
+            new ClownHammer(properties.attributes(
+                    ItemAttributeModifiers.builder()
+                            .add(Attributes.ATTACK_DAMAGE,
+                                    new AttributeModifier(Item.BASE_ATTACK_DAMAGE_ID, 10000000, AttributeModifier.Operation.ADD_VALUE),
+                                    EquipmentSlotGroup.MAINHAND)
+                            .build())));
+
 }
