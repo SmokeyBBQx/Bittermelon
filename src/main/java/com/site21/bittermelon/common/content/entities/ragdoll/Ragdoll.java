@@ -18,51 +18,52 @@ public class Ragdoll {
     private final List<Body> parts = new ArrayList<>();
     private final List<Constraint> joints = new ArrayList<>();
 
-    public Ragdoll(PhysicsSystem physicsSystem, Vec3 pos) {
+    public Ragdoll(PhysicsSystem physicsSystem, Vec3 pos, float yRot) {
         this.physicsSystem = physicsSystem;
+        Quat spawnRot = Quat.sRotation(Vec3.sAxisY(), (float) -Math.toRadians(yRot));
         BodyCreationSettings bcs = new BodyCreationSettings();
         bcs.setMotionType(EMotionType.Dynamic);
         bcs.setObjectLayer(MOVING);
         bcs.setFriction(0.5f);
         bcs.setRestitution(0.3f);
 
-        makePart(bcs, 0.25f, 0.25f, 0.25f, 10.0f, pos, new Vec3(0, 0.375f, 0), new Vec3(0.0f, -0.125f, 0.0f), 1, 1);
-        makeTorso(bcs, pos, new Vec3(), new Vec3());
-        makeLimb(bcs, pos, new Vec3(0.25f, 0.375f, 0.0f), new Vec3(-0.125f, 0.375f, 0.0f));
-        makeLimb(bcs, pos, new Vec3(-0.25f, 0.375f, 0.0f), new Vec3(0.125f, 0.375f, 0.0f));
-        makeLimb(bcs, pos, new Vec3(0.125f, -0.375f, 0.0f), new Vec3(0.0f, 0.375f, 0.0f));
-        makeLimb(bcs, pos, new Vec3(-0.125f, -0.375f, 0.0f), new Vec3(0.0f, 0.375f, 0.0f));
+        makePart(bcs, 0.25f, 0.25f, 0.25f, pos, new Vec3(0, 0.375f, 0), new Vec3(0.0f, -0.125f, 0.0f), spawnRot, 1, 1);
+        makeTorso(bcs, pos, new Vec3(), new Vec3(), spawnRot);
+        makeLimb(bcs, pos, new Vec3(0.25f, 0.375f, 0.0f), new Vec3(-0.125f, 0.375f, 0.0f), spawnRot);
+        makeLimb(bcs, pos, new Vec3(-0.25f, 0.375f, 0.0f), new Vec3(0.125f, 0.375f, 0.0f), spawnRot);
+        makeLimb(bcs, pos, new Vec3(0.125f, -0.375f, 0.0f), new Vec3(0.0f, 0.375f, 0.0f), spawnRot);
+        makeLimb(bcs, pos, new Vec3(-0.125f, -0.375f, 0.0f), new Vec3(0.0f, 0.375f, 0.0f), spawnRot);
 
         connectJoints();
     }
 
-    private void makeTorso(BodyCreationSettings bcs,
-                           Vec3 origin, Vec3 attachPoint, Vec3 offset) {
+    private void makeTorso(BodyCreationSettings bcs, Vec3 origin, Vec3 attachPoint, Vec3 offset, Quat rot) {
         Shape shape = new BoxShape(new Vec3(0.25f, 0.375f, 0.125f), 0.1f);
-        makeBody(bcs, shape, 30.0f, origin, attachPoint, offset);
+        makeBody(bcs, shape, origin, attachPoint, offset, rot);
     }
 
-    private void makeLimb(BodyCreationSettings bcs, Vec3 origin, Vec3 attachPoint, Vec3 offset) {
-        makePart(bcs, (float) 0.125, (float) 0.375, (float) 0.125, (float) 1.0, origin, attachPoint, offset, 1.1f, 0.9f);
+    private void makeLimb(BodyCreationSettings bcs, Vec3 origin, Vec3 attachPoint, Vec3 offset, Quat rot) {
+        makePart(bcs, (float) 0.125, (float) 0.375, (float) 0.125, origin, attachPoint, offset, rot, 1.1f, 0.9f);
     }
 
-    private void makePart(BodyCreationSettings bcs, float xHalfExtent, float yHalfExtent, float zHalfExtent, float mass,
-                          Vec3 origin, Vec3 attachPoint, Vec3 offset, float topTaper, float bottomTaper) {
+    private void makePart(BodyCreationSettings bcs, float xHalfExtent, float yHalfExtent, float zHalfExtent,
+                          Vec3 origin, Vec3 attachPoint, Vec3 offset, Quat rot, float topTaper, float bottomTaper) {
         float radius = (xHalfExtent + zHalfExtent) / 2.0f;
         float topRadius = radius * topTaper;
         float bottomRadius = radius * bottomTaper;
         float halfHeight = Math.max(0.1f, yHalfExtent - Math.max(topRadius, bottomRadius));
         TaperedCapsuleShapeSettings settings = new TaperedCapsuleShapeSettings(halfHeight, topRadius, bottomRadius);
-        makeBody(bcs, settings.create().get(), mass, origin, attachPoint, offset);
+        makeBody(bcs, settings.create().get(), origin, attachPoint, offset, rot);
     }
 
-    private void makeBody(BodyCreationSettings bcs, ConstShape shape, float mass, Vec3 origin, Vec3 attachPoint, Vec3 offset) {
+    private void makeBody(BodyCreationSettings bcs, ConstShape shape, Vec3 origin, Vec3 attachPoint, Vec3 offset, Quat rot) {
         bcs.setShape(shape);
         bcs.setPosition(
                 origin.getX() + offset.getX() + attachPoint.getX(),
                 origin.getY() + offset.getY() + attachPoint.getY(),
                 origin.getZ() + offset.getZ() + attachPoint.getZ()
         );
+        bcs.setRotation(rot);
 
         BodyInterface bi = physicsSystem.getBodyInterface();
         Body body = bi.createBody(bcs);

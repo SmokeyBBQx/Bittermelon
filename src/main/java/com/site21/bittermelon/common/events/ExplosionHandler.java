@@ -3,20 +3,20 @@ package com.site21.bittermelon.common.events;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.entities.mimicplayer.Mimic;
 import com.site21.bittermelon.common.content.entities.ragdoll.RagdollEntity;
+import com.site21.bittermelon.common.content.entities.ragdoll.RagdollUtil;
 import com.site21.bittermelon.common.content.items.scps.scp2398.SCP2398Item;
 import com.site21.bittermelon.common.systems.blockdamage.BlockDamageUtil;
 import com.site21.bittermelon.common.systems.fluid.substance.SubstanceFluidBlockEntity;
 import com.site21.bittermelon.common.systems.syncsound.SyncSoundEvent;
 import com.site21.bittermelon.common.systems.syncsound.SyncSoundType;
-import com.site21.bittermelon.init.neoforge.BitterEntities;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
@@ -60,14 +60,12 @@ public class ExplosionHandler {
 
         for (Entity entity : affectedEntities) {
             Vec3 force = entity.position().subtract(explosion.center()).normalize().scale(explosion.radius() * 5);
-            if (entity instanceof Mimic) {
-                RagdollEntity ragdoll = BitterEntities.RAGDOLL.get().create(entity.level(), EntitySpawnReason.EVENT);
-                ragdoll.setPos(entity.position().x, entity.position().y + 1, entity.position().z);
-                ragdoll.addMotion(force);
-                entity.level().addFreshEntity(ragdoll);
-                entity.discard();
-            } else if (entity instanceof RagdollEntity ragdoll) {
-                ragdoll.addMotion(force);
+            switch (entity) {
+                case Mimic mimic -> RagdollUtil.ragdollWithDiscard(mimic, force);
+                case RagdollEntity ragdoll -> ragdoll.addMotion(force);
+                case ServerPlayer player -> RagdollUtil.ragdollPlayer(player, force);
+                default -> {
+                }
             }
         }
 

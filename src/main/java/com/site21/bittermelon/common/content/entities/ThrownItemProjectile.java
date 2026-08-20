@@ -2,10 +2,11 @@ package com.site21.bittermelon.common.content.entities;
 
 import com.site21.bittermelon.common.content.entities.mimicplayer.Mimic;
 import com.site21.bittermelon.common.content.entities.ragdoll.RagdollEntity;
+import com.site21.bittermelon.common.content.entities.ragdoll.RagdollUtil;
 import com.site21.bittermelon.common.content.items.scps.scp2398.SCP2398Item;
-import com.site21.bittermelon.init.neoforge.BitterEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -13,7 +14,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -219,13 +219,15 @@ public class ThrownItemProjectile extends ThrowableItemProjectile {
             dmg /= getItem().getMaxStackSize() / 4f;
             entity.hurtServer(level, damageSources().thrown(this, getOwner()), dmg);
 
-            if (velocity.length() > 0.5 && entity instanceof Mimic) {
-                Vec3 dir = entity.position().subtract(position()).normalize();
-                RagdollEntity ragdoll = BitterEntities.RAGDOLL.get().create(entity.level(), EntitySpawnReason.EVENT);
-                ragdoll.setPos(entity.position().x, entity.position().y + 1, entity.position().z);
-                ragdoll.addMotion(dir.scale(10));
-                entity.level().addFreshEntity(ragdoll);
-                entity.discard();
+            if (velocity.length() > 0.5) {
+                Vec3 force = entity.position().subtract(position()).normalize().scale(20);
+                switch (entity) {
+                    case Mimic mimic -> RagdollUtil.ragdollWithDiscard(mimic, force);
+                    case RagdollEntity ragdoll -> ragdoll.addMotion(force);
+                    case ServerPlayer player -> RagdollUtil.ragdollPlayer(player, force);
+                    default -> {
+                    }
+                }
             }
         }
 

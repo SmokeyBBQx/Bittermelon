@@ -52,14 +52,14 @@ public class RagdollEntity extends Entity {
 
         if (ragdoll == null) {
             Vec3 startPos = new Vec3((float) getX(), (float) getY(), (float) getZ());
-            ragdoll = new Ragdoll(PhysicsManager.getPhysicsLevel(level().dimension()).system(), startPos);
+            ragdoll = new Ragdoll(PhysicsManager.getPhysicsLevel(level().dimension()).system(), startPos, getYRot());
         }
 
         ragdoll.addUniformVelocity(pushDirection);
         pushDirection = new Vec3();
 
         RVec3 torsoPos =  ragdoll.getPart(1).getPosition();
-        setPosRaw(torsoPos.xx(), torsoPos.yy(), torsoPos.zz());
+        setPos(torsoPos.xx(), torsoPos.yy(), torsoPos.zz());
 
         List<RagdollTransformation> updated = new ArrayList<>(6);
         for (int i = 0; i < 6; i++) {
