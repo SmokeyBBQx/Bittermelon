@@ -1,5 +1,6 @@
 package com.site21.bittermelon.common.content.entities.ragdoll.client;
 
+import com.github.stephengold.joltjni.Quat;
 import com.github.stephengold.joltjni.RVec3;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -14,12 +15,14 @@ import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.DefaultPlayerSkin;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
-
-import java.util.List;
 
 public class RagdollRenderer extends EntityRenderer<RagdollEntity, RagdollRenderState> {
     private final ModelPart head, torso, leftArm, rightArm, leftLeg, rightLeg;
+    private final Quaternionf quatA = new Quaternionf();
+    private final Quaternionf quatB = new Quaternionf();
 
     public RagdollRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -40,16 +43,24 @@ public class RagdollRenderer extends EntityRenderer<RagdollEntity, RagdollRender
     @Override
     public void extractRenderState(RagdollEntity entity, RagdollRenderState state, float partialTicks) {
         super.extractRenderState(entity, state, partialTicks);
-        List<RagdollTransformation> transformations = entity.getPartTransformations();
+
+        Vec3 entityPos = entity.getPosition(partialTicks);
         for (int i = 0; i < 6; i++) {
-            RVec3 interpolatedPos = transformations.get(i).interpolatedPos(partialTicks, state.partPositions[i]);
-            RVec3 local = new RVec3(
-                    interpolatedPos.xx() - entity.position().x,
-                    interpolatedPos.yy() - entity.position().y,
-                    interpolatedPos.zz() - entity.position().z
+            RVec3 prev = entity.getPrevPos(i);
+            RVec3 cur = entity.getCurPos(i);
+
+            state.partPositions[i].set(
+                    Mth.lerp(partialTicks, prev.xx(), cur.xx()) - entityPos.x,
+                    Mth.lerp(partialTicks, prev.yy(), cur.yy()) - entityPos.y,
+                    Mth.lerp(partialTicks, prev.zz(), cur.zz()) - entityPos.z
             );
-            state.partPositions[i] = local;
-            state.partRotations[i] = transformations.get(i).interpolatedRot(partialTicks, state.partRotations[i]);
+
+            Quat prevRot = entity.getPrevRot(i);
+            Quat curRot = entity.getCurRot(i);
+            quatA.set(prevRot.getX(), prevRot.getY(), prevRot.getZ(), prevRot.getW());
+            quatB.set(curRot.getX(), curRot.getY(), curRot.getZ(), curRot.getW());
+            quatA.slerp(quatB, partialTicks);
+            state.partRotations[i].set(quatA.x, quatA.y, quatA.z, quatA.w);
         }
     }
 
@@ -71,13 +82,9 @@ public class RagdollRenderer extends EntityRenderer<RagdollEntity, RagdollRender
         RVec3 pos = state.partPositions[i];
         poseStack.translate(pos.xx(), pos.yy(), pos.zz());
 
-        Quaternionf rotation = new Quaternionf(
-                state.partRotations[i].getX(),
-                state.partRotations[i].getY(),
-                state.partRotations[i].getZ(),
-                state.partRotations[i].getW()
-        );
-        poseStack.mulPose(rotation);
+        Quat r = state.partRotations[i];
+        quatA.set(r.getX(), r.getY(), r.getZ(), r.getW());
+        poseStack.mulPose(quatA);
         poseStack.mulPose(Axis.XP.rotationDegrees(180.0f));
 
         poseStack.translate(-part.x / 16.0f, -part.y / 16.0f, -part.z / 16.0f);

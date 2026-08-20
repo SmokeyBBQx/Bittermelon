@@ -1,5 +1,6 @@
 package com.site21.bittermelon.common.content.entities.ragdoll;
 
+import com.github.stephengold.joltjni.Quat;
 import com.github.stephengold.joltjni.RVec3;
 import com.github.stephengold.joltjni.Vec3;
 import com.site21.bittermelon.common.content.entities.ragdoll.client.RagdollTransformation;
@@ -19,15 +20,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RagdollEntity extends Entity {
+    private static final int PART_COUNT = 6;
     public Ragdoll ragdoll;
     public static final EntityDataAccessor<List<RagdollTransformation>> PART_TRANSFORMATIONS =
             SynchedEntityData.defineId(RagdollEntity.class, BitterDataSerializers.RAGDOLL_TRANSFORMATIONS.get());
     private Vec3 pushDirection = new Vec3();
+    private final RVec3[] prevPos = new RVec3[PART_COUNT];
+    private final RVec3[] curPos = new RVec3[PART_COUNT];
+    private final Quat[] prevRot = new Quat[PART_COUNT];
+    private final Quat[] curRot = new Quat[PART_COUNT];
 
     public RagdollEntity(EntityType<?> type, Level level) {
         super(type, level);
         if (!level.isClientSide()) {
             PhysicsManager.getPhysicsLevel(level.dimension()).addRagdoll(this);
+        }
+
+        for (int i = 0; i < PART_COUNT; i++) {
+            prevPos[i] = new RVec3();
+            curPos[i] = new RVec3();
+            prevRot[i] = new Quat();
+            curRot[i] = new Quat();
         }
     }
 
@@ -40,12 +53,12 @@ public class RagdollEntity extends Entity {
         super.tick();
 
         if (level().isClientSide()) {
-            List<RagdollTransformation> currentData = getPartTransformations();
-            if (currentData != null) {
-                for (RagdollTransformation transform : currentData) {
-                    transform.prevPos.set(transform.pos);
-                    transform.prevRot.set(transform.rot);
-                }
+            List<RagdollTransformation> t = entityData.get(PART_TRANSFORMATIONS);
+            for (int i = 0; i < PART_COUNT; i++) {
+                prevPos[i].set(curPos[i]);
+                curPos[i].set(t.get(i).pos);
+                prevRot[i].set(curRot[i]);
+                curRot[i].set(t.get(i).rot);
             }
             return;
         }
@@ -65,12 +78,26 @@ public class RagdollEntity extends Entity {
         for (int i = 0; i < 6; i++) {
             RagdollTransformation t = new RagdollTransformation();
             t.update(ragdoll.getPart(i));
-            t.prevPos.set(t.pos);
-            t.prevRot.set(t.rot);
             updated.add(t);
         }
 
         entityData.set(PART_TRANSFORMATIONS, updated);
+    }
+
+    public RVec3 getPrevPos(int i) {
+        return prevPos[i];
+    }
+
+    public RVec3 getCurPos(int i) {
+        return curPos[i];
+    }
+
+    public Quat getPrevRot(int i) {
+        return prevRot[i];
+    }
+
+    public Quat getCurRot(int i) {
+        return curRot[i];
     }
 
     public List<RagdollTransformation> getPartTransformations() {

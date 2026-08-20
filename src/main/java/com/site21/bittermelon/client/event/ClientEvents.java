@@ -6,7 +6,6 @@ import com.site21.bittermelon.client.render.ShaderManager;
 import com.site21.bittermelon.client.render.TypingIndicatorRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.client.PhoneTipRenderer;
 import com.site21.bittermelon.common.content.entities.ragdoll.RagdollEntity;
-import com.site21.bittermelon.common.content.entities.ragdoll.client.RagdollTransformation;
 import com.site21.bittermelon.common.content.items.wire.client.WireFeatureRenderer;
 import com.site21.bittermelon.common.content.items.wire.client.WireOverlayExtractor;
 import com.site21.bittermelon.common.systems.atmosphere.client.AtmosFogRenderer;
@@ -172,12 +171,13 @@ public class ClientEvents {
     public static void onComputeCameraAngles(ViewportEvent.ComputeCameraAngles event) {
         if (!(event.getCamera().entity() instanceof RagdollEntity ragdoll)) return;
 
-        RagdollTransformation headTransform = ragdoll.getPartTransformations().getFirst();
-        Quat rot = headTransform.interpolatedRot((float) event.getPartialTick(), new Quat());
+        Quat prevRot = ragdoll.getPrevRot(0);
+        Quat curRot = ragdoll.getCurRot(0);
+        Quaternionf q0 = new Quaternionf(prevRot.getX(), prevRot.getY(), prevRot.getZ(), prevRot.getW());
+        Quaternionf q1 = new Quaternionf(curRot.getX(), curRot.getY(), curRot.getZ(), curRot.getW());
 
-        Quaternionf q = new Quaternionf(rot.getX(), rot.getY(), rot.getZ(), rot.getW()).normalize();
-
-        Vector3f euler = q.getEulerAnglesYXZ(new Vector3f());
+        Quaternionf rot = q0.slerp(q1, (float) event.getPartialTick()).normalize();
+        Vector3f euler = rot.getEulerAnglesYXZ(new Vector3f());
         event.setPitch((float) Math.toDegrees(euler.x));
         event.setYaw((float) -Math.toDegrees(euler.y));
         event.setRoll((float) Math.toDegrees(euler.z));

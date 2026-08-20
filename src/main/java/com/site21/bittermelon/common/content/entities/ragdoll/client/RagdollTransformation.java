@@ -5,7 +5,6 @@ import com.github.stephengold.joltjni.Quat;
 import com.github.stephengold.joltjni.RVec3;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import org.joml.Quaternionf;
 
 public class RagdollTransformation {
     public static final StreamCodec<ByteBuf, RagdollTransformation> STREAM_CODEC = new StreamCodec<>() {
@@ -14,8 +13,6 @@ public class RagdollTransformation {
             RagdollTransformation transformation = new RagdollTransformation();
             transformation.pos.set(input.readDouble(), input.readDouble(), input.readDouble());
             transformation.rot.set(input.readFloat(), input.readFloat(), input.readFloat(), input.readFloat());
-            transformation.prevPos.set(transformation.pos);
-            transformation.prevRot.set(transformation.rot);
             return transformation;
         }
 
@@ -31,32 +28,11 @@ public class RagdollTransformation {
         }
     };
 
-    public final RVec3 prevPos = new RVec3();
     public final RVec3 pos = new RVec3();
-    public final Quat prevRot = new Quat();
     public final Quat rot = new Quat();
 
     public void update(Body body) {
-        prevPos.set(pos);
-        prevRot.set(rot);
         pos.set(body.getPosition());
         rot.set(body.getRotation());
-    }
-
-    public RVec3 interpolatedPos(float partialTick, RVec3 store) {
-        store.set(
-                prevPos.xx() + (pos.xx() - prevPos.xx()) * partialTick,
-                prevPos.yy() + (pos.yy() - prevPos.yy()) * partialTick,
-                prevPos.zz() + (pos.zz() - prevPos.zz()) * partialTick
-        );
-        return store;
-    }
-
-    public Quat interpolatedRot(float partialTick, Quat store) {
-        Quaternionf prev = new Quaternionf(prevRot.getX(), prevRot.getY(), prevRot.getZ(), prevRot.getW());
-        Quaternionf current = new Quaternionf(rot.getX(), rot.getY(), rot.getZ(), rot.getW());
-        prev.slerp(current, partialTick);
-        store.set(prev.x(), prev.y(), prev.z(), prev.w());
-        return store;
     }
 }
