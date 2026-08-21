@@ -31,7 +31,7 @@ public final class RagdollUtil {
     public static RagdollEntity spawnRagdoll(Level level, Vec3 pos, Vec3 velocity) {
         RagdollEntity ragdoll = BitterEntities.RAGDOLL.get().create(level, EntitySpawnReason.EVENT);
         assert ragdoll != null;
-        ragdoll.setPos(pos);
+        ragdoll.setPos(pos.x, pos.y + 1, pos.z);
         ragdoll.addMotion(velocity);
         level.addFreshEntity(ragdoll);
         return ragdoll;

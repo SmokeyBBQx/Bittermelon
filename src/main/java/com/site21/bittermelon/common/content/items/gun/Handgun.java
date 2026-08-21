@@ -26,7 +26,7 @@ public class Handgun extends Item {
 
         if (hitResult instanceof EntityHitResult entityHitResult && level instanceof ServerLevel serverLevel) {
             DamageSource source = stack.getDamageSource(player, () -> player.damageSources().playerAttack(player));
-            entityHitResult.getEntity().hurtServer(serverLevel, source, 20);
+            entityHitResult.getEntity().hurtServer(serverLevel, source, 1);
         }
 
         level.playSound(null, player.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 1.0f, 2.0f);

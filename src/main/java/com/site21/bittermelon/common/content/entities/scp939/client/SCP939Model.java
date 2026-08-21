@@ -4,12 +4,26 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.util.Mth;
 
 
 public class SCP939Model extends EntityModel<SCP939RenderState> {
+    protected final ModelPart head;
+    protected final ModelPart body;
+    protected final ModelPart rightFrontLeg;
+    protected final ModelPart leftFrontLeg;
+    protected final ModelPart rightHindLeg;
+    protected final ModelPart leftHindLeg;
 
     public SCP939Model(ModelPart root) {
         super(root);
+        this.body = root.getChild("body");
+        ModelPart front = body.getChild("upper_body").getChild("front");
+        this.head = front.getChild("head");
+        this.rightFrontLeg = front.getChild("right_front_leg");
+        this.leftFrontLeg = front.getChild("left_front_leg");
+        this.rightHindLeg = body.getChild("right_hind_leg");
+        this.leftHindLeg = body.getChild("left_hind_leg");
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -102,5 +116,19 @@ public class SCP939Model extends EntityModel<SCP939RenderState> {
         PartDefinition cube_r10 = right_hind_foot.addOrReplaceChild("cube_r10", CubeListBuilder.create().texOffs(58, 86).mirror().addBox(-0.5F, -1.5F, -2.0F, 0.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(1.6159F, 1.5F, -3.277F, 0.0F, -0.3927F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 128, 128);
+    }
+
+    @Override
+    public void setupAnim(SCP939RenderState state) {
+        super.setupAnim(state);
+        this.head.xRot = state.xRot * (float) (Math.PI / 180.0);
+        this.head.yRot = state.yRot * (float) (Math.PI / 180.0);
+        float animationPos = state.walkAnimationPos;
+        float animationSpeed = state.walkAnimationSpeed;
+        float speed = 0.5f;
+        this.rightHindLeg.xRot = Mth.cos(animationPos * 0.6662F) * speed * animationSpeed;
+        this.leftHindLeg.xRot = Mth.cos(animationPos * 0.6662F + (float) Math.PI) * speed * animationSpeed;
+        this.rightFrontLeg.xRot = Mth.cos(animationPos * 0.6662F + (float) Math.PI) * speed * animationSpeed;
+        this.leftFrontLeg.xRot = Mth.cos(animationPos * 0.6662F) * speed * animationSpeed;
     }
 }
