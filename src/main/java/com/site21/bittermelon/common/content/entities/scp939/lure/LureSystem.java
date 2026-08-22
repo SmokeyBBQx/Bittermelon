@@ -54,39 +54,49 @@ public class LureSystem {
         }
 
         Level level = entity.level();
+        assert activeScene != null;
         LurePool pool = activeScene.pool();
         if (level.getGameTime() - lastLure < interval) return;
 
         RandomSource random = entity.getRandom();
         if (random.nextFloat() < 0.1 && pool.sounds().length > 0) {
-            SoundEvent[] sounds = pool.sounds();
-            SoundEvent sound = sounds[random.nextInt(sounds.length)];
-            entity.playSound(sound);
+            playRandomSound(entity, random, pool);
         } else {
-            int i = random.nextInt(activeScene.lines().size());
-            LureDialogue dialogue = activeScene.lines().get(i);
-            String message = dialogue.messages().remove(random.nextInt(dialogue.messages().size()));
-
-            Character character = CharacterUtil.getCharacter(level, dialogue.character());
-            if (character == null) {
-                activeScene = null;
-                return;
-            }
-
-            Component component = Component.literal(character.getName() + " " + message);
-            LocalMessageUtil.sendLocalMessage(entity, 16, component);
-
-            if (dialogue.messages().isEmpty()) {
-                activeScene.lines().remove(i);
-            }
-
-            if (activeScene.lines().isEmpty()) {
-                activeScene = null;
-            }
+            makeRandomLure(entity, random);
         }
 
         lastLure = level.getGameTime();
         interval = pool.interval() + random.nextInt(pool.additionalRandomInterval());
+    }
+
+    private static void playRandomSound(Entity entity, RandomSource random, LurePool pool) {
+        SoundEvent[] sounds = pool.sounds();
+        SoundEvent sound = sounds[random.nextInt(sounds.length)];
+        entity.playSound(sound);
+    }
+
+    private void makeRandomLure(Entity entity, RandomSource random) {
+        assert activeScene != null;
+        int i = random.nextInt(activeScene.lines().size());
+        LureDialogue dialogue = activeScene.lines().get(i);
+        String message = dialogue.messages().remove(random.nextInt(dialogue.messages().size()));
+
+        Character character = CharacterUtil.getCharacter(entity.level(), dialogue.character());
+        if (character == null) {
+            activeScene = null;
+            return;
+        }
+
+        Component component = Component.literal(character.getName() + " " + message);
+        LocalMessageUtil.sendLocalMessage(entity, 16, component);
+
+        if (dialogue.messages().isEmpty()) {
+            activeScene.lines().remove(i);
+        }
+
+        if (activeScene.lines().isEmpty()) {
+            activeScene = null;
+        }
     }
 
     public List<UUID> getCharacters() {

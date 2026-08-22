@@ -18,6 +18,7 @@
     "ContextualInfoExtender",
     "CrosshairMixin",
     "GameRendererMixin",
+    "GuiGraphicsExtractorMixin",
     "GuiMixin",
     "HumanoidModelMixin",
     "LivingEntityRendererMixin",

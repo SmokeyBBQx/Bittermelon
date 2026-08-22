@@ -23,8 +23,11 @@ import com.site21.bittermelon.common.systems.stumble.client.RiseKeyHandler;
 import com.site21.bittermelon.common.systems.stumble.client.RiseProgressBar;
 import com.site21.bittermelon.common.systems.telecomms.intercom.IntercomManager;
 import com.site21.bittermelon.init.neoforge.BitterAttachmentTypes;
+import com.site21.bittermelon.init.neoforge.BitterMobEffects;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.TriState;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -35,6 +38,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
@@ -181,5 +185,24 @@ public class ClientEvents {
         event.setPitch((float) Math.toDegrees(euler.x));
         event.setYaw((float) -Math.toDegrees(euler.y));
         event.setRoll((float) Math.toDegrees(euler.z));
+    }
+
+    @SubscribeEvent
+    public static void onItemTooltip(ItemTooltipEvent event) {
+        Player player = event.getEntity();
+        if (player == null || !player.hasEffect(BitterMobEffects.AMNESIA)) return;
+
+        event.getToolTip().clear();
+        event.getToolTip().add(Component.literal("???").withStyle(ChatFormatting.DARK_GRAY));
+    }
+
+    @SubscribeEvent
+    public static void onRenderGuiLayer(RenderGuiLayerEvent.Pre event) {
+        if (!event.getName().equals(VanillaGuiLayers.SELECTED_ITEM_NAME)) return;
+
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player != null && mc.player.hasEffect(BitterMobEffects.AMNESIA)) {
+            event.setCanceled(true);
+        }
     }
 }

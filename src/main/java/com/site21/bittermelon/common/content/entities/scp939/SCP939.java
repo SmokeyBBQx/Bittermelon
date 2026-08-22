@@ -13,7 +13,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.DynamicGameEventListener;
 import net.minecraft.world.level.gameevent.EntityPositionSource;
@@ -53,6 +56,14 @@ public class SCP939 extends BitterMob<SCP939> {
     @Override
     protected Character initializeCharacter() {
         return new Character(uuid, "SCP-939-" + getRandom().nextInt(1, 24));
+    }
+
+    public static AttributeSupplier.@NotNull Builder createAttributes() {
+        return Monster.createMonsterAttributes()
+                .add(Attributes.MOVEMENT_SPEED, 0.3)
+                .add(Attributes.MAX_HEALTH, 150.0)
+                .add(Attributes.ATTACK_KNOCKBACK, 1.5)
+                .add(Attributes.ATTACK_DAMAGE, 30.0);
     }
 
     @Override

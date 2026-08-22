@@ -15,7 +15,7 @@ import com.site21.bittermelon.common.content.entities.scp548.SCP548;
 import com.site21.bittermelon.common.content.entities.scp650.SCP650;
 import com.site21.bittermelon.common.content.entities.scp718.SCP718;
 import com.site21.bittermelon.common.content.entities.scp815snake.SCP815Snake;
-import com.site21.bittermelon.common.content.entities.scp939.SCP939Old;
+import com.site21.bittermelon.common.content.entities.scp939.SCP939;
 import com.site21.bittermelon.common.content.entities.seamonkey.SeaMonkey;
 import com.site21.bittermelon.common.content.items.scps.scp2398.SCP2398ProjectileItem;
 import com.site21.bittermelon.common.content.items.taser.TaserProjectile;
@@ -45,8 +45,8 @@ public class BitterEntities {
                     .noLootTable()
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_2398_projectile"))));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<SCP939Old>> SCP_939 = ENTITY_TYPES.register("scp_939",
-            () -> EntityType.Builder.of(SCP939Old::new, MobCategory.MONSTER)
+    public static final DeferredHolder<EntityType<?>, EntityType<SCP939>> SCP_939 = ENTITY_TYPES.register("scp_939",
+            () -> EntityType.Builder.of(SCP939::new, MobCategory.MONSTER)
                     .sized(0.9f, 0.9f)
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "scp_939"))));
 
@@ -136,8 +136,8 @@ public class BitterEntities {
     }
 
     private static void registerAttributes(@NotNull EntityAttributeCreationEvent event) {
-        event.put(SCP_939.get(), SCP939Old.createAttributes().build());
-        event.put(SCP_250.get(), SCP939Old.createAttributes().build());
+        event.put(SCP_939.get(), SCP939.createAttributes().build());
+        event.put(SCP_250.get(), SCP939.createAttributes().build());
         event.put(CHICKEN.get(), Chicken.createAttributes().build());
         event.put(SCP_650.get(), SCP650.createAttributes().build());
         event.put(SCP_131.get(), SCP131.createAttributes().build());

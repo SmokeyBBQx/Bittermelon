@@ -3,7 +3,6 @@ package com.site21.bittermelon.common.content.entities.scp939;
 import com.site21.bittermelon.common.systems.ai.base.BitterMob;
 import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
-import com.site21.bittermelon.common.systems.ai.vibration.BitterVibrationSystem;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.combat.AttackTemplate;
@@ -40,14 +39,14 @@ import java.util.*;
 import static com.site21.bittermelon.init.neoforge.BitterSounds.SCREAM;
 
 @SuppressWarnings("unchecked")
-public class SCP939Old extends BitterMob<SCP939Old> implements BitterVibrationSystem {
-    private static final EntityDataAccessor<Integer> CLIENT_ANGER_LEVEL = SynchedEntityData.defineId(SCP939Old.class, EntityDataSerializers.INT);
+public class SCP939a extends BitterMob<SCP939> {
+    private static final EntityDataAccessor<Integer> CLIENT_ANGER_LEVEL = SynchedEntityData.defineId(SCP939.class, EntityDataSerializers.INT);
     private static final List<String> LURE_LINES;
 
     private final List<UUID> victims;
     private final List<String> remainingLureLines;
 
-    public SCP939Old(EntityType<? extends Mob> entityType, Level level) {
+    public SCP939a(EntityType<? extends Mob> entityType, Level level) {
         super((EntityType<? extends Monster>) entityType, level);
         victims = new ArrayList<>();
         remainingLureLines = new ArrayList<>(LURE_LINES);
@@ -166,7 +165,7 @@ public class SCP939Old extends BitterMob<SCP939Old> implements BitterVibrationSy
         return true;
     }
 
-    public static void setDisturbanceLocation(BlockPos pos, SCP939Old entity) {
+    public static void setDisturbanceLocation(BlockPos pos, SCP939 entity) {
         BrainUtil.setForgettableMemory(entity, MemoryModuleType.DISTURBANCE_LOCATION, pos, 600);
         BrainUtil.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(pos, 1.2f, 1));
     }
@@ -241,7 +240,7 @@ public class SCP939Old extends BitterMob<SCP939Old> implements BitterVibrationSy
 //    }
 //
 //    @Override
-//    public List<? extends ExtendedSensor<?>> getSensors(SCP939Old owner) {
+//    public List<? extends ExtendedSensor<?>> getSensors(SCP939 owner) {
 //        return List.of();
 //    }
 //
@@ -259,14 +258,14 @@ public class SCP939Old extends BitterMob<SCP939Old> implements BitterVibrationSy
 //        return builder;
 //    }
 //
-//    public List<BehaviorControl<?>> getInvestigationBehaviours(SCP939Old ignoredOwner) {
+//    public List<BehaviorControl<?>> getInvestigationBehaviours(SCP939 ignoredOwner) {
 //        return List.of(
 //                new MoveToWalkTarget<>(),
 //                new Idle<>().runFor(_ -> 60)
 //        );
 //    }
 //
-//    public List<Object> getHuntBehaviours(SCP939Old ignoredOwner) {
+//    public List<Object> getHuntBehaviours(SCP939 ignoredOwner) {
 //        return List.of(
 //                new SeekNearestPlayer<>()
 //                        .cooldownFor(_ -> 120),
@@ -309,7 +308,7 @@ public class SCP939Old extends BitterMob<SCP939Old> implements BitterVibrationSy
     }
 
     @Override
-    public List<? extends ExtendedSensor<?>> getSensors(SCP939Old owner) {
+    public List<? extends ExtendedSensor<?>> getSensors(SCP939 owner) {
         return List.of();
     }
 }
