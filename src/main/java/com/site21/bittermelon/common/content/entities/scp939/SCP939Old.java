@@ -3,9 +3,7 @@ package com.site21.bittermelon.common.content.entities.scp939;
 import com.site21.bittermelon.common.systems.ai.base.BitterMob;
 import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
-import com.site21.bittermelon.common.systems.ai.vibration.BitterAngerManagement;
 import com.site21.bittermelon.common.systems.ai.vibration.BitterVibrationSystem;
-import com.site21.bittermelon.common.systems.ai.vibration.BitterVibrationUser;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.common.systems.combat.AttackTemplate;
@@ -16,9 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.Unit;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -27,11 +23,9 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.WalkTarget;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.warden.AngerLevel;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.gameevent.DynamicGameEventListener;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.tslat.smartbrainlib.api.core.navigation.SmoothGroundNavigation;
@@ -42,7 +36,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.function.BiConsumer;
 
 import static com.site21.bittermelon.init.neoforge.BitterSounds.SCREAM;
 
@@ -53,21 +46,11 @@ public class SCP939Old extends BitterMob<SCP939Old> implements BitterVibrationSy
 
     private final List<UUID> victims;
     private final List<String> remainingLureLines;
-    private final DynamicGameEventListener<Listener> dynamicGameEventListener;
-    private final User vibrationUser;
-
-    private Data vibrationData;
-    private BitterAngerManagement angerManagement;
 
     public SCP939Old(EntityType<? extends Mob> entityType, Level level) {
         super((EntityType<? extends Monster>) entityType, level);
         victims = new ArrayList<>();
         remainingLureLines = new ArrayList<>(LURE_LINES);
-
-        vibrationUser = new BitterVibrationUser(this);
-        vibrationData = new Data();
-        dynamicGameEventListener = new DynamicGameEventListener<>(new Listener(this));
-        angerManagement = new BitterAngerManagement(this::canTargetEntity, Collections.emptyList());
     }
 
     @Override
@@ -96,13 +79,6 @@ public class SCP939Old extends BitterMob<SCP939Old> implements BitterVibrationSy
     }
 
     @Override
-    public void updateDynamicGameEventListener(@NotNull BiConsumer<DynamicGameEventListener<?>, ServerLevel> listenerConsumer) {
-        if (level() instanceof ServerLevel serverlevel) {
-            listenerConsumer.accept(this.dynamicGameEventListener, serverlevel);
-        }
-    }
-
-    @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(CLIENT_ANGER_LEVEL, 0);
@@ -111,9 +87,6 @@ public class SCP939Old extends BitterMob<SCP939Old> implements BitterVibrationSy
     @Override
     protected void addAdditionalSaveData(@NotNull ValueOutput output) {
         super.addAdditionalSaveData(output);
-
-        output.store("listener", Data.CODEC, vibrationData);
-        output.store("anger", BitterAngerManagement.codec(this::canTargetEntity), angerManagement);
 
         ValueOutput.TypedOutputList<UUID> victimsOutput = output.list("victims", UUIDUtil.CODEC);
         for (UUID uuid : victims) {
@@ -125,10 +98,6 @@ public class SCP939Old extends BitterMob<SCP939Old> implements BitterVibrationSy
     @Override
     protected void readAdditionalSaveData(@NotNull ValueInput input) {
         super.readAdditionalSaveData(input);
-
-        input.read("listener", Data.CODEC).ifPresent(data -> vibrationData = data);
-        input.read("anger", BitterAngerManagement.codec(this::canTargetEntity))
-                .ifPresent(angerM -> angerManagement = angerM);
 
         victims.clear();
         input.list("victims", UUIDUtil.CODEC).ifPresent(
@@ -154,29 +123,6 @@ public class SCP939Old extends BitterMob<SCP939Old> implements BitterVibrationSy
         return validVictims.isEmpty() ? null : validVictims.get(getRandom().nextInt(validVictims.size()));
     }
 
-    private int getActiveAnger() {
-        return this.angerManagement.getActiveAnger(this.getTarget());
-    }
-
-    public void increaseAngerAt(@Nullable Entity entity) {
-        this.increaseAngerAt(entity, 35);
-    }
-
-    public void increaseAngerAt(@Nullable Entity entity, int offset) {
-        if (!this.isNoAi() && this.canTargetEntity(entity)) {
-            if (!(entity instanceof LivingEntity livingEntity)) return;
-
-            int i = this.angerManagement.increaseAnger(entity, offset);
-            if (AngerLevel.byAnger(i).isAngry()) {
-                setAttackTarget(livingEntity);
-            }
-        }
-    }
-
-    public AngerLevel getAngerLevel() {
-        return AngerLevel.byAnger(this.getActiveAnger());
-    }
-
     @Nullable
     @Override
     public LivingEntity getTarget() {
@@ -197,83 +143,17 @@ public class SCP939Old extends BitterMob<SCP939Old> implements BitterVibrationSy
                 && this.level().getWorldBorder().isWithinBounds(livingentity.getBoundingBox());
     }
 
-    @Override
-    public boolean hurtServer(@NotNull ServerLevel level, @NotNull DamageSource source, float amount) {
-        boolean flag = super.hurtServer(level, source, amount);
-        if (!isNoAi()) {
-            Entity entity = source.getEntity();
-            increaseAngerAt(entity, AngerLevel.ANGRY.getMinimumAnger() + 20);
-
-            if (brain.getMemory(MemoryModuleType.ATTACK_TARGET).isEmpty()
-                    && entity instanceof LivingEntity livingentity
-                    && (source.isDirect() || closerThan(livingentity, 5.0))) {
-                setAttackTarget(livingentity);
-            }
-        }
-
-        return flag;
-    }
-
     protected SoundEvent getHurtSound(@NotNull DamageSource damageSource) {
         return SCREAM.value();
-    }
-
-    @Nullable
-    protected SoundEvent getAmbientSound() {
-        return this.getAngerLevel().getAmbientSound();
     }
 
     protected void playStepSound(@NotNull BlockPos pos, @NotNull BlockState state) {
         super.playStepSound(pos, state);
     }
 
-    @Override
-    protected void doPush(@NotNull Entity entity) {
-        if (!this.isNoAi() && !this.getBrain().hasMemoryValue(MemoryModuleType.TOUCH_COOLDOWN)) {
-            if (entity.getType() != this.getType()) {
-                this.getBrain().setMemoryWithExpiry(MemoryModuleType.TOUCH_COOLDOWN, Unit.INSTANCE, 20L);
-                this.increaseAngerAt(entity);
-                setDisturbanceLocation(entity.blockPosition(), this);
-            }
-        }
-
-        super.doPush(entity);
-    }
-
     public void setAttackTarget(LivingEntity attackTarget) {
         this.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, attackTarget);
         this.getBrain().eraseMemory(MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE);
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-        if (this.level() instanceof ServerLevel serverlevel) {
-            Ticker.tick(serverlevel, this.vibrationData, this.vibrationUser);
-        }
-
-        setNeed(Need.ANGER, getActiveAnger());
-    }
-
-    @Override
-    protected void customServerAiStep(@NotNull ServerLevel level) {
-        super.customServerAiStep(level);
-
-        if (this.tickCount % 20 == 0) {
-            this.angerManagement.tick(level, this::canTargetEntity);
-            this.syncClientAngerLevel();
-        }
-
-        angerManagement.getActiveEntity().ifPresent(activeEntity -> {
-            if (angerManagement.getActiveAnger(activeEntity) > 90) {
-                setAttackTarget(activeEntity);
-            }
-        });
-    }
-
-    private void syncClientAngerLevel() {
-        entityData.set(CLIENT_ANGER_LEVEL, getActiveAnger());
-        setNeed(Need.ANGER, 100 - getActiveAnger());
     }
 
     @Override
@@ -284,16 +164,6 @@ public class SCP939Old extends BitterMob<SCP939Old> implements BitterVibrationSy
     @Override
     public boolean dampensVibrations() {
         return true;
-    }
-
-    @Override
-    public @NotNull Data getVibrationData() {
-        return this.vibrationData;
-    }
-
-    @Override
-    public @NotNull User getVibrationUser() {
-        return this.vibrationUser;
     }
 
     public static void setDisturbanceLocation(BlockPos pos, SCP939Old entity) {
