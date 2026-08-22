@@ -1,6 +1,7 @@
 package com.site21.bittermelon.common.content.entities.scp939.lure;
 
 import java.util.List;
+import java.util.UUID;
 
-public record LureScene(LureType type, List<LureDialogue> lines, LurePool pool) {
+public record LureDialogue(UUID character, List<String> messages) {
 }

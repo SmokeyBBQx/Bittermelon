@@ -190,7 +190,7 @@ public class SCP939Old extends BitterMob<SCP939Old> implements BitterVibrationSy
 
         // TODO: Sounds
         // TODO: Personality sequences and conversations
-        // TODO: Store messages?
+        // TODO: Store lines?
 
         String lureLine = remainingLureLines.get(getRandom().nextInt(remainingLureLines.size()));
         remainingLureLines.remove(lureLine);

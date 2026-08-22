@@ -1,5 +1,6 @@
 package com.site21.bittermelon.common.content.entities.scp939;
 
+import com.site21.bittermelon.common.content.entities.scp939.behavior.AttemptLure;
 import com.site21.bittermelon.common.content.entities.scp939.lure.LureSystem;
 import com.site21.bittermelon.common.systems.ai.base.BitterMob;
 import com.site21.bittermelon.common.systems.ai.base.Need;
@@ -92,7 +93,8 @@ public class SCP939 extends BitterMob<SCP939> {
 
     public List<? extends BehaviorControl<?>> getHuntBehaviours(SCP939 ignoredOwner) {
         return List.of(
-                new SearchArea<>()
+                new SearchArea<>(),
+                new AttemptLure()
         );
     }
 
@@ -116,8 +118,11 @@ public class SCP939 extends BitterMob<SCP939> {
     protected void customServerAiStep(ServerLevel level) {
         if (tickCount % 20 == 0) {
             angerManagement.tick(level);
-            lureSystem.attemptLure(this);
         }
+    }
+
+    public LureSystem getLureSystem() {
+        return lureSystem;
     }
 
     @Override

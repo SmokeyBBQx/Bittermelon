@@ -13,10 +13,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class LureSystem {
     public static final Codec<LureSystem> CODEC = RecordCodecBuilder.create(
@@ -43,15 +40,19 @@ public class LureSystem {
         RandomSource random = entity.getRandom();
         List<LurePool> poolList = pools.get(type);
         LurePool pool = poolList.get(random.nextInt(poolList.size()));
-        UUID[] characterIds = new UUID[pool.dialogue().length];
+        List<LureDialogue> lines = new ArrayList<>();
         for (int i = 0; i < pool.dialogue().length; i++) {
-            characterIds[i] = characters.get(random.nextInt(characters.size()));
+            UUID uuid = characters.get(random.nextInt(characters.size()));
+            lines.add(new LureDialogue(uuid, new ArrayList<>(Arrays.asList(pool.dialogue()[i]))));
         }
-        return new LureScene(characterIds, pool);
+        return new LureScene(type, lines, pool);
     }
 
-    public void attemptLure(Entity entity) {
-        if (activeScene == null) return;
+    public void attemptLure(Entity entity, LureType type) {
+        if (activeScene == null || activeScene.type() != type) {
+            activeScene = createScene(entity, LureType.GENERIC);
+        }
+
         Level level = entity.level();
         LurePool pool = activeScene.pool();
         if (level.getGameTime() - lastLure < interval) return;
@@ -62,16 +63,26 @@ public class LureSystem {
             SoundEvent sound = sounds[random.nextInt(sounds.length)];
             entity.playSound(sound);
         } else {
-            int i = random.nextInt(activeScene.characters().length);
-            Character character = CharacterUtil.getCharacter(level, activeScene.characters()[i]);
+            int i = random.nextInt(activeScene.lines().size());
+            LureDialogue dialogue = activeScene.lines().get(i);
+            String message = dialogue.messages().remove(random.nextInt(dialogue.messages().size()));
+
+            Character character = CharacterUtil.getCharacter(level, dialogue.character());
             if (character == null) {
                 activeScene = null;
                 return;
             }
 
-            String[] dialogue = pool.dialogue()[i];
-            Component message = Component.literal(character.getName() + " " + dialogue[random.nextInt(dialogue.length)]);
-            LocalMessageUtil.sendLocalMessage(entity, 16, message);
+            Component component = Component.literal(character.getName() + " " + message);
+            LocalMessageUtil.sendLocalMessage(entity, 16, component);
+
+            if (dialogue.messages().isEmpty()) {
+                activeScene.lines().remove(i);
+            }
+
+            if (activeScene.lines().isEmpty()) {
+                activeScene = null;
+            }
         }
 
         lastLure = level.getGameTime();
