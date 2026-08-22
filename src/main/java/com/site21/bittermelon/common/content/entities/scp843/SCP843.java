@@ -3,8 +3,6 @@ package com.site21.bittermelon.common.content.entities.scp843;
 import com.site21.bittermelon.common.systems.ai.base.BitterMob;
 import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
-import com.site21.bittermelon.common.systems.ai.behavior.social.Relationship;
-import com.site21.bittermelon.common.systems.ai.behavior.social.Socializable;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.init.neoforge.BitterActivity;
 import net.minecraft.world.entity.EntityType;
@@ -18,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SCP843 extends BitterMob<SCP843> implements Socializable, SmartBrainOwner<SCP843> {
+public class SCP843 extends BitterMob<SCP843> implements SmartBrainOwner<SCP843> {
     protected SCP843(EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level);
     }
@@ -43,11 +41,6 @@ public class SCP843 extends BitterMob<SCP843> implements Socializable, SmartBrai
         statConfigs.put(Need.HYGIENE, new NeedInstance(0.001f, value -> Math.pow(value, 1.3), BitterActivity.GROOM.get()));
         statConfigs.put(Need.RECREATION, new NeedInstance(0.001f, value -> Math.pow(value, 1.3), BitterActivity.PLAY.get()));
         return statConfigs;
-    }
-
-    @Override
-    public Map<Character, Relationship> getRelationships() {
-        return null;
     }
 
     @Override

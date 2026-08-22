@@ -21,11 +21,11 @@ public class Attack<E extends Mob> extends AnimatableMeleeAttack<E> {
 
     @Override
     protected void doDelayedAction(E entity) {
-        BrainUtil.setForgettableMemory(entity, MemoryModuleType.ATTACK_COOLING_DOWN, true, this.attackIntervalSupplier.applyAsInt(entity));
+        BrainUtil.setForgettableMemory(entity, MemoryModuleType.ATTACK_COOLING_DOWN, true, attackInterval.applyAsInt(entity, target));
 
         if (this.target == null) return;
 
-        if (!entity.getSensing().hasLineOfSight(this.target) || !entity.isWithinMeleeAttackRange(this.target)) return;
+        if (!entity.getSensing().hasLineOfSight(target) || !entity.isWithinMeleeAttackRange(target)) return;
 
         CombatHandler.handleAttack(entity, target, selectAttack(entity));
     }

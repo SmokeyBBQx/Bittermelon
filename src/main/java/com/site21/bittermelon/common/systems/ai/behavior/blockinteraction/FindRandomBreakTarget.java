@@ -1,20 +1,21 @@
 package com.site21.bittermelon.common.systems.ai.behavior.blockinteraction;
 
-import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.behavior.declarative.MemoryCondition;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.level.block.state.BlockState;
-import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
+import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+import net.tslat.smartbrainlib.api.core.behaviour.base.ExtendedBehaviour;
 import net.tslat.smartbrainlib.library.object.MemoryTest;
 import net.tslat.smartbrainlib.registry.SBLMemoryTypes;
 import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 public class FindRandomBreakTarget<E extends PathfinderMob> extends ExtendedBehaviour<E> {
@@ -37,19 +38,19 @@ public class FindRandomBreakTarget<E extends PathfinderMob> extends ExtendedBeha
     }
 
     @Override
-    protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
+    public Set<MemoryCondition<?, ?>> getMemoryRequirements() {
         return MEMORY_REQUIREMENTS;
     }
 
     @Override
     protected void start(E entity) {
-        List<Pair<BlockPos, BlockState>> blocks = BrainUtil.getMemory(entity, SBLMemoryTypes.NEARBY_BLOCKS.get()).stream()
-                .filter(pair -> isValidBlock(entity, pair.getFirst(), pair.getSecond()))
+        List<BlockInWorld> blocks = BrainUtil.getMemory(entity, SBLMemoryTypes.NEARBY_BLOCKS.get()).stream()
+                .filter(block -> isValidBlock(entity, block.getPos(), block.getState()))
                 .toList();
 
         if (blocks.isEmpty()) return;
         int target = entity.getRandom().nextIntBetweenInclusive(0, blocks.size() - 1);
-        BlockPos targetPos = blocks.get(target).getFirst();
+        BlockPos targetPos = blocks.get(target).getPos();
 //        BrainUtil.setMemory(entity, BitterMemoryTypes.BREAK_TARGET.get(), targetPos);
 //        BrainUtil.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(targetPos, 1, 2));
     }

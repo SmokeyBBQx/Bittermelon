@@ -32,7 +32,7 @@ public class Pull<E extends Mob> extends AnimatableMeleeAttack<E> {
 
     @Override
     protected void doDelayedAction(@NotNull E entity) {
-        BrainUtil.setForgettableMemory(entity, MemoryModuleType.ATTACK_COOLING_DOWN, true, this.attackIntervalSupplier.applyAsInt(entity));
+        BrainUtil.setForgettableMemory(entity, MemoryModuleType.ATTACK_COOLING_DOWN, true, attackInterval.applyAsInt(entity, target));
 
         if (this.target == null)
             return;

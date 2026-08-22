@@ -3,17 +3,12 @@ package com.site21.bittermelon.common.content.entities.chicken;
 import com.site21.bittermelon.common.systems.ai.base.BitterMob;
 import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
-import com.site21.bittermelon.common.systems.ai.behavior.basicneeds.HasBasicNeeds;
-import com.site21.bittermelon.common.systems.ai.behavior.misc.FeelsPain;
-import com.site21.bittermelon.common.systems.ai.behavior.social.Relationship;
-import com.site21.bittermelon.common.systems.ai.behavior.social.Socializable;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.combat.AttackTemplate;
 import com.site21.bittermelon.init.neoforge.BitterActivity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -24,7 +19,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.chicken.ChickenSoundVariants;
 import net.minecraft.world.entity.schedule.Activity;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -41,7 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPain, HasBasicNeeds {
+public class Chicken extends BitterMob<Chicken> {
     public float flap;
     public float flapSpeed;
     public float oFlapSpeed;
@@ -49,11 +43,8 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
     public float flapping = 1.0F;
     private float nextFlap = 1.0F;
 
-    private final Map<Character, Relationship> relationships;
-
     public Chicken(EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level);
-        relationships = new HashMap<>();
     }
 
     @Override
@@ -134,7 +125,7 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
 //
 //    public BrainActivityGroup<? extends Chicken> getFightTasks() {
 //        return BrainActivityGroup.fightTasks(
-//                new InvalidateAttackTarget<>(),
+//                new BitterInvalidateAttackTarget<>(),
 //                new SetWalkTargetToAttackTarget<>().stopIf(LivingEntity::isDeadOrDying),
 //                new Attack<>(10, getAttackTemplates()).cooldownFor(entity -> 40),
 //                new LeapAtTarget<>(10)
@@ -293,39 +284,6 @@ public class Chicken extends BitterMob<Chicken> implements Socializable, FeelsPa
     @Override
     protected @NotNull PathNavigation createNavigation(@NotNull Level level) {
         return new SmoothGroundNavigation(this, level);
-    }
-
-    @Override
-    public Map<Character, Relationship> getRelationships() {
-        return relationships;
-    }
-
-    @Override
-    public boolean wantsToEat(@NotNull ItemStack stack) {
-        return stack.is(ItemTags.CHICKEN_FOOD);
-    }
-
-    @Override
-    public String getPainMessage(float pain) {
-        List<String> painMessages = List.of(
-                "squawks in distress",
-                "lets out a pained cluck",
-                "flaps frantically in pain",
-                "screeches in agony",
-                "clucks desperately",
-                "lets out a piercing squawk",
-                "flutters in distress",
-                "cackles in pain",
-                "lets out an alarmed bawk",
-                "thrashes about with panicked clucks"
-        );
-
-        return painMessages.get(this.random.nextInt(painMessages.size()));
-    }
-
-    @Override
-    public SoundEvent getPainSound(float pain) {
-        return SoundEvents.CHICKEN_SOUNDS.get(ChickenSoundVariants.SoundSet.CLASSIC).adultSounds().hurtSound().value();
     }
 
     public @NotNull List<AttackTemplate> getAttackTemplates() {

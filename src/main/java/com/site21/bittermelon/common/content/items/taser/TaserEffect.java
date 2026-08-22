@@ -2,7 +2,6 @@ package com.site21.bittermelon.common.content.items.taser;
 
 import com.site21.bittermelon.common.content.mobeffects.electrocuted.ElectrocutedEffect;
 import com.site21.bittermelon.common.content.mobeffects.electrocuted.networking.CutOffChat;
-import com.site21.bittermelon.common.systems.ai.behavior.misc.FeelsPain;
 import com.site21.bittermelon.common.systems.stumble.StumbleHandler;
 import com.site21.bittermelon.init.neoforge.BitterSounds;
 import net.minecraft.server.level.ServerLevel;
@@ -31,10 +30,6 @@ public class TaserEffect extends ElectrocutedEffect {
     @Override
     public void onEffectStarted(@NotNull LivingEntity entity, int amplifier) {
         StumbleHandler.stumble(entity, entity.getEffect(TASERED).getDuration(), entity.getLookAngle());
-
-        if (entity instanceof FeelsPain feelsPain) {
-            entity.level().playSound(null, entity.getOnPos(), feelsPain.getPainSound(amplifier), SoundSource.AMBIENT);
-        }
     }
 
     public void onEffectAdded(@NotNull LivingEntity entity, int amplifier) {

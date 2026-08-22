@@ -1,22 +1,21 @@
 package com.site21.bittermelon.common.content.entities.scp1507.behavior;
 
-import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.common.content.entities.scp1507.SCP1507;
 import com.site21.bittermelon.init.neoforge.BitterBlocks;
 import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.behavior.BlockPosTracker;
+import net.minecraft.world.entity.ai.behavior.declarative.MemoryCondition;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.memory.WalkTarget;
-import net.minecraft.world.level.block.state.BlockState;
-import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
+import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+import net.tslat.smartbrainlib.api.core.behaviour.base.ExtendedBehaviour;
 import net.tslat.smartbrainlib.library.object.MemoryTest;
 import net.tslat.smartbrainlib.registry.SBLMemoryTypes;
 import net.tslat.smartbrainlib.util.BrainUtil;
 import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 
-import java.util.List;
+import java.util.Set;
 
 public class FindFlamingoBlocks extends ExtendedBehaviour<SCP1507> {
     private static final MemoryTest MEMORY_REQUIREMENTS = MemoryTest.builder()
@@ -26,8 +25,9 @@ public class FindFlamingoBlocks extends ExtendedBehaviour<SCP1507> {
             .usesMemory(MemoryModuleType.LOOK_TARGET)
             .noMemory(BitterMemoryTypes.AWAKEN_TARGET.get());
 
+
     @Override
-    protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
+    public Set<MemoryCondition<?, ?>> getMemoryRequirements() {
         return MEMORY_REQUIREMENTS;
     }
 
@@ -36,9 +36,9 @@ public class FindFlamingoBlocks extends ExtendedBehaviour<SCP1507> {
         var nearbyBlocks = entity.getBrain().getMemory(SBLMemoryTypes.NEARBY_BLOCKS.get()).orElse(null);
         if (nearbyBlocks == null) return;
 
-        for (Pair<BlockPos, BlockState> block : nearbyBlocks) {
-            if (block.getSecond().is(BitterBlocks.PLASTIC_FLAMINGO)) {
-                BlockPos pos = block.getFirst();
+        for (BlockInWorld block : nearbyBlocks) {
+            if (block.getState().is(BitterBlocks.PLASTIC_FLAMINGO)) {
+                BlockPos pos = block.getPos();
                 setTarget(entity, pos);
                 alertAllies(pos, entity);
                 return;

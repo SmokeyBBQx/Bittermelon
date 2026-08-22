@@ -126,7 +126,6 @@ configurations {
 dependencies {
     implementation "net.tslat:smartbrainlib-neoforge-${minecraft_version}:${sbl_version}"
     implementation "com.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
-    implementation("com.github.stephengold:Libbulletjme-Windows64:23.1.0")
 
     implementation("com.github.stephengold:jolt-jni-Windows64:6.0.0")
     runtimeOnly("com.github.stephengold:jolt-jni-Windows64:6.0.0:DebugSp")

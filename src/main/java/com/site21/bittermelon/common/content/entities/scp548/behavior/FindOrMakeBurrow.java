@@ -1,6 +1,5 @@
 package com.site21.bittermelon.common.content.entities.scp548.behavior;
 
-import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.common.content.blocks.burrow.BurrowBlockEntity;
 import com.site21.bittermelon.init.neoforge.BitterBlockTags;
 import net.minecraft.core.BlockPos;
@@ -10,36 +9,34 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.behavior.BlockPosTracker;
+import net.minecraft.world.entity.ai.behavior.declarative.MemoryCondition;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.memory.WalkTarget;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.phys.AABB;
-import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.base.ExtendedBehaviour;
 import net.tslat.smartbrainlib.library.object.MemoryTest;
 import net.tslat.smartbrainlib.registry.SBLMemoryTypes;
 import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Set;
 
 import static com.site21.bittermelon.init.neoforge.BitterBlocks.BURROW;
 
 public class FindOrMakeBurrow extends ExtendedBehaviour<Mob> {
     private static final int DIGGING_DURATION = 60;
-
     private static final MemoryTest MEMORY_REQUIREMENTS = MemoryTest.builder()
             .hasMemories(SBLMemoryTypes.NEARBY_BLOCKS.get());
 
     private BlockPos burrowPos = null;
     private int diggingTicks = 0;
 
-    @Override
-    protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
-        return MEMORY_REQUIREMENTS;
-    }
+
 
     @Override
     protected boolean shouldKeepRunning(Mob entity) {
@@ -47,15 +44,20 @@ public class FindOrMakeBurrow extends ExtendedBehaviour<Mob> {
     }
 
     @Override
+    public Set<MemoryCondition<?, ?>> getMemoryRequirements() {
+        return MEMORY_REQUIREMENTS;
+    }
+
+    @Override
     protected void start(@NotNull Mob entity) {
-        List<Pair<BlockPos, BlockState>> nearbyBlocks = BrainUtil.getMemory(entity, SBLMemoryTypes.NEARBY_BLOCKS.get());
+        List<BlockInWorld> nearbyBlocks = BrainUtil.getMemory(entity, SBLMemoryTypes.NEARBY_BLOCKS.get());
         if (nearbyBlocks == null) return;
         Level level = entity.level();
 
         // First, look for existing burrow
-        for (Pair<BlockPos, BlockState> blockEntry : nearbyBlocks) {
-            BlockPos pos = blockEntry.getFirst();
-            BlockState state = blockEntry.getSecond();
+        for (BlockInWorld block : nearbyBlocks) {
+            BlockPos pos = block.getPos();
+            BlockState state = block.getState();
             if (state.is(BURROW) && canEnterBurrow(level, entity, pos, state)) {
                 burrowPos = pos;
                 setWalkTarget(entity, pos);
@@ -64,9 +66,9 @@ public class FindOrMakeBurrow extends ExtendedBehaviour<Mob> {
         }
 
         // Otherwise, look for burrowable block
-        for (Pair<BlockPos, BlockState> blockEntry : nearbyBlocks) {
-            BlockPos pos = blockEntry.getFirst();
-            BlockState state = blockEntry.getSecond();
+        for (BlockInWorld block : nearbyBlocks) {
+            BlockPos pos = block.getPos();
+            BlockState state = block.getState();
             if ((state.is(BitterBlockTags.BURROWABLE) || state.is(Blocks.DIRT)) && level.getBlockState(pos.above()).isAir()) {
                 burrowPos = pos.above();
                 setWalkTarget(entity, pos);

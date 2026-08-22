@@ -1,12 +1,6 @@
 package com.site21.bittermelon.common.content.mobeffects;
 
-import com.site21.bittermelon.common.systems.ai.behavior.misc.FeelsPain;
-import com.site21.bittermelon.common.systems.character.Character;
-import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.util.LocalMessageUtil;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -41,17 +35,6 @@ public class PainEffect extends MobEffect {
                     amplifier, false, false));
             entity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, duration,
                     amplifier, false, false));
-        }
-
-        Character character = CharacterManager.get(entity.level()).getActiveCharacter(entity);
-
-        if (character != null) {
-            Component message = Component.literal(character.getName() + " " + ((FeelsPain) entity)
-                    .getPainMessage(amplifier)).withColor(character.getEmoteColor());
-            LocalMessageUtil.sendLocalMessage(entity, 10, message);
-
-            entity.level().playSound(null, entity.getOnPos(), ((FeelsPain) entity)
-                    .getPainSound(amplifier), SoundSource.AMBIENT);
         }
 
         return true;

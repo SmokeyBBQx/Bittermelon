@@ -1,24 +1,23 @@
 package com.site21.bittermelon.common.systems.ai.behavior.blockinteraction;
 
-import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.common.systems.blockdamage.BlockDamageUtil;
 import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.behavior.declarative.MemoryCondition;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.phys.Vec3;
-import net.tslat.smartbrainlib.api.core.behaviour.DelayedBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.base.DelayedBehaviour;
 import net.tslat.smartbrainlib.library.object.MemoryTest;
 import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.ToIntFunction;
 
@@ -27,10 +26,10 @@ public class LeapAndHurtBlock<E extends Mob> extends DelayedBehaviour<E> {
             .hasMemory(BitterMemoryTypes.BREAK_TARGET.get())
             .noMemory(MemoryModuleType.ATTACK_COOLING_DOWN);
 
-    protected BiFunction<E, BlockPos, Float> verticalJumpStrength = (entity, target) -> 0.3f;
-    protected BiFunction<E, BlockPos, Float> jumpStrength = (entity, target) -> 0.4f;
-    protected BiFunction<E, BlockPos, Float> moveSpeedContribution = (entity, target) -> 0.2f;
-    protected ToIntFunction<E> breakInterval = entity -> 120;
+    protected BiFunction<E, BlockPos, Float> verticalJumpStrength = (_, _) -> 0.3f;
+    protected BiFunction<E, BlockPos, Float> jumpStrength = (_, _) -> 0.4f;
+    protected BiFunction<E, BlockPos, Float> moveSpeedContribution = (_, _) -> 0.2f;
+    protected ToIntFunction<E> breakInterval = _ -> 120;
     private BlockPos breakTarget = null;
 
     public LeapAndHurtBlock(int delayTicks) {
@@ -38,7 +37,7 @@ public class LeapAndHurtBlock<E extends Mob> extends DelayedBehaviour<E> {
     }
 
     @Override
-    protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
+    public Set<MemoryCondition<?, ?>> getMemoryRequirements() {
         return MEMORY_REQUIREMENTS;
     }
 

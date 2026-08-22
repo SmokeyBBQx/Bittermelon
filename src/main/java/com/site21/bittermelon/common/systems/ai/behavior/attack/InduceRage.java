@@ -1,18 +1,17 @@
 package com.site21.bittermelon.common.systems.ai.behavior.attack;
 
-import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.common.systems.rage.RageUtil;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.behavior.declarative.MemoryCondition;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.player.Player;
-import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.base.ExtendedBehaviour;
 import net.tslat.smartbrainlib.library.object.MemoryTest;
 import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.Set;
 import java.util.function.ToIntFunction;
 
 public class InduceRage<E extends LivingEntity> extends ExtendedBehaviour<E> {
@@ -25,7 +24,7 @@ public class InduceRage<E extends LivingEntity> extends ExtendedBehaviour<E> {
     protected LivingEntity target = null;
 
     @Override
-    protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
+    public Set<MemoryCondition<?, ?>> getMemoryRequirements() {
         return MEMORY_REQUIREMENTS;
     }
 

@@ -1,8 +1,6 @@
 package com.site21.bittermelon.common.content.entities.scp650.behavior;
 
-import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.common.content.entities.scp650.SCP650;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.Holder;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -10,14 +8,15 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.memory.MemoryStatus;
+import net.minecraft.world.entity.ai.behavior.declarative.MemoryCondition;
 import net.minecraft.world.entity.player.Player;
-import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.base.ExtendedBehaviour;
+import net.tslat.smartbrainlib.library.object.MemoryTest;
 import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Set;
 
 import static com.site21.bittermelon.init.neoforge.BitterMemoryTypes.OBSERVERS;
 import static com.site21.bittermelon.init.neoforge.BitterMemoryTypes.SCARE_TARGET;
@@ -25,14 +24,12 @@ import static com.site21.bittermelon.init.neoforge.BitterSounds.*;
 
 public class InvalidateFoundTarget<E extends SCP650> extends ExtendedBehaviour<E> {
     private static final List<Holder<SoundEvent>> SCARE_SOUNDS = List.of(SCARE_1, SCARE_2, SCARE_3, SCARE_4);
-
-    private static final List<Pair<MemoryModuleType<?>, MemoryStatus>> MEMORY_REQUIREMENTS = ObjectArrayList.of(
-            Pair.of(SCARE_TARGET.get(), MemoryStatus.VALUE_PRESENT),
-            Pair.of(OBSERVERS.get(), MemoryStatus.VALUE_PRESENT)
-    );
+    private static final MemoryTest MEMORY_REQUIREMENTS = MemoryTest.builder()
+            .hasMemory(SCARE_TARGET.get())
+            .hasMemory(OBSERVERS.get());
 
     @Override
-    protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
+    public Set<MemoryCondition<?, ?>> getMemoryRequirements() {
         return MEMORY_REQUIREMENTS;
     }
 

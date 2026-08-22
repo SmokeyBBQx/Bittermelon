@@ -1,28 +1,25 @@
 package com.site21.bittermelon.common.systems.ai.behavior.movement;
 
-import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.common.systems.ai.base.BitterMob;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.ai.behavior.declarative.MemoryCondition;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.memory.WalkTarget;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
-import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.base.ExtendedBehaviour;
+import net.tslat.smartbrainlib.library.object.MemoryTest;
 import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class SearchArea<E extends BitterMob<?>> extends ExtendedBehaviour<E> {
-    private static final List<Pair<MemoryModuleType<?>, MemoryStatus>> MEMORY_REQUIREMENTS = ObjectArrayList.of(
-            Pair.of(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_ABSENT),
-            Pair.of(MemoryModuleType.WALK_TARGET, MemoryStatus.REGISTERED));
-
+    private static final MemoryTest MEMORY_REQUIREMENTS = MemoryTest.builder()
+            .noMemory(MemoryModuleType.ATTACK_TARGET)
+            .usesMemory(MemoryModuleType.WALK_TARGET);
     private static final int EXPLORATION_RADIUS = 16;
     private static final int MIN_DISTANCE_BETWEEN_POINTS = 4;
     private static final int MAX_VISITED_POINTS = 50;
@@ -39,9 +36,8 @@ public class SearchArea<E extends BitterMob<?>> extends ExtendedBehaviour<E> {
     private int ticksSinceLastCheck;
     private int consecutiveStuckChecks;
 
-
     @Override
-    protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
+    public Set<MemoryCondition<?, ?>> getMemoryRequirements() {
         return MEMORY_REQUIREMENTS;
     }
 
@@ -143,13 +139,13 @@ public class SearchArea<E extends BitterMob<?>> extends ExtendedBehaviour<E> {
                 continue;
             }
 
-            BlockPos potential = new BlockPos((int)pos.x, (int)pos.y, (int)pos.z);
+            BlockPos potential = new BlockPos((int) pos.x, (int) pos.y, (int) pos.z);
 
 //            if (attempts < 11) {
-                if (isValidExplorationTarget(entity, potential)) {
-                    newTarget = potential;
-                    break;
-                }
+            if (isValidExplorationTarget(entity, potential)) {
+                newTarget = potential;
+                break;
+            }
 //            } else {
 //                newTarget = potential;
 //                break;

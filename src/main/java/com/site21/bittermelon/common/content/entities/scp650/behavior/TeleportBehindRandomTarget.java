@@ -1,42 +1,38 @@
 package com.site21.bittermelon.common.content.entities.scp650.behavior;
 
-import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.common.content.entities.scp650.SCP650;
 import com.site21.bittermelon.common.content.entities.scp650.networking.SetEntityPos;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.memory.MemoryStatus;
+import net.minecraft.world.entity.ai.behavior.declarative.MemoryCondition;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.base.ExtendedBehaviour;
+import net.tslat.smartbrainlib.library.object.MemoryTest;
 import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static com.site21.bittermelon.init.neoforge.BitterMemoryTypes.*;
 
 public class TeleportBehindRandomTarget<E extends SCP650> extends ExtendedBehaviour<E> {
-    private static final List<Pair<MemoryModuleType<?>, MemoryStatus>> MEMORY_REQUIREMENTS = ObjectArrayList.of(
-            Pair.of(SCARE_TARGET.get(), MemoryStatus.VALUE_ABSENT),
-            Pair.of(OBSERVERS.get(), MemoryStatus.VALUE_ABSENT)
-    );
-
-    ServerPlayer randomPlayer;
+    private static final MemoryTest MEMORY_REQUIREMENTS = MemoryTest.builder()
+            .noMemory(SCARE_TARGET.get())
+            .noMemory(OBSERVERS.get());
+    private ServerPlayer randomPlayer;
 
     @Override
-    protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
+    public Set<MemoryCondition<?, ?>> getMemoryRequirements() {
         return MEMORY_REQUIREMENTS;
     }
 

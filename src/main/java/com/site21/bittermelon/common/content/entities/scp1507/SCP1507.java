@@ -1,6 +1,5 @@
 package com.site21.bittermelon.common.content.entities.scp1507;
 
-import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.common.content.entities.scp1507.behavior.AwakenFlamingoBlocks;
 import com.site21.bittermelon.common.content.entities.scp1507.behavior.FindFlamingoBlocks;
 import com.site21.bittermelon.common.content.entities.scp1507.behavior.StopMovingWhenLookedAt;
@@ -14,13 +13,14 @@ import com.site21.bittermelon.common.systems.ai.behavior.blockinteraction.FindRa
 import com.site21.bittermelon.common.systems.ai.behavior.blockinteraction.InvalidateBreakTarget;
 import com.site21.bittermelon.common.systems.ai.behavior.blockinteraction.LeapAndHurtBlock;
 import com.site21.bittermelon.common.systems.ai.behavior.herd.VerifyOrFindLeader;
-import com.site21.bittermelon.common.systems.ai.behavior.target.InvalidateAttackTarget;
+import com.site21.bittermelon.common.systems.ai.behavior.target.BitterInvalidateAttackTarget;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.stumble.StumbleHandler;
 import com.site21.bittermelon.init.neoforge.BitterActivity;
 import com.site21.bittermelon.init.neoforge.BitterItems;
 import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
 import com.site21.bittermelon.init.neoforge.BitterParticles;
+import it.unimi.dsi.fastutil.objects.ObjectIntPair;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -46,8 +46,8 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.ActivityBuilder;
-import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
-import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.base.FirstApplicableBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.base.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.LeapAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
@@ -68,6 +68,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH;
 
@@ -119,7 +120,7 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
 
     @Override
     public Activity[] getActivityActivationPriority() {
-        return new Activity[] {Activity.FIGHT, BitterActivity.AWAKEN.get(), Activity.IDLE};
+        return new Activity[]{Activity.FIGHT, BitterActivity.AWAKEN.get(), Activity.IDLE};
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -127,7 +128,7 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     public ActivityBuilder<? extends SCP1507> getActivityGroupFor(Activity activity) {
         ActivityBuilder<? extends SCP1507> builder = ActivityBuilder.create(activity);
         if (activity.equals(BitterActivity.AWAKEN.get())) {
-            builder.behaviours((List)getAwakenBehaviours(this))
+            builder.behaviours((List) getAwakenBehaviours(this))
                     .requireAndClearMemoriesOnUse(BitterMemoryTypes.AWAKEN_TARGET.get());
         }
         return builder;
@@ -140,15 +141,15 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
                 new MoveToWalkTarget<>(),
                 new InvalidateBreakTarget<>(),
                 new ReactToUnreachableTarget<>()
-                        .reaction((_, _) -> new FindBlockingBlock<>()),
+                        .reaction((_, _, _) -> new FindBlockingBlock<>()),
                 new LeapAndHurtBlock<SCP1507>(0)
                         .whenStarting(SCP1507::resetAttackTime)
                         .startCondition((entity) ->
                                 BrainUtil.getMemory(entity, BitterMemoryTypes.BREAK_TARGET.get()).distSqr(entity.getOnPos()) <= 4),
                 new TargetOrRetaliate<>()
-                        .attackablePredicate(target -> !(target instanceof SCP1507)
+                        .canRetaliateAgainst(target -> !(target instanceof SCP1507)
                                 && opinions.get(OpinionSubject.of(target.getType())).respect() < 0.5f)
-                        .alertAlliesWhen((_, _) -> true)
+                        .alertAlliesIf((_, _) -> true)
         );
     }
 
@@ -157,21 +158,22 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
         return List.of(
                 new VerifyOrFindLeader<>(),
                 new TryToBecomeActive()
-                        .cooldownForBetween(600, 1200),
+                        .cooldownFor(600, 1200),
                 new StopMovingWhenLookedAt(),
                 new FindRandomBreakTarget<>()
-                        .cooldownForBetween(60, 120),
+                        .cooldownFor(60, 120),
                 new OneRandomBehaviour<>(
                         new FirstApplicableBehaviour<>(
-                                new FollowEntity<>()
-                                        .following((entity) -> BrainUtil.getMemory(entity, BitterMemoryTypes.LEADER.get()))
-                                        .stopFollowingWithin((entity, _) -> getFollowDistance(entity)),
-                                new SetRandomWalkTarget<>().startCondition((SCP1507::isActive))
+                                new FollowEntity<>((entity, target) ->
+                                        Objects.equals(BrainUtil.getMemory(entity, BitterMemoryTypes.LEADER.get()), target))
+                                        .startFollowingAfter((entity, _) -> getFollowDistance(entity)),
+                                new SetRandomWalkTarget<>()
+                                        .startCondition((SCP1507::isActive))
                         ),
                         new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))
                 ),
                 new FindFlamingoBlocks()
-                        .cooldownForBetween(100, 200)
+                        .cooldownFor(100, 200)
                         .startCondition(SCP1507::isActive)
         );
     }
@@ -179,16 +181,21 @@ public class SCP1507 extends BitterMob<SCP1507> implements SmartBrainOwner<SCP15
     @Override
     public List<? extends BehaviorControl<?>> getFightingBehaviours(SCP1507 owner) {
         return List.of(
-                new InvalidateAttackTarget<>(),
+                new BitterInvalidateAttackTarget<>(),
                 new SetWalkTargetToAttackTarget<>(),
                 new OneRandomBehaviour<>(
-                        Pair.of(new LeapAtTarget<SCP1507>(0)
+                        ObjectIntPair.of(
+                                new LeapAtTarget<SCP1507>(0)
                                         .whenStarting(SCP1507::resetAttackTime)
                                         .startCondition((entity) ->
                                                 BrainUtil.getTargetOfEntity(entity).distanceTo(entity) < 4)
                                         .whenStopping(SCP1507::attemptEmbedLeg),
-                                10),
-                        Pair.of(new CollectivePush<>(10, 5.0, 0), 1)
+                                10
+                        ),
+                        ObjectIntPair.of(
+                                new CollectivePush<>(10, 5.0, 0),
+                                1
+                        )
                 )
                         .whenStopping(SCP1507::setActive)
                         .startCondition(StumbleHandler::canMove)

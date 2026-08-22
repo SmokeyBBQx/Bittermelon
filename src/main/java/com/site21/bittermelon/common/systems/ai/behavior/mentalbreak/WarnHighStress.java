@@ -1,27 +1,27 @@
 package com.site21.bittermelon.common.systems.ai.behavior.mentalbreak;
 
-import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.util.LocalMessageUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.memory.MemoryStatus;
-import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
+import net.minecraft.world.entity.ai.behavior.declarative.MemoryCondition;
+import net.tslat.smartbrainlib.api.core.behaviour.base.ExtendedBehaviour;
 
 import java.util.List;
+import java.util.Set;
 
 public class WarnHighStress<E extends LivingEntity> extends ExtendedBehaviour<E> {
     protected final List<String> messages;
 
-    @Override
-    protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
-        return List.of();
-    }
 
     public WarnHighStress(List<String> messages) {
         this.messages = messages;
+    }
+
+    @Override
+    public Set<MemoryCondition<?, ?>> getMemoryRequirements() {
+        return Set.of();
     }
 
     @Override

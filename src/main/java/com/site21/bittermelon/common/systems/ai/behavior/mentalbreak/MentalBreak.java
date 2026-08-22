@@ -1,24 +1,21 @@
 package com.site21.bittermelon.common.systems.ai.behavior.mentalbreak;
 
-import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.common.systems.ai.base.NeedsUser;
 import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.memory.MemoryStatus;
-import net.tslat.smartbrainlib.api.core.behaviour.ExtendedBehaviour;
+import net.minecraft.world.entity.ai.behavior.declarative.MemoryCondition;
+import net.tslat.smartbrainlib.api.core.behaviour.base.ExtendedBehaviour;
+import net.tslat.smartbrainlib.library.object.MemoryTest;
 import net.tslat.smartbrainlib.util.BrainUtil;
 
-import java.util.List;
+import java.util.Set;
 
 public abstract class MentalBreak<E extends LivingEntity & NeedsUser> extends ExtendedBehaviour<E> {
-    private static final List<Pair<MemoryModuleType<?>, MemoryStatus>> MEMORY_REQUIREMENTS = ObjectArrayList.of(
-            Pair.of(BitterMemoryTypes.HAS_MENTAL_BREAK.get(), MemoryStatus.VALUE_ABSENT)
-    );
+    private static final MemoryTest MEMORY_REQUIREMENTS = MemoryTest.builder()
+            .noMemory(BitterMemoryTypes.BREAK_TARGET.get());
 
     @Override
-    protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
+    public Set<MemoryCondition<?, ?>> getMemoryRequirements() {
         return MEMORY_REQUIREMENTS;
     }
 

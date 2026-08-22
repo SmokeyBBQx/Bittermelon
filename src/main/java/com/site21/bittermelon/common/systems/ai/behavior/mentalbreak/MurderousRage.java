@@ -1,29 +1,27 @@
 package com.site21.bittermelon.common.systems.ai.behavior.mentalbreak;
 
-import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.common.systems.ai.base.NeedsUser;
 import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.behavior.declarative.MemoryCondition;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.memory.NearestVisibleLivingEntities;
+import net.tslat.smartbrainlib.library.object.MemoryTest;
 import net.tslat.smartbrainlib.util.BrainUtil;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class MurderousRage<E extends LivingEntity & NeedsUser> extends MentalBreak<E> {
-    private static final List<Pair<MemoryModuleType<?>, MemoryStatus>> MEMORY_REQUIREMENTS = ObjectArrayList.of(
-            Pair.of(BitterMemoryTypes.HAS_MENTAL_BREAK.get(), MemoryStatus.VALUE_ABSENT),
-            Pair.of(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES, MemoryStatus.VALUE_PRESENT),
-            Pair.of(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_ABSENT)
-    );
+    private static final MemoryTest MEMORY_REQUIREMENTS = MemoryTest.builder()
+            .noMemory(BitterMemoryTypes.HAS_MENTAL_BREAK.get())
+            .hasMemory(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES)
+            .noMemory(MemoryModuleType.ATTACK_TARGET);
     private final boolean sameTypeOnly;
 
     @Override
-    protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
+    public Set<MemoryCondition<?, ?>> getMemoryRequirements() {
         return MEMORY_REQUIREMENTS;
     }
 

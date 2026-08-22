@@ -1,10 +1,8 @@
 package com.site21.bittermelon.common.content.mobeffects.electrocuted;
 
 import com.site21.bittermelon.common.content.mobeffects.electrocuted.networking.CutOffChat;
-import com.site21.bittermelon.common.systems.ai.behavior.misc.FeelsPain;
 import com.site21.bittermelon.common.systems.stumble.StumbleHandler;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
@@ -20,10 +18,6 @@ public class ElectrocutedEffect extends MobEffect {
 
     public void onEffectStarted(@NotNull LivingEntity entity, int amplifier) {
         StumbleHandler.stumble(entity, entity.getEffect(ELECTROCUTED).getDuration(), entity.getLookAngle());
-
-        if (entity instanceof FeelsPain feelsPain) {
-            entity.level().playSound(null, entity.getOnPos(), feelsPain.getPainSound(amplifier), SoundSource.AMBIENT);
-        }
     }
 
     public void onEffectAdded(@NotNull LivingEntity entity, int amplifier) {

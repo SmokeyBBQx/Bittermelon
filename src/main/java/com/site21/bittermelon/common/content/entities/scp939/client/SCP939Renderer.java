@@ -1,7 +1,7 @@
 package com.site21.bittermelon.common.content.entities.scp939.client;
 
 import com.site21.bittermelon.Bittermelon;
-import com.site21.bittermelon.common.content.entities.scp939.SCP939;
+import com.site21.bittermelon.common.content.entities.scp939.SCP939Old;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.Identifier;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.site21.bittermelon.client.event.LayerDefinitions.SCP_939_LAYER;
 
 
-public class SCP939Renderer extends MobRenderer<SCP939,SCP939RenderState, SCP939Model> {
+public class SCP939Renderer extends MobRenderer<SCP939Old,SCP939RenderState, SCP939Model> {
     public SCP939Renderer(EntityRendererProvider.Context context) {
         super(context, new SCP939Model(context.bakeLayer(SCP_939_LAYER)), 0.5f);
     }

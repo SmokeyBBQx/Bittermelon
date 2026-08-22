@@ -1,14 +1,13 @@
 package com.site21.bittermelon.common.systems.ai.behavior.attack;
 
-import com.mojang.datafixers.util.Pair;
 import com.site21.bittermelon.common.systems.stumble.StumbleHandler;
 import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.behavior.declarative.MemoryCondition;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
@@ -17,6 +16,7 @@ import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.ToIntFunction;
 
@@ -45,7 +45,7 @@ public class CollectivePush<E extends Mob> extends AnimatableMeleeAttack<E> {
     }
 
     @Override
-    protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
+    public Set<MemoryCondition<?, ?>> getMemoryRequirements() {
         return MEMORY_REQUIREMENTS;
     }
 
@@ -136,7 +136,7 @@ public class CollectivePush<E extends Mob> extends AnimatableMeleeAttack<E> {
     }
 
     private void applyMemoriesAndLeap(@NotNull E entity) {
-        BrainUtil.setForgettableMemory(entity, MemoryModuleType.ATTACK_COOLING_DOWN, true, attackIntervalSupplier.applyAsInt(entity));
+        BrainUtil.setForgettableMemory(entity, MemoryModuleType.ATTACK_COOLING_DOWN, true, attackInterval.applyAsInt(entity, target));
         BrainUtil.setForgettableMemory(entity, BitterMemoryTypes.COLLECTIVE_PUSH_COOLDOWN.get(),  true, pushIntervalSupplier.applyAsInt(entity));
         leapAtTarget(entity);
     }
