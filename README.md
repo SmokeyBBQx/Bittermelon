@@ -14,7 +14,7 @@
 ## Contributing ##
 
 ### Prerequisites ###
-* [Java Development Kit 21]
+* [Java Development Kit 25]
 * [Gradle]
 
 
