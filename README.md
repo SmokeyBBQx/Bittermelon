@@ -1,5 +1,5 @@
 
-[Java Development Kit 21]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+[Java Development Kit 25]: https://www.oracle.com/java/technologies/javase/jdk25-archive-downloads.html
 [Gradle]: https://www.gradle.org/
 
 [discord-shield]: https://dcbadge.limes.pink/api/server/https://discord.gg/BbH6kv6
@@ -24,7 +24,7 @@ Follow the steps here: https://docs.github.com/en/repositories/creating-and-mana
 
 ### 2) Setup in [IntelliJ IDEA] ###
 1. Open the template's root folder as a new project in IDEA. This is the folder that contains this README.md file and the gradlew executable.
-2. If your default JVM/JDK is not Java 21 you will encounter an error when opening the project. This error is fixed by going to `File > Settings > Build, Execution, Deployment > Build Tools > Gradle > Gradle JVM` and changing the value to a valid Java 21 JVM. You will also need to set the Project SDK to Java 21. This can be done by going to `File > Project Structure > Project SDK`. Once both have been set open the Gradle tab in IDEA and click the refresh button to reload the project.
+2. If your default JVM/JDK is not Java 25 you will encounter an error when opening the project. This error is fixed by going to `File > Settings > Build, Execution, Deployment > Build Tools > Gradle > Gradle JVM` and changing the value to a valid Java 25 JVM. You will also need to set the Project SDK to Java 25. This can be done by going to `File > Project Structure > Project SDK`. Once both have been set open the Gradle tab in IDEA and click the refresh button to reload the project.
 3. Open your Run/Debug Configurations. Under the `Application` category there should now be options to run Fabric and NeoForge projects. Select one of the client options and try to run it.
 4. Assuming you were able to run the game in step 3 your workspace should now be set up.
 
