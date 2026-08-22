@@ -1,5 +1,6 @@
 package com.site21.bittermelon.common.content.entities.scp939;
 
+import com.site21.bittermelon.common.content.entities.scp939.lure.LureSystem;
 import com.site21.bittermelon.common.systems.ai.base.BitterMob;
 import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
@@ -19,8 +20,11 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.gameevent.PositionSource;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.tslat.smartbrainlib.api.core.behaviour.base.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +38,7 @@ public class SCP939 extends BitterMob<SCP939> {
     private static final int LISTENING_RADIUS = 16;
     private final DynamicGameEventListener<BitterVibrationListener> gameListener;
     private BitterAngerManagement angerManagement;
+    private LureSystem lureSystem;
 
     public SCP939(EntityType entityType, Level level) {
         super(entityType, level);
@@ -41,6 +46,7 @@ public class SCP939 extends BitterMob<SCP939> {
         BitterVibrationListener listener = new BitterVibrationListener(positionSource, LISTENING_RADIUS, SCP939::onVibration);
         this.gameListener = new DynamicGameEventListener<>(listener);
         this.angerManagement = new BitterAngerManagement();
+        this.lureSystem = new LureSystem();
     }
 
     @Override
@@ -70,7 +76,13 @@ public class SCP939 extends BitterMob<SCP939> {
 
     @Override
     public List<? extends BehaviorControl<?>> getIdleBehaviours(SCP939 owner) {
-        return super.getIdleBehaviours(owner);
+        return List.of(
+                new OneRandomBehaviour<>(
+                        new SetRandomWalkTarget<>()
+                                .setRadius(getRandom().nextInt(1, 10)),
+                        new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))
+                )
+        );
     }
 
     @Override
@@ -104,6 +116,7 @@ public class SCP939 extends BitterMob<SCP939> {
     protected void customServerAiStep(ServerLevel level) {
         if (tickCount % 20 == 0) {
             angerManagement.tick(level);
+            lureSystem.attemptLure(this);
         }
     }
 
@@ -111,11 +124,13 @@ public class SCP939 extends BitterMob<SCP939> {
     protected void addAdditionalSaveData(@NotNull ValueOutput output) {
         super.addAdditionalSaveData(output);
         output.store("anger", BitterAngerManagement.CODEC, angerManagement);
+        output.store("lures", LureSystem.CODEC, lureSystem);
     }
 
     @Override
     protected void readAdditionalSaveData(@NotNull ValueInput input) {
         super.readAdditionalSaveData(input);
         angerManagement = input.read("anger", BitterAngerManagement.CODEC).orElse(new BitterAngerManagement());
+        lureSystem = input.read("lures", LureSystem.CODEC).orElse(new LureSystem());
     }
 }
