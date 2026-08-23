@@ -13,10 +13,13 @@ import com.site21.bittermelon.common.systems.character.Character;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.memory.WalkTarget;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.DynamicGameEventListener;
@@ -34,6 +37,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAtt
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.InvalidateAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.TargetOrRetaliate;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
+import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,14 +47,14 @@ import java.util.function.BiConsumer;
 
 public class SCP939 extends BitterMob<SCP939> {
     private static final int LISTENING_RADIUS = 16;
-    private final DynamicGameEventListener<BitterVibrationListener> gameListener;
+    private final DynamicGameEventListener<BitterVibrationListener<SCP939>> gameListener;
     private BitterAngerManagement angerManagement;
     private LureSystem lureSystem;
 
     public SCP939(EntityType entityType, Level level) {
         super(entityType, level);
         PositionSource positionSource = new EntityPositionSource(this, getEyeHeight());
-        BitterVibrationListener listener = new BitterVibrationListener(positionSource, LISTENING_RADIUS, SCP939::onVibration);
+        BitterVibrationListener<SCP939> listener = new BitterVibrationListener<>(positionSource, LISTENING_RADIUS, SCP939::onVibration, this);
         this.gameListener = new DynamicGameEventListener<>(listener);
         this.angerManagement = new BitterAngerManagement();
         this.lureSystem = new LureSystem();
@@ -128,8 +132,20 @@ public class SCP939 extends BitterMob<SCP939> {
         }
     }
 
-    public static void onVibration(ServerLevel level, BlockPos sourcePos, Holder<GameEvent> event, @Nullable Object sourceEntity, double distance) {
+    public static void onVibration(SCP939 entity, ServerLevel level, BlockPos sourcePos, Holder<GameEvent> event, @Nullable Entity sourceEntity, double distance) {
+        BitterAngerManagement angerManagement = entity.getAngerManagement();
+        if (sourceEntity != null) {
+            angerManagement.increaseAnger(sourceEntity, 10);
+        }
 
+        if (angerManagement.getHighestAnger(level) < 80) {
+            BrainUtil.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(sourcePos, 0, 2));
+        }
+    }
+
+    @Override
+    public boolean dampensVibrations() {
+        return true;
     }
 
     @Override
@@ -137,6 +153,10 @@ public class SCP939 extends BitterMob<SCP939> {
         if (tickCount % 20 == 0) {
             angerManagement.tick(level);
         }
+    }
+
+    public BitterAngerManagement getAngerManagement() {
+        return angerManagement;
     }
 
     public boolean shouldAmnesticize() {
