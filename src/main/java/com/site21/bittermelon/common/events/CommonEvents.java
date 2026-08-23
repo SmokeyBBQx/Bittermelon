@@ -23,8 +23,11 @@ import com.site21.bittermelon.common.systems.substance.SubstanceMixture;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import com.site21.bittermelon.common.systems.telecomms.intercom.IntercomManager;
 import com.site21.bittermelon.common.systems.telecomms.intercom.networking.SyncIntercomList;
+import com.site21.bittermelon.init.neoforge.BitterMobEffects;
 import com.site21.bittermelon.networking.server.SetLastTypingTime;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -41,6 +44,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingBreatheEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
@@ -281,6 +285,15 @@ public class CommonEvents {
     public static void onBlockNotifyNeighbors(BlockEvent.NeighborNotifyEvent event) {
         if (event.getLevel() instanceof ServerLevel serverLevel) {
             AtmosHandler.onBlockUpdate(serverLevel, event.getPos());
+        }
+    }
+
+    @SubscribeEvent
+    public static void onRemoveEffect(MobEffectEvent.Remove event) {
+        if (event.getEffect().is(BitterMobEffects.AMNESIA) && event.getEntity() instanceof ServerPlayer player) {
+            Component text = Component.literal("You struggle to remember what just happened.").withStyle(ChatFormatting.RED);
+            player.sendSystemMessage(text, true);
+            player.sendSystemMessage(text);
         }
     }
 }
