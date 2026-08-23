@@ -1,6 +1,7 @@
 package com.site21.bittermelon.common.content.entities.scp939;
 
 import com.site21.bittermelon.common.content.entities.scp939.behavior.AttemptLure;
+import com.site21.bittermelon.common.content.entities.scp939.behavior.ReleaseGas;
 import com.site21.bittermelon.common.content.entities.scp939.lure.LureSystem;
 import com.site21.bittermelon.common.systems.ai.base.BitterMob;
 import com.site21.bittermelon.common.systems.ai.base.Need;
@@ -10,6 +11,7 @@ import com.site21.bittermelon.common.systems.ai.sensors.VisionConeSensor;
 import com.site21.bittermelon.common.systems.ai.vibration.BitterAngerManagement;
 import com.site21.bittermelon.common.systems.ai.vibration.BitterVibrationListener;
 import com.site21.bittermelon.common.systems.character.Character;
+import com.site21.bittermelon.init.neoforge.BitterActivity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
@@ -18,9 +20,10 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
+import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.memory.WalkTarget;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.DynamicGameEventListener;
 import net.minecraft.world.level.gameevent.EntityPositionSource;
@@ -28,6 +31,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.gameevent.PositionSource;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.tslat.smartbrainlib.api.core.ActivityBuilder;
 import net.tslat.smartbrainlib.api.core.behaviour.base.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
@@ -54,7 +58,13 @@ public class SCP939 extends BitterMob<SCP939> {
     public SCP939(EntityType entityType, Level level) {
         super(entityType, level);
         PositionSource positionSource = new EntityPositionSource(this, getEyeHeight());
-        BitterVibrationListener<SCP939> listener = new BitterVibrationListener<>(positionSource, LISTENING_RADIUS, SCP939::onVibration, this);
+        BitterVibrationListener<SCP939> listener = new BitterVibrationListener<>(
+                positionSource,
+                LISTENING_RADIUS,
+                SCP939::onVibration,
+                SCP939::isFocusedListening,
+                this
+        );
         this.gameListener = new DynamicGameEventListener<>(listener);
         this.angerManagement = new BitterAngerManagement();
         this.lureSystem = new LureSystem();
@@ -86,10 +96,32 @@ public class SCP939 extends BitterMob<SCP939> {
     }
 
     @Override
+    public Activity[] getActivityActivationPriority() {
+        return new Activity[]{Activity.FIGHT, BitterActivity.LISTEN.get(), BitterActivity.HUNT.get(), Activity.IDLE};
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Override
+    public ActivityBuilder<SCP939> getActivityGroupFor(Activity activity) {
+        ActivityBuilder<SCP939> builder = ActivityBuilder.create(activity);
+        if (activity.equals(BitterActivity.LISTEN.get())) {
+            builder.behaviours((List) getListenBehaviours(this))
+                    .behaviourPriorityBase(50)
+                    .requireAndClearMemoriesOnUse(MemoryModuleType.DISTURBANCE_LOCATION);
+        } else if (activity.equals(BitterActivity.HUNT.get())) {
+            builder.behaviours((List) getHuntBehaviours(this))
+                    .behaviourPriorityBase(50);
+        }
+
+        return builder;
+    }
+
+    @Override
     public List<? extends BehaviorControl<?>> getAlwaysRunningBehaviours(SCP939 owner) {
         return List.of(
                 new LookAtTarget<>(),
-                new MoveToWalkTarget<>()
+                new MoveToWalkTarget<>(),
+                new TargetOrRetaliate<>()
         );
     }
 
@@ -100,8 +132,7 @@ public class SCP939 extends BitterMob<SCP939> {
                         new SetRandomWalkTarget<>()
                                 .setRadius(getRandom().nextInt(1, 10)),
                         new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))
-                ),
-                new TargetOrRetaliate<>()
+                )
         );
     }
 
@@ -122,6 +153,7 @@ public class SCP939 extends BitterMob<SCP939> {
 
     public List<? extends BehaviorControl<?>> getListenBehaviours(SCP939 ignoredOwner) {
         return List.of(
+                new ReleaseGas(10)
         );
     }
 
@@ -135,12 +167,18 @@ public class SCP939 extends BitterMob<SCP939> {
     public static void onVibration(SCP939 entity, ServerLevel level, BlockPos sourcePos, Holder<GameEvent> event, @Nullable Entity sourceEntity, double distance) {
         BitterAngerManagement angerManagement = entity.getAngerManagement();
         if (sourceEntity != null) {
+            if (sourceEntity instanceof SCP939) return;
             angerManagement.increaseAnger(sourceEntity, 10);
         }
 
         if (angerManagement.getHighestAnger(level) < 80) {
-            BrainUtil.setMemory(entity, MemoryModuleType.WALK_TARGET, new WalkTarget(sourcePos, 0, 2));
+            BehaviorUtils.setWalkAndLookTargetMemories(entity, sourcePos, 1.0f, 2);
+            BrainUtil.setForgettableMemory(entity, MemoryModuleType.DISTURBANCE_LOCATION, sourcePos, 200);
         }
+    }
+
+    private boolean isFocusedListening() {
+        return getBrain().isActive(BitterActivity.LISTEN.get()) && getNavigation().isDone();
     }
 
     @Override

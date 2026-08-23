@@ -13,18 +13,25 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.function.Predicate;
 
 public class BitterVibrationListener<E extends Entity> implements GameEventListener {
     private final PositionSource listenerSource;
     private final int listenerRadius;
     private final VibrationCallback<E> callback;
+    private final Predicate<E> ignoreDampening;
     private final E entity;
 
-    public BitterVibrationListener(PositionSource listenerSource, int listenerRadius, VibrationCallback<E> callback, E entity) {
+    public BitterVibrationListener(PositionSource listenerSource, int listenerRadius, VibrationCallback<E> callback, Predicate<E> ignoreDampening, E entity) {
         this.listenerSource = listenerSource;
         this.listenerRadius = listenerRadius;
         this.callback = callback;
+        this.ignoreDampening = ignoreDampening;
         this.entity = entity;
+    }
+
+    public BitterVibrationListener(PositionSource listenerSource, int listenerRadius, VibrationCallback<E> callback, E entity) {
+        this(listenerSource, listenerRadius, callback, _ -> false, entity);
     }
 
     @Override
@@ -54,11 +61,17 @@ public class BitterVibrationListener<E extends Entity> implements GameEventListe
     protected boolean isValidVibration(Holder<GameEvent> event, GameEvent.Context context) {
         if (!event.is(GameEventTags.VIBRATIONS)) return false;
 
+        boolean ignoresDampening = ignoreDampening.test(entity);
+
         Entity sourceEntity = context.sourceEntity();
         if (sourceEntity != null) {
-            return !sourceEntity.isSpectator() && !sourceEntity.dampensVibrations();
+            if (sourceEntity.isSpectator()) return false;
+            return ignoresDampening || !sourceEntity.dampensVibrations();
         }
-        return context.affectedState() == null || !context.affectedState().is(BlockTags.DAMPENS_VIBRATIONS);
+
+        return ignoresDampening
+                || context.affectedState() == null
+                || !context.affectedState().is(BlockTags.DAMPENS_VIBRATIONS);
     }
 
     @FunctionalInterface
