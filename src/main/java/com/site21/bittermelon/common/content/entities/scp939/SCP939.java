@@ -6,6 +6,7 @@ import com.site21.bittermelon.common.systems.ai.base.BitterMob;
 import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
 import com.site21.bittermelon.common.systems.ai.behavior.movement.SearchArea;
+import com.site21.bittermelon.common.systems.ai.sensors.VisionConeSensor;
 import com.site21.bittermelon.common.systems.ai.vibration.BitterAngerManagement;
 import com.site21.bittermelon.common.systems.ai.vibration.BitterVibrationListener;
 import com.site21.bittermelon.common.systems.character.Character;
@@ -30,7 +31,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
-import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
+import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,7 +75,8 @@ public class SCP939 extends BitterMob<SCP939> {
     @Override
     public List<? extends ExtendedSensor<?>> getSensors(SCP939 owner) {
         return List.of(
-                new NearbyPlayersSensor<>()
+                new NearbyLivingEntitySensor<>(),
+                new VisionConeSensor<>(this::getVisionConeAngle)
         );
     }
 
@@ -141,6 +143,10 @@ public class SCP939 extends BitterMob<SCP939> {
 
     public LureSystem getLureSystem() {
         return lureSystem;
+    }
+
+    public double getVisionConeAngle() {
+        return 180;
     }
 
     @Override
