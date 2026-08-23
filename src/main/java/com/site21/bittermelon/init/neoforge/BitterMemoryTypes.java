@@ -59,7 +59,4 @@ public class BitterMemoryTypes {
 
     public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<BlockPos>> AWAKEN_TARGET = MEMORY_MODULE_TYPES.register("awaken_target",
             () -> new MemoryModuleType<>(Optional.of(BlockPos.CODEC)));
-
-    public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<List<LivingEntity>>> VISION_CONE_LIVING_ENTITIES = MEMORY_MODULE_TYPES.register("vision_cone_living_entities",
-            () -> new MemoryModuleType<>(Optional.empty()));
 }

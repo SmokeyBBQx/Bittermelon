@@ -30,8 +30,10 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.target.InvalidateAttackTarget;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.target.TargetOrRetaliate;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
-import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -75,7 +77,6 @@ public class SCP939 extends BitterMob<SCP939> {
     @Override
     public List<? extends ExtendedSensor<?>> getSensors(SCP939 owner) {
         return List.of(
-                new NearbyLivingEntitySensor<>(),
                 new VisionConeSensor<>(this::getVisionConeAngle)
         );
     }
@@ -95,13 +96,17 @@ public class SCP939 extends BitterMob<SCP939> {
                         new SetRandomWalkTarget<>()
                                 .setRadius(getRandom().nextInt(1, 10)),
                         new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))
-                )
+                ),
+                new TargetOrRetaliate<>()
         );
     }
 
     @Override
     public List<? extends BehaviorControl<?>> getFightingBehaviours(SCP939 owner) {
-        return super.getFightingBehaviours(owner);
+        return List.of(
+                new InvalidateAttackTarget<>(),
+                new SetWalkTargetToAttackTarget<>()
+        );
     }
 
     public List<? extends BehaviorControl<?>> getHuntBehaviours(SCP939 ignoredOwner) {
@@ -146,7 +151,7 @@ public class SCP939 extends BitterMob<SCP939> {
     }
 
     public double getVisionConeAngle() {
-        return 180;
+        return 90;
     }
 
     @Override
