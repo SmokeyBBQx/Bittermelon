@@ -1,60 +1,38 @@
-package com.site21.bittermelon.common.systems.atmosphere.client;
+package com.site21.bittermelon.client.render;
 
-import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosHandler;
 import com.site21.bittermelon.common.systems.atmosphere.AtmosInstance;
 import com.site21.bittermelon.common.systems.substance.SubstanceStack;
 import net.minecraft.client.Minecraft;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ViewportEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.site21.bittermelon.util.ColorUtil.mixColorsRGB;
+import static com.site21.bittermelon.util.ColorUtil.mixColors;
 
-@EventBusSubscriber(modid = Bittermelon.MOD_ID, value = Dist.CLIENT)
-public class AtmosFogRenderer {
+public class AtmosFog {
     private static final float MAX_FOG_DENSITY = 0.01f; // Maximum fog density (0.0 - 1.0)
     private static final float DENSITY_THRESHOLD = 100.0f; // Gas amount at which max density is reached
     private static final float BASE_FOG_DISTANCE = 0.25f; // Base fog distance
 
-    public static void applyFogDistance(ViewportEvent.@NotNull RenderFog event) {
+    public static FogRenderer.Fog getAtmosFog() {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null || mc.player == null) return;
+        if (mc.level == null || mc.player == null) return null;
 
         AtmosInstance instance = AtmosHandler.getAtmosInstanceAt(mc.level, mc.player.getOnPos().above());
-        if (instance == null) return;
+        if (instance == null) return null;
 
         float fogDensity = calculateFogDensity(instance);
         float fogStart = BASE_FOG_DISTANCE * (1 - fogDensity);
 
-        // TODO: Fix fog density
-        // TODO: Look into SetupFogEvent for new fog system
-
-        event.setNearPlaneDistance(fogStart);
-        event.setFarPlaneDistance(2);
-    }
-
-    public static void applyFogColor(ViewportEvent.ComputeFogColor event) {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null || mc.player == null) return;
-
-        AtmosInstance instance = AtmosHandler.getAtmosInstanceAt(mc.level, mc.player.getOnPos().above());
-        if (instance == null) return;
-
         Map<Integer, Integer> colors = new HashMap<>();
-
         for (SubstanceStack stack : instance.getGases()) {
             colors.put(stack.getSubstance().getColor(), stack.getAmount());
         }
+        int color = mixColors(colors);
 
-        int[] colorsRGB = mixColorsRGB(colors);
-        event.setRed(colorsRGB[0] / 255f);
-        event.setGreen(colorsRGB[1] / 255f);
-        event.setBlue(colorsRGB[2] / 255f);
+        return new FogRenderer.Fog(fogStart, 2, color);
     }
 
     private static float calculateFogDensity(@NotNull AtmosInstance instance) {
@@ -62,7 +40,7 @@ public class AtmosFogRenderer {
 
         for (SubstanceStack stack : instance.getGases()) {
             float amount = stack.getAmount();
-            float transparency = 0.9F;
+            float transparency = 0.9f;
             weightedAmount += amount * (1 - transparency);
         }
 

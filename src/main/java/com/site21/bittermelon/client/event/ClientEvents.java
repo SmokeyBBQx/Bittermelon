@@ -2,13 +2,13 @@ package com.site21.bittermelon.client.event;
 
 import com.github.stephengold.joltjni.Quat;
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.client.render.FogRenderer;
 import com.site21.bittermelon.client.render.ShaderManager;
 import com.site21.bittermelon.client.render.TypingIndicatorRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.client.PhoneTipRenderer;
 import com.site21.bittermelon.common.content.entities.ragdoll.RagdollEntity;
 import com.site21.bittermelon.common.content.items.wire.client.WireFeatureRenderer;
 import com.site21.bittermelon.common.content.items.wire.client.WireOverlayExtractor;
-import com.site21.bittermelon.common.systems.atmosphere.client.AtmosFogRenderer;
 import com.site21.bittermelon.common.systems.atmosphere.data.AtmosInstancesData;
 import com.site21.bittermelon.common.systems.blockdamage.client.BlockDamageExtractor;
 import com.site21.bittermelon.common.systems.carry.CarryHandler;
@@ -116,12 +116,12 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onFogRender(ViewportEvent.RenderFog event) {
-        AtmosFogRenderer.applyFogDistance(event);
+        FogRenderer.onRenderFog(event);
     }
 
     @SubscribeEvent
     public static void onComputeFogColors(ViewportEvent.ComputeFogColor event) {
-        AtmosFogRenderer.applyFogColor(event);
+        FogRenderer.onFogColor(event);
     }
 
     @SubscribeEvent

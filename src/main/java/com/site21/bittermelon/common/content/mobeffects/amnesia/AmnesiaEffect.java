@@ -2,6 +2,7 @@ package com.site21.bittermelon.common.content.mobeffects.amnesia;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -19,13 +20,19 @@ public class AmnesiaEffect extends MobEffect {
     }
 
     @Override
-    public void onEffectStarted(LivingEntity mob, int amplifier) {
+    public boolean shouldApplyEffectTickThisTick(int tickCount, int amplification) {
+        return tickCount % Math.max(1200, (6000 - 1200 * amplification)) == 0;
+    }
+
+    @Override
+    public boolean applyEffectTick(ServerLevel serverLevel, LivingEntity mob, int amplification) {
         if (mob instanceof ServerPlayer player) {
             shuffleInventory(player);
         }
+        return true;
     }
 
-    public static void shuffleInventory(ServerPlayer player) {
+    private static void shuffleInventory(ServerPlayer player) {
         Inventory inventory = player.getInventory();
         IntList slots = new IntArrayList();
         List<ItemStack> stacks = new ArrayList<>();

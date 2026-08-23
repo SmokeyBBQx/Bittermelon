@@ -69,4 +69,14 @@ public class BitterAngerManagement {
         if (topUUID == null) return null;
         return level.getEntity(topUUID);
     }
+
+    public int getHighestAnger(ServerLevel level) {
+        int maxAnger = 0;
+        for (Map.Entry<UUID, Integer> entry : subjects.entrySet()) {
+            if (entry.getValue() > maxAnger) {
+                maxAnger = entry.getValue();
+            }
+        }
+        return maxAnger;
+    }
 }

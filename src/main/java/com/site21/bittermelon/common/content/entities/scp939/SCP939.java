@@ -132,6 +132,13 @@ public class SCP939 extends BitterMob<SCP939> {
         }
     }
 
+    public boolean shouldAmnesticize() {
+        if (level() instanceof ServerLevel level) {
+            return angerManagement.getHighestAnger(level) > 50;
+        }
+        return false;
+    }
+
     public LureSystem getLureSystem() {
         return lureSystem;
     }

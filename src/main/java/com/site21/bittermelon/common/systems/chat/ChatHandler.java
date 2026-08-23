@@ -3,34 +3,33 @@ package com.site21.bittermelon.common.systems.chat;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.common.systems.character.CharacterManager;
-import com.site21.bittermelon.common.systems.syncsound.SyncSoundEvent;
-import com.site21.bittermelon.common.systems.syncsound.SyncSoundType;
 import com.site21.bittermelon.init.custom.VerbSets;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.ServerChatEvent;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ACTIVE_CHANNEL;
 import static com.site21.bittermelon.init.neoforge.BitterAttachmentTypes.ENRAGED;
-import static com.site21.bittermelon.init.neoforge.BitterMobEffects.ELECTROCUTED;
-import static com.site21.bittermelon.init.neoforge.BitterMobEffects.TASERED;
+import static com.site21.bittermelon.init.neoforge.BitterMobEffects.*;
 import static java.lang.Character.isLetter;
 
 @EventBusSubscriber(modid = Bittermelon.MOD_ID)
 public class ChatHandler {
     private static final Pattern EMOTE_PATTERN = Pattern.compile("\\*(.*?)\\*|([^*]+)");
     private static final int DEFAULT_GRAY = 0xFF808080;
+    private static final List<ChatFilter> FILTERS = List.of();
 
     public static final int WHISPER_RANGE = 5;
     public static final int NORMAL_RANGE = 16;
@@ -58,50 +57,6 @@ public class ChatHandler {
         }
     }
 
-    public static void sendRPMessage(@NotNull Character character, ServerPlayer player, @NotNull String message, int range, String verb) {
-        if (player.hasEffect(ELECTROCUTED) || player.hasEffect(TASERED)) {
-            message = formatElectrocuted(message, player.getRandom());
-        }
-
-        if (player.getData(ENRAGED)) {
-            message = formatRage(message);
-            verb = VerbSets.HUMAN.get().shoutingVerb();
-            range = SHOUT_RANGE;
-        }
-
-        int emoteColor = character.getEmoteColor();
-        MutableComponent messageComponent = Component.empty();
-
-        // If the message does not contain any emotes, use the standard format
-        if (!message.contains("*")) {
-            messageComponent.append(Component.literal(character.getName() + " " + verb + ", ").withColor(emoteColor));
-        } else {
-            messageComponent.append(Component.literal("(" + character.getName() + ") ").withColor(emoteColor));
-        }
-
-        // Split message into emotes and dialogue
-        Matcher matcher = EMOTE_PATTERN.matcher(message);
-        while (matcher.find()) {
-            // If group 1 is not null, it's an emote. Otherwise, it's dialogue
-            if (matcher.group(1) != null) {
-                String emoteText = matcher.group(1);
-                Component emote = Component.literal(emoteText).withColor(emoteColor);
-                messageComponent.append(emote).append(" ");
-            } else {
-                String dialogueText = matcher.group(2).trim();
-                Component dialogue = Component.literal("\"" + dialogueText + "\" ");
-                messageComponent.append(dialogue);
-            }
-        }
-
-        sendMessageWithDistanceAlpha(messageComponent, player, range);
-
-        // Broadcast sound event for speech
-        if (!player.level().isClientSide()) {
-            NeoForge.EVENT_BUS.post(new SyncSoundEvent(player.level(), player.getOnPos(), SyncSoundType.SPEECH, messageComponent, range));
-        }
-    }
-
     public static void sendRPMessage(@NotNull Character character, ServerPlayer player, String message, int range, @NotNull VerbSet verbSet) {
         sendRPMessage(character, player, message, range, verbSet.getVerb(message));
     }
@@ -118,19 +73,6 @@ public class ChatHandler {
         sendMessage(messageComponent, player, 16);
     }
 
-    public static void sendMessageWithDistanceAlpha(MutableComponent message, @NotNull ServerPlayer player, int range) {
-        for (ServerPlayer serverPlayer : player.level().players()) {
-            double distance = player.distanceTo(serverPlayer);
-            if (distance <= range) {
-                float alpha = (float) ((range - distance) / range);
-                Style newStyle = ((AlphaContainer) message.getStyle()).bittermelon$withAlpha(alpha);
-                MutableComponent copy = message.copy();
-                copy.setStyle(newStyle);
-                serverPlayer.sendSystemMessage(copy);
-            }
-        }
-    }
-
     public static void sendMessage(Component message, @NotNull ServerPlayer player, int range) {
         for (ServerPlayer serverPlayer : player.level().players()) {
             if (player.distanceTo(serverPlayer) <= range) {
@@ -143,6 +85,83 @@ public class ChatHandler {
         for (ServerPlayer serverPlayer : player.level().players()) {
             serverPlayer.sendSystemMessage(message);
         }
+    }
+
+    public static void sendRPMessage(@NotNull Character character, ServerPlayer player, @NotNull String message, int range, String verb) {
+        if (player.hasEffect(ELECTROCUTED) || player.hasEffect(TASERED)) {
+            message = formatElectrocuted(message, player.getRandom());
+        }
+
+        if (player.getData(ENRAGED)) {
+            message = formatRage(message);
+            verb = VerbSets.HUMAN.get().shoutingVerb();
+            range = SHOUT_RANGE;
+        }
+
+        RPMessage msg = new RPMessage(character, player, verb, parse(message), range);
+        dispatch(msg);
+    }
+
+    private static List<ChatSegment> parse(String message) {
+        List<ChatSegment> segments = new ArrayList<>();
+        Matcher matcher = EMOTE_PATTERN.matcher(message);
+        while (matcher.find()) {
+            if (matcher.group(1) != null) {
+                segments.add(new ChatSegment.Emote(matcher.group(1)));
+            } else {
+                String dialogue = matcher.group(2).trim();
+                if (!dialogue.isEmpty()) segments.add(new ChatSegment.Dialogue(dialogue));
+            }
+        }
+        return segments;
+    }
+
+    public static void dispatch(RPMessage msg) {
+        for (ServerPlayer recipient : msg.source().level().players()) {
+            double distance = msg.source().distanceTo(recipient);
+            if (distance > msg.range()) continue;
+
+            RPMessage personal = msg;
+            for (ChatFilter filter : FILTERS) {
+                personal = filter.apply(personal, recipient);
+                if (personal == null) break;
+            }
+            if (personal == null || personal.segments().isEmpty()) continue;
+
+            float alpha = (float) ((msg.range() - distance) / msg.range());
+            recipient.sendSystemMessage(render(personal, recipient, alpha));
+        }
+    }
+
+    public static Component render(RPMessage msg, ServerPlayer recipient, float alpha) {
+        int color = emoteColor(msg, recipient);
+        String name = displayName(msg, recipient);
+
+        boolean hasEmote = msg.segments().stream().anyMatch(s -> s instanceof ChatSegment.Emote);
+        MutableComponent out = Component.empty();
+        out.append(hasEmote
+                ? Component.literal("(" + name + ") ").withColor(color)
+                : Component.literal(name + " " + msg.verb() + ", ").withColor(color));
+
+        for (ChatSegment segment : msg.segments()) {
+            if (segment instanceof ChatSegment.Emote(String text)) {
+                out.append(Component.literal(text).withColor(color)).append(" ");
+            } else if (segment instanceof ChatSegment.Dialogue(String text)) {
+                out.append(Component.literal("\"" + text + "\" ").withColor(0xFFFFFF));
+            }
+        }
+
+        AlphaContainer alphaContainer = (AlphaContainer) out.getStyle();
+        out.setStyle(alphaContainer.bittermelon$withAlpha(alpha));
+        return out;
+    }
+
+    public static String displayName(RPMessage msg, ServerPlayer recipient) {
+        return recipient.hasEffect(AMNESIA) ? "???" : msg.character.getName();
+    }
+
+    public static int emoteColor(RPMessage msg, ServerPlayer recipient) {
+        return recipient.hasEffect(AMNESIA) ? 0xFFFFFF : msg.character.getEmoteColor();
     }
 
     private static @NotNull String formatElectrocuted(@NotNull String text, RandomSource random) {
@@ -184,5 +203,24 @@ public class ChatHandler {
 
     private static String formatRage(String text) {
         return text.toUpperCase();
+    }
+
+    public sealed interface ChatSegment {
+        record Emote(String text) implements ChatSegment {}
+        record Dialogue(String text) implements ChatSegment {}
+    }
+
+    public record RPMessage(
+            Character character,
+            ServerPlayer source,
+            String verb,
+            List<ChatSegment> segments,
+            int range
+    ) {}
+
+    @FunctionalInterface
+    public interface ChatFilter {
+        /** Return modified message, or null to drop it */
+        @Nullable RPMessage apply(RPMessage message, ServerPlayer recipient);
     }
 }

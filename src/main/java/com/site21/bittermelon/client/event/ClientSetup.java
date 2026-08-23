@@ -5,6 +5,7 @@ import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.client.particles.BoomParticle;
 import com.site21.bittermelon.client.particles.KapowParticle;
 import com.site21.bittermelon.client.particles.PlasticParticle;
+import com.site21.bittermelon.client.render.FogRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.intercom.client.PhoneCordRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.largeslidingdoor.client.LargeSlidingDoorRenderer;
 import com.site21.bittermelon.common.content.blocks.electronics.slidingdoor.client.SlidingDoorRenderer;
@@ -152,6 +153,7 @@ public class ClientSetup {
         CompartmentRenderers.register();
         InstrumentWidgets.register();
         SleepTransforms.init();
+        FogRenderer.register();
     }
 
     @SubscribeEvent
