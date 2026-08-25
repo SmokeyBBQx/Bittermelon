@@ -2,6 +2,7 @@ package com.site21.bittermelon.common.content.entities.scp939.behavior;
 
 import com.site21.bittermelon.common.content.entities.scp939.SCP939;
 import com.site21.bittermelon.init.neoforge.BitterMobEffects;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.behavior.declarative.MemoryCondition;
@@ -23,6 +24,11 @@ public class ReleaseGas extends DelayedBehaviour<SCP939> {
     @Override
     public Set<MemoryCondition<?, ?>> getMemoryRequirements() {
         return MEMORY_REQUIREMENTS;
+    }
+
+    @Override
+    protected boolean checkExtraStartConditions(ServerLevel level, SCP939 entity) {
+        return entity.shouldAmnesticize();
     }
 
     @Override

@@ -7,6 +7,7 @@ import net.neoforged.neoforge.client.event.ViewportEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class FogRenderer {
@@ -20,7 +21,8 @@ public class FogRenderer {
    public static Fog getAmnesiaFog() {
        Minecraft mc = Minecraft.getInstance();
        if (mc.player == null || !mc.player.hasEffect(BitterMobEffects.AMNESIA)) return null;
-       return new Fog(0, 30f, 0x555555);
+       int amplifier = Objects.requireNonNull(mc.player.getEffect(BitterMobEffects.AMNESIA)).getAmplifier();
+       return new Fog(0, 30f + (Math.max(0, 100f - amplifier * 10f)), 0x555555);
    }
 
     public static void onRenderFog(ViewportEvent.RenderFog event) {

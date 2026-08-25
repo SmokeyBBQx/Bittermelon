@@ -2,11 +2,11 @@ package com.site21.bittermelon.common.content.entities.scp939;
 
 import com.site21.bittermelon.common.content.entities.scp939.behavior.AttemptLure;
 import com.site21.bittermelon.common.content.entities.scp939.behavior.ReleaseGas;
+import com.site21.bittermelon.common.content.entities.scp939.behavior.SetWalkToDisturbanceLocation;
 import com.site21.bittermelon.common.content.entities.scp939.lure.LureSystem;
 import com.site21.bittermelon.common.systems.ai.base.BitterMob;
 import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
-import com.site21.bittermelon.common.systems.ai.behavior.movement.SearchArea;
 import com.site21.bittermelon.common.systems.ai.sensors.VisionConeSensor;
 import com.site21.bittermelon.common.systems.ai.vibration.BitterAngerManagement;
 import com.site21.bittermelon.common.systems.ai.vibration.BitterVibrationListener;
@@ -20,7 +20,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
-import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.schedule.Activity;
@@ -33,6 +32,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.tslat.smartbrainlib.api.core.ActivityBuilder;
 import net.tslat.smartbrainlib.api.core.behaviour.base.OneRandomBehaviour;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
@@ -140,19 +140,20 @@ public class SCP939 extends BitterMob<SCP939> {
     public List<? extends BehaviorControl<?>> getFightingBehaviours(SCP939 owner) {
         return List.of(
                 new InvalidateAttackTarget<>(),
-                new SetWalkTargetToAttackTarget<>()
+                new SetWalkTargetToAttackTarget<>(),
+                new AnimatableMeleeAttack<>(0)
         );
     }
 
     public List<? extends BehaviorControl<?>> getHuntBehaviours(SCP939 ignoredOwner) {
         return List.of(
-                new SearchArea<>(),
                 new AttemptLure()
         );
     }
 
     public List<? extends BehaviorControl<?>> getListenBehaviours(SCP939 ignoredOwner) {
         return List.of(
+                new SetWalkToDisturbanceLocation<>(),
                 new ReleaseGas(10)
         );
     }
@@ -172,8 +173,8 @@ public class SCP939 extends BitterMob<SCP939> {
         }
 
         if (angerManagement.getHighestAnger(level) < 80) {
-            BehaviorUtils.setWalkAndLookTargetMemories(entity, sourcePos, 1.0f, 2);
-            BrainUtil.setForgettableMemory(entity, MemoryModuleType.DISTURBANCE_LOCATION, sourcePos, 200);
+//            BehaviorUtils.setWalkAndLookTargetMemories(entity, sourcePos, 1.0f, 2);
+            BrainUtil.setForgettableMemory(entity, MemoryModuleType.DISTURBANCE_LOCATION, sourcePos, 1200);
         }
     }
 
@@ -191,6 +192,8 @@ public class SCP939 extends BitterMob<SCP939> {
         if (tickCount % 20 == 0) {
             angerManagement.tick(level);
         }
+        System.out.println(brain.getActiveNonCoreActivity());
+        System.out.println(BrainUtil.getMemory(this, MemoryModuleType.WALK_TARGET));
     }
 
     public BitterAngerManagement getAngerManagement() {
