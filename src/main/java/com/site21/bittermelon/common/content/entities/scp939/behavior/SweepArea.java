@@ -13,6 +13,9 @@ import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.core.behaviour.base.ExtendedBehaviour;
 import net.tslat.smartbrainlib.library.object.MemoryTest;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 
 public class SweepArea extends ExtendedBehaviour<PathfinderMob> {
@@ -36,6 +39,8 @@ public class SweepArea extends ExtendedBehaviour<PathfinderMob> {
 
     @Override
     protected void tick(PathfinderMob entity) {
+        if (entity.level().isClientSide()) return;
+
         long key = gridKey(entity.blockPosition());
         VISIT_GRID.put(key, entity.level().getGameTime());
         touchGrid.put(entity.blockPosition().asLong(), entity.level().getGameTime());
@@ -60,30 +65,51 @@ public class SweepArea extends ExtendedBehaviour<PathfinderMob> {
     }
 
     private Path pickTarget(PathfinderMob entity) {
-        Path best = null;
-        float bestScore = Float.NEGATIVE_INFINITY;
-        long currentTime = entity.level().getGameTime();
+        long now = entity.level().getGameTime();
+        BlockPos origin = entity.blockPosition();
+        Vec3 heading = entity.getDeltaMovement();
+
+        List<Candidate> candidates = new ArrayList<>();
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-        BlockPos entityPos = entity.blockPosition();
 
-        for (int dx = -SEARCH_RADIUS; dx <= SEARCH_RADIUS; dx++) {
-            for (int dz = -SEARCH_RADIUS; dz <= SEARCH_RADIUS; dz++) {
-                pos.set(entityPos.getX() + dx, entityPos.getY(), entityPos.getZ() + dz);
+        int cellRadius = SEARCH_RADIUS / CELL_SIZE;
+        for (int cx = -cellRadius; cx <= cellRadius; cx++) {
+            for (int cz = -cellRadius; cz <= cellRadius; cz++) {
+                int x = origin.getX() + cx * CELL_SIZE;
+                int z = origin.getZ() + cz * CELL_SIZE;
+                pos.set(x, origin.getY(), z);
+                if (pos.equals(entity.blockPosition())) continue;
+
                 if (entity.level().getBlockState(pos).isCollisionShapeFullBlock(entity.level(), pos)) continue;
+                candidates.add(new Candidate(pos.immutable(), scoreCell(pos, now, heading, origin)));
 
-                float score = scoreCell(pos, currentTime, entity.getDeltaMovement(), entityPos);
-                if (score > bestScore) {
-                    Path path = entity.getNavigation().createPath(pos, 0);
-                    if (path == null || !path.canReach()) continue;
-
-                    bestScore = score;
-                    best = path;
+                if (entity.level() instanceof ServerLevel level) {
+                    level.sendParticles(
+                            ParticleTypes.FLAME,
+                            pos.getX() + 0.5,
+                            pos.getY() + 0.5,
+                            pos.getZ() + 0.5,
+                            1,
+                            0, 0, 0, 0
+                    );
                 }
             }
         }
 
-        return best;
+        candidates.sort(Comparator.comparingDouble(Candidate::score).reversed());
+        System.out.println("Checking " + candidates.size() + " candidates");
+
+        for (int i = 0; i <= Math.min(20, candidates.size()); i++) {
+            Path path = entity.getNavigation().createPath(candidates.get(i).pos(), 0);
+            if (path != null && path.canReach()) {
+                System.out.println("Found path on attempt: " + i);
+                return path;
+            }
+        }
+        return null;
     }
+
+    private record Candidate(BlockPos pos, float score) {}
 
     private float scoreCell(BlockPos blockPos, long currentTime, Vec3 heading, BlockPos pos) {
         if (blockPos.distSqr(pos) <= 1) {
@@ -102,10 +128,12 @@ public class SweepArea extends ExtendedBehaviour<PathfinderMob> {
         float momentum = 0;
         if (heading.lengthSqr() > 0.01) {
             Vec3 toCell = new Vec3(blockPos.getX() - pos.getX(), 0, blockPos.getZ() - pos.getZ()).normalize();
-            momentum = (float) heading.dot(toCell) * 30;
+            momentum = (float) heading.dot(toCell) * 100;
         }
 
-        return timeSinceLastVisit + activityLevel + momentum + timeSinceLastTouch;
+        float distancePenalty = (float) blockPos.distSqr(pos) * 10;
+
+        return timeSinceLastVisit + activityLevel + momentum + timeSinceLastTouch - distancePenalty;
     }
 
     private static long gridKey(BlockPos pos) {

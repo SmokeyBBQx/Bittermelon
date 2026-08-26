@@ -195,8 +195,6 @@ public class SCP939 extends BitterMob<SCP939> {
         if (tickCount % 20 == 0) {
             angerManagement.tick(level);
         }
-        System.out.println(brain.getActiveNonCoreActivity());
-        System.out.println(BrainUtil.getMemory(this, MemoryModuleType.WALK_TARGET));
     }
 
     public BitterAngerManagement getAngerManagement() {
