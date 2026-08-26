@@ -10,6 +10,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
@@ -36,6 +37,8 @@ public class SCP131 extends BitterMob<SCP131> {
     public static final int MAX_VARIANTS = 2;
     private static final EntityDataAccessor<Integer> VARIANT = SynchedEntityData.defineId(SCP131.class, EntityDataSerializers.INT);
 
+    public final AnimationState walkAnimationState = new AnimationState();
+
     public SCP131(EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level);
     }
@@ -57,6 +60,14 @@ public class SCP131 extends BitterMob<SCP131> {
     @Override
     public void tick() {
         super.tick();
+
+        if (level().isClientSide()) {
+            if (this.walkAnimation.speed() > 0.01F) {
+                walkAnimationState.startIfStopped(this.tickCount);
+            } else {
+                walkAnimationState.stop();
+            }
+        }
 
         if (horizontalCollision) {
             if (getDeltaMovement().x > 1 || getDeltaMovement().z > 1) {

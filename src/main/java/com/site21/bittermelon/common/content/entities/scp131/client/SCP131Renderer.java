@@ -20,7 +20,7 @@ public class SCP131Renderer extends MobRenderer<SCP131, SCP131RenderState, SCP13
         return renderState.variant == 0 ?
                 Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/entity/scp_131_a.png") :
                 Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/entity/scp_131_b.png");
-        }
+    }
 
     @Override
     public @NotNull SCP131RenderState createRenderState() {
@@ -31,5 +31,6 @@ public class SCP131Renderer extends MobRenderer<SCP131, SCP131RenderState, SCP13
     public void extractRenderState(@NotNull SCP131 entity, @NotNull SCP131RenderState reusedState, float partialTick) {
         super.extractRenderState(entity, reusedState, partialTick);
         reusedState.variant = entity.getVariant();
+        reusedState.walkAnimationState = entity.walkAnimationState;
     }
 }
