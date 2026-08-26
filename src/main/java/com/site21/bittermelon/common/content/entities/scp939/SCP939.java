@@ -3,6 +3,7 @@ package com.site21.bittermelon.common.content.entities.scp939;
 import com.site21.bittermelon.common.content.entities.scp939.behavior.AttemptLure;
 import com.site21.bittermelon.common.content.entities.scp939.behavior.ReleaseGas;
 import com.site21.bittermelon.common.content.entities.scp939.behavior.SetWalkToDisturbanceLocation;
+import com.site21.bittermelon.common.content.entities.scp939.behavior.SweepArea;
 import com.site21.bittermelon.common.content.entities.scp939.lure.LureSystem;
 import com.site21.bittermelon.common.systems.ai.base.BitterMob;
 import com.site21.bittermelon.common.systems.ai.base.Need;
@@ -122,6 +123,7 @@ public class SCP939 extends BitterMob<SCP939> {
                 new LookAtTarget<>(),
                 new MoveToWalkTarget<>(),
                 new TargetOrRetaliate<>()
+                        .canRetaliateAgainst((entity) -> !(entity instanceof SCP939))
         );
     }
 
@@ -147,6 +149,7 @@ public class SCP939 extends BitterMob<SCP939> {
 
     public List<? extends BehaviorControl<?>> getHuntBehaviours(SCP939 ignoredOwner) {
         return List.of(
+                new SweepArea(),
                 new AttemptLure()
         );
     }
