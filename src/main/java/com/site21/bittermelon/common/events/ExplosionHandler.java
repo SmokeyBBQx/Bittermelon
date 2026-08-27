@@ -45,6 +45,8 @@ public class ExplosionHandler {
                 affectFluid(level, pos, explosion.center(), explosion.radius());
             }
 
+            if (level.getBlockState(pos).isAir()) continue;
+
             int breakProgress = calculateBreakProgress(explosion.center(), pos, explosion.radius());
             BlockDamageUtil.addDamage(level, pos, breakProgress);
         }
