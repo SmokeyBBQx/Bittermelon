@@ -45,8 +45,6 @@ public class SweepArea extends ExtendedBehaviour<PathfinderMob> {
 
     @Override
     protected void tick(PathfinderMob entity) {
-        if (entity.level().isClientSide()) return;
-
         long key = gridKey(entity.blockPosition());
         VISIT_GRID.put(key, entity.level().getGameTime());
         touchGrid.put(entity.blockPosition().asLong(), entity.level().getGameTime());

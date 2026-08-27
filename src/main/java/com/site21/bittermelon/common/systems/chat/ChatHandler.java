@@ -6,8 +6,10 @@ import com.site21.bittermelon.common.systems.character.CharacterManager;
 import com.site21.bittermelon.init.custom.VerbSets;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ServerChatEvent;
@@ -117,7 +119,13 @@ public class ChatHandler {
     }
 
     public static void dispatch(RPMessage msg) {
-        for (ServerPlayer recipient : msg.source().level().players()) {
+        ServerLevel level = msg.source().level();
+
+        if (msg.range() > WHISPER_RANGE && msg.hasDialogue()) {
+            level.gameEvent(GameEvent.ENTITY_ACTION, msg.source().position(), GameEvent.Context.of(msg.source()));
+        }
+
+        for (ServerPlayer recipient : level.players()) {
             double distance = msg.source().distanceTo(recipient);
             if (distance > msg.range()) continue;
 
@@ -216,7 +224,11 @@ public class ChatHandler {
             String verb,
             List<ChatSegment> segments,
             int range
-    ) {}
+    ) {
+        public boolean hasDialogue() {
+            return segments.stream().anyMatch(s -> s instanceof ChatSegment.Dialogue);
+        }
+    }
 
     @FunctionalInterface
     public interface ChatFilter {
