@@ -110,8 +110,11 @@ public class CommonEvents {
 
     @SubscribeEvent
     public static void onLevelTick(LevelTickEvent.Post event) {
-        if (event.getLevel().isClientSide()) return;
-        PhysicsManager.updatePhysicsLevel(event.getLevel());
+        if (event.getLevel() instanceof ServerLevel serverLevel) {
+            if (serverLevel.tickRateManager().runsNormally()) {
+                PhysicsManager.updatePhysicsLevel(event.getLevel());
+            }
+        }
     }
 
     private static void tickCharacter(LivingEntity entity, Character character) {
