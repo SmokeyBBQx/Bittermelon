@@ -1,10 +1,10 @@
 package com.site21.bittermelon.common.content.entities.scp939.client;
 
+import net.minecraft.client.animation.KeyframeAnimation;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.util.Mth;
 
 
 public class SCP939Model extends EntityModel<SCP939RenderState> {
@@ -14,6 +14,7 @@ public class SCP939Model extends EntityModel<SCP939RenderState> {
     protected final ModelPart leftFrontLeg;
     protected final ModelPart rightHindLeg;
     protected final ModelPart leftHindLeg;
+    private final KeyframeAnimation crouch;
 
     public SCP939Model(ModelPart root) {
         super(root);
@@ -24,6 +25,7 @@ public class SCP939Model extends EntityModel<SCP939RenderState> {
         this.leftFrontLeg = front.getChild("left_front_leg");
         this.rightHindLeg = body.getChild("right_hind_leg");
         this.leftHindLeg = body.getChild("left_hind_leg");
+        crouch = SCP939Animation.CRAWL.bake(root);
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -123,12 +125,13 @@ public class SCP939Model extends EntityModel<SCP939RenderState> {
         super.setupAnim(state);
         this.head.xRot = state.xRot * (float) (Math.PI / 180.0);
         this.head.yRot = state.yRot * (float) (Math.PI / 180.0);
-        float animationPos = state.walkAnimationPos;
-        float animationSpeed = state.walkAnimationSpeed;
-        float speed = 0.5f;
-        this.rightHindLeg.xRot = Mth.cos(animationPos * 0.6662F) * speed * animationSpeed;
-        this.leftHindLeg.xRot = Mth.cos(animationPos * 0.6662F + (float) Math.PI) * speed * animationSpeed;
-        this.rightFrontLeg.xRot = Mth.cos(animationPos * 0.6662F + (float) Math.PI) * speed * animationSpeed;
-        this.leftFrontLeg.xRot = Mth.cos(animationPos * 0.6662F) * speed * animationSpeed;
+//        float animationPos = state.walkAnimationPos;
+//        float animationSpeed = state.walkAnimationSpeed;
+//        float speed = 0.5f;
+//        this.rightHindLeg.xRot = Mth.cos(animationPos * 0.6662F) * speed * animationSpeed;
+//        this.leftHindLeg.xRot = Mth.cos(animationPos * 0.6662F + (float) Math.PI) * speed * animationSpeed;
+//        this.rightFrontLeg.xRot = Mth.cos(animationPos * 0.6662F + (float) Math.PI) * speed * animationSpeed;
+//        this.leftFrontLeg.xRot = Mth.cos(animationPos * 0.6662F) * speed * animationSpeed;
+        crouch.applyWalk(state.walkAnimationPos, state.walkAnimationSpeed, 4.0f, 100.0f);
     }
 }

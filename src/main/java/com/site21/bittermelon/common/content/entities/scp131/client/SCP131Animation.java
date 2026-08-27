@@ -1,11 +1,11 @@
-package com.site21.bittermelon.client.animation;
+package com.site21.bittermelon.common.content.entities.scp131.client;
 
 import net.minecraft.client.animation.AnimationChannel;
 import net.minecraft.client.animation.AnimationDefinition;
 import net.minecraft.client.animation.Keyframe;
 import net.minecraft.client.animation.KeyframeAnimations;
 
-public class SCP131Walk {
+public class SCP131Animation {
     public static final AnimationDefinition WALK = AnimationDefinition.Builder.withLength(0.5F).looping()
             .addAnimation("body", new AnimationChannel(AnimationChannel.Targets.ROTATION,
                     new Keyframe(0.0F, KeyframeAnimations.degreeVec(5.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),

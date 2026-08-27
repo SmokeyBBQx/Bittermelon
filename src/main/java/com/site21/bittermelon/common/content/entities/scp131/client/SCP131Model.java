@@ -1,15 +1,10 @@
 package com.site21.bittermelon.common.content.entities.scp131.client;
 
-import com.site21.bittermelon.client.animation.SCP131Walk;
 import net.minecraft.client.animation.KeyframeAnimation;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.CubeDeformation;
-import net.minecraft.client.model.geom.builders.CubeListBuilder;
-import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.model.geom.builders.MeshDefinition;
-import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.model.geom.builders.*;
 import org.jetbrains.annotations.NotNull;
 
 public class SCP131Model extends EntityModel<SCP131RenderState> {
@@ -19,7 +14,7 @@ public class SCP131Model extends EntityModel<SCP131RenderState> {
     protected SCP131Model(ModelPart root) {
         super(root);
         body = root.getChild("body");
-        walk = SCP131Walk.WALK.bake(root);
+        walk = SCP131Animation.WALK.bake(root);
     }
 
     public static @NotNull LayerDefinition createBodyLayer() {
@@ -53,6 +48,6 @@ public class SCP131Model extends EntityModel<SCP131RenderState> {
         body.xRot = renderState.xRot * ((float) Math.PI / 180F);
         body.yRot = renderState.yRot * ((float) Math.PI / 180F);
 
-        this.walk.apply(renderState.walkAnimationState, renderState.ageInTicks);
+        walk.apply(renderState.walkAnimationState, renderState.ageInTicks);
     }
 }
