@@ -28,7 +28,6 @@ public class SweepArea extends ExtendedBehaviour<PathfinderMob> {
 
     private static final Long2LongOpenHashMap VISIT_GRID = new Long2LongOpenHashMap();
     private static final Long2IntOpenHashMap ACTIVITY_GRID = new Long2IntOpenHashMap();
-    private final Long2LongOpenHashMap touchGrid = new Long2LongOpenHashMap();
     private long lastOffsetReset = 0;
     private int offsetX = 0;
     private int offsetZ = 0;
@@ -47,7 +46,6 @@ public class SweepArea extends ExtendedBehaviour<PathfinderMob> {
     protected void tick(PathfinderMob entity) {
         long key = gridKey(entity.blockPosition());
         VISIT_GRID.put(key, entity.level().getGameTime());
-        touchGrid.put(entity.blockPosition().asLong(), entity.level().getGameTime());
         if (!entity.getNavigation().isDone()) return;
 
         Path path = pickTarget(entity);
@@ -64,6 +62,7 @@ public class SweepArea extends ExtendedBehaviour<PathfinderMob> {
 //                0, 0, 0, 0
 //            );
         }
+
         entity.getNavigation().moveTo(path, 0.8);
         entity.getLookControl().setLookAt(Vec3.atCenterOf(targetPos));
     }
@@ -85,10 +84,11 @@ public class SweepArea extends ExtendedBehaviour<PathfinderMob> {
 
         for (int cx = -SEARCH_RADIUS; cx <= SEARCH_RADIUS; cx++) {
             for (int cz = -SEARCH_RADIUS; cz <= SEARCH_RADIUS; cz++) {
+                if (candidates.size() >= MAX_CANDIDATES) break;
                 int x = origin.getX() + cx * CELL_SIZE + offsetX;
                 int z = origin.getZ() + cz * CELL_SIZE + offsetZ;
                 pos.set(x, origin.getY(), z);
-                if (pos.equals(entity.blockPosition())) continue;
+                if (pos.equals(origin)) continue;
 
                 if (entity.level().getBlockState(pos).isCollisionShapeFullBlock(entity.level(), pos)) continue;
                 candidates.add(new Candidate(pos.immutable(), scoreCell(pos, now, heading, origin)));
@@ -131,9 +131,6 @@ public class SweepArea extends ExtendedBehaviour<PathfinderMob> {
 
         int activityLevel = ACTIVITY_GRID.getOrDefault(gridKey, 0);
 
-        long lastTouch = touchGrid.getOrDefault(blockPos.asLong(), 0L);
-        long timeSinceLastTouch = currentTime - lastTouch;
-
         float momentum = 0;
         if (heading.lengthSqr() > 0.01) {
             Vec3 toCell = new Vec3(blockPos.getX() - pos.getX(), 0, blockPos.getZ() - pos.getZ()).normalize();
@@ -142,7 +139,7 @@ public class SweepArea extends ExtendedBehaviour<PathfinderMob> {
 
         float distancePenalty = (float) blockPos.distSqr(pos) * 10;
 
-        return timeSinceLastVisit + activityLevel + momentum + timeSinceLastTouch - distancePenalty;
+        return timeSinceLastVisit + activityLevel + momentum - distancePenalty;
     }
 
     private static long gridKey(BlockPos pos) {

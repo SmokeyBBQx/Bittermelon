@@ -163,7 +163,7 @@ public class SCP939 extends BitterMob<SCP939> {
     public List<? extends BehaviorControl<?>> getHuntBehaviours(SCP939 ignoredOwner) {
         return List.of(
                 new SweepArea()
-                        .whenStopping(entity -> setDisturbanceLocation(entity, entity.blockPosition()))
+                        .whenStopping(entity -> setDisturbanceLocationIfNone(entity, entity.blockPosition(), 100))
                         .runFor(300, 600),
                 new AttemptLure()
         );
@@ -190,9 +190,11 @@ public class SCP939 extends BitterMob<SCP939> {
             angerManagement.increaseAnger(sourceEntity, 10);
         }
 
+        System.out.println("Received vibration! Current highest anger: " + angerManagement.getHighestAnger(level));
+
         if (angerManagement.getHighestAnger(level) < 80) {
 //            BehaviorUtils.setWalkAndLookTargetMemories(entity, sourcePos, 1.0f, 2);
-            setDisturbanceLocation(entity, sourcePos);
+            setDisturbanceLocation(entity, sourcePos, 150);
             BrainUtil.setMemory(entity, BitterMemoryTypes.HUNTING.get(), true);
         }
     }
@@ -234,8 +236,14 @@ public class SCP939 extends BitterMob<SCP939> {
         return 90;
     }
 
-    public static void setDisturbanceLocation(PathfinderMob entity, BlockPos pos) {
-        BrainUtil.setForgettableMemory(entity, MemoryModuleType.DISTURBANCE_LOCATION, pos, 100);
+    public static void setDisturbanceLocationIfNone(PathfinderMob entity, BlockPos pos, int time) {
+        if (!entity.getBrain().hasMemoryValue(MemoryModuleType.DISTURBANCE_LOCATION)) {
+            setDisturbanceLocation(entity, pos, time);
+        }
+    }
+
+    public static void setDisturbanceLocation(PathfinderMob entity, BlockPos pos, int time) {
+        BrainUtil.setForgettableMemory(entity, MemoryModuleType.DISTURBANCE_LOCATION, pos, time);
     }
 
     @Override

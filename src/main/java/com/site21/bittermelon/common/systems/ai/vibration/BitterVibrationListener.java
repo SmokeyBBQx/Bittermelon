@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.GameEventTags;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.gameevent.GameEventListener;
 import net.minecraft.world.level.gameevent.PositionSource;
@@ -65,7 +66,7 @@ public class BitterVibrationListener<E extends Entity> implements GameEventListe
 
         Entity sourceEntity = context.sourceEntity();
         if (sourceEntity != null) {
-            if (sourceEntity.isSpectator()) return false;
+            if (sourceEntity.isSpectator() || (sourceEntity instanceof Player player && player.isCreative())) return false;
             return ignoresDampening || !sourceEntity.dampensVibrations();
         }
 
