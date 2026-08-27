@@ -21,11 +21,18 @@ import java.util.Set;
 public class SweepArea extends ExtendedBehaviour<PathfinderMob> {
     public static final MemoryTest MEMORY_REQUIREMENTS = MemoryTest.builder()
             .usesMemories(MemoryModuleType.WALK_TARGET);
+
+    private static final int SEARCH_RADIUS = 2;
+    private static final int CELL_SIZE = 4;
+    private static final int OFFSET_RESET_INTERVAL = 2400;
+    private static final int MAX_CANDIDATES = 21;
+
     private static final Long2LongOpenHashMap VISIT_GRID = new Long2LongOpenHashMap();
     private static final Long2IntOpenHashMap ACTIVITY_GRID = new Long2IntOpenHashMap();
     private final Long2LongOpenHashMap touchGrid = new Long2LongOpenHashMap();
-    private static final int SEARCH_RADIUS = 8;
-    private static final int CELL_SIZE = 4;
+    private long lastOffsetReset = 0;
+    private int offsetX = 0;
+    private int offsetZ = 0;
 
     @Override
     public Set<MemoryCondition<?, ?>> getMemoryRequirements() {
@@ -60,23 +67,29 @@ public class SweepArea extends ExtendedBehaviour<PathfinderMob> {
                 0, 0, 0, 0
             );
         }
-        entity.getNavigation().moveTo(path, 1.0);
+        entity.getNavigation().moveTo(path, 0.8);
         entity.getLookControl().setLookAt(Vec3.atCenterOf(targetPos));
     }
 
     private Path pickTarget(PathfinderMob entity) {
         long now = entity.level().getGameTime();
+
+        if (now - lastOffsetReset > OFFSET_RESET_INTERVAL) {
+            offsetX = entity.getRandom().nextInt(CELL_SIZE);
+            offsetZ = entity.getRandom().nextInt(CELL_SIZE);
+            lastOffsetReset = now;
+        }
+
         BlockPos origin = entity.blockPosition();
         Vec3 heading = entity.getDeltaMovement();
 
         List<Candidate> candidates = new ArrayList<>();
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 
-        int cellRadius = SEARCH_RADIUS / CELL_SIZE;
-        for (int cx = -cellRadius; cx <= cellRadius; cx++) {
-            for (int cz = -cellRadius; cz <= cellRadius; cz++) {
-                int x = origin.getX() + cx * CELL_SIZE;
-                int z = origin.getZ() + cz * CELL_SIZE;
+        for (int cx = -SEARCH_RADIUS; cx <= SEARCH_RADIUS; cx++) {
+            for (int cz = -SEARCH_RADIUS; cz <= SEARCH_RADIUS; cz++) {
+                int x = origin.getX() + cx * CELL_SIZE + offsetX;
+                int z = origin.getZ() + cz * CELL_SIZE + offsetZ;
                 pos.set(x, origin.getY(), z);
                 if (pos.equals(entity.blockPosition())) continue;
 
@@ -99,17 +112,16 @@ public class SweepArea extends ExtendedBehaviour<PathfinderMob> {
         candidates.sort(Comparator.comparingDouble(Candidate::score).reversed());
         System.out.println("Checking " + candidates.size() + " candidates");
 
-        for (int i = 0; i <= Math.min(20, candidates.size()); i++) {
+        for (int i = 0; i < Math.min(MAX_CANDIDATES, candidates.size()); i++) {
             Path path = entity.getNavigation().createPath(candidates.get(i).pos(), 0);
             if (path != null && path.canReach()) {
                 System.out.println("Found path on attempt: " + i);
                 return path;
             }
         }
+
         return null;
     }
-
-    private record Candidate(BlockPos pos, float score) {}
 
     private float scoreCell(BlockPos blockPos, long currentTime, Vec3 heading, BlockPos pos) {
         if (blockPos.distSqr(pos) <= 1) {
@@ -141,4 +153,6 @@ public class SweepArea extends ExtendedBehaviour<PathfinderMob> {
         int z = Math.floorDiv(pos.getZ(), CELL_SIZE);
         return (x & 0xFFFFFFFFL) | ((long) z << 32);
     }
+
+    private record Candidate(BlockPos pos, float score) {}
 }

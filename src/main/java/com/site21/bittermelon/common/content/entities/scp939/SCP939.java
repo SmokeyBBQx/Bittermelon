@@ -13,15 +13,18 @@ import com.site21.bittermelon.common.systems.ai.vibration.BitterAngerManagement;
 import com.site21.bittermelon.common.systems.ai.vibration.BitterVibrationListener;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.init.neoforge.BitterActivity;
+import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
@@ -111,7 +114,8 @@ public class SCP939 extends BitterMob<SCP939> {
                     .requireAndClearMemoriesOnUse(MemoryModuleType.DISTURBANCE_LOCATION);
         } else if (activity.equals(BitterActivity.HUNT.get())) {
             builder.behaviours((List) getHuntBehaviours(this))
-                    .behaviourPriorityBase(50);
+                    .behaviourPriorityBase(50)
+                    .addMemoryRequirement(BitterMemoryTypes.HUNTING.get(), MemoryStatus.VALUE_PRESENT);
         }
 
         return builder;
@@ -149,7 +153,9 @@ public class SCP939 extends BitterMob<SCP939> {
 
     public List<? extends BehaviorControl<?>> getHuntBehaviours(SCP939 ignoredOwner) {
         return List.of(
-                new SweepArea(),
+                new SweepArea()
+                        .whenStopping(entity -> setDisturbanceLocation(entity, entity.blockPosition()))
+                        .runFor(600),
                 new AttemptLure()
         );
     }
@@ -177,7 +183,8 @@ public class SCP939 extends BitterMob<SCP939> {
 
         if (angerManagement.getHighestAnger(level) < 80) {
 //            BehaviorUtils.setWalkAndLookTargetMemories(entity, sourcePos, 1.0f, 2);
-            BrainUtil.setForgettableMemory(entity, MemoryModuleType.DISTURBANCE_LOCATION, sourcePos, 1200);
+            setDisturbanceLocation(entity, sourcePos);
+            BrainUtil.setMemory(entity, BitterMemoryTypes.HUNTING.get(), true);
         }
     }
 
@@ -195,6 +202,8 @@ public class SCP939 extends BitterMob<SCP939> {
         if (tickCount % 20 == 0) {
             angerManagement.tick(level);
         }
+
+
     }
 
     public BitterAngerManagement getAngerManagement() {
@@ -214,6 +223,10 @@ public class SCP939 extends BitterMob<SCP939> {
 
     public double getVisionConeAngle() {
         return 90;
+    }
+
+    public static void setDisturbanceLocation(PathfinderMob entity, BlockPos pos) {
+        BrainUtil.setForgettableMemory(entity, MemoryModuleType.DISTURBANCE_LOCATION, pos, 100);
     }
 
     @Override

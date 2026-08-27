@@ -59,4 +59,7 @@ public class BitterMemoryTypes {
 
     public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<BlockPos>> AWAKEN_TARGET = MEMORY_MODULE_TYPES.register("awaken_target",
             () -> new MemoryModuleType<>(Optional.of(BlockPos.CODEC)));
+
+    public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<Boolean>> HUNTING = MEMORY_MODULE_TYPES.register("hunting",
+            () -> new MemoryModuleType<>(Optional.of(Codec.BOOL)));
 }
