@@ -3,7 +3,6 @@ package com.site21.bittermelon.common.content.entities.scp939.behavior;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.behavior.declarative.MemoryCondition;
@@ -58,14 +57,14 @@ public class SweepArea extends ExtendedBehaviour<PathfinderMob> {
         BlockPos targetPos = path.getTarget();
 
         if (entity.level() instanceof ServerLevel level) {
-            level.sendParticles(
-                ParticleTypes.CAMPFIRE_SIGNAL_SMOKE,
-                targetPos.getX() + 0.5,
-                targetPos.getY() + 0.5,
-                targetPos.getZ() + 0.5,
-                1,
-                0, 0, 0, 0
-            );
+//            level.sendParticles(
+//                ParticleTypes.CAMPFIRE_SIGNAL_SMOKE,
+//                targetPos.getX() + 0.5,
+//                targetPos.getY() + 0.5,
+//                targetPos.getZ() + 0.5,
+//                1,
+//                0, 0, 0, 0
+//            );
         }
         entity.getNavigation().moveTo(path, 0.8);
         entity.getLookControl().setLookAt(Vec3.atCenterOf(targetPos));
@@ -97,14 +96,14 @@ public class SweepArea extends ExtendedBehaviour<PathfinderMob> {
                 candidates.add(new Candidate(pos.immutable(), scoreCell(pos, now, heading, origin)));
 
                 if (entity.level() instanceof ServerLevel level) {
-                    level.sendParticles(
-                            ParticleTypes.FLAME,
-                            pos.getX() + 0.5,
-                            pos.getY() + 0.5,
-                            pos.getZ() + 0.5,
-                            1,
-                            0, 0, 0, 0
-                    );
+//                    level.sendParticles(
+//                            ParticleTypes.FLAME,
+//                            pos.getX() + 0.5,
+//                            pos.getY() + 0.5,
+//                            pos.getZ() + 0.5,
+//                            1,
+//                            0, 0, 0, 0
+//                    );
                 }
             }
         }

@@ -25,6 +25,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
@@ -44,6 +45,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarge
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetWalkTargetToAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.InvalidateAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.TargetOrRetaliate;
+import net.tslat.smartbrainlib.api.core.navigation.SmoothGroundNavigation;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.util.BrainUtil;
 import org.jetbrains.annotations.NotNull;
@@ -84,12 +86,18 @@ public class SCP939 extends BitterMob<SCP939> {
                 .add(Attributes.MOVEMENT_SPEED, 0.3)
                 .add(Attributes.MAX_HEALTH, 150.0)
                 .add(Attributes.ATTACK_KNOCKBACK, 1.5)
-                .add(Attributes.ATTACK_DAMAGE, 30.0);
+                .add(Attributes.ATTACK_DAMAGE, 30.0)
+                .add(Attributes.FOLLOW_RANGE, 128.0);
     }
 
     @Override
     protected Map<Need, NeedInstance> initializeNeeds() {
         return Map.of();
+    }
+
+    @Override
+    protected PathNavigation createNavigation(Level level) {
+        return new SmoothGroundNavigation(this, level);
     }
 
     @Override
@@ -146,7 +154,8 @@ public class SCP939 extends BitterMob<SCP939> {
     public List<? extends BehaviorControl<?>> getFightingBehaviours(SCP939 owner) {
         return List.of(
                 new InvalidateAttackTarget<>(),
-                new SetWalkTargetToAttackTarget<>(),
+                new SetWalkTargetToAttackTarget<>()
+                        .speedModifier(1.4f),
                 new AnimatableMeleeAttack<>(0)
         );
     }
@@ -155,7 +164,7 @@ public class SCP939 extends BitterMob<SCP939> {
         return List.of(
                 new SweepArea()
                         .whenStopping(entity -> setDisturbanceLocation(entity, entity.blockPosition()))
-                        .runFor(600),
+                        .runFor(300, 600),
                 new AttemptLure()
         );
     }

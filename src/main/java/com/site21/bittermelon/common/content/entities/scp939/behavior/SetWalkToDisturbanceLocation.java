@@ -28,6 +28,6 @@ public class SetWalkToDisturbanceLocation<E extends Mob> extends ExtendedBehavio
         if (pos == null) return;
 
         BrainUtil.setMemory(entity.getBrain(), MemoryModuleType.LOOK_TARGET, new BlockPosTracker(pos));
-        BrainUtil.setMemory(entity.getBrain(), MemoryModuleType.WALK_TARGET, new WalkTarget(pos, 0.7f, 2));
+        BrainUtil.setMemory(entity.getBrain(), MemoryModuleType.WALK_TARGET, new WalkTarget(pos, 1.2f, 2));
     }
 }
