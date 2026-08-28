@@ -3,6 +3,7 @@ package com.site21.bittermelon.init.neoforge;
 import com.site21.bittermelon.Bittermelon;
 import com.site21.bittermelon.common.content.entities.cage.client.BlockInfo;
 import com.site21.bittermelon.common.content.entities.ragdoll.client.RagdollTransformation;
+import com.site21.bittermelon.common.content.entities.scp939.SCP939State;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -45,6 +46,21 @@ public class BitterDataSerializers {
 
                 @Override
                 public UUID copy(UUID value) {
+                    return value;
+                }
+            }
+    );
+
+    public static final DeferredHolder<EntityDataSerializer<?>, EntityDataSerializer<SCP939State>> SCP_939_STATE = ENTITY_DATA_SERIALIZERS.register(
+            "scp_939_state",
+            () -> new EntityDataSerializer<>() {
+                @Override
+                public StreamCodec<? super RegistryFriendlyByteBuf, SCP939State> codec() {
+                    return SCP939State.STREAM_CODEC;
+                }
+
+                @Override
+                public SCP939State copy(SCP939State value) {
                     return value;
                 }
             }

@@ -1,9 +1,6 @@
 package com.site21.bittermelon.common.content.entities.scp939;
 
-import com.site21.bittermelon.common.content.entities.scp939.behavior.AttemptLure;
-import com.site21.bittermelon.common.content.entities.scp939.behavior.ReleaseGas;
-import com.site21.bittermelon.common.content.entities.scp939.behavior.SetWalkToDisturbanceLocation;
-import com.site21.bittermelon.common.content.entities.scp939.behavior.SweepArea;
+import com.site21.bittermelon.common.content.entities.scp939.behavior.*;
 import com.site21.bittermelon.common.content.entities.scp939.lure.LureSystem;
 import com.site21.bittermelon.common.systems.ai.base.BitterMob;
 import com.site21.bittermelon.common.systems.ai.base.Need;
@@ -13,10 +10,14 @@ import com.site21.bittermelon.common.systems.ai.vibration.BitterAngerManagement;
 import com.site21.bittermelon.common.systems.ai.vibration.BitterVibrationListener;
 import com.site21.bittermelon.common.systems.character.Character;
 import com.site21.bittermelon.init.neoforge.BitterActivity;
+import com.site21.bittermelon.init.neoforge.BitterDataSerializers;
 import com.site21.bittermelon.init.neoforge.BitterMemoryTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
@@ -60,6 +61,9 @@ public class SCP939 extends BitterMob<SCP939> {
     private final DynamicGameEventListener<BitterVibrationListener<SCP939>> gameListener;
     private BitterAngerManagement angerManagement;
     private LureSystem lureSystem;
+    private static final EntityDataAccessor<SCP939State> DATA_STATE = SynchedEntityData.defineId(SCP939.class,
+            BitterDataSerializers.SCP_939_STATE.get());
+    public final AnimationState listeningAnimationState = new AnimationState();
 
     public SCP939(EntityType entityType, Level level) {
         super(entityType, level);
@@ -172,8 +176,40 @@ public class SCP939 extends BitterMob<SCP939> {
     public List<? extends BehaviorControl<?>> getListenBehaviours(SCP939 ignoredOwner) {
         return List.of(
                 new SetWalkToDisturbanceLocation<>(),
-                new ReleaseGas(10)
+                new ReleaseGas(10),
+                new Listen()
         );
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder entityData) {
+        super.defineSynchedData(entityData);
+        entityData.define(DATA_STATE, SCP939State.IDLE);
+    }
+
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> accessor) {
+        if (DATA_STATE.equals(accessor)) {
+            SCP939State state = getState();
+            resetAnimations();
+            if (state == SCP939State.LISTENING) {
+                listeningAnimationState.startIfStopped(tickCount);
+            }
+        }
+
+        super.onSyncedDataUpdated(accessor);
+    }
+
+    public SCP939State getState() {
+        return entityData.get(DATA_STATE);
+    }
+
+    public void setState(SCP939State state) {
+        entityData.set(DATA_STATE, state);
+    }
+
+    private void resetAnimations() {
+        listeningAnimationState.stop();
     }
 
     @Override
@@ -194,7 +230,7 @@ public class SCP939 extends BitterMob<SCP939> {
 
         if (angerManagement.getHighestAnger(level) < 80) {
 //            BehaviorUtils.setWalkAndLookTargetMemories(entity, sourcePos, 1.0f, 2);
-            setDisturbanceLocation(entity, sourcePos, 150);
+            setDisturbanceLocation(entity, sourcePos, 350);
             BrainUtil.setMemory(entity, BitterMemoryTypes.HUNTING.get(), true);
         }
     }

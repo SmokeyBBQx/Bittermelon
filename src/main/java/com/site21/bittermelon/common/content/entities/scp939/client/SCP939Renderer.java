@@ -21,6 +21,12 @@ public class SCP939Renderer extends MobRenderer<SCP939, SCP939RenderState, SCP93
     }
 
     @Override
+    public void extractRenderState(SCP939 entity, SCP939RenderState state, float partialTicks) {
+        super.extractRenderState(entity, state, partialTicks);
+        state.listeningAnimationState.copyFrom(entity.listeningAnimationState);
+    }
+
+    @Override
     public @NotNull Identifier getTextureLocation(@NotNull SCP939RenderState renderState) {
         return Identifier.fromNamespaceAndPath(Bittermelon.MOD_ID, "textures/entity/scp_939.png");
     }
