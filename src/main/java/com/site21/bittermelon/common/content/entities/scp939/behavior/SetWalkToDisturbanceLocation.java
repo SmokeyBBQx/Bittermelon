@@ -26,7 +26,7 @@ public class SetWalkToDisturbanceLocation<E extends Mob> extends ExtendedBehavio
     @Override
     protected void start(E entity) {
         BlockPos pos = BrainUtil.getMemory(entity, MemoryModuleType.DISTURBANCE_LOCATION);
-        if (pos == null || entity.distanceToSqr(Vec3.atLowerCornerOf(pos)) < 4.0) return;
+        if (pos == null || entity.distanceToSqr(Vec3.atCenterOf(pos)) <= 4.0) return;
 
         BrainUtil.setMemory(entity.getBrain(), MemoryModuleType.LOOK_TARGET, new BlockPosTracker(pos));
         BrainUtil.setMemory(entity.getBrain(), MemoryModuleType.WALK_TARGET, new WalkTarget(pos, 1.2f, 2));

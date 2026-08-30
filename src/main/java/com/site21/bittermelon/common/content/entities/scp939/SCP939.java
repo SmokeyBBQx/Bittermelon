@@ -177,7 +177,7 @@ public class SCP939 extends BitterMob<SCP939> {
         return List.of(
                 new SetWalkToDisturbanceLocation<>(),
                 new ReleaseGas(10),
-                new Listen()
+                new Listen().noTimeout()
         );
     }
 
@@ -192,6 +192,7 @@ public class SCP939 extends BitterMob<SCP939> {
         if (DATA_STATE.equals(accessor)) {
             SCP939State state = getState();
             resetAnimations();
+
             if (state == SCP939State.LISTENING) {
                 listeningAnimationState.startIfStopped(tickCount);
             }
@@ -221,7 +222,7 @@ public class SCP939 extends BitterMob<SCP939> {
 
     public static void onVibration(SCP939 entity, ServerLevel level, BlockPos sourcePos, Holder<GameEvent> event, @Nullable Entity sourceEntity, double distance) {
         BitterAngerManagement angerManagement = entity.getAngerManagement();
-        if (sourceEntity != null) {
+        if (sourceEntity != null && !sourceEntity.isInvisible()) {
             if (sourceEntity instanceof SCP939) return;
             angerManagement.increaseAnger(sourceEntity, 10);
         }
@@ -230,7 +231,7 @@ public class SCP939 extends BitterMob<SCP939> {
 
         if (angerManagement.getHighestAnger(level) < 80) {
 //            BehaviorUtils.setWalkAndLookTargetMemories(entity, sourcePos, 1.0f, 2);
-            setDisturbanceLocation(entity, sourcePos, 350);
+            setDisturbanceLocation(entity, sourcePos, 550);
             BrainUtil.setMemory(entity, BitterMemoryTypes.HUNTING.get(), true);
         }
     }
@@ -249,8 +250,6 @@ public class SCP939 extends BitterMob<SCP939> {
         if (tickCount % 20 == 0) {
             angerManagement.tick(level);
         }
-
-
     }
 
     public BitterAngerManagement getAngerManagement() {

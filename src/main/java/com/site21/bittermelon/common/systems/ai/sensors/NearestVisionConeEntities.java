@@ -37,6 +37,8 @@ public class NearestVisionConeEntities extends NearestVisibleLivingEntities {
     }
 
     private boolean isWithinCone(LivingEntity entity, LivingEntity target) {
+        if (target.isInvisible()) return false;
+
         Vec3 toTarget = target.getEyePosition().subtract(entity.getEyePosition());
         double dot = toTarget.dot(entity.getLookAngle());
         if (dot < 0) return false;

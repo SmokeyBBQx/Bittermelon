@@ -5,6 +5,7 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 
 
 public class SCP939Model extends EntityModel<SCP939RenderState> {
@@ -14,11 +15,13 @@ public class SCP939Model extends EntityModel<SCP939RenderState> {
     protected final ModelPart leftFrontLeg;
     protected final ModelPart rightHindLeg;
     protected final ModelPart leftHindLeg;
+    protected final ModelPart drool1;
+    protected final ModelPart drool2;
     private final KeyframeAnimation crouch;
     private final KeyframeAnimation listening;
 
     public SCP939Model(ModelPart root) {
-        super(root);
+        super(root, RenderTypes::entityTranslucent);
         this.body = root.getChild("body");
         ModelPart front = body.getChild("upper_body").getChild("front");
         this.head = front.getChild("head");
@@ -26,6 +29,8 @@ public class SCP939Model extends EntityModel<SCP939RenderState> {
         this.leftFrontLeg = front.getChild("left_front_leg");
         this.rightHindLeg = body.getChild("right_hind_leg");
         this.leftHindLeg = body.getChild("left_hind_leg");
+        this.drool1 = root.getChild("drool_1");
+        this.drool2 = root.getChild("drool_2");
         crouch = SCP939Animation.CRAWL.bake(root);
         listening = SCP939Animation.LISTENING.bake(root);
     }
@@ -52,13 +57,13 @@ public class SCP939Model extends EntityModel<SCP939RenderState> {
 
         PartDefinition head = front.addOrReplaceChild("head", CubeListBuilder.create(), PartPose.offset(-0.6667F, -1.286F, -20.8255F));
 
-        PartDefinition lower_jaw = head.addOrReplaceChild("lower_jaw", CubeListBuilder.create().texOffs(0, 40).addBox(-2.5F, -0.7079F, -12.6796F, 5.0F, 2.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 1.1369F, 1.668F));
+        PartDefinition lower_jaw = head.addOrReplaceChild("lower_jaw", CubeListBuilder.create().texOffs(0, 40).addBox(-4.7279F, -2.8419F, -11.6913F, 5.0F, 2.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offset(2.0F, 3.1369F, 0.668F));
 
-        PartDefinition cube_r1 = lower_jaw.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(62, 52).mirror().addBox(-0.5F, -2.0F, -6.5F, 0.0F, 3.0F, 11.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(-2.0F, -0.7079F, -6.1796F, 0.0F, 0.0F, -0.3927F));
+        PartDefinition cube_r1 = lower_jaw.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(62, 52).mirror().addBox(-0.5F, -2.0F, -6.5F, 0.0F, 3.0F, 11.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(-4.2279F, -2.8419F, -5.1913F, 0.0F, 0.0F, -0.3927F));
 
-        PartDefinition cube_r2 = lower_jaw.addOrReplaceChild("cube_r2", CubeListBuilder.create().texOffs(40, 15).addBox(-2.5F, -1.5F, 0.0F, 5.0F, 3.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -1.2459F, -12.9611F, 0.3927F, 0.0F, 0.0F));
+        PartDefinition cube_r2 = lower_jaw.addOrReplaceChild("cube_r2", CubeListBuilder.create().texOffs(40, 15).addBox(-2.5F, -1.5F, 0.0F, 5.0F, 3.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.2279F, -3.3799F, -11.9728F, 0.3927F, 0.0F, 0.0F));
 
-        PartDefinition cube_r3 = lower_jaw.addOrReplaceChild("cube_r3", CubeListBuilder.create().texOffs(62, 52).addBox(0.5F, -2.0F, -6.5F, 0.0F, 3.0F, 11.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(2.0F, -0.7079F, -6.1796F, 0.0F, 0.0F, 0.3927F));
+        PartDefinition cube_r3 = lower_jaw.addOrReplaceChild("cube_r3", CubeListBuilder.create().texOffs(62, 52).addBox(0.5F, -2.0F, -6.5F, 0.0F, 3.0F, 11.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-0.2279F, -2.8419F, -5.1913F, 0.0F, 0.0F, 0.3927F));
 
         PartDefinition upper_jaw = head.addOrReplaceChild("upper_jaw", CubeListBuilder.create().texOffs(34, 37).addBox(-2.5F, -1.4341F, -10.8437F, 5.0F, 3.0F, 12.0F, new CubeDeformation(0.0F))
                 .texOffs(68, 11).addBox(0.0F, -4.1841F, -7.8437F, 0.0F, 3.0F, 9.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -1.1369F, -0.168F));
@@ -120,6 +125,10 @@ public class SCP939Model extends EntityModel<SCP939RenderState> {
 
         PartDefinition cube_r10 = right_hind_foot.addOrReplaceChild("cube_r10", CubeListBuilder.create().texOffs(58, 86).mirror().addBox(-0.5F, -1.5F, -2.0F, 0.0F, 2.0F, 2.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offsetAndRotation(1.8659F, 1.5F, -3.277F, 0.0F, -0.3927F, 0.0F));
 
+        PartDefinition drool_1 = partdefinition.addOrReplaceChild("drool_1", CubeListBuilder.create().texOffs(24, 19).addBox(0.0F, -0.1F, -0.5F, 0.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(-0.5F, 2.1F, -15.5F));
+
+        PartDefinition drool_2 = partdefinition.addOrReplaceChild("drool_2", CubeListBuilder.create().texOffs(24, 21).addBox(0.0F, 0.0F, -0.5F, 0.0F, 2.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.5F, 2.0F, -15.5F));
+
         return LayerDefinition.create(meshdefinition, 128, 128);
     }
 
@@ -135,7 +144,11 @@ public class SCP939Model extends EntityModel<SCP939RenderState> {
 //        this.leftHindLeg.xRot = Mth.cos(animationPos * 0.6662F + (float) Math.PI) * speed * animationSpeed;
 //        this.rightFrontLeg.xRot = Mth.cos(animationPos * 0.6662F + (float) Math.PI) * speed * animationSpeed;
 //        this.leftFrontLeg.xRot = Mth.cos(animationPos * 0.6662F) * speed * animationSpeed;
-        crouch.applyWalk(state.walkAnimationPos, state.walkAnimationSpeed, 4.0f, 100.0f);
+        if (!state.listeningAnimationState.isStarted()) {
+            crouch.applyWalk(state.walkAnimationPos, state.walkAnimationSpeed, 4.0f, 100.0f);
+        }
+        drool1.visible = state.listeningAnimationState.isStarted();
+        drool2.visible = state.listeningAnimationState.isStarted();
         listening.apply(state.listeningAnimationState, state.ageInTicks);
     }
 }
