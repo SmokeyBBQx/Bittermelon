@@ -13,6 +13,7 @@ import static com.site21.bittermelon.client.event.LayerDefinitions.SCP_939_LAYER
 public class SCP939Renderer extends MobRenderer<SCP939, SCP939RenderState, SCP939Model> {
     public SCP939Renderer(EntityRendererProvider.Context context) {
         super(context, new SCP939Model(context.bakeLayer(SCP_939_LAYER)), 0.5f);
+        this.addLayer(new SCP939EmissiveLayer(this));
     }
 
     @Override

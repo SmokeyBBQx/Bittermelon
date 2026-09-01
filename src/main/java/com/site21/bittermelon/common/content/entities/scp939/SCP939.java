@@ -64,6 +64,7 @@ public class SCP939 extends BitterMob<SCP939> {
     private static final EntityDataAccessor<SCP939State> DATA_STATE = SynchedEntityData.defineId(SCP939.class,
             BitterDataSerializers.SCP_939_STATE.get());
     public final AnimationState listeningAnimationState = new AnimationState();
+    public final AnimationState crawlAnimationState = new AnimationState();
 
     public SCP939(EntityType entityType, Level level) {
         super(entityType, level);
@@ -188,17 +189,15 @@ public class SCP939 extends BitterMob<SCP939> {
     }
 
     @Override
-    public void onSyncedDataUpdated(EntityDataAccessor<?> accessor) {
-        if (DATA_STATE.equals(accessor)) {
-            SCP939State state = getState();
-            resetAnimations();
+    public void tick() {
+        super.tick();
+        if (!level().isClientSide()) return;
 
-            if (state == SCP939State.LISTENING) {
-                listeningAnimationState.startIfStopped(tickCount);
-            }
-        }
+        boolean moving = walkAnimation.speed() > 0.01F;
+        boolean listening = !moving && getState() == SCP939State.LISTENING;
 
-        super.onSyncedDataUpdated(accessor);
+        if (moving) crawlAnimationState.startIfStopped(tickCount); else crawlAnimationState.stop();
+        if (listening) listeningAnimationState.startIfStopped(tickCount); else listeningAnimationState.stop();
     }
 
     public SCP939State getState() {
@@ -207,10 +206,6 @@ public class SCP939 extends BitterMob<SCP939> {
 
     public void setState(SCP939State state) {
         entityData.set(DATA_STATE, state);
-    }
-
-    private void resetAnimations() {
-        listeningAnimationState.stop();
     }
 
     @Override

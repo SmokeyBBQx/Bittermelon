@@ -70,7 +70,10 @@ public class SCP939Animation {
                     new Keyframe(2.0F, KeyframeAnimations.degreeVec(12.5F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM)
             ))
             .addAnimation("lower_jaw", new AnimationChannel(AnimationChannel.Targets.POSITION,
-                    new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, -2.0F, 1.0F), AnimationChannel.Interpolations.LINEAR)
+                    new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, -2.0F, 1.8F), AnimationChannel.Interpolations.LINEAR),
+                    new Keyframe(0.3333F, KeyframeAnimations.posVec(0.0F, -2.0F, 1.57F), AnimationChannel.Interpolations.LINEAR),
+                    new Keyframe(1.0F, KeyframeAnimations.posVec(0.0F, -2.0F, 1.07F), AnimationChannel.Interpolations.LINEAR),
+                    new Keyframe(2.0F, KeyframeAnimations.posVec(0.0F, -2.0F, 1.8F), AnimationChannel.Interpolations.LINEAR)
             ))
             .addAnimation("upper_jaw", new AnimationChannel(AnimationChannel.Targets.ROTATION,
                     new Keyframe(0.0F, KeyframeAnimations.degreeVec(7.5F, 0.0F, 0.0F), AnimationChannel.Interpolations.CATMULLROM),
@@ -197,6 +200,9 @@ public class SCP939Animation {
                 ))
                 .addAnimation("front", new AnimationChannel(AnimationChannel.Targets.ROTATION,
                         new Keyframe(0.0F, KeyframeAnimations.degreeVec(17.5F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR)
+                ))
+                .addAnimation("front", new AnimationChannel(AnimationChannel.Targets.POSITION,
+                        new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, 0.0F, 1.0F), AnimationChannel.Interpolations.LINEAR)
                 ))
                 .addAnimation("left_front_leg", new AnimationChannel(AnimationChannel.Targets.ROTATION,
                         new Keyframe(0.0F, KeyframeAnimations.degreeVec(-15.0F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR)
