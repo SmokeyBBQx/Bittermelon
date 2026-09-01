@@ -1,10 +1,12 @@
 package com.site21.bittermelon.common.content.entities.scp939;
 
+import com.site21.bittermelon.common.content.entities.ragdoll.RagdollUtil;
 import com.site21.bittermelon.common.content.entities.scp939.behavior.*;
 import com.site21.bittermelon.common.content.entities.scp939.lure.LureSystem;
 import com.site21.bittermelon.common.systems.ai.base.BitterMob;
 import com.site21.bittermelon.common.systems.ai.base.Need;
 import com.site21.bittermelon.common.systems.ai.base.NeedInstance;
+import com.site21.bittermelon.common.systems.ai.behavior.attack.YankItem;
 import com.site21.bittermelon.common.systems.ai.sensors.VisionConeSensor;
 import com.site21.bittermelon.common.systems.ai.vibration.BitterAngerManagement;
 import com.site21.bittermelon.common.systems.ai.vibration.BitterVibrationListener;
@@ -17,10 +19,10 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.AnimationState;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
@@ -29,6 +31,7 @@ import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.schedule.Activity;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.DynamicGameEventListener;
 import net.minecraft.world.level.gameevent.EntityPositionSource;
@@ -36,9 +39,11 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.gameevent.PositionSource;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.Vec3;
 import net.tslat.smartbrainlib.api.core.ActivityBuilder;
 import net.tslat.smartbrainlib.api.core.behaviour.base.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
+import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.LeapAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.MoveToWalkTarget;
@@ -160,7 +165,12 @@ public class SCP939 extends BitterMob<SCP939> {
                 new InvalidateAttackTarget<>(),
                 new SetWalkTargetToAttackTarget<>()
                         .speedModifier(1.4f),
-                new AnimatableMeleeAttack<>(0)
+                new OneRandomBehaviour<>(
+                        new AnimatableMeleeAttack<>(0),
+                        new LeapAtTarget<>(10)
+                                .jumpStrength(1.2f),
+                        new YankItem<>(0)
+                )
         );
     }
 
@@ -179,6 +189,33 @@ public class SCP939 extends BitterMob<SCP939> {
                 new ReleaseGas(10),
                 new Listen().noTimeout()
         );
+    }
+
+    @Override
+    protected float getKnockback(Entity target, DamageSource damageSource) {
+        float knockback = (float) this.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
+        if (level() instanceof ServerLevel level) {
+            knockback = EnchantmentHelper.modifyKnockback(level, getWeaponItem(), target, damageSource, knockback);
+        }
+        knockback *= 0.5f;
+
+        float speed = (float) getKnownMovement().horizontalDistance();
+        float t = Mth.clamp(speed / 0.03f, 0.0f, 1.0f);
+        return knockback + Mth.lerp(t, 0.25f, 1.5f);
+    }
+
+    @Override
+    public void causeExtraKnockback(Entity target, float knockback, Vec3 oldMovement) {
+        super.causeExtraKnockback(target, knockback, oldMovement);
+        if (knockback > 1.0f && target instanceof LivingEntity livingTarget) {
+            float strength = knockback * 2.5f;
+            Vec3 motion = new Vec3(Mth.sin(getYRot() * (float) (Math.PI / 180.0)), 0, -Mth.cos(getYRot() * (float) (Math.PI / 180.0))).scale(strength);
+            if (livingTarget instanceof ServerPlayer player) {
+                RagdollUtil.ragdollPlayer(player, motion);
+            } else {
+                RagdollUtil.ragdollWithDiscard(livingTarget, motion);
+            }
+        }
     }
 
     @Override
