@@ -2,26 +2,26 @@ package com.site21.bittermelon.common.content.entities.scp815snake.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.site21.bittermelon.Bittermelon;
+import com.site21.bittermelon.client.render.player.PlayerSkinLayer;
 import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
-import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.resources.Identifier;
 
 import static com.site21.bittermelon.client.event.ClientSetup.BROKEN_JAW;
 
 
-public class SCP815BloodLayer extends RenderLayer<AvatarRenderState, PlayerModel> {
+public class SCP815BloodLayer extends PlayerSkinLayer {
     private static final Identifier SCP_815_BLOOD = Bittermelon.identifier("textures/entity/815_bloody_layer.png");
 
     public SCP815BloodLayer(RenderLayerParent<AvatarRenderState, PlayerModel> renderer) {
-        super(renderer);
+        super(renderer, SCP_815_BLOOD, 0);
     }
 
     @Override
     public void submit(PoseStack poseStack, SubmitNodeCollector collector, int lightCoords, AvatarRenderState state, float yRot, float xRot) {
         if (!Boolean.TRUE.equals(state.getRenderData(BROKEN_JAW))) return;
-        renderColoredCutoutModel(getParentModel(), SCP_815_BLOOD, poseStack, collector, lightCoords, state, -1, 1);
+        super.submit(poseStack, collector, lightCoords, state, yRot, xRot);
     }
 }

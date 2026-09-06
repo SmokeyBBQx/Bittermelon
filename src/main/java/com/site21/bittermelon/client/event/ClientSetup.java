@@ -364,6 +364,7 @@ public class ClientSetup {
     public static void addLayers(EntityRenderersEvent.AddLayers event) {
         for (PlayerModelType skin : event.getSkins()) {
             AvatarRenderer<AbstractClientPlayer> renderer = event.getPlayerRenderer(skin);
+            if (renderer == null) return;
             renderer.addLayer(new EyeballOnPlayerLayer(renderer, event.getEntityModels()));
             renderer.addLayer(new SCP815BloodLayer(renderer));
             renderer.addLayer(new LimbLayer<>(renderer));
